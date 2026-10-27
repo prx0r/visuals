@@ -6,13 +6,13 @@ Edits are exact unique substring replacements of the target source file.
 We apply -> render -> show qwen again -> repeat until pass or MAX_ROUNDS.
 Only preview-scale renders. Owner remains taste-of-record.
 """
-import base64, json, subprocess, sys, time, urllib.request
+import base64, json, os, subprocess, sys, time, urllib.request
 from pathlib import Path
 
 TARGET = Path(sys.argv[1] if len(sys.argv) > 1 else "/home/box/visuals/pilots/make_white_s1a.py")
 MAX_ROUNDS = int(sys.argv[2]) if len(sys.argv) > 2 else 3
 OUT = Path("/home/box/visuals/experiments")
-LOG = OUT / "design_loop_log.json"
+LOG = OUT / f"design_loop_{TARGET.stem}.json"
 SHOOTOUT = Path("/tmp/opencode/qwen_shootout_results.txt")
 
 QWEN_URL = ("https://ws-h6o7g3oq9mc7u24u.ap-southeast-1.maas.aliyuncs.com"
@@ -85,8 +85,14 @@ history = ""
 verdict = {"pass": False, "score": 0, "defects": ["never ran"], "edits": []}
 for rnd in range(1, MAX_ROUNDS + 1):
     print(f"--- round {rnd}", flush=True)
-    parts = [media_part(OUT / "white_s1a_v0.mp4")] + [media_part(p) for p in previews() if p.exists()]
-    ctx = BRIEF + f"\n\nCURRENT SOURCE ({TARGET}):\n\"\"\"\n{src}\n\"\"\""
+    mp4 = Path(os.environ.get("LOOP_MP4") or "white_s1a_v0.mp4")
+    if not mp4.is_absolute():
+        mp4 = OUT / mp4
+    prev = [OUT / p for p in os.environ.get(
+        "LOOP_PREVIEWS", "white_s1a_t4.5.png,white_s1a_t9.5.png").split(",")]
+    parts = [media_part(mp4)] + [media_part(p) for p in prev if p.exists()]
+    brief = Path(os.environ["LOOP_BRIEF"]).read_text() if os.environ.get("LOOP_BRIEF") else BRIEF
+    ctx = brief + f"\n\nCURRENT SOURCE ({TARGET}):\n\"\"\"\n{src}\n\"\"\""
     if SHOOTOUT.exists():
         ctx += "\n\nSPECTROGRAM SHOOTOUT RESULTS (you judged these):\n" + SHOOTOUT.read_text()[:1500]
     if history:
