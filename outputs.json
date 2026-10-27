@@ -212,6 +212,30 @@
    "date": "2026-10-27",
    "verdict": "unreviewed",
    "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/renders/nanavira-paticcasamuppada-1080p.mp4"
+  },
+  {
+   "id": "waveA_white_cline",
+   "project": "waveforms",
+   "type": "video",
+   "title": "WAVEFORM A \u2014 white-paper ink line (ffmpeg showwaves baseline)",
+   "path": "/home/box/visuals/experiments/waveA_white_cline.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "",
+   "verdict": "awaiting qwen eyes",
+   "notes": "the VOICE WAVE (per owner pivot): cline, negated to white paper"
+  },
+  {
+   "id": "waveB_dark_cline",
+   "project": "waveforms",
+   "type": "video",
+   "title": "WAVEFORM B \u2014 dark bg pale line (ffmpeg showwaves baseline)",
+   "path": "/home/box/visuals/experiments/waveB_dark_cline.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "",
+   "verdict": "awaiting qwen eyes",
+   "notes": "the VOICE WAVE: cline on black"
   }
  ]
 }

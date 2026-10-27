@@ -201,8 +201,12 @@ class Outbox(Gtk.Window):
             if os.path.exists(path):
                 GLib.idle_add(self._add, path, True)
 
-    def _open_item(self, _view, path):
-        self.show_file(path)
+    def _open_item(self, _view, tpath):
+        try:
+            it = self.store.get_iter(tpath)
+        except (ValueError, TypeError):
+            return
+        self.show_file(self.store.get_value(it, 2))
 
     def show_file(self, path):
         kind = kind_of(path)
@@ -228,7 +232,6 @@ class Outbox(Gtk.Window):
         elif kind == "video":
             self.pending_video = path
             self.detail_stack.set_visible_child_name("video")
-            self.socket.reset()
             GLib.timeout_add(250, self._spawn_vlc)
         elif kind == "audio":
             self.audio_lbl.set_text(name)
