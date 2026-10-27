@@ -1,0 +1,38 @@
+{
+ "target": "/home/box/visuals/pilots/make_white_s1a.py",
+ "rounds": [
+  {
+   "rnd": 1,
+   "score": 2,
+   "defects": [
+    "Bottom strip is gray mush: formant/harmonic bands and bell-vs-voice structure are invisible, violating the 'must READ as a spectrogram' mandate",
+    "Spectrogram contrast crushed by 0.55 multiplier + 99.7th-percentile ref + 0.85 gamma, so only a faint smear survives on white"
+   ],
+   "edits": [
+    {
+     "old": "    ref = np.percentile(S, 99.7)\n    v = np.clip(S / (ref + 1e-6), 0, 1) ** 0.85\n    v = v * 0.55                        # restrained: light ink texture, never a heavy band",
+     "new": "    ref = np.percentile(S, 99.0)\n    v = np.clip(S / (ref + 1e-6), 0, 1) ** 0.55\n    v = np.clip(v * 1.15, 0, 1)         # readable formant/harmonic bands, not mush"
+    }
+   ],
+   "rationale": "Left wipes and right staged geometry (vermillion only on nodes) match spec well. But the bottom zone fails its hard requirement: with v*0.55, gamma 0.85 and a 99.7% ref dominated by the bell transient, voiced bands map near-white and the strip reads as noise, not a spectrogram. Raising contrast (lower ref percentile, lower gamma, clipped boost) makes formants/harmonics legible while staying in ink-on-paper palette.",
+   "secs": 31
+  },
+  {
+   "rnd": 2,
+   "score": 4,
+   "defects": [
+    "Bell transient collapses to a single flat horizontal line (partials sit below the 55 Hz floor), so the bell-vs-voice contrast is weak",
+    "Left third of the scrolling window is near-empty lead-in, leaving the strip sparse at mid-times"
+   ],
+   "edits": [
+    {
+     "old": "ROWS, FMIN, FMAX = 112, 55.0, 9500.0",
+     "new": "ROWS, FMIN, FMAX = 128, 30.0, 9500.0"
+    }
+   ],
+   "rationale": "Left wipes/rule-draw and staged right geometry with vermillion only on nodes/dots satisfy the spec; the round-1 gray-mush is fixed (99% ref, gamma 0.55, 1.15 boost) so formant/harmonic bands now read. Remaining nit is the bell floor; dropping FMIN reveals its harmonic stack.",
+   "secs": 37
+  }
+ ],
+ "final": "pass"
+}

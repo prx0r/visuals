@@ -1,0 +1,217 @@
+{
+ "outputs": [
+  {
+   "id": "specA_intensity_log",
+   "project": "spectrograms",
+   "type": "video",
+   "title": "SPECTROGRAM A \u2014 intensity, log freq, scroll (black, classic)",
+   "path": "/home/box/visuals/experiments/specA_intensity_log.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/specA_intensity_log.mp4",
+   "verdict": "P0 shootout \u2014 pick one",
+   "notes": "same 10s slice (white_s1a_audio), ffmpeg showspectrum"
+  },
+  {
+   "id": "specB_channel_log",
+   "project": "spectrograms",
+   "type": "video",
+   "title": "SPECTROGRAM B \u2014 channel colors, log freq, scroll",
+   "path": "/home/box/visuals/experiments/specB_channel_log.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/specB_channel_log.mp4",
+   "verdict": "P0 shootout \u2014 pick one",
+   "notes": "same 10s slice (white_s1a_audio), ffmpeg showspectrum"
+  },
+  {
+   "id": "specC_rainbow_replace",
+   "project": "spectrograms",
+   "type": "video",
+   "title": "SPECTROGRAM C \u2014 separate channels, rainbow, refresh",
+   "path": "/home/box/visuals/experiments/specC_rainbow_replace.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/specC_rainbow_replace.mp4",
+   "verdict": "P0 shootout \u2014 pick one",
+   "notes": "same 10s slice (white_s1a_audio), ffmpeg showspectrum"
+  },
+  {
+   "id": "specD_white_ink",
+   "project": "spectrograms",
+   "type": "video",
+   "title": "SPECTROGRAM D \u2014 white-paper ink (grayscale, negated)",
+   "path": "/home/box/visuals/experiments/specD_white_ink.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/specD_white_ink.mp4",
+   "verdict": "P0 shootout \u2014 pick one",
+   "notes": "same 10s slice (white_s1a_audio), ffmpeg showspectrum"
+  },
+  {
+   "id": "white_s1a_v0",
+   "project": "experiments",
+   "type": "video",
+   "title": "WHITE S1A v0 \u2014 verse \u00b7 drawing \u00b7 spectrogram (s\u016btra 3)",
+   "path": "/home/box/visuals/experiments/white_s1a_v0.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/white_s1a_v0.mp4",
+   "verdict": "the white version begins",
+   "notes": "left: verse in wipes (no fades) \u00b7 right: geometry drawn live + vermillion nodes \u00b7 bottom: scrolling log-mel of Baumer actually reading s\u016btra 3 \u00b7 replaces the PowerPoint-feel pilots"
+  },
+  {
+   "id": "pilot_verse10",
+   "project": "vatula",
+   "type": "video",
+   "title": "Intro pilot \u2014 s\u016btra 10",
+   "path": "/home/box/visuals/pilots/pilot_verse10.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "scores": {
+    "typography": 4,
+    "calm": 4
+   },
+   "verdict": "qwen lead pick",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/pilot_verse10.mp4"
+  },
+  {
+   "id": "pilot_verse3",
+   "project": "vatula",
+   "type": "video",
+   "title": "Intro pilot \u2014 s\u016btra 3 (the two boards)",
+   "path": "/home/box/visuals/pilots/pilot_verse3.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "scores": {
+    "typography": 4,
+    "calm": 4
+   },
+   "verdict": "ship-ready",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/pilot_verse3.mp4"
+  },
+  {
+   "id": "pilot_svatantrya",
+   "project": "vatula",
+   "type": "video",
+   "title": "Intro pilot \u2014 Sv\u0101tantrya",
+   "path": "/home/box/visuals/pilots/pilot_svatantrya.mp4",
+   "duration": "0:10",
+   "date": "2026-10-27",
+   "scores": {
+    "typography": 4,
+    "calm": 4
+   },
+   "verdict": "fixed round-2",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/pilot_svatantrya.mp4"
+  },
+  {
+   "id": "dual_reading_v3",
+   "project": "vatula",
+   "type": "audio",
+   "title": "Dual reading v3 \u2014 standard compilation",
+   "path": "/home/box/Downloads/yt/baumer/build/dual_reading/vatula_full_dual_reading.mp3",
+   "duration": "10:23",
+   "date": "2026-10-27",
+   "verdict": "DONE \u2014 owner: beautiful",
+   "notes": "bell version \u00b7 P0 PASS \u00b7 DONE by rule (DONE.md)",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/dual_reading_v3.mp3"
+  },
+  {
+   "id": "card_shaktipata",
+   "project": "vatula",
+   "type": "image",
+   "title": "Gloss card \u2014 \u015aaktip\u0101ta",
+   "path": "/home/box/Downloads/yt/baumer/build/visual_mocks/term_shaktipata.png",
+   "date": "2026-10-27",
+   "verdict": "approved",
+   "notes": "Tiro Devanagari + Cormorant, white + vermillion",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/card_shaktipata.png"
+  },
+  {
+   "id": "card_mahashunyata",
+   "project": "vatula",
+   "type": "image",
+   "title": "Gloss card \u2014 Mah\u0101\u015b\u016bnyat\u0101",
+   "path": "/home/box/Downloads/yt/baumer/build/visual_mocks/term_mahashunyata.png",
+   "date": "2026-10-27",
+   "verdict": "approved",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/card_mahashunyata.png"
+  },
+  {
+   "id": "card_svatantrya",
+   "project": "vatula",
+   "type": "image",
+   "title": "Gloss card \u2014 Sv\u0101tantrya",
+   "path": "/home/box/Downloads/yt/baumer/build/visual_mocks/term_svatantrya.png",
+   "date": "2026-10-27",
+   "verdict": "approved",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/card_svatantrya.png"
+  },
+  {
+   "id": "card_mahasahas",
+   "project": "vatula",
+   "type": "image",
+   "title": "Gloss card \u2014 Mah\u0101sahas\u0101",
+   "path": "/home/box/Downloads/yt/baumer/build/visual_mocks/term_mahasahas.png",
+   "date": "2026-10-27",
+   "verdict": "approved",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/card_mahasahas.png"
+  },
+  {
+   "id": "card_verse3",
+   "project": "vatula",
+   "type": "image",
+   "title": "Verse card \u2014 s\u016btra 3",
+   "path": "/home/box/Downloads/yt/baumer/build/visual_mocks/verse_3.png",
+   "date": "2026-10-27",
+   "verdict": "approved",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/card_verse3.png"
+  },
+  {
+   "id": "card_verse10",
+   "project": "vatula",
+   "type": "image",
+   "title": "Verse card \u2014 s\u016btra 10",
+   "path": "/home/box/Downloads/yt/baumer/build/visual_mocks/verse_10.png",
+   "date": "2026-10-27",
+   "verdict": "approved",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/card_verse10.png"
+  },
+  {
+   "id": "s1a_proof",
+   "project": "shiva-sutras",
+   "type": "video",
+   "title": "S1 essay-A proof v3",
+   "path": "/home/box/Downloads/siva-sutras-S1A-proof-v3.mp4",
+   "duration": "1:37",
+   "date": "2026-10-27",
+   "verdict": "template keep + 3 upgrades",
+   "notes": "upgrades: our white typography \u00b7 spectrogram rail \u00b7 fluid right panel; qwen watch: 4/5 contemplative",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/renders/siva-sutras-S1A-proof-v3.mp4"
+  },
+  {
+   "id": "vg_dual_14s",
+   "project": "experiments",
+   "type": "video",
+   "title": "voice-garden render of dual reading (25k particles)",
+   "path": "/home/box/visuals/experiments/vg_dual_14s.mp4",
+   "duration": "0:14",
+   "date": "2026-10-27",
+   "verdict": "first of the visualizer shelf",
+   "notes": "854x480 @15fps, SwiftShader, 9min/14s",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/gallery/vg_dual_14s.mp4"
+  },
+  {
+   "id": "nanavira_do",
+   "project": "nanavira",
+   "type": "video",
+   "title": "N\u0101\u1e47\u0101v\u012bra \u2014 pa\u1e6diccasamupp\u0101da 1080p",
+   "path": "/home/box/Downloads/nanavira-paticcasamuppada-1080p.mp4",
+   "duration": "51:26",
+   "date": "2026-10-27",
+   "verdict": "unreviewed",
+   "url": "https://pub-8f77709efb2043fbbd8e88677347249a.r2.dev/renders/nanavira-paticcasamuppada-1080p.mp4"
+  }
+ ]
+}

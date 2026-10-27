@@ -1,0 +1,8 @@
+visualizers/
+Qwen-MM-Plugins/
+references/
+skills/
+**/__pycache__/
+*.wav
+*.raw
+*.pyc
