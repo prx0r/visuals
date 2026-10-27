@@ -1,5 +1,7 @@
 # THE PATALA DESKTOP — operator manual (v1, 2026-10-27)
 
+> Creating a Baumer visual/movie? → **`CREATING.md`** (the flow) · engine steps → `essay-visual-engine/docs/OPERATOR.md`
+
 This box (hub) is a desktop for **coding with agents, seeing outputs, and fanning work
 out to our VPSes**. Light on purpose: VS Code desktop measured 752 MB / 82% CPU here and
 was rejected; the stack below idles at ~1–2% CPU.
