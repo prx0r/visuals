@@ -1,0 +1,38 @@
+{
+ "target": "/home/box/visuals/pilots/make_white_s1a.py",
+ "rounds": [
+  {
+   "rnd": 1,
+   "score": 2,
+   "defects": [
+    "bottom strip is gray mush, not a readable spectrogram (no harmonic/formant ridges)",
+    "FMAX 9500 lets high\u2011frequency noise dominate; gamma 0.55 lifts the noise floor",
+    "no vertical smoothing so formant bands never coalesce into ridges"
+   ],
+   "edits": [
+    {
+     "old": "    freqs = np.fft.rfftfreq(NFFT, 1 / SR)\n    ROWS, FMIN, FMAX = 112, 55.0, 9500.0\n    fr = np.exp(np.linspace(np.log(FMIN), np.log(FMAX), ROWS))\n    idx = np.clip(np.searchsorted(freqs, fr) - 1, 0, len(freqs) - 1)\n    S = S[:, idx]                      # (n, ROWS) log-frequency\n    S = np.log1p(S * 10.0)\n    ref = np.percentile(S, 99.0)\n    v = np.clip(S / (ref + 1e-6), 0, 1) ** 0.55\n    v = np.clip(v * 1.15, 0, 1)         # readable formant/harmonic bands, not mush",
+     "new": "    freqs = np.fft.rfftfreq(NFFT, 1 / SR)\n    ROWS, FMIN, FMAX = 140, 60.0, 4200.0   # voice/formant band, drop HF noise\n    fr = np.exp(np.linspace(np.log(FMIN), np.log(FMAX), ROWS))\n    idx = np.clip(np.searchsorted(freqs, fr) - 1, 0, len(freqs) - 1)\n    S = S[:, idx]                      # (n, ROWS) log-frequency\n    S = np.log1p(S * 10.0)\n    ref = np.percentile(S, 97.0)\n    v = np.clip(S / (ref + 1e-6), 0, 1)\n    v = np.clip((v - 0.18) / 0.82, 0, 1) ** 0.85   # kill noise floor, keep ridges\n    v = np.convolve(v, np.ones(3) / 3.0, axis=0, mode='same')  # formant bands coalesce"
+    }
+   ],
+   "rationale": "Left wipes and right construction geometry satisfy spec, but the bottom violates the hard 'must read as spectrogram' rule: the contrast map (percentile\u201199 ref, ^0.55, *1.15, FMAX 9500) renders broadband static. Narrowing to voice formants, thresholding the floor, steepening gamma and adding a light vertical blur recovers ridge/bell\u2011vs\u2011voice structure.",
+   "secs": 37
+  },
+  {
+   "rnd": 2,
+   "score": 4,
+   "defects": [
+    "render crash: np.convolve has no 'axis' kwarg \u2014 vertical formant smoothing line is invalid numpy"
+   ],
+   "edits": [
+    {
+     "old": "    v = np.convolve(v, np.ones(3) / 3.0, axis=0, mode='same')  # formant bands coalesce",
+     "new": "    vp = np.pad(v, ((1, 1), (0, 0)), mode='edge')  # formant bands coalesce (vertical 3-tap)\n    v = (vp[:-2] + vp[1:-1] + vp[2:]) / 3.0"
+    }
+   ],
+   "rationale": "Spec zones are satisfied (left wipes-only, right staged construction with vermillion nodes, bottom log-freq voice-band spectrogram with floor threshold + gamma + vertical ridge coalescing). Only blocker is the illegal np.convolve(axis=...) call; replacing it with a sliced 3-tap vertical box filter keeps the formant-ridge smoothing and unblocks the render.",
+   "secs": 18
+  }
+ ],
+ "final": "pass"
+}

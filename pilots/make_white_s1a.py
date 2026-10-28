@@ -26,14 +26,15 @@ def build_spectrogram():
     for i in range(n):
         S[i] = np.abs(np.fft.rfft(x[i * HOP:i * HOP + NFFT] * win))
     freqs = np.fft.rfftfreq(NFFT, 1 / SR)
-    ROWS, FMIN, FMAX = 112, 55.0, 9500.0
+    ROWS, FMIN, FMAX = 140, 60.0, 4200.0   # voice/formant band, drop HF noise
     fr = np.exp(np.linspace(np.log(FMIN), np.log(FMAX), ROWS))
     idx = np.clip(np.searchsorted(freqs, fr) - 1, 0, len(freqs) - 1)
     S = S[:, idx]                      # (n, ROWS) log-frequency
     S = np.log1p(S * 10.0)
-    ref = np.percentile(S, 99.0)
-    v = np.clip(S / (ref + 1e-6), 0, 1) ** 0.55
-    v = np.clip(v * 1.15, 0, 1)         # readable formant/harmonic bands, not mush
+    ref = np.percentile(S, 97.0)
+    v = np.clip(S / (ref + 1e-6), 0, 1)
+    v = np.clip((v - 0.18) / 0.82, 0, 1) ** 0.85   # kill noise floor, keep ridges
+    v = np.convolve(v, np.ones(3) / 3.0, axis=0, mode='same')  # formant bands coalesce
     v = v.T[::-1]                      # image: height=ROWS (top=high freq), width=time
     white = np.array(WHITE, dtype=np.float32)
     ink = np.array(INK, dtype=np.float32)

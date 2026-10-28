@@ -15,11 +15,23 @@ OUT = Path("/home/box/visuals/experiments")
 LOG = OUT / f"design_loop_{TARGET.stem}.json"
 SHOOTOUT = Path("/tmp/opencode/qwen_shootout_results.txt")
 
-QWEN_URL = ("https://ws-h6o7g3oq9mc7u24u.ap-southeast-1.maas.aliyuncs.com"
+def _load_env(path):
+    out = {}
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if "=" in line and not line.strip().startswith("#"):
+                k, v = line.split("=", 1)
+                out[k.strip()] = v.strip()
+    return out
+
+_dotenv = _load_env(Path(__file__).resolve().parents[1] / ".env")
+QWEN_URL = (_dotenv.get("QWEN_BASE_URL")
+            or "https://ws-h6o7g3oq9mc7u24u.ap-southeast-1.maas.aliyuncs.com"
             "/compatible-mode/v1/chat/completions")
-QWEN_MODEL = "qwen3.8-omni-flash"
-QWEN_KEY = next((Path(p).read_text().strip() for p in ("/home/box/.qwen_key", "/tmp/opencode/qwen/key")
-                 if Path(p).exists()), None)
+QWEN_MODEL = _dotenv.get("QWEN_MODEL") or "qwen3.8-omni-flash"
+QWEN_KEY = (_dotenv.get("QWEN_API_KEY")
+            or next((Path(p).read_text().strip() for p in ("/home/box/.qwen_key", "/tmp/opencode/qwen/key")
+                     if Path(p).exists()), None))
 
 BRIEF = """You are the DESIGNER-ENGINEER of a white proof page video (White S1A).
 Zones (owner's spec, fixed): LEFT = verse card revealed ONLY by ink wipes / rule draw — no fades, no rise;

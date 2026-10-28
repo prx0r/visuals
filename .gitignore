@@ -6,3 +6,6 @@ skills/
 *.wav
 *.raw
 *.pyc
+.env
+NORTHSTAR.md
+standard_cards/standard_v*.mp4
