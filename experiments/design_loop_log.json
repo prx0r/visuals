@@ -1,38 +1,102 @@
 {
- "target": "/home/box/visuals/pilots/make_white_s1a.py",
+ "target": "/home/box/visuals/pilots/make_wave_strip.py",
  "rounds": [
   {
    "rnd": 1,
    "score": 2,
    "defects": [
-    "Bottom strip is gray mush: formant/harmonic bands and bell-vs-voice structure are invisible, violating the 'must READ as a spectrogram' mandate",
-    "Spectrogram contrast crushed by 0.55 multiplier + 99.7th-percentile ref + 0.85 gamma, so only a faint smear survives on white"
+    "Waveform stretches all available samples to fill band width via linspace, producing fat diamond blobs in early/mid frames instead of a constant-speed scrolling trace",
+    "Dead code `(bw/bh)*0` and misleading `+0.25` lookahead obscure intent and cause off-by-one window sizing",
+    "Hanning(9) smoothing at 260 px/s blurs syllable attacks and erases the bell's sustained-vs-bursty contrast",
+    "No right-alignment: trace should enter from one edge and scroll, not re-scale every frame"
    ],
    "edits": [
     {
-     "old": "    ref = np.percentile(S, 99.7)\n    v = np.clip(S / (ref + 1e-6), 0, 1) ** 0.85\n    v = v * 0.55                        # restrained: light ink texture, never a heavy band",
-     "new": "    ref = np.percentile(S, 99.0)\n    v = np.clip(S / (ref + 1e-6), 0, 1) ** 0.55\n    v = np.clip(v * 1.15, 0, 1)         # readable formant/harmonic bands, not mush"
+     "old": "    k = np.hanning(9); k /= k.sum()",
+     "new": "    k = np.hanning(5); k /= k.sum()"
+    },
+    {
+     "old": "def wave_slice(t):\n    bw, bh = BAND[2] - BAND[0], BAND[3] - BAND[1]\n    c_end = int((t + 0.25) * PPS)\n    w_cols = int((bw / bh) * 0) + int(6.0 * PPS)   # 6s window\n    c0 = max(0, c_end - w_cols)\n    c1 = min(len(ENV), max(c_end, c0 + 8))\n    seg = ENV[c0:c1]\n    img = Image.new(\"RGB\", (bw, bh), WHITE)\n    d = ImageDraw.Draw(img)\n    cy = bh // 2\n    amp = (bh // 2 - 6)\n    d.line([(0, cy), (bw, cy)], fill=(228, 224, 216), width=1)   # baseline hairline\n    n = len(seg)\n    if n > 1:\n        xs = np.linspace(0, bw - 1, n)\n        top = [(float(x), cy - float(v) * amp) for x, v in zip(xs, seg)]\n        bot = [(float(x), cy + float(v) * amp) for x, v in zip(xs, seg)][::-1]\n        d.polygon(top + bot, fill=INK)\n    return img",
+     "new": "def wave_slice(t):\n    bw, bh = BAND[2] - BAND[0], BAND[3] - BAND[1]\n    cy = bh // 2\n    amp = (bh // 2 - 6)\n    img = Image.new(\"RGB\", (bw, bh), WHITE)\n    d = ImageDraw.Draw(img)\n    d.line([(0, cy), (bw, cy)], fill=(228, 224, 216), width=1)\n    c_now = int(t * PPS)\n    if c_now <= 0:\n        return img\n    c_left = max(0, c_now - bw + 1)\n    seg = ENV[c_left:c_now + 1]\n    n = len(seg)\n    if n < 2:\n        return img\n    x_start = bw - n          # right-align: newest sample at right edge\n    xs = np.arange(x_start, x_start + n, dtype=float)\n    top = [(float(x), cy - float(v) * amp) for x, v in zip(xs, seg)]\n    bot = [(float(x), cy + float(v) * amp) for x, v in zip(xs, seg)][::-1]\n    d.polygon(top + bot, fill=INK)\n    return img"
     }
    ],
-   "rationale": "Left wipes and right staged geometry (vermillion only on nodes) match spec well. But the bottom zone fails its hard requirement: with v*0.55, gamma 0.85 and a 99.7% ref dominated by the bell transient, voiced bands map near-white and the strip reads as noise, not a spectrogram. Raising contrast (lower ref percentile, lower gamma, clipped boost) makes formants/harmonics legible while staying in ink-on-paper palette.",
-   "secs": 31
+   "rationale": "Core violation: linspace(0,bw-1,n) stretches variable-length segments to full band width, so early frames show a fat blob and later frames compress differently \u2014 unstable scale, not a living scroll. Fix: 1:1 pixel mapping (bw\u2248window_secs\u00d7PPS by construction), right-aligned so new audio enters from the right edge at constant speed. Also reduce smoothing to hanning(5) to preserve syllabic attack and bell sustain.",
+   "secs": 78
   },
   {
    "rnd": 2,
-   "score": 4,
+   "score": 3,
    "defects": [
-    "Bell transient collapses to a single flat horizontal line (partials sit below the 55 Hz floor), so the bell-vs-voice contrast is weak",
-    "Left third of the scrolling window is near-empty lead-in, leaving the strip sparse at mid-times"
+    "Temple bell renders as a giant solid black wedge (per-column MAX saturates the log envelope to ~1.0 across the whole ring), violating 'bell clearly differentiated from speech' and 'no swinging between fat blobs and hairline'",
+    "Filled silhouette alone hides any oscillation, so the ring reads as a blob, not a periodic decay",
+    "Voice region after the bell is comparatively hairline-thin, confirming the scale swing"
    ],
    "edits": [
     {
-     "old": "ROWS, FMIN, FMAX = 112, 55.0, 9500.0",
-     "new": "ROWS, FMIN, FMAX = 128, 30.0, 9500.0"
+     "old": "def load_env():\n    w = wave.open(AUDIO)\n    raw = w.readframes(w.getnframes())\n    x = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0\n    if w.getnchannels() == 2:\n        x = x.reshape(-1, 2).mean(axis=1)\n    sr = w.getframerate()\n    # per-column peak envelope at PX_PER_S\n    step = sr / PX_PER_S\n    n = int(len(x) / step)\n    env = np.array([np.abs(x[int(i * step):max(int(i * step) + 1, int((i + 1) * step))]).max()\n                    for i in range(n)], dtype=np.float32)\n    # stable scale: log-compress + global percentile, never swings\n    env = np.log1p(env * 20.0)\n    ref = np.percentile(env[env > 0], 99.5) if (env > 0).any() else 1.0\n    env = np.clip(env / (ref + 1e-6), 0, 1) ** 0.8\n    # smooth (kill diamond-blob strobing, keep syllabic rhythm)\n    k = np.hanning(5); k /= k.sum()\n    env = np.convolve(env, k, mode=\"same\")\n    return env, PX_PER_S\n\nENV, PPS = load_env()",
+     "new": "FINE_PPS = PX_PER_S * 4          # sub-column resolution to reveal oscillation (bell ring)\nSOFT = (74, 60, 50)              # warm-ink silhouette body (lighter than the trace line)\n\ndef load_env():\n    w = wave.open(AUDIO)\n    raw = w.readframes(w.getnframes())\n    x = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0\n    if w.getnchannels() == 2:\n        x = x.reshape(-1, 2).mean(axis=1)\n    sr = w.getframerate()\n    step = sr / PX_PER_S\n    n = int(len(x) / step)\n    # RMS per column -> stable silhouette body (never saturates into a fat blob)\n    rms = np.empty(n, dtype=np.float32)\n    for i in range(n):\n        a = int(i * step); b = max(a + 1, int((i + 1) * step))\n        s = x[a:b]\n        rms[i] = math.sqrt(float(np.mean(s * s)))\n    ref_r = np.percentile(rms[rms > 0], 99.0) if (rms > 0).any() else 1.0\n    env = np.clip(rms / (ref_r + 1e-6), 0, 1) ** 0.65     # gentle, controlled breathing room\n    k = np.hanning(3); k /= k.sum()\n    env = np.convolve(env, k, mode=\"same\")\n    # fine signed trace at FINE_PPS, normalized by global peak -> shows the bell's sine ripples\n    fstep = sr / FINE_PPS\n    nf = int(len(x) / fstep)\n    fine = np.empty(nf, dtype=np.float32)\n    for i in range(nf):\n        a = int(i * fstep); b = max(a + 1, int((i + 1) * fstep))\n        s = x[a:b]\n        fine[i] = float(np.mean(s)) if len(s) else 0.0\n    ref_f = np.percentile(np.abs(fine[fine != 0]), 99.5) if (fine != 0).any() else 1.0\n    fine = np.clip(fine / (ref_f + 1e-6), -1, 1)\n    return env, fine, PX_PER_S, FINE_PPS\n\nENV, FINE, PPS, FPPS = load_env()"
+    },
+    {
+     "old": "def wave_slice(t):\n    bw, bh = BAND[2] - BAND[0], BAND[3] - BAND[1]\n    cy = bh // 2\n    amp = (bh // 2 - 6)\n    img = Image.new(\"RGB\", (bw, bh), WHITE)\n    d = ImageDraw.Draw(img)\n    d.line([(0, cy), (bw, cy)], fill=(228, 224, 216), width=1)\n    c_now = int(t * PPS)\n    if c_now <= 0:\n        return img\n    c_left = max(0, c_now - bw + 1)\n    seg = ENV[c_left:c_now + 1]\n    n = len(seg)\n    if n < 2:\n        return img\n    x_start = bw - n          # right-align: newest sample at right edge\n    xs = np.arange(x_start, x_start + n, dtype=float)\n    top = [(float(x), cy - float(v) * amp) for x, v in zip(xs, seg)]\n    bot = [(float(x), cy + float(v) * amp) for x, v in zip(xs, seg)][::-1]\n    d.polygon(top + bot, fill=INK)\n    return img",
+     "new": "def wave_slice(t):\n    bw, bh = BAND[2] - BAND[0], BAND[3] - BAND[1]\n    cy = bh // 2\n    amp_fill = (bh // 2 - 8) * 0.62      # silhouette body sits inside the trace\n    amp_line = (bh // 2 - 4)             # oscillation trace reaches near full height\n    img = Image.new(\"RGB\", (bw, bh), WHITE)\n    d = ImageDraw.Draw(img)\n    d.line([(0, cy), (bw, cy)], fill=(228, 224, 216), width=1)\n    c_now = int(t * PPS)\n    if c_now <= 0:\n        return img\n    # --- silhouette (RMS body), right-aligned, constant speed ---\n    c_left = max(0, c_now - bw + 1)\n    seg = ENV[c_left:c_now + 1]\n    n = len(seg)\n    if n >= 2:\n        xs = np.arange(bw - n, bw, dtype=float)\n        top = [(float(x), cy - float(v) * amp_fill) for x, v in zip(xs, seg)]\n        bot = [(float(x), cy + float(v) * amp_fill) for x, v in zip(xs, seg)][::-1]\n        d.polygon(top + bot, fill=SOFT)\n    # --- fine oscillation trace (reveals bell ring vs voice fuzz), right-aligned ---\n    f_now = int(t * FPPS)\n    f_left = max(0, f_now - bw + 1)\n    fs = FINE[f_left:f_now + 1]\n    m = len(fs)\n    if m >= 2:\n        fx = np.arange(bw - m, bw, dtype=float)\n        pts = [(float(x), cy - float(v) * amp_line) for x, v in zip(fx, fs)]\n        d.line(pts, fill=INK, width=1, joint=\"curve\")\n    return img"
     }
    ],
-   "rationale": "Left wipes/rule-draw and staged right geometry with vermillion only on nodes/dots satisfy the spec; the round-1 gray-mush is fixed (99% ref, gamma 0.55, 1.15 boost) so formant/harmonic bands now read. Remaining nit is the bell floor; dropping FMIN reveals its harmonic stack.",
-   "secs": 37
+   "rationale": "Peak-max envelope + hard log-clip turns the sustained bell into a flat-topped filled polygon = fat blob, indistinguishable from a glitch and opposite of a ring. Fix: drive the silhouette from RMS (stable body, no saturation) and overlay a fine-resolution ink polyline of the actual waveform so the bell's sine ripples poke out of a moderate body (clearly a ring) while speech stays dense fuzz (clearly voice). Keeps right-aligned constant-speed scroll.",
+   "secs": 111
+  },
+  {
+   "rnd": 3,
+   "score": 3,
+   "defects": [
+    "Bell at t\u22484.5s renders as a solid dark block: fine trace at 1040 samples/s (~4 per pixel) zigzags at \u00b176px, and the 1px connected polyline fills the band vertically, destroying periodic-ring legibility",
+    "amp_line (76px) >> amp_fill (44.6px) means the fine trace dominates the visual, so the bell's sustained oscillation reads as a monolithic wedge rather than a decaying ring",
+    "No decay gradient visible in the bell region: RMS stays near-max throughout the ring, so the silhouette body is a flat-topped plateau indistinguishable from a glitch blob"
+   ],
+   "edits": [
+    {
+     "old": "FINE_PPS = PX_PER_S * 4          # sub-column resolution to reveal oscillation (bell ring)\nSOFT = (74, 60, 50)              # warm-ink silhouette body (lighter than the trace line)",
+     "new": "FINE_PPS = PX_PER_S * 6          # sub-column resolution for oscillation texture\nSOFT = (74, 60, 50)              # warm-ink silhouette body (lighter than the trace line)"
+    },
+    {
+     "old": "    amp_fill = (bh // 2 - 8) * 0.62      # silhouette body sits inside the trace\n    amp_line = (bh // 2 - 4)             # oscillation trace reaches near full height",
+     "new": "    amp_fill = (bh // 2 - 8) * 0.45      # silhouette body: moderate, leaves breathing room\n    amp_line = (bh // 2 - 8) * 0.55      # oscillation ticks: subtle ripple beyond body"
+    },
+    {
+     "old": "    # --- fine oscillation trace (reveals bell ring vs voice fuzz), right-aligned ---\n    f_now = int(t * FPPS)\n    f_left = max(0, f_now - bw + 1)\n    fs = FINE[f_left:f_now + 1]\n    m = len(fs)\n    if m >= 2:\n        fx = np.arange(bw - m, bw, dtype=float)\n        pts = [(float(x), cy - float(v) * amp_line) for x, v in zip(fx, fs)]\n        d.line(pts, fill=INK, width=1, joint=\"curve\")",
+     "new": "    # --- fine oscillation as per-pixel min-max tick marks (texture, not connected line) ---\n    f_now = int(t * FPPS)\n    f_left = max(0, f_now - bw + 1)\n    fs = FINE[f_left:f_now + 1]\n    m = len(fs)\n    if m >= 2:\n        # bin fine samples into pixel columns and draw vertical extent ticks\n        px_start = bw - m\n        samples_per_px = max(1, m // bw)\n        for px in range(0, m, samples_per_px):\n            chunk = fs[px:px + samples_per_px]\n            if len(chunk) == 0:\n                continue\n            lo = float(np.min(chunk))\n            hi = float(np.max(chunk))\n            x_pos = px_start + px // samples_per_px * (m / bw) if bw > 0 else px_start\n            x_pos = min(max(x_pos, 0), bw - 1)\n            y_lo = cy - hi * amp_line\n            y_hi = cy - lo * amp_line\n            if abs(y_hi - y_lo) < 0.5:\n                y_hi = y_lo + 0.5\n            d.line([(x_pos, y_lo), (x_pos, y_hi)], fill=INK, width=1)"
+    }
+   ],
+   "rationale": "Core issue: connected polyline of sub-Nyquist oscillation = visual fill. Fix by (1) reducing amp_line to ~55% of half-height so ripple pokes modestly beyond RMS body, (2) rendering fine trace as per-pixel min-max tick marks (vertical stubs) instead of a connected line\u2014this shows oscillation extent as texture without filling, (3) lowering amp_fill to 0.45 so the RMS body is narrower, leaving clear whitespace above/below the bell's tick field, making it read as a ring rather than a block.",
+   "secs": 83
+  },
+  {
+   "rnd": 4,
+   "score": 2,
+   "defects": [
+    "Fine trace uses np.mean(s) per column which destroys oscillation phase info \u2014 bell at ~300Hz with ~28 samples/column averages to near-zero, so no periodic ticks render; bell reads as bare tapering wedge (Picture 1)",
+    "Pixel-mapping loop has broken x_pos formula (`px_start + px // samples_per_px * (m / bw)`) producing scattered/gapped tick placement instead of contiguous 1:1 column coverage",
+    "amp_line (39.6px) barely exceeds amp_fill (32.4px) so even if ticks existed they'd be hidden inside the silhouette body \u2014 no visible oscillation texture beyond the envelope"
+   ],
+   "edits": [
+    {
+     "old": "    # fine signed trace at FINE_PPS, normalized by global peak -> shows the bell's sine ripples\n    fstep = sr / FINE_PPS\n    nf = int(len(x) / fstep)\n    fine = np.empty(nf, dtype=np.float32)\n    for i in range(nf):\n        a = int(i * fstep); b = max(a + 1, int((i + 1) * fstep))\n        s = x[a:b]\n        fine[i] = float(np.mean(s)) if len(s) else 0.0\n    ref_f = np.percentile(np.abs(fine[fine != 0]), 99.5) if (fine != 0).any() else 1.0\n    fine = np.clip(fine / (ref_f + 1e-6), -1, 1)\n    return env, fine, PX_PER_S, FINE_PPS",
+     "new": "    # fine oscillation: store per-column min AND max of RAW samples (preserves sine shape)\n    fstep = sr / FINE_PPS\n    nf = int(len(x) / fstep)\n    fine_min = np.empty(nf, dtype=np.float32)\n    fine_max = np.empty(nf, dtype=np.float32)\n    for i in range(nf):\n        a = int(i * fstep); b = max(a + 1, int((i + 1) * fstep))\n        s = x[a:b]\n        fine_min[i] = float(np.min(s)) if len(s) else 0.0\n        fine_max[i] = float(np.max(s)) if len(s) else 0.0\n    ref_f = max(\n        np.percentile(np.abs(fine_max[fine_max != 0]), 99.5) if (fine_max != 0).any() else 1.0,\n        np.percentile(np.abs(fine_min[fine_min != 0]), 99.5) if (fine_min != 0).any() else 1.0,\n    )\n    fine_min = np.clip(fine_min / (ref_f + 1e-6), -1, 1)\n    fine_max = np.clip(fine_max / (ref_f + 1e-6), -1, 1)\n    return env, (fine_min, fine_max), PX_PER_S, FINE_PPS"
+    },
+    {
+     "old": "ENV, FINE, PPS, FPPS = load_env()",
+     "new": "ENV, FINE_PAIR, PPS, FPPS = load_env()\nFINE_MIN, FINE_MAX = FINE_PAIR"
+    },
+    {
+     "old": "    amp_fill = (bh // 2 - 8) * 0.45      # silhouette body: moderate, leaves breathing room\n    amp_line = (bh // 2 - 8) * 0.55      # oscillation ticks: subtle ripple beyond body",
+     "new": "    amp_fill = (bh // 2 - 8) * 0.38      # silhouette body: narrow, leaves clear whitespace\n    amp_line = (bh // 2 - 8) * 0.72      # oscillation ticks: extend well beyond body for ring legibility"
+    },
+    {
+     "old": "    # --- fine oscillation as per-pixel min-max tick marks (texture, not connected line) ---\n    f_now = int(t * FPPS)\n    f_left = max(0, f_now - bw + 1)\n    fs = FINE[f_left:f_now + 1]\n    m = len(fs)\n    if m >= 2:\n        # bin fine samples into pixel columns and draw vertical extent ticks\n        px_start = bw - m\n        samples_per_px = max(1, m // bw)\n        for px in range(0, m, samples_per_px):\n            chunk = fs[px:px + samples_per_px]\n            if len(chunk) == 0:\n                continue\n            lo = float(np.min(chunk))\n            hi = float(np.max(chunk))\n            x_pos = px_start + px // samples_per_px * (m / bw) if bw > 0 else px_start\n            x_pos = min(max(x_pos, 0), bw - 1)\n            y_lo = cy - hi * amp_line\n            y_hi = cy - lo * amp_line\n            if abs(y_hi - y_lo) < 0.5:\n                y_hi = y_lo + 0.5\n            d.line([(x_pos, y_lo), (x_pos, y_hi)], fill=INK, width=1)",
+     "new": "    # --- fine oscillation: bin raw min/max into pixel columns, draw vertical tick marks ---\n    f_now = int(t * FPPS)\n    f_left = max(0, f_now - bw + 1)\n    fm = FINE_MIN[f_left:f_now + 1]\n    fx = FINE_MAX[f_left:f_now + 1]\n    m = len(fm)\n    if m >= 2:\n        spp = m / bw  # float samples-per-pixel (~6 at current settings)\n        for px in range(bw):\n            s0 = int(px * spp)\n            s1 = int((px + 1) * spp)\n            if s1 <= s0:\n                s1 = s0 + 1\n            s1 = min(s1, m)\n            lo = float(np.min(fm[s0:s1]))\n            hi = float(np.max(fx[s0:s1]))\n            y_lo = cy - hi * amp_line\n            y_hi = cy - lo * amp_line\n            if abs(y_hi - y_lo) < 0.5:\n                y_hi = y_lo + 0.5\n            d.line([(px, y_lo), (px, y_hi)], fill=INK, width=1)"
+    }
+   ],
+   "rationale": "Root cause: mean-based fine sampling annihilates the sine structure that distinguishes bell from speech. Fix: store per-column min AND max of raw samples, bin into pixel columns with proper 1:1 mapping, and widen amp_line so ticks poke clearly beyond RMS body. This makes the bell a sustained tick-field (ring) vs speech's bursty tick-field (voice).",
+   "secs": 85
   }
- ],
- "final": "pass"
+ ]
 }
