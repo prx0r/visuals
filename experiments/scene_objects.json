@@ -1,0 +1,968 @@
+[
+ {
+  "id": "intro.dev",
+  "kind": "text",
+  "text": "वातुलनाथसूत्राणि",
+  "t_on": 9.56,
+  "t_off": 92.722,
+  "light_rect": [
+   643.5859375,
+   332,
+   1276.4140625,
+   466
+  ],
+  "source": "sheet intro.start=9.56 +0.0 stagger"
+ },
+ {
+  "id": "intro.rom",
+  "kind": "text",
+  "text": "Vātūlanātha Sūtrāṇi",
+  "t_on": 10.16,
+  "t_off": 92.722,
+  "light_rect": [
+   743.203125,
+   522,
+   1176.796875,
+   612
+  ],
+  "source": "sheet intro.start=9.56 +0.6 stagger"
+ },
+ {
+  "id": "intro.en",
+  "kind": "text",
+  "text": "the thirteen sūtras",
+  "t_on": 10.76,
+  "t_off": 92.722,
+  "light_rect": [
+   792.8828125,
+   632,
+   1127.1171875,
+   710
+  ],
+  "source": "sheet intro.start=9.56 +1.2 stagger"
+ },
+ {
+  "id": "intro.dot",
+  "kind": "dot",
+  "text": null,
+  "t_on": 11.96,
+  "t_off": 92.722,
+  "light_rect": [
+   940,
+   731,
+   980,
+   771
+  ],
+  "source": "sheet intro.start=9.56 +2.4 (signature dot)"
+ },
+ {
+  "id": "v1.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 96.372,
+  "t_off": 144.863,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b01.start=96.222 +0.15"
+ },
+ {
+  "id": "v1.dev",
+  "kind": "text",
+  "text": "१ महासाहसवृत्त्या स्वरूपलाभः",
+  "t_on": 96.222,
+  "t_off": 144.863,
+  "light_rect": [
+   116,
+   416,
+   769,
+   498
+  ],
+  "source": "sheet b01.start=96.222 (sanskrit at her onset)"
+ },
+ {
+  "id": "v1.rom",
+  "kind": "text",
+  "text": "1 mahāsāhasavṛttyā svarūpalābhaḥ",
+  "t_on": 96.722,
+  "t_off": 144.863,
+  "light_rect": [
+   116,
+   522,
+   588,
+   570
+  ],
+  "source": "sheet b01.start=96.222 +0.5 stagger"
+ },
+ {
+  "id": "v1.eng_a",
+  "kind": "text",
+  "text": "The real nature is acquired by the firm stay in the pre-eminent sahasa.",
+  "t_on": 112.222,
+  "t_off": 133.831,
+  "light_rect": [
+   1016,
+   456,
+   1721,
+   576
+  ],
+  "source": "sheet b01.start=96.222 +16.0 cue-matched until her voice stops"
+ },
+ {
+  "id": "v1.eng_b",
+  "kind": "text",
+  "text": "through the activity of the great spontaneous immediacy one discovers one's true nature",
+  "t_on": 135.431,
+  "t_off": 144.863,
+  "light_rect": [
+   1016,
+   456,
+   1714,
+   636
+  ],
+  "source": "sheet h01.start=135.431 (his render)"
+ },
+ {
+  "id": "v2.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 148.213,
+  "t_off": 183.828,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b02.start=148.063 +0.15"
+ },
+ {
+  "id": "v2.dev",
+  "kind": "text",
+  "text": "२ तल्लाभा[च्छुरिता यु] द्युगपद्वृत्तिप्रवृत्तिः",
+  "t_on": 148.063,
+  "t_off": 183.828,
+  "light_rect": [
+   116,
+   416,
+   598,
+   580
+  ],
+  "source": "sheet b02.start=148.063 (sanskrit at her onset)"
+ },
+ {
+  "id": "v2.rom",
+  "kind": "text",
+  "text": "2 tallābhā[cchuritā yu] dyugapadvṛttipravṛttiḥ",
+  "t_on": 148.563,
+  "t_off": 183.828,
+  "light_rect": [
+   116,
+   604,
+   724,
+   652
+  ],
+  "source": "sheet b02.start=148.063 +0.5 stagger"
+ },
+ {
+  "id": "v2.eng_a",
+  "kind": "text",
+  "text": "The flow of operations (becomes) all of a sudden saturated, as it were, with the acquisition of that.",
+  "t_on": 149.063,
+  "t_off": 172.526,
+  "light_rect": [
+   1016,
+   456,
+   1759,
+   636
+  ],
+  "source": "sheet b02.start=148.063 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v2.eng_b",
+  "kind": "text",
+  "text": "through the discovery of that the flow of activities of Consciousness becomes all of a sudden saturated with it",
+  "t_on": 174.126,
+  "t_off": 183.828,
+  "light_rect": [
+   1016,
+   456,
+   1774,
+   636
+  ],
+  "source": "sheet h02.start=174.126 (his render)"
+ },
+ {
+  "id": "v3.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 187.178,
+  "t_off": 217.189,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b03.start=187.028 +0.15"
+ },
+ {
+  "id": "v3.dev",
+  "kind": "text",
+  "text": "३ उभयपट्टोद्धट्टनान्महाशून्यताप्रवेश ः",
+  "t_on": 187.028,
+  "t_off": 217.189,
+  "light_rect": [
+   116,
+   416,
+   856,
+   580
+  ],
+  "source": "sheet b03.start=187.028 (sanskrit at her onset)"
+ },
+ {
+  "id": "v3.rom",
+  "kind": "text",
+  "text": "3 ubhayapaṭṭoddhaṭṭanānmahāśūnyatāpraveśa ḥ",
+  "t_on": 187.528,
+  "t_off": 217.189,
+  "light_rect": [
+   116,
+   604,
+   751,
+   652
+  ],
+  "source": "sheet b03.start=187.028 +0.5 stagger"
+ },
+ {
+  "id": "v3.eng_a",
+  "kind": "text",
+  "text": "Entry into the great vacuity results from the bursting open of the two boards.",
+  "t_on": 188.028,
+  "t_off": 204.047,
+  "light_rect": [
+   1016,
+   456,
+   1754,
+   576
+  ],
+  "source": "sheet b03.start=187.028 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v3.eng_b",
+  "kind": "text",
+  "text": "through breaking open the two casings there is entry into the great emptiness or the Great spaciousness",
+  "t_on": 205.647,
+  "t_off": 217.189,
+  "light_rect": [
+   1016,
+   456,
+   1764,
+   636
+  ],
+  "source": "sheet h03.start=205.647 (his render)"
+ },
+ {
+  "id": "v4.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 220.539,
+  "t_off": 260.24,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b04.start=220.389 +0.15"
+ },
+ {
+  "id": "v4.dev",
+  "kind": "text",
+  "text": "४ युग्मग्रासान्निरवकाशसंविन्निष्ठा",
+  "t_on": 220.389,
+  "t_off": 260.24,
+  "light_rect": [
+   116,
+   416,
+   796,
+   498
+  ],
+  "source": "sheet b04.start=220.389 (sanskrit at her onset)"
+ },
+ {
+  "id": "v4.rom",
+  "kind": "text",
+  "text": "4 yugmagrāsānniravakāśasaṃvinniṣṭhā",
+  "t_on": 220.889,
+  "t_off": 260.24,
+  "light_rect": [
+   116,
+   522,
+   638,
+   570
+  ],
+  "source": "sheet b04.start=220.389 +0.5 stagger"
+ },
+ {
+  "id": "v4.eng_a",
+  "kind": "text",
+  "text": "The firm stay in the universal consciousness is brought about by the destruction of the couple.",
+  "t_on": 221.389,
+  "t_off": 250.067,
+  "light_rect": [
+   1016,
+   456,
+   1711,
+   636
+  ],
+  "source": "sheet b04.start=220.389 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v4.eng_b",
+  "kind": "text",
+  "text": "through devouring the pair there is abiding in continuous occasionless consciousness",
+  "t_on": 251.667,
+  "t_off": 260.24,
+  "light_rect": [
+   1016,
+   456,
+   1666,
+   636
+  ],
+  "source": "sheet h04.start=251.667 (his render)"
+ },
+ {
+  "id": "v5.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 263.59,
+  "t_off": 294.726,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b05.start=263.440 +0.15"
+ },
+ {
+  "id": "v5.dev",
+  "kind": "text",
+  "text": "५ सिद्धयोगिनीसंघट्टान्महामेलापोदयः",
+  "t_on": 263.44,
+  "t_off": 294.726,
+  "light_rect": [
+   116,
+   416,
+   839,
+   580
+  ],
+  "source": "sheet b05.start=263.440 (sanskrit at her onset)"
+ },
+ {
+  "id": "v5.rom",
+  "kind": "text",
+  "text": "5 siddhayoginīsaṃghaṭṭānmahāmelāpodayaḥ",
+  "t_on": 263.94,
+  "t_off": 294.726,
+  "light_rect": [
+   116,
+   604,
+   703,
+   652
+  ],
+  "source": "sheet b05.start=263.440 +0.5 stagger"
+ },
+ {
+  "id": "v5.eng_a",
+  "kind": "text",
+  "text": "The great union arises from the unification of the siddhayoginis.",
+  "t_on": 264.44,
+  "t_off": 283.212,
+  "light_rect": [
+   1016,
+   456,
+   1615,
+   576
+  ],
+  "source": "sheet b05.start=263.440 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v5.eng_b",
+  "kind": "text",
+  "text": "through the lovemaking of the siddhas and yoganese the great celebratory unification arises",
+  "t_on": 284.812,
+  "t_off": 294.726,
+  "light_rect": [
+   1016,
+   456,
+   1723,
+   636
+  ],
+  "source": "sheet h05.start=284.812 (his render)"
+ },
+ {
+  "id": "v6.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 298.076,
+  "t_off": 320.891,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b06.start=297.926 +0.15"
+ },
+ {
+  "id": "v6.dev",
+  "kind": "text",
+  "text": "६ त्रिकञ्चुकपरित्यागान्निराख्यपदावस्थितिः",
+  "t_on": 297.926,
+  "t_off": 320.891,
+  "light_rect": [
+   116,
+   416,
+   935,
+   580
+  ],
+  "source": "sheet b06.start=297.926 (sanskrit at her onset)"
+ },
+ {
+  "id": "v6.rom",
+  "kind": "text",
+  "text": "6 trikañcukaparityāgānnirākhyapadāvasthitiḥ",
+  "t_on": 298.426,
+  "t_off": 320.891,
+  "light_rect": [
+   116,
+   604,
+   721,
+   652
+  ],
+  "source": "sheet b06.start=297.926 +0.5 stagger"
+ },
+ {
+  "id": "v6.eng_a",
+  "kind": "text",
+  "text": "The inexpressible stage appears on the abandonment of the three veils.",
+  "t_on": 298.926,
+  "t_off": 310.988,
+  "light_rect": [
+   1016,
+   456,
+   1716,
+   576
+  ],
+  "source": "sheet b06.start=297.926 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v6.eng_b",
+  "kind": "text",
+  "text": "through completely letting go of the three veils one is established in the nameless state",
+  "t_on": 312.588,
+  "t_off": 320.891,
+  "light_rect": [
+   1016,
+   456,
+   1685,
+   636
+  ],
+  "source": "sheet h06.start=312.588 (his render)"
+ },
+ {
+  "id": "v7.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 324.241,
+  "t_off": 355.014,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b07.start=324.091 +0.15"
+ },
+ {
+  "id": "v7.dev",
+  "kind": "text",
+  "text": "७ वाक्चतुष्टयोदयविरामप्रथासु स्वरः प्रथते",
+  "t_on": 324.091,
+  "t_off": 355.014,
+  "light_rect": [
+   116,
+   416,
+   869,
+   580
+  ],
+  "source": "sheet b07.start=324.091 (sanskrit at her onset)"
+ },
+ {
+  "id": "v7.rom",
+  "kind": "text",
+  "text": "7 vākcatuṣṭayodayavirāmaprathāsu svaraḥ prathate",
+  "t_on": 324.591,
+  "t_off": 355.014,
+  "light_rect": [
+   116,
+   604,
+   789,
+   652
+  ],
+  "source": "sheet b07.start=324.091 +0.5 stagger"
+ },
+ {
+  "id": "v7.eng_a",
+  "kind": "text",
+  "text": "In all the manifestations of appearance and disappearance of the four forms of utterance, the sound alone glories.",
+  "t_on": 325.091,
+  "t_off": 343.736,
+  "light_rect": [
+   1016,
+   456,
+   1729,
+   636
+  ],
+  "source": "sheet b07.start=324.091 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v7.eng_b",
+  "kind": "text",
+  "text": "the resonance exists in all manifestations of the arising and cessation of the four aspects of the word",
+  "t_on": 345.336,
+  "t_off": 355.014,
+  "light_rect": [
+   1016,
+   456,
+   1763,
+   636
+  ],
+  "source": "sheet h07.start=345.336 (his render)"
+ },
+ {
+  "id": "v8.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 358.364,
+  "t_off": 387.891,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b08.start=358.214 +0.15"
+ },
+ {
+  "id": "v8.dev",
+  "kind": "text",
+  "text": "८ रसत्रितयास्वादनेनानिच्छोच्छलितं विगतबन्धं परं ब्रह्म",
+  "t_on": 358.214,
+  "t_off": 387.891,
+  "light_rect": [
+   116,
+   416,
+   863,
+   580
+  ],
+  "source": "sheet b08.start=358.214 (sanskrit at her onset)"
+ },
+ {
+  "id": "v8.rom",
+  "kind": "text",
+  "text": "8 rasatritayāsvādanenānicchocchalitaṃ vigatabandhaṃ paraṃ brahma",
+  "t_on": 358.714,
+  "t_off": 387.891,
+  "light_rect": [
+   116,
+   604,
+   836,
+   700
+  ],
+  "source": "sheet b08.start=358.214 +0.5 stagger"
+ },
+ {
+  "id": "v8.eng_a",
+  "kind": "text",
+  "text": "On the enjoyment of the triple happiness, the unfettered supreme Brahman of the involuntary and sudden appearance (comes to revelation).",
+  "t_on": 359.214,
+  "t_off": 376.019,
+  "light_rect": [
+   1016,
+   456,
+   1781,
+   696
+  ],
+  "source": "sheet b08.start=358.214 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v8.eng_b",
+  "kind": "text",
+  "text": "by savoring the three flavors the Supreme absolute utterly free surges up spontaneously",
+  "t_on": 377.619,
+  "t_off": 387.891,
+  "light_rect": [
+   1016,
+   456,
+   1776,
+   636
+  ],
+  "source": "sheet h08.start=377.619 (his render)"
+ },
+ {
+  "id": "v9.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 391.241,
+  "t_off": 413.289,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b09.start=391.091 +0.15"
+ },
+ {
+  "id": "v9.dev",
+  "kind": "text",
+  "text": "९ देवीचतुष्टयोल्लासेन सदैव स्वविश्रान्त्यवस्थितिः",
+  "t_on": 391.091,
+  "t_off": 413.289,
+  "light_rect": [
+   116,
+   416,
+   686,
+   580
+  ],
+  "source": "sheet b09.start=391.091 (sanskrit at her onset)"
+ },
+ {
+  "id": "v9.rom",
+  "kind": "text",
+  "text": "9 devīcatuṣṭayollāsena sadaiva svaviśrāntyavasthitiḥ",
+  "t_on": 391.591,
+  "t_off": 413.289,
+  "light_rect": [
+   116,
+   604,
+   800,
+   652
+  ],
+  "source": "sheet b09.start=391.091 +0.5 stagger"
+ },
+ {
+  "id": "v9.eng_a",
+  "kind": "text",
+  "text": "Permanence of the immersion in the real self takes place for ever by the full development of the four deities.",
+  "t_on": 392.091,
+  "t_off": 400.829,
+  "light_rect": [
+   1016,
+   456,
+   1762,
+   636
+  ],
+  "source": "sheet b09.start=391.091 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v9.eng_b",
+  "kind": "text",
+  "text": "by the playful manifestation of the four goddesses one is permanently established in the state of repose within oneself",
+  "t_on": 402.429,
+  "t_off": 413.289,
+  "light_rect": [
+   1016,
+   456,
+   1767,
+   636
+  ],
+  "source": "sheet h09.start=402.429 (his render)"
+ },
+ {
+  "id": "v10.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 416.639,
+  "t_off": 452.297,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b10.start=416.489 +0.15"
+ },
+ {
+  "id": "v10.dev",
+  "kind": "text",
+  "text": "१० द्वादशवाहोदयेन महामरीचिविकासः",
+  "t_on": 416.489,
+  "t_off": 452.297,
+  "light_rect": [
+   116,
+   416,
+   545,
+   580
+  ],
+  "source": "sheet b10.start=416.489 (sanskrit at her onset)"
+ },
+ {
+  "id": "v10.rom",
+  "kind": "text",
+  "text": "10 dvādaśavāhodayena mahāmarīcivikāsaḥ",
+  "t_on": 416.989,
+  "t_off": 452.297,
+  "light_rect": [
+   116,
+   604,
+   684,
+   652
+  ],
+  "source": "sheet b10.start=416.489 +0.5 stagger"
+ },
+ {
+  "id": "v10.eng_a",
+  "kind": "text",
+  "text": "The play of the big rays follows the emanation of the twelve currents.",
+  "t_on": 417.489,
+  "t_off": 441.847,
+  "light_rect": [
+   1016,
+   456,
+   1660,
+   576
+  ],
+  "source": "sheet b10.start=416.489 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v10.eng_b",
+  "kind": "text",
+  "text": "through the arising of the flow of the twelve there is the expansion of the great rays of consciousness",
+  "t_on": 443.447,
+  "t_off": 452.297,
+  "light_rect": [
+   1016,
+   456,
+   1766,
+   636
+  ],
+  "source": "sheet h10.start=443.447 (his render)"
+ },
+ {
+  "id": "v11.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 455.647,
+  "t_off": 502.956,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b11.start=455.497 +0.15"
+ },
+ {
+  "id": "v11.dev",
+  "kind": "text",
+  "text": "११ चर्यापञ्चकोदये निस्तरङ्गसमावेशः",
+  "t_on": 455.497,
+  "t_off": 502.956,
+  "light_rect": [
+   116,
+   416,
+   877,
+   498
+  ],
+  "source": "sheet b11.start=455.497 (sanskrit at her onset)"
+ },
+ {
+  "id": "v11.rom",
+  "kind": "text",
+  "text": "11 caryāpañcakodaye nistaraṅgasamāveśaḥ",
+  "t_on": 455.997,
+  "t_off": 502.956,
+  "light_rect": [
+   116,
+   522,
+   676,
+   570
+  ],
+  "source": "sheet b11.start=455.497 +0.5 stagger"
+ },
+ {
+  "id": "v11.eng_a",
+  "kind": "text",
+  "text": "On the full play of the five functions, the ungraded inspiration takes place.",
+  "t_on": 456.497,
+  "t_off": 494.27,
+  "light_rect": [
+   1016,
+   456,
+   1766,
+   576
+  ],
+  "source": "sheet b11.start=455.497 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v11.eng_b",
+  "kind": "text",
+  "text": "when the five observances arise there is immersion into the waveless",
+  "t_on": 495.87,
+  "t_off": 502.956,
+  "light_rect": [
+   1016,
+   456,
+   1734,
+   576
+  ],
+  "source": "sheet h11.start=495.870 (his render)"
+ },
+ {
+  "id": "v12.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 506.306,
+  "t_off": 530.9,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b12.start=506.156 +0.15"
+ },
+ {
+  "id": "v12.dev",
+  "kind": "text",
+  "text": "१२ महाबोधसमावेशात्पुण्यपापासंबन्धः",
+  "t_on": 506.156,
+  "t_off": 530.9,
+  "light_rect": [
+   116,
+   416,
+   859,
+   580
+  ],
+  "source": "sheet b12.start=506.156 (sanskrit at her onset)"
+ },
+ {
+  "id": "v12.rom",
+  "kind": "text",
+  "text": "12 mahābodhasamāveśātpuṇyapāpāsaṃbandhaḥ",
+  "t_on": 506.656,
+  "t_off": 530.9,
+  "light_rect": [
+   116,
+   604,
+   741,
+   652
+  ],
+  "source": "sheet b12.start=506.156 +0.5 stagger"
+ },
+ {
+  "id": "v12.eng_a",
+  "kind": "text",
+  "text": "Release from merit and demerit accompanies the inspiration of the great enlightenment.",
+  "t_on": 507.156,
+  "t_off": 521.405,
+  "light_rect": [
+   1016,
+   456,
+   1753,
+   636
+  ],
+  "source": "sheet b12.start=506.156 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v12.eng_b",
+  "kind": "text",
+  "text": "through immersion into awakened awareness there is no more connection with virtue or sin",
+  "t_on": 523.005,
+  "t_off": 530.9,
+  "light_rect": [
+   1016,
+   456,
+   1725,
+   636
+  ],
+  "source": "sheet h12.start=523.005 (his render)"
+ },
+ {
+  "id": "v13.rule",
+  "kind": "rule",
+  "text": null,
+  "t_on": 534.25,
+  "t_off": 570.534,
+  "light_rect": [
+   946,
+   250,
+   974,
+   830
+  ],
+  "source": "sheet b13.start=534.100 +0.15"
+ },
+ {
+  "id": "v13.dev",
+  "kind": "text",
+  "text": "१३ अकथनकथाबलेन महाविस्मयमुद्रा- प्राप्त्या खस्वरता",
+  "t_on": 534.1,
+  "t_off": 570.534,
+  "light_rect": [
+   116,
+   416,
+   804,
+   580
+  ],
+  "source": "sheet b13.start=534.100 (sanskrit at her onset)"
+ },
+ {
+  "id": "v13.rom",
+  "kind": "text",
+  "text": "13 akathanakathābalena mahāvismayamudrā- prāptyā khasvaratā",
+  "t_on": 534.6,
+  "t_off": 570.534,
+  "light_rect": [
+   116,
+   604,
+   821,
+   700
+  ],
+  "source": "sheet b13.start=534.100 +0.5 stagger"
+ },
+ {
+  "id": "v13.eng_a",
+  "kind": "text",
+  "text": "The attainment of the unity takes place, through the acquisition of the mudra of great wonderment, by virtue of the concentration on the real nature.",
+  "t_on": 535.1,
+  "t_off": 553.644,
+  "light_rect": [
+   1016,
+   456,
+   1746,
+   696
+  ],
+  "source": "sheet b13.start=534.100 +1.0 default until her voice stops"
+ },
+ {
+  "id": "v13.eng_b",
+  "kind": "text",
+  "text": "through the power of the inexpressible oral teaching there is the discovery of the Seal of great Wonder through that the Resonance of the Void is known",
+  "t_on": 555.244,
+  "t_off": 570.534,
+  "light_rect": [
+   1016,
+   456,
+   1770,
+   696
+  ],
+  "source": "sheet h13.start=555.244 (his render)"
+ }
+]
