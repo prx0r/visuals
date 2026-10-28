@@ -1,108 +1,145 @@
 #!/usr/bin/env python3
-"""reveal_variations — owner demo reel.
+"""reveal_variations — owner demo reel under the 3-layer ontology.
 
-Core logic: canvas is BLACK. The verse card (white ground, black text) is
-already fully present. A WHITE REGION grows to expose it. The text never
-moves, fades, or draws — it was "always there"; only the light arrives.
+layer 1 BLACK ground · layer 3 TEXT pre-drawn in black ink, final position,
+never moves · layer 2 WHITE light grows to illuminate it. You never leave
+the black screen; the light arrives.
 
-  python3 reveal_variations.py          # -> experiments/reveal_variations.mp4
-                                        #    + experiments/reveal_stills/*.png
+  python3 reveal_variations.py   # -> experiments/reveal_variations.mp4
+                                 #    + experiments/reveal_stills/*.png
 """
-import os, shutil, subprocess, sys
+import shutil, subprocess, sys
 from pathlib import Path
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, str(Path(__file__).parent))
-from build import (W, H, DEVA, SERIF, ITAL, VERM, verse_card, load,
-                   f, wrap, para_words)
+from build import (W, H, BLACK, INK, INK50, VERM, LIGHT, PAD, ground,
+                   clean_roman, load, to_dev,
+                   f, wrap, para_words, draw_para)
 
 OUT = Path("/home/box/visuals/experiments")
 STILLS = OUT / "reveal_stills"
 SEGS = Path("/tmp/opencode/reveal_segs")
 FPS = 30
-REVEAL_F = 20          # 0.67s reveal
-HOLD_F = 55            # 1.83s hold
-BLACK = Image.new("RGB", (W, H), (0, 0, 0))
+REVEAL_F = 20          # 0.67s — light arrives
+HOLD_F = 55            # 1.83s — settled
 
 
 def ease(p):
     p = min(max(p, 0.0), 1.0)
-    return 1 - (1 - p) ** 3      # gentle ease-out; no bounce, no PowerPoint
+    return 1 - (1 - p) ** 3
 
 
-def verse_metrics(sans, roman, eng):
-    """same layout math as verse_card — needed to bound the reveal regions"""
+def verse_layers(roman, eng):
+    """Build the static layers once: (text_layer RGBA, light_box, spine_x).
+    Text is drawn once and never touched again — only the light moves."""
+    roman = clean_roman(roman)
+    eng = eng.replace("'", "\u2019")
+    dev = to_dev(roman)
     sd, sr, se = f(DEVA, 58), f(ITAL, 34), f(SERIF, 44, 500)
-    slines = wrap(para_words([(sans, sd)]), 720)
+    slines = wrap(para_words([(dev, sd)]), 720)
     rlines = wrap(para_words([(roman, sr)]), 720)
     elines = wrap(para_words([(eng, se)]), 720)
-    left_h = len(slines) * 82 + 20 + len(rlines) * 48
-    right_h = len(elines) * 60
-    mid = (200 + (H - 160)) / 2
-    return mid - left_h / 2, left_h, mid - right_h / 2, right_h
+    lh_s, lh_r, lh_e = 82, 48, 60
+    left_h = len(slines) * lh_s + 20 + len(rlines) * lh_r
+    right_h = len(elines) * lh_e
+    mid = (220 + (H - 180)) / 2
+    ys, ye = mid - left_h / 2, mid - right_h / 2
+    top, bot = int(min(ys, ye) - PAD), int(max(ys + left_h, ye + right_h) + PAD)
+
+    txt = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(txt)
+    draw_para(d, 140, ys, [(dev, sd)], 720, lh_s)
+    draw_para(d, 140, ys + len(slines) * lh_s + 20, [(roman, sr)], 720, lh_r)
+    d.line([(960, top + 24), (960, bot - 24)], fill=INK50 + (255,), width=1)
+    d.ellipse([954, (top + bot) // 2 - 6, 966, (top + bot) // 2 + 6],
+              fill=VERM + (255,))
+    draw_para(d, 1040, ye, [(eng, se)], 720, lh_e)
+    return txt, (90, top, W - 90, bot)
 
 
-def m_lr_full(p, m):
-    return [(0, 0, int(W * p), H)]
+DEVA = "/root/.fonts/TiroDevanagariSanskrit-Regular.ttf"
+SERIF = "/root/.fonts/CormorantGaramond[wght].ttf"
+ITAL = "/root/.fonts/CormorantGaramond-Italic[wght].ttf"
 
 
-def m_lr_band(p, m):
-    ys, lh, ye, rh = m
-    top, bot = int(min(ys, ye) - 48), int(max(ys + lh, ye + rh) + 48)
-    return [(0, top, int(W * p), bot)]
+def frame(txt, light_box, rects, label):
+    """black ground -> light rects (layer 2) -> text (layer 3, already present)."""
+    im = ground()
+    d = ImageDraw.Draw(im)
+    for r in rects:
+        d.rectangle(r, fill=LIGHT)
+    im.paste(txt, (0, 0), txt)
+    ImageDraw.Draw(im).text((60, H - 72), label, font=f(SERIF, 26, 500), fill=VERM)
+    return im
 
 
-def m_tb(p, m):
-    return [(0, 0, W, int(H * p))]
+def clip_to(box, r):
+    x0, y0 = max(box[0], r[0]), max(box[1], r[1])
+    x1, y1 = min(box[2], r[2]), min(box[3], r[3])
+    return (x0, y0, x1, y1) if x0 < x1 and y0 < y1 else None
 
 
-def m_center(p, m):
-    half = int(W * p / 2)
-    return [(W // 2 - half, 0, W // 2 + half, H)]
+def lr_sweep(p, box):
+    x0, y0, x1, y1 = box
+    r = clip_to(box, (x0, y0, x0 + int((x1 - x0) * p), y1))
+    return [r] if r else []
 
 
-def m_spine(p, m):
-    # phase 1: hairline on the column rule grows from centre out (vertical)
-    # phase 2: that bar widens horizontally into the full card
+def lr_band(p, box):
+    # light band is the box itself; only its horizontal growth moves
+    return lr_sweep(p, box)
+
+
+def tb_sweep(p, box):
+    x0, y0, x1, y1 = box
+    r = clip_to(box, (x0, y0, x1, y0 + int((y1 - y0) * p)))
+    return [r] if r else []
+
+
+def center_out(p, box):
+    x0, y0, x1, y1 = box
+    cx = (x0 + x1) // 2
+    half = int((x1 - x0) * p / 2)
+    r = clip_to(box, (cx - half, y0, cx + half, y1))
+    return [r] if r else []
+
+
+def spine_open(p, box):
+    x0, y0, x1, y1 = box
+    cx = 960
     if p < 0.45:
         q = p / 0.45
-        h = int(H * q / 2)
-        return [(952, H // 2 - h, 968, H // 2 + h)]
+        h = int((y1 - y0) * q / 2)
+        cy = (y0 + y1) // 2
+        r = clip_to(box, (cx - 8, cy - h, cx + 8, cy + h))
+        return [r] if r else []
     q = ease((p - 0.45) / 0.55)
-    half = int((W // 2) * q)
-    return [(960 - half, 0, 960 + half, H)]
+    half = int((x1 - x0) * q / 2)
+    r = clip_to(box, (cx - half, y0, cx + half, y1))
+    return [r] if r else []
 
 
-def m_cols(p, m):
-    # left column zone first, then right column zone
+def cols_stagger(p, box):
+    x0, y0, x1, y1 = box
+    midx = 960
     if p < 0.5:
         q = ease(p / 0.5)
-        return [(80, 0, int(80 + 840 * q), H)]
+        r = clip_to(box, (x0, y0, x0 + int((midx - x0) * q), y1))
+        return [r] if r else []
     q = ease((p - 0.5) / 0.5)
-    return [(80, 0, 920, H), (1000, 0, int(1000 + 840 * q), H)]
+    r1 = clip_to(box, (x0, y0, midx, y1))
+    r2 = clip_to(box, (midx, y0, midx + int((x1 - midx) * q), y1))
+    return [r for r in (r1, r2) if r]
 
 
 VARIATIONS = [
-    ("1_fullheight_lr", "1 · full-height bar, left to right", m_lr_full),
-    ("2_textband_lr",   "2 · text-band bar, left to right",   m_lr_band),
-    ("3_topdown",       "3 · full-width bar, top to bottom",  m_tb),
-    ("4_center_out",    "4 · opens from centre outward",      m_center),
-    ("5_spine_first",   "5 · spine hairline, then opens",     m_spine),
-    ("6_cols_stagger",  "6 · left column, then right column", m_cols),
+    ("1_lr_sweep",   "1 · light sweeps left to right",   lr_sweep),
+    ("2_tb_sweep",   "2 · light sweeps top to bottom",   tb_sweep),
+    ("3_center_out", "3 · light opens from centre",      center_out),
+    ("4_spine_open", "4 · spine first, then opens",      spine_open),
+    ("5_cols",       "5 · left column, then right",      cols_stagger),
 ]
-
-
-def composite(card, rects):
-    mask = Image.new("L", (W, H), 0)
-    d = ImageDraw.Draw(mask)
-    for r in rects:
-        d.rectangle(r, fill=255)
-    return Image.composite(card, BLACK, mask)
-
-
-def caption(img, text):
-    d = ImageDraw.Draw(img)
-    d.text((60, H - 72), text, font=f(SERIF, 26, 500), fill=VERM)
 
 
 def main():
@@ -111,9 +148,7 @@ def main():
     SEGS.mkdir(parents=True)
 
     tl, verses, kaul, hap = load()
-    n = "1"
-    card = verse_card(n, verses[n], verses[n], kaul[n])
-    m = verse_metrics(verses[n], verses[n], kaul[n])
+    txt, box = verse_layers(verses["1"], kaul["1"])
 
     seg_paths = []
     for key, label, mask_fn in VARIATIONS:
@@ -122,8 +157,7 @@ def main():
         total = REVEAL_F + HOLD_F
         for i in range(total):
             p = ease(i / REVEAL_F) if i < REVEAL_F else 1.0
-            img = composite(card, mask_fn(p, m))
-            caption(img, label)
+            img = frame(txt, box, mask_fn(p, box), label)
             img.save(f"{fdir}/{i:04d}.png")
             if i == REVEAL_F // 2:
                 img.save(STILLS / f"{key}_mid.png")
@@ -143,7 +177,6 @@ def main():
                     "-i", str(concat), "-c", "copy", str(OUT / "reveal_variations.mp4")],
                    check=True)
     print("reel", OUT / "reveal_variations.mp4")
-    print("stills", STILLS)
 
 
 if __name__ == "__main__":
