@@ -114,7 +114,11 @@ def clean_roman(s):
 
 
 def load():
-    tl = json.load(open(BAUMER / "build/dual_reading/production_sheet.built.json"))["timeline"]
+    # SHEET env: the TTS-track timeline (same row schema) will point here;
+    # default = the dual-reading sheet until the new track ships.
+    tl = json.load(open(os.environ.get(
+        "SHEET", str(BAUMER / "build/dual_reading/production_sheet.built.json"))
+    ))["timeline"]
     verses = {}
     for line in open(BAUMER / "text/sutra_verses.txt"):
         m = re.match(r"(.+?)\s*\|\|\s*(\d+)\s*\|\|", line.strip())
