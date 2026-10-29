@@ -42,6 +42,38 @@ The owner's names (scripts in `/usr/local/bin/`):
 
 Proven 2026-10-27: **3 units dispatched simultaneously → wall clock 5 s** (437/458/443 ms).
 
+### The dashboard — dagu (browser) — NEW 2026-10-29
+
+| what | where |
+|---|---|
+| **web UI (run/monitor DAGs, step logs, history)** | **http://127.0.0.1:8090** (Falkon) — 127.0.0.1 only; port avoids 8080 code-server / 7800 quill / 18787 deploy |
+| server process | `dagu start-all --host 127.0.0.1 --port 8090` (setsid nohup, log `/tmp/opencode/dagu_server.log`) |
+| DAG files | `/root/.config/dagu/dags/` — `fleet-ping.yaml` (smoke), `scene-render.yaml` (ship → wait → collect+notify) |
+| install log | `/tmp/opencode/install_dagu.log` — single Go binary, no docker, file state (hub stays light) |
+| outputs land | `~/visuals/experiments/` → click in the IDE (8080) to play |
+| desktop pings | `notify-send` on collect success and on remote failure |
+
+**Under the hood (scene-render DAG):** `ship-and-launch` (scp `bootstrap.sh` → vps, `setsid nohup`
+remote) → remote `~/job_scene/`: always `tar xzf` the bundle → `pip --user indic-transliteration` →
+env-rooted `python3 scene.py render` (PIL frames → ffmpeg `-threads 2`, niced) →
+`wait-for-render` (poll `vps:~/job_scene/run.log` every 15s, pgrep uses the `[s]cene` bracket trick)
+→ `collect-and-notify` (scp mp4 → `experiments/`, chown box, `notify-send`).
+
+One-off dispatchers using the same pattern (NEVER BLOCK protocol, root AGENTS.md):
+`/tmp/opencode/dispatch_scene_v{1..4}.sh` + `bootstrap.sh`, logs alongside them.
+
+### Lessons — the bugs this system was built over (postmortem 2026-10-29)
+
+| # | mistake | fix (now load-bearing) |
+|---|---|---|
+| 1 | long ops run synchronously inside a tool call → tool kills at ~2 min, chained `&& verify` dies too | **NEVER BLOCK protocol** — root `AGENTS.md`; job scripts own lifecycle + notify |
+| 2 | remote bootstrap forgot to `tar xzf` the bundle → `scene.py not found` | bootstrap always extracts first |
+| 3 | extract guard `[ -f scene.py ] \|\| tar` → stale code ran after bundle updates | always extract (idempotent overwrite) |
+| 4 | watcher `pgrep -f "scene.py render"` matched its own cmdline → blind to failures | bracket trick `pgrep -f "[s]cene.py render"` (same for pkill / any self-referential pattern) |
+| 5 | `ve/glosscard.py` rendered 6 demo cards **at import** with hardcoded `/root/.fonts/` → died on remote | env roots (`FONTS_DIR`/`GLOSSCARD_OUT`), demos under `__main__`, lazy makedirs — import side-effect-free |
+| 6 | `pkill -f` pattern matched my own shell → killed the tool call mid-run | kill by PID (Global Rules #7), bracket all patterns |
+| 7 | `timeout 240 scp && md5` → transfer truncated, verify never ran | upload lives in the job script with md5-retry loop |
+
 Rules (all in the skill, repeated here because they're load-bearing):
 1. **Probe first**: load / free / `df` on the target; all three disks are nearly full —
    outputs are tiny, **temp is not**: pipe frames into ffmpeg stdin, never frame dumps.

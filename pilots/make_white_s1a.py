@@ -26,15 +26,18 @@ def build_spectrogram():
     for i in range(n):
         S[i] = np.abs(np.fft.rfft(x[i * HOP:i * HOP + NFFT] * win))
     freqs = np.fft.rfftfreq(NFFT, 1 / SR)
-    ROWS, FMIN, FMAX = 140, 60.0, 4200.0   # voice/formant band, drop HF noise
+    ROWS, FMIN, FMAX = 240, 80.0, 4200.0   # voice/formant band, finer grid, keep HF harmonics
     fr = np.exp(np.linspace(np.log(FMIN), np.log(FMAX), ROWS))
     idx = np.clip(np.searchsorted(freqs, fr) - 1, 0, len(freqs) - 1)
     S = S[:, idx]                      # (n, ROWS) log-frequency
     S = np.log1p(S * 10.0)
-    ref = np.percentile(S, 97.0)
+    ref = np.percentile(S, 99.0)
     v = np.clip(S / (ref + 1e-6), 0, 1)
-    v = np.clip((v - 0.18) / 0.82, 0, 1) ** 0.85   # kill noise floor, keep ridges
-    v = np.convolve(v, np.ones(3) / 3.0, axis=0, mode='same')  # formant bands coalesce
+    v = np.clip((v - 0.20) / 0.80, 0, 1) ** 0.82   # deeper floor: crisp ink ridges, no white voids
+    _ma = lambda arr, k: np.apply_along_axis(lambda m: np.convolve(m, np.ones(k) / k, mode='same'), 0, arr)
+    v = _ma(v, 4)             # time-smooth: narrow window keeps formant ridges + bell transient sharp
+    v = _ma(v.T, 2).T         # light freq-smooth: band continuity without merging harmonics
+    v = np.clip(v * 1.95, 0, 1)                 # ridge brightness: strong ink bands, no black saturation
     v = v.T[::-1]                      # image: height=ROWS (top=high freq), width=time
     white = np.array(WHITE, dtype=np.float32)
     ink = np.array(INK, dtype=np.float32)

@@ -15,22 +15,88 @@ text that was already present in the dark. Between verses = pure black.
 import json, os, re, subprocess, sys
 from pathlib import Path
 
-sys.path.insert(0, "/home/box/essay-visual-engine")
-sys.path.insert(0, "/home/box/Documents/patala/.venv/lib/python3.13/site-packages")
+# path-blind roots (skill rule 5): every hardcoded path overridable for remote jobs
+ROOTS = {
+    "VE_PATH": "/home/box/essay-visual-engine",
+    "TRANSLIT_PATH": "/home/box/Documents/patala/.venv/lib/python3.13/site-packages",
+    "BAUMER": "/home/box/Downloads/yt/baumer",
+    "OUT": "/home/box/visuals/standard_cards",
+    "FONTS_DIR": "/root/.fonts",
+}
+sys.path.insert(0, os.environ.get("VE_PATH", ROOTS["VE_PATH"]))
+sys.path.insert(0, os.environ.get("TRANSLIT_PATH", ROOTS["TRANSLIT_PATH"]))
 from ve.glosscard import f, wrap, para_words, draw_para
 from PIL import Image, ImageDraw
 
 from indic_transliteration import sanscript
 def to_dev(s): return sanscript.transliterate(s, sanscript.IAST, sanscript.DEVANAGARI)
+def to_iast(s): return sanscript.transliterate(s, sanscript.DEVANAGARI, sanscript.IAST)
 
-BAUMER = Path("/home/box/Downloads/yt/baumer")
-OUT = Path("/home/box/visuals/standard_cards")
+# ---- akshara segmentation (syllable parts for learning alignment) ----
+_DV_INDEP = set(range(0x0905, 0x0915))          # अ..औ independent vowels
+_DV_CONS = (set(range(0x0915, 0x093A))          # क..ह
+            | set(range(0x0958, 0x0960))        # क़..ह़
+            | set(range(0x0978, 0x0980)))       # ख़..ह़ legacy
+_DV_MATRA = set(range(0x093E, 0x094D))          # ा..ौ vowel signs
+_DV_VIRAMA = 0x094D                              # ्
+_DV_MOD = {0x0901, 0x0902, 0x0903, 0x093D}       # ँ ं ः ऽ
+_DV_DIGIT = set(range(0x0966, 0x0970))
+
+
+def aksharas(dev):
+    """Segment a Devanagari string into aksharas (syllable units).
+
+    A consonant joins the previous part ONLY after virama (conjunct);
+    matra/modifier closes a part; independent vowels and spaces break it.
+    Non-Devanagari chars (brackets etc) attach to the open part."""
+    parts, cur, prev = [], "", ""
+    def flush():
+        nonlocal cur
+        if cur:
+            parts.append(cur)
+            cur = ""
+    for ch in dev:
+        cp = ord(ch)
+        if cp in _DV_CONS:
+            if cur and prev != "virama":
+                flush()
+            cur += ch
+            prev = "cons"
+        elif cp in _DV_INDEP:
+            flush()
+            cur, prev = ch, "closed"
+        elif cp in _DV_MATRA:
+            cur += ch
+            prev = "closed"
+        elif cp == _DV_VIRAMA:
+            cur += ch
+            prev = "virama"
+        elif cp in _DV_MOD:
+            cur += ch
+            prev = "mod"
+        elif cp in _DV_DIGIT:
+            if not (cur and prev == "digit"):
+                flush()
+            cur += ch
+            prev = "digit"
+        elif ch == " ":
+            flush()
+            prev = "closed"
+        else:                                    # brackets / latin / danda
+            cur += ch
+            prev = "raw"
+    flush()
+    return parts
+
+BAUMER = Path(os.environ.get("BAUMER", ROOTS["BAUMER"]))
+OUT = Path(os.environ.get("OUT", ROOTS["OUT"]))
 CARDS = OUT / "cards"
 W, H = 1920, 1080
 
-DEVA = "/root/.fonts/TiroDevanagariSanskrit-Regular.ttf"
-SERIF = "/root/.fonts/CormorantGaramond[wght].ttf"
-ITAL = "/root/.fonts/CormorantGaramond-Italic[wght].ttf"
+_F = os.environ.get("FONTS_DIR", ROOTS["FONTS_DIR"])
+DEVA = os.path.join(_F, "TiroDevanagariSanskrit-Regular.ttf")
+SERIF = os.path.join(_F, "CormorantGaramond[wght].ttf")
+ITAL = os.path.join(_F, "CormorantGaramond-Italic[wght].ttf")
 
 BLACK = (0, 0, 0)
 INK, INK50, VERM, LIGHT = (23, 20, 15), (118, 115, 110), (160, 43, 30), (255, 255, 255)
@@ -43,6 +109,7 @@ PAD = 72  # breathing room of light around the text block
 def clean_roman(s):
     s = re.sub(r"\s*\|\|\s*\d+\s*\|\|\s*$", "", s.strip())
     s = re.sub(r"\s+:", ":", s)
+    s = re.sub(r" ḥ", "ḥ", s)      # KSTS stray space before visarga (sūtra 3)
     return re.sub(r"\s+", " ", s).strip()
 
 
@@ -176,6 +243,7 @@ def main():
                     "-map", "0:v", "-map", "1:a",
                     "-vf", "fps=30,format=yuv420p", "-c:v", "libx264",
                     "-preset", "veryfast", "-crf", "16", "-c:a", "aac", "-b:a", "192k",
+                    "-movflags", "+faststart",
                     "-shortest", str(OUT / "standard_v3.mp4")], check=True)
     print("rendered", OUT / "standard_v3.mp4")
 

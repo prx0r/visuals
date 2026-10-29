@@ -70,32 +70,46 @@
   "source": "sheet b01.start=96.222 +0.15"
  },
  {
-  "id": "v1.dev",
-  "kind": "text",
-  "text": "१ महासाहसवृत्त्या स्वरूपलाभः",
+  "id": "v1.w1",
+  "kind": "pair",
+  "text": "१ / 1",
   "t_on": 96.222,
   "t_off": 144.863,
   "light_rect": [
-   116,
-   416,
-   769,
-   498
+   124,
+   469.0,
+   181.796875,
+   603.0
   ],
-  "source": "sheet b01.start=96.222 (sanskrit at her onset)"
+  "source": "sheet b01.start=96.222 +0.0 word 1 of 3"
  },
  {
-  "id": "v1.rom",
-  "kind": "text",
-  "text": "1 mahāsāhasavṛttyā svarūpalābhaḥ",
-  "t_on": 96.722,
+  "id": "v1.w2",
+  "kind": "pair",
+  "text": "महासाहसवृत्त्या / mahāsāhasavṛttyā",
+  "t_on": 96.522,
   "t_off": 144.863,
   "light_rect": [
-   116,
-   522,
-   588,
-   570
+   189.796875,
+   469.0,
+   502.765625,
+   603.0
   ],
-  "source": "sheet b01.start=96.222 +0.5 stagger"
+  "source": "sheet b01.start=96.222 +0.3 word 2 of 3"
+ },
+ {
+  "id": "v1.w3",
+  "kind": "pair",
+  "text": "स्वरूपलाभः / svarūpalābhaḥ",
+  "t_on": 96.822,
+  "t_off": 144.863,
+  "light_rect": [
+   510.765625,
+   469.0,
+   755.671875,
+   603.0
+  ],
+  "source": "sheet b01.start=96.222 +0.6 word 3 of 3"
  },
  {
   "id": "v1.eng_a",
@@ -140,32 +154,60 @@
   "source": "sheet b02.start=148.063 +0.15"
  },
  {
-  "id": "v2.dev",
-  "kind": "text",
-  "text": "२ तल्लाभा[च्छुरिता यु] द्युगपद्वृत्तिप्रवृत्तिः",
+  "id": "v2.w1",
+  "kind": "pair",
+  "text": "२ / 2",
   "t_on": 148.063,
   "t_off": 183.828,
   "light_rect": [
-   116,
-   416,
-   598,
-   580
+   124,
+   399.0,
+   183.96875,
+   533.0
   ],
-  "source": "sheet b02.start=148.063 (sanskrit at her onset)"
+  "source": "sheet b02.start=148.063 +0.0 word 1 of 4"
  },
  {
-  "id": "v2.rom",
-  "kind": "text",
-  "text": "2 tallābhā[cchuritā yu] dyugapadvṛttipravṛttiḥ",
-  "t_on": 148.563,
+  "id": "v2.w2",
+  "kind": "pair",
+  "text": "तल्लाभा[च्छुरिता / tallābhā[cchuritā",
+  "t_on": 148.363,
   "t_off": 183.828,
   "light_rect": [
-   116,
-   604,
-   724,
-   652
+   191.96875,
+   399.0,
+   510.875,
+   533.0
   ],
-  "source": "sheet b02.start=148.063 +0.5 stagger"
+  "source": "sheet b02.start=148.063 +0.3 word 2 of 4"
+ },
+ {
+  "id": "v2.w3",
+  "kind": "pair",
+  "text": "यु] / yu]",
+  "t_on": 148.663,
+  "t_off": 183.828,
+  "light_rect": [
+   518.875,
+   399.0,
+   602.40625,
+   533.0
+  ],
+  "source": "sheet b02.start=148.063 +0.6 word 3 of 4"
+ },
+ {
+  "id": "v2.w4",
+  "kind": "pair",
+  "text": "द्युगपद्वृत्तिप्रवृत्तिः / dyugapadvṛttipravṛttiḥ",
+  "t_on": 148.963,
+  "t_off": 183.828,
+  "light_rect": [
+   124,
+   539.0,
+   448.84375,
+   673.0
+  ],
+  "source": "sheet b02.start=148.063 +0.9 word 4 of 4"
  },
  {
   "id": "v2.eng_a",
@@ -210,32 +252,46 @@
   "source": "sheet b03.start=187.028 +0.15"
  },
  {
-  "id": "v3.dev",
-  "kind": "text",
-  "text": "३ उभयपट्टोद्धट्टनान्महाशून्यताप्रवेश ः",
+  "id": "v3.w1",
+  "kind": "pair",
+  "text": "३ / 3",
   "t_on": 187.028,
   "t_off": 217.189,
   "light_rect": [
-   116,
-   416,
-   856,
-   580
+   124,
+   469.0,
+   183.40625,
+   603.0
   ],
-  "source": "sheet b03.start=187.028 (sanskrit at her onset)"
+  "source": "sheet b03.start=187.028 +0.0 word 1 of 3"
  },
  {
-  "id": "v3.rom",
-  "kind": "text",
-  "text": "3 ubhayapaṭṭoddhaṭṭanānmahāśūnyatāpraveśa ḥ",
-  "t_on": 187.528,
+  "id": "v3.w2",
+  "kind": "pair",
+  "text": "उभयपट्टोद्धट्टनान्महाशून्यताप्रवेश / ubhayapaṭṭoddhaṭṭanānmahāśūnyatāpraveśa",
+  "t_on": 187.328,
   "t_off": 217.189,
   "light_rect": [
-   116,
-   604,
-   751,
-   652
+   191.40625,
+   469.0,
+   805.6875,
+   603.0
   ],
-  "source": "sheet b03.start=187.028 +0.5 stagger"
+  "source": "sheet b03.start=187.028 +0.3 word 2 of 3"
+ },
+ {
+  "id": "v3.w3",
+  "kind": "pair",
+  "text": "ः / ḥ",
+  "t_on": 187.628,
+  "t_off": 217.189,
+  "light_rect": [
+   813.6875,
+   469.0,
+   896.953125,
+   603.0
+  ],
+  "source": "sheet b03.start=187.028 +0.6 word 3 of 3"
  },
  {
   "id": "v3.eng_a",
@@ -280,32 +336,32 @@
   "source": "sheet b04.start=220.389 +0.15"
  },
  {
-  "id": "v4.dev",
-  "kind": "text",
-  "text": "४ युग्मग्रासान्निरवकाशसंविन्निष्ठा",
+  "id": "v4.w1",
+  "kind": "pair",
+  "text": "४ / 4",
   "t_on": 220.389,
   "t_off": 260.24,
   "light_rect": [
-   116,
-   416,
-   796,
-   498
+   124,
+   469.0,
+   184.703125,
+   603.0
   ],
-  "source": "sheet b04.start=220.389 (sanskrit at her onset)"
+  "source": "sheet b04.start=220.389 +0.0 word 1 of 2"
  },
  {
-  "id": "v4.rom",
-  "kind": "text",
-  "text": "4 yugmagrāsānniravakāśasaṃvinniṣṭhā",
-  "t_on": 220.889,
+  "id": "v4.w2",
+  "kind": "pair",
+  "text": "युग्मग्रासान्निरवकाशसंविन्निष्ठा / yugmagrāsānniravakāśasaṃvinniṣṭhā",
+  "t_on": 220.689,
   "t_off": 260.24,
   "light_rect": [
-   116,
-   522,
-   638,
-   570
+   192.703125,
+   469.0,
+   751.4375,
+   603.0
   ],
-  "source": "sheet b04.start=220.389 +0.5 stagger"
+  "source": "sheet b04.start=220.389 +0.3 word 2 of 2"
  },
  {
   "id": "v4.eng_a",
@@ -350,32 +406,32 @@
   "source": "sheet b05.start=263.440 +0.15"
  },
  {
-  "id": "v5.dev",
-  "kind": "text",
-  "text": "५ सिद्धयोगिनीसंघट्टान्महामेलापोदयः",
+  "id": "v5.w1",
+  "kind": "pair",
+  "text": "५ / 5",
   "t_on": 263.44,
   "t_off": 294.726,
   "light_rect": [
-   116,
-   416,
-   839,
-   580
+   124,
+   469.0,
+   184.96875,
+   603.0
   ],
-  "source": "sheet b05.start=263.440 (sanskrit at her onset)"
+  "source": "sheet b05.start=263.440 +0.0 word 1 of 2"
  },
  {
-  "id": "v5.rom",
-  "kind": "text",
-  "text": "5 siddhayoginīsaṃghaṭṭānmahāmelāpodayaḥ",
-  "t_on": 263.94,
+  "id": "v5.w2",
+  "kind": "pair",
+  "text": "सिद्धयोगिनीसंघट्टान्महामेलापोदयः / siddhayoginīsaṃghaṭṭānmahāmelāpodayaḥ",
+  "t_on": 263.74,
   "t_off": 294.726,
   "light_rect": [
-   116,
-   604,
-   703,
-   652
+   192.96875,
+   469.0,
+   830.84375,
+   603.0
   ],
-  "source": "sheet b05.start=263.440 +0.5 stagger"
+  "source": "sheet b05.start=263.440 +0.3 word 2 of 2"
  },
  {
   "id": "v5.eng_a",
@@ -420,32 +476,32 @@
   "source": "sheet b06.start=297.926 +0.15"
  },
  {
-  "id": "v6.dev",
-  "kind": "text",
-  "text": "६ त्रिकञ्चुकपरित्यागान्निराख्यपदावस्थितिः",
+  "id": "v6.w1",
+  "kind": "pair",
+  "text": "६ / 6",
   "t_on": 297.926,
   "t_off": 320.891,
   "light_rect": [
-   116,
-   416,
-   935,
-   580
+   124,
+   399.0,
+   184.234375,
+   533.0
   ],
-  "source": "sheet b06.start=297.926 (sanskrit at her onset)"
+  "source": "sheet b06.start=297.926 +0.0 word 1 of 2"
  },
  {
-  "id": "v6.rom",
-  "kind": "text",
-  "text": "6 trikañcukaparityāgānnirākhyapadāvasthitiḥ",
-  "t_on": 298.426,
+  "id": "v6.w2",
+  "kind": "pair",
+  "text": "त्रिकञ्चुकपरित्यागान्निराख्यपदावस्थितिः / trikañcukaparityāgānnirākhyapadāvasthitiḥ",
+  "t_on": 298.226,
   "t_off": 320.891,
   "light_rect": [
-   116,
-   604,
-   721,
-   652
+   124,
+   539.0,
+   848.03125,
+   673.0
   ],
-  "source": "sheet b06.start=297.926 +0.5 stagger"
+  "source": "sheet b06.start=297.926 +0.3 word 2 of 2"
  },
  {
   "id": "v6.eng_a",
@@ -490,32 +546,60 @@
   "source": "sheet b07.start=324.091 +0.15"
  },
  {
-  "id": "v7.dev",
-  "kind": "text",
-  "text": "७ वाक्चतुष्टयोदयविरामप्रथासु स्वरः प्रथते",
+  "id": "v7.w1",
+  "kind": "pair",
+  "text": "७ / 7",
   "t_on": 324.091,
   "t_off": 355.014,
   "light_rect": [
-   116,
-   416,
-   869,
-   580
+   124,
+   399.0,
+   188.921875,
+   533.0
   ],
-  "source": "sheet b07.start=324.091 (sanskrit at her onset)"
+  "source": "sheet b07.start=324.091 +0.0 word 1 of 4"
  },
  {
-  "id": "v7.rom",
-  "kind": "text",
-  "text": "7 vākcatuṣṭayodayavirāmaprathāsu svaraḥ prathate",
-  "t_on": 324.591,
+  "id": "v7.w2",
+  "kind": "pair",
+  "text": "वाक्चतुष्टयोदयविरामप्रथासु / vākcatuṣṭayodayavirāmaprathāsu",
+  "t_on": 324.391,
   "t_off": 355.014,
   "light_rect": [
-   116,
-   604,
-   789,
-   652
+   196.921875,
+   399.0,
+   720.328125,
+   533.0
   ],
-  "source": "sheet b07.start=324.091 +0.5 stagger"
+  "source": "sheet b07.start=324.091 +0.3 word 2 of 4"
+ },
+ {
+  "id": "v7.w3",
+  "kind": "pair",
+  "text": "स्वरः / svaraḥ",
+  "t_on": 324.691,
+  "t_off": 355.014,
+  "light_rect": [
+   728.328125,
+   399.0,
+   846.125,
+   533.0
+  ],
+  "source": "sheet b07.start=324.091 +0.6 word 3 of 4"
+ },
+ {
+  "id": "v7.w4",
+  "kind": "pair",
+  "text": "प्रथते / prathate",
+  "t_on": 324.991,
+  "t_off": 355.014,
+  "light_rect": [
+   124,
+   539.0,
+   249.296875,
+   673.0
+  ],
+  "source": "sheet b07.start=324.091 +0.9 word 4 of 4"
  },
  {
   "id": "v7.eng_a",
@@ -560,32 +644,74 @@
   "source": "sheet b08.start=358.214 +0.15"
  },
  {
-  "id": "v8.dev",
-  "kind": "text",
-  "text": "८ रसत्रितयास्वादनेनानिच्छोच्छलितं विगतबन्धं परं ब्रह्म",
+  "id": "v8.w1",
+  "kind": "pair",
+  "text": "८ / 8",
   "t_on": 358.214,
   "t_off": 387.891,
   "light_rect": [
-   116,
-   416,
-   863,
-   580
+   124,
+   399.0,
+   182.359375,
+   533.0
   ],
-  "source": "sheet b08.start=358.214 (sanskrit at her onset)"
+  "source": "sheet b08.start=358.214 +0.0 word 1 of 5"
  },
  {
-  "id": "v8.rom",
-  "kind": "text",
-  "text": "8 rasatritayāsvādanenānicchocchalitaṃ vigatabandhaṃ paraṃ brahma",
-  "t_on": 358.714,
+  "id": "v8.w2",
+  "kind": "pair",
+  "text": "रसत्रितयास्वादनेनानिच्छोच्छलितं / rasatritayāsvādanenānicchocchalitaṃ",
+  "t_on": 358.514,
   "t_off": 387.891,
   "light_rect": [
-   116,
-   604,
-   836,
-   700
+   190.359375,
+   399.0,
+   811.3125,
+   533.0
   ],
-  "source": "sheet b08.start=358.214 +0.5 stagger"
+  "source": "sheet b08.start=358.214 +0.3 word 2 of 5"
+ },
+ {
+  "id": "v8.w3",
+  "kind": "pair",
+  "text": "विगतबन्धं / vigatabandhaṃ",
+  "t_on": 358.814,
+  "t_off": 387.891,
+  "light_rect": [
+   124,
+   539.0,
+   338.421875,
+   673.0
+  ],
+  "source": "sheet b08.start=358.214 +0.6 word 3 of 5"
+ },
+ {
+  "id": "v8.w4",
+  "kind": "pair",
+  "text": "परं / paraṃ",
+  "t_on": 359.114,
+  "t_off": 387.891,
+  "light_rect": [
+   346.421875,
+   539.0,
+   437.140625,
+   673.0
+  ],
+  "source": "sheet b08.start=358.214 +0.9 word 4 of 5"
+ },
+ {
+  "id": "v8.w5",
+  "kind": "pair",
+  "text": "ब्रह्म / brahma",
+  "t_on": 359.414,
+  "t_off": 387.891,
+  "light_rect": [
+   445.140625,
+   539.0,
+   548.640625,
+   673.0
+  ],
+  "source": "sheet b08.start=358.214 +1.2 word 5 of 5"
  },
  {
   "id": "v8.eng_a",
@@ -630,32 +756,60 @@
   "source": "sheet b09.start=391.091 +0.15"
  },
  {
-  "id": "v9.dev",
-  "kind": "text",
-  "text": "९ देवीचतुष्टयोल्लासेन सदैव स्वविश्रान्त्यवस्थितिः",
+  "id": "v9.w1",
+  "kind": "pair",
+  "text": "९ / 9",
   "t_on": 391.091,
   "t_off": 413.289,
   "light_rect": [
-   116,
-   416,
-   686,
-   580
+   124,
+   399.0,
+   181.734375,
+   533.0
   ],
-  "source": "sheet b09.start=391.091 (sanskrit at her onset)"
+  "source": "sheet b09.start=391.091 +0.0 word 1 of 4"
  },
  {
-  "id": "v9.rom",
-  "kind": "text",
-  "text": "9 devīcatuṣṭayollāsena sadaiva svaviśrāntyavasthitiḥ",
-  "t_on": 391.591,
+  "id": "v9.w2",
+  "kind": "pair",
+  "text": "देवीचतुष्टयोल्लासेन / devīcatuṣṭayollāsena",
+  "t_on": 391.391,
   "t_off": 413.289,
   "light_rect": [
-   116,
-   604,
-   800,
-   652
+   189.734375,
+   399.0,
+   547.921875,
+   533.0
   ],
-  "source": "sheet b09.start=391.091 +0.5 stagger"
+  "source": "sheet b09.start=391.091 +0.3 word 2 of 4"
+ },
+ {
+  "id": "v9.w3",
+  "kind": "pair",
+  "text": "सदैव / sadaiva",
+  "t_on": 391.691,
+  "t_off": 413.289,
+  "light_rect": [
+   555.921875,
+   399.0,
+   681.6875,
+   533.0
+  ],
+  "source": "sheet b09.start=391.091 +0.6 word 3 of 4"
+ },
+ {
+  "id": "v9.w4",
+  "kind": "pair",
+  "text": "स्वविश्रान्त्यवस्थितिः / svaviśrāntyavasthitiḥ",
+  "t_on": 391.991,
+  "t_off": 413.289,
+  "light_rect": [
+   124,
+   539.0,
+   518.53125,
+   673.0
+  ],
+  "source": "sheet b09.start=391.091 +0.9 word 4 of 4"
  },
  {
   "id": "v9.eng_a",
@@ -700,32 +854,46 @@
   "source": "sheet b10.start=416.489 +0.15"
  },
  {
-  "id": "v10.dev",
-  "kind": "text",
-  "text": "१० द्वादशवाहोदयेन महामरीचिविकासः",
+  "id": "v10.w1",
+  "kind": "pair",
+  "text": "१० / 10",
   "t_on": 416.489,
   "t_off": 452.297,
   "light_rect": [
-   116,
-   416,
-   545,
-   580
+   124,
+   469.0,
+   209.5625,
+   603.0
   ],
-  "source": "sheet b10.start=416.489 (sanskrit at her onset)"
+  "source": "sheet b10.start=416.489 +0.0 word 1 of 3"
  },
  {
-  "id": "v10.rom",
-  "kind": "text",
-  "text": "10 dvādaśavāhodayena mahāmarīcivikāsaḥ",
-  "t_on": 416.989,
+  "id": "v10.w2",
+  "kind": "pair",
+  "text": "द्वादशवाहोदयेन / dvādaśavāhodayena",
+  "t_on": 416.789,
   "t_off": 452.297,
   "light_rect": [
-   116,
-   604,
-   684,
-   652
+   217.5625,
+   469.0,
+   526.859375,
+   603.0
   ],
-  "source": "sheet b10.start=416.489 +0.5 stagger"
+  "source": "sheet b10.start=416.489 +0.3 word 2 of 3"
+ },
+ {
+  "id": "v10.w3",
+  "kind": "pair",
+  "text": "महामरीचिविकासः / mahāmarīcivikāsaḥ",
+  "t_on": 417.089,
+  "t_off": 452.297,
+  "light_rect": [
+   534.859375,
+   469.0,
+   902.921875,
+   603.0
+  ],
+  "source": "sheet b10.start=416.489 +0.6 word 3 of 3"
  },
  {
   "id": "v10.eng_a",
@@ -770,32 +938,46 @@
   "source": "sheet b11.start=455.497 +0.15"
  },
  {
-  "id": "v11.dev",
-  "kind": "text",
-  "text": "११ चर्यापञ्चकोदये निस्तरङ्गसमावेशः",
+  "id": "v11.w1",
+  "kind": "pair",
+  "text": "११ / 11",
   "t_on": 455.497,
   "t_off": 502.956,
   "light_rect": [
-   116,
-   416,
-   877,
-   498
+   124,
+   469.0,
+   206.546875,
+   603.0
   ],
-  "source": "sheet b11.start=455.497 (sanskrit at her onset)"
+  "source": "sheet b11.start=455.497 +0.0 word 1 of 3"
  },
  {
-  "id": "v11.rom",
-  "kind": "text",
-  "text": "11 caryāpañcakodaye nistaraṅgasamāveśaḥ",
-  "t_on": 455.997,
+  "id": "v11.w2",
+  "kind": "pair",
+  "text": "चर्यापञ्चकोदये / caryāpañcakodaye",
+  "t_on": 455.797,
   "t_off": 502.956,
   "light_rect": [
-   116,
-   522,
-   676,
-   570
+   214.546875,
+   469.0,
+   504.90625,
+   603.0
   ],
-  "source": "sheet b11.start=455.497 +0.5 stagger"
+  "source": "sheet b11.start=455.497 +0.3 word 2 of 3"
+ },
+ {
+  "id": "v11.w3",
+  "kind": "pair",
+  "text": "निस्तरङ्गसमावेशः / nistaraṅgasamāveśaḥ",
+  "t_on": 456.097,
+  "t_off": 502.956,
+  "light_rect": [
+   512.90625,
+   469.0,
+   852.515625,
+   603.0
+  ],
+  "source": "sheet b11.start=455.497 +0.6 word 3 of 3"
  },
  {
   "id": "v11.eng_a",
@@ -840,32 +1022,32 @@
   "source": "sheet b12.start=506.156 +0.15"
  },
  {
-  "id": "v12.dev",
-  "kind": "text",
-  "text": "१२ महाबोधसमावेशात्पुण्यपापासंबन्धः",
+  "id": "v12.w1",
+  "kind": "pair",
+  "text": "१२ / 12",
   "t_on": 506.156,
   "t_off": 530.9,
   "light_rect": [
-   116,
-   416,
-   859,
-   580
+   124,
+   469.0,
+   209.25,
+   603.0
   ],
-  "source": "sheet b12.start=506.156 (sanskrit at her onset)"
+  "source": "sheet b12.start=506.156 +0.0 word 1 of 2"
  },
  {
-  "id": "v12.rom",
-  "kind": "text",
-  "text": "12 mahābodhasamāveśātpuṇyapāpāsaṃbandhaḥ",
-  "t_on": 506.656,
+  "id": "v12.w2",
+  "kind": "pair",
+  "text": "महाबोधसमावेशात्पुण्यपापासंबन्धः / mahābodhasamāveśātpuṇyapāpāsaṃbandhaḥ",
+  "t_on": 506.456,
   "t_off": 530.9,
   "light_rect": [
-   116,
-   604,
-   741,
-   652
+   217.25,
+   469.0,
+   872.90625,
+   603.0
   ],
-  "source": "sheet b12.start=506.156 +0.5 stagger"
+  "source": "sheet b12.start=506.156 +0.3 word 2 of 2"
  },
  {
   "id": "v12.eng_a",
@@ -910,32 +1092,74 @@
   "source": "sheet b13.start=534.100 +0.15"
  },
  {
-  "id": "v13.dev",
-  "kind": "text",
-  "text": "१३ अकथनकथाबलेन महाविस्मयमुद्रा- प्राप्त्या खस्वरता",
+  "id": "v13.w1",
+  "kind": "pair",
+  "text": "१३ / 13",
   "t_on": 534.1,
   "t_off": 570.534,
   "light_rect": [
-   116,
-   416,
-   804,
-   580
+   124,
+   399.0,
+   209.203125,
+   533.0
   ],
-  "source": "sheet b13.start=534.100 (sanskrit at her onset)"
+  "source": "sheet b13.start=534.100 +0.0 word 1 of 5"
  },
  {
-  "id": "v13.rom",
-  "kind": "text",
-  "text": "13 akathanakathābalena mahāvismayamudrā- prāptyā khasvaratā",
-  "t_on": 534.6,
+  "id": "v13.w2",
+  "kind": "pair",
+  "text": "अकथनकथाबलेन / akathanakathābalena",
+  "t_on": 534.4,
   "t_off": 570.534,
   "light_rect": [
-   116,
-   604,
-   821,
-   700
+   217.203125,
+   399.0,
+   576.328125,
+   533.0
   ],
-  "source": "sheet b13.start=534.100 +0.5 stagger"
+  "source": "sheet b13.start=534.100 +0.3 word 2 of 5"
+ },
+ {
+  "id": "v13.w3",
+  "kind": "pair",
+  "text": "महाविस्मयमुद्रा- / mahāvismayamudrā-",
+  "t_on": 534.7,
+  "t_off": 570.534,
+  "light_rect": [
+   584.328125,
+   399.0,
+   906.3125,
+   533.0
+  ],
+  "source": "sheet b13.start=534.100 +0.6 word 3 of 5"
+ },
+ {
+  "id": "v13.w4",
+  "kind": "pair",
+  "text": "प्राप्त्या / prāptyā",
+  "t_on": 535.0,
+  "t_off": 570.534,
+  "light_rect": [
+   124,
+   539.0,
+   259.5,
+   673.0
+  ],
+  "source": "sheet b13.start=534.100 +0.9 word 4 of 5"
+ },
+ {
+  "id": "v13.w5",
+  "kind": "pair",
+  "text": "खस्वरता / khasvaratā",
+  "t_on": 535.3,
+  "t_off": 570.534,
+  "light_rect": [
+   267.5,
+   539.0,
+   457.734375,
+   673.0
+  ],
+  "source": "sheet b13.start=534.100 +1.2 word 5 of 5"
  },
  {
   "id": "v13.eng_a",
