@@ -56,17 +56,17 @@ def state_question(q):
 
 
 def state_text(text, plain=None):
-    """Verbatim text anchored top; if plain, hairline + English below."""
+    """Verbatim text anchored top at FINAL size/pos; plain English below swaps. No hairline."""
     im = Image.new("RGB", (W, H), LIGHT)
     d = ImageDraw.Draw(im)
     text = " ".join(text.split())
+    # always reserve the plain's space so the text NEVER resizes between states
     size = 54
     while size > 30:
         ft = f(SERIF, size, 500)
         lines = wrap(text, ft, W - 360)
         block_h = len(lines) * int(size * 1.4)
-        avail = (H * 0.52 - 160) if plain else (H - 240)
-        if block_h <= avail:
+        if block_h <= H * 0.52 - 160:
             break
         size -= 2
     ft = f(SERIF, size, 500)
@@ -79,10 +79,7 @@ def state_text(text, plain=None):
         y += lh
     if plain:
         plain = " ".join(plain.split())
-        y += 20
-        rw = 280
-        d.line([(W/2 - rw/2, y), (W/2 + rw/2, y)], fill=INK50, width=1)
-        y += 40
+        y += 50
         size2 = 46
         while size2 > 28:
             ft2 = f(ITAL, size2)

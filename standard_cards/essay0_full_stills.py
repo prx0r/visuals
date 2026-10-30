@@ -129,24 +129,21 @@ def state_question(cell):
 
 
 def state_sanskrit_alone(cell):
-    """Sanskrit appears — Devanagari + IAST, no English yet."""
+    """Sanskrit appears — Devanagari + IAST at FINAL position (never moves)."""
     im = Image.new("RGB", (W, H), LIGHT)
     d = ImageDraw.Draw(im)
     dev = to_dev(cell["iast"])
-    draw_sanskrit_block(d, dev, cell["iast"], y_dev=400)
+    draw_sanskrit_block(d, dev, cell["iast"], y_dev=280)
     return im
 
 
 def state_with_english(cell, en_text, italic=False):
-    """Couplet: anchored Sanskrit + hairline + English (the swappable part)."""
+    """Couplet: anchored Sanskrit (same pos/size as alone) + English below. No hairline."""
     im = Image.new("RGB", (W, H), LIGHT)
     d = ImageDraw.Draw(im)
     dev = to_dev(cell["iast"])
     y_hair = draw_sanskrit_block(d, dev, cell["iast"], y_dev=280)
-    # hairline
-    rw = 280
-    d.line([(W/2 - rw/2, y_hair + 10), (W/2 + rw/2, y_hair + 10)], fill=INK50, width=1)
-    draw_english(d, en_text, y_hair + 55, italic=italic)
+    draw_english(d, en_text, y_hair + 60, italic=italic)
     return im
 
 
