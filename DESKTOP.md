@@ -39,6 +39,19 @@ The owner's names (scripts in `/usr/local/bin/`):
 | **opencode1** | debz, Hetzner | `ssh -o BatchMode=yes hetzner` (root, key) | 4c / 4.5G | 97% ⚠ |
 | **opencode2** | server2 | `sshpass -p '…' ssh root@2.28.50.109` (password auth) | 4c / 3.4G | **98% ⚠⚠** |
 | **opencode3** | old OVH | `ssh -o BatchMode=yes vps` (ubuntu, key) | **6c / 7.8G** | 96% ⚠ |
+| **work volume** | HC_Volume on opencode2 | `sshpass -p 'xx' ssh root@2.28.50.109` → `/mnt/HC_Volume_106427611/patala/` | ext4, **59G (56G free)** | 1% ✓ |
+
+**STORAGE LAW (owner, 2026-10-31): bulk work lives on the volume.** All renders, takes,
+stills, archives land in `/mnt/HC_Volume_106427611/patala/{audio,renders,archive,docs,tests,backup}`
+(written directly by fleet jobs on opencode2; hub pushes audio via the sshpass hop and keeps
+only hot serving copies in `~/visuals/outputs/`). The three box disks sit at 95–98% — new
+render dispatch scripts MUST output to the volume path, not box-local disk.
+**Full note + file lists + moved-from table: `patala/docs/VOLUME.md` on the volume**
+(regenerable listing: `find . -type f` there; checksums in `patala/archive/LEDGER-<date>.md5`;
+breadcrumb where bulk left the hub: `~/Downloads/MOVED.md`).
+Access from hub: `sshpass -p xx ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no root@2.28.50.109`
+· opencode3 pushes its `publish_r2.sh` third target to `patala/backup/` (key generated, owner adds).
+Job scripts (persistent): `~/visuals/ops/{store_work,shift_to_volume}.sh` (logs `/tmp/opencode/`, notify).
 
 Proven 2026-10-27: **3 units dispatched simultaneously → wall clock 5 s** (437/458/443 ms).
 
