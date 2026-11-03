@@ -1,0 +1,6 @@
+name: fleet-ping
+steps:
+  - name: hub
+    command: echo hub-ok && uptime -p
+  - name: vps
+    command: ssh -o BatchMode=yes -o ConnectTimeout=10 vps 'uptime -p && free -m | sed -n 2p'
