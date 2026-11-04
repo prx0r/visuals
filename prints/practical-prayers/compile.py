@@ -15,19 +15,22 @@ except Exception:
 META = dict(
     title="Practical Prayers",
     subtitle="Thirty Trika prayers for the moments of the day",
-    blurb="food · waking · sleeping · waiting · negative · positive",
+    blurb="waking · bathing · social · work · food · waiting · negative · positive · evening",
     epi_iast="brahmārpaṇaṁ brahma havir brahmāgnau brahmaṇā hutam",
     epi_en="the offering is brahman, the oblation is brahman, poured by brahman into the fire of brahman",
     epi_src="Bhagavad Gītā 4.24 — the meal prayer",
 )
 
 SECTIONS = [
-    ("food", "I", "Food", "before eating"),
-    ("wake", "II", "Waking", "on rising"),
-    ("sleep", "III", "Sleeping", "at lights-out"),
-    ("wait", "IV", "Waiting", "in the in-between"),
-    ("negative", "V", "When You Are Negative", "fear · doubt · grief"),
-    ("positive", "VI", "When You Are Positive", "rejoice · devote"),
+    ("wake", "I", "Waking / Morning", "on rising"),
+    ("bath", "II", "Bathing", "water & body"),
+    ("social", "III", "Social", "out among people"),
+    ("work", "IV", "At Work", "at the desk"),
+    ("food", "V", "Food", "before eating"),
+    ("wait", "VI", "Waiting", "in the in-between"),
+    ("negative", "VII", "When You Are Negative", "fear · doubt · grief"),
+    ("positive", "VIII", "When You Are Positive", "rejoice · devote"),
+    ("sleep", "IX", "Evening / Sleep", "wind down · lights out"),
 ]
 
 # corpus refs: (chapter, verse) into shivastotravali_corpus.json
@@ -270,6 +273,128 @@ dict(id="spanda-1", section="positive", title="The Wheel of Powers",
  logic="The Spandakārikā opens with a hymn to the pulse: by the Lord's opening and closing (onmeṣa-nimeṣa — his blink) the world dissolves and arises. The 'wheel of powers' is the circle of śaktis through which consciousness manifests. To sing is to join the pulse rather than resist it.",
  howto="Recite when the world feels vivid — when colours are sharp, when music lands, when the pulse is obvious. It's a song of participation. Feeling-tip: blink with the verse; the world dissolving and arising on each blink is literal enough.",
  source_path="sources/spanda.md", source_ref="Spandakārikā 1.1"),
+
+# ---------------- LEAVING THE HOUSE ----------------
+dict(id="deha-2", section="social", title="Gaṇapati at the Threshold",
+ source="Dehastha v.2",
+ iast="asurasuravṛndavanditamabhimatavaravitaraṇe niratam | darśanaśatāgryapūjyaṃ prāṇatanuṃ gaṇapatiṃ vande",
+ en="him who is saluted by the hosts of demons and gods, engaged in bestowing wished-for boons, worshipable as foremost in a hundred rites, breath-bodied — gaṇapati i praise.",
+ brief="The Trika Gaṇeśa: breath-bodied, praised by gods and demons alike.",
+ logic="Dehastha names Gaṇapati as prāṇatanu — breath-bodied — not as a distant remover of obstacles but as the breath itself, busy granting boons. The one who salutes him includes demons and gods, so the blessing does not discriminate. The verse turns the threshold into a court where everyone waits.",
+ howto="At the door, before stepping out: one round, hand on the chest. Feel the breath as Gaṇapati already granting the day's boons. The feeling: the obstacle is not outside the door — it is the contraction you carry through it; the breath loosens it. Then walk.",
+ source_path="sources/deha-p01.md", source_ref="v.2"),
+dict(id="sst-2-28", section="social", title="The Thunderbolt Path", corpus=[2,28],
+ source="Utpaladeva, Śivastotrāvalī 2.28",
+ en="to the path of maheśvara — shattering every doubt, burning every misfortune like the fire of time, the fulfilment of every good fortune — namas.",
+ brief="For the road: a path that burns what's in the way.",
+ logic="Lakshmanjoo's gloss: the path is a thunderbolt that shatters doubts; alakṣmī (misfortune) is daridhratā, poverty of spirit, and the path fires it to ashes like kālāgnirudra; kalpa's end comes so joy arrives. The verse is a blessing on the way itself — not safe travel but a road that works on you as you walk it.",
+ howto="Before leaving: say it once, facing the direction you're going. The image is a burning path — not destructive but consuming of what shouldn't arrive with you. Feeling-tip: the first few steps feel lighter; that's the alakṣmī left at the door.",
+ source_path="sources/sivastotravali_corpus.json", source_ref="2.28"),
+dict(id="mpa-20", section="work", title="Yoke the Mind",
+ source="Mahopadeśaviṃśatikā v.20",
+ iast="evameva parā pūjā sarvāvasthāsu sarvadā | aikyabuddhayā tu sarveśe mano deve niyojayet",
+ en="just so is the highest worship — in every state, at all times: with a mind of oneness, one should yoke the mind to god as the lord of all.",
+ brief="The instruction after the litany: work is the highest pūjā.",
+ logic="Parā pūjā is ritual re-specified: all states, all times instead of the fixed occasion, and aikyabuddhi — oneness-mindedness — instead of the duality of giver and gift. The verb is niyojayet, yoke: the mind is a draught-animal that must be hitched, and the yoke is identity. The desk becomes the temple by the hitching, not the décor.",
+ howto="Before opening the laptop: one line, then begin. The test for aikyabuddhi: the boundary of your skin thins. If it sharpens, you're thinking oneness, not yoking it — drop to the breath and restart. Each task is one yoke; re-hitch as often as needed.",
+ source_path="sources/L2-mpa-p02.md", source_ref="v.20"),
+dict(id="sst-1-14", section="work", title="Achieve God in Activity", corpus=[1,14],
+ source="Utpaladeva, Śivastotrāvalī 1.14",
+ en="so the devotee is told: become śiva and worship. you yourself are the essence of the body, purified by devotion's non-duality.",
+ brief="Lakshmanjoo's work verse: find God in the activity, not by shunning it.",
+ logic="The verse (śivo bhūtvā yajeti) instructs: become Śiva and worship — and adds that the body's essence (vapuḥ sāraṃ) is refined by bhakti's advaya, non-duality. The gloss from the Academy: achieve God in the activity of the universe, not by shunning it; perceive him in each and every action of life. Work is the field, not the obstacle.",
+ howto="At the desk, when work feels like a distraction from practice: say it and reclassify. The spreadsheet, the email, the conversation — that is the worship. Feeling-tip: the task itself becomes slightly luminous; do it as offering, not as interruption.",
+ source_path="sources/sivastotravali_corpus.json", source_ref="1.14"),
+dict(id="deha-7", section="work", title="Flowers of Resolve",
+ source="Dehastha v.7",
+ iast="arcayati bhairavaṃ yā niścayakusumaiḥ sureśapatrasthā | praṇamāmi buddhirūpāṃ brahmāṇīṃ tāmahaṃ satatam",
+ en="who worships bhairava with flowers of resolve, standing in the petal of the lord — to intellect-formed brāhmaṇī, to her, i ever bow.",
+ brief="Focus as worship: the flower of niścaya, resolve.",
+ logic="Brāhmaṇī — buddhirūpā, the intellect-formed mother — worships Bhairava with niścaya-kusuma, flowers of resolve, standing in the lord's petal. The offering is not a plant but a decision: the settled intention to do this, now. The intellect's own substance becomes the flower.",
+ howto="At the start of a hard task: name the resolve as a flower — 'this, now' — and place it. One decision, one flower; three tasks, three flowers. Feeling-tip: the mind stops negotiating once the flower is placed. The bow is to the clarity that placed it.",
+ source_path="sources/deha-p01.md", source_ref="v.7"),
+dict(id="deha-8", section="work", title="I-Making Flowers",
+ source="Dehastha v.8",
+ iast="kurute bhairavapūjāmanaladalasthā'bhimānakusumairyā | nityamahaṅkṛtirūpāṃ vande tāṃ śāmbhavīmambām",
+ en="who performs bhairava's worship, standing in fire's petal, with flowers of i-making — ever of i-making form, i praise her, the mother śāmbhavī.",
+ brief="Hand the work-ego over: the ahaṃkāra is the offering.",
+ logic="Śāmbhavī stands in the petal of fire and worships with abhimāna-kusuma — flowers of I-making: the sense of mine and I that is normally the problem. The rite converts the fault into the flower. At work, the 'I' that wants credit is not suppressed — it is picked and placed in the fire.",
+ howto="When the ego flares mid-task — pride, irritation at the colleague, hunger for recognition: see it as a flower, pick it, place it at the heart's fire. Three flowers are enough. Feeling-tip: relief, like putting down a bag; the fire (warmth at the solar plexus) confirms it.",
+ source_path="sources/deha-p01.md", source_ref="v.8"),
+dict(id="mpa-9", section="work", title="When Your Form Expands",
+ source="Mahopadeśaviṃśatikā v.9",
+ iast="tvatsvarūpe jṛmbhamāṇe tvaṃ cāhaṃ cākhilaṃ jagat | jāte tasya tirodhāne na tvaṃ nāhaṃ na vai jagat",
+ en="when your own form expands — you and i and the whole world. when its withdrawal is born — neither you, nor i, nor indeed the world.",
+ brief="Expansion and withdrawal: the world is his inhale and exhale.",
+ logic="Two movements: when svarūpa expands (jṛmbhamāṇe), you, I and the whole world appear together; when it withdraws (tirodhāne), none of the three remains. The verse relativises the entire workday — deadlines, colleagues, the self doing them — as one expansion of his form. Not nihilism: the expansion is real, and so is who expands it.",
+ howto="Use it at the overwhelm point — too much to do, the self tightening. Say it and feel the day as one exhale of a larger form. The overwhelm thins because the 'me' carrying it is part of the expansion, not its owner. Then return to the next small task.",
+ source_path="sources/L2-mpa-p01.md", source_ref="v.9"),
+
+# ---------------- TALKING ----------------
+dict(id="bhair-7", section="social", title="The Speech-Goddess",
+ source="Bhairavānukaraṇa v.7",
+ iast="svātmaprabhāṃ vidhāya vāgdevīṃ viṣayakusumakḷptārcaḥ | prathamonmeṣaṃ gurum atha vanditvā hṛdayam āviśya",
+ en="having made the speech-goddess one's own light, with sense-flowers arranged as offering — bowing to the guru, first unfolding, then entering the heart.",
+ brief="Before you speak: make vāk the light, not the weapon.",
+ logic="The verse sequences the art of speech: svātmaprabhāṃ vidhāya vāgdevīṃ — make the speech-goddess your own light; arrange the sense-flowers as the offering; bow to the guru, the first unfolding (prathamonmeṣa); then enter the heart. Speech is not emitted from the mouth but lit from the heart and offered with the senses.",
+ howto="Before a difficult conversation, a speech, a message you'll regret: one breath, hand on the throat. Make the speech a light — not a blade. Offering the sense-flowers means: don't weaponise what you've seen and heard. Then speak from the heart-entered place, not the throat.",
+ source_path="sources/bhairavanukarana.md", source_ref="bhair-p01 v.7"),
+dict(id="anu-3", section="social", title="Every Sound Is Mantra",
+ source="Anubhavanivedana v.3",
+ iast="śabdaḥ kaścana yo mukhādudayate mantraḥ sa lokottaraḥ saṃsthānaṃ sukhaduḥkhajanmavapuṣo yatkāpi mudraiva sā | prāṇasya svarasena yatpravahaṇaṃ yogaḥ sa evādbhutaḥ śāktaṃ dhāma paraṃ mamānubhavataḥ kinnāma na bhrājate",
+ en="whatever sound arises from the mouth — that mantra is transcendent. whatever posture of the pleasure-pain-born body — that indeed is mudrā. whatever flowing of breath by its own rhythm — that indeed is wonderful yoga. the supreme śākta abode — while i experience, what indeed would not shine?",
+ brief="Every word out of your mouth is already a mantra. Use that.",
+ logic="Abhinavagupta's experience-report: any sound from the mouth is lokottara mantra — transcendent; any posture is mudrā; any breath-flow by its own rhythm is yoga. Nothing needs to be Sanskritic to be practice. The verse abolishes the distinction between talking and chanting, fidgeting and ritual, breathing and kriyā.",
+ howto="Use it after you've said something — ordinary, even stupid. That was mantra. The recognition flips the whole day: the meeting, the small talk, the complaint — all of it is mantra, mudrā, yoga, shining. Feeling-tip: the mouth becomes a temple; be careful what you put on the altar.",
+ source_path="sources/anubhavanivedana.md", source_ref="anu-p03 v.3"),
+dict(id="mpa-8", section="social", title="Enough of Difference-Talk",
+ source="Mahopadeśaviṃśatikā v.8",
+ iast="alaṃ bhedānukathayā tvadbhaktirasacarvaṇāt | sarvamekamidaṃ śāntamiti vaktuṃ ca lajjate",
+ en="enough of difference-talk — chewing the sap of devotion to you: all this is one, at peace; and even to say so feels shy.",
+ brief="Knowing when to stop talking: the oneness embarrasses speech.",
+ logic="Bheda-anukathā, the narration of difference, is abandoned mid-chewing of bhakti-rasa: all is one, at peace. And even to say so feels shy (lajjate) — the verse guards non-duality from becoming a thesis. The oneness is so ordinary that stating it out loud is like announcing a family is at peace: true, and slightly vulgar.",
+ howto="Use it when an argument about views has you mid-sentence — or when you're about to explain your practice to someone who doesn't need it. Stop. The shyness is the right register. Feeling-tip: looking away slightly, a small heat in the face — let the body do the disarming.",
+ source_path="sources/L2-mpa-p02.md", source_ref="v.8"),
+# ---------------- BATHING ----------------
+dict(id="mpa-13", section="bath", title="Whence Foot-Water?",
+ source="Mahopadeśaviṃśatikā v.13",
+ iast="pūrṇasyāvāhanaṃ kutra sarvādhārasya cāsanam | svacchasya pādyamarghyañca śuddhasyācamanaṃ kutaḥ",
+ en="for the full, whence invocation? for the all-supporting, whence a seat? for the clear, foot-water and welcome-water? for the pure, the sipping?",
+ brief="The litany begins at the washbasin: the rites cannot apply to what already contains them.",
+ logic="The first questions of the deconstructive litany: āvāhana (invocation) presumes absence, āsana (seat) presumes sitting elsewhere, pādyārghya (foot- and hand-water) presumes a journey, ācamana (sipping) presumes impurity. Śiva lacks nothing and is never impure — so the washing is for you, not him. The recognition is a perfect absence of need.",
+ howto="At the basin, water on the hands: let each 'whence?' land as a shrug. The water is real, the impurity imagined, the washing both. Feeling-tip: lightness, not solemnity — the joke is the doctrine, and the hands are clean either way.",
+ source_path="sources/L2-mpa-p02.md", source_ref="v.13"),
+dict(id="mpa-14", section="bath", title="What Bath for the Stainless?",
+ source="Mahopadeśaviṃśatikā v.14",
+ iast="nirmalasya kutaḥ snānaṃ vastraṃ viśvodarasya ca | nirlepasya kuto gandho ramyasyābharaṇaṃ kutaḥ",
+ en="for the stainless, what bath? for the world-bellied, what garment? for the unanointed, what scent? for the lovely, what jewel?",
+ brief="Shower, towel, scent, jewel — all addressed to one who needs none.",
+ logic="The litany names the bathroom itself: snāna (bath), vastra (garment), gandha (scent), bharaṇa (jewel) — each with a deity stripped of the lack it serves: stainless, world-bellied (all-containing), unanointed, lovely. What looks like futility is the precise applicability of each gift: you bathe the unblemished because bathing is what love does, not what dirt requires.",
+ howto="In the shower: name each item as you use it — water for the stainless, towel for the world-bellied, scent for the unanointed. The mismatch is the smile. Feeling-tip: the water becomes an offering rather than a chore; three items, three small bows.",
+ source_path="sources/L2-mpa-p02.md", source_ref="v.14"),
+dict(id="mpa-15", section="bath", title="Flowers for the Desireless",
+ source="Mahopadeśaviṃśatikā v.15",
+ iast="nirālambasyopavītaṃ puṣpaṃ nirvāsanasya ca | aghrāṇasya kuto dhūpaścakṣurhīnasya dīpakaḥ",
+ en="the sacred thread for the supportless, flowers for the desireless; incense for the noseless, lamp for the eyeless — of what use?",
+ brief="At the mirror: thread, flower, incense, lamp — for the one who has none of the faculties they serve.",
+ logic="The next movement of the litany names the offering-objects — upavīta (thread), puṣpa (flower), dhūpa (incense), dīpaka (lamp) — each matched to a deity stripped of the relevant faculty: no support, no desire, no nose, no eye. The mismatch is the teaching: worship addresses the emptiness of lack itself. What looks like futility is the exact fit of each gift.",
+ howto="At the mirror or altar: offer each item while naming its mismatch — thread for the one who supports nothing, incense for the one with no nose. With no altar, do it in air with the hand: four gestures, four lines. The feeling: tenderness toward an absence rather than a presence.",
+ source_path="sources/L2-mpa-p02.md", source_ref="v.15"),
+dict(id="deha-4", section="bath", title="The Stainless Guru",
+ source="Dehastha v.4",
+ iast="yaddhībalena viśvaṃ bhaktānāṃ śivapathaṃ bhāti | tamahamavadhānarūpaṃ sadgurumamalaṃ sadā vande",
+ en="by whose mind-strength the universe shines as śiva's path for devotees — him, intent in attention, the stainless true guru, always i praise.",
+ brief="After the water: the guru is attention itself, made stainless.",
+ logic="The verse identifies the guru not primarily as a person but as avadhāna-rūpa — the form of intent attention — by whose dhībala (mind-strength) the whole universe shines as Śiva's path for devotees. The guru is what makes the world a road rather than a mess. The stainless one (amala) mirrors the freshly washed body.",
+ howto="Towel in hand, after the bath: one bow to the clarity that is seeing — the attention that has just been rinsed into readiness. Feeling-tip: the room looks slightly sharper; that sharpness is the guru's path appearing. Then dress as devotee on that path.",
+ source_path="sources/deha-p01.md", source_ref="v.4"),
+dict(id="sst-17-26", section="bath", title="This Body for Worship", corpus=[17,26],
+ source="Utpaladeva, Śivastotrāvalī 17.26",
+ en="may this body of mine — nourished by the clear, bright nectar of devotion rising within — be fit only for your worship.",
+ brief="The body leaves the water consecrated: today's uniform is worship.",
+ logic="The body is not renounced; it is consecrated. Nourished by the clear nectar of devotion rising in the heart (antar ullasad acchāccha-bhakti-pīyūṣa), it becomes fit for pūjā — and then it is the offering itself. This is the Trika answer to body-denial: the body is the Lord's instrument, and devotion makes it luminous.",
+ howto="Dressed, before leaving the bathroom: say it once and feel the freshly washed body as anointed rather than merely clean. The day ahead is the pūjā; the body is the instrument. Feeling-tip: a slight uprightness in the spine — the instrument picking itself up.",
+ source_path="sources/sivastotravali_corpus.json", source_ref="17.26"),
 ]
 
 CORPUS = json.load(open(HERE / "sources" / "shivastotravali_corpus.json"))
@@ -394,6 +519,16 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 <div class="en">{esc(META['epi_en'])}</div>
 <div class="src">{esc(META['epi_src'])}</div></section>""")
 
+    pages.append("""<section class="page epi">
+<div class="lines" style="text-align:left;max-width:none">
+<span class="ln" style="font-size:14pt;font-weight:600;font-style:normal">How this book works</span>
+<span class="ln" style="margin-top:6mm">Nine sections, one for each turn of the day. Every prayer faces its explanation: the prayer page is for the mouth, the guide page for the mind.</span>
+<span class="ln">Take the prayer at the moment it names — before food, at the threshold, when the negativity arrives — and read its guide once, so the words land with their logic.</span>
+<span class="ln">All forty-five prayers are Trika: Kashmir Shaivism's own corpus, from Abhinavagupta and Utpaladeva to Vasugupta, Kṣemarāja, Somananda, and the anonymous masters of the Vijñāna Bhairava and the Dehastha.</span>
+<span class="ln">Nothing here needs belief. The verses were built to be said — at the sink, at the desk, in the queue, in the dark.</span>
+</div>
+<div class="src">Practical Prayers</div></section>""")
+
     toc = ['<section class="page toc"><h2>Contents</h2><ol>']
     for sid, num, title, sub in SECTIONS:
         toc.append(f'<div class="sec">{num} &nbsp; {esc(title)} <span style="opacity:.6">{esc(sub)}</span></div>')
@@ -434,6 +569,14 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 
     pages.append(f"""<section class="page epi"><div class="skt">ॐ शान्तिः शान्तिः शान्तिः</div>
 <div class="en">peace, peace, peace</div>
+<div class="src">Practical Prayers</div></section>""")
+
+    pages.append("""<section class="page epi">
+<div class="lines" style="text-align:left;max-width:none">
+<span class="ln" style="font-size:14pt;font-weight:600;font-style:normal">The day, complete</span>
+<span class="ln" style="margin-top:6mm">From the first light to the last breath, the day is one sequence of recognitions: you wake into his waking, wash a body that is his temple, walk out among his forms, work as his yoke, eat his offering, wait in his pace, meet your negatives as his play, rejoice in his victory, and hand the night back to his sleep.</span>
+<span class="ln">The prayers are small; the day is the practice.</span>
+</div>
 <div class="src">Practical Prayers</div></section>""")
 
     seen, blist = set(), []
