@@ -18,6 +18,7 @@ def _svg(body, size=22, extra=""):
 
 
 def rasa_rosette(n=0, size=26):
+    n = 0 if n > 9 else n  # appendix sections (IX+) get the full rosette
     """Nine-petal rosette (navāvaraṇa grammar: bindu + ring + nine rays).
     Emphasises petal n (1..9) when given; n=0 → all equal."""
     import math

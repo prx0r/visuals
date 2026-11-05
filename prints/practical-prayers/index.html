@@ -15,33 +15,38 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 .cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
 .cover .om{font-family:'Tiro';font-size:60pt;line-height:1;margin-bottom:16mm;}
 .cover h1{font-family:'Cormorant';font-weight:600;font-size:36pt;letter-spacing:.05em;margin:0;text-transform:uppercase;}
-.cover .sub{font-size:15pt;font-style:italic;color:var(--grey);margin-top:4mm;}
+.cover .sub{font-size:16pt;font-style:italic;color:var(--grey);margin-top:4mm;}
 .cover .rule{width:40mm;height:1px;background:var(--ink);margin:10mm auto;}
-.cover .blurb{font-size:11pt;text-transform:uppercase;letter-spacing:.16em;color:var(--grey);}
-.epi{display:flex;flex-direction:column;justify-content:center;text-align:center;}
-.epi .skt{font-family:'Tiro';font-size:16pt;line-height:2;margin-bottom:6mm;}
-.epi .en{font-style:italic;color:var(--grey);font-size:13pt;max-width:100mm;margin:0 auto;}
+.cover .blurb{font-size:11pt;text-transform:uppercase;letter-spacing:.14em;color:var(--grey);}
+.epi{display:flex;flex-direction:column;justify-content:center;}
+.epi.center{align-items:center;text-align:center;}
+.epi .lines{font-size:14pt;line-height:1.7;}
+.epi .src{font-size:9.5pt;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-top:8mm;}
+h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08em;text-transform:uppercase;margin:6mm 0 3mm;color:var(--ink);}
 .epi h2.blk+p,.epi p{font-size:11.5pt;line-height:1.5;margin:0 0 3mm;}
 .epi .sr{display:block;font-size:10pt;color:#76736e;line-height:1.45;margin-top:.8mm;}
-h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08em;text-transform:uppercase;margin:6mm 0 3mm;color:var(--ink);}
-.epi .src{font-size:9.5pt;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-top:8mm;}
+.epi table{border-collapse:collapse;font-size:12pt;width:100%;}
+.epi th{text-align:left;font-size:9.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);border-bottom:1px solid var(--ink);padding:2mm 2mm 2mm 0;font-weight:400;}
+.epi td{padding:1.8mm 2mm 1.8mm 0;border-bottom:1px solid var(--hair);}
+.epi td.s{font-style:italic;color:var(--grey);}
 .toc h2,.sec-div h2,.bib h2{font-family:'Cormorant';font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13pt;color:var(--grey);}
-.toc ol{list-style:none;padding:0;margin:6mm 0 0;column-count:2;column-gap:7mm;}
+.toc ol{list-style:none;padding:0;margin:5mm 0 0;column-count:2;column-gap:7mm;}
 .toc li,.toc .sec{break-inside:avoid;-webkit-column-break-inside:avoid;}
-.toc .sec{margin-top:4mm;font-size:9.5pt;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);line-height:1.2;}
-.toc li{margin:.4mm 0;font-size:11.5pt;line-height:1.3;}
+.toc .sec{margin-top:3.5mm;font-size:9.5pt;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);line-height:1.2;}
+.toc li{margin:.5mm 0;font-size:11pt;line-height:1.35;}
 .toc .n{color:var(--grey);display:inline-block;width:7mm;}
 .sec-div{display:flex;flex-direction:column;justify-content:center;text-align:center;}
 .sec-div .glyph{line-height:0;margin-bottom:5mm;}
 .sec-div .num{font-family:'Cormorant';font-size:11pt;letter-spacing:.3em;color:var(--grey);}
 .sec-div h2{font-size:26pt;letter-spacing:.06em;margin:4mm 0 0;color:var(--ink);text-transform:none;font-weight:600;}
 .sec-div .sub{font-style:italic;color:var(--grey);font-size:13pt;margin-top:3mm;}
-.sec-div .rule{width:30mm;height:1px;background:var(--ink);margin:8mm auto 0;}
+.sec-div .gloss{font-size:10pt;color:var(--grey);margin-top:2.5mm;letter-spacing:.01em;}
+.sec-div .rule{width:30mm;height:1px;background:var(--ink);margin:7mm auto 0;}
+.sec-div .doc{font-size:11pt;line-height:1.5;color:#241f19;max-width:108mm;margin:7mm auto 0;font-style:italic;}
 .src{font-size:9.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);}
-.prayer{display:flex;flex-direction:column;}
-.prayer h3{font-family:'Cormorant';font-weight:600;font-size:17pt;margin:2mm 0 0;text-align:center;}
-.prayer .dev{font-family:'Tiro';text-align:center;white-space:pre-line;margin:8mm 0 0;}
-.prayer .iast{font-style:italic;color:var(--grey);text-align:center;font-size:11pt;line-height:1.5;margin-top:4mm;}
+.prayer h3,.guide h3{font-family:'Cormorant';font-weight:600;font-size:17pt;margin:2mm 0 4mm;text-align:center;}
+.prayer .dev{font-family:'Tiro';text-align:center;white-space:pre-line;margin:6mm 0 0;}
+.prayer .iast{font-style:italic;color:var(--grey);text-align:center;font-size:11pt;line-height:1.5;margin-top:3mm;}
 .prayer .en{margin:8mm 0 0;text-align:center;line-height:1.65;color:#241f19;}
 .prayer .en .ln{display:block;}
 .guide .label{font-size:9pt;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);margin-bottom:3mm;}
@@ -61,26 +66,28 @@ h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08
 <h1>Practical Prayers</h1>
 <div class="sub">Forty prayers for the moments of the day — with Swamiji&#x27;s sangha hymns</div>
 <div class="rule"></div>
-<div class="blurb">waking · bathing · social · work · food · waiting · negative · positive · evening</div>
-</section><section class="page epi"><div class="skt">ब्रह्मार्पणं ब्रह्म हविर् ब्रह्माग्नौ ब्रह्मणा हुतम्</div>
-<div class="en">the offering is brahman, the oblation is brahman, poured by brahman into the fire of brahman</div>
+<div class="blurb">nine moments · four prayers each</div>
+
+</section><section class="page epi center"><div class="lines">ब्रह्मार्पणं ब्रह्म हविर् ब्रह्माग्नौ ब्रह्मणा हुतम्</div>
 <div class="src">Bhagavad Gītā 4.24 — the meal prayer</div></section><section class="page epi">
 <div class="lines" style="text-align:left;max-width:none">
 <span class="ln" style="font-size:14pt;font-weight:600;font-style:normal">Why these prayers</span>
 <span class="ln" style="margin-top:6mm">Swami Lakshmanjoo compiled his Wisdom verses in the summer of 1987 and told his devotees: "These verses are for your daily recitation. Maybe sometime you will experience these stages."</span>
 <span class="ln">Four of the six hymns in his recitation appendix live in these pages — the Krama Stotra, the Anuttarāṣṭikā, the Bhairava Stotra and the Dehastha — alongside the mealtime yajña he taught, the breath-japa of the Vijñāna Bhairava, and the dawn-dusk junction of the Tantrāloka: "the Lord must be worshipped at the point of the meeting of day and night."</span>
-<span class="ln">Ten sections, one for each moment the day turns. Forty prayers, each facing its explanation — when to do it, how, why, and what it does. At the close: the two hymns chanted at his Weekly Sangha, the Aghora Mantra and the Śrī Bahurūpa-Garbha Stotra, with the notes from his own teaching.</span>
+<span class="ln">Nine sections, one for each moment the day turns. Thirty-six prayers, each facing its explanation — when to do it, how, why, and what it does.</span>
 <span class="ln">Nothing here needs belief. The verses were built to be said — at the sink, at the desk, in the queue, in the dark.</span>
 </div>
-<div class="src">Practical Prayers</div></section><section class="page epi">
+<div class="src">Practical Prayers</div></section>
+<section class="page epi">
 <div class="lines" style="text-align:left;max-width:none">
 <span class="ln" style="font-size:14pt;font-weight:600;font-style:normal">Reading a spread</span>
 <span class="ln" style="margin-top:6mm">Each prayer sits beside its explanation. The left page is for the mouth — Devanagari big enough to fill the eye, the sound beneath it, the sense beneath that. The right page is for the mind: what the verse is actually doing, how to perform it, and what it is for.</span>
 <span class="ln">Read the guide once when you meet the prayer. After that, only the prayer page matters — you'll know what lies behind it.</span>
-<span class="ln">Take the one the day hands you: waking, bathing, social, work, food, waiting, negative, sick, positive, evening.</span>
-<span class="ln">Every source is linked from its guide — the translations come from our Kashmir Shaiva corpus, the sangha hymns from the Lakshmanjoo Academy.</span>
+<span class="ln">Take the one the day hands you: waking, bathing, social, work, food, waiting, sick, positive, evening.</span>
+<span class="ln">Every source is linked from its guide — the translations come from our Kashmir Shaiva corpus, verified against its witnesses.</span>
 </div>
-<div class="src">Practical Prayers</div></section><section class="page epi">
+<div class="src">Practical Prayers</div></section>
+<section class="page epi">
 <h2 class="blk">Decoding the verses — the axioms (1 of 2)</h2>
 <p><b>Śiva</b> — consciousness that is <i>self-lit</i>: knowing that needs no second thing in order to be known.
 <span class="sr">Why: any knower requiring another knower regresses forever; the chain of proof must end in
@@ -99,7 +106,8 @@ which is why one mantra can be the entire practice.</span></p>
 <p><b>Anātha</b> — the refuge that asks for no qualifications.
 <span class="sr">Why: a protector requiring worthy applicants is a merchant; "refuge of the refugeless"
 (Bhairavastava 1) removes the condition — grace that cannot be refused.</span></p>
-<div class="src">Practical Prayers · the key</div></section><section class="page epi">
+<div class="src">Practical Prayers · the key</div></section>
+<section class="page epi">
 <h2 class="blk">Decoding the verses — the axioms (2 of 2)</h2>
 <p><b>Anupāya</b> — the no-means.
 <span class="sr">Why: if every method — contemplation, japa, visualization — can be dropped and recognition
@@ -119,7 +127,7 @@ devotion works by alignment, not technique; that is why these guides give feelin
 <p><b>Māyā</b> — the world's making-power, seen from underneath.
 <span class="sr">Why: the texts never deny the world — "the world, both real and unreal" (Mahopadeśaviṃśatikā 11) —
 they deny only the view from below that takes the making for the made.</span></p>
-<div class="src">Practical Prayers · the key</div></section><section class="page toc"><h2>Contents</h2><ol><div class="sec">I &nbsp; Waking / Morning <span style="opacity:.6">on rising</span></div><li><span class="n">·</span>Homage to the World-Formed</li><li><span class="n">·</span>The Body-Temple Offering</li><li><span class="n">·</span>The Three States as His Rays</li><li><span class="n">·</span>The Play of the Dawning</li><div class="sec">II &nbsp; Bathing <span style="opacity:.6">water &amp; body</span></div><li><span class="n">·</span>What Bath for the Stainless?</li><li><span class="n">·</span>This Body for Worship</li><li><span class="n">·</span>Waving-Lights for the Self-Shining</li><li><span class="n">·</span>Pardon for the Unseen</li><div class="sec">III &nbsp; Social <span style="opacity:.6">out among people</span></div><li><span class="n">·</span>The Speech-Goddess</li><li><span class="n">·</span>Every Sound Is Mantra</li><li><span class="n">·</span>Enough of Difference-Talk</li><li><span class="n">·</span>When Your Words Are Not Heard</li><div class="sec">IV &nbsp; At Work <span style="opacity:.6">at the desk</span></div><li><span class="n">·</span>Yoke the Mind</li><li><span class="n">·</span>Achieve God in Activity</li><li><span class="n">·</span>I-Making Flowers</li><li><span class="n">·</span>When Your Form Expands</li><div class="sec">V &nbsp; Food <span style="opacity:.6">before eating</span></div><li><span class="n">·</span>The Meal Offering</li><li><span class="n">·</span>Śiva Bows to Śiva</li><li><span class="n">·</span>The Sense-Goddesses Offer Bhairava</li><li><span class="n">·</span>Devouring Māyā as Food</li><div class="sec">VI &nbsp; Waiting <span style="opacity:.6">in the in-between</span></div><li><span class="n">·</span>I Don&#x27;t Mind</li><li><span class="n">·</span>In Every Action</li><li><span class="n">·</span>Abandon Nothing, Grasp Nothing</li><li><span class="n">·</span>Two Classes of People</li><div class="sec">VII &nbsp; When You Are Negative <span style="opacity:.6">fear · doubt · grief</span></div><li><span class="n">·</span>I Never Fear</li><li><span class="n">·</span>The Cloud Lifts</li><li><span class="n">·</span>The Knife That Cuts the Knot</li><li><span class="n">·</span>Turn Not This Wrathful Gaze</li><div class="sec">VIII &nbsp; When You Are Sick <span style="opacity:.6">illness · pain</span></div><li><span class="n">·</span>No Fear-Talk</li><li><span class="n">·</span>Forgetting, and the Final Plea</li><li><span class="n">·</span>Dance with the Foot-Dust</li><li><span class="n">·</span>Whatever Is Seen Is You</li><div class="sec">IX &nbsp; When You Are Positive <span style="opacity:.6">rejoice · devote</span></div><li><span class="n">·</span>Victory at the Door</li><li><span class="n">·</span>Mad with the Nectar of Devotion</li><li><span class="n">·</span>The Wheel of Powers</li><li><span class="n">·</span>Enjoy Lordhood</li><div class="sec">X &nbsp; Evening / Sleep <span style="opacity:.6">wind down · lights out</span></div><li><span class="n">·</span>From Your Waking, His Waking</li><li><span class="n">·</span>In Sleep, When the Outer Range Perished</li><li><span class="n">·</span>At Your Cool Feet</li><li><span class="n">·</span>Bliss Is the Forgotten Treasure</li><div class="sec">A &nbsp; Chanted at the Sangha <span style="opacity:.6">Swamiji&#x27;s hymns of protection</span></div><li><span class="n">·</span>The Aghora Mantra</li><li><span class="n">·</span>The Secret Remedy</li><li><span class="n">·</span>No Mantra Greater</li></ol></section><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 66 A32 32 0 0 1 82 66"/><line x1="10" y1="76" x2="90" y2="76"/><circle cx="50" cy="52" r="4" fill="#17140f" stroke="none"/></g></svg></div><div class="num">I</div>
+<div class="src">Practical Prayers · the key</div></section><section class="page toc"><h2>Contents</h2><ol><div class="sec">I &nbsp; Waking / Morning <span style="opacity:.6">on rising</span></div><li><span class="n">·</span>Homage to the World-Formed</li><li><span class="n">·</span>The Body-Temple Offering</li><li><span class="n">·</span>The Three States as His Rays</li><li><span class="n">·</span>The Play of the Dawning</li><div class="sec">II &nbsp; Bathing <span style="opacity:.6">water &amp; body</span></div><li><span class="n">·</span>What Bath for the Stainless?</li><li><span class="n">·</span>This Body for Worship</li><li><span class="n">·</span>Waving-Lights for the Self-Shining</li><li><span class="n">·</span>Pardon for the Unseen</li><div class="sec">III &nbsp; Social <span style="opacity:.6">out among people</span></div><li><span class="n">·</span>The Speech-Goddess</li><li><span class="n">·</span>Every Sound Is Mantra</li><li><span class="n">·</span>Enough of Difference-Talk</li><li><span class="n">·</span>When Your Words Are Not Heard</li><div class="sec">IV &nbsp; At Work <span style="opacity:.6">at the desk</span></div><li><span class="n">·</span>Yoke the Mind</li><li><span class="n">·</span>Achieve God in Activity</li><li><span class="n">·</span>I-Making Flowers</li><li><span class="n">·</span>When Your Form Expands</li><div class="sec">V &nbsp; Food <span style="opacity:.6">before eating</span></div><li><span class="n">·</span>The Meal Offering</li><li><span class="n">·</span>Śiva Bows to Śiva</li><li><span class="n">·</span>The Sense-Goddesses Offer Bhairava</li><li><span class="n">·</span>Devouring Māyā as Food</li><div class="sec">VI &nbsp; Waiting <span style="opacity:.6">in the in-between</span></div><li><span class="n">·</span>I Don&#x27;t Mind</li><li><span class="n">·</span>In Every Action</li><li><span class="n">·</span>Abandon Nothing, Grasp Nothing</li><li><span class="n">·</span>Two Classes of People</li><div class="sec">VII &nbsp; When You Are Sick <span style="opacity:.6">illness · pain</span></div><li><span class="n">·</span>No Fear-Talk</li><li><span class="n">·</span>Forgetting, and the Final Plea</li><li><span class="n">·</span>Dance with the Foot-Dust</li><li><span class="n">·</span>Whatever Is Seen Is You</li><div class="sec">VIII &nbsp; When You Are Positive <span style="opacity:.6">rejoice · devote</span></div><li><span class="n">·</span>Victory at the Door</li><li><span class="n">·</span>Mad with the Nectar of Devotion</li><li><span class="n">·</span>The Wheel of Powers</li><li><span class="n">·</span>Enjoy Lordhood</li><div class="sec">IX &nbsp; Evening / Sleep <span style="opacity:.6">wind down · lights out</span></div><li><span class="n">·</span>From Your Waking, His Waking</li><li><span class="n">·</span>In Sleep, When the Outer Range Perished</li><li><span class="n">·</span>At Your Cool Feet</li><li><span class="n">·</span>Bliss Is the Forgotten Treasure</li></ol></section><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 66 A32 32 0 0 1 82 66"/><line x1="10" y1="76" x2="90" y2="76"/><circle cx="50" cy="52" r="4" fill="#17140f" stroke="none"/></g></svg></div><div class="num">I</div>
 <h2>Waking / Morning</h2><div class="sub">on rising</div><div class="rule"></div></section><div class="spread">
 <section class="page prayer">
 <div class="src">Mahopadeśaviṃśatikā v.1</div>
@@ -581,84 +589,7 @@ they deny only the view from below that takes the making for the made.</span></p
 </div>
 <div class="foot">Source: <a href="sources/sivastotravali_corpus.json">sivastotravali_corpus.json · 16.1</a></div>
 <div class="pnum">24 · guide</div></section>
-</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 30 L78 30 L50 80 Z"/></g></svg></div><div class="num">VII</div>
-<h2>When You Are Negative</h2><div class="sub">fear · doubt · grief</div><div class="rule"></div></section><div class="spread">
-<section class="page prayer">
-<div class="src">Abhinavagupta, Bhairavastava 5</div>
-<h3>I Never Fear</h3>
-<div class="dev" style="font-size:32pt;line-height:1.9">इत्थम् उपोढभवन्मयसंविद्दीधितिदारितभूरितमिस्रः । मृत्युयमान्तककर्मपिशाचैर् नाथ नमोऽस्तु न जातु बिभेमि</div>
-<div class="iast">ittham upoḍhabhavanmayasaṃviddīdhitidāritabhūritamisraḥ | mṛtyuyamāntakakarmapiśācair nātha namo&#x27;stu na jātu bibhemi</div>
-<div class="en" style="font-size:13.5pt"><span class="ln">thus, with the great darkness torn open by the rays of the consciousness become you — lord, namas; i never fear, not from death, from yama, from the ender, from the ghosts of karma.</span></div>
-<div class="pnum">25</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>I Never Fear</h3>
-<div class="src">Abhinavagupta, Bhairavastava 5 · bh-p05</div>
-<div class="brief">Fearlessness as salutation, not as courage.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>Awareness has already torn the darkness; what remains is not courage but salutation. The devotee still names death&#x27;s ministers — Mṛtyu, Yama, the ender, the karma-ghosts — and bows to them, because they too are Śiva&#x27;s play. &#x27;I never fear&#x27; is the natural temperature of recognition.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>Recite when fear arrives — not to banish it but to salute it. The fear is named, bowed to, and left standing. Feeling-tip: the chest opens rather than tightens; the bow is physical as well as verbal. Do it at night, or in the moment before the difficult thing.</p></div>
-</div>
-<div class="foot">Source: <a href="sources/bhairavastava.md">bhairavastava.md · bh-p05</a></div>
-<div class="pnum">25 · guide</div></section>
-</div><div class="spread">
-<section class="page prayer">
-<div class="src">Abhinavagupta, Pañcaślokī 4</div>
-<h3>The Cloud Lifts</h3>
-<div class="dev" style="font-size:25pt;line-height:1.8">गुरोर्वाक्याद्युक्ति-प्रचय-रचन-उन्मार्जन-वशात्समाश्वासाच्छास्त्रं प्रति समुचितादपि कथितम् । विलीने शङ्काभ्रे हृदयगगनोद्भासिमहसः प्रभोः सूर्यस्येव स्पृशतु चरणान् ध्वान्तजयिनः</div>
-<div class="iast">gurorvākyādyukti-pracaya-racana-unmārjana-vaśātsamāśvāsācchāstraṃ prati samucitādapi kathitam | vilīne śaṅkābhre hṛdayagaganodbhāsimahasaḥ prabhoḥ sūryasyeva spṛśatu caraṇān dhvāntajayinaḥ</div>
-<div class="en" style="font-size:12.5pt"><span class="ln">from the guru&#x27;s word — by the force that wipes away the fabric of heaped-up reasonings — and from the assurance told, fittingly, out of regard for scripture: when the cloud of doubt has dissolved, let me touch the feet of the lord, whose splendor shines in the sky of the heart — like the sun, the conqueror of darkness.</span></div>
-<div class="pnum">26</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>The Cloud Lifts</h3>
-<div class="src">Abhinavagupta, Pañcaślokī 4 · pan-p04</div>
-<div class="brief">For doubt: the cloud dissolves, the sun is already there.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>The verse traces doubt to &#x27;heaped-up reasonings&#x27; (pracaya-racana) that the guru&#x27;s word wipes away, and promises that when the cloud of doubt (śaṅkābhra) dissolves, the feet of the sun-like Lord — shining in the heart-sky — become touchable. Doubt is weather, not the sky.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>When doubt is heavy, say it and picture the cloud as literal weather over the heart. The sun is not summoned; it is uncovered. Feeling-tip: the image of touching the feet — a small act of trust — is the whole practice. Repeat the last line as a refrain.</p></div>
-</div>
-<div class="foot">Source: <a href="sources/pancashloki.md">pancashloki.md · pan-p04</a></div>
-<div class="pnum">26 · guide</div></section>
-</div><div class="spread">
-<section class="page prayer">
-<div class="src">Svabodhasiddhi v.6</div>
-<h3>The Knife That Cuts the Knot</h3>
-<div class="dev" style="font-size:40pt;line-height:2.0">ममाहम् इति हृद्ग्रन्थिच्छेदनैककृपाणिकाम् । स्पन्दास्पन्दकृतग्रासां नौम्य् अहं शुद्धसंविदम्</div>
-<div class="iast">mamāham iti hṛdgranthicchedanaikakṛpāṇikām | spandāspandakṛtagrāsāṃ naumy ahaṃ śuddhasaṃvidam</div>
-<div class="en" style="font-size:13.5pt"><span class="ln">i bow — i — to pure awareness: the knife that alone cuts the heart&#x27;s knot of &#x27;mine&#x27; and &#x27;i&#x27;, the one that has swallowed both the throb and its stillness.</span></div>
-<div class="pnum">27</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>The Knife That Cuts the Knot</h3>
-<div class="src">Svabodhasiddhi v.6 · v.6</div>
-<div class="brief">For guilt and possessiveness: one cut, and the knot is gone.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>The knot (granthi) is mamāham — &#x27;mine&#x27; and &#x27;I&#x27;, two threads. The instrument is a kṛpāṇa, a knife, and only one does it: pure awareness. And the knower&#x27;s own domain — throb and stillness — has already been swallowed by that knife. &#x27;I bow — I&#x27; stages the surrender: the pronoun survives long enough to bow, then is cut too.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>Recite with a hand flat over the sternum. Weight the first aham: feel where your &#x27;I&#x27; sits in the body, and on &#x27;naumy ahaṃ&#x27; press gently and let that place soften. The image is a blade, but the feeling is a release of grip, not a strike — knots untie. Fastest on small knots (a slighted email), slower on old ones.</p></div>
-</div>
-<div class="foot">Source: <a href="sources/L2-svab-p01.md">L2-svab-p01.md · v.6</a></div>
-<div class="pnum">27 · guide</div></section>
-</div><div class="spread">
-<section class="page prayer">
-<div class="src">Abhinavagupta, Bhairavastava 4</div>
-<h3>Turn Not This Wrathful Gaze</h3>
-<div class="dev" style="font-size:32pt;line-height:1.9">अन्तक मां प्रति मा दृशम् एनां क्रोधकरालतां विनिधेहि । शङ्करसेवनचिन्तनधीरो भीषणभैरवशक्तिमयो ऽस्मि</div>
-<div class="iast">antaka māṃ prati mā dṛśam enāṃ krodhakarālatāṃ vinidhehi | śaṅkarasevanacintanadhīro bhīṣaṇabhairavaśaktimayo &#x27;smi</div>
-<div class="en" style="font-size:15pt"><span class="ln">o ender, turn not toward me this most wrathful-terrible gaze. by śaṅkara-service, contemplation-firm, i am terrifying-bhairava-power-filled.</span></div>
-<div class="pnum">28</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>Turn Not This Wrathful Gaze</h3>
-<div class="src">Abhinavagupta, Bhairavastava 4 · bh-p04</div>
-<div class="brief">Facing wrath — his or theirs — without flinching.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>The devotee does not ask the wrath away; he asks that it not be aimed at him, and answers with his own composition: service and firm contemplation have made him bhīṣaṇa-bhairava-śakti-maya, filled with the terrifying power itself. You cannot be burned by the fire you are made of. The gaze turns aside because there is no separate target left.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>When facing anger — a boss, a partner, your own — say it with the hand on the sternum. Don&#x27;t argue with the wrath; declare your composition. Feeling-tip: you become too made-of-it to be its victim; the gaze slides off because the target dissolved.</p></div>
-</div>
-<div class="foot">Source: <a href="sources/bhairavastava.md">bhairavastava.md · bh-p04</a></div>
-<div class="pnum">28 · guide</div></section>
-</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="26" y="26" width="48" height="48"/><circle cx="50" cy="50" r="6" fill="#17140f" stroke="none"/></g></svg></div><div class="num">VIII</div>
+</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="26" y="26" width="48" height="48"/><circle cx="50" cy="50" r="6" fill="#17140f" stroke="none"/></g></svg></div><div class="num">VII</div>
 <h2>When You Are Sick</h2><div class="sub">illness · pain</div><div class="rule"></div></section><div class="spread">
 <section class="page prayer">
 <div class="src">Abhinavagupta, Bhairavastava 3</div>
@@ -666,7 +597,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:32pt;line-height:1.9">स्वात्मनि विश्वगये त्वयि नाथे तेन न संसृतिभीतिकथास्ति । सत्स्व् अपि दुर्धरदुःखविमोहत्रासविधायिषु कर्मगणेषु</div>
 <div class="iast">svātmani viśvagaye tvayi nāthe tena na saṃsṛtibhītikathāsti | satsv api durdharaduḥkhavimohatrāsavidhāyiṣu karmagaṇeṣu</div>
 <div class="en" style="font-size:13.5pt"><span class="ln">with you as lord, all-pervading in own self — therefore no talk of transmigration-fear. even though hard-to-bear suffering, delusion, terror-causing karma-hosts are present.</span></div>
-<div class="pnum">29</div></section>
+<div class="pnum">25</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>No Fear-Talk</h3>
@@ -677,7 +608,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>When negative, say it and let the concession stand: yes, this is hard; and the fear of it is separate from the pain itself. The verse splits them. Feeling-tip: the pain stays, the story about the pain thins. That thinning is the verse working.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/bhairavastava.md">bhairavastava.md · bh-p03</a></div>
-<div class="pnum">29 · guide</div></section>
+<div class="pnum">25 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Abhinavagupta, Pañcaślokī 5</div>
@@ -685,7 +616,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:25pt;line-height:1.8">यातस्त्वत्सहवासतो बहुतरः कालो वतास्मिन् क्षणे किं किं वा न कृतं त्वया वरगुरूपासानिमित्तेन मे । वारं वारमहं पुनर्निरुपमां दिव्यं भुवं प्रासुवत्कायस्त्वां किल विस्मरामि यदतः स्थेयं न भूयस्त्वया</div>
 <div class="iast">yātastvatsahavāsato bahutaraḥ kālo vatāsmin kṣaṇe kiṃ kiṃ vā na kṛtaṃ tvayā varagurūpāsānimittena me | vāraṃ vāramahaṃ punarnirupamāṃ divyaṃ bhuvaṃ prāsuvatkāyastvāṃ kila vismarāmi yadataḥ stheyaṃ na bhūyastvayā</div>
 <div class="en" style="font-size:12.5pt"><span class="ln">much time dwelling with you has passed — alas, in this very moment! what, what has not been done by you for me, for the sake of serving the excellent guru! again and again i, whose body has attained the incomparable divine plane — yet indeed i forget you. therefore, by you let there be no further staying-away!</span></div>
-<div class="pnum">30</div></section>
+<div class="pnum">26</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Forgetting, and the Final Plea</h3>
@@ -696,7 +627,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>When ill and feeling forgotten: say the whole verse as the complaint it is — &#x27;what has not been done by you for me?&#x27; — and let the last line be the request. Feeling-tip: the forgetting is admitted first (you forgot him); the plea is fair because of that. One round, then rest.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/pancashloki.md">pancashloki.md · pan-p05</a></div>
-<div class="pnum">30 · guide</div></section>
+<div class="pnum">26 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Utpaladeva, Śivastotrāvalī 5.2</div>
@@ -704,7 +635,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:40pt;line-height:2.0">भवत्पादाम्बुजरजोराजिरञ्जितमूर्धजः / अपाररभसारब्धनर्तनः स्याम् अहं कदा</div>
 <div class="iast">bhavatpādāmbujarajorājirañjitamūrdhajaḥ / apārarabhasārabdhanartanaḥ syām ahaṃ kadā</div>
 <div class="en" style="font-size:13.5pt"><span class="ln">when will that glorious day come to me, my lord — your lotus-foot dust anointing my hair — that i may dance the dance begun from the endless?</span></div>
-<div class="pnum">31</div></section>
+<div class="pnum">27</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Dance with the Foot-Dust</h3>
@@ -715,7 +646,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>From the sickbed, say it as a question — kadā, when — without demanding the answer today. Picture only the dust on the hair; the dance can wait. Feeling-tip: longing itself becomes the posture; the verse sanctifies not-yet.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/sivastotravali_corpus.json">sivastotravali_corpus.json · 5.2</a></div>
-<div class="pnum">31 · guide</div></section>
+<div class="pnum">27 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Mahopadeśaviṃśatikā v.3</div>
@@ -723,7 +654,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:40pt;line-height:2.0">अन्तर्देहे मया नित्यं त्वमात्मा च गवेषितः । न दृष्टस्त्वं नचैवात्मा यच्च दृष्टं त्वमेव तत्</div>
 <div class="iast">antardehe mayā nityaṃ tvamātmā ca gaveṣitaḥ | na dṛṣṭastvaṃ nacaivātmā yacca dṛṣṭaṃ tvameva tat</div>
 <div class="en" style="font-size:15pt"><span class="ln">inside the body, sought by me always — you as self, and the self is never seen. whatever is seen is you alone, that.</span></div>
-<div class="pnum">32</div></section>
+<div class="pnum">28</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Whatever Is Seen Is You</h3>
@@ -734,8 +665,8 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>When pain or weakness is present: look at it once — the ache as an object — and name it &#x27;seen: you.&#x27; Not as denial of pain but as address change. Feeling-tip: the pain stays but loses its claim to be yours; it&#x27;s his visible side, and visibility is already grace.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/L2-mpa-p01.md">L2-mpa-p01.md · v.3</a></div>
-<div class="pnum">32 · guide</div></section>
-</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="14"/><path d="M50 10 Q60 30 50 36 Q40 30 50 10 M90 50 Q70 60 64 50 Q70 40 90 50 M50 90 Q40 70 50 64 Q60 70 50 90 M10 50 Q30 40 36 50 Q30 60 10 50"/></g></svg></div><div class="num">IX</div>
+<div class="pnum">28 · guide</div></section>
+</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="14"/><path d="M50 10 Q60 30 50 36 Q40 30 50 10 M90 50 Q70 60 64 50 Q70 40 90 50 M50 90 Q40 70 50 64 Q60 70 50 90 M10 50 Q30 40 36 50 Q30 60 10 50"/></g></svg></div><div class="num">VIII</div>
 <h2>When You Are Positive</h2><div class="sub">rejoice · devote</div><div class="rule"></div></section><div class="spread">
 <section class="page prayer">
 <div class="src">Abhinavagupta, Pañcaślokī 2</div>
@@ -743,7 +674,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:25pt;line-height:1.8">महेश त्वद्द्वारि स्फुरतु रुचिरा वाग् अतितरां मम एषा निर्दोषं जय जय महेशेति सततम् । शिवा सैषा वाणी भवतु शिवदा मह्यम् अनिशं महेशनाथं मां शरणद सनाथं कुरु विभो</div>
 <div class="iast">maheśa tvaddvāri sphuratu rucirā vāg atitarāṃ mama eṣā nirdoṣaṃ jaya jaya maheśeti satatam | śivā saiṣā vāṇī bhavatu śivadā mahyam aniśaṃ maheśanāthaṃ māṃ śaraṇada sanāthaṃ kuru vibho</div>
 <div class="en" style="font-size:12.5pt"><span class="ln">o maheśa, may this lovely speech of mine flash forth at your door, faultlessly, again and again: victory, victory to maheśa! may this auspicious speech be giver of bliss to me, unceasingly. o lord, o giver of refuge, make me — whose protector is maheśanātha — to have a protector.</span></div>
-<div class="pnum">33</div></section>
+<div class="pnum">29</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Victory at the Door</h3>
@@ -754,7 +685,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>When something good has happened — or when you want to rejoice anyway — say it aloud if possible. The repetition of &#x27;jaya jaya maheśa&#x27; is the celebration. Feeling-tip: the smile arrives before the words; let it. The verse is permission to be happy in his name.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/pancashloki.md">pancashloki.md · pan-p02</a></div>
-<div class="pnum">33 · guide</div></section>
+<div class="pnum">29 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Utpaladeva, Śivastotrāvalī 1.5</div>
@@ -762,7 +693,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:40pt;line-height:2.0">जयन्ति भक्तिपीयूषरसासववरोन्मदाः / अद्वितीया अपि सदा त्वद्द्वितीया अपि प्रभो</div>
 <div class="iast">jayanti bhaktipīyūṣarasāsavavaronmadāḥ / advitīyā api sadā tvaddvitīyā api prabho</div>
 <div class="en" style="font-size:13.5pt"><span class="ln">victory to those who have become mad by taking the nectarized liquor of thy devotion — those who, though alone, are always with thee, though without a second.</span></div>
-<div class="pnum">34</div></section>
+<div class="pnum">30</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Mad with the Nectar of Devotion</h3>
@@ -773,7 +704,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>When the joy is already there, say it and name it: this is the nectar. Don&#x27;t analyse the joy; toast it. Feeling-tip: the slight giddiness the verse describes is the actual state — lean into it, don&#x27;t explain it to anyone.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/sivastotravali_corpus.json">sivastotravali_corpus.json · 1.5</a></div>
-<div class="pnum">34 · guide</div></section>
+<div class="pnum">30 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Vasugupta, Spandakārikā 1.1</div>
@@ -781,7 +712,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:40pt;line-height:2.0">यस्योन्मेषनिमेषाभ्यां जगतः प्रलयोदयौ । तं शक्तिचक्रविभवप्रभवं शङ्करं स्तुमः</div>
 <div class="iast">yasyonmeṣanimeṣābhyāṃ jagataḥ pralayodayau | taṃ śakticakravibhavaprabhavaṃ śaṅkaraṃ stumaḥ</div>
 <div class="en" style="font-size:15pt"><span class="ln">to him by whose opening and closing the world dissolves and arises — to śaṅkara, source of the glory of the wheel of powers, we sing.</span></div>
-<div class="pnum">35</div></section>
+<div class="pnum">31</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>The Wheel of Powers</h3>
@@ -792,7 +723,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>Recite when the world feels vivid — when colours are sharp, when music lands, when the pulse is obvious. It&#x27;s a song of participation. Feeling-tip: blink with the verse; the world dissolving and arising on each blink is literal enough.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/spanda.md">spanda.md · Spandakārikā 1.1</a></div>
-<div class="pnum">35 · guide</div></section>
+<div class="pnum">31 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Abhinavagupta, Anuttarāṣṭikā v.8</div>
@@ -800,7 +731,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:25pt;line-height:1.8">यत् सत्यं यद् असत्यम् अल्पबहुलं नित्यं न नित्यं च यत् यन् मायामलिनं यद् आत्मविमलं चिद्दर्पणे राजते । तत् सर्वं स्वविमर्शसंविदुदयाद् रूपप्रकाशात्मकं ज्ञात्वा स्वानुभवाधिरूढमहिमा विश्वेश्वरत्वं भज</div>
 <div class="iast">yat satyaṁ yad asatyam alpabahulaṁ nityaṁ na nityaṁ ca yat yan māyāmalinaṁ yad ātmavimalaṁ ciddarpaṇe rājate | tat sarvaṁ svavimarśasaṁvidudayād rūpaprakāśātmakaṁ jñātvā svānubhavādhirūḍhamahimā viśveśvaratvaṁ bhaja</div>
 <div class="en" style="font-size:12.5pt"><span class="ln">whatever is real and whatever is unreal, little or much, eternal or not; whatever shines stained by māyā or pure as the self in the mirror of consciousness — know it all to be the light of form arising from one&#x27;s own self-awareness; then, with a glory mounted on your own experience, enjoy the lordhood of the universe.</span></div>
-<div class="pnum">36</div></section>
+<div class="pnum">32</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Enjoy Lordhood</h3>
@@ -811,8 +742,8 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>When things are going well — or when you want to rejoice anyway: say the last clause aloud. Lordhood is a tasting, not a trophy. Feeling-tip: the chest opens, the world turns slightly luminous; that luminance is svānubhavādhirūḍha, mounted on your own experience. Don&#x27;t explain it to anyone.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/anuttarastika.md">anuttarastika.md · anu-p08 v.8</a></div>
-<div class="pnum">36 · guide</div></section>
-</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M64 22 A34 34 0 1 0 64 78 A26 26 0 1 1 64 22 Z"/></g></svg></div><div class="num">X</div>
+<div class="pnum">32 · guide</div></section>
+</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M64 22 A34 34 0 1 0 64 78 A26 26 0 1 1 64 22 Z"/></g></svg></div><div class="num">IX</div>
 <h2>Evening / Sleep</h2><div class="sub">wind down · lights out</div><div class="rule"></div></section><div class="spread">
 <section class="page prayer">
 <div class="src">Mahopadeśaviṃśatikā v.11</div>
@@ -820,7 +751,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:32pt;line-height:1.9">त्वत्प्रबोधात् प्रबोधोऽस्य त्वन्निद्रातो लयोऽस्य यत् । अतस्त्वदात्मकं सर्वं विश्व सदसदात्मकम्</div>
 <div class="iast">tvatprabodhāt prabodho&#x27;sya tvannidrāto layo&#x27;sya yat | atastvadātmakaṃ sarvaṃ viśva sadasadātmakam</div>
 <div class="en" style="font-size:15pt"><span class="ln">from your waking comes his waking; from your sleep comes his merging. hence all is of your nature — the world, both real and unreal.</span></div>
-<div class="pnum">37</div></section>
+<div class="pnum">33</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>From Your Waking, His Waking</h3>
@@ -831,7 +762,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>Last line of the day. Lie down and take one awake minute: you are about to do what he does at night. Don&#x27;t stay awake doing this — fall asleep inside the thought. Feeling-tip: as the eyes close, feel the day&#x27;s edges get soft, &#x27;unreal&#x27; — that softening is sadasadātmakam. If anxious at night, this dissolves the day rather than reviewing it.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/L2-mpa-p02.md">L2-mpa-p02.md · v.11</a></div>
-<div class="pnum">37 · guide</div></section>
+<div class="pnum">33 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Vijñāna Bhairava v.75</div>
@@ -839,7 +770,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:40pt;line-height:2.0">अनागतायां निद्रायाम् प्रणष्टे बाह्यगोचरे । सावस्था मनसा गम्या परा देवी प्रकाशते</div>
 <div class="iast">anāgatāyāṃ nidrāyām praṇaṣṭe bāhyagocare | sāvasthā manasā gamyā parā devī prakāśate</div>
 <div class="en" style="font-size:15pt"><span class="ln">in the not-yet-come sleep, when the outer range has perished — that state, to be gone to by mind, the supreme goddess shines forth.</span></div>
-<div class="pnum">38</div></section>
+<div class="pnum">34</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>In Sleep, When the Outer Range Perished</h3>
@@ -850,7 +781,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>At lights-out, on your back, one hand on the belly. Wait for the outer field to fade — sounds go dull, images slow. Then instead of following sleep passively, send the mind as an arrow to the heart-centre, once. Then release. The Goddess-feel is a hum or warmth behind the chest; if images swarm you have grasped — release and let the hum carry. Single-shot: no repetitions.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/vbt-p08.md">vbt-p08.md · v.75</a></div>
-<div class="pnum">38 · guide</div></section>
+<div class="pnum">34 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Utpaladeva, Śivastotrāvalī 9.14</div>
@@ -858,7 +789,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:40pt;line-height:2.0">अशेषविषयाशून्यश्रीसमाश्लेषसुस्थितः / शयीयम् इव शीताङ्घ्रिकुशेशययुगे कदा</div>
 <div class="iast">aśeṣaviṣayāśūnyaśrīsamāśleṣasusthitaḥ / śayīyam iva śītāṅghrikuśeśayayuge kadā</div>
 <div class="en" style="font-size:15pt"><span class="ln">when will i lie down — free of every object, settled in the embrace of undiminished glory — at your two cool lotus feet?</span></div>
-<div class="pnum">39</div></section>
+<div class="pnum">35</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>At Your Cool Feet</h3>
@@ -869,7 +800,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>In bed. Say it once, then let the image of the two cool feet form under the mind&#x27;s eye — no details needed, just the coolness. The feeling to find: the fever of the day dropping. If the mind races, return to the coolness, not the words.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/sivastotravali_corpus.json">sivastotravali_corpus.json · 9.14</a></div>
-<div class="pnum">39 · guide</div></section>
+<div class="pnum">35 · guide</div></section>
 </div><div class="spread">
 <section class="page prayer">
 <div class="src">Abhinavagupta, Anuttarāṣṭikā v.4</div>
@@ -877,7 +808,7 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="dev" style="font-size:25pt;line-height:1.8">आनन्दो ऽत्र न वित्तमध्यमदवन् नैवाङ्गनासङ्गवत् दीपार्केन्दुकृतप्रभाप्रकरवन् नैव प्रकाशोदयः । हर्षः संभृतभेदमुक्तिसुखभूर् भारावतारोपमः सर्वाद्वैतपदस्य विस्मृतनिधेः प्राप्तिः प्रकाशोदयः</div>
 <div class="iast">ānando &#x27;tra na vittamadhyamadavan naivāṅganāsaṅgavat dīpārkendukṛtaprabhāprakaravan naiva prakāśodayaḥ | harṣaḥ saṃbhṛtabhedamuktisukhabhūr bhārāvatāropamaḥ sarvādvaitapadasya vismṛtanidheḥ prāptiḥ prakāśodayaḥ</div>
 <div class="en" style="font-size:12.5pt"><span class="ln">bliss here is not wealth-middle-intoxication, nor like enjoying women, nor lamp-sun-moon-made splendour-multitude — and not the light-rise either. joy with gathered-difference-liberation-bliss-ground, like burden-lowering, is the attainment of the forgotten treasure of the all-nonduality state — the light-rise.</span></div>
-<div class="pnum">40</div></section>
+<div class="pnum">36</div></section>
 <section class="page guide">
 <div class="label">The Guide</div>
 <h3>Bliss Is the Forgotten Treasure</h3>
@@ -888,71 +819,12 @@ they deny only the view from below that takes the making for the made.</span></p
 <div class="blk"><span class="bl">How to use it</span><p>In bed, say it and feel the day&#x27;s weight as the literal bhāra being lowered. Bliss here is not an event but an unloading. Feeling-tip: the shoulders drop a centimetre deeper each line; by the last line the bed has the treasure under it.</p></div>
 </div>
 <div class="foot">Source: <a href="sources/anuttarastika.md">anuttarastika.md · anu-p04 v.4</a></div>
-<div class="pnum">40 · guide</div></section>
-</div><section class="page sec-div"><div class="glyph"><svg viewBox="0 0 100 100" width="18mm" height="18mm" xmlns="http://www.w3.org/2000/svg" ><g fill="none" stroke="#17140f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="86" x2="50" y2="34"/><path d="M30 42 L30 16 L50 34 L70 16 L70 42"/><circle cx="50" cy="86" r="0"/></g></svg></div><div class="num">A</div>
-<h2>Chanted at the Sangha</h2><div class="sub">Swamiji&#x27;s hymns of protection</div><div class="rule"></div></section><div class="spread">
-<section class="page prayer">
-<div class="src">Yajurveda · chanted by Swami Lakshmanjoo at every Weekly Sangha</div>
-<h3>The Aghora Mantra</h3>
-<div class="dev" style="font-size:40pt;line-height:2.0">अघोरेभ्यो ऽथ घोरेभ्यो घोरघोरतरीभ्यश्च । सर्वतः शर्व सर्वेभ्यो नमस्ते रुद्ररूपेभ्यः ॥</div>
-<div class="iast">aghorebhyo &#x27;tha ghorebhyo ghoraghoratarībhyaśca | sarvataḥ śarva sarvebhyo namaste rudrarūpebhyaḥ ||</div>
-<div class="en" style="font-size:15pt"><span class="ln">salutations to aghora, to ghora, to ghoraghora-tarī — to sarva in all directions, to all the rudra-forms: namas.</span></div>
-<div class="pnum">41</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>The Aghora Mantra</h3>
-<div class="src">Yajurveda · chanted by Swami Lakshmanjoo at every Weekly Sangha · Secret Supreme ch.13 · letter 1989</div>
-<div class="brief">The Sangha&#x27;s opening chant. Swamiji&#x27;s directive after his 1989 vision: spread this message all over the world.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>The verse salutes the three energies of Rudra as his forms. Per Swamiji&#x27;s Tantrāloka 3.257-259 teaching: Aghorā carries you to God-consciousness at once, even without your wish (cit-śakti); Ghorā makes the desirer wait — &#x27;don&#x27;t hurry, just we will see the time&#x27; (icchā-śakti); Ghoratarī carries the careless downward (jñāna-śakti). The protection invoked is real but conditional: Svacchandanātha&#x27;s eighteen arms are the eighteen tattvas, outgrowths of the five śaktis, made for the protection of the individual — but protection requires the yamas and niyamas, the supreme of which is īśvara-praṇidhāna: if you love Lord Śiva and are devoted to Him, it is not possible for Him to neglect you.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>Chant it where Swamiji put it: at the opening of any practice — this is the beginning of the Weekly Sangha. Three to nine rounds, aloud. When to: first thing in the morning, or at any moment of fear — you are addressing the three energies directly. Effect, per the tradition he taught: protection through the eighteen arms and purification of the three channels, body, speech and mind. His own instruction for its spread: &#x27;You should spread this message all over the world.&#x27;</p></div>
-</div>
-<div class="foot">Source: <a href="sources/efficacy-aghora.pdf">efficacy-aghora.pdf · Secret Supreme ch.13 · letter 1989</a></div>
-<div class="pnum">41 · guide</div></section>
-</div><div class="spread">
-<section class="page prayer">
-<div class="src">Śrī Bahurūpa-Garbha Stotra, Bhairava&#x27;s answer (vv.5-7)</div>
-<h3>The Secret Remedy</h3>
-<div class="dev" style="font-size:20pt;line-height:1.75">शृणु देवी! परं गुह्यं रहस्यं परमाद्भुतम् । सर्व-पाप-प्रशमनं सर्व-दुःख-निवारणम् ॥ प्रायश्चित्तेषु सर्वेषु तीव्रेष्व् अपि विमोचनम् । सर्व-च्छिद्राप-हरणं सर्वार्ति-विनिवारकम् ॥ समयोलङ्घने घोरे जपादेव विमोचनम् । भोग-मोक्ष्ह-प्रदं देवी! सर्व-सिद्धि-फलप्रदम् ॥</div>
-<div class="iast">śṛṇu devī! paraṁ guhyaṁ rahasyaṁ paramādbhutam | sarva-pāpa-praśamanaṁ sarva-duḥkha-nivāraṇam || prāyaścitteṣu sarveṣu tīvreṣv api vimocanam | sarva-cchidrāpa-haraṇaṁ sarvārti-vinivārakam || samayolaṅghane ghore japādeva vimocanam | bhoga-mokṣha-pradaṁ devī! sarva-siddhi-phalapradam ||</div>
-<div class="en" style="font-size:12.5pt"><span class="ln">listen, goddess: the supreme secret, most wonderful — it pacifies all sins, removes all sorrows; releases even from intense atonement, removes every gap, uproots all affliction; in the breaking of the vows the remedy is the recitation alone — it grants enjoyment and liberation, goddess, the fruits of all accomplishments.</span></div>
-<div class="pnum">42</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>The Secret Remedy</h3>
-<div class="src">Śrī Bahurūpa-Garbha Stotra, Bhairava&#x27;s answer (vv.5-7) · vv.5-7 · Academy recitation PDF</div>
-<div class="brief">The Devī asks for the easy remedy; Bhairava answers: the recitation itself.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>The hymn&#x27;s frame: Bhairavī approaches Svacchanda Bhairava on Kailāśa and asks for the upāya for those who have broken the rules, however sincerely they try to atone. Bhairava&#x27;s answer is not a ritual but a text — japādeva vimocanam, liberation by the recitation itself. It purifies the three channels, closes the chidras (the flaws and gaps in conduct and rite), and grants both bhoga and mokṣa. The logic of a remedy-hymn: the mantra is the medicine, and the disease is as much guilt as transgression.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>Recite it at the beginning and end of any ritual — the hymn&#x27;s own instruction (yāgārambhe ca yāgānte). Also daily (nitya), on occasion (naimitika), when you want something (kāmya), for yourself or for someone else. Counting effects per the hymn: one hundred recitations purify even great sinners; fifty, inadvertent sins; twenty-five, minor sins — and a single recitation (of this hymn or of the Aghora japa) removes wrongs done by body, speech or mind, whether through inattention or knowingly. Feeling-tip: the ease is the point — sadupāyaṁ, the remedy without strain.</p></div>
-</div>
-<div class="foot">Source: <a href="sources/bahurupa-meaning.pdf">bahurupa-meaning.pdf · vv.5-7 · Academy recitation PDF</a></div>
-<div class="pnum">42 · guide</div></section>
-</div><div class="spread">
-<section class="page prayer">
-<div class="src">Śrī Bahurūpa-Garbha Stotra, the close (vv.13-15)</div>
-<h3>No Mantra Greater</h3>
-<div class="dev" style="font-size:20pt;line-height:1.75">विधिहीने प्रमादे च जप्तव्यं सर्व-कर्मसु । नातः परतरो मन्त्रो नातः परतरा स्तुतिः ॥ नातः परतरा काचित् सम्यक्-प्रत्यङ्गिरा प्रिये । इयं समय-विद्यानां राज-राजेश्वरी-श्वरि ॥ परमाप्यायनं देवि भैरवस्य प्रकीर्तितम् । प्रीणनं सर्व-देवानां सर्व-सौभाग्य-वर्धनम् ॥</div>
-<div class="iast">vidhihīne pramāde ca japtavyaṁ sarva-karmasu | nātaḥ parataro mantro nātaḥ paratarā stutiḥ || nātaḥ paratarā kācit samyak-pratyaṅgirā priye | iyaṁ samaya-vidyānāṁ rāja-rājeśvarī-śvari || paramāpyāyanaṁ devi bhairavasya prakīrtitam | prīṇanaṁ sarva-devānāṁ sarva-saubhāgya-vardhanam ||</div>
-<div class="en" style="font-size:12.5pt"><span class="ln">when the rule is missing, when there is negligence — it should be recited in every action. no mantra is greater than this, no praise higher; no counter-formula better than this, o beloved — this queen of the knowledge of the precepts, o sovereign among isvaras! this, o goddess, is the supreme nourishment of bhairava&#x27;s glorification — it satisfies all the gods and increases all good fortune.</span></div>
-<div class="pnum">43</div></section>
-<section class="page guide">
-<div class="label">The Guide</div>
-<h3>No Mantra Greater</h3>
-<div class="src">Śrī Bahurūpa-Garbha Stotra, the close (vv.13-15) · vv.13-15 · viniyoga</div>
-<div class="brief">The hymn&#x27;s own claim: no mantra greater, no counter-formula better.</div>
-<div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>Three closing claims: (1) it covers every action, including mistakes of omission and negligence (pramāda); (2) it is samyak-pratyaṅgirā — the perfect counter-charm against ritual flaw — the queen of samaya-vidyā, the knowledge of the precepts; (3) its effect is āpyāyana, nourishment — of Bhairava&#x27;s glorification, pleasing to all the gods, increasing saubhāgya, all good fortune. The hymn then gives its own viniyoga: Ṛṣi Vāmadeva, meter Anuṣṭupa, devatā Bahurūpabhaṭṭāraka, purpose — removal of sins of body, speech and mind, and attainment of the four goals: dharma, artha, kāma, mokṣa.</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>Full practice in the tradition: dhyāna of Svacchanda (crystal-white upward face, yellow east, blue south, pomegranate-red north, moon-white west — the twelve-verse meditation), then this hymn, then the Gāyatrī — oṁ bahurupāya vidmahe, koṭarākṣāya dhīmahi, tanno &#x27;ghoraḥ pracodayāt, three times — then the mūla mantra. In this book&#x27;s simpler use: one round of these three verses at the close of any difficult day; the line to remember is &#x27;no mantra greater than this&#x27;.</p></div>
-</div>
-<div class="foot">Source: <a href="sources/bahurupa-recitation.pdf">bahurupa-recitation.pdf · vv.13-15 · viniyoga</a></div>
-<div class="pnum">43 · guide</div></section>
-</div><section class="page epi"><div class="skt">ॐ शान्तिः शान्तिः शान्तिः</div>
-<div class="en">peace, peace, peace</div>
+<div class="pnum">36 · guide</div></section>
+</div><section class="page epi center"><div class="lines" style="font-family:'Tiro'">ॐ शान्तिः शान्तिः शान्तिः</div>
 <div class="src">Practical Prayers</div></section><section class="page epi">
 <div class="lines" style="text-align:left;max-width:none">
 <span class="ln" style="font-size:14pt;font-weight:600;font-style:normal">The day, complete</span>
 <span class="ln" style="margin-top:6mm">From the first light to the last breath, the day is one sequence of recognitions: you wake into his waking, wash a body that is his temple, walk out among his forms, work as his yoke, eat his offering, wait in his pace, meet your negatives as his play, rejoice in his victory, and hand the night back to his sleep.</span>
 <span class="ln">The prayers are small; the day is the practice.</span>
 </div>
-<div class="src">Practical Prayers</div></section><section class="page bib"><h2>Sources</h2><ul><li><b>mealtime yajna.md</b><br><a href="sources/mealtime-yajna.md">sources/mealtime-yajna.md</a><br><span style="color:#76736e;font-size:9.5pt">Gītā 4.24, Śivadṛṣṭi 7.103 (provisional)</span></li><li><b>deha p01.md</b><br><a href="sources/deha-p01.md">sources/deha-p01.md</a><br><span style="color:#76736e;font-size:9.5pt">v.5, v.1, v.8, v.6</span></li><li><b>L2 mpa p01.md</b><br><a href="sources/L2-mpa-p01.md">sources/L2-mpa-p01.md</a><br><span style="color:#76736e;font-size:9.5pt">v.1, v.10, v.9, v.3</span></li><li><b>L2 mpa p02.md</b><br><a href="sources/L2-mpa-p02.md">sources/L2-mpa-p02.md</a><br><span style="color:#76736e;font-size:9.5pt">v.11, v.20, v.8, v.14, v.17, v.19</span></li><li><b>vbt p08.md</b><br><a href="sources/vbt-p08.md">sources/vbt-p08.md</a><br><span style="color:#76736e;font-size:9.5pt">v.75</span></li><li><b>sivastotravali_corpus.json</b><br><a href="sources/sivastotravali_corpus.json">sources/sivastotravali_corpus.json</a><br><span style="color:#76736e;font-size:9.5pt">9.14, 16.8, 17.19, 1.5, 1.14, 17.26, 15.2, 16.1, 5.2</span></li><li><b>bhairavastava.md</b><br><a href="sources/bhairavastava.md">sources/bhairavastava.md</a><br><span style="color:#76736e;font-size:9.5pt">bh-p05, bh-p03, bh-p04</span></li><li><b>pancashloki.md</b><br><a href="sources/pancashloki.md">sources/pancashloki.md</a><br><span style="color:#76736e;font-size:9.5pt">pan-p04, pan-p02, pan-p03, pan-p05</span></li><li><b>L2 svab p01.md</b><br><a href="sources/L2-svab-p01.md">sources/L2-svab-p01.md</a><br><span style="color:#76736e;font-size:9.5pt">v.6</span></li><li><b>spanda.md</b><br><a href="sources/spanda.md">sources/spanda.md</a><br><span style="color:#76736e;font-size:9.5pt">Spandakārikā 1.1</span></li><li><b>bhairavanukarana.md</b><br><a href="sources/bhairavanukarana.md">sources/bhairavanukarana.md</a><br><span style="color:#76736e;font-size:9.5pt">bhair-p01 v.7</span></li><li><b>anubhavanivedana.md</b><br><a href="sources/anubhavanivedana.md">sources/anubhavanivedana.md</a><br><span style="color:#76736e;font-size:9.5pt">anu-p03 v.3</span></li><li><b>anuttarastika.md</b><br><a href="sources/anuttarastika.md">sources/anuttarastika.md</a><br><span style="color:#76736e;font-size:9.5pt">anu-p02 v.2, anu-p08 v.8, anu-p04 v.4</span></li><li><b>efficacy aghora.pdf</b><br><a href="sources/efficacy-aghora.pdf">sources/efficacy-aghora.pdf</a><br><span style="color:#76736e;font-size:9.5pt">Secret Supreme ch.13 · letter 1989</span></li><li><b>bahurupa meaning.pdf</b><br><a href="sources/bahurupa-meaning.pdf">sources/bahurupa-meaning.pdf</a><br><span style="color:#76736e;font-size:9.5pt">vv.5-7 · Academy recitation PDF</span></li><li><b>bahurupa recitation.pdf</b><br><a href="sources/bahurupa-recitation.pdf">sources/bahurupa-recitation.pdf</a><br><span style="color:#76736e;font-size:9.5pt">vv.13-15 · viniyoga</span></li></ul></section></body></html>
+<div class="src">Practical Prayers</div></section><section class="page bib"><h2>Sources</h2><ul><li><b>mealtime yajna.md</b><br><a href="sources/mealtime-yajna.md">sources/mealtime-yajna.md</a><br><span style="color:#76736e;font-size:9.5pt">Gītā 4.24, Śivadṛṣṭi 7.103 (provisional)</span></li><li><b>deha p01.md</b><br><a href="sources/deha-p01.md">sources/deha-p01.md</a><br><span style="color:#76736e;font-size:9.5pt">v.5, v.1, v.8, v.6</span></li><li><b>L2 mpa p01.md</b><br><a href="sources/L2-mpa-p01.md">sources/L2-mpa-p01.md</a><br><span style="color:#76736e;font-size:9.5pt">v.1, v.10, v.9, v.3</span></li><li><b>L2 mpa p02.md</b><br><a href="sources/L2-mpa-p02.md">sources/L2-mpa-p02.md</a><br><span style="color:#76736e;font-size:9.5pt">v.11, v.20, v.8, v.14, v.17, v.19</span></li><li><b>vbt p08.md</b><br><a href="sources/vbt-p08.md">sources/vbt-p08.md</a><br><span style="color:#76736e;font-size:9.5pt">v.75</span></li><li><b>sivastotravali_corpus.json</b><br><a href="sources/sivastotravali_corpus.json">sources/sivastotravali_corpus.json</a><br><span style="color:#76736e;font-size:9.5pt">9.14, 16.8, 17.19, 1.5, 1.14, 17.26, 15.2, 16.1, 5.2</span></li><li><b>bhairavastava.md</b><br><a href="sources/bhairavastava.md">sources/bhairavastava.md</a><br><span style="color:#76736e;font-size:9.5pt">bh-p03</span></li><li><b>pancashloki.md</b><br><a href="sources/pancashloki.md">sources/pancashloki.md</a><br><span style="color:#76736e;font-size:9.5pt">pan-p02, pan-p03, pan-p05</span></li><li><b>spanda.md</b><br><a href="sources/spanda.md">sources/spanda.md</a><br><span style="color:#76736e;font-size:9.5pt">Spandakārikā 1.1</span></li><li><b>bhairavanukarana.md</b><br><a href="sources/bhairavanukarana.md">sources/bhairavanukarana.md</a><br><span style="color:#76736e;font-size:9.5pt">bhair-p01 v.7</span></li><li><b>anubhavanivedana.md</b><br><a href="sources/anubhavanivedana.md">sources/anubhavanivedana.md</a><br><span style="color:#76736e;font-size:9.5pt">anu-p03 v.3</span></li><li><b>anuttarastika.md</b><br><a href="sources/anuttarastika.md">sources/anuttarastika.md</a><br><span style="color:#76736e;font-size:9.5pt">anu-p02 v.2, anu-p08 v.8, anu-p04 v.4</span></li></ul></section></body></html>
