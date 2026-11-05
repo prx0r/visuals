@@ -84,9 +84,9 @@ h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08
 .guide h3{text-align:left;font-size:19pt;margin:0 0 3mm;}
 .guide .src{text-align:left;margin-bottom:4mm;}
 .guide .brief{font-style:italic;color:var(--grey);font-size:11.5pt;line-height:1.45;padding-bottom:3mm;margin-bottom:4mm;border-bottom:1px solid var(--hair);}
-.guide .blk{margin-bottom:4mm;}
+.guide .blk{margin-bottom:3mm;}
 .guide .bl{font-size:8.5pt;letter-spacing:.2em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:1mm;}
-.guide .body{font-size:11.5pt;line-height:1.55;color:#241f19;}
+.guide .body{font-size:11pt;line-height:1.5;color:#241f19;}
 .guide .body p{margin:0;}
 .guide .foot{margin-top:auto;border-top:1px solid var(--hair);padding-top:3mm;font-size:9pt;color:var(--grey);}
 .guide .foot a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--hair);}
@@ -208,8 +208,10 @@ def build(d):
 <div class="src">{esc(e['source'])} · {esc(e.get('source_ref',''))}</div>
 <div class="brief">{esc(e['brief'])}</div>
 <div class="body">
-<div class="blk"><span class="bl">What is happening</span><p>{esc(e['logic'])}</p></div>
-<div class="blk"><span class="bl">How to use it</span><p>{esc(e['howto'])}</p></div>
+<div class="blk"><span class="bl">What is it</span><p>{esc(e.get('what') or e.get('logic',''))}</p></div>
+<div class="blk"><span class="bl">How to perform it</span><p>{esc(e.get('how') or e.get('howto',''))}</p></div>
+{f'<div class="blk"><span class="bl">How to know it\'s working</span><p>{esc(e["sign"])}</p></div>' if e.get('sign') else ''}
+{f'<div class="blk"><span class="bl">What to feel / visualise</span><p>{esc(e["feel"])}</p></div>' if e.get('feel') else ''}
 </div>
 <div class="foot">Source: <a href="{esc(e.get('source_path',''))}">{esc(e.get('source_path','').replace('sources/',''))} · {esc(e.get('source_ref',''))}</a></div>
 <div class="pnum">{n} · guide</div></section>
