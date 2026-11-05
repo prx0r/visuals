@@ -275,7 +275,7 @@ dict(id="vbt-76", section="sleep", title="Gaze in the Dappled Sky",
  logic="A physiological dhāraṇā: look at a light (sun, lamp), the visual field goes śabala, dappled with after-images; fix the gaze in that dappled sky (ākāśa) and svātma-rūpa, one's own self-form, shines forth there. The technique uses the eye's own residue as the screen on which the self displays.",
  howto="Before sleep, on your back: glance at the lamp for a second, close the eyes, and watch the dappled field behind the lids. Rest the gaze there without straining. The patches of light are the sky; the self-form shines in them. Feeling-tip: don't hunt an image — the after-glow is enough; let it carry you down.",
  source_path="sources/vbt-p08.md", source_ref="v.76")
-],
+,
 # --- removed with the Negative section + relocated Sangha appendix (2026-11-05) ---
 dict(id='bh-5',
  section='negative',
