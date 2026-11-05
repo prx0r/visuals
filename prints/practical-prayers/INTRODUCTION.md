@@ -149,3 +149,40 @@ full sleep, free the mind of preoccupations — then meditate without deviation.
   Mantra.pdf").
 
 *Compiled2026-11-05. Keep appending — this file feeds the book's introduction pages.*
+
+## 10. The reality of Svacchanda Nātha (Aghora part 2, Academy blog)
+
+Two verses with Swamiji's own commentary (Secret Supreme ch.13 material):
+
+> **viśvaikarūpaviśvātma viśvasargādi-kāraṇam |
+> paraprakāśa-vapuṣaṁ stumaḥ svacchanda-bhairavam || 35 ||**
+> "We bow to Svacchandanātha of the five heads — who is one with the whole universe
+> (viśvaika-rūpa), the embodiment of the universe (viśvātma), the cause of its creation,
+> protection, destruction, concealing and revealing with his five acts — and who is
+> **para-prakāśa-vapuṣa, the embodiment of supreme light**, the light beyond the three
+> lights of fire, moon and sun."
+
+> **madhya-prāṇa-niviṣṭa-haṁsa... | tān mantrātmatayā vilomayati yaḥ svacchanda-nāthaḥ
+> paraḥ | devo 'sau vidadhātu bhairava-vapuḥ tejaḥ paraṁ śāśvatam || 36 ||**
+> "In the central vein of breath lives the supreme haṁsa, in the wells of the hair-pores —
+> three and a half crore pores (35 million), openings of breath from the madhyā nādi in
+> suṣumna. May that Svacchandanātha reverse them into mantra-form, and may that God
+> bestow the supreme, immortal light (tejaḥ param śāśvatam) of Bhairava's body."
+
+**Swamiji's key lines (part 2 talk):**
+- **"Whatever is residing in the universe, that you'll find in your own body. This is the
+  mystery, this is the secret..."** — asked how the35 million vijñānākalins connect to the
+ 35 million prāṇas.
+- "Even in one tiny insect there are thirty-six elements... he has the capacity of residing
+  in one hundred and eighteen worlds" (ekaikatrāpi tattve'pi ṣaṭtriṁśat-tattva-rūpatā).
+- The pure creation (māyā → Sadāśiva) **only rises** — "there is no fear of decreasing; it
+  has the tendency to rise." The impure scale (earth → māyā) rises AND falls. This is why
+  the protection works upward.
+- "It is very easy for Him to do if he so wills, wishes." (on bestowing the immortal light.)
+
+**Files archived in `sources/`:** efficacy-aghora.pdf · bahurupa-meaning.pdf ·
+bahurupa-recitation.pdf · secret-supreme-ch13.pdf · tantraloka-extract.pdf ·
+aghora-letter.zip (Swamiji's 1989 letter) · aghora-swamiji.mp3 (his own recitation) ·
+bahurupa-swamiji.m4a · svacchanda-bhairava.jpg (the icon for the appendix).
+
+*Compiled 2026-11-05 — keep appending.*
