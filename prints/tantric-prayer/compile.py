@@ -35,16 +35,30 @@ DOCTRINE = {
  "santa": "sthāyin: śānti — the ninth rasa, Abhinavagupta's own addition: the ocean in which the other eight swim",
 }
 
+
+# three-layer naming: literal Sanskrit gloss + conventional rasa term (MW-standard English)
+GLOSS = {
+ "srgara": "śṛṅgāra — \"amorous sentiment, love; the beauty that adorns\" (Monier-Williams)",
+ "hasa": "hāsya — \"laughable, comic; mockery — that which slays\" (from hās, to slay)",
+ "karuna": "karuṇā — \"compassion, mercy; the pitiable, what moves to pity\"",
+ "raudra": "raudra — \"furious, stormy — the mood of Rudra\" (rudra: to roar)",
+ "vira": "vīra — \"heroic, manly valour; mighty effort\"",
+ "bhayanaka": "bhayānaka — \"causing fear: terrible, dreadful\" (bhaya: fear)",
+ "bibhatsa": "bībhatsa — \"loathsome, revolting; that which excites disgust\"",
+ "adbhuta": "adbhuta — \"the un-become: astonishing, marvellous, unprecedented\" (a-dbhūta)",
+ "santa": "śānta — \"pacified, allayed, put to rest\" — the ninth, added by Abhinavagupta",
+}
+
 SECTIONS = [
-    ("srgara", "I", "Śṛṅgāra", "desire & longing"),
-    ("hasa", "II", "Hāsya", "mirth & laughter"),
-    ("karuna", "III", "Karuṇā", "grief & sorrow"),
-    ("raudra", "IV", "Raudra", "anger & rage"),
-    ("vira", "V", "Vīra", "valour & energy"),
-    ("bhayanaka", "VI", "Bhayānaka", "fear & anxiety"),
-    ("bibhatsa", "VII", "Bībhatsa", "disgust & self-loathing"),
-    ("adbhuta", "VIII", "Adbhuta", "wonder & awe"),
-    ("santa", "IX", "Śānta", "peace — Abhinavagupta's ninth"),
+    ("srgara", "I", "Śṛṅgāra", "the Erotic — desire & longing"),
+    ("hasa", "II", "Hāsya", "the Comic — mirth & laughter"),
+    ("karuna", "III", "Karuṇā", "the Pathetic — grief & compassion"),
+    ("raudra", "IV", "Raudra", "the Furious — anger & rage"),
+    ("vira", "V", "Vīra", "the Heroic — valour & energy"),
+    ("bhayanaka", "VI", "Bhayānaka", "the Horrible — fear & anxiety"),
+    ("bibhatsa", "VII", "Bībhatsa", "the Disgusting — disgust & self-loathing"),
+    ("adbhuta", "VIII", "Adbhuta", "the Marvellous — wonder & awe"),
+    ("santa", "IX", "Śānta", "the Peaceful — Abhinavagupta's ninth"),
 ]
 
 E = [
@@ -394,6 +408,7 @@ h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08
 .sec-div .num{font-family:'Cormorant';font-size:11pt;letter-spacing:.3em;color:var(--grey);}
 .sec-div h2{font-size:26pt;letter-spacing:.06em;margin:4mm 0 0;color:var(--ink);text-transform:none;font-weight:600;}
 .sec-div .sub{font-style:italic;color:var(--grey);font-size:13pt;margin-top:3mm;}
+.sec-div .gloss{font-size:10pt;color:var(--grey);margin-top:2.5mm;letter-spacing:.01em;}
 .sec-div .rule{width:30mm;height:1px;background:var(--ink);margin:7mm auto 0;}
 .sec-div .doc{font-size:11pt;line-height:1.5;color:#241f19;max-width:108mm;margin:7mm auto 0;font-style:italic;}
 .src{font-size:9.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);}
@@ -446,24 +461,28 @@ sādhāraṇīkaraṇa — and the savour is recognition wearing that emotion's 
 <div class="src">Theory: Abhinavabhāratī &amp; Tantrāloka, via the house rasa sessions</div></section>""")
 
     # --- INTRO2: the nine ---
-    rows = "".join(f"<tr><td>{t}</td><td class='s'>{s}</td><td>{d}</td></tr>" for t, s, d in [
-        ("Śṛṅgāra", "rati", "love, longing, attraction"),
-        ("Hāsya", "hāsa", "mirth, laughter"),
-        ("Karuṇā", "śoka", "sorrow, grief"),
-        ("Raudra", "krodha", "fury, rage"),
-        ("Vīra", "utsāha", "valour, energy, courage"),
-        ("Bhayānaka", "bhaya", "fear, terror"),
-        ("Bībhatsa", "jugupsā", "disgust, self-loathing"),
-        ("Adbhuta", "vismaya", "wonder, awe"),
-        ("Śānta", "śānti", "peace — Abhinavagupta's own ninth")])
+    rows = ""
+    for k, (t, conv, door) in {
+      "srgara": ("Śṛṅgāra", "the Erotic", "love, longing"),
+      "hasa": ("Hāsya", "the Comic", "mirth, laughter"),
+      "karuna": ("Karuṇā", "the Pathetic", "grief, compassion"),
+      "raudra": ("Raudra", "the Furious", "fury, rage"),
+      "vira": ("Vīra", "the Heroic", "valour, energy"),
+      "bhayanaka": ("Bhayānaka", "the Horrible", "fear, terror"),
+      "bibhatsa": ("Bībhatsa", "the Disgusting", "disgust, loathing"),
+      "adbhuta": ("Adbhuta", "the Marvellous", "wonder, awe"),
+      "santa": ("Śānta", "the Peaceful", "peace (his ninth)")}.items():
+        lit = GLOSS[k].split("— ",1)[1].split(" (")[0].strip('"')
+        sth = DOCTRINE[k].split("sthāyin: ",1)[1].split(" —")[0]
+        rows += f"<tr><td>{t}<br><span style='font-size:9.5pt;color:#76736e'>{lit}</span></td><td><b>{conv}</b></td><td class='s'>{door}</td><td class='s'>{sth}</td></tr>"
     pages.append(f"""<section class="page epi">
 <h2 class="blk">The nine rasas</h2>
 <p>The classical table of nine (Nāṭyaśāstra), fixed by Abhinavagupta in his
 Abhinavabhāratī — where he added the ninth, śānta. Each rasa carries its <b>sthāyibhāva</b>,
 the permanent emotion beneath it. Four prayers per rasa; each section's divider gives the
-sthāyin and the doctrine.</p>
-<table><tr><th>Rasa</th><th>Sthāyibhāva</th><th>The door</th></tr>{rows}</table>
-<div class="src">Nāṭyaśāstra · Abhinavabhāratī · thirty-six prayers inside</div></section>""")
+literal sense, the conventional term, the sthāyin and the doctrine.</p>
+<table><tr><th>Rasa &amp; its literal sense</th><th>Conventional</th><th>The door</th><th>Sthāyin</th></tr>{rows}</table>
+<div class="src">Nāṭyaśāstra · Abhinavabhāratī · Monier-Williams glosses · thirty-six prayers inside</div></section>""")
 
     # --- INTRO3: how to use ---
     pages.append("""<section class="page epi">
@@ -496,7 +515,8 @@ guide. Theory quotes are short and attributed; verify against print editions bef
     n = 0
     for sid, num, title, sub in SECTIONS:
         pages.append(f"""<section class="page sec-div"><div class="num">{esc(num)}</div>
-<h2>{esc(title)}</h2><div class="sub">{esc(sub)}</div><div class="rule"></div>
+<h2>{esc(title)}</h2><div class="sub">{esc(sub)}</div>
+<div class="gloss">{esc(GLOSS[sid])}</div><div class="rule"></div>
 <div class="doc">{esc(DOCTRINE[sid])}</div></section>""")
         for e in [x for x in entries if x["section"] == sid]:
             n += 1
