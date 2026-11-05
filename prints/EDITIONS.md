@@ -161,3 +161,62 @@ one CSS variable in the build).
 2. ✅ **Recognition for Dummies** (177 Q→A from 79 archive docs) — built 2026-11-05, 55pp, prints/recognition-dummies/
 3. KDP re-trim test: 5.5×8.5 export of Vol 1 → order $2.30 proof
 4. Etsy listing: Vol 1 + Vol 2 PDFs @ £2.99
+
+---
+
+# KDP Print Research (2026-11-05)
+
+## Design constraints (verified from KDP help pages)
+- **Trim:** paperback allows **custom trim** (w 4–8.5", h 6–11.69") → **A5 (5.83×8.27") fits
+  and stays under "large trim" (6.12×9") → regular pricing. Hardcover = fixed sizes only
+  (no A5) → hardbacks need 5×8 / 5.5×8.5 / 6×9 etc.
+- **Margins (24–150pp):** gutter ≥0.375" (9.6mm), outside ≥0.25" (6.4mm). Our pages: 18mm
+  sides / 20mm top-bottom → comfortably pass. 151–300pp: gutter 0.5".
+- **Fonts:** must be **embedded** (ours are: Tiro Devanagari + Cormorant, both SIL OFL —
+  embedding allowed). Min size 7pt (ours ≥8.5pt ✓). Chrome print-to-pdf embeds subsets ✓.
+- **Bleed:** text-only interior → no bleed, PDF page = trim exactly (our PDFs ✓). Images ≥300
+  DPI; single pages not spreads; no crop marks; ≤650MB.
+- **Cover:** separate PDF, CMYK (RGB shifts), 0.125" bleed all round, spine = pages ×
+  0.002252" (white/B&W). **Spine text needs ≥0.25" → ≥112pp** (Anuttara II 162pp = 0.365"
+  ✓; Practical Prayers 107pp = 0.24" ✗ no spine text; vol1 99pp ✗). Leave 2×1.2" barcode
+  block bottom-right back (KDP prints it free). Always regenerate template per page count.
+- **Cover finish:** 80lb white stock, gloss or matte (matte suits the prayer books).
+
+## Quality
+- B&W toner POD is excellent for text; **white paper** for these books (Devanagari hairlines +
+  grey English stay crisp; cream muddies them). Matte cover.
+- Interior greys print fine in B&W; avoid large solid-black floods.
+- **Always order a physical proof** (~$4 + ship) before publishing — check Devanagari ink.
+
+## Imprint / logo / ISBN — verdict
+- **Logo: NOT required.** Free KDP ISBN → imprint shows "Independently published".
+- **Imprint (own name): optional; worth it for the series** (Patala Press / Patala Editions?).
+  Own imprint requires **own ISBNs** (Bowker: $125×1 or $295×10; UK Nielsen similar) and the
+  imprint string must match the ISBN registration **character for character** (case-sensitive).
+- Simple mark: one shape, reads at 0.5", B&W first, no text needed on spine; appears on
+  copyright page + publisher field.
+- Recommended path: **test with free ISBN first; buy the ISBN block when committing** —
+  changing later means re-issuing the book.
+- Etsy PDF e-book: no ISBN, no logo needed.
+
+## Platform rules
+- **Do NOT enroll in KDP Select** (optional) — Select makes the digital edition Kindle-exclusive,
+  which conflicts with selling the PDF on Etsy. Print books don't need it.
+- Kindle ebook optional; print = KDP paperback/hardcover with free barcode + free KDP ISBN.
+- 2 categories + 10 keywords; Author Central + A+ content free.
+
+## GitHub agent projects for book pipelines
+| Repo | What it does |
+|---|---|
+| `shipfail/press0` | Agent skill: Markdown → bookstore-quality 6×9 PDF (Book Publisher Protocol) |
+| `chesley-veko/book_skill` | Agent skill: topic → designed print-ready PDF via **Typst** (research→chapters→illustrations→fact-check) |
+| `epicsagas/Velith` | Claude Code plugin: 6-phase pipeline, 16 skills, 7 agents, **includes KDP checklists**, EPUB/PDF |
+| `NousResearch/autonovel` | Full pipeline; **gen_cover_print.py with KDP/Lulu full-wrap cover specs**, LaTeX (EB Garamond) typesetting |
+| `iaj6/novelkit` | brief → draft → epub/pdf/cover/audiobook + web reading room |
+| `erdemayaz/bitig` | TypeScript book compiler CLI with agent loop (context/capture/analyze/build) |
+- Our stack (compile.py + Chrome print-to-pdf) already covers interior; steal: Velith's KDP
+  checklist, autonovel's cover generator, book_skill's Typst typography if we outgrow CSS.
+
+## Cost recap (from earlier research)
+- KDP B&W ≤110pp: **$2.30 flat**; hardcover 75–108pp: **$6.80 flat**; std colour 100pp $3.55.
+- Royalty = 60% × list − print. Etsy PDF £2.99 → net ≈ £2.31.
