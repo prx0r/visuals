@@ -292,3 +292,30 @@ list prices below print cost, so the floor IS cost.
 - English edition: ~100–140pp → **flat tier / just over** ✓
 - Study: ~200–280pp · Complete (essays): ~300–450pp → still ~$6 royalty at size-pricing
 - Source reads verse-only; if later units add prose, scale up proportionally.
+
+---
+
+## CONTENT SOURCING LAW (canonical for prayer books — owner, 2026-11-05)
+
+**You never write any of it yourself. Every block is EXTRACT-AND-PLACE from the
+translation layers, then clarity-edits only** (shorten, un-stiffen, fix flow —
+never new claims, never new instructions, never your own theology).
+
+| Block | Extracts from |
+|---|---|
+| brief | C1 essence line / argmap tagline / L2 summary sentence |
+| What the prayer does | ARGMAP statements + L2 clause sense (≤60w) |
+| How to perform it | the text's OWN practice lines in T1/L2 (occasion, actions, order, count) |
+| How to know it's working | claimed effects: C1 effect claims, efficacy lore, witness (Swamiji) effects, rasa tags |
+| What to feel / visualise | C1 rasa block / craft_notes feelings — present or absent, never half |
+
+Rules:
+- `en` translation is never touched in scaffolding passes (witness-verified).
+- Caps: brief ≈100 chars · what ≤60w · how ≤40w · sign/feel ≤30w — keeps every
+  guide to one page, book at 44/43 guides, ≤110pp.
+- If a block has no extractable layer source → it stays OFF the page (fail
+  closed); ask for the layer upstream instead of filling the gap yourself.
+- Signs authored 2026-11-05 (pre-law) are provisional: each batch pass
+  re-anchors them to a named layer extract or flags them.
+- Provenance stays on the entry (source_path · source_ref), integrity-checked
+  by bookfactory `check.py` (M1).
