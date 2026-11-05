@@ -247,3 +247,48 @@ Fonts: **Tiro Devanagari Sanskrit** (Devanagari + Om) + **Cormorant Garamond** (
 | TOC | 11pt, 2 columns, break-inside avoid (fits 1 page ≤50 lines) |
 | Footer/pnum | 9pt grey · minimum anywhere = 8.5pt (KDP floor 7pt) |
 Stencils: `prints/stencils.py` — SVG monoline (stroke 2.4), rasa rosette (navāvaraṇa: bindu+ring+nine) on TP, activity glyphs on PP dividers.
+
+---
+
+## Part 5 — Edition ladder & pricing tiers (owner ruling, 2026-11-05)
+
+**Three editions per work:**
+
+| Edition | Content | Ref level | Page target | At-cost list (royalty $0) |
+|---|---|---|---|---|
+| **English** | translation only | minimal (numbers, no apparatus) | ≤110 flat tier | **$4.60** / £3.86 / €4.10 |
+| **Study** | Sanskrit (Deva+IAST) + English | spread format (current prayer-book style) | ≤110 for verse works; priced-to-size for big ones | ≤110: **$4.60** · 250pp: $8.00 · 300pp: $9.20 |
+| **Complete** | Study + our essays (intros, c1 essays, glossary, notes) | full | whatever it honestly needs | 400pp: **$9.99** · 500pp: $11.67 · 600pp: $13.67 |
+
+**Stance (owner): sell at cost.** At-cost = min list price, royalty $0. KDP refuses
+list prices below print cost, so the floor IS cost.
+
+### KDP cost curve (Amazon.com, black ink, regular trim, verified 2026-09/11)
+- ≤110pp: **$2.30 flat** · 111pp+: **$1.00 + $0.012/page** (each page above 110 = +1.2¢)
+- 150pp=$2.80 · 200=$3.40 · 300=$4.60 · 400=$5.80 · 500=$7.00 · 600=$8.20
+- UK: £1.93 flat → £0.85+£0.010/pp · EU: €2.05 flat → €0.75+€0.012/pp
+- Royalty: **60% ≥ $9.99 / £7.99 / €9.99, 50% below** (rate × list − print)
+- Min list (floor) = print÷0.5, or max(threshold, print÷0.6) once past the 50% band
+
+### Floors table (royalty $0)
+| Pages | US print | US floor | UK floor | EU floor |
+|---|---|---|---|---|
+| ≤110 | $2.30 | **$4.60** | £3.86 | €4.10 |
+| 200 | $3.40 | $6.80 | £5.70 | €6.30 |
+| 300 | $4.60 | $9.20 | £7.70 | €8.70 |
+| 400 | $5.80 | $9.99 | £8.08 | €9.99 |
+| 500 | $7.00 | $11.67 | £9.75 | €11.25 |
+| 600 | $8.20 | $13.67 | £11.42 | €13.25 |
+
+### Traps
+1. Never price at $9.98/£7.98/€9.98 — one penny under the threshold flips to 50%.
+2. Floors are per-marketplace — set each minimum manually at upload (Territories = All).
+3. 110 is an optimization, not a law: royalty stays ~$6–7 across a size-priced ladder
+   ($14.99@110 / $17.99@250 / $19.99@400); don't mutilate a book to hide under 110.
+4. True "reader pays print only" is impossible on KDP (Amazon keeps its half) — the
+   Etsy PDF is the genuine at-cost channel.
+
+### Tantrasāra sizing (measured from repo: 11,815 Sanskrit words, ~748 verse units, 22 āhṇikas)
+- English edition: ~100–140pp → **flat tier / just over** ✓
+- Study: ~200–280pp · Complete (essays): ~300–450pp → still ~$6 royalty at size-pricing
+- Source reads verse-only; if later units add prose, scale up proportionally.
