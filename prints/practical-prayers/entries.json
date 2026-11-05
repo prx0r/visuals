@@ -597,20 +597,17 @@
   "id": "bh-1",
   "section": "alone",
   "title": "Refuge of the Refugeless",
-  "corpus": [
-   1,
-   1
-  ],
-  "source": "Utpaladeva, Śivastotrāvalī 1.1",
+  "source": "Abhinavagupta, Bhairavastava 1",
   "en": "pervading every state of moving and unmoving,\nconsciousness itself is one — without end or beginning.\nbhairava, lord, refuge of the helpless —\nwith a mind become yours, in my heart, i bow.",
   "brief": "The address for when there is no one else.",
   "logic": "Anātha-śaraṇya — refuge of the one WITHOUT a protector — is the name at the heart of being alone: he shelters precisely those who bring no credentials, no community, nobody standing behind them. The verse is the door that opens when every other door has closed.",
   "howto": "When the room is too quiet: say it and give the loneliness its address — it qualifies you rather than disqualifies you. Feeling-tip: the absence of people becomes the presence of the one who takes the unprotected.",
-  "source_path": "sources/sivastotravali_corpus.json",
-  "source_ref": "1.1",
+  "source_path": "sources/bhairavastava.md",
+  "source_ref": "bh-p01",
   "how": "When the room is too quiet: say it and give the loneliness its address — it qualifies you rather than disqualifies you.",
   "feel": "the absence of people becomes the presence of the one who takes the unprotected.",
-  "sign": "the absence of people becomes the presence of him: the room reads full precisely because it is empty of them."
+  "sign": "the absence of people becomes the presence of him: the room reads full precisely because it is empty of them.",
+  "iast": "vyāptacarācarabhāvaviśeṣaṃ cinmayam ekam anantam anādim | bhairavanātham anāthaśaraṇyaṃ tvanmayacittatayā hṛdi vande"
  },
  {
   "id": "sst-16-28",
