@@ -118,3 +118,50 @@ editions before publishing** (house rule: sessions are machine-consolidated).
   opening move
 
 *Next action when green-lit: run the selector, lock the 8×4 verse table, then build.*
+
+---
+
+## 7. FAITHFUL TAXONOMY (verified 2026-11-05 — no invented categories)
+
+### The standard list of 9 = the Navarasa
+Source: Nāṭyaśāstra (Bharata) ch.7, systematized with **śānta as the ninth by Abhinavagupta
+himself** in the Abhinavabhāratī (our own author). Each rasa has its **sthāyibhāva**
+(permanent emotion) — this is the textbook-standard table:
+
+| # | Rasa | Sthāyibhāva | Doorway (everyday name) |
+|---|---|---|---|
+| 1 | śṛṅgāra | rati | Desire & Longing |
+| 2 | hāsya | hāsa | Mirth |
+| 3 | karuṇā | śoka | Grief / Depression |
+| 4 | raudra | krodha | Anger |
+| 5 | vīra | utsāha | Excitement / Energy |
+| 6 | bhayānaka | bhaya | Fear / Anxiety |
+| 7 | bībhatsa | jugupsā | Disgust / Self-loathing |
+| 8 | adbhuta | vismaya | Wonder |
+| 9 | śānta | śānti | Peace *(Abhinavagupta's addition)* |
+
+### What Tantrasāra / Tantrāloka / our texts actually say (grep-verified)
+- `navarasa`, `sthāyibhāva`: **0 files** in our L2 corpus — the navarasa enumeration is
+  Nāṭyaśāstra/Abhinavabhāratī territory (whose exact quotes our LOGICVID sessions carry),
+  not something our Trika translations enumerate. TĀ āhnikas a01/a13/a28 carry the
+  kāma/rasa/bhāva discussions (206/301/76 hits) — those are the rasa-theory chapters to cite.
+- **Obstacle/dullness terms ARE in the corpus**: `saṃśaya` (doubt) = **22 files**,
+  `ālasya` (lethargy/flatness) = **15 files**, `vyādhi` (disease) = 13 files. So:
+  - Flatness has double classical citizenship: **ālasya** — a vyābhicāri bhāva (Nāṭyaśāstra)
+    AND a Patañjali antarāya (yogic obstacle). Not an invention — the exact Sanskrit word.
+  - Doubt = **saṃśaya**, likewise classical (yogic obstacle + darśana-śuddhi term).
+  - Loneliness has no rasa slot: its Trika-native name is **anāthya** — Bhairavastava's
+    own *anātha-śaraṇya*, "refuge of the refugeless" (our text's word).
+- Verse pools per feeling already counted (fear 8, grief 44, anger 6, desire 105, joy 31,
+  lonely 11 in Śivastotrāvalī) + VBT emotion dhāraṇās (96–98, 101, 103, 118, 127, 130, 136).
+
+### Structure decision
+Every section header carries **dual naming** — the everyday door + its classical Sanskrit
+term + source line. Two coherent builds possible:
+- **Design A — "The Nine Rasas"**: strictly the navarasa9 (hāsya, adbhuta, śānta included;
+  loneliness/doubt/flatness become sub-movements: flatness discussed *against* śānta — peace
+  vs stupor is the classic distinction; doubt under adbhuta — the wonder-question).
+- **Design B — "Nine Doorways"**: the eight practical doors + one, each dual-named
+  (Fear/bhayānaka, Grief/karuṇā, Anger/raudra, Desire/śṛṅgāra, Excitement/vīra,
+  Loneliness/anāthya, Doubt/saṃśaya, Flatness/ālasya, + Disgust/bībhatsa or Peace/śānta).
+Both are faithful; A is more canonical, B serves the daily-use promise of the format.
