@@ -76,6 +76,12 @@ def activity_glyph(key, size=20):
         "sick": '<rect x="26" y="26" width="48" height="48"/><circle cx="50" cy="50" r="6" fill="#17140f" stroke="none"/>',
         # positive: eight-petal bloom
         "positive": '<circle cx="50" cy="50" r="14"/><path d="M50 10 Q60 30 50 36 Q40 30 50 10 M90 50 Q70 60 64 50 Q70 40 90 50 M50 90 Q40 70 50 64 Q60 70 50 90 M10 50 Q30 40 36 50 Q30 60 10 50"/>',
+        # alone: one bindu alone inside the circle
+        "alone": '<circle cx="50" cy="50" r="30"/><circle cx="50" cy="50" r="5" fill="#17140f" stroke="none"/>',
+        # flatness: the level plane — horizon with resting bindu
+        "flatness": '<line x1="14" y1="58" x2="86" y2="58"/><circle cx="50" cy="44" r="5" fill="#17140f" stroke="none"/>',
+        # gratitude: the receiving bowl with a drop arriving
+        "gratitude": '<path d="M24 44 Q50 84 76 44"/><path d="M50 16 Q57 30 50 32 Q43 30 50 16"/><line x1="50" y1="36" x2="50" y2="42"/>',
         # sleep: candra-kalā (crescent of Śiva)
         "sleep": '<path d="M64 22 A34 34 0 1 0 64 78 A26 26 0 1 1 64 22 Z"/>',
         # sangha: triśūla — the three Aghora energies

@@ -57,6 +57,9 @@ h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08
 .epi th{text-align:left;font-size:9.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);border-bottom:1px solid var(--ink);padding:2mm 2mm 2mm 0;font-weight:400;}
 .epi td{padding:1.8mm 2mm 1.8mm 0;border-bottom:1px solid var(--hair);}
 .epi td.s{font-style:italic;color:var(--grey);}
+.bib ul{list-style:none;padding:0;margin:4mm 0 0;}
+.bib li{margin:0 0 1.5mm;font-size:9.5pt;line-height:1.35;}
+.bib li a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--hair);word-break:break-all;}
 .toc h2,.sec-div h2,.bib h2{font-family:'Cormorant';font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13pt;color:var(--grey);}
 .toc ol{list-style:none;padding:0;margin:5mm 0 0;column-count:2;column-gap:7mm;}
 .toc li,.toc .sec{break-inside:avoid;-webkit-column-break-inside:avoid;}
