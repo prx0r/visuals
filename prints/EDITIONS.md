@@ -220,3 +220,11 @@ one CSS variable in the build).
 ## Cost recap (from earlier research)
 - KDP B&W ≤110pp: **$2.30 flat**; hardcover 75–108pp: **$6.80 flat**; std colour 100pp $3.55.
 - Royalty = 60% × list − print. Etsy PDF £2.99 → net ≈ £2.31.
+
+## DEFAULT PAPERBACK FORMAT (locked 2026-11-05)
+All books build to: **A5 (148×210mm) custom trim** · margins 18mm sides / 20mm top-bottom
+(KDP mins: 9.6mm gutter, 6.4mm outside) · text-only, no bleed (PDF page = trim) ·
+Tiro Devanagari + Cormorant Garamond (SIL OFL, embedded, min 8.5pt > KDP's 7pt floor) ·
+white paper, matte cover · odd page counts auto-padded by KDP.
+**Gate:** `python3 prints/kdp_preflight.py <pdfs>` — run before every upload; exit 1 on fail.
+Status: all 5 books PASS (practical 107, vol1 99, vol2 57, dummies 55, poems1 54).
