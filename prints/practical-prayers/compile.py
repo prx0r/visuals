@@ -4,6 +4,9 @@ Prayer page (type-filling Devanagari, Brahmārpaṇaṁ format) + facing explana
 Run with the patala venv python (indic_transliteration)."""
 
 import json, html, pathlib, re
+import sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from stencils import activity_glyph
 
 HERE = pathlib.Path(__file__).parent
 try:
@@ -442,7 +445,7 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 .spread{display:flex;gap:8mm;justify-content:center;flex-wrap:wrap;margin:0 auto 10mm;}
 .spread .page{margin:0;}
 .cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
-.cover .om{font-family:'Tiro';font-size:64pt;line-height:1;margin-bottom:16mm;}
+.cover .om{font-family:'Tiro';font-size:60pt;line-height:1;margin-bottom:16mm;}
 .cover h1{font-family:'Cormorant';font-weight:600;font-size:36pt;letter-spacing:.05em;margin:0;text-transform:uppercase;}
 .cover .sub{font-size:15pt;font-style:italic;color:var(--grey);margin-top:4mm;}
 .cover .rule{width:40mm;height:1px;background:var(--ink);margin:10mm auto;}
@@ -452,11 +455,13 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 .epi .en{font-style:italic;color:var(--grey);font-size:13pt;max-width:100mm;margin:0 auto;}
 .epi .src{font-size:9.5pt;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-top:8mm;}
 .toc h2,.sec-div h2,.bib h2{font-family:'Cormorant';font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13pt;color:var(--grey);}
-.toc ol{list-style:none;padding:0;margin:6mm 0 0;}
+.toc ol{list-style:none;padding:0;margin:6mm 0 0;column-count:2;column-gap:7mm;}
+.toc li,.toc .sec{break-inside:avoid;-webkit-column-break-inside:avoid;}
 .toc .sec{margin-top:4mm;font-size:9.5pt;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);line-height:1.2;}
 .toc li{margin:.4mm 0;font-size:11.5pt;line-height:1.3;}
 .toc .n{color:var(--grey);display:inline-block;width:7mm;}
 .sec-div{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+.sec-div .glyph{line-height:0;margin-bottom:5mm;}
 .sec-div .num{font-family:'Cormorant';font-size:11pt;letter-spacing:.3em;color:var(--grey);}
 .sec-div h2{font-size:26pt;letter-spacing:.06em;margin:4mm 0 0;color:var(--ink);text-transform:none;font-weight:600;}
 .sec-div .sub{font-style:italic;color:var(--grey);font-size:13pt;margin-top:3mm;}
@@ -523,8 +528,8 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
     pages.append("".join(toc))
 
     n = 0
-    for sid, num, title, sub in SECTIONS:
-        pages.append(f"""<section class="page sec-div"><div class="num">{esc(num)}</div>
+    for si, (sid, num, title, sub) in enumerate(SECTIONS, 1):
+        pages.append(f"""<section class="page sec-div"><div class="glyph">{activity_glyph(sid, 18)}</div><div class="num">{esc(num)}</div>
 <h2>{esc(title)}</h2><div class="sub">{esc(sub)}</div><div class="rule"></div></section>""")
         for e in [x for x in entries if x["section"] == sid]:
             n += 1

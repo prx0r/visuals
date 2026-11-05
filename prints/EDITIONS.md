@@ -228,3 +228,22 @@ Tiro Devanagari + Cormorant Garamond (SIL OFL, embedded, min 8.5pt > KDP's 7pt f
 white paper, matte cover · odd page counts auto-padded by KDP.
 **Gate:** `python3 prints/kdp_preflight.py <pdfs>` — run before every upload; exit 1 on fail.
 Status: all 5 books PASS (practical 107, vol1 99, vol2 57, dummies 55, poems1 54).
+
+## TYPE STANDARD (both prayer books, locked 2026-11-05)
+Fonts: **Tiro Devanagari Sanskrit** (Devanagari + Om) + **Cormorant Garamond** (all text) — OFL, embedded.
+| Role | Spec |
+|---|---|
+| Cover title | Cormorant 600 · 36pt · uppercase · .05em |
+| Cover Om | Tiro · 60pt |
+| Divider h2 | Cormorant 600 · 26pt |
+| Prayer title | Cormorant 600 · 17pt |
+| Devanagari tiers | Tiro 40/32/25/20/16pt · line-height 2.0→1.7 (autofit by length) |
+| IAST | Cormorant italic · 11pt · grey #76736e |
+| Prayer English | Cormorant · 15/13.5/12.5pt tiers · line-height 1.65 |
+| Guide label | 8.5pt · uppercase · .24em |
+| Guide title | Cormorant 600 · 19pt |
+| Guide brief | italic · 11.5pt · grey, hairline below |
+| Guide body | Cormorant · 11.5pt / 1.55 |
+| TOC | 11pt, 2 columns, break-inside avoid (fits 1 page ≤50 lines) |
+| Footer/pnum | 9pt grey · minimum anywhere = 8.5pt (KDP floor 7pt) |
+Stencils: `prints/stencils.py` — SVG monoline (stroke 2.4), rasa rosette (navāvaraṇa: bindu+ring+nine) on TP, activity glyphs on PP dividers.

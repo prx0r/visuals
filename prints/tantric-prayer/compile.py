@@ -5,6 +5,9 @@ Rasa theory from Abhinavabhāratī/Tantrāloka (house LOGICVID sessions).
 Run with the patala venv python (indic_transliteration)."""
 
 import json, html, pathlib
+import sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from stencils import rasa_rosette
 
 HERE = pathlib.Path(__file__).parent
 try:
@@ -400,11 +403,13 @@ h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08
 .epi td{padding:1.8mm 2mm 1.8mm 0;border-bottom:1px solid var(--hair);}
 .epi td.s{font-style:italic;color:var(--grey);}
 .toc h2,.sec-div h2,.bib h2{font-family:'Cormorant';font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13pt;color:var(--grey);}
-.toc ol{list-style:none;padding:0;margin:5mm 0 0;}
+.toc ol{list-style:none;padding:0;margin:5mm 0 0;column-count:2;column-gap:7mm;}
+.toc li,.toc .sec{break-inside:avoid;-webkit-column-break-inside:avoid;}
 .toc .sec{margin-top:3.5mm;font-size:9.5pt;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);line-height:1.2;}
-.toc li{margin:.4mm 0;font-size:11.5pt;line-height:1.3;}
+.toc li{margin:.5mm 0;font-size:11pt;line-height:1.35;}
 .toc .n{color:var(--grey);display:inline-block;width:7mm;}
 .sec-div{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+.sec-div .glyph{line-height:0;margin-bottom:5mm;}
 .sec-div .num{font-family:'Cormorant';font-size:11pt;letter-spacing:.3em;color:var(--grey);}
 .sec-div h2{font-size:26pt;letter-spacing:.06em;margin:4mm 0 0;color:var(--ink);text-transform:none;font-weight:600;}
 .sec-div .sub{font-style:italic;color:var(--grey);font-size:13pt;margin-top:3mm;}
@@ -437,10 +442,35 @@ h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08
 <div class="sub">{esc(META['subtitle'])}</div>
 <div class="rule"></div>
 <div class="blurb">{esc(META['blurb'])}</div>
+<div class="yantra" style="margin-top:10mm">{rasa_rosette(0, 24)}</div>
 </section>""")
 
     pages.append(f"""<section class="page epi center"><div class="lines">{esc(deva(META['epi_iast']))}</div>
 <div class="src">{esc(META['epi_src'])}</div></section>""")
+
+    pages.append("""<section class="page epi">
+<h2 class="blk">Introduction</h2>
+<p><b>Tantric Prayer</b> is the companion to <i>Practical Prayers</i>. That book was for the
+moments of the day; this one is for the weather inside it. Same form — a prayer facing its
+explanation — but the sections are not places. They are the nine rasas, the classical
+table fixed by Abhinavagupta himself in the Abhinavabhāratī, where he added the ninth,
+śānta.</p>
+<p>The claim is his, and it is old: an emotion is not an obstacle to practice — it is
+consciousness already tasting itself in that key. Fear, grief, rage and wonder are one
+wonder (camatkāra) in nine costumes. So this book never argues with a feeling. It gives
+it its Sanskrit name, its literal sense, its conventional term and its sthāyibhāva —
+and then says a verse at it. The prayer does not banish the emotion; it re-tastes it,
+which is what recognition feels like when it wears that emotion's face.</p>
+<p>Every verse comes from our own Kashmir Śaiva corpus: thirty-three from Utpaladeva's
+<i>Śivastotrāvalī</i>, one each from Kṣemarāja's <i>Ghatakarpara</i>, Abhinavagupta's
+<i>Kramastotra</i> — in Swami Lakshmanjoo's own recitation list — and Abhinavagupta's
+<i>Gītārthasaṅgraha</i>. Translations are ours, checked line by line against the corpus
+witnesses; each guide links to its source. Theory quotations are short and attributed;
+their references are flagged for verification against print editions.</p>
+<p>Where <i>Practical Prayers</i> gave you a verse for the sink and the desk, these give
+you one for the inside. Read the guide when you meet a prayer; after that, the prayer
+page alone is enough.</p>
+<div class="src">Tantric Prayer · a companion to Practical Prayers</div></section>""")
 
     # --- INTRO1: what is a rasa ---
     pages.append("""<section class="page epi">
@@ -513,8 +543,8 @@ guide. Theory quotes are short and attributed; verify against print editions bef
     pages.append("".join(toc))
 
     n = 0
-    for sid, num, title, sub in SECTIONS:
-        pages.append(f"""<section class="page sec-div"><div class="num">{esc(num)}</div>
+    for si, (sid, num, title, sub) in enumerate(SECTIONS, 1):
+        pages.append(f"""<section class="page sec-div"><div class="glyph">{rasa_rosette(si, 22)}</div><div class="num">{esc(num)}</div>
 <h2>{esc(title)}</h2><div class="sub">{esc(sub)}</div>
 <div class="gloss">{esc(GLOSS[sid])}</div><div class="rule"></div>
 <div class="doc">{esc(DOCTRINE[sid])}</div></section>""")
