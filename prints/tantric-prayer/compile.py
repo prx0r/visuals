@@ -395,6 +395,8 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 .epi{display:flex;flex-direction:column;justify-content:center;}
 .epi.center{align-items:center;text-align:center;}
 .epi .lines{font-size:14pt;line-height:1.7;}
+.epi h2.blk+p,.epi p{font-size:11.5pt;line-height:1.5;margin:0 0 3mm;}
+.epi .sr{display:block;font-size:10pt;color:#76736e;line-height:1.45;margin-top:.8mm;}
 .epi .src{font-size:9.5pt;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-top:8mm;}
 h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08em;text-transform:uppercase;margin:6mm 0 3mm;color:var(--ink);}
 .epi p{font-size:13pt;line-height:1.55;margin:0 0 3.5mm;color:#241f19;}
@@ -531,6 +533,51 @@ meet a prayer; after that, the prayer page alone is enough.</p>
 (translation-work) — Abhinavagupta, Utpaladeva, Kṣemarāja, Vasugupta — each linked from its
 guide. Theory quotes are short and attributed; verify against print editions before study.</p>
 <div class="src">Tantric Prayer</div></section>""")
+
+    pages.append("""<section class="page epi">
+<h2 class="blk">Decoding the verses — the axioms (1 of 2)</h2>
+<p><b>Rasa</b> — a taste, not an emotion: consciousness's own flavour, savoured.
+<span class="sr">Why: Abhinavabhāratī — rasa is "the enjoyment of one's own consciousness as uniform bliss";
+the feelings are the variety, the taste is the one. Hence all rasas pleasurable, even the painful ones.</span></p>
+<p><b>Camatkāra</b> — wonder: the signature of consciousness.
+<span class="sr">Why: Tantrāloka ad 1/53 — wonder distinguishes the conscious from the insentient; perception
+itself is "it appears to me," and that appearing is camatkāra. Emotions are particular camatkāras (TĀ 15254).</span></p>
+<p><b>Sthāyibhāva</b> — the permanent root beneath each rati, śoka, krodha, bhaya…
+<span class="sr">Why: emotions pass, roots remain; the nine roots are why nine doors are enough — every
+transient state is accounted for by one stable taste. (Nāṭyaśāstra / Abhinavabhāratī)</span></p>
+<p><b>Alaukika</b> — the taste beyond time and space, yet felt.
+<span class="sr">Why: Abhinavabhāratī's paradox — rasa is not an object (no empirical means reaches it) yet
+sva-saṁvedana: "because rasa is felt, therefore it exists." Resolution: it is subject-relish, not object-fact.</span></p>
+<p><b>Sādhāraṇīkaraṇa</b> — universalisation: one heart, many sharers.
+<span class="sr">Why: a single person's grief is not yet rasa — the private feeling must be lifted to the
+shareable; that lifting is exactly what converts suffering into taste. This is the book's central move.</span></p>
+<p><b>Vimarśa</b> — awareness bent back on itself: the feel of feeling.
+<span class="sr">Why: light with no surface shines nowhere; consciousness needs itself as its mirror —
+every emotion is vimarśa's particular curvature.</span></p>
+<div class="src">Tantric Prayer · the key</div></section>""")
+
+
+    pages.append("""<section class="page epi">
+<h2 class="blk">Decoding the verses — the axioms (2 of 2)</h2>
+<p><b>Spanda</b> — the pulse: by whose opening and closing the world arises and dissolves.
+<span class="sr">Why: Spandakārikā 1.1 — the world blinks; emotions are blinks too — raised and lowered
+states of one pulse, which is why no feeling lasts and none needs to.</span></p>
+<p><b>Bhāva</b> — the feeling as it appears, before it is savoured (the raw presentation).
+<span class="sr">Why: raw → presented → tasted: the same event at three depths. Prayer works at the third —
+that is why the guides never argue with the raw layer.</span></p>
+<p><b>Svātantrya</b> — freedom: the feeling must be allowed to be what it is.
+<span class="sr">Why: if consciousness is freedom, a suppressed emotion contradicts its own ground;
+the doorway practice permits first, transforms second.</span></p>
+<p><b>Pratyabhijñā</b> — recognition wearing the emotion's face.
+<span class="sr">Why: bondage as real makes freedom impossible — yet the difference is felt; so bondage
+is misreading, and the savoured feeling is what corrects it. (the same axiom as the first book, in rasa's key)</span></p>
+<p><b>Anupāya</b> — the no-means: techniques are optional, tasting is not.
+<span class="sr">Why: Anuttarāṣṭikā 1 drops contemplation, japa and visualization — yet the rasa still arrives;
+the arrival was never caused by the doing.</span></p>
+<p><b>Māyā</b> — not the world's denial but its manufacture, seen from below.
+<span class="sr">Why: "the world, both real and unreal" (Mahopadeśaviṃśatikā 11) — real as his expression,
+unreal only from the underside. Emotions belong to the making, not the mistake.</span></p>
+<div class="src">Tantric Prayer · the key</div></section>""")
 
     toc = ['<section class="page toc"><h2>Contents</h2><ol>']
     n = 0

@@ -453,6 +453,9 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 .epi{display:flex;flex-direction:column;justify-content:center;text-align:center;}
 .epi .skt{font-family:'Tiro';font-size:16pt;line-height:2;margin-bottom:6mm;}
 .epi .en{font-style:italic;color:var(--grey);font-size:13pt;max-width:100mm;margin:0 auto;}
+.epi h2.blk+p,.epi p{font-size:11.5pt;line-height:1.5;margin:0 0 3mm;}
+.epi .sr{display:block;font-size:10pt;color:#76736e;line-height:1.45;margin-top:.8mm;}
+h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08em;text-transform:uppercase;margin:6mm 0 3mm;color:var(--ink);}
 .epi .src{font-size:9.5pt;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-top:8mm;}
 .toc h2,.sec-div h2,.bib h2{font-family:'Cormorant';font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13pt;color:var(--grey);}
 .toc ol{list-style:none;padding:0;margin:6mm 0 0;column-count:2;column-gap:7mm;}
@@ -518,6 +521,50 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 <span class="ln">Every source is linked from its guide — the translations come from our Kashmir Shaiva corpus, the sangha hymns from the Lakshmanjoo Academy.</span>
 </div>
 <div class="src">Practical Prayers</div></section>""")
+
+    pages.append("""<section class="page epi">
+<h2 class="blk">Decoding the verses — the axioms (1 of 2)</h2>
+<p><b>Śiva</b> — consciousness that is <i>self-lit</i>: knowing that needs no second thing in order to be known.
+<span class="sr">Why: any knower requiring another knower regresses forever; the chain of proof must end in
+something self-evidencing. That self-evidencing is what the texts name Śiva. (svaprakāśa)</span></p>
+<p><b>Śakti</b> — Śiva knowing himself: power not as muscle but as the act of shining.
+<span class="sr">Why: "self-lit" means lit <i>by itself</i> — that "by" is Śakti. Flame and burning are one word's two halves.</span></p>
+<p><b>Brahman</b> (in the meal verse) — read as Śiva in all four places: offering, oblation, fire, goal.
+<span class="sr">Why: Gītā 4.24 names them all "brahman"; if any one differed, the chain would break into parts —
+one substance makes the meal a self-offering. (Lakshmanjoo, mealtime teaching)</span></p>
+<p><b>So'ham / haṃsa</b> — the mantra already running: out <i>sa</i>, in <i>ha</i>.
+<span class="sr">Why: Vijñāna Bhairava 155 — the jīva recites it 21,600 times a day without trying; so real
+practice adds no sound, it only shortens the gap (Swamiji's tuṭi-method) until you notice it.</span></p>
+<p><b>Pañcākṣara</b> — naḥ·maḥ·śi·vā·ya = the five acts: creation, preservation, dissolution, concealment, grace.
+<span class="sr">Why: nothing in experience falls outside those five — so five sounds cover the whole cycle,
+which is why one mantra can be the entire practice.</span></p>
+<p><b>Anātha</b> — the refuge that asks for no qualifications.
+<span class="sr">Why: a protector requiring worthy applicants is a merchant; "refuge of the refugeless"
+(Bhairavastava 1) removes the condition — grace that cannot be refused.</span></p>
+<div class="src">Practical Prayers · the key</div></section>""")
+
+
+    pages.append("""<section class="page epi">
+<h2 class="blk">Decoding the verses — the axioms (2 of 2)</h2>
+<p><b>Anupāya</b> — the no-means.
+<span class="sr">Why: if every method — contemplation, japa, visualization — can be dropped and recognition
+still arrives, method was never the cause. Anuttarāṣṭikā 1 simply lists what must be set down.</span></p>
+<p><b>Pratyabhijñā</b> — recognition, not achievement: you don't come to know Śiva; you notice you never stopped.
+<span class="sr">Why: bondage must be real for liberation to be sought — yet if it were real, no freedom could
+ever be felt; you do feel the difference, so bondage is a misreading, and what corrects a misreading is recognition.</span></p>
+<p><b>Svātantrya</b> — freedom: the cause that needs no cause.
+<span class="sr">Why: every chain of causation stops somewhere or loops; the texts place the stop at freedom —
+the one that acts without being acted on.</span></p>
+<p><b>Pūjā</b> — offering as re-cognition of what is already there.
+<span class="sr">Why: the litany (Mahopadeśaviṃśatikā 13–20) proves the Lord needs nothing from the rite —
+what the rite changes is the offerer. The worship is the worshipper, turning.</span></p>
+<p><b>Bhakti</b> — the method that is not a method.
+<span class="sr">Why: Śivastotrāvalī 1 describes a devotee attained without meditation or recitation —
+devotion works by alignment, not technique; that is why these guides give feelings, not repetitions.</span></p>
+<p><b>Māyā</b> — the world's making-power, seen from underneath.
+<span class="sr">Why: the texts never deny the world — "the world, both real and unreal" (Mahopadeśaviṃśatikā 11) —
+they deny only the view from below that takes the making for the made.</span></p>
+<div class="src">Practical Prayers · the key</div></section>""")
 
     toc = ['<section class="page toc"><h2>Contents</h2><ol>']
     for sid, num, title, sub in SECTIONS:
