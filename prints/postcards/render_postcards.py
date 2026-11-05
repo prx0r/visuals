@@ -12,7 +12,8 @@ Usage:
   python3 prints/postcards/render_postcards.py tantric-prayer mpa-1 sst-16-8
   python3 prints/postcards/render_postcards.py all            # both books
 """
-import os, re, shutil, subprocess, sys
+import argparse, json, os, re, shutil, subprocess, sys, tempfile
+from pathlib import Path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PRINTS = os.path.dirname(HERE)
@@ -68,33 +69,9 @@ html,body {{ background:#fff; }}
 """
 
 
-def corpus_index(book_dir):
-    p = os.path.join(book_dir, "sources", "shivastotravali_corpus.json")
-    if not os.path.exists(p):
-        return {}
-    import json
-    d = json.load(open(p))
-    idx = {}
-    for ch in d["chapters"]:
-        for v in ch["verses"]:
-            idx[(int(ch["number"]), int(v["number"]))] = v
-    return idx
-
-
 def sanskrit_of(e, idx):
-    if "iast" in e:
-        iast = e["iast"]
-    elif "corpus" in e:
-        rec = idx.get((int(e["corpus"][0]), int(e["corpus"][1])))
-        if not rec:
-            return None, None
-        iast = rec["iast"]
-    else:
-        return None, None
-    from indic_transliteration import sanscript
-    from indic_transliteration.sanscript import transliterate
-    dev = transliterate(iast, sanscript.IAST, sanscript.DEVANAGARI)
-    return dev, iast
+    # load_entries has already resolved the declared source and transliterated.
+    return e["devanagari"], e["iast"]
 
 
 def esc(s):
@@ -111,7 +88,7 @@ def front(e, idx, book_title, section_name):
         long_sanskrit = len(iast or "") > 150
         dcls = "dev sm" if long_sanskrit else "dev"
         icls = "iast sm" if long_sanskrit else "iast"
-        dev_p = dev.replace("।", "।").replace("/", "<br>")
+        dev_p = esc(dev).replace("/", "<br>")
         left = f'<div class="{dcls}">{dev_p}</div><div class="{icls}">{esc(iast).replace("/", "<br>")}</div>'
     return f"""<section class="page f">
 <div class="label">{esc(e.get('title',''))}</div>
@@ -141,76 +118,121 @@ def back(e, idx, book_title, section_name):
 </section>"""
 
 
-def build(book, ids=None):
-    import json
-    book_dir = os.path.join(PRINTS, book)
+def build(book, ids=None, out_dir=None, draft=True, social=False, backend="chrome", book_dir=None):
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", book):
+        raise ValueError("invalid book identifier")
+    book_dir = os.fspath(book_dir) if book_dir else os.path.join(PRINTS, book)
     entries = json.load(open(os.path.join(book_dir, "entries.json")))
     book_title = json.load(open(os.path.join(book_dir, "book.json")))["meta"]["title"]
-    idx = corpus_index(book_dir)
     sections = {s["id"]: s.get("title", s["id"]) for s in
                 json.load(open(os.path.join(book_dir, "book.json")))["sections"]}
     if ids:
         want = set(ids)
+        if len(want) != len(ids):
+            raise ValueError("duplicate entry ids requested")
         entries = [e for e in entries if e["id"] in want]
-        if not entries:
-            raise SystemExit(f"no entries matched {ids}")
+        missing = want - {e["id"] for e in entries}
+        if missing:
+            raise ValueError(f"unknown entry ids: {sorted(missing)}")
+    entry_ids = [e["id"] for e in entries]
+    if len(set(entry_ids)) != len(entry_ids) or any(not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]*", i) for i in entry_ids):
+        raise ValueError("duplicate or unsafe entry id")
+    if not entries:
+        raise ValueError("no entries to render")
+    sys.path.insert(0, PRINTS)
+    from bookkit.engine import load_entries
+    entries = load_entries(Path(book_dir), entries)
+    idx = {}  # kept in the front/back interface for compatibility
     pages, order = [], []
     for e in entries:
         sec = sections.get(e["section"], e["section"])
         pages.append(front(e, idx, book_title, sec))
         pages.append(back(e, idx, book_title, sec))
         order.append(e["id"])
-    html = f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{''.join(pages)}</body></html>"
-    os.makedirs("/tmp/opencode", exist_ok=True)
-    src = f"/tmp/opencode/postcards_{book}.html"
-    open(src, "w").write(html)
-    pdf = f"/tmp/opencode/postcards_{book}.pdf"
-    if os.path.exists(pdf):
-        os.remove(pdf)
-    subprocess.run([
-        "google-chrome-stable", "--headless=new", "--disable-gpu", "--no-sandbox",
-        "--disable-dev-shm-usage", "--disable-crash-reporter", "--no-pdf-header-footer",
-        f"--print-to-pdf={pdf}", f"file://{src}"], check=True,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=180)
-    out_dir = os.path.join(OUT, book)
-    shutil.rmtree(out_dir, ignore_errors=True)
-    os.makedirs(out_dir, exist_ok=True)
-    subprocess.run(["pdftoppm", "-r", "300", "-png", pdf,
-                    os.path.join(out_dir, "_pg")], check=True)
-    made = []
-    for i, eid in enumerate(order):
-        for k, side in ((2 * i + 1, "front"), (2 * i + 2, "back")):
-            pg = os.path.join(out_dir, f"_pg-{k:02d}.png")
-            if not os.path.exists(pg):       # pdftoppm width depends on page count
-                pg = os.path.join(out_dir, f"_pg-{k}.png")
-            dst = os.path.join(out_dir, f"{eid}__{side}.png")
-            os.replace(pg, dst)
-            made.append(dst)
-    index = os.path.join(out_dir, "index.html")
-    rows = "".join(
-        f"<div style='display:flex;gap:24px;margin-bottom:40px;align-items:flex-start'>"
-        f"<div><h3 style='font-family:serif'>{eid} — front</h3>"
-        f"<img src='{eid}__front.png' width='600'></div>"
-        f"<div><h3 style='font-family:serif'>{eid} — back</h3>"
-        f"<img src='{eid}__back.png' width='600'></div></div>"
-        for eid in order)
-    open(index, "w").write(
-        f"<!doctype html><meta charset='utf-8'><title>{book} postcards — {SKU}</title>"
-        f"<body style='background:#ddd;font-family:sans-serif;padding:30px'>"
-        f"<h1>{book} · fine-art postcards · {SKU} ({W}×{H}px @300dpi)</h1>{rows}</body>")
-    for f in os.listdir(out_dir):
-        if f.startswith("_pg"):
-            os.remove(os.path.join(out_dir, f))
-    print(f"{book}: {len(order)} cards x2 sides -> {len(made)} PNGs")
-    print(f"  index: {index}")
+    fonts = Path(book_dir) / "fonts"
+    tiro = fonts / "TiroDevanagariSanskrit-Regular.ttf"
+    cormorant = fonts / "CormorantGaramond[wght].ttf"
+    if not tiro.is_file() or not cormorant.is_file():
+        raise FileNotFoundError("book fonts missing")
+    css = CSS.replace("file://" + TIO, tiro.resolve().as_uri()).replace("file://" + COR, cormorant.resolve().as_uri())
+    if draft:
+        css += ".page:before{content:'DRAFT · NOT FOR SALE';position:absolute;top:.08in;right:.15in;font:6pt sans-serif;color:#9d2424;}"
+    target = (Path(out_dir) if out_dir else Path(OUT) / book).resolve()
+    target.mkdir(parents=True, exist_ok=True)
+
+    def render(doc_pages, extra_css, tmp, prefix):
+        doc = f"<!doctype html><html><head><meta charset='utf-8'><style>{css}{extra_css}</style></head><body>{''.join(doc_pages)}</body></html>"
+        src, pdf = tmp / (prefix + ".html"), tmp / (prefix + ".pdf")
+        src.write_text(doc, encoding="utf-8")
+        if backend == "weasyprint":
+            from weasyprint import HTML
+            HTML(filename=str(src)).write_pdf(str(pdf))
+        else:
+            chrome = os.environ.get("BOOKFACTORY_CHROME") or shutil.which("google-chrome-stable") or shutil.which("chromium")
+            if not chrome:
+                raise RuntimeError("Chrome/Chromium missing; set BOOKFACTORY_CHROME")
+            subprocess.run([chrome, "--headless=new", "--disable-gpu", "--no-sandbox", "--disable-dev-shm-usage", "--disable-crash-reporter", "--no-pdf-header-footer", f"--print-to-pdf={pdf}", src.as_uri()], check=True, timeout=180, capture_output=True)
+        info = subprocess.run(["pdfinfo", str(pdf)], check=True, capture_output=True, text=True).stdout
+        count = re.search(r"Pages:\s+(\d+)", info)
+        if not count or int(count.group(1)) != len(doc_pages):
+            raise RuntimeError(f"unexpected pagination for {prefix}")
+        subprocess.run(["pdftoppm", "-r", "300", "-png", str(pdf), str(tmp / prefix)], check=True, capture_output=True)
+        return [tmp / f"{prefix}-{i:0{len(str(len(doc_pages)))}d}.png" for i in range(1, len(doc_pages)+1)]
+
+    # Render in isolation; only replace this selection after all files succeed.
+    with tempfile.TemporaryDirectory(prefix=".bookfactory-postcards-", dir=target) as work:
+        tmp = Path(work)
+        files = render(pages, "", tmp, "card")
+        products = [(files[2*i+j], f"{eid}__{side}.png", (1800, 1200)) for i,eid in enumerate(order) for j,side in enumerate(("front", "back"))]
+        if social:
+            for label, height in (("square", 3.6), ("portrait", 4.5)):
+                overrides = f"""@page{{size:3.6in {height}in;margin:0}}
+.page{{width:3.6in;height:{height}in;padding:.3in .28in;}}
+.f .cols{{height:{height-1.15}in;gap:.12in;margin-top:.1in;}}
+.f .left{{width:46%}} .f .dev{{font-size:12pt}} .f .dev.sm{{font-size:10pt}}
+.f .iast{{font-size:7.5pt}} .f .iast.sm{{font-size:7pt}}
+.f .en{{font-size:11pt}} .f .en.sm{{font-size:9pt}} .f .en.xs{{font-size:8pt}}
+.f .foot{{left:.28in;right:.28in;bottom:.2in}}"""
+                rendered = render(pages[::2], overrides, tmp, label)
+                size = (1080, 1080 if label == "square" else 1350)
+                products += [(rendered[i], f"{eid}__social-{label}.png", size) for i,eid in enumerate(order)]
+        from PIL import Image
+        for src, name, size in products:
+            if not src.is_file():
+                raise RuntimeError(f"missing rendered page: {src.name}")
+            with Image.open(src) as image:
+                if image.format != "PNG" or image.size != size:
+                    raise RuntimeError(f"{name}: unexpected image format or dimensions {image.size}; expected PNG {size}")
+                dpi = image.info.get("dpi", (0, 0))
+                if min(dpi) < 299 or max(dpi) > 301:
+                    raise RuntimeError(f"{name}: missing or incorrect 300 dpi metadata: {dpi}")
+                image.verify()
+        for src, name, size in products:
+            os.replace(src, target / name)
+        if not social:
+            # These belong to the selected entry but were not regenerated;
+            # preserve every unselected entry and remove only its stale sides.
+            for eid in order:
+                for suffix in ("social-square", "social-portrait"):
+                    (target / f"{eid}__{suffix}.png").unlink(missing_ok=True)
+    print(f"{book}: {len(order)} selected cards -> {len(products)} PNGs in {target}")
+    print("Existing unselected cards were preserved.")
 
 
 if __name__ == "__main__":
-    args = sys.argv[1:]
-    if not args:
-        raise SystemExit(__doc__)
-    if args[0] == "all":
-        build("practical-prayers")
-        build("tantric-prayer")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("book")
+    parser.add_argument("ids", nargs="*")
+    parser.add_argument("--output", help="output directory; existing other entries are preserved")
+    parser.add_argument("--draft", action="store_true", default=True, help="mark previews as not for sale (the CLI currently produces drafts only)")
+    parser.add_argument("--social", action="store_true", help="also render 1080x1080 and 1080x1350")
+    parser.add_argument("--backend", choices=("chrome", "weasyprint"), default="chrome", help="weasyprint is an experimental preview backend")
+    parser.add_argument("--book-dir", help="explicit bookkit data directory for an isolated draft")
+    args = parser.parse_args()
+    if args.book == "all":
+        if args.ids or args.output or args.book_dir:
+            parser.error("all cannot be combined with ids, --output or --book-dir")
+        for book in ("practical-prayers", "tantric-prayer"):
+            build(book, draft=args.draft, social=args.social, backend=args.backend)
     else:
-        build(args[0], args[1:] or None)
+        build(args.book, args.ids or None, args.output, args.draft, args.social, args.backend, args.book_dir)
