@@ -4,6 +4,11 @@
 rates (checked via web 2026-11). Print prices are public-list estimates — verify in each
 dashboard before pricing a title.*
 
+> **Proof status correction:** historical PASS claims below used the old
+> preflight. The current Practical Prayers and Tantric Prayer PDFs fail
+> actual text-size and margin checks; they require new Chrome proofs. See
+> `HANDOVER.md` and `prx0r/bookfactory/PIPELINE.md` for the current gate.
+
 ---
 
 ## Part 1 — What's possible (L4 inventory, post-pull)
@@ -254,14 +259,16 @@ Stencils: `prints/stencils.py` — SVG monoline (stroke 2.4), rasa rosette (nav�
 
 **Three editions per work:**
 
-| Edition | Content | Ref level | Page target | At-cost list (royalty $0) |
+| Edition | Content | Ref level | Page target | Minimum-list estimates |
 |---|---|---|---|---|
 | **English** | translation only | minimal (numbers, no apparatus) | ≤110 flat tier | **$4.60** / £3.86 / €4.10 |
 | **Study** | Sanskrit (Deva+IAST) + English | spread format (current prayer-book style) | ≤110 for verse works; priced-to-size for big ones | ≤110: **$4.60** · 250pp: $8.00 · 300pp: $9.20 |
 | **Complete** | Study + our essays (intros, c1 essays, glossary, notes) | full | whatever it honestly needs | 400pp: **$9.99** · 500pp: $11.67 · 600pp: $13.67 |
 
-**Stance (owner): sell at cost.** At-cost = min list price, royalty $0. KDP refuses
-list prices below print cost, so the floor IS cost.
+**Stance (owner): sell as close to cost as the platform permits.** The minimum
+list price must cover the printing cost after the applicable royalty rate.
+Thresholds and rounding can leave a small positive royalty even at that minimum;
+the reader's price is not the same as the printer's cost.
 
 ### KDP cost curve (Amazon.com, black ink, regular trim, verified 2026-09/11)
 - ≤110pp: **$2.30 flat** · 111pp+: **$1.00 + $0.012/page** (each page above 110 = +1.2¢)
@@ -270,15 +277,18 @@ list prices below print cost, so the floor IS cost.
 - Royalty: **60% ≥ $9.99 / £7.99 / €9.99, 50% below** (rate × list − print)
 - Min list (floor) = print÷0.5, or max(threshold, print÷0.6) once past the 50% band
 
-### Floors table (royalty $0)
+### Minimum list estimates (royalty may be positive at a rate threshold)
 | Pages | US print | US floor | UK floor | EU floor |
 |---|---|---|---|---|
 | ≤110 | $2.30 | **$4.60** | £3.86 | €4.10 |
 | 200 | $3.40 | $6.80 | £5.70 | €6.30 |
 | 300 | $4.60 | $9.20 | £7.70 | €8.70 |
-| 400 | $5.80 | $9.99 | £8.08 | €9.99 |
+| 400 | $5.80 | $9.99 | £8.09 | €9.99 |
 | 500 | $7.00 | $11.67 | £9.75 | €11.25 |
 | 600 | $8.20 | $13.67 | £11.42 | €13.25 |
+
+For example, at 400 pages in the US, 60% of $9.99 minus $5.80 is about
+$0.19, not $0. Confirm minimum list prices and rounding in KDP's calculator.
 
 ### Traps
 1. Never price at $9.98/£7.98/€9.98 — one penny under the threshold flips to 50%.

@@ -1,5 +1,18 @@
 # HANDOVER — Prayer Books & Publishing Pipeline (2026-11-05)
 
+> **2026-11-05 preflight correction:** the existing Practical Prayers and
+> Tantric Prayer 108-page PDFs fail the new actual-PDF checks: font sizes
+> under 7pt and Sanskrit beyond safe margins. They are not KDP-ready merely
+> because the old preflight returned PASS. `prints/kdp_preflight.py` now checks
+> page sizes, PDF text geometry, embedded fonts and image resolution; install
+> `prints/requirements-publishing.txt`. The shared engine wraps long strings
+> and derives Devanagari from IAST, but both books still require a new Chrome
+> proof, text/pagination review and successful preflight. See the paired
+> `prx0r/bookfactory` `codex/publishing-handoff` branch, `PIPELINE.md`, for
+> quote previews, asset handoffs and the remaining source/rights gates. The
+> 110-page cost target is marketplace-specific (Australia's fixed tier stops
+> at 108). Older statements below that say the PDFs pass are superseded.
+
 *Read this first. Repo: `prx0r/visuals` (main). Book work lives in `prints/`.
 Corpus: `/home/box/repos/translation-work` (git — `git pull` before sourcing; it moves daily).*
 

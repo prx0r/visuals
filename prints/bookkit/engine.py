@@ -37,7 +37,7 @@ CSS = """
 html,body{margin:0;padding:0;background:#efece5;color:var(--ink);}
 body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 .page{background:#fff;width:148mm;min-height:210mm;margin:0 auto 10mm;padding:20mm 18mm;
-  box-shadow:0 2px 14px rgba(0,0,0,.12);position:relative;page-break-after:always;}
+  box-shadow:0 2px 14px rgba(0,0,0,.12);position:relative;page-break-after:always;overflow-wrap:anywhere;}
 .spread{display:flex;gap:8mm;justify-content:center;flex-wrap:wrap;margin:0 auto 10mm;}
 .spread .page{margin:0;}
 .cover{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
@@ -53,6 +53,9 @@ body{font-family:'Cormorant',Georgia,serif;font-size:15pt;line-height:1.5;}
 h2.blk{font-family:'Cormorant';font-weight:600;font-size:15pt;letter-spacing:.08em;text-transform:uppercase;margin:6mm 0 3mm;color:var(--ink);}
 .epi h2.blk+p,.epi p{font-size:11.5pt;line-height:1.5;margin:0 0 3mm;}
 .epi .sr{display:block;font-size:10pt;color:#76736e;line-height:1.45;margin-top:.8mm;}
+.opening-image{display:flex;align-items:center;justify-content:center;}
+.opening-image img{display:block;max-width:100%;max-height:165mm;object-fit:contain;}
+.opening-image .draft-mark{position:absolute;top:8mm;right:10mm;font:8pt sans-serif;color:#a22;}
 .epi table{border-collapse:collapse;font-size:12pt;width:100%;}
 .epi th{text-align:left;font-size:9.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);border-bottom:1px solid var(--ink);padding:2mm 2mm 2mm 0;font-weight:400;}
 .epi td{padding:1.8mm 2mm 1.8mm 0;border-bottom:1px solid var(--hair);}
@@ -100,30 +103,51 @@ def esc(s):
 
 
 def deva(iast):
-    if _tr is None or not iast:
-        return ""
+    if not iast:
+        raise ValueError("cannot transliterate an empty IAST source")
+    if _tr is None:
+        raise RuntimeError("indic-transliteration is required to build Devanagari")
     try:
         out = _tr(iast, sanscript.IAST, sanscript.DEVANAGARI)
-    except Exception:
-        return ""
+    except Exception as exc:
+        raise ValueError("cannot transliterate IAST") from exc
     return out.replace("\U0000A8F3", "\u0902").replace("\U0000A8F2", "\u0901")
 
 
 def load_entries(d, entries):
-    corp = d / "sources" / "shivastotravali_corpus.json"
-    idx = {}
-    if corp.exists():
-        c = json.load(open(corp))
-        idx = {(ch["number"], v["number"]): v
-               for ch in c["chapters"] for v in ch["verses"]}
+    # Resolve the corpus declared by this entry, not a similarly named copy.
+    # This keeps the printed citation tied to the same bytes as its source.
+    indexes = {}
+    root = pathlib.Path(d).resolve()
     out = []
     for e in entries:
         e = dict(e)
-        if "corpus" in e and tuple(e["corpus"]) in idx:
-            v = idx[tuple(e["corpus"])]
-            e["iast"], e["devanagari"] = v["iast"], v["devanagari"]
-        elif e.get("iast") and not e.get("devanagari"):
-            e["devanagari"] = deva(e["iast"])
+        if "corpus" in e:
+            if e.get("iast"):
+                raise ValueError(f"ambiguous IAST and corpus for {e.get('id', '?')}")
+            source = e.get("source_path")
+            if not isinstance(source, str) or pathlib.Path(source).is_absolute():
+                raise ValueError(f"missing relative corpus source for {e.get('id', '?')}")
+            corp = (root / source).resolve()
+            if not corp.is_relative_to(root) or not corp.is_file():
+                raise ValueError(f"corpus source missing or outside book for {e.get('id', '?')}")
+            if corp not in indexes:
+                c = json.loads(corp.read_text(encoding="utf-8"))
+                idx = {}
+                for ch in c["chapters"]:
+                    for verse in ch["verses"]:
+                        key = (ch["number"], verse["number"])
+                        if key in idx:
+                            raise ValueError(f"duplicate corpus reference {key}")
+                        idx[key] = verse
+                indexes[corp] = idx
+            key = tuple(e["corpus"])
+            if key not in indexes[corp]:
+                raise ValueError(f"unresolved corpus reference for {e.get('id', '?')}")
+            e["iast"] = indexes[corp][key]["iast"]
+        if not e.get("iast"):
+            raise ValueError(f"missing IAST for {e.get('id', '?')}")
+        e["devanagari"] = deva(e["iast"])
         out.append(e)
     return out
 
@@ -164,6 +188,21 @@ def build(d):
 
     pages.append(f"""<section class="page epi center"><div class="lines">{esc(deva(meta['epi_iast']))}</div>
 <div class="src">{esc(meta['epi_src'])}</div></section>""")
+
+    # Optional, explicitly chosen artwork. Existing books without this field
+    # are unchanged. File access is constrained to the book directory.
+    art = book.get("opening_image")
+    if art is not None:
+        if not isinstance(art, dict) or not isinstance(art.get("path"), str) or not art.get("alt"):
+            raise ValueError("opening_image requires path and alt")
+        relative = pathlib.Path(art["path"])
+        image = (d / relative).resolve()
+        if relative.is_absolute() or not image.is_relative_to(d.resolve()) or not image.is_file():
+            raise ValueError("opening_image must be a file inside the book directory")
+        if image.suffix.lower() not in (".png", ".jpg", ".jpeg"):
+            raise ValueError("opening_image must be PNG or JPEG")
+        mark = '<span class="draft-mark">DRAFT · NOT FOR SALE</span>' if art.get('draft_only', True) else ''
+        pages.append(f'<section class="page opening-image">{mark}<img src="{html.escape(relative.as_posix(), quote=True)}" alt="{html.escape(art["alt"], quote=True)}"></section>')
 
     if front:
         pages.append(front)
