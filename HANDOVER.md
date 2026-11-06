@@ -13,6 +13,15 @@
 > 110-page cost target is marketplace-specific (Australia's fixed tier stops
 > at 108). Older statements below that say the PDFs pass are superseded.
 
+*Read this first: **BOOK WORK MOVED (2026-11-06).** Everything book-related
+(the two prayer books, bookkit, kdp_preflight, postcards, EDITIONS/PRICING,
+theses, decisions, the gate) now lives in **`prx0r/bookfactory`** — start at
+`bookfactory/BOOKS.md`. Local clone: `/home/box/repos/bookfactory`.
+This repo keeps only visuals/ (outputs, storyboards, standard_cards).
+Everything below is historical.*
+
+--- HISTORICAL (pre-migration) ---
+
 *Read this first. Repo: `prx0r/visuals` (main). Book work lives in `prints/`.
 Corpus: `/home/box/repos/translation-work` (git — `git pull` before sourcing; it moves daily).*
 
