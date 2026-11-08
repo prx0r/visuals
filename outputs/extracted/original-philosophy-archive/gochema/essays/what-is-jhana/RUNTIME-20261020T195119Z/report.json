@@ -1,0 +1,35 @@
+{
+ "pack": "what-is-jhana",
+ "started": "20261020T195119Z",
+ "phases": [
+  "deslop",
+  "draft",
+  "gate",
+  "push"
+ ],
+ "slop_target": 0.2,
+ "chapters": [
+  {
+   "label": "COLD OPEN",
+   "brief": "Owner's hook: what is a jhana, why glossed over, mastery is the inverse",
+   "pred_ai_conf": 0.0,
+   "draft_words": 193,
+   "deslop": {
+    "em/en dashes": 2
+   },
+   "push_objections": 7,
+   "gate": [
+    {
+     "iter": 0,
+     "ai_conf": 0.0,
+     "tags": [
+      "3LIST"
+     ]
+    }
+   ],
+   "gate_pass": true
+  }
+ ],
+ "finished": "20261020T195237Z",
+ "elapsed_s": 77.4
+}

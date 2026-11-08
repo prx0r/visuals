@@ -1,0 +1,488 @@
+Yes. A seller could attach a **verified reference run** to an agent/Worker profile, but the badge should say exactly what was proved:
+
+```text
+ResearchWorker v12
+
+✓ 83 recorded economic runs
+✓ 31 externally accepted outcomes
+✓ 31 settlement receipts
+✓ 12 TEE-attested runs
+✓ 3 ZK-inference verified runs
+```
+
+DeepProve would prove specific neural-network inference inside those runs; dstack/Phala would attest the full confidential runtime; WorkerKit would cryptographically connect those proofs to the output, submission and eventual outcome. ERC-8004 is deliberately designed for this kind of tiered trust: reputation, zkML validation and TEE attestations can coexist rather than pretending one proof mechanism solves everything. ([Ethereum Improvement Proposals][1])
+
+And **no, I would absolutely not make Moltwork an Algorand-native application.** Algorand should be one adapter to a chain-neutral protocol.
+
+## The split I would make
+
+### Algorand: one tiny, useful commercial primitive
+
+Conceptually, the ideal Algorand entry is not “Moltwork Marketplace.”
+
+It is:
+
+> **WorkerProof — an x402 endpoint that verifies economic work receipts.**
+
+Something as narrow as:
+
+```text
+POST /v1/verify-run
+
+input:
+    WorkerRun bundle / receipt URI
+
+checks:
+    ✓ artifact hashes
+    ✓ event-chain integrity
+    ✓ DSSE / signer
+    ✓ verifier attestations
+    ✓ optional TEE evidence
+    ✓ optional DeepProve evidence
+    ✓ submission ↔ output binding
+    ✓ external outcome evidence
+    ✓ settlement evidence
+
+output:
+    evidence graph
+    proof levels
+    failures
+    signed verification result
+```
+
+And charge, say, a tiny pay-per-verification amount through Algorand x402.
+
+This is almost comically aligned with Algorand's own suggested category: their challenge explicitly says to build paid endpoints for **“trust scores, proofs, audit trails, reputation checks, or validation services.”** ([Algorand][2])
+
+Their judging is equally weighted across real payment volume, use-case quality, sustained potential and innovation; x402 has to be core rather than cosmetic. 
+
+Architecture:
+
+```text
+                 WORKERPROOF
+
+TaskMarket receipt ─┐
+Upwork receipt ─────┤
+Roblox receipt ─────┤
+Moltwork receipt ───┤
+                    ▼
+             canonical verifier
+                    │
+                    ▼
+            signed proof report
+                    ▲
+                    │ payment
+             Algorand x402
+```
+
+Algorand is just:
+
+```text
+payment rail
++
+discovery rail
+```
+
+not:
+
+```text
+Moltwork's database
+Moltwork's identity
+Moltwork's marketplace
+Moltwork's canonical chain
+```
+
+That separation is important.
+
+### There is already competition around generic “agent trust”
+
+This is another reason not to enter with:
+
+> “we provide agent reputation scores!”
+
+That's crowded already. Agent402 has a multi-chain x402 marketplace, ERC-8004 registration and trust scoring; various ERC-8004 scanners already exist; 402.coffee sells certification/risk scoring/escrow; vet402 sells independent x402 verification. ([Agent 402 Marketplace][3])
+
+Your differentiated thing is:
+
+> **Show me the actual work that earned the reputation.**
+
+Not:
+
+```text
+Agent score = 87
+```
+
+but:
+
+```text
+Worker #182
+
+run: wr_8291
+cost: $0.31
+artifact: sha256:...
+verification: PASS
+submitted: TaskMarket #992
+accepted: YES
+earned: $12 USDC
+settled: tx 0x...
+
+proofs:
+✓ run provenance
+✓ artifact binding
+✓ external outcome
+✓ settlement
+✓ TEE execution
+```
+
+That is materially different.
+
+---
+
+## Important Algorand eligibility issue
+
+The current Global x402 Challenge rules require every entrant to be at least **18 or the relevant age of majority**.  The registration deadline is September 1 at 11:45pm Eastern, and entrants must already have a paid Mainnet x402 endpoint using GoPlausible. 
+
+So you aren't personally eligible to enter that competition under its current rules. I would not try to route around that requirement.
+
+Technically, though, **WorkerProof-over-Algorand is still the exact integration I would build if you want an Algorand adapter for the ecosystem later.**
+
+---
+
+# ETHOnline is the much better place for Moltwork itself
+
+ETHOnline runs **September 4–16, 2026**. ([ETHGlobal][4]) ETHGlobal explicitly permits under-18 participants with parent/guardian consent. ([ETHGlobal][5])
+
+And here the project should be substantially bigger:
+
+> **Moltwork Work Receipts — cryptographically verifiable economic history for autonomous agents.**
+
+Not the whole marketplace yet.
+
+The artifact you ship should be the **protocol layer**.
+
+```text
+                 MOLTWORK WORK RECEIPTS
+
+ Agent / Worker
+       │
+       ▼
+ WorkerKit
+       │
+       ├── costs
+       ├── tools
+       ├── models
+       ├── artifacts
+       └── runtime trace
+       │
+       ▼
+ WorkReceipt
+       │
+       ├── in-toto / DSSE
+       ├── TEE attestation
+       ├── optional zkML proof
+       └── external outcome
+       │
+       ▼
+ ERC-8004 Validation
+       │
+       ▼
+ Agent profile / marketplace
+```
+
+That is exactly the missing piece between:
+
+```text
+ERC-8004:
+who is this agent?
+what reputation reports exist?
+
+x402:
+how does it get paid?
+
+Moltwork:
+WHAT WORK ACTUALLY GENERATED THAT REPUTATION?
+```
+
+ERC-8004 itself says that payments are orthogonal to the protocol and provides generic validation hooks for things including zkML and TEE validators. ([Ethereum Improvement Proposals][1])
+
+That's an opening rather than a competitor.
+
+---
+
+# Best ETHOnline sponsor target right now: Hedera
+
+This is almost written for WorkerKit.
+
+Their **AI & Agentic Payments** prize is $6,000 and specifically asks for:
+
+* a live x402-gated service;
+* an agent/platform that buys from it;
+* real paid end-to-end execution;
+* multi-agent ACP/A2A as extra credit;
+* ERC-8004/HCS-14 identity as extra credit;
+* **verifiable payment audit trails** as extra credit. ([ETHGlobal][6])
+
+So don't build “Moltwork on Hedera.”
+
+Build:
+
+```text
+Moltwork
+   │
+   ├── chain neutral WorkReceipt
+   │
+   └── settlement adapters
+           │
+           ├── Ethereum
+           ├── Base
+           ├── Algorand
+           └── Hedera  ← ETHOnline demo
+```
+
+For the ETHOnline demo:
+
+```text
+Buyer Worker
+    │
+    │ needs verification
+    ▼
+Moltwork verifier service
+    │
+    │ HTTP 402
+    ▼
+Hedera x402 payment
+    │
+    ▼
+verify WorkReceipt
+    │
+    ▼
+signed result
+    │
+    ▼
+HCS payment/proof audit trail
+```
+
+That alone directly hits their prize specification.
+
+---
+
+# Then ERC-8004 gives you the bigger story
+
+A Worker profile:
+
+```text
+ERC-8004 Agent #8291
+
+ResearchWorker Pro
+│
+├── identity
+├── MCP endpoint
+├── x402 endpoint
+│
+├── reputation
+│
+└── validation records
+      │
+      ├── WorkReceipt #101
+      ├── WorkReceipt #102
+      └── WorkReceipt #103
+```
+
+Each validation record points off-chain to the richer signed receipt.
+
+You do **not** put:
+
+```text
+prompts
+entire traces
+files
+model outputs
+```
+
+on Ethereum.
+
+Put:
+
+```text
+receipt hash
+URI
+validator
+verification type
+result
+```
+
+onchain.
+
+The heavy evidence remains in R2/IPFS/object storage.
+
+---
+
+# And dstack/Phala provides the killer demo
+
+If you have enough time, this is the thing that turns it from “nice provenance standard” into something memorable.
+
+Demo two marketplace Workers:
+
+```text
+BASIC RESEARCHER
+source visible
+$0.02/call
+
+PRO RESEARCHER
+source/config private
+$0.20/call
+TEE VERIFIED
+23 verified winning runs
+```
+
+Buyer leases Pro:
+
+```text
+purchase lease
+     ↓
+encrypted Worker bundle
+     ↓
+dstack TEE
+     ↓
+attestation
+     ↓
+key released
+     ↓
+secret Worker executes
+     ↓
+WorkerRun created
+     ↓
+receipt issued
+```
+
+Profile can legitimately say:
+
+```text
+Confidential Worker
+
+✓ Asset digest 0x82...
+✓ dstack TEE
+✓ configuration not revealed
+✓ 23 attested economic runs
+✓ 9 externally accepted
+```
+
+That illustrates **why an agent marketplace needs crypto at all**.
+
+Otherwise someone reasonably asks:
+
+> why not just use Upwork with APIs?
+
+And the answer becomes:
+
+> Because Moltwork lets you lease proprietary executable know-how without handing over the know-how, while retaining portable proof of its real economic track record.
+
+That's much stronger.
+
+---
+
+# DeepProve: make it an optional premium badge
+
+Don't make DeepProve essential to ETHOnline.
+
+The UI should support:
+
+```text
+Proof coverage
+
+Run provenance           VERIFIED
+Runtime                   TEE ATTESTED
+Output verifier           VERIFIED
+Model inference           —
+External outcome          VERIFIED
+Payment                   ONCHAIN
+```
+
+A seller can optionally pay for a stronger run:
+
+```text
+Model inference           ZK VERIFIED
+                           DeepProve
+```
+
+Then clicking it exposes:
+
+```text
+model digest
+input commitment
+output commitment
+proof digest
+verification result
+```
+
+That creates a market incentive:
+
+> Want a higher-assurance profile? Generate stronger evidence.
+
+Very nice marketplace dynamic.
+
+---
+
+# What I would actually build between now and ETHOnline
+
+One codebase, with chain adapters:
+
+```text
+workerkit/
+    run/
+    economics/
+    proof/
+    commit_gate/
+
+moltwork-protocol/
+    schemas/
+        worker-manifest
+        work-receipt
+        outcome-receipt
+        settlement-receipt
+
+    attestations/
+        intoto
+        dsse
+
+    validators/
+        basic
+        dstack
+        deepprove
+
+    adapters/
+        taskmarket
+        generic-http
+
+    chains/
+        evm/
+        hedera/
+        algorand/
+```
+
+And the ETHOnline submission is **not**:
+
+> “Here's our enormous future marketplace.”
+
+It is:
+
+> **“Here is the missing receipt layer for the agent economy. Watch an agent buy work, execute privately, produce an artifact, get independently verified, receive payment, and carry that proof to its ERC-8004 profile.”**
+
+That is focused enough to demo and broad enough to become Moltwork's foundation.
+
+## My priority
+
+**Algorand concept:** `WorkerProof API` — one chain-neutral verification service sold through Algorand x402. Do **not** make Moltwork Algorand-native. Current rules prevent you personally entering this one. 
+
+**ETHOnline:** `Moltwork Work Receipts` — ERC-8004-compatible economic provenance + WorkerKit runtime + optional dstack confidential lease. For sponsor targeting, add the **Hedera x402 verification endpoint + verifiable payment audit trail**, because that prize specification maps almost one-for-one onto what you're building anyway. ([ETHGlobal][6])
+
+I would also keep an eye on **The Graph, Chainlink, Privy and Ledger**: their ETHOnline allocations are live but several exact prize briefs are still “coming soon,” so one could become an even cleaner fit before September 4. ([ETHGlobal][6])
+
+One final hackathon warning: ETHGlobal's Classic track does **not** allow pre-existing project-specific work. Continuity tracks do, provided you disclose what existed before and make substantive new work during the event. Don't disguise Moltwork/QDW/WorkerKit history; either use an applicable Continuity path or clearly carve out genuinely new event work and get its eligibility confirmed. ([ETHGlobal][5])
+
+[1]: https://eips.ethereum.org/EIPS/eip-8004?utm_source=chatgpt.com "ERC-8004: Trustless Agents"
+[2]: https://algorand.co/global-x402-challenge?utm_source=chatgpt.com "Global x402 Challenge"
+[3]: https://marketplace.agent402.app/?utm_source=chatgpt.com "Agent402 Marketplace - List your API, get paid in crypto"
+[4]: https://ethglobal.com/events?utm_source=chatgpt.com "ETHGlobal"
+[5]: https://ethglobal.com/rules?utm_source=chatgpt.com "ETHGlobal | Code of Conduct"
+[6]: https://ethglobal.com/events/ethonline2026/prizes "ETHGlobal"

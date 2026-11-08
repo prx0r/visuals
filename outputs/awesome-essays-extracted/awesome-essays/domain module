@@ -1,0 +1,778 @@
+Yes. And after checking the current Porkbun + Cloudflare capabilities, I would make the TinyTools domain system **more selective than “every tool gets a `.xyz`.”**
+
+## The domain lifecycle I would use
+
+```text
+IDEA
+  ↓
+BUILD + TEST
+  ↓
+FREE INCUBATION
+tool-name.<your-account>.workers.dev
+  ↓
+passes basic quality gates
+  ↓
+TINYTOOLS PRODUCTION
+tool-name.tinytools.xyz
+  ↓
+shows meaningful usage/search/agent traffic
+  ↓
+STANDALONE PRODUCT
+goodname.xyz
+  ↓
+becomes genuinely valuable
+  ↓
+PREMIUM IDENTITY
+goodname.com
+```
+
+That gives Hydra something extremely useful: **domain acquisition becomes a promotion event rather than part of initial deployment.**
+
+### Why this is better
+
+A domain is not actually required to test whether an API is useful. Every Cloudflare Worker automatically gets a free `*.workers.dev` endpoint. ([Cloudflare Docs][1])
+
+And once you own one TinyTools root domain, you can have:
+
+```text
+pdfmerge.tinytools.xyz
+domaincheck.tinytools.xyz
+htmlclean.tinytools.xyz
+timestamp.tinytools.xyz
+jsonrepair.tinytools.xyz
+currency.tinytools.xyz
+...
+```
+
+for effectively **zero additional domain-registration cost**.
+
+Then only products that show evidence of life get:
+
+```text
+jsonrepair.xyz
+```
+
+and perhaps eventually:
+
+```text
+jsonrepair.com
+```
+
+This is much more sensible for a factory capable of creating thousands of utilities.
+
+---
+
+# Do the tools need websites?
+
+I think **yes, but barely**.
+
+Don't think:
+
+> API + separate marketing website + frontend project.
+
+Think:
+
+```text
+GET /
+    tiny HTML landing page
+
+GET /docs
+    human documentation
+
+GET /openapi.json
+    machine specification
+
+POST /api/...
+    actual utility
+
+/mcp
+    MCP interface where relevant
+
+/health
+    machine health
+
+/robots.txt
+/sitemap.xml
+```
+
+It can all be the **same Cloudflare Worker**.
+
+So every utility automatically has a small human-readable page showing:
+
+```text
+JSON Repair
+
+Repairs malformed JSON.
+
+[Try it]
+
+API
+
+POST /api/repair
+
+Example:
+...
+
+Latency: 41 ms
+Free: 100 calls/day
+Machine access:
+OpenAPI | MCP
+```
+
+That's useful for Google, humans, other agents, documentation, backlinks and trust without creating much extra engineering.
+
+---
+
+# Free domains
+
+There is no free normal ICANN domain option I would base this system on.
+
+There are perfectly reputable **free hostnames**:
+
+| Option            |                                  Cost | Use                                |
+| ----------------- | ------------------------------------: | ---------------------------------- |
+| `*.workers.dev`   |                                    $0 | Excellent incubation               |
+| `*.pages.dev`     |                                    $0 | Excellent static site incubation   |
+| `*.github.io`     |                                    $0 | Fine for docs/static pages         |
+| `*.tinytools.xyz` | effectively $0/tool after owning root | **Best production factory option** |
+| standalone `.xyz` |                                  paid | Product promotion                  |
+| standalone `.com` |                                  paid | Proven products                    |
+
+Cloudflare explicitly positions `workers.dev` as a free development/hobby endpoint and recommends custom domains for production. ([Cloudflare Docs][1])
+
+So it fits our lifecycle almost perfectly.
+
+---
+
+# Important `.xyz` price warning
+
+There's actually a timely wrinkle.
+
+Porkbun currently shows `.xyz` around:
+
+**$2.04 first-year promotional registration / $12.98 regular renewal.** ([porkbun.com][2])
+
+But Porkbun has published a `.XYZ` price increase taking effect **August 25, 2026**, listing registration, renewal and transfer at **$16**. That's four days from today. ([porkbun.com][3])
+
+So don't build Hydra around:
+
+```text
+xyz_cost = $2
+```
+
+Build it around:
+
+```text
+price = registrar.quote(domain)
+```
+
+every single time.
+
+Then Hydra can eventually discover things like:
+
+```text
+foo.xyz      $2.04
+foo.site     $1.76
+foo.com      $11.08
+foo.dev      $12.xx
+```
+
+and make a decision from current economics.
+
+---
+
+# Porkbun is amazingly well suited to this
+
+Their API has become almost suspiciously tailored to what you're building.
+
+Current Porkbun API v3.15 supports:
+
+* domain availability + pricing
+* registration
+* renewal
+* transfer
+* account domains
+* nameserver replacement
+* DNS
+* DNSSEC
+* registration contacts
+* webhooks
+* API spending controls
+* idempotent writes
+* dry-run purchases
+* **sandbox purchases with fake money**
+* OpenAPI
+* official MCP server
+
+([porkbun.com][4])
+
+In particular, these three features are fantastic for autonomous purchasing.
+
+### Dry run
+
+Before spending:
+
+```text
+dryRun: true
+```
+
+Porkbun checks things such as the price, available funds and registration eligibility without actually registering the domain. ([porkbun.com][4])
+
+### Idempotency
+
+Every purchase should have something like:
+
+```text
+Idempotency-Key:
+domain-registration:<hydra-product-id>:<domain>
+```
+
+Porkbun remembers write requests for 24 hours, preventing an agent retry from accidentally charging you twice. ([porkbun.com][4])
+
+### Sandbox
+
+You can create a Porkbun sandbox key beginning with `pk1_sb_`.
+
+It has **fake account credit**, and registrations don't perform real actions or charge money. ([porkbun.com][4])
+
+This means we can hammer the entire Hydra domain-acquisition pipeline in testing before ever allowing it to spend $1.
+
+---
+
+# And yes: basically you put money in Porkbun
+
+Your understanding is correct.
+
+The simple arrangement is:
+
+```text
+YOUR PORKBUN ACCOUNT
+
+balance: $50
+
+API monthly spending limit: $20
+
+low balance alert: $10
+
+agent API key:
+    registration     ✓
+    nameservers      ✓
+    read domains     ✓
+    DNS              maybe
+```
+
+Then:
+
+```text
+Hydra
+ ↓
+Porkbun API
+ ↓
+register domain
+ ↓
+cost deducted from Porkbun balance
+```
+
+Porkbun explicitly says the MCP's registration, renewal and transfer tools **draw down the Porkbun account balance**. ([Porkbun Knowledge Base][5])
+
+They now also expose monthly spend limits, low-balance alerts and automatic top-up for API spending. ([porkbun.com][4])
+
+So you could put, say, $20–50 in there and let Hydra operate inside:
+
+```yaml
+monthly_domain_budget: 20
+max_single_purchase: 5
+premium_domains: false
+renewal_price_limit: 20
+```
+
+I would **not enable unlimited auto-top-up** for an autonomous agent. Maintain a small balance or put a low ceiling on automated spend.
+
+---
+
+# The complete Porkbun → Cloudflare flow
+
+This is the architecture I'd implement.
+
+```text
+                 HYDRA
+                   │
+                   ▼
+          DOMAIN DECISION ENGINE
+                   │
+          Does it need a domain?
+             │           │
+             no          yes
+             │           │
+             ▼           ▼
+        workers.dev   generate names
+                         │
+                         ▼
+                  PORKBUN SEARCH
+                         │
+                 availability
+                 registration $
+                 renewal $
+                 premium?
+                         │
+                         ▼
+                   POLICY GATE
+                         │
+            ┌────────────┼────────────┐
+            │            │            │
+         reject       require       approve
+                     human
+                                    │
+                                    ▼
+                           Porkbun dryRun
+                                    │
+                              successful?
+                                    │
+                                    ▼
+                           REGISTER DOMAIN
+                                    │
+                                    ▼
+                       CREATE CLOUDFLARE ZONE
+                                    │
+                                    ▼
+                  CF returns two nameservers
+                                    │
+                                    ▼
+                    UPDATE PORKBUN NAMESERVERS
+                                    │
+                                    ▼
+                      poll Cloudflare zone
+                                    │
+                                  ACTIVE
+                                    │
+                                    ▼
+                         deploy Cloudflare
+                               Worker
+                                    │
+                                    ▼
+                         attach custom domain
+                                    │
+                                    ▼
+                       Cloudflare DNS + TLS
+                                    │
+                                    ▼
+                              VALIDATE
+                                    │
+                                    ▼
+                         Hydra records result
+```
+
+There is no human step required after initial credential setup.
+
+---
+
+# The clever bit: Cloudflare should be created BEFORE changing Porkbun
+
+When you buy:
+
+```text
+repairjson.xyz
+```
+
+Hydra does:
+
+### 1. Register through Porkbun
+
+Porkbun becomes the registrar.
+
+### 2. Add domain to Cloudflare
+
+Cloudflare has:
+
+```http
+POST /zones
+```
+
+which creates the zone and returns its assigned Cloudflare nameservers. ([Cloudflare Docs][6])
+
+For example:
+
+```text
+ada.ns.cloudflare.com
+bob.ns.cloudflare.com
+```
+
+### 3. Tell Porkbun to use those nameservers
+
+Porkbun's current API can read and **replace nameservers at the registry level**. ([porkbun.com][4])
+
+So Hydra sends the two nameservers back to Porkbun.
+
+```text
+Porkbun registrar
+
+repairjson.xyz
+     NS → ada.ns.cloudflare.com
+     NS → bob.ns.cloudflare.com
+```
+
+Porkbun is now essentially just holding ownership/renewal.
+
+Everything else becomes Cloudflare.
+
+Cloudflare says a zone initially remains `pending` until the registrar points the domain at the assigned Cloudflare nameservers. ([Cloudflare Docs][6])
+
+---
+
+# Then Cloudflare takes over
+
+Once active:
+
+```text
+Cloudflare
+├── DNS
+├── TLS certificates
+├── Worker
+├── cache
+├── WAF
+├── redirects
+├── analytics
+├── D1
+├── R2
+├── KV
+├── Durable Objects
+└── whatever else tool needs
+```
+
+If the application itself is a Worker, **Cloudflare Custom Domains are particularly nice**.
+
+When Hydra attaches:
+
+```text
+repairjson.xyz
+```
+
+to the Worker, Cloudflare can automatically create the DNS records and issue the required TLS certificate. ([Cloudflare Docs][7])
+
+Thus no:
+
+```text
+generate cert
+upload cert
+configure nginx
+create A records
+configure load balancer
+```
+
+It's effectively:
+
+```text
+Worker
+   +
+Cloudflare zone
+   +
+Custom Domain
+   =
+live HTTPS product
+```
+
+---
+
+# Hydra should have a Domain Oracle
+
+I would make domain management its own module instead of embedding Porkbun calls in the builder.
+
+Something like:
+
+```text
+hydra/
+  domain/
+    oracle
+    candidates
+    pricing
+    lifecycle
+    policies
+
+    registrars/
+      porkbun
+      cloudflare
+
+    dns/
+      cloudflare
+
+    deployment/
+      cloudflare_worker
+
+    validation/
+      dns
+      tls
+      http
+      openapi
+      mcp
+```
+
+Then Hydra asks:
+
+```text
+domain.oracle.recommend(product)
+```
+
+rather than:
+
+```text
+buy_xyz()
+```
+
+The oracle can consider:
+
+```json
+{
+  "product": "JSON Repair",
+  "stage": "incubating",
+  "daily_calls": 4,
+  "search_impressions": 12,
+  "agent_calls": 0,
+  "revenue": 0
+}
+```
+
+and return:
+
+```json
+{
+  "decision": "KEEP_FREE",
+  "hostname": "json-repair.tinytools.workers.dev",
+  "reason": "promotion threshold not reached"
+}
+```
+
+Later:
+
+```json
+{
+  "daily_calls": 810,
+  "search_impressions": 3200,
+  "external_referrers": 16,
+  "revenue": 3.41
+}
+```
+
+might produce:
+
+```json
+{
+  "decision": "PROMOTE_SUBDOMAIN",
+  "hostname": "jsonrepair.tinytools.xyz"
+}
+```
+
+And eventually:
+
+```json
+{
+  "decision": "ACQUIRE_DOMAIN",
+  "candidates": [
+    {
+      "domain": "jsonrepair.xyz",
+      "registration": 2.04,
+      "renewal": 12.98
+    },
+    {
+      "domain": "repairjson.com",
+      "registration": 11.08,
+      "renewal": 11.08
+    }
+  ]
+}
+```
+
+---
+
+# Don't make `.xyz → .com` automatic purely from traffic
+
+I'd make the promotion decision economic.
+
+For example:
+
+```text
+DOMAIN VALUE SCORE
+
+usage
++ unique callers
++ recurring callers
++ agent callers
++ revenue
++ organic search
++ backlinks
++ direct traffic
++ brand searches
++ API integrations
+- expected renewal cost
+- maintenance cost
+```
+
+Then Hydra could discover empirically:
+
+> Tools with standalone domains get 34% more agent discovery.
+
+or perhaps:
+
+> Standalone domains make absolutely no difference until 10k calls/month.
+
+That's exactly the sort of experiment Hydra should be learning from.
+
+---
+
+# The domain ladder I'd actually deploy
+
+```text
+LEVEL 0 — EXPERIMENT
+$0
+
+slug.account.workers.dev
+
+No domain purchase.
+Kill aggressively.
+```
+
+```text
+LEVEL 1 — TINYTOOLS
+~one domain total
+
+tinytools.xyz/tool/slug
+and/or
+slug.tinytools.xyz
+
+Public searchable tool.
+```
+
+```text
+LEVEL 2 — INDEPENDENT PRODUCT
+~$2–16/year initially depending TLD/current promotion
+
+slug.xyz
+
+Only tools with demonstrated traction.
+```
+
+```text
+LEVEL 3 — SERIOUS PRODUCT
+
+slug.com
+
+Revenue / meaningful adoption / compelling brand.
+```
+
+```text
+LEVEL 4 — BRAND DEFENSE
+
+slug.com
+slug.xyz
+possibly common variants
+
+Only genuinely valuable products.
+```
+
+I think that's substantially better than buying 10,000 `.xyz` domains.
+
+At $16 renewal, 10,000 `.xyz`s would eventually mean roughly **$160,000/year** just to preserve names. One root domain with thousands of Cloudflare-hosted tools costs almost nothing comparatively.
+
+---
+
+# Hydra can also run the domain experiment itself
+
+This becomes another experimental dimension in the database:
+
+```text
+experiment:
+    hypothesis:
+        standalone domains increase discovery
+
+cohort_A:
+    *.tinytools.xyz
+
+cohort_B:
+    standalone *.xyz
+
+measures:
+    Google impressions
+    organic clicks
+    agent referrals
+    MCP calls
+    API calls
+    citations
+    backlinks
+    conversion
+    retention
+
+duration:
+    30 days
+```
+
+Then instead of us guessing whether domains matter, **Hydra eventually learns whether domains matter.**
+
+That ties perfectly into the broader Hydra idea.
+
+---
+
+# What you need to do manually once
+
+Very little.
+
+1. Create/login to Porkbun.
+2. Fill in your **default registration contact details**; Porkbun uses registration defaults for future domains. ([Porkbun Knowledge Base][8])
+3. Put some credit in the account.
+4. Generate a **sandbox API key first**.
+5. Give Hydra sandbox credentials.
+6. Test the entire workflow.
+7. Generate production API credentials.
+8. Set a strict monthly API spend limit.
+9. Create a scoped Cloudflare API token with the required Zone/DNS/Workers permissions.
+
+After that:
+
+> **Hydra can choose → buy → attach → deploy → TLS → test → publish without you touching the dashboard.**
+
+And Porkbun already includes agent-specific protections we otherwise would have had to build ourselves: dry runs, idempotency, spend controls, sandbox keys, machine-readable recovery instructions and webhooks. ([porkbun.com][4])
+
+### My final architecture
+
+```text
+PORKBUN
+= ownership + purchasing
+
+CLOUDFLARE
+= everything operational
+
+HYDRA
+= decision maker
+
+Hydra
+ │
+ ├── Porkbun
+ │    ├ availability
+ │    ├ live pricing
+ │    ├ registration
+ │    ├ renewals
+ │    └ nameserver control
+ │
+ └── Cloudflare
+      ├ workers.dev incubation
+      ├ zone creation
+      ├ DNS
+      ├ TLS
+      ├ Workers
+      ├ storage
+      ├ analytics
+      └ custom domains
+```
+
+The key change I'd make to your original idea is therefore:
+
+> **Don't make `.xyz` the default TinyTool domain. Make `free → TinyTools subdomain → standalone .xyz → .com` a measurable evolutionary ladder.**
+
+That simultaneously makes the factory much cheaper **and** gives Hydra another thing it can optimize from actual product performance.
+
+[1]: https://developers.cloudflare.com/workers/configuration/routing/workers-dev/?utm_source=chatgpt.com "workers.dev · Cloudflare Workers docs"
+[2]: https://porkbun.com/tld/xyz/?coupon=XYZFREE22&utm_source=chatgpt.com "porkbun.com | .XYZ TLD Domain Names"
+[3]: https://porkbun.com/blog/upcoming-price-increases/?utm_source=chatgpt.com "Everything You Wanted To Know About Upcoming Domain Name Price Increases - Porkbun.com"
+[4]: https://porkbun.com/api/json/v3/documentation "Porkbun API Documentation — domains, DNS, SSL & hosting for developers and AI agents"
+[5]: https://kb.porkbun.com/article/296-how-to-install-the-porkbun-mcp-server-in-claude-desktop?utm_source=chatgpt.com "How to Install the Porkbun MCP Server in Claude Desktop - Porkbun Knowledge Base"
+[6]: https://developers.cloudflare.com/api/resources/zones/methods/create/?utm_source=chatgpt.com "Create Zone | Cloudflare API"
+[7]: https://developers.cloudflare.com/workers/configuration/routing/custom-domains/?utm_source=chatgpt.com "Custom Domains · Cloudflare Workers docs"
+[8]: https://kb.porkbun.com/article/57-how-to-change-contact-information?utm_source=chatgpt.com "How to Change Domain and Account Contact Information - Porkbun Knowledge Base"

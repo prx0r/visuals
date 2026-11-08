@@ -1,0 +1,3030 @@
+I deep-read `prx0r/influence` through the latest push `88712bd` and compared it against the current OddHobb architecture, the new `pogpet/catalog/packs` gate system, and `prx0r/qprivately`.
+
+The core idea is very strong. The implementation is currently more dangerous than it looks because **the documents describe a much stricter system than the code actually enforces**.
+
+The best framing is:
+
+> **qprivately = kernel**  
+> **Influence = operating system / scheduler / control plane**  
+> **Pogpet = product factory**  
+> **product packs = immutable commercial truth**  
+> **content factories = workers**  
+> **Etsy/X/YouTube/etc. adapters = device drivers**  
+> **the Influence middle canvas = human review terminal**
+
+That separation would make the whole stack click.
+
+# Executive peer review
+
+| Area | Current state | Assessment |
+|---|---:|---|
+| Overall Influence thesis | 90% | Correct |
+| Multi-brand operator architecture | 75% | Strong |
+| Product-pack integration | 40% | Currently pointed at old truth |
+| Campaign/account state | 75% | Useful |
+| Content compilation | 65% | Directionally right |
+| Media assembly | 70% | Good principle |
+| Human approval model | 35% | Docs substantially ahead of implementation |
+| qprivately integration | 40% | Mostly post-hoc rather than kernel |
+| Effect auditing | 60% | Good logging, weak enforcement boundary |
+| Verification | 55% | Good idea, duplicate/noncanonical implementation |
+| Spend safety | 55% | Good primitives, not universal |
+| Review UI | 35% | Shell exists; universal review object doesn't |
+| Autonomous brand manager | 55% | Components exist, control plane needs consolidation |
+
+The primary problem is **not lack of features**.
+
+It is that there are currently too many paths around the thing that is supposed to be law.
+
+---
+
+# The architecture is conceptually right
+
+`THESIS.md` gets the important point exactly right:
+
+> cognition ≠ truth ≠ authority
+
+And qprivately formalizes precisely the right equation:
+
+```text
+proposal
++
+evidence
++
+authority
++
+deterministic gates
+        ↓
+accepted transition
+```
+
+That is almost tailor-made for Influence.
+
+A brand manager is fundamentally dangerous because it can:
+
+- generate;
+- publish;
+- spend;
+- email;
+- change product listings;
+- launch ads;
+- alter public claims;
+- contact suppliers;
+- eventually order inventory.
+
+So Influence should **not primarily be an agent framework**.
+
+It should be a **consequence-control runtime for agents**.
+
+The LLMs can be wild.
+
+The effect boundary must be boring.
+
+---
+
+# The strongest pieces of Influence
+
+Several recent pushes were very good.
+
+`pipeline/channel_state.py` is the right concept. Each account has independent rate limits, quality threshold, cooldown and performance state.
+
+`pipeline/campaign.py` is also the right abstraction. Product × channel belongs to a campaign rather than being random agent actions.
+
+`pipeline/learn.py` and the Jev/statistics methodology are unusually disciplined. Especially:
+
+```text
+generate
+→ judge
+→ publish
+→ measure
+→ test correlations
+→ update strategy
+```
+
+with power gates and BH correction rather than pretending that 11 posts prove a strategy.
+
+`pipeline/media.py` also has an extremely important product principle:
+
+> **real product foreground + generated environment**
+
+For OddHobb that should remain law.
+
+AI can create:
+
+- Christmas table;
+- gift scene;
+- background;
+- lifestyle context;
+- animation;
+
+but it must not hallucinate the Croc charm shape we're actually selling.
+
+And the newest spec compiler is useful conceptually.
+
+But it also reveals one of the major separation problems.
+
+---
+
+# The biggest architectural problem: Influence currently has its own product truth
+
+This must be fixed first.
+
+Current Influence:
+
+```python
+PACKS_DIR = "/root/oddhobbies/stores"
+```
+
+and expects:
+
+```text
+stores/<store>/listings/<sku>.json
+```
+
+with fields like:
+
+```text
+etsy_title
+tags
+description
+taxonomy_id
+etsy_listing_id
+state
+```
+
+Meanwhile OddHobb has now built the much stronger canonical system in:
+
+```text
+pogpet/catalog/packs/<SKU>/product.json
+pogpet/catalog/packs/<SKU>/gates.json
+pogpet/catalog/graph.json
+```
+
+with:
+
+```text
+manufacturing
+supplier
+cost
+geometry
+personalisation slots
+audience
+canonical images
+print hash
+preflight
+LISTABLE / PROVEN
+```
+
+**Those cannot both remain sources of truth.**
+
+Influence is currently compiling against the old world.
+
+---
+
+# The ownership boundary I would freeze
+
+This should become non-negotiable:
+
+| Domain | Owner |
+|---|---|
+| Product physical truth | **Product Pack / catalog** |
+| Product generation/transforms | **Pogpet** |
+| Product renderer | **Pogpet** |
+| Customer product creation | **Pogpet** |
+| Product fulfilment | **Pogpet** |
+| Brand identity | **brand registry / bgraph** |
+| Campaign strategy | **Influence** |
+| Channel-specific content | **Influence** |
+| Scheduling | **Influence** |
+| Channel accounts | **Influence** |
+| Analytics | **Influence** |
+| Learning | **Influence** |
+| Human approvals | **Influence + qprivately** |
+| Authority/grants | **qprivately** |
+| Canonical receipts | **qprivately** |
+| External platform adapter | worker/adapter behind Influence |
+| Live Etsy/X/YT IDs | **Influence** |
+
+Whether Product Packs physically remain inside `pogpet/catalog/` for now is less important.
+
+They must be a **catalog boundary**.
+
+Influence reads them.
+
+Influence does not redefine them.
+
+---
+
+# So: should Etsy listings live in Product Packs?
+
+**The product itself should. The Etsy listing should not.**
+
+This distinction is important.
+
+The Product Pack should answer:
+
+> What are we definitely selling?
+
+It should contain things like:
+
+```text
+SKU
+product name
+dimensions
+material
+price / approved pricing policy
+personalisation options
+supplier
+production time
+canonical product images
+approved factual claims
+audience
+occasions
+what it is NOT suitable for
+physical sample status
+```
+
+Influence should answer:
+
+> How are we presenting this product on Etsy today?
+
+That includes:
+
+```text
+Etsy title
+13 tags
+taxonomy
+image ordering
+channel-formatted description
+SEO experiments
+promotion copy
+listing ID
+listing state
+campaign attribution
+live performance
+```
+
+Those change constantly.
+
+Your product should not need a new manufacturing pack revision because:
+
+> `"dog dad gift"` beat `"pet lover gift"` as an Etsy search tag.
+
+That is marketing state.
+
+---
+
+# The clean rule
+
+> **The pack controls what may be claimed. Influence controls how the claims are expressed.**
+
+For example Product Pack:
+
+```json
+{
+  "name": "Personalised Pet Croc Charm",
+
+  "facts": {
+    "size_mm": 28,
+    "material": "Full Colour Tough Resin",
+    "fitting": "Croc-compatible push-fit stem"
+  },
+
+  "approved_claims": [
+    "made from your pet photo",
+    "printed in full colour"
+  ],
+
+  "forbidden_claims": [
+    "indestructible",
+    "waterproof",
+    "next-day delivery"
+  ]
+}
+```
+
+Influence can derive:
+
+> Custom Pet Croc Charm | Personalised Dog Face Shoe Charm
+
+without being able to invent:
+
+> Waterproof lifetime-guaranteed premium charm.
+
+Perfect separation.
+
+---
+
+# Your current new Product Pack G10 is slightly too Etsy-specific
+
+The current Pogpet Product Pack requires things like:
+
+```text
+title <= 140
+exactly 13 tags
+each <= 20 chars
+```
+
+Those are Etsy constraints leaking downward into product truth.
+
+I'd gradually split this.
+
+Product Pack:
+
+```text
+MARKETING_READY
+approved facts
+canonical imagery
+audience
+positioning
+processing facts
+```
+
+Influence:
+
+```text
+ETSY_READY
+title valid
+13 tags
+taxonomy resolved
+10-image ordering
+shipping profile mapped
+description compiled
+```
+
+Then:
+
+```text
+LISTABLE product
++
+ETSY_READY release
+=
+may publish to Etsy
+```
+
+Much cleaner.
+
+You don't need to migrate all of this tomorrow. Just stop extending the Etsy-specific fields inside the core pack.
+
+---
+
+# There should be a new object in Influence: `ChannelRelease`
+
+This is probably the missing abstraction.
+
+Not:
+
+```text
+product
+→ Etsy
+```
+
+but:
+
+```text
+Product Pack revision
+        ↓
+Influence compiler
+        ↓
+ChannelRelease
+        ↓
+review
+        ↓
+publish
+```
+
+Example:
+
+```json
+{
+  "id": "release_etsy_croc_004",
+
+  "brand": "oddhobb",
+  "channel": "etsy",
+
+  "sku": "CHARM-CROC-PET",
+  "pack_hash": "sha256:...",
+
+  "compiler": "etsy-v3",
+
+  "payload": {
+    "title": "...",
+    "description": "...",
+    "tags": ["..."],
+    "taxonomy_id": 123
+  },
+
+  "media": [
+    "asset:hero...",
+    "asset:side...",
+    "asset:back..."
+  ],
+
+  "state": "review_ready",
+
+  "external_id": null,
+  "receipt_id": null
+}
+```
+
+That is what campaigns operate on.
+
+That is what humans review.
+
+That is what gets published.
+
+That is what analytics attaches to.
+
+---
+
+# `pipeline/compilers/specs.py` currently violates this boundary
+
+This should be removed or heavily reduced.
+
+It contains its own table:
+
+```python
+KNOWN_DIMS = {
+    "CHARM-CROC-JIBBIT": ...,
+    "KEYCHAIN-PET": ...,
+    ...
+}
+```
+
+with sources pointing back to Pogpet docs.
+
+That's exactly the duplication you don't want.
+
+If dimensions are missing from the Product Pack, Influence should say:
+
+> product truth incomplete
+
+and generate an A-task:
+
+> Measure product / repair pack.
+
+It should **not compensate by maintaining another product database**.
+
+The same applies to material, weight, production time, etc.
+
+Influence may hold generic contextual references:
+
+```text
+10p coin = 24.5mm
+credit card = 85.6mm
+```
+
+because those are rendering helpers.
+
+It must not own:
+
+```text
+this OddHobb product is 28mm.
+```
+
+---
+
+# Another current violation: the Etsy template invents operational facts
+
+`pipeline/compilers/template.py` says every personalised listing gets:
+
+> We create a preview within 24 hours.
+
+and:
+
+> Message us for rush options.
+
+Those are product/operations claims that don't come from the pack.
+
+This directly contradicts:
+
+> compilers never invent values.
+
+This needs removing.
+
+The template may control **shape**:
+
+```text
+HOOK
+WHAT YOU GET
+HOW IT WORKS
+SPECS
+SHIPPING
+BRAND
+```
+
+but all factual sentences inside those sections need to compile from source truth.
+
+For modern OddHobb it might actually be:
+
+> Upload your photos. Your personalised preview is generated immediately.
+
+But Influence should not decide that.
+
+Pogpet/Product Pack should.
+
+---
+
+# Price is another source-of-truth problem
+
+`compile_etsy()` intentionally doesn't include price because:
+
+> owner sets price separately.
+
+That now feels wrong.
+
+Your Product Pack has:
+
+- cost;
+- fees;
+- margin gates;
+- approved retail price.
+
+If Influence independently leaves live Etsy pricing outside that chain, you can have:
+
+```text
+pack says £15
+margin validated at £15
+Etsy accidentally says £10
+```
+
+and your product gate becomes meaningless.
+
+For P0, the Etsy ChannelRelease should include the **approved channel price derived from Product Pack pricing truth**.
+
+If you want channel-specific prices:
+
+```text
+product base price
+etsy price
+Shopify price
+```
+
+those belong in catalog pricing policy.
+
+Influence executes them.
+
+---
+
+# qprivately should absolutely become the running OS
+
+This is the biggest opportunity in the repo.
+
+Currently qprivately is partly:
+
+> we did an action; let's produce a receipt afterward.
+
+That is useful.
+
+It is not enough.
+
+The better architecture is:
+
+```text
+               QPRIVATELY KERNEL
+
+         proposal
+            ↓
+        ActionSpec
+            ↓
+       deterministic gates
+            ↓
+     human authority if needed
+            ↓
+          GRANT
+            ↓
+       effect journal
+            ↓
+        EXECUTION
+            ↓
+     independent observation
+            ↓
+        verification
+            ↓
+   TransitionReceipt / settle
+```
+
+Influence becomes the userland around this kernel.
+
+---
+
+# There must be exactly one syscall for consequences
+
+Think about Linux.
+
+Arbitrary processes do not write straight to the hard disk controller.
+
+They cross the kernel boundary.
+
+Do that here.
+
+Anything that:
+
+```text
+spends money
+publishes publicly
+sends a message
+changes a listing
+creates an ad
+orders goods
+changes DNS
+moves funds
+```
+
+must enter:
+
+```python
+runtime.execute(action_spec)
+```
+
+And no other path should be able to cause that effect.
+
+That is how you make qprivately real rather than ceremonial.
+
+---
+
+# At the moment there are several serious bypasses
+
+The most obvious is `pipeline/runner.py`.
+
+It has:
+
+```python
+if not dry_run:
+    push_listing(...)
+```
+
+There is no qprivately grant required there.
+
+So an agent with access to `run_pack(... dry_run=False)` can bypass the human approval architecture described in the docs.
+
+Similarly `pipeline/adapters/etsy.py` can be called directly:
+
+```python
+push_listing(... dry_run=False)
+```
+
+with no authority object.
+
+That function only verifies afterward.
+
+And `pipeline/scheduler.py` says:
+
+> human_confirm → queue
+
+but the implementation actually does:
+
+```text
+can_publish
+→ INSERT into post_queue
+```
+
+There is no human confirm step.
+
+Its return even says:
+
+> Publishes via scheduler after human approval.
+
+but no approval evidence is passed or checked.
+
+That's exactly the kind of gap qprivately should make structurally impossible.
+
+---
+
+# The scheduler bug is particularly important
+
+There are three separate facts:
+
+```text
+compiled
+queued
+published
+```
+
+They must not collapse.
+
+Current queue insertion can be logged as:
+
+```text
+PASS
+```
+
+But all that proves is:
+
+> we wrote a row to SQLite.
+
+It does **not** prove:
+
+> Instagram post exists.
+
+Canonical claims should be:
+
+```text
+post.compiled = TRUE
+post.queued = TRUE
+post.published = UNKNOWN
+```
+
+Then after the scheduler acts:
+
+```text
+platform GET
+→ verified content
+→ post.published = TRUE
+```
+
+That's qprivately's bool3 model used correctly.
+
+---
+
+# Your current human task implementation needs replacing
+
+The docs describe:
+
+```text
+PENDING
+STARTED
+APPROVED
+EXECUTING
+VERIFIED
+DONE
+```
+
+Great.
+
+The actual SQL model has:
+
+```python
+done: bool
+```
+
+And:
+
+```python
+approve_task():
+    UPDATE human_actions SET done=1
+```
+
+So:
+
+> approved
+
+currently means the same database bit as:
+
+> finished.
+
+Those are completely different facts.
+
+This needs changing.
+
+---
+
+# There is an even more serious approval bug in Etsy
+
+`etsy_listing.execute(task_id)` reads:
+
+```text
+title
+instructions
+done
+```
+
+Then uses regex to recover:
+
+```text
+SKU: ...
+```
+
+from the human-readable instructions.
+
+That means the thing you approve is **not actually the immutable payload that executes**.
+
+Then it recompiles the listing again.
+
+That breaks the most important authority invariant:
+
+> human approval must bind exact bytes.
+
+Approval should never mean:
+
+> I approve something roughly described by this prose and whatever the compiler produces later.
+
+It must mean:
+
+> I authorize payload hash `sha256:abcd...`.
+
+---
+
+# The correct approval chain
+
+When the agent creates an Etsy listing revision:
+
+```text
+compile exact title
+compile exact tags
+compile exact description
+select exact media
+resolve exact price
+resolve target listing
+```
+
+Freeze it.
+
+Hash it.
+
+Then display it.
+
+Human approves that hash.
+
+The grant contains that hash.
+
+The executor checks:
+
+```text
+current payload hash == grant payload hash
+```
+
+before doing anything.
+
+If a single character changes after approval:
+
+> grant invalid.
+
+Re-review required.
+
+That is the whole value of qprivately authority.
+
+---
+
+# Human approval should not mean completion
+
+This is another principle I'd freeze.
+
+For consequential tasks:
+
+```text
+human APPROVED
+```
+
+means:
+
+> permission to attempt.
+
+Not:
+
+> action happened.
+
+After approval:
+
+```text
+APPROVED
+→ GRANTED
+→ EXECUTING
+→ VERIFYING
+→ PROVEN_TRUE
+```
+
+or:
+
+```text
+UNKNOWN_RECONCILE
+```
+
+or:
+
+```text
+PROVEN_FALSE
+```
+
+Then and only then does the task close.
+
+Humans should never need to click:
+
+> ✓ done
+
+for an API effect.
+
+Proof should close it automatically.
+
+---
+
+# Human Tasks should become first-class effect objects
+
+Your current task row is fine for:
+
+> Go claim this Instagram handle manually.
+
+It is not adequate for:
+
+> Approve £17 of FAL generation.
+
+I'd introduce a real runtime task shape:
+
+```text
+task_id
+brand
+kind
+action_spec_id
+review_bundle_id
+payload_hash
+risk_class
+cost_estimate
+cost_cap
+consequence
+state
+expires_at
+decision
+decision_at
+grant_id
+execution_id
+receipt_id
+```
+
+State machine:
+
+```text
+PROPOSED
+→ REVIEW_READY
+→ APPROVED / REJECTED
+→ GRANTED
+→ EXECUTING
+→ VERIFYING
+→ PROVEN_TRUE / PROVEN_FALSE / UNKNOWN_RECONCILE
+```
+
+The old `HumanAction` can remain for onboarding/checklist tasks.
+
+Don't force both categories into one boolean table.
+
+---
+
+# The Human Task Queue should be the center of Influence
+
+This part of your original thesis is absolutely correct.
+
+Influence should not primarily open to:
+
+> analytics dashboard.
+
+It should open to:
+
+> **What needs my judgment?**
+
+For example:
+
+```text
+HIGH
+£12.40 · Generate 40 Christmas creatives
+OddHobb · Christmas campaign
+
+MEDIUM
+Publish Etsy listing for Pet Croc Charm
+5 images · £15 · Product Pack PROVEN
+
+MEDIUM
+Approve YouTube Short
+0:27 · Christmas pet wrapping paper
+
+LOW
+Choose between headline A/B
+Pinterest
+```
+
+Each task should contain:
+
+```text
+why you're seeing it
+what changes if approved
+cost
+risk
+expiry
+agent recommendation
+preview
+source product
+evidence status
+```
+
+Then the human makes decisions.
+
+Not operations.
+
+---
+
+# qprivately grants can make this much less annoying
+
+You don't want:
+
+> Approve $0.025  
+> Approve $0.025  
+> Approve $0.025  
+> Approve $0.025
+
+for 40 FAL generations.
+
+Approve an envelope:
+
+```text
+Campaign: OddHobb Christmas Wrap
+
+capability:
+  image.generate
+
+providers:
+  fal / Alibaba
+
+max_value:
+  $3.00
+
+max_calls:
+  100
+
+expiry:
+  2 hours
+
+predicates:
+  campaign == christmas-wrap
+  model_cost <= configured_limit
+```
+
+qprivately already has the right grant constraint idea.
+
+Then generation can proceed automatically inside that grant.
+
+Once it expires or hits its cap:
+
+> ask again.
+
+This is exactly how you get safe autonomy without approval spam.
+
+---
+
+# Public posting should be a separate grant
+
+Generation permission is not publication permission.
+
+You want two boundaries:
+
+```text
+GENERATION GRANT
+"you may spend up to $3 creating candidates"
+
+               ↓
+
+human reviews actual outputs
+
+               ↓
+
+PUBLICATION GRANT
+"you may publish these exact bytes"
+```
+
+That's ideal HITL.
+
+Especially for:
+
+- YouTube;
+- Etsy;
+- Instagram;
+- paid ads.
+
+---
+
+# The middle canvas you described is exactly what the current dash needs
+
+Do **not** build another Studio.
+
+Your current dashboard already has:
+
+```text
+activity rail
+sidebar
+editor-main
+persistent chat dock
+```
+
+`editor-main` should become the universal:
+
+# Review Canvas
+
+It should render whatever the active Human Task is reviewing.
+
+Same surface, different renderers.
+
+---
+
+# Etsy Review Canvas
+
+The center should show something like:
+
+```text
+PERSONALISED PET CROC CHARM
+
+[ HERO ] [ IN USE ] [ SCALE ] [ BACK ] [ DETAIL ]
+
+Title
+────────────────────────────────────
+Custom Pet Croc Charm | Personalised...
+
+Price
+£15.00
+
+Tags
+pet croc charm · dog jibbitz · ...
+
+Description
+────────────────────────────────────
+...
+
+PACK
+PROVEN ✓
+
+LIVE DIFF
+title        changed
+tags         4 changed
+description  changed
+price        unchanged
+
+EXPECTED CONSEQUENCE
+Update Etsy listing #12345
+
+COST
+£0
+
+[ Reject ] [ Request changes ] [ Approve exact revision ]
+```
+
+That is much better than approving from text instructions.
+
+---
+
+# YouTube Review Canvas
+
+Same object, different renderer:
+
+```text
+[               VIDEO PLAYER               ]
+
+THUMBNAIL
+
+"Your Dog Is Now Christmas Wrapping Paper"
+
+0:27
+1080×1920
+H.264
+captions ✓
+music licensed ✓
+
+Description
+...
+
+Source product
+Santa Pet Wrapping Paper
+pack: sha256:...
+
+Campaign
+OddHobb Christmas
+
+Expected action
+Publish YouTube Short
+
+[ Reject ] [ Edit ] [ Approve ]
+```
+
+After approval:
+
+```text
+EXECUTING
+→ VERIFYING
+→ LIVE
+
+YouTube ID: abc
+receipt: receipt:def...
+```
+
+No other UI needed.
+
+---
+
+# Images / ads / social use the same canvas
+
+For image generation:
+
+```text
+source product render
+        ↔
+generated lifestyle creative
+```
+
+show them side-by-side.
+
+For Instagram:
+
+> exact post mockup.
+
+For X:
+
+> exact tweet rendering.
+
+For Pinterest:
+
+> actual Pin image + title + destination URL.
+
+For ads:
+
+```text
+creative
+copy
+audience
+landing page
+daily cap
+max campaign spend
+```
+
+Everything consequential becomes visually reviewable.
+
+---
+
+# Introduce a `ReviewBundle`
+
+This is the other missing object.
+
+It should be immutable.
+
+Conceptually:
+
+```json
+{
+  "id": "review_123",
+
+  "kind": "etsy_listing",
+
+  "brand": "oddhobb",
+
+  "source": {
+    "sku": "CHARM-CROC-PET",
+    "pack_hash": "sha256:..."
+  },
+
+  "artifacts": [
+    {"kind": "image", "id": "..."},
+    {"kind": "image", "id": "..."}
+  ],
+
+  "payload": {
+    "title": "...",
+    "tags": ["..."],
+    "description": "..."
+  },
+
+  "diff": {...},
+
+  "cost": {
+    "estimate_usd": 0
+  },
+
+  "consequence": {
+    "capability": "etsy.listing.update",
+    "target": "listing:12345"
+  },
+
+  "payload_hash": "sha256:..."
+}
+```
+
+The Human Task points to this.
+
+The grant points to its payload hash.
+
+The execution points to the same hash.
+
+The receipt proves the exact release went live.
+
+That's the full chain.
+
+---
+
+# Then your middle canvas is almost trivial technically
+
+Instead of every subsystem building UI, you implement:
+
+```text
+renderReview(bundle)
+```
+
+with type handlers:
+
+```text
+etsy_listing
+social_post
+image
+video
+email
+ad_campaign
+supplier_order
+domain_purchase
+```
+
+This is exactly the right degree of abstraction.
+
+Not a generic visual editor.
+
+A **generic consequence reviewer**.
+
+---
+
+# qprivately should govern the ReviewBundle transition too
+
+The flow becomes:
+
+```text
+AGENT COGNITION
+
+"I think OddHobb should publish this."
+
+        ↓
+
+UNTRUSTED PROPOSAL
+
+        ↓
+
+ChannelRelease / ReviewBundle
+
+        ↓
+
+machine pre-gates
+
+Product pack LISTABLE?
+Claims allowed?
+Image provenance valid?
+Cost within campaign?
+Account healthy?
+Content checks pass?
+
+        ↓
+
+HUMAN TASK
+
+        ↓
+
+human approves exact payload hash
+
+        ↓
+
+QPRIVATELY GRANT
+
+        ↓
+
+EFFECT JOURNAL
+persist idempotency BEFORE action
+
+        ↓
+
+ADAPTER
+
+        ↓
+
+INDEPENDENT FETCH
+
+        ↓
+
+QPRIVATELY GATES
+
+        ↓
+
+TransitionReceipt
+
+        ↓
+
+CANONICAL STATE
+```
+
+This should become the fundamental Influence loop.
+
+---
+
+# Current verification has another architectural issue
+
+`pipeline/verifiers/gates.py` generates what it calls:
+
+> QP-style receipt.
+
+But it isn't the actual qprivately `acom.receipts.transition()` receipt.
+
+You now have effectively two receipt formats.
+
+Don't.
+
+qprivately explicitly says:
+
+> TransitionReceipt is the ONE canonical output.
+
+Believe it.
+
+`pipeline/verifiers/` should produce:
+
+```text
+EVIDENCE
++
+channel-specific claims
+```
+
+Then pass those into actual:
+
+```python
+acom.receipts.transition(...)
+```
+
+There should be **no handcrafted parallel receipt implementation**.
+
+---
+
+# There are also duplicated gate implementations
+
+Influence currently has:
+
+```text
+law/acom/gates.py
+pipeline/verifiers/gates.py
+qp/actuality.py
+qp/authority.py
+qp/spend.py
+```
+
+Some duplication is reasonable at adapter level.
+
+But the deterministic truth/authority model needs one kernel.
+
+The most concerning duplicate is authority.
+
+There is:
+
+```text
+law/acom/grants.py
+```
+
+and a different:
+
+```text
+qp/authority.py
+```
+
+with its own Grant class and signature model.
+
+Consolidate.
+
+qprivately should define the canonical Grant shape and cryptography.
+
+Influence should merely request/consume grants.
+
+---
+
+# Also stop vendoring a drifting qprivately copy if possible
+
+Influence contains:
+
+```text
+law/acom/
+```
+
+while `prx0r/qprivately` itself is the frozen specification.
+
+That can drift.
+
+The ideal architecture is:
+
+```text
+qprivately package
+pinned commit/version
+
+Influence imports kernel
+```
+
+not:
+
+```text
+copy qprivately
+modify copy
+copy another variant somewhere else
+```
+
+At minimum have one pinned compatibility test:
+
+```text
+Influence law program hashes
+==
+qprivately release hashes
+```
+
+If they diverge:
+
+> CI fails.
+
+---
+
+# Another direct code discrepancy: G5 exists but isn't run
+
+`pipeline/verifiers/gates.py` defines:
+
+```python
+g5_fresh(...)
+```
+
+but `run_gates()` actually runs:
+
+```text
+G1
+G2
+G3
+G4
+evidence_fresh
+no_duplicate
+```
+
+It doesn't call `g5_fresh()`.
+
+Yet the documentation repeatedly claims:
+
+> G1–G5.
+
+That needs fixing.
+
+More broadly:
+
+> docs must not claim safety properties the runtime does not enforce.
+
+That is especially important in an audit-oriented system.
+
+---
+
+# Etsy image verification is also too weak
+
+`upload_image()` currently gets a returned image ID and logs:
+
+```text
+PASS
+```
+
+It does not independently fetch the Etsy listing's images and verify:
+
+```text
+image exists
+correct rank
+correct count
+correct image hash/representation where possible
+```
+
+By your own qprivately philosophy:
+
+> API attempt evidence is not truth.
+
+So image upload isn't proven yet.
+
+---
+
+# The Actions table is useful but should not become canonical state
+
+`pipeline/actions.py` is useful operational telemetry:
+
+```text
+what
+when
+channel
+cost
+receipt
+```
+
+Keep it.
+
+But:
+
+> an Actions row saying PASS is not truth.
+
+The receipt is truth.
+
+Ideally `actions.status` is derived/synchronized from:
+
+```text
+effect journal + receipt
+```
+
+rather than independently asserted.
+
+---
+
+# Campaign spend should also be receipt-derived
+
+`campaigns` currently stores:
+
+```text
+spent_usd
+```
+
+and `add_spend()` mutates it.
+
+Separately, Actions logs actual cost.
+
+Separately, `qp/spend.py` has the strongest spend ledger.
+
+Eventually these should converge.
+
+I would make:
+
+```text
+budget_usd
+```
+
+a campaign policy input.
+
+And:
+
+```text
+spent_usd
+```
+
+a derived sum of **settled spend receipts**.
+
+Then it cannot drift.
+
+---
+
+# Your qprivately SpendLedger is actually very good
+
+This sequence is strong:
+
+```text
+PROPOSED
+→ AUTHORIZED
+→ provider readback
+→ SETTLED / FLAGGED_DRIFT
+```
+
+And especially:
+
+> attempt evidence never settles.
+
+Use this everywhere.
+
+FAL.
+
+Alibaba.
+
+Higgsfield.
+
+Etsy Ads.
+
+Google Ads.
+
+Supplier orders.
+
+A provider showing:
+
+> successful request
+
+doesn't mean:
+
+> we spent $1.37.
+
+Read the actual billing/usage where available.
+
+---
+
+# Influence should become a multi-brand process manager
+
+The brand shouldn't have bespoke code.
+
+Conceptually each brand has:
+
+```text
+identity
+goals
+product sources
+content sources
+channel accounts
+budgets
+approval policy
+strategy weights
+campaigns
+```
+
+Then:
+
+```text
+OddHobb
+Pogtown
+HumanVoiced
+Pow Systems
+```
+
+are just different configurations.
+
+This is already beginning to happen in the dashboard.
+
+That's good.
+
+---
+
+# OddHobb is a particularly good first brand because Product Packs make it deterministic
+
+The Influence planner can ask:
+
+```text
+What products are eligible for Christmas promotion?
+```
+
+Catalog says:
+
+```text
+PROVEN
+occasion=Christmas
+audience=pet owners
+margin > threshold
+images available
+```
+
+Influence sees:
+
+```text
+Pet Santa Wrap
+Personalised Ornament
+Croc Charm
+...
+```
+
+Then its job begins.
+
+Not before.
+
+Influence should never ask:
+
+> maybe we could make a Croc charm?
+
+That's product strategy/product factory territory.
+
+Influence asks:
+
+> which already-valid product should this brand push, to whom, where and how?
+
+That's a much sharper mission.
+
+---
+
+# Product Pack levels should control Influence permissions
+
+This is a lovely clean integration.
+
+I would use:
+
+| Pack level | Influence may |
+|---|---|
+| DRAFT | inspect only |
+| PRINT_READY | internal test content only |
+| LISTABLE | publish storefront/listing + organic content |
+| PROVEN | paid promotion + scale |
+| RETIRED | stop all new campaigns |
+
+Thus:
+
+```text
+PROVEN
+```
+
+becomes a machine-readable marketing permission.
+
+Beautiful.
+
+---
+
+# Marketing agents should never alter Product Packs
+
+Influence should produce derived assets.
+
+For example:
+
+```text
+catalog pack:
+CHARM-CROC-PET@sha256:abc
+
+       ↓
+
+Influence creative:
+christmas-croc-pinterest-v3
+
+       ↓
+
+Influence release:
+pin_72
+
+       ↓
+
+receipt:
+receipt:xyz
+```
+
+The Product Pack never changes.
+
+Performance learning changes future marketing.
+
+Not the product truth.
+
+---
+
+# Generated marketing imagery needs strong lineage
+
+Your latest `pipeline/media.py` has the right philosophy.
+
+Extend the manifest so every output binds:
+
+```text
+pack hash
+source asset hash
+transform ID/version
+prompt hash
+provider/model
+render template
+output hash
+cost
+QC result
+```
+
+For example:
+
+```text
+CHARM-CROC-PET
+canonical hero render
+        ↓
+Higgsfield Christmas Gift Table
+        ↓
+social creative
+```
+
+We should always know:
+
+> this image came from that exact proven product.
+
+That becomes essential once dozens of agents are generating campaigns.
+
+---
+
+# Don't let the marketing image generator alter the product itself
+
+For a physical OddHobb item, generated ads should preserve:
+
+```text
+shape
+dimensions
+colour
+attachment
+surface detail
+personalisation
+```
+
+Models may alter:
+
+```text
+background
+lighting
+surroundings
+human context
+composition
+```
+
+If they alter the actual object:
+
+> QC reject.
+
+This mirrors your transformation/product split in Pogpet.
+
+---
+
+# The current media assembler is therefore a good foundation
+
+I would keep its constraint:
+
+> pack foreground never AI-invented.
+
+Later you can allow generative image editing with an object-preservation QC gate.
+
+But don't replace it with:
+
+> generate a beautiful Croc charm ad from text.
+
+That destroys product truth.
+
+---
+
+# Learning loop should only learn from proven releases
+
+Another qprivately connection.
+
+Don't feed:
+
+```text
+queued post
+```
+
+into performance learning.
+
+Only:
+
+```text
+PROVEN_TRUE published artifact
++
+verified external ID
+```
+
+enters `content_items`.
+
+And attach:
+
+```text
+ChannelRelease ID
+Product Pack hash
+Creative recipe
+```
+
+Then your stats can eventually say:
+
+> generated lifestyle scenes outperform white-background renders by 31% for Pinterest pet gifts.
+
+That's valuable proprietary data.
+
+---
+
+# The current dashboard is already 70% of the right physical UI
+
+I wouldn't replace it.
+
+Current layout:
+
+```text
+activity bar
+sidebar
+editor-main
+HUD
+persistent chat dock
+```
+
+is perfect for this.
+
+I'd redefine the roles.
+
+The left/sidebar becomes:
+
+> queue/context.
+
+The giant middle `editor-main` becomes:
+
+> Review Canvas.
+
+The bottom chat becomes:
+
+> agent/operator conversation about the current object.
+
+The HUD becomes:
+
+> live QP state.
+
+Example HUD:
+
+```text
+PACK PROVEN · COST £0 · PUBLISH HUMAN · GATES 7/7 · payload sha256:a83… · task #422
+```
+
+That's excellent.
+
+---
+
+# Do not build another creator Studio inside Influence
+
+This is important given your existing `Sleep Studio`.
+
+Influence is not Photoshop.
+
+Influence should say:
+
+> Request another variation.
+
+Then call:
+
+```text
+Pogpet
+sleepdraw
+content/
+fal
+Higgsfield
+```
+
+to create one.
+
+The resulting artifact returns to the Review Canvas.
+
+Influence owns review and consequence.
+
+Workers own making things.
+
+---
+
+# One universal review interaction
+
+The human should have three primary decisions:
+
+```text
+APPROVE
+CHANGE
+REJECT
+```
+
+`CHANGE` creates a new revision.
+
+Approval remains pinned to the old one and is not reusable.
+
+That gives you:
+
+```text
+revision 4
+→ human: "background too busy"
+→ revision 5
+→ review
+→ approve rev 5
+```
+
+Perfect audit trail.
+
+---
+
+# Your middle canvas becomes extremely powerful for videos
+
+A YouTube task can show:
+
+```text
+video
+thumbnail
+caption
+title
+description
+music/source info
+product source
+campaign
+predicted score
+cost
+```
+
+You can scrub through it.
+
+The agent can sit in chat:
+
+> I think the first 1.2 seconds are weak. Want me to make the hook faster?
+
+You reply:
+
+> yes
+
+New render appears.
+
+Then:
+
+> approve.
+
+That's genuinely useful autonomous management.
+
+---
+
+# And for ad campaigns the Review Canvas can go beyond creative
+
+An ad approval should show:
+
+```text
+CREATIVE
+COPY
+PRODUCT
+LANDING PAGE
+
+Audience
+UK · pet owners · Christmas gifting
+
+Budget
+£10/day
+£50 max
+
+Stop rules
+CPA > £8 after 5 orders
+or £25 spent with 0 orders
+
+Expected downside
+£50
+
+[ APPROVE CAMPAIGN ]
+```
+
+The grant then contains:
+
+```text
+max_value=50
+campaign=...
+asset=<creative hash>
+expiry=...
+```
+
+The agent can't exceed it.
+
+That's qprivately used exactly as intended.
+
+---
+
+# Repo hygiene also needs attention
+
+The root `README.md` still opens with:
+
+> cmail — the agentic business stack
+
+and tells people to clone `prx0r/cmail`.
+
+That's now actively harmful to coding agents working on Influence.
+
+Likewise the repository contains:
+
+```text
+cmail/
+domainnamechecker/
+stevejobless/
+core/cmail/
+port/
+law/
+qp/
+pipeline/
+dash/
+```
+
+Some are live dependencies, some inheritance, some reference.
+
+Do not necessarily delete them because there is live infrastructure.
+
+But the root documentation needs a clear declaration:
+
+```text
+INFLUENCE RUNTIME
+pipeline/
+dash/
+qp integration
+
+UPSTREAM / LEGACY
+cmail/
+domainnamechecker/
+stevejobless/
+
+DO NOT ADD NEW BRAND OPERATOR LOGIC OUTSIDE pipeline/
+```
+
+Without that, agents will continue implementing the same thing in three places.
+
+---
+
+# `AGENTS.md` needs an Influence-specific invariant
+
+I would make the first rule:
+
+> **No external consequence outside the Effect Runtime.**
+
+Then make CI enforce it.
+
+Any function that can:
+
+```text
+POST
+PATCH
+DELETE
+send
+publish
+buy
+generate-paid
+launch-ad
+```
+
+needs:
+
+```text
+ActionSpec + valid Grant
+```
+
+or it fails.
+
+That is much stronger than asking coding agents to remember.
+
+---
+
+# The architecture I would ultimately freeze
+
+```text
+                         BRAND
+                    goals / identity
+                           │
+                           ▼
+                    INFLUENCE PLAN
+                           │
+               ┌───────────┴───────────┐
+               │                       │
+               ▼                       ▼
+        PRODUCT CATALOG           PERFORMANCE
+       PROVEN packs only          prior releases
+               │                       │
+               └───────────┬───────────┘
+                           ▼
+                     CAMPAIGN PLAN
+                           │
+                           ▼
+                       WORKERS
+             Pogpet / FAL / content / etc
+                           │
+                           ▼
+                   CONTENT ARTIFACTS
+                           │
+                           ▼
+                    CHANNEL RELEASE
+                           │
+                           ▼
+                     MACHINE GATES
+                           │
+                           ▼
+                     REVIEW BUNDLE
+                           │
+                           ▼
+                    HUMAN TASK QUEUE
+                           │
+                     approve exact hash
+                           │
+                           ▼
+                    QP AUTHORITY GRANT
+                           │
+                           ▼
+                     EFFECT JOURNAL
+                           │
+                           ▼
+                         ADAPTER
+                           │
+                           ▼
+                 INDEPENDENT READBACK
+                           │
+                           ▼
+                   QP TRANSITION RECEIPT
+                           │
+                           ▼
+                     CANONICAL STATE
+                           │
+                           ▼
+                       ANALYTICS
+                           │
+                           ▼
+                      LEARN LOOP
+```
+
+That is the autonomous brand manager.
+
+Not:
+
+> ChatGPT with access to social APIs.
+
+---
+
+# Coding-agent handoff
+
+I would give the coding agent this exact directive:
+
+```text
+INFLUENCE PEER REVIEW — MAKE QPRIVATELY THE EXECUTION KERNEL
+
+The current architecture is directionally correct but docs describe stronger
+safety guarantees than the implementation actually enforces.
+
+Do not add more channels or autonomous behaviours until the consequence
+boundary is canonical.
+
+
+1. FREEZE OWNERSHIP BOUNDARIES
+
+Catalog/Product Pack owns:
+- SKU
+- physical/product truth
+- dimensions/materials
+- manufacturing
+- cost
+- approved price / pricing policy
+- personalisation contract
+- canonical truthful product imagery
+- approved/forbidden claims
+- audience/occasion
+- LISTABLE/PROVEN state.
+
+Pogpet owns:
+- personalised product creation
+- transforms
+- renderers
+- fulfilment
+- customer product revisions.
+
+Influence owns:
+- campaigns
+- channel releases
+- content variants
+- scheduling
+- account state
+- analytics
+- learning
+- human review
+- action orchestration.
+
+qprivately owns:
+- canonical objects
+- grants
+- gates
+- authority
+- receipts
+- canonical consequence transition.
+
+Adapters/workers own:
+- talking to external providers only.
+
+No duplicated truth across these boundaries.
+
+
+2. RETIRE THE OLD ODDHOBBIES LISTING PACK AS CANONICAL SOURCE
+
+pipeline/compilers/pack_loader.py currently reads:
+
+/root/oddhobbies/stores/<store>/listings/<sku>.json
+
+This is stale relative to the new Product Pack system.
+
+Change Influence to read canonical catalog packs / graph / gate status.
+
+Prefer a read-only catalog API or filesystem adapter.
+
+Do not copy packs into Influence.
+
+Keep old loader only as legacy migration compatibility if required.
+
+
+3. REMOVE PRODUCT FACT DUPLICATION
+
+pipeline/compilers/specs.py must not maintain KNOWN_DIMS for OddHobb products.
+
+Dimensions, weight, material, process and production truth come from Product Pack.
+
+Generic reference object dimensions (10p coin, A4, credit card) may remain.
+
+If a pack lacks dimensions:
+- mark the dependent creative BLOCKED;
+- open a product-pack repair task.
+
+Do not guess or maintain a shadow product database.
+
+
+4. PRODUCT PACK VS ETSY
+
+Exact Etsy state does NOT belong in Product Pack.
+
+Product Pack owns what may truthfully be said and shown.
+
+Influence owns:
+- Etsy title
+- tags
+- taxonomy
+- channel description formatting
+- image ordering
+- live listing ID
+- live state
+- SEO experiments
+- campaign attribution.
+
+Introduce ChannelRelease as the immutable derived channel object.
+
+Every ChannelRelease pins:
+- pack hash/revision
+- compiler version
+- exact payload
+- exact media IDs
+- exact price source
+- payload hash
+- external ID after publication
+- receipt ID.
+
+
+5. SPLIT LISTABLE FROM ETSY_READY
+
+Do not require product-manufacturing truth to change when an Etsy SEO tag changes.
+
+Catalog:
+LISTABLE = product has sufficient truthful marketing/source material.
+
+Influence:
+ETSY_READY = compiled release satisfies Etsy constraints.
+
+LISTABLE + ETSY_READY + human grant = publishable.
+
+
+6. FIX TEMPLATE INVENTED FACTS
+
+pipeline/compilers/template.py currently inserts statements such as:
+"preview within 24 hours"
+and
+"message us for rush options."
+
+Remove hardcoded operational promises.
+
+Templates define section shape only.
+
+All factual claims compile from Product Pack / channel policy.
+
+
+7. PRICE MUST COME FROM APPROVED COMMERCIAL TRUTH
+
+compile_etsy currently intentionally omits price.
+
+For OddHobb, Product Pack margin validation depends on approved retail pricing.
+
+ChannelRelease must resolve its price from catalog pricing truth.
+
+Influence may not invent or manually drift price.
+
+If channel-specific pricing exists, add it to catalog pricing policy.
+
+
+8. INTRODUCE ONE EFFECT RUNTIME
+
+No code may directly cause an external consequence.
+
+Canonical API:
+
+runtime.execute(ActionSpec)
+
+ActionSpec must contain:
+- id
+- brand
+- campaign
+- capability
+- consequence class
+- adapter
+- target
+- immutable payload reference
+- full payload SHA256
+- source artifact hashes
+- expected cost
+- budget/grant requirements
+- idempotency key
+- verifier ID
+- review_bundle_id where human review is required.
+
+
+9. BLOCK DIRECT ADAPTER EXECUTION
+
+The following patterns are currently bypassable:
+
+runner.py dry_run=False → push_listing()
+etsy adapter push_listing(... dry_run=False)
+scheduler.queue_post() → direct PostQueue insertion
+other publisher/provider direct effects.
+
+Refactor adapters so consequential methods require an execution context
+containing a verified grant/action ID.
+
+Without it:
+FAIL CLOSED.
+
+Do not rely on caller convention.
+
+
+10. QPRIVATELY IS THE KERNEL, NOT POST-HOC RECEIPT DECORATION
+
+Canonical effect lifecycle:
+
+PROPOSED
+→ REVIEW_READY
+→ APPROVED
+→ GRANTED
+→ EXECUTING
+→ VERIFYING
+→ PROVEN_TRUE | PROVEN_FALSE | UNKNOWN_RECONCILE
+
+Human approval authorizes an attempt.
+It never proves success.
+
+Only receipt-backed independent verification closes the action.
+
+
+11. USE ONE CANONICAL RECEIPT FORMAT
+
+pipeline/verifiers/gates.py currently creates a "QP-style" receipt.
+
+Remove this second receipt format.
+
+Channel verifiers produce EVIDENCE.
+
+Actual qprivately acom.receipts.transition() creates the canonical receipt.
+
+TransitionReceipt is the only accepted completion artifact.
+
+
+12. CONSOLIDATE AUTHORITY
+
+There are multiple grant/authority implementations:
+law/acom/grants.py
+qp/authority.py
+
+Choose qprivately's canonical authority format/crypto.
+
+Influence consumes it.
+
+Do not maintain two incompatible grant systems.
+
+
+13. PIN QPRIVATELY
+
+Avoid a silently drifting vendored law/acom copy.
+
+Prefer qprivately as a pinned package/commit.
+
+At minimum add compatibility tests asserting canonical gate/program hashes and
+protocol version match the pinned qprivately source.
+
+
+14. FIX G5
+
+g5_fresh exists but run_gates() currently does not execute it.
+
+Either genuinely execute G1-G5 or stop documenting G1-G5.
+
+Runtime claims and docs must agree exactly.
+
+
+15. REDESIGN HUMAN TASKS
+
+Current HumanAction done:boolean cannot model consequence approval.
+
+Keep it for checklist/onboarding if useful.
+
+Create first-class effect approval tasks with:
+
+task_id
+brand
+kind
+action_spec_id
+review_bundle_id
+payload_hash
+risk_class
+estimated_cost
+cost_cap
+state
+expiry
+decision
+decided_at
+grant_id
+execution_id
+receipt_id.
+
+State:
+PROPOSED
+REVIEW_READY
+APPROVED / REJECTED
+GRANTED
+EXECUTING
+VERIFYING
+PROVEN_TRUE / PROVEN_FALSE / UNKNOWN_RECONCILE.
+
+
+16. NEVER PARSE APPROVAL PAYLOAD FROM HUMAN PROSE
+
+etsy_listing.execute() currently regexes SKU from task instructions and then
+recompiles the listing.
+
+Remove this entirely.
+
+Approval must bind exact frozen payload bytes.
+
+Human approves payload hash H.
+
+Grant authorizes payload hash H.
+
+Executor checks payload hash H immediately before mutation.
+
+Any changed byte invalidates the grant and requires a new review.
+
+
+17. APPROVAL IS NOT DONE
+
+Do not mark consequential Human Tasks done when approved.
+
+APPROVED means permission only.
+
+The task closes automatically when the associated qprivately receipt settles
+the required claim TRUE.
+
+Manual "done" remains valid only for genuinely manual work such as:
+- paste API key
+- physically measure sample
+- complete CAPTCHA
+- inspect received object.
+
+
+18. BUILD REVIEWBUNDLE
+
+Create one immutable object used by the Human Task and middle canvas:
+
+id
+kind
+brand
+campaign
+source_refs
+pack_hash
+artifacts
+compiled_payload
+payload_hash
+live_diff
+estimated_cost
+consequence
+machine_gate_results
+action_spec_id.
+
+ReviewBundle is what the human actually approves.
+
+
+19. TURN editor-main INTO THE UNIVERSAL REVIEW CANVAS
+
+Do not build another Studio.
+
+Current dash already has:
+activity bar
+sidebar
+editor-main
+HUD
+chat dock.
+
+Use:
+sidebar = task queue/context
+editor-main = Review Canvas
+HUD = qprivately/action status
+chat dock = agent conversation about current review.
+
+Add ReviewBundle renderers, not separate apps.
+
+
+20. ETSY REVIEW RENDERER
+
+Show:
+- actual product image carousel
+- title
+- price
+- tags
+- full description
+- materials
+- taxonomy
+- shipping/processing facts
+- Product Pack level
+- diff against live listing
+- expected external target
+- payload hash
+- cost
+- machine gate warnings
+
+Actions:
+REJECT
+REQUEST CHANGES
+APPROVE EXACT REVISION.
+
+
+21. VIDEO REVIEW RENDERER
+
+Show:
+- actual video player
+- thumbnail
+- title
+- description
+- captions/transcript status
+- dimensions/duration/codec
+- source product/content
+- campaign
+- cost
+- expected platform action.
+
+Approval binds video hash + metadata payload hash.
+
+
+22. IMAGE / SOCIAL / AD RENDERERS
+
+Image:
+source vs generated derivative + provenance.
+
+Social:
+platform-native preview with exact text/media.
+
+Ad:
+creative + copy + audience + landing page + budget + stop rules + maximum downside.
+
+Same ReviewBundle pipeline.
+
+
+23. REQUEST CHANGES CREATES A NEW REVISION
+
+Never mutate an approved artifact.
+
+rev4 → "make background less busy" → rev5.
+
+Approval of rev4 never authorizes rev5.
+
+
+24. GENERATION AND PUBLICATION ARE TWO AUTHORITY BOUNDARIES
+
+Paid generation:
+
+human approves a bounded spend grant, e.g.
+campaign=Christmas
+capability=image.generate
+max_value=$3
+max_calls=100
+expiry=2h.
+
+The agent generates many candidates inside this grant.
+
+Public publishing still requires a second review of the actual resulting
+artifact/payload.
+
+
+25. USE BATCH SPEND GRANTS
+
+Do not make humans approve every $0.025 FAL request.
+
+Use qprivately constraints:
+max_value
+max_calls
+provider/model policy
+campaign predicate
+expiry.
+
+When exhausted, ask again.
+
+
+26. INTEGRATE qp/spend.py INTO EFFECT RUNTIME
+
+PROPOSE spend before execution.
+AUTHORIZE with the grant.
+SETTLE using independent provider billing/readback where available.
+
+Campaign actual spend should derive from settled spend receipts, not an
+independently mutable spent_usd counter.
+
+
+27. FIX SCHEDULER CLAIMS
+
+queue_post() currently writes to PostQueue without demonstrated human approval.
+
+Queueing and publishing are separate claims.
+
+PostQueue insertion may prove:
+post.queued = TRUE
+
+It must never prove:
+post.published = TRUE.
+
+Actual publication needs adapter execution + independent platform readback +
+qprivately receipt.
+
+
+28. VERIFY ETSY IMAGES PROPERLY
+
+upload_image() currently treats returned image ID as success.
+
+After upload:
+GET listing images
+verify expected image exists
+verify rank/order
+verify image count
+then issue evidence.
+
+Attempt response alone is insufficient.
+
+
+29. USE PRODUCT PACK LEVEL AS MARKETING PERMISSION
+
+Suggested policy:
+
+DRAFT:
+internal inspection only.
+
+PRINT_READY:
+internal test content/sample activity.
+
+LISTABLE:
+channel listings + organic content allowed.
+
+PROVEN:
+paid ads / scale / bundles / large campaigns allowed.
+
+RETIRED:
+new publishing blocked.
+
+Machine-enforce this in ActionSpec pre-gates.
+
+
+30. MARKETING AGENTS MAY NOT MUTATE PACKS
+
+Agents read the pack and generate ChannelReleases/ContentArtifacts.
+
+Performance changes future campaigns.
+
+It does not rewrite physical truth.
+
+
+31. MEDIA PROVENANCE
+
+Extend pipeline/media.py manifests with:
+
+pack_hash
+source_asset_hashes
+transform_id/version
+prompt_hash
+provider/model
+renderer/template
+output_hash
+cost
+QC
+created_at.
+
+Only immutable artifacts move into ReviewBundles.
+
+
+32. PRODUCT IMAGERY LAW
+
+For physical products:
+AI may alter scene/background/lighting/context.
+
+It may not silently alter:
+geometry
+dimensions
+colour
+attachment interface
+personalisation
+material-defining appearance.
+
+If those change:
+QC FAIL.
+
+
+33. LEARN ONLY FROM VERIFIED PUBLICATIONS
+
+content_items enters the learning system only after:
+external ID exists
+independent verification passes
+receipt says published TRUE.
+
+Attach:
+channel_release_id
+pack_hash
+creative recipe/version.
+
+Never learn from queued/failed/simulated output unless explicitly marked
+simulated and excluded.
+
+
+34. MULTI-BRAND CONFIG, NOT MULTI-BRAND CODE
+
+OddHobb, Pogtown, HumanVoiced etc. should each define:
+
+brand identity ref
+product/content sources
+channel accounts
+goals
+budgets
+approval policy
+strategy weights.
+
+One Influence runtime handles all.
+
+
+35. CLEAN REPO ORIENTATION
+
+Root README currently still describes cmail and even tells users to clone
+prx0r/cmail.
+
+Replace the root orientation with Influence.
+
+Document:
+
+CANONICAL RUNTIME:
+pipeline/
+dash/
+qprivately adapter
+
+UPSTREAM/LEGACY:
+cmail/
+domainnamechecker/
+stevejobless/
+
+No new brand-manager logic should be added to legacy trees.
+
+
+36. UPDATE AGENTS.md WITH THE PRIMARY INVARIANT
+
+Rule #1 for Influence:
+
+NO EXTERNAL CONSEQUENCE OUTSIDE THE EFFECT RUNTIME.
+
+Publish, send, spend, buy, mutate listing, launch ad and paid-generation
+operations all require ActionSpec + appropriate qprivately authority.
+
+Add tests that prove adapter calls fail without execution context.
+
+
+37. DASH HOME SHOULD BE THE HUMAN QUEUE
+
+The primary operator question is:
+"What needs my judgment?"
+
+Rank by:
+risk
+unblock value
+deadline
+cost of waiting
+expected value
+campaign priority.
+
+Routine successful autonomous work stays quiet.
+
+
+38. HUD SHOULD SHOW LAW STATE
+
+For current ReviewBundle display:
+
+PACK PROVEN
+MACHINE GATES 8/8
+COST CAP $3
+PUBLICATION HUMAN
+payload sha256:...
+task #...
+grant ...
+receipt ...
+
+This makes qprivately visible rather than hidden infrastructure.
+
+
+39. FINAL ODDHOBB FLOW
+
+Product Pack PROVEN
+→ Influence notices Christmas opportunity
+→ campaign creates creative brief
+→ Pogpet/fal/Higgsfield worker generates assets
+→ Influence ingests immutable artifacts
+→ compiles Etsy/Pin/YouTube releases
+→ machine QC
+→ ReviewBundle
+→ Human Task
+→ exact-hash approval
+→ qprivately Grant
+→ effect journal
+→ adapter executes
+→ independent readback
+→ qprivately TransitionReceipt
+→ campaign state updates
+→ analytics
+→ learn loop.
+
+
+40. STOP ADDING CHANNELS UNTIL THIS WORKS ON TWO REAL EFFECTS
+
+Acceptance test A:
+PROVEN OddHobb product
+→ compile Etsy listing
+→ center canvas review
+→ approve exact revision
+→ publish
+→ fetch back all important fields/images
+→ canonical qprivately receipt
+→ task auto-closes.
+
+Acceptance test B:
+create YouTube Short
+→ center canvas playback
+→ review metadata
+→ approve exact bytes
+→ publish
+→ fetch live video
+→ canonical receipt
+→ analytics later ingest verified ID.
+
+Once these pass, new channel adapters become easy and safe.
+```
+
+## The central product insight
+
+Influence should eventually feel less like:
+
+> “an AI that runs my socials”
+
+and more like:
+
+> **“an autonomous company operating system where agents can do almost unlimited cognitive work, but anything consequential passes through a tiny, visible, auditable authority boundary.”**
+
+That is significantly more interesting.
+
+And qprivately is almost perfectly designed for it.
+
+The single most important next change is therefore **not another agent**. It is making it mechanically impossible for `push_listing()`, `queue_post()`, paid generation, or any future ad API to execute without going through the exact same QP-backed consequence runtime.
+
+Once that kernel exists, the middle Review Canvas and Human Task Queue become the natural front end to the entire company.

@@ -1,0 +1,990 @@
+t's great to be able to talk to you today. I find your group super exciting. So I'm Barbara. I'm a postoc at EPFL
+0:08
+working in the group of Clema Hungla. And today I'll be talking about our
+0:13
+recent progress on the questions of universality and self-replication in dynamical systems. Um specifically my
+0:22
+claim will be that computing systems are not necessarily living. And yeah, this
+0:27
+is based on joint work with uh mainly Georgian Cutler, with Clemo Hunglar and with my student Yonas Minar.
+0:35
+So um what I find maybe the most exciting goal is to understand the
+0:40
+principles of life abstracted away from the particularities of its biological
+0:46
+implementation or in other words to understand life as it could be. And this
+0:52
+is really um a question typically studied through the lens of biology or
+0:58
+astrobiology or chemistry and origins of life research. But I would say it is
+1:04
+less common to study this through the lens [snorts] of mathematics which is
+1:09
+what I will um talk about today. And I want to make claims through three
+1:15
+historical examples where a high level of abstraction
+1:20
+um and the language of physics or mathematics really contributed greatly
+1:27
+um to uncover some fundamental principles of living systems. Be the example of Shroinga who who was
+1:34
+wondering what should be the properties of the physical material of heredity and coining the term a periodic crystal or
+1:42
+the work of Alan Turing and his fundamental work on the chemical basis of morphogenesis
+1:49
+or the work of John Fonoyman on the theory of self-reroducing automata and
+1:55
+this is exactly where we will start today as this will form the basis of our recent results. So, um
+2:05
+somehow um when it comes to to humans
+2:11
+trying to picture uh a machine producing an exact copy of itself, it really took
+2:17
+a long time uh I mean throughout the 18th and even until the 19th century
+2:23
+that people started taking that question seriously. before that it was really
+2:28
+something that was viewed as absurd. This is really excellently described in the book uh by Tim Taylor and Alan
+2:35
+Duran. And there's really no wonder because most of the machines we see around
+2:42
+ourselves look more like the picture down here um where a machine builds one
+2:47
+that is much simpler than itself. And it does seem to be quite intuitive as if we
+2:54
+have B to build some machine A then it seems necessary that B has to contain a
+3:01
+full description of the machine A and on top of it the means to construct such a
+3:08
+machine from the description. So one could arrive at the intuitive conclusion that the complication of B has to be
+3:15
+necessarily greater than the complication of A. So, how come a
+3:20
+biology found a way out of this seemingly paradoxical
+3:26
+self-referential situation and how could we use this to construct
+3:32
+self-replicating machines? So these are exactly the questions that John Fonoyman
+3:38
+asked himself and after the initial attempts to
+3:44
+construct such self-replicators in in his kinematic model he moved on to a
+3:50
+more abstract environment that really helped him to tackle the logic of the self-replication decoupled from some
+3:56
+more technical issues of motion in continuous space and so on. So the
+4:02
+environment he ended up using is the one of cellular automata.
+4:08
+So specifically he considered a two-dimensional cellular automaton. Here you see the 2D grid which has 29 states.
+4:17
+Here you see a subset of the states that form some signal wires.
+4:23
+And within this um cellular automaton he constructed an initial pattern which in
+4:30
+the software of goalie would look something like this for instance which has the following properties. So it
+4:37
+consists of three main building blocks. The main part being the supervisor unit
+4:44
+then the construction arm and the tape which contains instructions.
+4:50
+Now the supervisory unit has multiple functions. First of all, it acts as a
+4:56
+during machine. It is able to read the information from its tape, manipulated,
+5:01
+write it and so on. But it is also able to process the information and send
+5:07
+signals down its construction arm. And this through creation and annihilation
+5:12
+can move around the grid and construct new states out of the quiscent
+5:18
+background. So as does as such this pattern also acts as a constructor which
+5:24
+can turn instructions into this physical configurations in the CA space. And
+5:32
+inspired by the work of Turing, Ponoyman used a similar trick to say that um we
+5:37
+can map every finite pattern onto a binary description. Um and as such we
+5:44
+can have a universal constructor that whatever description of a finite pattern
+5:49
+it sees on tape it can interpret it and build it in the cellular space. Now as a
+5:56
+special case if this supervisory unit receives a description of its own
+6:01
+pattern then it can build a copy of itself. However, this description will
+6:07
+not contain the the tape itself and as such the offspring will not be able to
+6:14
+start any fresh process of self-replication on its own. And this is
+6:20
+really when Fonoyman's genius uncovered something fundamental and that is that
+6:25
+we can internally organize the supervisor unit to have two modes of operation.
+6:30
+First one that is analogous to translation where the information is
+6:36
+interpreted for the new pattern to be built. And second for transcription
+6:41
+where the exact copy of the tape is copied onto the um onto the tape of the
+6:49
+new machine which really compl completes the replication process and uncovers a
+6:54
+principle that biological models of self-replication also
+7:02
+also [snorts] seems to have discovered. And what is remarkable about this is despite this
+7:08
+being um only published posthumously much later, he already gave talks about
+7:13
+this result in 1949 which was 4 years prior to the discovery of the structure
+7:19
+of DNA by Watson and Creek. Um though this contribution of to um to something
+7:27
+fundamental in biology was only appreciated retrospectively. So to summarize the supervisory unit has
+7:34
+two functions. It is both construction universal meaning it can build any
+7:39
+admissible patterns from the description on its tape and computation universal
+7:45
+meaning it implements a universal touring machine acting on the tape.
+7:50
+So despite this being a successful example of an artificial self-replicator, it really raises so
+7:57
+many questions. For instance, is construction universality or computation
+8:03
+universality necessary for non-trivial self-replication? Is it sufficient for self-replication?
+8:09
+And so on. Uh and in the light of later examples, it really became clear that
+8:17
+such uh questions really need some answers. So let me make it a bit more
+8:23
+confusing. Um, so along the same time or around the same time that Fonan was
+8:28
+working on his logic, sorry. Um, I'm sorry, sorry for interjection. Do you mind if I ask a
+8:35
+question here? Mhm. Um, so what is the uh analog of the tape
+8:40
+in the biological case? Uh, I can see that the instruction is the DNA, but the
+8:45
+tape is I mean the tape together with the instructions is the analog of DNA.
+8:51
+That's a great question. So, so it's just one thing that does both
+8:56
+operations. The tape is the carrier of the instructions. The same way I would say
+9:04
+DNA is the carrier of Yeah. the information. Okay. Okay. Cool.
+9:09
+Mhm. So, we will actually talk about it just now. So, right. So, around the same
+9:15
+time, Fman was working on on the logic of self-replication. Clean was developing
+9:22
+the foundations of theoretical computer science and arrived at the theorems now
+9:29
+known as the clean's recursion theorems. So their precise statement is not really important for us right now. Uh what is
+9:36
+important is their corollary which in a bit of a simplified way can be stated as
+9:42
+follows. So in every Turing complete programming language there exists a
+9:47
+program Q which outputs exactly its own source code from an empty input.
+9:55
+This program is typically called a quinine. And if we reformulate it in the language of Turing machines, it
+10:02
+essentially means that for every universal Turing machine U, there exists
+10:07
+some program Q such that if we put this description of this program on the tape of the universal Turing machine and it
+10:15
+simulates this program on empty input, it will output another copy of the
+10:21
+program. So can we see quaint as some flavor of self-replication?
+10:28
+This becomes especially interesting in the light of future constructions of
+10:33
+artificial worlds such as the um there's many others like Avida or the work on
+10:39
+computation life by the team in Google Turik but let me just cover one example.
+10:45
+So, Tira is an artificial world introduced by Thomas Esray who was
+10:50
+interested in the question of how can we synthesize life and very um roughly
+10:57
+speaking the world consists of a shared memory where which is inhabited by
+11:03
+computer programs. Each program has is has assigned its own virtual CPU. So
+11:09
+here you see a lovely illustration from the original video where Ray talks about
+11:16
+this. So this is the illustration of the program living in the memory. This is
+11:22
+its CPU. The program instructs the CPU to move along the memory, read
+11:29
+information, write information. Um, and what Ry did is he handcrafted
+11:36
+uh a careful example of an initial quine. That is a program that instructs
+11:41
+the CPU to create an exact copy of itself. Um,
+11:48
+so what happens afterwards is Ray designs the world such that when a copy is built, automatically a new virtual
+11:56
+CPU is spawned to this new copy. And um soon the memory is filled with programs
+12:03
+that compete for shared um execution time and for space ultimately evolving
+12:10
+different kinds of fascinating behaviors such as parasitism. Here I think the red
+12:15
+program essentially develops the capacity to steal other programs CPUs to
+12:21
+be able to essentially self-replicate twice as fast.
+12:27
+Um so with this example in mind we can uh arrive at two very concrete open
+12:34
+problems. So the first question is in what precise sense if any is funman's
+12:41
+cellular automaton self-replicator stronger than a coin and the second question does every dynamical system
+12:48
+capable of universal computation support non-trivial self-replication
+12:54
+knowing that every universal um or every computation universal system
+13:00
+has coins. So what we will arrive at is a negative answer to the second question
+13:07
+which also will show in what sense is phon replicator stronger which may be a bit
+13:14
+of a surprising result in in the light of the example of tiara for instance.
+13:20
+But before um we dive into the technical details that allow to answer this
+13:26
+question, let me um walk you through a very rough
+13:32
+story uh meant to build some intuition for these questions and the answers.
+13:39
+So let's consider three examples in which we would typically um
+13:46
+study self-replication. So the first one is the phono man self-replicator. Second
+13:51
+one could be a biological cell and the third one could be some artificial world
+13:56
+based on coins such as tiara. Now what we can notice is that in all examples
+14:03
+there is a natural separation between two types of layers. There is the informationational layer and the
+14:10
+functional layer. So in the case of the poniman self-replicator information layer is the tape containing the
+14:17
+description of the organism and the functional layer is the supervisory unit acting upon it. In very loosely speaking
+14:25
+in the biological cell the information layer can be the DNA and the functional
+14:30
+layer could be ribosomes and other cellular machinery that acts upon the DNA. Um and in both these cases it is
+14:37
+the interplay between the informationational and functional layer that eventually results in a full copy
+14:44
+of both layers which cons constitute the new organism.
+14:50
+Now what is the analog in the coin setting? Um here we can enter a philosophical debate but I think it is
+14:57
+most natural to to see the organism as consisting both of the description that
+15:04
+is of the content of the tape of the Turing machine and the position and
+15:09
+state of the head because only then does this really become a deterministic dynamical system.
+15:15
+So then it becomes natural to say that quin uh is exactly or let's say the
+15:21
+content of the tape is exactly the informationational layer and it is the Turing machine head and its state that
+15:28
+act upon it as this is the only active piece of the puzzle here. Now in the
+15:33
+classical um during machine world what happens is that once uh the universal
+15:39
+during machine executes it ends in a halting state and stops um yeah the
+15:47
+active updates of the tape. So in this sense it seems like quin does not fully
+15:52
+replicate because it is not the case that the new copy would arrive with a new head in the initial state. Um, so
+16:00
+there's no copying of the heads, which would allow the new offspring to to again self-replicate.
+16:07
+Um, but we could easily modify the world in the same way Ray did where we
+16:13
+essentially modify the underlying physics of this dynamical system to as
+16:19
+soon as the computation helps to just spawn two new heads. So the um
+16:25
+computation can continue. And in this sense, we really do have a full copy of both theformational and the functional
+16:32
+layer. However, the internal organization of our construction only explains self-replication of one half of
+16:40
+the organism and that is the information layer. We had to somehow hardcode the
+16:45
+copying of the functional layer into the underlying dynamics. So this is let's
+16:50
+say the intuitive level for why the phon replicator is in some sense stronger as
+16:57
+it explains both the organizational structure of copying the
+17:02
+informationational and the functional layer. So now let's look at how we could prove
+17:09
+um such a statement and in order to do that let's focus on
+17:14
+the second question. The problem is that there are two notions that um that are
+17:21
+not mathematically rigorously defined right now. So what does it really mean
+17:26
+for a dynamical system to be capable of universal computation and what is non-trivial self-relication anyways?
+17:34
+So now we'll come to the first technical interlude where we will delve into the
+17:40
+first question regarding computation. So whenever we talk about a physical or
+17:46
+dynamical system um computing uh really there is always this
+17:53
+fundamentally underlying notion of simulation. So typically if we want to say that a cellular automaton uh for
+18:01
+instance computes something we compare it to some others more standard notion
+18:07
+of computation be it the result of the program you run on your laptop or a touring machine and we would say that
+18:13
+the cellular automaton does compute the same thing if there is some encoder which allows us to take the initial the
+18:21
+input of our computational process encode it somehow into a configuration In the cellular space, we let the
+18:29
+cellular automaton iterate some number of time steps and subsequently we decode and we want the
+18:35
+output to exactly match the output of the computation. So what remains unclear is what exactly
+18:44
+can these encoder and decoder mappings be and what is the system that we would
+18:49
+compare the dynamical system we are given with. So now for simplicity and
+18:55
+for historical motivation by dynamical systems I will mainly focus on cellular
+19:00
+automata though a subset of the results is generalizable to other substrates.
+19:06
+So let's answer the question or let's distinguish what kinds of system can we
+19:11
+be simulating by our dynamical system. And as it turns out the choice really matters.
+19:17
+Um so the first choice is that we ask a cellular automaton to simulate a during
+19:24
+machine. Uh in this sense we would say that our cellular automaton is locally
+19:29
+universal if it can simulate a universal during machine. Um so why local? Because
+19:37
+the during machine at every particular instance in time only has a finite
+19:42
+number of non-blank symbols on it t on its tape. So the information really is
+19:47
+just finite and we want this to be locally represented in the cellular
+19:52
+automatons infinite grid just by a finite region whose size is somehow
+19:59
+proportional to the size of the non-blank region. Um
+20:05
+so it is difficult to compare cellular automata and Turing machines since they have very different architectures. So
+20:12
+during machines exactly have just finite information and have some predefined halting state. A cellular automaton
+20:19
+operates on an infinite grid and does not really have any halting notion. But
+20:26
+one way we can make the two systems uh seen through the same lens is to really
+20:32
+view the touring machine as a dynamical system um where one step really is the
+20:37
+one update of the touring machine state and the head's position and the content
+20:43
+of the tape and we want every particular step of this computation to be encoded
+20:49
+in a cellular automatons configuration. So here you see for instance game of life's configuration simulating a
+20:56
+three-state three symbol touring machine where we first encode the content of the tape into this finite region which can
+21:05
+grow but proportionally to the size of the tape. Um and we see that after quite
+21:12
+a substantial number of time steps we can read out using the decoder every
+21:18
+subsequent step of the touring machine's computation. So hopefully there we have some
+21:23
+intuition for local universality and as opposed to that is a notion which
+21:28
+will turn out to be much stronger which is the notion of global universality where we require a cellular automaton in
+21:36
+some dimension D to simulate every other cellular automaton in the same dimension
+21:43
+and here we really mean on the infinite grid. So really somehow the whole
+21:50
+physics in this infinite world has to be contained um in the CA that is
+21:55
+simulating this other CA. So here we see an example again of game of life. Um so
+22:03
+this is a very zoomed out view of the of the game of life's grid. If we zoom in,
+22:09
+we see that this is pretty a pretty elaborate construction which naturally
+22:14
+makes us view this darker cell maybe as a zero and this lighter cell as a one.
+22:20
+And after a number of time steps, game of life does an update which actually mimics the behavior of this cellular
+22:28
+automaton on this higher level after we rescale in space and time. So the fun
+22:33
+fact is that here um here you see an actual uh simulation in progress. Here
+22:41
+the rule that game of life is simulating is again game of life itself but the
+22:47
+construction could be um modified such that game of life actually simulates
+22:52
+other cellular automata. So local universality deals with
+22:59
+representing uh a computational process with just finite number of information
+23:05
+or bits of information whereas global universality requires the simulation in its entirety of a whole cellular
+23:11
+automaton. And since we have a bit more time let us dig into more technical details. So
+23:18
+let's zoom in on the notion of local universality. So to make this more concrete, suppose
+23:26
+we have a cellular automaton A, which this notation just means it has state
+23:31
+set S S and it operates on a grid Z to the D. So this is it's all infinite configuration space and F is its local
+23:39
+update rule which updates all the cells at once and let T be a during machine.
+23:45
+So here the notation configuration of T means essentially
+23:51
+the finite number of symbols it takes to specify the whole content of the tape, the exact state of the head and the
+23:58
+position of the head. And here f of t or f subt is just um this global update
+24:06
+function which updates the whole configuration into the next step of the
+24:11
+dring machine state. So in this case we can say that a simulates t if there
+24:17
+exists an encoder which maps exactly such configurations onto the configurations of the CA a decoder
+24:25
+working in the opposite direction and some delay function towo which essentially tells us looking at the
+24:32
+configuration how many time steps should we simulate the CA before we read out the information
+24:38
+such that no matter what during machine configuration we start with and no
+24:44
+matter how many time steps we would like to simulate, it holds that um if we
+24:51
+encode this information into the configuration of the CA, we iterate this
+24:56
+CA potentially with the delay given by TOAO and then we decode we obtain
+25:01
+exactly the same information as iterating the Turing machine T times.
+25:07
+So this is let's say another level of resolution of what local universality
+25:12
+means. But it is still not a precise definition because I did not specify what the encoders and decoders really
+25:19
+can be. And if we left the definition as is and let the encoders and decoders be
+25:25
+arbitrary mappings, we could easily have problems. That is it could so happen that it is
+25:32
+the encoder and decoder that would actually realize the computation of the Turing machine and not the cellular
+25:39
+automaton that is supposed to simulate it. So we have to be very careful and somehow constrain the computational
+25:45
+capacity of all the three maps. So just to give you an example of what
+25:51
+can go wrong. Let's say we don't we have an unrestricted decoder and it can be an
+25:56
+arbitrary map and suppose we have some universal Turing machine U which just
+26:02
+iterates its dynamics from some initial configuration C
+26:07
+and we construct a trivially universal CA which does the following. The encoder is just the identity map. The CA does
+26:14
+not manipulate the information at all. It just at every time steps at every
+26:20
+time step appends a single one in the cellular space. So essentially all it does it it tracks
+26:28
+time. Um so now if we define the decoder to take this unperturbed information in
+26:35
+C and read out the number of time steps present in the number of ones and simply
+26:42
+decode this information by iterating k number of time steps. the universal uh
+26:48
+function on C we quickly obtain this relationship without really the CA doing
+26:55
+any of the hard work let's say so I will
+27:00
+not go into the exact mathematical definition but it is clear that we have to computationally constrain all three
+27:07
+maps and one potential way to do it is as follows so given during machine configuration C
+27:15
+which consists of n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n n non-blank symbols. The encoder which maps this. So the encoder
+27:22
+is essentially implemented by a touring machine and transforms this information this finite information C into some
+27:30
+finite region C prime and for the remaining background choosing some
+27:35
+admissible background for instance everything blank or some some very
+27:42
+simple periodic pattern or so. So in this case we would like the encoder to
+27:49
+be implemented by a touring machine that always holds and runs in time that is um
+27:56
+all of some function beta of n. So this is just some fixed computational uh
+28:02
+computable function beta. Um so we kind of bound the computational time uh of
+28:08
+the encoder and similarly we can bound the computational time of the decoder that works in the opposite direction. It
+28:16
+starts with the touring machine head position for instance at position zero
+28:21
+um reads out information a finite um let's say region of information from
+28:26
+from the CA configuration and transforms it back into the drinking machine configurations and we would also like it
+28:32
+to run in a function proportional um to n. So this is really the nuance.
+28:38
+If we would bound its time complexity by the size of C prime, actually this kind
+28:44
+of decoder we defined here would be an admissible decoder and we don't want that. So we want things to be always
+28:50
+bounded by the size of the non-blank portion of the Turing machine state. And
+28:56
+similarly we can we can bound the complexity of the delay function to
+29:03
+and this allows us to really formalize what it means for a cellular automaton to simulate a touring machine. Um and
+29:11
+[clears throat] actually this reasoning can be uh stretched far beyond cellular automata. In fact, it has been done uh
+29:19
+prior to our work by Jordan Cutler and Simon Rishchikov that this has also been
+29:24
+formalized for smooth maps of manifolds
+29:30
+and the strength is so I will not go into the detail of how this definition
+29:35
+generalizes to smooth maps but essentially this relationship remains the same. Now we just have to relate
+29:43
+discrete symbols to um yeah to continuous space by some real valued
+29:49
+during machines. Um but now once we have this formalized it really allows us to
+29:55
+prove not only positive results which there's plenty of in the literature but
+30:01
+also negative ones. So there is a cool results in the work of uh Jordan and Simon which for instance say that
+30:08
+certain chaotic systems such as the XM a system um cannot in some robust way
+30:14
+simulate a universal during machine. So there's very few of such negative results in the literature especially
+30:21
+because without a formal definition one cannot really work with what it would
+30:26
+mean to not be able to be universal. Um
+30:32
+so maybe one more um interesting remark is um maybe one of the most elaborate
+30:41
+constructions of local universality in cellular automata was Matthew Cook's
+30:47
+proof of local universality of rule 110 which on the first look looks quite
+30:53
+astonishing. Rule 110 is an elementary cellular automaton whose whole information can be encoded in just eight
+31:00
+bits. Yet it is somehow able to be computationally universal.
+31:06
+And that is because in these kinds of constructions it is exactly the encoders and decoders that remain implicit from
+31:13
+the construction and essentially they're not really highlighted. So I would say
+31:18
+um not everyone thinks about them explicitly. But if we would really look at the construction which really um is a
+31:27
+very elaborate series of reduction steps from a touring machine to a clockwise touring machine to a cyclic tech system
+31:33
+to the dynamics of rule 110. There's all these encoders and decoders that actually compose to really witness the
+31:40
+final local universality of rule 110. And
+31:46
+now the magic that something small so small can be universal maybe is um or
+31:53
+the result is not as astonishing given that it is partially the encoders and
+31:59
+decoders that offload some of this complexity. So they can still work in a
+32:04
+polomial time and linear space. But this was also not clear a priority. So in the original
+32:11
+construction of cook actually these encoders and decoders needed exponential slowdown and it was only later improved
+32:18
+to make this really let's say an efficient simulation. So this is something to keep in mind
+32:24
+that it really is useful to view the encoders and decoders that witness certain simulations explicitly.
+32:32
+So hopefully this is more or less clear. Let's go to the other side which is
+32:39
+global universality. So I will not go into the exact details
+32:44
+but um we say that a d-dimensional cellular automaton B can globally
+32:51
+simulate a d-dimensional cellular automaton A if uh we can efficiently
+32:57
+recover each space-time diagram of A from a suitable space-time diagram of B
+33:03
+after potential geometrical transformations of B. So instead of giving you the exact formal definition,
+33:10
+let me showcase um two examples. So this comes from a classical
+33:17
+construction of Chulik and U. So let's consider a one-dimensional cellular automaton A with radius one. Um so there
+33:26
+for it there exists a one-way cellular automaton B that can simulate it. So radius one means that each cell can just
+33:34
+see its left and right neighbor and one way is even more limited. Each cell can only see its right neighbor. So going
+33:42
+over this uh briefly we can for a fixed A we can construct B which has a larger
+33:48
+space such that if we initiate A with some states S1 S2 S3 we can initiate B
+33:56
+with the exact same configuration and use one time step to aggregate information from two cells and then use
+34:04
+the second time step to compute the exact same result. So with this more
+34:09
+limited radius, B can do the same thing as A if we um give it more space. So a
+34:16
+richer state space and more time. And we see that the resulting um state is um
+34:25
+obtained by iterating B twice and by shifting the information one step to the
+34:30
+left. So they really match positions in this particular case. the sec. So this might lead to a natural
+34:38
+question. Does B need more states in order to globally simulate A? Um as it
+34:43
+was the case now and um the answer is naturally no otherwise we wouldn't have
+34:49
+be able to have globally universal automata. So here is an example of how we can
+34:55
+somehow view each cellular automaton as operating on an arbitrarily rich state
+35:00
+space. So let's assume the elementary cellular automaton 184 which is this
+35:06
+traffic rule where each black cell is attempting to move right unless there is a black cell in which case it waits and
+35:13
+rule 128 which is just the conjunction of its three um bits. Um and the trick
+35:22
+we can do is if we initialize the grid of rule 184 in a very particular way by
+35:30
+let's say um partitioning the grid into two consecutive cells and viewing these
+35:36
+as one larger cell. Now we have four possible states for these tpples.
+35:42
+Um and we can represent each zero of rule 128 by a one zero sequence and each
+35:50
+one by a 01 sequence. And if we check this let's say blown up rule table of
+35:56
+the rule 184 we see that it actually exactly mimics the dynamics of rule 128.
+36:04
+So if we project back to the uh to to the state zero and one in this way, we
+36:12
+see that really the dynamics of rule 128 is hidden inside the dynamics of rule
+36:18
+184 through this packing of the cells into supercells. So very briefly
+36:25
+um we say that an automaton B globally simulates A. Um if we can geometrically
+36:32
+transform B using these three operators so we can somehow consider more time
+36:38
+steps. So we use some constant time delay. We can shift the global map to
+36:43
+relocate information and to pack the CA to interpret it as a CA operating on a
+36:50
+richer state space. So this allows us to modify B into essentially um yeah some
+36:58
+some CA B tilda and then inside this B tilda we have to find all the possible
+37:04
+space diagrams of A and this is typically done by finding some subspace
+37:09
+upon which this geometrically transformed B is invariant and projecting this subspace onto a
+37:15
+dynamical system isomeorphic to A. So there is some this is let's say some algebraic interpretation of global
+37:22
+simulation. So with these two notions in mind um it
+37:27
+is not difficult to show that global universality implies local universality because in every dimension we have a CA
+37:34
+that is locally universal and the global universal CA is able to simulate every
+37:40
+cellular automaton in the same dimension as it also lies. So in particular it is
+37:46
+able to simulate the local universal CA and by transitivity it also simulates the universal during machine. Now what
+37:53
+is interesting is whether um this inclusion is strict and the interesting
+37:58
+example which showed this is the example of reversible cellular automata which
+38:03
+are automata that are essentially whose global maps are injective and the inverse map can also be implemented by a
+38:10
+cellular automaton. So we can equally run the dynamics by the CA both forwards and backwards. So there are interesting
+38:17
+constructions which show that in every dimension there is a reversible CA which can locally simulate a universal touring
+38:24
+machine. But a known result from the 80s is that reversible cellular automata
+38:31
+cannot be globally universal. This is really saying something interesting about the nature of
+38:37
+computation being inherently irreversible and we can somehow amend
+38:42
+for this by having enough extra space where we can essentially eject garbage
+38:50
+which helps to res reverse the irreversible gates like and and or um
+38:56
+but if we don't have enough space as is the as in the case of global simulation
+39:02
+this is where reverse iversibility shows its limitations. So this gives us the following picture.
+39:10
+We have local universality within which lives the subset of globally universal systems and uh a separate class of
+39:19
+universal or let's say local universal reversible cellular automata. So this
+39:25
+was the summary of known results except for formalizing the notion of local simulation.
+39:31
+But the first new result um that is not even really published uh which further
+39:38
+elaborates on the interplay of universe of local and global universals through
+39:43
+the lens of topological dynamics. It's the following. Um I will just
+39:51
+briefly mention that um one can consider um yeah one can study cellular automata
+39:57
+as maps uh as topological maps and consider their topological entropy and
+40:02
+the results that we show is that um for every curing machine there exists a CA
+40:09
+which can locally simulate it which has zero topological entropy.
+40:14
+Um but a cellular automaton with zero topological entropy cannot be globally
+40:20
+universal. So this so topological entropy somehow measures the richness of
+40:27
+space-time diagrams that we see uh on a finite observation window and how quickly this grow if we let time
+40:34
+unravel. But without going into further detail, uh this essentially shows a new
+40:40
+separation of the classes of locally and globally universal systems. Um yeah, so
+40:48
+this really suggests an interesting program since now that we have formally
+40:53
+understood what does it mean for a system to be locally and globally universal. um we can really start
+40:59
+relating the computational properties of systems to their dynamical or topological properties and cellular
+41:06
+automata are interesting example because they have been extensively studied as models of computation and as topological
+41:14
+maps but there are very few results that relate the two. So I think this really is an interesting future direction.
+41:22
+But uh without further ado, um hopefully now we have a good understanding of what
+41:28
+does it mean for a cellular automaton or a dynamical system in general to be computationally universal and that
+41:34
+there's different flavors of it. Local universality being weaker than global universality as shown by the classes of
+41:41
+reversible CAS or CS with zero topological entropy. And let's go back to the question of what is non-trivial
+41:47
+software replication. This is really a difficult question because before we can
+41:52
+understand the biology of of cellular automata we should understand their physics. So for now we will only uh work
+42:00
+with a necessary condition for non-trivial self-replication. To fully characterize non-trivial
+42:06
+self-replication remains an open problem for us. But what is the setup? Suppose
+42:13
+we have a D- dimensional CA and we are curious whether it has the capacity for
+42:18
+non-trivial self-replication. What is the object that is self-replicating? It is some sequence of
+42:25
+local patterns. You can think for instance a glider in game of life which
+42:30
+has the same finite support and just different shapes over its temporal evolution.
+42:36
+Um and we are interested when does such a pattern self-replicate uh in its
+42:42
+environment and essentially the simplest way to state this is that suppose we
+42:48
+have some configuration of A. So we say that this local series of patterns
+42:54
+self-replicates with configuration C in the background if there exist two sequences of growing positive integers
+43:02
+such that in the n iteration of the CA on the configuration C we have exactly
+43:09
+KI copies of P. So they can be maybe rotated or they can have a different
+43:15
+temporal face but essentially we want ki disjoint regions where this pattern
+43:21
+occurs and we say that a cellular automaton satisfies the local self-replicating condition if it
+43:28
+contains a self-replicating pattern which has at least which has some non-trivial temporal dynamics. So you
+43:35
+want at least two distinct patterns that somehow at least wiggle
+43:41
+[snorts] um and the background configuration is somehow computationally feasible like we
+43:47
+don't want the background configuration to already encode all the other copies of this organism for instance.
+43:55
+So again this is not um a 100% formal definition but hopefully it gives a good
+44:01
+idea of what we mean. So here you see an example of a build's loop which is a
+44:06
+very compact self-replicating loop in a cellular automaton. As you see it has a
+44:12
+non-trivial temporal period. Um and it has a growing number of occurrences in
+44:17
+this joint regions though they might be rotated. So such a CA would satisfy the
+44:23
+local self-replicating condition. An example that this uh condition rules out
+44:29
+is just a very trivial let's say uh automaton modeling some crystal growth
+44:35
+where here the temporal u pattern has just um yeah size one so there is no
+44:42
+activity going on. So this is a really minimal condition and many trivial
+44:48
+instances of self-relication satisfy it. But we were really aiming for for a complete baseline because the main
+44:55
+result we showed is that there exists a locally universal cellular automaton
+45:00
+which does not satisfy the local self-replicating condition. So even if in the future we come up with
+45:07
+more stringent criteria for self-replication this result would still hold as uh our
+45:14
+example would also rule out these future more stringent versions and I don't have
+45:20
+the time to really go in detail but essentially the example we construct is
+45:26
+a one-dimensional CA that mimics um the computation of a Turing machine if it
+45:32
+has a single head on the tape. But as soon as there are multiple heads, they somehow mark their territories in way
+45:39
+that completely prohibits their communication and cooperation. And so they really since the heads are the only
+45:47
+source of activity in the grid, they really cannot be used to um uh let's say
+45:53
+participate in the replication of organisms. Um can I can I ask a question in the
+45:59
+previous slide? Um the loops the loops example that you had. Yeah. Um, do you
+46:06
+know what happens if you remove some of these patterns like
+46:13
+randomly? Do they just automatically get refilled or does it disrupt any other
+46:19
+existing patterns? Sorry. If we do what to the patterns? So, so we see these loops copying
+46:26
+themselves, right? And after a while, we see uh a certain number of them. What
+46:32
+happens? What do you think will happen if you just randomly remove some of these loops from the grid?
+46:37
+Do they get refilled? Yeah. Or does it disrupt? Um, so [sighs]
+46:43
+yeah, typically these patterns are not robust in the sense that if you perturb a particular loop, it will most likely
+46:50
+lose its ability to self-replicate. But if you just erase some of them, um I
+46:56
+think the loop essentially keeps trying to replicate and only fails if the space
+47:03
+around it is occupied. So if that space is freed again, the loop will keep on trying to replicate hopefully. I don't
+47:11
+I'm not familiar with the particular details of this construction, but at least it would not be difficult to
+47:17
+construct that have that property. Yeah, I I think that property is
+47:22
+essential, right? Because uh otherwise what it would mean is uh the existence
+47:29
+of one of the loops is contingent on the existence of others which is not self-replication. There is
+47:35
+no self there. They are not independent. So yeah, I agree. Yeah. Yeah. Yeah. Yeah. So this would be
+47:41
+one nice already a good idea of how to make the definition more stringent to maybe introduce some robustness to
+47:48
+perturbations of the soft replicators. Um but it is difficult to formalize what
+47:54
+we mean by a perturbation in this discrete space and so on. Um yes thank
+48:00
+you. Um so with this result we can formally or we can reformulate it as
+48:08
+follows. We can introduce the class of systems called universal self-replicating which satisfy two
+48:15
+criteria together. They are locally universal and they satisfy the local
+48:20
+self-replicating condition as this baseline minimal condition for self-replication. And what we have just
+48:26
+shown is that the universal self-replicating class is a strict subset of locally universal cellular
+48:34
+automata. meaning that local universality is not a sufficient condition for satisfying the local
+48:41
+self-replicating condition. So to really finish the picture, we can
+48:48
+also easily show that in every dimension there exists a cellular automaton which belongs to the universal
+48:54
+self-replicating class in 2D. This would be for instance just the example of
+48:59
+phenomenon soft replicator if we program it to enter some periodic behavior after it con creates an offspring. Um but we
+49:08
+can also take so what we have done is essentially looked at the phonyman's construction which creates the offspring
+49:14
+with a particular diagonal offset and modified it such that the offspring is
+49:20
+actually created just with horizontal offset which allowed us to let's say squish this construction to a
+49:26
+one-dimensional one to show that even one-dimensional worlds can um support
+49:34
+genuine not replication of sense of phenomenon.
+49:39
+So this already implies that each globally universal CA in every dimension
+49:46
+can simulate the universal self-replicating CA in that dimension and thus global universal globally
+49:53
+universal CA belongs to universal self-replicating class. So to see this
+49:59
+um picture let's say in a in a diagram what we have proved is that global
+50:06
+universality implies um being universal self-replicating and universal
+50:11
+self-replicating implies being locally universal but all of these inclusions are strict. The one inclusion I have not
+50:18
+talked about is that global universality is strictly a subset of universal self-replicating. But we can easily
+50:25
+create examples of reversible cellular automata that can sustain non-trivial
+50:30
+self-replication which then allow us to see the split between these two classes.
+50:36
+So since I am running out of time, let me just quickly summarize with some open
+50:42
+problems that I find quite interesting. So here we have talked about computation
+50:47
+and self-replication in a discrete system without the presence of any noise and I would be in
+50:54
+particular interested in how this construction can generalize to continuous media and especially if we
+50:59
+add noise or let's say random perturbations to the system.
+51:04
+It would be extremely exciting to see um a whole hierarchy of increasingly
+51:10
+stringent criteria of non-trivial self-replication. And as I have suggested, we have now um
+51:18
+the possibility to start relating a wide range of dynamical properties to local
+51:24
+and global universality. So now we have the example of reversible computation and zero topological entropy. But
+51:30
+there's so many other dynamical and topological properties that we can start understanding through the lens of
+51:36
+computation or vice versa to start understanding computation through the lens of dynamical properties and to end
+51:44
+with a very particular example is that our construction of a one-dimensional
+51:49
+universal self-replicator is quite artificial. So as opposed to that we have this
+51:56
+famous very compact cellular automaton rule 110 and it is still an open problem
+52:02
+whether this automaton is also globally universal or whether it supports genuine
+52:07
+non genuinely non-trivial self-replication. So with this thank you so much for um
+52:15
+yeah for this space. Uh if you are interested in more details of this work,
+52:20
+I'm super happy to chat. Also outside of the seminar, you can also visit my
+52:25
+website where um there's a lot of materials as we have just taught a master student course about these topics
+52:32
+at EPFL and um I wrote lecture notes that we now have the ambition to turn into a book and it would be extremely
+52:39
+valuable to get feedback um on that and yeah otherwise I'm happy to answer
+52:44

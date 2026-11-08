@@ -1,0 +1,895 @@
+`fleece` is **absolutely worth mining**, but I would not make it the new base repo. It is a donor of several unusually good primitives that fit the Letta + Hydra + `cg` direction almost perfectly.
+
+The funny part is that `fleece` already contains an earlier, trading-specific version of what we just rediscovered as the Moltwork Lab.
+
+## What `fleece` already got right
+
+Its core structure is:
+
+```text
+fixed strategies
+     ↓
+pools
+     ↓
+evolvable allocation genome
+     ↓
+"school"
+     ↓
+league
+     ↓
+rank / prune / breed
+     ↓
+graveyard
+     ↓
+Hydra remembers everything
+     ↓
+Orca reads history
+     ↓
+proposes next experiments
+```
+
+That is explicitly how the repo describes itself.
+
+The **really valuable bits** are not the options logic. They are the general mechanisms underneath it.
+
+### 1. The graveyard
+
+This is excellent and should go straight into Moltwork.
+
+Fleece never deletes bad schools. Bottom performers become tombstones and remain evidence for future learning. The league then mines previous failures rather than repeatedly rediscovering them.
+
+For Moltwork:
+
+```text
+WorkerMutation
+     │
+     ├─ promoted
+     │
+     └─ rejected
+            │
+            ▼
+        GRAVEYARD
+            │
+       why rejected
+       tasks failed
+       metrics regressed
+       cost regression
+       parent version
+```
+
+Then when Letta proposes:
+
+> “Maybe I should start doing X.”
+
+Moltwork can answer:
+
+> We tried effectively-X three generations ago. It improved presentation but reduced factuality 11%.
+
+That is exactly the kind of organizational memory a Lab should develop.
+
+---
+
+## 2. Trait mining is basically embryonic Lab science
+
+`trait_mining.py` does something directly transferable.
+
+It extracts features from candidate genomes, associates them with outcomes in Hydra, identifies traits disproportionately present among elites/failures, and uses those learned priors to bias subsequent mutations.
+
+For workers, replace trading traits like:
+
+```text
+wide_stop
+rsi_short
+premium_tilt
+```
+
+with:
+
+```text
+explicit_requirements_matrix
+
+research_before_planning
+
+parallel_research
+
+adversarial_reviewer
+
+three_candidate_outputs
+
+source_first_party_first
+
+large_context_pack
+
+aggressive_compaction
+
+glm_for_review
+
+mimo_for_research
+```
+
+Then Hydra can accumulate:
+
+```text
+Trait
+  ↑
+USED_BY
+  │
+WorkerVersion
+  │
+RAN
+  ▼
+Task
+  │
+PRODUCED
+  ▼
+Outcome
+```
+
+Over hundreds of runs you might discover:
+
+```text
+"adversarial_review"
++12% final evaluator quality
++$0.08 average cost
+
+"five_candidates"
++2% quality
++87% cost
+→ generally bad
+
+"requirements_matrix"
++19% requirement coverage
+especially on hackathons
+```
+
+That is **very valuable**.
+
+It's not an LLM telling you what it thinks works.
+
+It's empirical organizational knowledge.
+
+---
+
+# 3. Thompson sampling is extremely reusable
+
+This might be the most surprising transplant.
+
+Fleece currently uses a contextual Bayesian bandit: Hydra stores outcomes, the allocator maintains Beta posteriors, uncertain candidates continue to receive exploration, and strong evidence increasingly concentrates allocation toward known winners. It also uses hierarchical shrinkage so sparse contexts can borrow evidence from a worker's broader history.
+
+Forget capital allocation.
+
+Apply exactly that idea to **School curriculum**.
+
+Suppose a worker needs practice.
+
+You have exercises across:
+
+```text
+requirements
+research
+coding
+debugging
+writing
+evidence
+presentation
+```
+
+You don't simply rotate evenly.
+
+The School could maintain:
+
+```text
+worker × capability → posterior
+```
+
+and intelligently allocate exercises.
+
+For example:
+
+```text
+research      strong / certain
+requirements weak / certain
+debugging     unknown
+evidence      medium / uncertain
+```
+
+The School chooses:
+
+```text
+requirements  → exploit known weakness
+debugging     → explore uncertainty
+```
+
+That becomes a principled **adaptive curriculum**.
+
+Even better, use hierarchical shrinkage:
+
+```text
+Worker's API-debugging ability
+
+=
+evidence on API debugging
++
+partial prior from general debugging ability
++
+small Lab/template prior
+```
+
+New workers don't start with completely arbitrary estimates.
+
+That's almost tailor-made for Schools.
+
+---
+
+# 4. Regime-conditioned performance → task-conditioned capability
+
+Fleece asks:
+
+> Which strategy works in which market regime?
+
+Moltwork asks:
+
+> Which worker/process works on which kind of task?
+
+Same abstraction.
+
+Fleece's graph has performance conditioned on `Regime`.
+
+Replace:
+
+```text
+Regime
+```
+
+with a richer task context:
+
+```text
+TaskFamily
+Difficulty
+Platform
+RewardBucket
+TimeConstraint
+CompetitionLevel
+RequiredCapability
+ClientType
+```
+
+Then:
+
+```text
+researcher-03
+
+general score         .82
+
+API research          .94
+hackathon submissions .88
+frontend work          .31
+legal research        .57
+short-deadline jobs    .91
+```
+
+This is much more useful than one global reputation number.
+
+---
+
+# 5. Fleece's “DecisionPoint” idea is basically a School exercise
+
+This file is only partly implemented, but the abstraction is strong.
+
+The intended primitive is a **content-addressed decision point** that any agent can revisit and compete on.
+
+That's almost exactly what Schools need.
+
+Instead of:
+
+```text
+trading state
+→ what trade do you make?
+```
+
+you have:
+
+```text
+job state
+→ what do you do next?
+```
+
+Examples:
+
+```text
+API RESEARCH SCHOOL
+
+DecisionPoint #381
+
+You have:
+- this bounty
+- these docs
+- this time budget
+- this initial research
+
+Choose:
+A. research further
+B. begin implementation
+C. reject opportunity
+D. ask reviewer
+E. collect competing implementations
+```
+
+Or:
+
+```text
+SUBMISSION SCHOOL
+
+Here's the task.
+Here's candidate output.
+Here's rubric.
+
+What is wrong with it?
+```
+
+Or:
+
+```text
+CODING SCHOOL
+
+Repository state at commit X.
+Bug report Y.
+
+Produce patch.
+```
+
+Every exercise is hash-locked and repeatable.
+
+Excellent primitive.
+
+---
+
+# 6. The experimental discipline should definitely survive
+
+Fleece is much more rigorous than most “self-improving agent” projects.
+
+It has:
+
+* hash-locked scenarios
+* immutable control systems
+* held-out evaluation
+* preregistered experiments
+* evidence grades
+* bootstrap/Wilson statistical evaluation
+* explicit invalidation
+* append-only findings
+
+Its findings ledger even records when adaptive approaches **lose** rather than pretending every experiment succeeded.
+
+That's exactly the attitude Moltwork needs.
+
+The Lab should say:
+
+```text
+Hypothesis:
+Three candidate submissions improve quality.
+
+Test:
+80 historical jobs.
+
+Result:
++1.7% quality
++71% compute
+
+Verdict:
+REJECT
+```
+
+instead of:
+
+> The agent reflected and became smarter!
+
+This is probably one of your strongest differentiators.
+
+---
+
+# 7. Orca maps beautifully onto a Letta Lab Scientist
+
+Fleece's Orca has the right division of responsibility:
+
+> **generator, never judge.**
+
+It reads:
+
+* graveyard
+* successful traits
+* failed traits
+* control gaps
+
+and proposes experiments. Deterministic/pre-registered systems judge the result.
+
+That is **exactly** what I would do with Letta.
+
+```text
+          LAB SCIENTIST
+             Letta
+
+reads Hydra:
+- recent failures
+- strange correlations
+- recurring weaknesses
+- worker differences
+- task gaps
+- marketplace demand
+
+             ↓
+
+proposes:
+- new memory
+- skill modification
+- curriculum experiment
+- worker branch
+- routing change
+- evaluator hypothesis
+
+             ↓
+
+             CG
+
+runs controlled tests
+
+             ↓
+
+Hydra records verdict
+```
+
+So I'd revive **Orca conceptually**, but make it a persistent Letta scientist rather than the current hard-coded proposal script.
+
+---
+
+# 8. Fleece's lineage should become Worker lineage
+
+It already records:
+
+```text
+MUTATED_FROM
+RANKED
+RETIRED_FROM
+SHARES_TRAIT
+```
+
+and keeps genealogy.
+
+That slots directly into:
+
+```text
+Researcher-01 v12
+       │
+       ├──── mutation A → v13
+       │                    ↓
+       │                 graveyard
+       │
+       └──── mutation B → v14
+                            ↓
+                         promoted
+                            │
+                   ┌────────┴─────────┐
+                   ↓                  ↓
+             API specialist    market researcher
+```
+
+That's also the basis of the marketplace lineage/reputation story.
+
+---
+
+# 9. Canonical files → derived Hydra graph: KEEP THIS
+
+Fleece explicitly treats Hydra as derived, rebuildable memory rather than canonical truth. Its experiment records remain local/canonical and Hydra is reconstructed from them.
+
+That is exactly right.
+
+Our new architecture should be:
+
+```text
+CANONICAL
+
+RunEvent
+Trajectory
+Artifact
+Evaluation
+Outcome
+MemoryCommit
+WorkerVersion
+
+immutable/event-sourced
+
+      │
+      ├────► Hydra
+      │       graph projection
+      │
+      ├────► analytics
+      │
+      ├────► cg
+      │
+      └────► receipts/proofs
+```
+
+Never:
+
+```text
+Hydra is the only place the experience exists
+```
+
+because databases change.
+
+---
+
+# What I would NOT port directly
+
+There is significant prototype debt.
+
+For example the Hydra client calls itself pooled but currently constructs a fresh `httpx.AsyncClient` inside every `_post()`. It also declares a write queue but doesn't actually implement the promised write-behind mechanism.
+
+More importantly, there are **two generations of graph representation mixed together**.
+
+The basic client says relationships are materialized as:
+
+```text
+REL_RAN_ON
+REL_CONTAINS
+```
+
+**nodes**, due to limitations of an older Hydra image.
+
+But several later query paths expect actual relationships:
+
+```text
+(f:Fish)-[r:RAN_ON]->(g:Regime)
+```
+
+while others query the association nodes:
+
+```text
+MATCH (n:REL_RAN_ON)
+```
+
+You can see both styles living in `pool_thompson.py`.
+
+So:
+
+> **reuse the schema ideas, not this Hydra compatibility code.**
+
+Start the new Lab integration clean against current Hydra.
+
+---
+
+# One naming problem
+
+There's an important semantic collision.
+
+In Fleece:
+
+> **School = competitor/genome being evolved.**
+
+In our new Moltwork concept:
+
+> **School = environment/curriculum that trains a worker.**
+
+Don't carry the old name forward.
+
+When porting Fleece:
+
+```text
+Fleece School
+```
+
+should become something like:
+
+```text
+WorkerCandidate
+WorkerGenome
+WorkerVersion
+```
+
+Then:
+
+```text
+Moltwork School
+```
+
+remains the curriculum/evaluation institution.
+
+Otherwise it will get confusing immediately.
+
+---
+
+# What should physically move out of Fleece?
+
+I would extract concepts into `cg`, rather than copy huge amounts into `mw`.
+
+Something like:
+
+```text
+cg/
+  curriculum/
+    decision_point.py
+    adaptive_curriculum.py
+
+  population/
+    lineage.py
+    graveyard.py
+    traits.py
+    thompson.py
+
+  eval/
+    controls.py
+    preregistration.py
+    holdouts.py
+    evidence_grade.py
+
+  science/
+    hypothesis.py
+    experiment.py
+    finding.py
+
+  experience/
+    hydra_projection.py
+```
+
+Then Moltwork calls `cg`.
+
+Letta remains outside.
+
+```text
+Moltwork
+   │
+   ├── Letta        worker
+   ├── Hydra        Lab graph
+   └── cg           School/science engine
+```
+
+That is much cleaner.
+
+---
+
+# There's an especially good new thing we can make from Fleece
+
+### Adaptive School curriculum
+
+Steal the Thompson allocator, but instead of allocating dollars:
+
+> **allocate the worker's training budget.**
+
+```text
+                 SCHOOL
+
+          Worker capability graph
+                    │
+        ┌───────────┼───────────┐
+        │           │           │
+   requirements   coding     evidence
+      Beta()       Beta()      Beta()
+        │           │           │
+        └───────────┼───────────┘
+                    │
+            Thompson selection
+                    │
+                    ▼
+              NEXT EXERCISE
+```
+
+Then difficulty can adapt too.
+
+```text
+worker passes L2 reliably
+        ↓
+increase difficulty
+
+worker fails repeatedly
+        ↓
+retrieve relevant Letta experience
+        ↓
+training example
+        ↓
+retry nearby problem
+```
+
+This turns Schools from static benchmark packs into actual **learning environments**.
+
+That's excellent.
+
+---
+
+# And Fleece's “graveyard” makes School certificates more meaningful
+
+School can expose:
+
+```text
+Graduate:
+worker-17
+
+But also:
+
+Attempt history:
+81 exercises
+
+Worker versions tested:
+12
+
+Rejected mutations:
+17
+
+Validated improvements:
+6
+
+Final hidden score:
+0.91
+```
+
+That's much stronger than:
+
+```text
+passed test
+```
+
+You can demonstrate the agent actually **learned through controlled failure**.
+
+---
+
+# Is Fleece itself worth submitting?
+
+### To the current Alpaca hackathon: **yes, definitely.**
+
+The current event runs **August 28–September 4, 2026**, is specifically asking for autonomous AI trading agents built around Alpaca's Trading API plus MCP/CLI, and the current event page lists a $6,000 prize pool. ([LabLab][1])
+
+Alpaca's own current announcement says the main prizes are **$2,500 / $1,500 / $1,000**, and specifically says judging considers **P&L and creativity/engagement**. It requires a dedicated competition paper account, a $100,000 starting paper balance, a one-page description of AI logic/risk gates/Alpaca integration, and options use. ([LinkedIn][2])
+
+Fleece is almost absurdly aligned:
+
+```text
+✓ autonomous agent system
+✓ Alpaca integration
+✓ MCP
+✓ options
+✓ paper runner
+✓ dashboard
+✓ adaptation
+✓ actual experiment framework
+✓ unusual original concept
+✓ transparent failures/evidence
+```
+
+And your repo isn't a mockup. The canonical architecture documents a wired live runner, experiment lab, Hydra experience graph, evolution league, API, dashboard and MCP surface.
+
+So from a **project-quality** perspective:
+
+> **yes, submit it.**
+
+I would not spend another week turning it into something completely different.
+
+---
+
+# But there are three important hackathon risks
+
+## 1. The project predates the event
+
+Your initial DeltaTuna commit is **August 26**, while the hackathon starts August 28.
+
+Some lablab events explicitly require work to be original and created during the hackathon, although event-specific rules can differ. ([LabLab][3])
+
+So **check the Alpaca event's specific rules before entering it** and disclose any pre-existing work if required. Don't present pre-event code as though it was created during the event.
+
+This is probably the biggest procedural issue.
+
+---
+
+## 2. The competition account matters
+
+The handover says the dedicated Alpaca competition paper account was still missing at that point.
+
+Since the sponsor's own announcement explicitly requires a fresh dedicated paper account, the polished research system won't substitute for satisfying that rule. ([LinkedIn][2])
+
+If the event's account eligibility or age rules do not allow you to participate, don't try to bypass them.
+
+---
+
+## 3. Don't let sophistication destroy reliability
+
+For judges, I'd rather have:
+
+```text
+one working live loop
++ clear dashboard
++ clear Hydra memory demo
++ visible school evolution
++ clear evidence story
+```
+
+than:
+
+```text
+GAT
++ Fisherman
++ Orca
++ four graph schemas
++ fourteen experiments
++ broken demo
+```
+
+The project already has a huge amount of intellectual depth.
+
+The remaining work is **compression**, not invention.
+
+---
+
+# How I would present Fleece
+
+Not:
+
+> “An evolving options trading strategy.”
+
+That's forgettable.
+
+I'd make the story:
+
+> **DeltaTuna is a trading laboratory where populations of allocation agents compete, fail, and learn collectively. HydraDB preserves their experience graph—including failed lineages—and that shared memory changes which architectures the system explores next.**
+
+Then demo one tiny cycle:
+
+```text
+MARKET
+  ↓
+agent allocation
+  ↓
+paper outcome
+  ↓
+Hydra experience
+  ↓
+school ranking
+  ↓
+loser → graveyard
+  ↓
+trait mining
+  ↓
+next generation
+```
+
+That is visually understandable and creative.
+
+And crucially, it's the ancestor of what we're now building for general work.
+
+---
+
+# My recommendation
+
+**Submit Fleece if the event rules/eligibility permit it.** The marginal effort makes sense because it is already extremely tailored to Alpaca.
+
+But **do not turn Fleece into Moltwork**.
+
+Treat it as:
+
+> **the first specialized School/experience-evolution experiment.**
+
+Then harvest its generalizable primitives into the new stack:
+
+```text
+FLEECE
+│
+├── graveyard              → cg
+├── lineage                → cg
+├── trait mining           → cg
+├── Thompson exploration   → cg School curriculum
+├── decision points        → cg School exercises
+├── arena/holdouts         → cg
+├── preregistration        → cg
+├── findings/evidence      → cg
+├── Hydra projection ideas → new Lab schema
+└── Orca concept           → Letta Lab Scientist
+```
+
+And the amusing realization is that **Fleece itself can eventually become a Moltwork School**:
+
+> “Can a worker learn to make robust sequential decisions under uncertain outcomes?”
+
+Its scenarios, controls, graveyard, adaptation experiments and hidden evaluations are already nearly a worldpack.
+
+So no, this work wasn't a detour. **It looks like one of the prototypes that accidentally taught us how to build the general system.**
+
+[1]: https://lablab.ai/ai-hackathons/alpaca-ai-trading-agents-hackathon "Alpaca AI Trading Agents Hackathon AI Hackathon | lablab.ai"
+[2]: https://co.linkedin.com/company/alpacamarkets?utm_source=chatgpt.com "Alpaca | LinkedIn"
+[3]: https://lablab.ai/ai-hackathons/openclaw-surge-hackathon?utm_source=chatgpt.com "[Recap] SURGE × OpenClaw Hackathon | lablab.ai"

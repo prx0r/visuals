@@ -1,0 +1,163 @@
+# EDITIONS.md — catalogue spec + US print economics
+
+*2026-11-05. Sources: translation-work L4 inventory (post-pull), KDP/Ingram/Lulu published
+rates (checked via web 2026-11). Print prices are public-list estimates — verify in each
+dashboard before pricing a title.*
+
+---
+
+## Part 1 — What's possible (L4 inventory, post-pull)
+
+Everything below has **L4** in the corpus: crafted verse `lines` + `craft_notes` (the
+p4 gloss: word-choice decisions) + `reads_against.argmap` (logic Q→A) + `c1_rasa` (taste)
++ fidelity/needs flags. That's the page engine for the poetry editions.
+
+| Work | L4 | Author | Theme |
+|---|---|---|---|
+| Vijñāna Bhairava | 162 | tradition (Utpala?) | **practice** — dhāraṇās by life-trigger |
+| Stavacintāmaṇi | 120 | Bhaṭṭa Nārāyaṇa | **hymn** — wish-fulfilling jewel |
+| Śivasūtra | 75 | Vasugupta | **aphorism** — recognition in 77 lines |
+| Īśvarasiddhi | 56 | Kṣemarāja | **recognition** |
+| Paryantapañcāśikā | 52 | Abhinavagupta | **poetry** — the ultimate fifty |
+| Bhairavānukaraṇa | 48 | tradition | **hymn** — iconography as non-dual logic |
+| Bodhavilāsa | 41 | Kṣemarāja | **recognition** — play of waking |
+| Parātrīśikā | 36 | tradition (Abh. comm.) | **goddess** — the secret of the heart |
+| PTV Madhyama | 35 | — | practice/ritual |
+| Svabodhasiddhi | 33 | Kṣemarāja | **recognition** — self-knowledge |
+| Śaktivijñāna | 30 | — | śakti |
+| Kramastotra | 30 | Abhinavagupta | **poetry** — the sequence hymn |
+| Ajadapramatṛsiddhi | 27 | Kṣemarāja | **recognition** — never-failing awareness |
+| Spandakārikā | 25 | Vasugupta/Kallata | **pulse** — spanda |
+| Sambandhasiddhi | 23 | Kṣemarāja | **recognition** — the means of relation |
+| Ghatakarpara | 21 | Kṣemarāja | **allegory** — the pot-sherds night |
+| Śivastotrāvalī (L4 so far) | 20 | Utpaladeva | **devotion** — 450 verses total |
+| Hṛdaya (phrdaya) | 20 | — | **heart** |
+| Mahopadeśaviṃśatikā | 20 | tradition | **instruction** — the twenty |
+| Rahasyapañcadaśikā | 16 | tradition | **secret** — the fifteen |
+| Paramārthasāra (16/105) | 16 | Abhinavagupta | **poetry** — essence of the ultimate |
+| Dehastha | 16 | tradition | **body** — the temple |
+| Bodhapañcadaśikā | 15 | Abhinavagupta | **poetry** — fifteen on awareness |
+| Paramārthadvādaśikā | 13 | Abhinavagupta | **poetry** — twelve on the supreme |
+| Bhairavastava | 10 | Abhinavagupta | **poetry** — surrender |
+| Parāprāveśikā | 9 | Kṣemarāja | **recognition** — entering the supreme |
+| Paramārthacarca | 8 | Abhinavagupta | dialogue |
+| Anuttarāṣṭikā | 8 | Abhinavagupta | **poetry** — no-method |
+| Pañcaślokī | 5 | Abhinavagupta | **poetry** — five verses of surrender |
+| Anubhavanivedana | 4 | Abhinavagupta | **poetry** — experience report |
+| Spandasandoha | 2 | Kṣemarāja | **pulse** — condensation |
+| Tantrasāra (fragments) | 21 total | Abhinavagupta | ritual manual |
+
+---
+
+## Part 2 — Proposed editions catalogue
+
+### A. Prayer series (engine: vol 1–2 format — prayer / guide spread)
+1. ✅ **Anuttara I — Invocations of the Heart** (42 prayers)
+2. ✅ **Anuttara II — The Practitioner's Day** (22 + Daily Ten)
+
+### B. The Poems of Abhinavagupta (engine: poem / craft-notebook spread, L4)
+3. **The Surrender** — Bhairavastava 10 + Pañcaślokī 5 + Anuttarāṣṭikā 8 = **23 poems** ← build first
+4. **The Fifteen** — Bodhapañcadaśikā 15 + Paramārthadvādaśikā 13 + Anubhavanivedana 4 = **32**
+5. **The Sequence** — Kramastotra **30**
+6. **The Ultimate Fifty** — Paryantapañcāśikā **52**
+7. *Later:* Paramārthasāra (needs remaining L4), Stavacintāmaṇi **120** (Bhaṭṭa Nārāyaṇa — its own volume)
+
+### C. Recognition (the pratyabhijñā shelf)
+8. **Recognition for Dummies** — no-nonsense terse literal. Format: *Q → one-line answer*,
+   mined from L2/T1 across the siddhi quartet (Īśvarasiddhi 56 + Svabodhasiddhi 33 +
+   Ajadapramatṛsiddhi 27 + Sambandhasiddhi 23) + Bodhavilāsa 41 + Parāprāveśikā 9.
+   ~120–160 entries, one per page or four-up. Zero Sanskrit required — pure plain-English layer.
+9. **Pages on Recognition** — a *format*, not a title: every edition above can carry 2–4
+   plain "recognition pages" (the L2 literal layer as a no-gloss interlude). Good for vol 3+.
+10. **The Aphorisms** — Śivasūtra 75 (full!) + Spandakārikā 25 = **100 lines**, aphorism/commentary spread.
+
+### D. Practice
+11. **The Vijñāna Bhairava Handbook** — 162 dhāraṇās re-themed by trigger:
+    breath, space, sound, body, fear, food, sleep, desire, the gap. The big practical volume (~330pp at spread format — or single-column 160pp).
+12. **The Twenty** — Mahopadeśaviṃśatikā 20 + Dehastha 16 = **36** (daily instruction)
+13. **The Body-Temple** — Dehastha 16 + Hṛdaya 20 + Ghatakarpara 21 = **57** (body, heart, night-allegory)
+
+### E. Hymns & Śakti
+14. **Śivastotrāvalī** — 20 songs done in L4 → one volume per ~4 songs (Utpaladeva; already mined for cards)
+15. **Bhairavānukaraṇa** — **48** verses (fierce-iconography hymn; the "drawing of the formless")
+16. **The Kula Hymns** — Parātrīśikā 36 + Rahasyapañcadaśikā 16 = **52**
+17. **Spanda — The Pulse** — Spandakārikā 25 + Spandasandoha 2 = **27**
+
+**Total addressable: ~17 editions, ~1,000+ crafted verses.**
+
+---
+
+## Part 3 — US print & ship economics (100pp and under)
+
+### The magic numbers (regular trim, black ink, Amazon.com)
+| | Paperback | Hardcover |
+|---|---|---|
+| **KDP** | **$2.30 flat** for 24–110pp | **$6.80 flat** for 75–108pp |
+| IngramSpark (A5, 50lb crème) | $1.31 + $0.0143/pp → **$2.74 @100pp** | $5.31 + $0.0132/pp → **$6.63 @100pp** |
+| Lulu | 6×9 $4.11; **A5 from $2.55** | **$12.07** @100pp |
+| B&N Press | $2.36 (B&N only) | — |
+| BookVault (US printers) | ≈$2.90 proof + media mail ≈$2.80 | ≈$5.91 proof |
+
+**All three of our current books fit the flat tiers** (Vol 1 = 99pp, Vol 2 = 57pp, Poems I ≈ 50pp).
+
+### Colour (100pp, regular trim)
+| Option | Formula | @100pp | Paper |
+|---|---|---|---|
+| **KDP standard colour** | $1.00 + $0.0255/pp (min 72pp) | **$3.55** | 55lb, matte — cheapest colour |
+| KDP premium colour | $1.00 + $0.065/pp (min 42pp; 24–40pp flat $3.60) | **$7.50** | sharp, toner |
+| Ingram std colour, 50lb white | $1.20 + $0.0259/pp | $3.79 | standard |
+| **Ingram std colour, 70lb white** | $1.31 + $0.0363/pp | **$4.94** | **nice thick paper — best colour+paper value** |
+| Ingram premium colour, 70lb | $1.31 + $0.0700/pp | $8.31 | vivid |
+| Lulu premium colour | — | ~$18 | avoid for interiors |
+
+### Nice papers (no colour)
+- **Ingram 70lb White**: $1.31 + $0.0225/pp → **$3.56 @100pp** (heavy, no bleed-through)
+- Lulu 80# coated white (photo-grade) — premium feel, price≈ $5.35+ @100pp
+- KDP: only 55lb white/cream (cream = warm antique look, free)
+
+### Shipping a single copy in the US (cheapest first)
+1. **KDP via Amazon — $0 to us.** Customer pays Amazon (Prime free or Amazon's rate). Nothing to arrange.
+2. **IngramSpark publisher-direct** — ≈$3.49 untraceable + handling; or wholesale-to-bookstores (no shipping by us).
+3. **BookVault** — USPS media mail ≈$2.80–4.62, best packaging/quality per proof tests.
+4. **Lulu / Lulu Direct** — cheapest shipping $5.69 (slow), $1.75 fulfilment fee on Direct.
+
+### Bulk (when a title earns it)
+- **48 Hour Books**: 100 copies → 25 free; ≈**$4.74/copy** 6×9 180pp incl. full-colour cover; min order 10; USA-made, 2-day.
+- **Offset at 500+**: B&W $1.50–2.50/copy (colour offset similar at volume) — PrintingForLess/Mixam-class printers.
+- Mixam single-copy hardcover ≈$51 — NOT economic; skip.
+
+### Recommended stack
+| Need | Use | Why |
+|---|---|---|
+| Fastest/cheapest print+ship, US | **KDP paperback B&W** | $2.30 flat, Prime shipping free to buyer, 72h live |
+| A5 locked (our current trim) | **Lulu A5 $2.55** or **Ingram A5 $2.74** | KDP has no A5 (use 5.5×8.5 if switching) |
+| Colour accents, cheapest | **KDP standard colour** $3.55 | needs ≥72pp (pad with matter/notes) |
+| Colour + nice paper | **Ingram std colour 70lb white** $4.94 | thick stock, no show-through |
+| Hardback | **KDP $6.80** (≥75pp) or **Ingram ≈$6.63** (A5, bookstores) | Lulu $12 only for linen |
+| Bookstore/library distribution | **IngramSpark** (setup now free; 1.5% market fee; $25 rev after 60d) | 45,000+ retailers |
+| 100-copy run | **48 Hour Books** ($4.74 incl. colour cover) | 25 free bonus |
+
+### Trim note
+Our books are A5 (148×210). **KDP does not offer A5** → either (a) keep A5 on
+Lulu/Ingram, or (b) re-lay out to 5.5×8.5" for KDP's flat $2.30 tier (closest match;
+one CSS variable in the build).
+
+---
+
+## Part 4 — Version 1: the e-book on Etsy
+
+- **£2.99 digital download** (PDF, optionally EPUB) — zero marginal cost, instant delivery.
+- Etsy take on £2.99: ~10.75% transaction+payment (6.5% + 4% + 0.25%) ≈ £0.32 +
+  £0.20 processing + £0.16 listing ≈ **£0.68 fees → net ≈ £2.31 (~$2.90), 77% margin.**
+- Ladder: £2.99 e-book (v1, validates design) → $12.99–14.99 KDP paperback → $18–22 hardback
+  → bundle (e-book + print discount code) later.
+- Royalty check: KDP @ $14.99 list, 60% − $2.30 = **$6.69/sale**; hardback @ $24.99,
+  60% − $6.80 = **$8.19/sale**.
+
+---
+
+## Build queue (suggested)
+1. ✅ **Poems I — The Surrender** (23 poems, L4 gloss format) — built 2026-11-05, 54pp, prints/poems1/
+2. ✅ **Recognition for Dummies** (177 Q→A from 79 archive docs) — built 2026-11-05, 55pp, prints/recognition-dummies/
+3. KDP re-trim test: 5.5×8.5 export of Vol 1 → order $2.30 proof
+4. Etsy listing: Vol 1 + Vol 2 PDFs @ £2.99

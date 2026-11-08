@@ -1,0 +1,151 @@
+Yes. You can absolutely make a **web app that behaves like a phone** for your Telnyx number: browser calling + incoming calls + SMS/MMS inbox/outbox.
+
+The strongest starting point I found is actually Telnyx’s own open-source repo:
+
+**`team-telnyx/telnyx-demo-contact-center`** — it already combines **inbound/outbound WebRTC voice + SMS/MMS + modern web UI**, with Node/Express, Postgres, Socket.IO, Next.js, and the Telnyx SDK. ([GitHub][1])
+
+That is much closer to what you want than building from scratch.
+
+For a lighter implementation, Telnyx also maintains:
+
+* **`team-telnyx/webrtc-demo-js`** — React/TypeScript browser dialer with make/receive calls, call history, mute/hold/DTMF, etc. ([GitHub][2])
+* **`team-telnyx/webrtc`** — their actual open-source browser/WebRTC SDK, including a React wrapper. ([GitHub][3])
+* **`team-telnyx/webrtc-examples`** — smaller example apps for browser/React integration. ([GitHub][4])
+
+My recommendation is:
+
+```text
+fork telnyx-demo-contact-center
+        ↓
+strip contact-center features
+        ↓
+keep:
+- dialer
+- incoming call popup
+- contacts
+- call history
+- SMS inbox
+- SMS composer
+- voicemail
+        ↓
+deploy to your VPS
+```
+
+Then you effectively have:
+
+```text
+phone.yourdomain.com
+
+┌────────────────────────┐
+│ +44 xxxx xxx xxx       │
+├────────────────────────┤
+│ Calls                  │
+│ Messages               │
+│ Contacts               │
+│ Voicemail              │
+│ History                │
+├────────────────────────┤
+│       Dial Pad         │
+└────────────────────────┘
+```
+
+### How it works
+
+Voice is:
+
+```text
+browser
+  ↓ WebRTC
+Telnyx JS SDK
+  ↓
+Telnyx
+  ↓
+PSTN
+```
+
+Telnyx’s JS client can authenticate using a JWT rather than putting permanent SIP credentials into the browser, and it supports both outgoing and incoming calls. ([GitHub][5])
+
+SMS is slightly different:
+
+```text
+incoming SMS
+    ↓
+Telnyx webhook
+    ↓
+your backend
+    ↓
+database
+    ↓
+WebSocket/SSE
+    ↓
+browser inbox
+```
+
+Outbound:
+
+```text
+browser
+ ↓
+your backend
+ ↓
+Telnyx Messaging API
+ ↓
+SMS network
+```
+
+So **don’t call the Telnyx SMS API directly from client-side JavaScript** with your main API key. Keep that server-side.
+
+### A very small stack is enough
+
+For your personal version I wouldn't even use the whole enterprise contact-centre architecture.
+
+I'd reduce it to:
+
+```text
+Next.js
+│
+├── /calls
+├── /messages
+├── /contacts
+└── /api
+      │
+      ├── telnyx/messages/send
+      ├── telnyx/webhooks
+      └── telnyx/token
+
+Postgres / SQLite
+      │
+      ├── messages
+      ├── calls
+      └── contacts
+
+Telnyx
+├── WebRTC Voice
+└── Messaging API
+```
+
+You could probably have a perfectly usable personal webphone in a very small codebase.
+
+### There are generic SIP projects too
+
+If you ever move away from Telnyx, there are generic browser phones like **React-Phone**, which uses React 19 + JsSIP and already supports browser SIP calling. ([GitHub][6])
+
+And **SIP.js** itself supports browser calling, messaging, presence, transfer, hold, DTMF, etc. ([GitHub][7])
+
+But because you're specifically using Telnyx, I would **not introduce generic SIP plumbing yet**.
+
+Use:
+
+> `telnyx-demo-contact-center` as the donor repo + Telnyx's WebRTC SDK.
+
+Then gut it until it becomes your own minimalist browser phone.
+
+One caveat from what we found earlier: if you want **SMS on a UK Telnyx number**, make sure you buy a UK number type that actually supports messaging; Telnyx's UK local/national numbers may not have SMS capability, whereas their UK mobile inventory is the relevant option for SMS.
+
+[1]: https://github.com/team-telnyx/telnyx-demo-contact-center?utm_source=chatgpt.com "GitHub - team-telnyx/telnyx-demo-contact-center · GitHub"
+[2]: https://github.com/team-telnyx/webrtc-demo-js?utm_source=chatgpt.com "GitHub - team-telnyx/webrtc-demo-js: Telnyx Javascript Voice SDK - Demo Application · GitHub"
+[3]: https://github.com/team-telnyx/webrtc?utm_source=chatgpt.com "GitHub - team-telnyx/webrtc: SDK for Telnyx's WebRTC platform · GitHub"
+[4]: https://github.com/team-telnyx/webrtc-examples?utm_source=chatgpt.com "GitHub - team-telnyx/webrtc-examples · GitHub"
+[5]: https://github.com/team-telnyx/webrtc/blob/main/packages/js/docs/ts/classes/TelnyxRTC.md?utm_source=chatgpt.com "webrtc/packages/js/docs/ts/classes/TelnyxRTC.md at main · team-telnyx/webrtc · GitHub"
+[6]: https://github.com/3monthsfree/React-Phone?utm_source=chatgpt.com "GitHub - 3monthsfree/React-Phone: A modern, browser-based WebRTC SIP softphone built with React 19, TypeScript, and JsSIP for making VOiP phone calls directly from your browser. · GitHub"
+[7]: https://github.com/onsip/sip.js/?utm_source=chatgpt.com "GitHub - onsip/SIP.js: A simple, intuitive, and powerful JavaScript signaling library · GitHub"

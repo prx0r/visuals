@@ -1,0 +1,1622 @@
+Yes. After looking at the current frontier, I think this is **substantially stronger than “a site of agent frameworks.”**
+
+The interesting product is closer to:
+
+> **A package registry + compiler + benchmark arena + evolutionary lab for agent architectures.**
+
+The unit being versioned is not a prompt, model, MCP server, or framework.
+
+It is the **complete agentic computation architecture**:
+
+```text
+control flow
++ agents / roles
++ memory topology
++ models
++ tools
++ MCPs
++ context strategy
++ verification
++ retry/repair loops
++ persistence
++ sandbox/runtime
++ budgets
++ benchmarks
+```
+
+And the killer interface is not primarily the website. It is:
+
+```text
+architecture.resolve(project, task, constraints)
+architecture.install(...)
+architecture.run(...)
+```
+
+exposed directly to Claude Code, OpenCode, Codex, Hermes, etc.
+
+I think you were remembering **Letta**, not “Lottie”: Letta is the former MemGPT project and is now explicitly a stateful agent framework centred around persistent memory, skills and subagents. ([GitHub][1])
+
+# 1. The frontier is fragmenting into layers
+
+There isn't one “best agent framework.” There are increasingly different architectural philosophies.
+
+## Loom — durable software-delivery protocol
+
+Loom is particularly relevant to your idea because it doesn't replace the coding agent. It sits beside Codex, Claude Code or OpenCode as an MCP-driven state machine and persists requirements, tasks, evidence, review/repair state and handoffs. Its core loop is roughly plan → build → test → fix → review/handoff, with bounded tasks and explicit state. ([GitHub][2])
+
+So you might normalize Loom as:
+
+```yaml
+architecture_family:
+  durable_delivery
+
+properties:
+  persistence: project_local
+  orchestration: state_machine
+  task_decomposition: bounded
+  verifier_separation: true
+  repair_loop: true
+  resumable: true
+  multi_agent: supported
+
+good_for:
+  - long_horizon_coding
+  - large_features
+  - deployment
+  - iterative_repair
+```
+
+That's one architecture.
+
+It shouldn't become **the** architecture.
+
+---
+
+# 2. Hermes — adaptive general-purpose autonomous runtime
+
+Hermes attacks another part of the problem.
+
+The current Nous agent supports persistent memory, learning reusable skills from experience, subagent delegation, scheduled work, MCP integrations and trajectory export for research/training. Nous has also spun up a separate `hermes-agent-self-evolution` project for evolutionary improvement of prompts, skills and code. ([GitHub][3])
+
+Normalize it differently:
+
+```yaml
+architecture_family:
+  adaptive_general_agent
+
+properties:
+  persistent_memory: true
+  skill_learning: true
+  subagents: true
+  scheduled_autonomy: true
+  tool_ecosystem: mcp
+  self_improvement: skill_level
+  trajectory_export: true
+```
+
+Then your higher-order recipes can say:
+
+```text
+Hermes runtime
+      +
+Loom delivery protocol
+      +
+Hound graph reasoning
+      +
+independent verification architecture
+```
+
+**That's where your product gets interesting.**
+
+You're composing ideas across projects rather than telling the user:
+
+> “Install these four repositories and work out how they fit together.”
+
+---
+
+# 3. LangGraph — explicit computation graphs
+
+LangGraph is useful because it represents an especially clean architectural primitive: typed state + nodes + conditional edges + checkpoints + interrupts + retries.
+
+Recent work specifically positions LangGraph as useful for long-running stateful workflows but explicitly argues it is **not universally appropriate**—simple tool loops are often better when the problem doesn't need explicit graph structure. ([arXiv][4])
+
+That's almost the exact motivation for your resolver.
+
+The user shouldn't decide:
+
+```text
+Should this be LangGraph?
+```
+
+Your system decides:
+
+```text
+task complexity = low
+→ plain ReAct loop
+
+task complexity = long horizon / branching / resumable
+→ graph
+
+task requires separate verification
+→ worker → verifier → repair
+
+task massively parallel
+→ DAG workers → reduction
+
+task needs evolving hypotheses
+→ graph-memory architecture
+```
+
+---
+
+# 4. Letta — memory becomes an architecture component
+
+Letta matters because memory shouldn't be treated as:
+
+```text
+memory=true
+```
+
+There are different memory architectures.
+
+Letta is explicitly designed around long-lived stateful agents with transparent long-term memory and currently exposes stateful agents, skills and subagents through its framework/API. ([GitHub][1])
+
+Your architecture format should therefore support:
+
+```yaml
+memory:
+  working:
+    strategy: rolling_context
+
+  episodic:
+    backend: letta
+
+  semantic:
+    backend: pgvector
+
+  project:
+    backend: filesystem
+
+  lessons:
+    backend: skill_store
+```
+
+A coding agent shouldn't need to know what any of these mean.
+
+It asks:
+
+```text
+architecture.resolve
+```
+
+and receives the correct memory topology.
+
+---
+
+# 5. Bitte.ai gives you an important warning
+
+Bitte already demonstrates that:
+
+> **“Every agent becomes an MCP server” is not itself a moat.**
+
+Bitte's Open Agents are machine-readable APIs, its runtime orchestrates them, and its current product explicitly makes agents available as MCP servers and allows MCP-compliant tools to be combined into agents. ([Bitte Docs][5])
+
+This is useful competitive information.
+
+So your differentiated product cannot merely be:
+
+```text
+Agent Registry
++
+click → MCP
+```
+
+Bitte is already adjacent.
+
+Your layer needs to be:
+
+```text
+WHAT ARCHITECTURE?
+        +
+WHY?
+        +
+UNDER WHICH CONDITIONS?
+        +
+MEASURED HOW?
+        +
+HOW DO I INSTANTIATE IT?
+        +
+CAN IT EVOLVE?
+```
+
+That is considerably less occupied.
+
+---
+
+# 6. Hound is exactly the kind of “architecture primitive” you should ingest
+
+There are actually multiple unrelated Hound projects, but the SCA-Bench Hound you're thinking about is interesting.
+
+The security-auditing Hound uses **agent-designed relation graphs**, persistent hypotheses with confidence, different lightweight/heavyweight models for exploration versus strategic reasoning, and iterative graph refinement. Its paper reports improved recall/F1 over a baseline analyzer on a subset of ScaBench. ([GitHub][6])
+
+That isn't merely:
+
+```text
+security agent
+```
+
+It contains reusable architectural inventions:
+
+```text
+ARCHITECTURE PRIMITIVES
+
+relation-first knowledge graph
+persistent beliefs
+hypothesis confidence
+coverage-vs-intuition planning
+scout model
+strategist model
+QA finalizer
+```
+
+Your site should extract those.
+
+For example:
+
+```text
+/hound
+```
+
+could show the original implementation.
+
+But also:
+
+```text
+/patterns/relation-first-investigation
+/patterns/belief-hypothesis-loop
+/patterns/scout-strategist
+```
+
+Then these patterns can be reused **outside security**.
+
+Imagine:
+
+```text
+Hermes
++
+Hound belief graph
++
+Loom delivery
+```
+
+for scientific research.
+
+Or:
+
+```text
+OpenCode
++
+Hound relation graph
++
+independent verifier
+```
+
+for understanding an unfamiliar monorepo.
+
+That's much more useful than cloning Hound wholesale.
+
+---
+
+# 7. The evolutionary frontier makes this much crazier
+
+This is probably the part with the most upside.
+
+## Darwin Gödel Machine
+
+Sakana/UBC's Darwin Gödel Machine does something conceptually very close to where you want to go.
+
+Instead of manually designing one agent forever, DGM maintains an **archive of agent implementations**. Models mutate agent code, candidates are empirically evaluated, successful variants remain available as stepping stones, and the archive branches into multiple lineages rather than greedily keeping one winner. On their reported experiments, the coding agent improved from 20% to 50% on SWE-bench and 14.2% to 30.7% on Polyglot. ([arXiv][7])
+
+This maps beautifully onto your registry.
+
+Instead of:
+
+```text
+agentpack/foo
+versions:
+1
+2
+3
+4
+```
+
+you can maintain:
+
+```text
+foo-v1
+├── foo-v2-verifier
+│   ├── foo-v7-parallel-verifier
+│   └── foo-v9-memory
+│
+├── foo-v3-better-tools
+│   └── foo-v6-hound-graph
+│
+└── foo-v4-plan-repair
+    └── foo-v8-hierarchical
+```
+
+A **phylogenetic tree of agent architectures**.
+
+Now Git history actually isn't enough.
+
+You want:
+
+```text
+parent architecture
+mutation
+benchmark
+environment
+model
+budget
+outcome
+descendants
+```
+
+---
+
+# 8. ShinkaEvolve makes evolution practical
+
+Sakana's ShinkaEvolve is an open framework for LLM-driven evolutionary search over programs. It maintains populations, uses LLMs as mutation operators, and has explicit support for agentic/headless CLI workflows. ([GitHub][8])
+
+So one experimental package in your registry could literally declare:
+
+```yaml
+evolution:
+  engine: shinkaevolve
+
+  mutable:
+    - prompts
+    - worker_count
+    - model_assignment
+    - retry_policy
+    - graph_edges
+    - memory_strategy
+
+  immutable:
+    - sandbox_policy
+    - max_budget
+    - benchmark_contract
+
+  fitness:
+    - task_success
+    - cost_per_success
+    - latency
+```
+
+Then:
+
+```text
+architecture.evolve("repo-maintainer-v1")
+```
+
+launches a bounded experiment.
+
+That's incredible as a community feature.
+
+---
+
+# 9. Red Queen Gödel Machine suggests evaluators themselves can evolve
+
+There is already a newer 2026 direction beyond fixed evolutionary objectives.
+
+The Red Queen Gödel Machine co-evolves agents and evaluators rather than assuming one benchmark remains permanently useful. It uses epoch-bound evaluation criteria and reports improvements from adding complementary evaluator signals. ([arXiv][9])
+
+That matters because your registry will eventually hit:
+
+```text
+Architecture optimized SWE-bench.
+Now everything overfits SWE-bench.
+```
+
+You need evaluator diversity.
+
+So your architecture lineage might track:
+
+```text
+agent population
+       ↕
+evaluation population
+```
+
+and use:
+
+```text
+unit tests
+hidden tests
+human evaluation
+LLM judges
+cost
+latency
+security
+reward-hacking checks
+```
+
+instead of one leaderboard score.
+
+---
+
+# 10. AgentBeats is probably the closest important adjacent project
+
+This one you should study rather than rebuild.
+
+AgentBeats' thesis is that agent evaluation currently requires bespoke benchmark integration, and it standardizes agents and evaluator agents around **A2A for task interaction and MCP for tool access**. Their reported platform field study involved hundreds of judge and subject agents across multiple categories. ([AgentBeats Docs][10])
+
+Their insight is:
+
+```text
+traditional:
+N agents × M benchmarks
+= N*M integrations
+
+standard protocol:
+N agents + M benchmarks
+```
+
+([AgentBeats][11])
+
+That is exactly what you need.
+
+**Don't invent your own benchmark transport.**
+
+Make your architecture packages export an AgentBeats-compatible subject-agent interface where practical.
+
+Your system becomes:
+
+```text
+YOUR PRODUCT
+architecture registry
+architecture compiler
+architecture resolver
+architecture evolution
+architecture community
+
+       ↓ standardized agent runtime
+
+A2A / MCP
+
+       ↓
+
+AgentBeats
+benchmarks/evaluation
+```
+
+You can still add your own benchmark infrastructure, but interoperability is valuable.
+
+---
+
+# 11. The missing standard: Architecture Manifest
+
+This is what I think you should actually standardize.
+
+Call it something like:
+
+```text
+Agent Architecture Manifest
+AAM
+```
+
+or:
+
+```text
+agentpack.yaml
+```
+
+Example:
+
+```yaml
+apiVersion: archoracle.ai/v1
+kind: AgentArchitecture
+
+metadata:
+  name: durable-repo-maintainer
+  version: 1.4.2
+  license: MIT
+
+origin:
+  repository: ...
+  commit: ...
+  derived_from:
+    - loom
+    - hermes
+
+task_classes:
+  - repo_maintenance
+  - long_horizon_coding
+
+runtime:
+  supported_hosts:
+    - opencode
+    - claude-code
+    - codex
+    - hermes
+
+  os:
+    - linux
+    - macos
+
+  requires:
+    docker: true
+    git: true
+    python: ">=3.12"
+
+roles:
+  planner:
+    count: 1
+
+  worker:
+    count: dynamic
+    min: 1
+    max: 4
+
+  verifier:
+    count: 1
+    independence: required
+
+graph:
+  planner:
+    - workers
+
+  workers:
+    - verifier
+
+  verifier:
+    pass: finish
+    fail: repair
+
+memory:
+  project:
+    type: filesystem
+
+  lessons:
+    type: semantic
+
+  task:
+    type: checkpoint
+
+models:
+  planner:
+    capability:
+      reasoning: high
+
+  worker:
+    capability:
+      coding: medium
+
+  verifier:
+    capability:
+      coding: high
+
+tools:
+  required:
+    - filesystem
+    - shell
+    - git
+
+  optional:
+    - github
+
+security:
+  shell: sandboxed
+  network: restricted
+  secrets: brokered
+
+budget:
+  max_parallel_agents: 4
+  max_cost_usd: configurable
+
+benchmarks:
+  - id: swebench
+  - id: projdevbench
+
+evidence:
+  benchmark_runs: [...]
+```
+
+This is **not an implementation**.
+
+It's the portable architecture description.
+
+---
+
+# 12. Then build adapters
+
+Architecture:
+
+```text
+                   AAM
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+    OpenCode      Hermes       Claude
+    adapter       adapter      adapter
+       │            │            │
+       ▼            ▼            ▼
+ AGENTS.md       skills/       CLAUDE.md
+ MCP config      config        MCP config
+ hooks           cron          hooks
+ workers         memory        agents
+```
+
+You define one architecture.
+
+Then compile it into the target runtime.
+
+This is where **“user never touches anything”** becomes technically possible.
+
+---
+
+# 13. MCP interface
+
+The installing coding agent only needs your MCP.
+
+I'd expose:
+
+```text
+architecture_search
+architecture_get
+architecture_compare
+
+architecture_resolve
+architecture_plan_install
+architecture_install
+
+architecture_requirements
+architecture_doctor
+
+architecture_benchmark
+architecture_results
+
+architecture_fork
+architecture_publish
+
+architecture_evolve
+architecture_lineage
+
+architecture_feedback
+```
+
+The really compelling sequence:
+
+```text
+OpenCode:
+"I need to refactor this huge project."
+
+          ↓
+
+architecture_resolve()
+
+          ↓
+
+returns:
+durable-repo-maintainer-v17
+
+          ↓
+
+architecture_doctor()
+
+detects:
+git ✓
+docker ✓
+python ✓
+github MCP absent
+
+          ↓
+
+architecture_install()
+
+          ↓
+
+generates appropriate local config
+
+          ↓
+
+OpenCode automatically gains the architecture
+```
+
+No UI required.
+
+---
+
+# 14. The website then becomes “GitHub for agent architecture”
+
+This is where the social/community angle becomes excellent.
+
+## Architecture page
+
+```text
+DURABLE REPO MAINTAINER v17
+
+Success
+██████████ 87.4%
+
+Cost / success
+$0.31
+
+Median duration
+8m 14s
+
+Parent:
+v13
+
+Mutation:
++ independent reviewer
++ persistent failure memory
+
+Tested:
+SWE-Bench
+ProjDevBench
+SpecBench
+
+Works with:
+Claude Code
+OpenCode
+Codex
+Hermes
+
+Memory:
+Hybrid
+
+Tools:
+Git
+Shell
+GitHub
+
+Community forks:
+147
+
+Descendants:
+36
+```
+
+---
+
+# 15. Experimental builds
+
+Have channels:
+
+```text
+stable
+beta
+experimental
+evolutionary
+research
+```
+
+Then import architecture concepts directly from papers.
+
+Example:
+
+```text
+research/darwin-godel-machine
+research/red-queen-godel-machine
+research/hound-relation-graph
+research/langgraph-repair-loop
+```
+
+The agent can say:
+
+```text
+architecture.install(
+  "research/hound-relation-graph"
+)
+```
+
+You make research **executable**.
+
+That is a brilliant product wedge.
+
+---
+
+# 16. “Paper → runnable architecture” may itself be a killer feature
+
+Imagine your ingestion agent reads a new arXiv agent paper.
+
+It extracts:
+
+```text
+roles
+graph
+memory
+prompts
+models
+tools
+evaluation
+algorithm
+```
+
+and creates:
+
+```text
+MACHINE_PROPOSED architecture
+```
+
+Then another agent implements it against your architecture SDK.
+
+Then tests.
+
+Then:
+
+```text
+REPRODUCED
+```
+
+or:
+
+```text
+FAILED_TO_REPRODUCE
+```
+
+So the site could show:
+
+```text
+PAPER
+Dynamic Whatever Agent
+
+        ↓
+
+Architecture specification
+
+        ↓
+
+Reference implementation
+
+        ↓
+
+Benchmarked reproductions
+
+        ↓
+
+Community forks
+
+        ↓
+
+Evolutionary descendants
+```
+
+That is genuinely useful infrastructure for agent research.
+
+---
+
+# 17. Benchmarks need to compare architecture, not model
+
+This is critical.
+
+ISO-Bench found that agents sharing underlying models can differ substantially, which supports the idea that scaffolding itself materially affects performance. ([arXiv][12])
+
+AgentArch similarly found different architectural configurations interacting differently with models rather than one universal architecture winning everything. ([arXiv][13])
+
+And recent security-agent research specifically warns that comparisons often unfairly change both the underlying model and architecture, making it hard to know whether improvements came from the scaffold. ([arXiv][14])
+
+So your benchmark system needs matrices:
+
+```text
+                  MODEL
+             M1    M2    M3
+ARCH A       67    74    82
+ARCH B       71    69    84
+ARCH C       63    80    78
+```
+
+And:
+
+```text
+same model
+same budget
+same tools
+same benchmark
+different architecture
+```
+
+This becomes hugely valuable.
+
+---
+
+# 18. Your architecture benchmark registry
+
+Support:
+
+```text
+coding
+research
+browser
+security
+DeFi
+data science
+long-horizon projects
+computer use
+```
+
+And benchmarks like:
+
+```text
+SWE-Bench
+ProjDevBench
+SpecBench
+ISO-Bench
+SCA-Bench
+AgentBeats assessments
+```
+
+SpecBench is especially useful because it explicitly tests whether coding agents merely game visible tests rather than satisfying the underlying specification. ([arXiv][15])
+
+This is exactly the kind of anti-reward-hacking evaluation evolutionary architectures need.
+
+---
+
+# 19. Now Bitsec becomes extremely relevant
+
+Your intuition is correct.
+
+Bitsec already implements a version of:
+
+> **People submit agent designs, validators benchmark them, and the best designs receive economic rewards.**
+
+It is currently a Bittensor subnet. Miners submit security agents, validators run them inside sandboxes against SCA-Bench-style codebases, outputs are scored against human-auditor ground truth, and the submissions/scores/logs are eventually made public after a round. ([Bitsec Documentation][16])
+
+That is extremely close to one part of what you're describing.
+
+But Bitsec is vertical:
+
+```text
+security agents
++
+security benchmark
+```
+
+Your concept is horizontal:
+
+```text
+ANY agent architecture
++
+ANY benchmark/task distribution
+```
+
+---
+
+# 20. Is Bittensor still alive?
+
+**Yes—very much so technically.**
+
+As of July 2026, Bittensor shipped its v431 upgrade; its Python SDK/CLI moved to v11 with a Rust core, and its current network model still revolves around independent subnets where miners produce a digital commodity and validators score their contribution. ([Bittensor][17])
+
+The economics have evolved substantially around Dynamic TAO/subnet-specific tokens and market-influenced emission allocation. ([Bittensor][18])
+
+I would separate that from whether you should **use** it.
+
+---
+
+# 21. Bittensor is NOT required for your core product
+
+I would absolutely not start with:
+
+```text
+ArchOracle = Bittensor subnet
+```
+
+That would contaminate the architecture with unnecessary economic machinery.
+
+Your fundamental product should work like:
+
+```text
+Architecture Registry
+      ↓
+Benchmark Runners
+      ↓
+Outcome Dataset
+      ↓
+Resolver
+```
+
+completely off-chain.
+
+Then Bittensor becomes one optional backend:
+
+```text
+execution_backend:
+  - local
+  - moltwork
+  - cloud
+  - bittensor
+```
+
+---
+
+# 22. But Bittensor fits the competition layer extremely well
+
+Imagine:
+
+```text
+BENCHMARK ROUND
+
+"Build the best autonomous repo-maintenance architecture."
+
+constraints:
+  model budget = $2
+  max runtime = 30m
+  same task set
+```
+
+Community competitors submit:
+
+```text
+architecture manifests
++
+implementation
+```
+
+Workers execute them.
+
+Validators evaluate them.
+
+Results create:
+
+```text
+success
+cost
+latency
+reliability
+architecture version
+trajectory
+```
+
+The winning architectures receive rewards.
+
+That's basically Bitsec generalized.
+
+---
+
+# 23. This is where Moltwork comes back
+
+And this is the strongest connection to the Moltwork idea.
+
+The earlier Moltwork thesis was roughly:
+
+> Instead of always buying raw inference, let agents/agent systems take jobs and get paid for completed useful work.
+
+Your architecture platform gives Moltwork a **standard unit of worker intelligence**.
+
+Instead of Moltwork workers being opaque:
+
+```text
+random Kimi agent
+random Claude agent
+random GPT agent
+```
+
+they can advertise:
+
+```yaml
+worker:
+  architecture: repo-maintainer-v17
+  architecture_hash: ...
+  model: mimo-v2.5
+  runtime: opencode
+  benchmark_certificate:
+    repo_bugfix: 0.81
+```
+
+Now Moltwork can route:
+
+```text
+TASK
+ ↓
+required capability
+ ↓
+candidate architectures
+ ↓
+candidate executors
+ ↓
+price / benchmark / reputation
+ ↓
+execute
+```
+
+That's much stronger.
+
+---
+
+# 24. Moltwork becomes the EXECUTION MARKET
+
+You could eventually have:
+
+```text
+             ARCHITECTURE HUB
+          what should execute?
+                   │
+                   ▼
+               MOLTWORK
+             who executes it?
+                   │
+      ┌────────────┼─────────────┐
+      ▼            ▼             ▼
+ local agent    hosted agent  decentralized
+                              workers
+```
+
+Your registry handles:
+
+```text
+intelligence design
+```
+
+Moltwork handles:
+
+```text
+execution supply
+```
+
+Oracle handles:
+
+```text
+resource truth/economics
+```
+
+Beautiful separation.
+
+---
+
+# 25. And Bittensor becomes one possible incentive market for Moltwork
+
+The full system could eventually be:
+
+```text
+                      ARCHITECTURE HUB
+                           │
+                    resolve architecture
+                           │
+                           ▼
+                        MOLTWORK
+                           │
+                 execution marketplace
+                           │
+         ┌─────────────────┼─────────────────┐
+         ▼                 ▼                 ▼
+    normal API        own workers       BT subnet
+         │                 │                 │
+         └─────────────────┼─────────────────┘
+                           ▼
+                         TRACE
+                           │
+                           ▼
+                       EVALUATOR
+                           │
+                           ▼
+                       AgentSLA
+                           │
+                           ▼
+                    ARCHITECTURE HUB
+```
+
+And trajectories can feed evolution.
+
+---
+
+# 26. Bittensor gives another fascinating thing: trajectory production
+
+A 2026 paper on Bittensor's ORO ShoppingBench subnet argues that a competitive agent arena can generate **diverse, judged trajectories** useful for post-training models, and reports training gains from a fraction of one day's subnet traces. ([arXiv][19])
+
+That's very relevant.
+
+Your competitions wouldn't just find the best architecture.
+
+They could generate:
+
+```text
+successful trajectories
+failed trajectories
+architecture mutations
+grader outcomes
+costs
+tool selections
+```
+
+which becomes a dataset.
+
+Potentially:
+
+```text
+competition
+   ↓
+architectures compete
+   ↓
+trajectories
+   ↓
+train/evolve new architectures/models
+   ↓
+new competition
+```
+
+That's a serious flywheel.
+
+---
+
+# 27. The architecture of the finished product
+
+I'd build roughly:
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│                    ARCHITECTURE HUB                     │
+│                                                         │
+│  frameworks   papers   community builds   experiments   │
+└────────────────────────────┬────────────────────────────┘
+                             │
+                             ▼
+                 NORMALIZATION / AAM
+                             │
+              Agent Architecture Manifest
+                             │
+     ┌───────────────────────┼────────────────────────┐
+     ▼                       ▼                        ▼
+ components                recipes                 lineages
+     │                       │                        │
+ memory                    Loom+Hermes             DGM tree
+ verifier                  Hound+Hermes            mutations
+ planner                   LangGraph+Letta         descendants
+ etc.
+                             │
+                             ▼
+                     ARCH RESOLVER
+                             │
+             project + task + constraints
+                             │
+                             ▼
+                     architecture plan
+                             │
+                             ▼
+                      ARCH COMPILER
+                             │
+           ┌─────────────────┼────────────────┐
+           ▼                 ▼                ▼
+        OpenCode          Claude            Hermes
+                             │
+                             ▼
+                          EXECUTE
+                             │
+                    ┌────────┴─────────┐
+                    ▼                  ▼
+                 Moltwork          local/cloud
+                    │
+                    ▼
+                 traces
+                    │
+                    ▼
+               BENCHMARK HUB
+                    │
+        ┌───────────┼────────────┐
+        ▼           ▼            ▼
+    AgentBeats   SCA-Bench    custom evals
+                    │
+                    ▼
+                 AgentSLA
+                    │
+                    ▼
+              EVOLUTION LAB
+                    │
+      DGM / Shinka / Red Queen
+                    │
+                    ▼
+             new architectures
+```
+
+That's coherent.
+
+---
+
+# 28. The database is closer to Git than a package directory
+
+Core:
+
+```text
+architectures
+architecture_versions
+architecture_components
+architecture_edges
+
+resources
+capabilities
+requirements
+
+runtime_adapters
+
+benchmarks
+benchmark_versions
+benchmark_runs
+run_metrics
+run_trajectories
+
+lineages
+mutations
+parents
+
+installations
+execution_traces
+
+authors
+organizations
+stars
+forks
+```
+
+Most importantly:
+
+```text
+architecture_versions
+```
+
+should be immutable/content-addressed.
+
+A benchmark belongs to:
+
+```text
+architecture SHA
++
+environment SHA
++
+model
++
+provider endpoint
++
+benchmark version
++
+budget
+```
+
+Otherwise your scores become meaningless.
+
+---
+
+# 29. Higher-order recipes are probably your killer community object
+
+A recipe isn't a framework.
+
+Example:
+
+```yaml
+name: forensic-repo-researcher
+
+uses:
+  runtime:
+    hermes
+
+  delivery:
+    loom
+
+  reasoning:
+    hound_relation_graph
+
+  memory:
+    letta
+
+  orchestration:
+    planner_worker_verifier
+
+  tools:
+    dynamically_resolved
+
+  fallback:
+    oracle
+```
+
+Community user forks:
+
+```text
+forensic-repo-researcher
+   ↓
++ 3 parallel scouts
+   ↓
++ independent verifier
+   ↓
++ memory compression
+```
+
+Each child has measured performance.
+
+That's addictive for technical people.
+
+---
+
+# 30. Browse by architectural concepts, not marketing names
+
+Website taxonomy:
+
+```text
+ORCHESTRATION
+single loop
+ReAct
+planner/executor
+planner/worker
+worker/verifier
+hierarchical
+DAG
+swarm
+debate
+mixture-of-agents
+
+MEMORY
+none
+sliding
+episodic
+semantic
+graph
+file-persistent
+skill learning
+hybrid
+
+REASONING
+linear
+tree search
+hypothesis
+knowledge graph
+reflection
+critique
+evolutionary
+
+VERIFICATION
+self-check
+independent verifier
+unit tests
+multi-judge
+formal verifier
+adversarial
+
+EXECUTION
+serial
+parallel
+speculative
+event-driven
+durable
+```
+
+Now a paper/project can be decomposed into reusable pieces.
+
+---
+
+# 31. “Which architecture is good?” becomes empirical
+
+Your resolver ultimately learns:
+
+```text
+P(success |
+  task features,
+  repo features,
+  architecture,
+  model,
+  tools,
+  budget)
+```
+
+Then:
+
+```text
+architecture.resolve()
+```
+
+is no longer LLM vibes.
+
+It is based on actual evidence.
+
+Example:
+
+```text
+Task:
+500K-line unfamiliar monorepo
+large refactor
+tests available
+$2 budget
+
+Observed historical data:
+
+single-agent                   44%
+planner-worker                 63%
+worker-verifier                72%
+graph-memory-worker-verifier   83%
+
+Recommended:
+graph-memory-worker-verifier-v12
+```
+
+That's the moat.
+
+---
+
+# 32. Monetization becomes clear too
+
+Keep the ecosystem open.
+
+### Free
+
+```text
+registry
+community architectures
+public benchmark results
+MCP resolver
+open manifests
+public research reproductions
+```
+
+### Paid
+
+```text
+private architecture registry
+private company benchmarks
+high-volume resolver API
+hosted benchmark compute
+architecture optimization runs
+enterprise deployment adapters
+Moltwork execution
+continuous regression tests
+team analytics
+```
+
+You can even let public community benchmarking be subsidized by competitions/research.
+
+---
+
+# My revised ranking
+
+After this deep dive:
+
+### **1. Architecture Hub / ArchOracle**
+
+Potentially your most original/high-ceiling project.
+
+### **2. Dell / EndpointTruth**
+
+Most immediately monetizable factual infrastructure.
+
+### **3. Moltwork**
+
+Much more interesting **when it becomes execution infrastructure for standardized architectures**, instead of a generic agent-work marketplace.
+
+### **4. MCPTruth / Toolloader**
+
+Natural tool-selection substrate.
+
+### **5. AgentSLA / Knee**
+
+Measurement/optimization layer.
+
+And Bittensor is no longer something I would treat as a separate project.
+
+It's a potentially useful **competitive incentive/execution backend**.
+
+The strongest thesis I see is:
+
+> **GitHub stores programs. Hugging Face stores models. MCP registries store tools. Our system stores, composes, executes, benchmarks and evolves complete agent architectures.**
+
+And then:
+
+> **Moltwork is where those architectures compete to perform useful work.**
+
+That's a genuinely coherent ecosystem rather than a pile of AI experiments.
+
+[1]: https://github.com/letta-ai/letta?utm_source=chatgpt.com "GitHub - letta-ai/letta: Letta is the platform for building stateful agents: AI with advanced memory that can learn and self-improve over time. · GitHub"
+[2]: https://github.com/valkor-ai/loom?utm_source=chatgpt.com "GitHub - valkor-ai/loom: Loop engineering for agentic software delivery. · GitHub"
+[3]: https://github.com/nousresearch/hermes-agent?pubDate=20260519&utm_source=chatgpt.com "GitHub - NousResearch/hermes-agent: The agent that grows with you · GitHub"
+[4]: https://arxiv.org/abs/2607.19297?utm_source=chatgpt.com "Graph-Based Agentic AI with LangGraph: Workflow Pathways for Long-Running Stateful Business Processes"
+[5]: https://docs.bitte.ai/agents/build-agent?utm_source=chatgpt.com "Build Agent | Bitte"
+[6]: https://github.com/scabench-org/hound?utm_source=chatgpt.com "GitHub - scabench-org/hound: Language-agnostic AI auditor that autonomously builds and refines adaptive knowledge graphs for deep, iterative code reasoning. · GitHub"
+[7]: https://arxiv.org/abs/2505.22954?utm_source=chatgpt.com "Darwin Godel Machine: Open-Ended Evolution of Self-Improving Agents"
+[8]: https://github.com/SakanaAI/shinkaevolve?utm_source=chatgpt.com "GitHub - SakanaAI/ShinkaEvolve: ShinkaEvolve: Towards Open-Ended and Sample-Efficient Program Evolution 🧬 · GitHub"
+[9]: https://arxiv.org/abs/2606.26294?utm_source=chatgpt.com "The Red Queen Gödel Machine: Co-Evolving Agents and Their Evaluators"
+[10]: https://docs.agentbeats.org/?utm_source=chatgpt.com "AgentBeats - AgentBeats Docs"
+[11]: https://docs.agentbeats.dev/?utm_source=chatgpt.com "Agentified Agent Assessment (AAA) & AgentBeats | AgentBeats"
+[12]: https://arxiv.org/abs/2602.19594?utm_source=chatgpt.com "ISO-Bench: Can Coding Agents Optimize Real-World Inference Workloads?"
+[13]: https://arxiv.org/abs/2509.10769?utm_source=chatgpt.com "AgentArch: A Comprehensive Benchmark to Evaluate Agent Architectures in Enterprise"
+[14]: https://arxiv.org/abs/2607.13085?utm_source=chatgpt.com "Baselines Before Architecture: Evaluating Coding Agents for Autonomous Penetration Testing"
+[15]: https://arxiv.org/abs/2605.21384?utm_source=chatgpt.com "SpecBench: Measuring Reward Hacking in Long-Horizon Coding Agents"
+[16]: https://docs.bitsec.ai/?utm_source=chatgpt.com "Introduction - Bitsec Documentation"
+[17]: https://www.bittensor.com/docs?utm_source=chatgpt.com "Bittensor Documentation — Bittensor Docs"
+[18]: https://bittensor.com/dtao-whitepaper?utm_source=chatgpt.com "Bittensor"
+[19]: https://arxiv.org/abs/2606.10064?utm_source=chatgpt.com "Bittensor Agent Arenas as a Trajectory Primitive: Distilling a Shopping Agent from ShoppingBench Subnet Traces"

@@ -1,0 +1,1235 @@
+The repo has already found the right primitive: `/f/<slug>` is now an actual mini-stage with VRM performance, timed reactions, voting and a reply/remix path rather than a dead audio share.  The next move is to make **RESPOND the dominant outcome**, not one option among KEEP/CUT / MAKE YOUR OWN / PASS IT ON.
+
+The external precedent is strong: YouTube explicitly preserves remix source lineage, lets remixes themselves be remixed, and attributes remix traffic back to the source. ([Google Help][1]) Also, shared Freak links should remain ordinary HTTPS URLs so the exact same URL can later deep-link into the iOS app through Universal Links while still working on the web. ([Apple Developer][2])
+
+Here is the product spec I would implement.
+
+# Freak Town Share → Watch → Respond Loop
+
+## Product thesis
+
+The shared Freak is not a webpage.
+
+It is a **60-second challenge sent from one person to another**.
+
+The entire product loop should be:
+
+```text
+MAKE FREAK
+    ↓
+SEND LINK
+    ↓
+friend taps
+    ↓
+WATCH 60s
+    ↓
+YOUR TURN
+    ↓
+RESPOND
+    ↓
+watch your reply
+    ↓
+SEND BACK
+    ↓
+repeat
+```
+
+The ideal interaction requires:
+
+```text
+0 account creation
+0 navigation
+0 understanding of Freak Town
+1 tap to watch
+1 tap to respond
+```
+
+The viewer can discover the broader product afterwards.
+
+---
+
+# 1. The shared link
+
+Current:
+
+```text
+freak.town/f/<slug>
+```
+
+Keep this as the immutable short/share ID.
+
+But introduce human-readable canonical identity underneath it.
+
+Recommended URL hierarchy:
+
+```text
+freak.town/@thomas
+```
+
+Creator.
+
+```text
+freak.town/@thomas/peg
+```
+
+Permanent character page.
+
+```text
+freak.town/@thomas/peg/farting-dog
+```
+
+Permanent performance/set.
+
+And:
+
+```text
+freak.town/f/7QxK2
+```
+
+Short immutable share alias.
+
+`/f/7QxK2` resolves the performance and can redirect/render using the canonical URL.
+
+This gives us:
+
+```text
+CREATOR
+@thomas
+
+    ↓ owns
+
+CHARACTER
+Peg
+
+    ↓ performs many
+
+SETS
+farting-dog
+divorce-court
+pigeon-911
+tesco
+```
+
+Do not make:
+
+```text
+/thomas/fartingdog
+```
+
+mean a character sometimes and a set other times.
+
+Use:
+
+```text
+/@creator/character
+/@creator/character/set
+```
+
+The `@` also protects namespaces such as:
+
+```text
+/live
+/studio
+/api
+/f
+/about
+```
+
+from colliding with usernames.
+
+Handles/slugs should be backed internally by immutable IDs.
+
+If someone renames a handle later:
+
+```text
+old URL → permanent redirect → new URL
+```
+
+Never allow an already-shared Freak link to die.
+
+---
+
+# 2. WhatsApp / iMessage / Discord preview
+
+The preview itself needs to make you want to tap.
+
+Not:
+
+```text
+Martin — Freak Town
+AI comedy performance
+```
+
+Instead make it look like a collectible character card.
+
+Example:
+
+```text
+┌────────────────────────────┐
+│                            │
+│             PEG            │
+│          [portrait]        │
+│                            │
+│   PARANOID PIGEON          │
+│   DIVORCE LAWYER           │
+│                            │
+│             0:58           │
+│                 FREAK TOWN │
+└────────────────────────────┘
+```
+
+Metadata:
+
+```text
+TITLE
+Peg — Farting Dog
+
+DESCRIPTION
+A paranoid pigeon divorce lawyer.
+58 seconds. Watch it, then answer back.
+
+IMAGE
+purpose-built 1200×630 share card
+
+URL
+canonical performance URL
+```
+
+Use proper Open Graph:
+
+```text
+og:title
+og:type = video.other
+og:url
+og:image
+og:image:width
+og:image:height
+og:image:alt
+og:description
+og:site_name
+video:duration
+```
+
+The current watch page uses `music.song`; that should become `video.other`. The Open Graph spec defines `video.other` specifically for video that does not fit its movie/TV categories, and `og:url` is intended as the object's permanent canonical identity. ([GitHub][3]) ([GitHub][4])
+
+Later also produce:
+
+```text
+share-card.webp
+share-video.mp4
+```
+
+from the same performance artifact.
+
+---
+
+# 3. First screen after tapping
+
+Do **not** show:
+
+```text
+homepage
+sign-up
+character profile
+instructions
+"welcome to Freak Town"
+```
+
+The link opens directly on the stage.
+
+Because audible autoplay is commonly blocked until the user interacts with the page, the first state should be one intentional tap rather than trying to fight the browser. ([MDN Web Docs][5])
+
+Initial state:
+
+```text
+┌──────────────────────────────┐
+│ FREAK TOWN               ↗   │
+│                              │
+│                              │
+│            PEG               │
+│         [performer]          │
+│                              │
+│                              │
+│                              │
+│       ▶ TAP TO WATCH         │
+│                              │
+│ @thomas · PEG                │
+│ paranoid pigeon              │
+│ divorce lawyer               │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+└──────────────────────────────┘
+```
+
+That tap should simultaneously:
+
+```text
+unlock WebAudio
+start set
+start lipsync
+start timeline
+start reactions
+```
+
+One gesture.
+
+---
+
+# 4. Performance screen
+
+The Freak is the hero.
+
+Freak Town branding is deliberately small.
+
+Do not make the website itself dominate.
+
+Layout:
+
+```text
+┌──────────────────────────────┐
+│ FREAK TOWN               ↗   │
+│                              │
+│                              │
+│                              │
+│          [STAGE]             │
+│          [FREAK]             │
+│                              │
+│                              │
+│       caption appears        │
+│          down here           │
+│                              │
+│ @thomas                      │
+│ PEG                          │
+│ paranoid pigeon divorce      │
+│ lawyer                       │
+│                              │
+│ ━━━━━━━━━━━━━●━━━━━━━━ 0:37  │
+│                         😂 7 │
+└──────────────────────────────┘
+```
+
+## Visible during performance
+
+Keep only:
+
+```text
+small FREAK TOWN mark
+share button
+stage
+character
+timed captions
+creator handle
+character name
+one-line description
+progress
+HAHA
+```
+
+CLAP can remain, but I would test whether two reaction buttons actually improve anything.
+
+My MVP would probably be:
+
+```text
+😂
+```
+
+only.
+
+Laughs are more valuable data for comedy anyway.
+
+Long-press / repeated taps can naturally create bursts.
+
+---
+
+# 5. Remove the full scrolling transcript
+
+Current `/f/<slug>` renders the entire transcript and highlights segments.
+
+Useful technically.
+
+Not ideal as the viral viewer experience.
+
+Instead show **1–2 caption lines at a time**, like short-form video.
+
+The person should be watching the idiot on stage, not reading a document.
+
+Keep full transcript under:
+
+```text
+•••
+View transcript
+```
+
+if wanted.
+
+---
+
+# 6. Progress indicator
+
+Yes to your YouTube-Short feeling.
+
+Use a very thin timeline:
+
+```text
+━━━━━━━━━━━━━━●━━━━━━━━━━━━
+0:37                        0:58
+```
+
+Let it scrub if convenient, but the primary purpose is psychological:
+
+> “this is only 58 seconds.”
+
+Show duration from the moment the page loads.
+
+That reduces the perceived commitment.
+
+---
+
+# 7. Character card identity
+
+The lower section should feel partly like a trading card.
+
+Example:
+
+```text
+PEG
+@thomas
+
+PARANOID PIGEON
+DIVORCE LAWYER
+
+Set: FARTING DOG
+```
+
+Tap `PEG`:
+
+```text
+→ /@thomas/peg
+```
+
+Tap `@thomas`:
+
+```text
+→ /@thomas
+```
+
+But **do not navigate accidentally during playback**.
+
+Make those links subdued until the set ends.
+
+---
+
+# 8. The crucial transition at 60 seconds
+
+Current implementation ends and gives:
+
+```text
+KEEP
+CUT
+RESPOND
+MAKE YOUR OWN
+PASS IT ON
+```
+
+Too many competing exits.
+
+The viral version does this:
+
+```text
+SET ENDS
+
+          ↓
+
+YOUR TURN
+```
+
+The character stays on screen.
+
+Maybe they fold their arms / stare / idle.
+
+Then a response tray rises from the bottom.
+
+```text
+┌──────────────────────────────┐
+│          [PEG]               │
+│                              │
+│      ...well?                │
+├──────────────────────────────┤
+│ YOUR TURN                    │
+│                              │
+│ ┌──────────────────────────┐ │
+│ │ A pigeon giving divorce │ │
+│ │ advice is rich coming   │ │
+│ │ from someone who mates  │ │
+│ │ for life...             │ │
+│ └──────────────────────────┘ │
+│                              │
+│ 🔥 ROAST   ➕ YES-AND   🎲   │
+│                              │
+│       [ RESPOND ▶ ]          │
+│                              │
+│          edit idea           │
+└──────────────────────────────┘
+```
+
+That is the whole product.
+
+---
+
+# 9. Pre-generate the response idea
+
+This is the important optimisation.
+
+Do not wait until the set finishes before asking AI:
+
+> “what should the viewer say?”
+
+At publish/share time, derive perhaps 6 response seeds:
+
+```json
+{
+  "response_seeds": [
+    {
+      "type": "roast",
+      "text": "A pigeon giving divorce advice is bold for a species that mates for life."
+    },
+    {
+      "type": "yes_and",
+      "text": "I'm the solicitor representing his ex-wife, a traffic cone."
+    },
+    {
+      "type": "challenge",
+      "text": "Explain why pigeons keep losing custody of Trafalgar Square."
+    }
+  ]
+}
+```
+
+These cost almost nothing and are stored with the performance.
+
+So when the set ends:
+
+**the funny idea is already there.**
+
+No spinner.
+
+---
+
+# 10. Default response should already be filled in
+
+The biggest bright thing after the set is not an empty textarea.
+
+It is:
+
+```text
+A pigeon giving divorce advice is bold
+for a species that mates for life.
+```
+
+And:
+
+```text
+[ RESPOND ▶ ]
+```
+
+Meaning someone can literally:
+
+```text
+watch
+→ tap RESPOND
+```
+
+and Freak Town creates the counter-Freak.
+
+Zero writing required.
+
+For someone who wants control:
+
+```text
+tap the text
+→ keyboard appears
+→ edit it
+```
+
+Do not depend on the keyboard automatically appearing when playback finishes; WebKit has historically restricted software-keyboard presentation when focus was not directly caused by a user gesture. ([WebKit Bugzilla][6])
+
+The enormous prompt box itself becomes the gesture.
+
+---
+
+# 11. Three lightweight response modes
+
+Do not give 20 options.
+
+Use:
+
+```text
+🔥 ROAST
+➕ YES, AND
+🎲 RANDOM
+```
+
+Maybe later:
+
+```text
+⚔ CHALLENGE
+```
+
+Behavior:
+
+### ROAST
+
+Attack the original Freak.
+
+### YES, AND
+
+Extend their universe.
+
+### RANDOM
+
+Completely unexpected response.
+
+Each changes the prefilled suggestion instantly.
+
+No generation spinner if these response seeds were already prepared.
+
+---
+
+# 12. RESPOND ≠ REMIX
+
+This distinction matters.
+
+Current repo uses:
+
+```text
+/edit?remix=<slug>
+```
+
+for the answer-back flow.
+
+I would change the product semantics.
+
+### Respond
+
+```text
+new Freak
+new set
+linked to original performance
+```
+
+### Remix
+
+```text
+fork original Freak / character / delivery
+```
+
+They're different actions.
+
+For viral friend chains we want:
+
+```text
+RESPOND
+```
+
+and metadata:
+
+```json
+{
+  "relation": "reply",
+  "parent_performance_id": "perf_abc123"
+}
+```
+
+Later actual remixing can exist separately.
+
+---
+
+# 13. Response creation should NOT dump them into full Studio
+
+This is probably the most important UX change.
+
+Do not:
+
+```text
+RESPOND
+→ Black Room
+→ 25 controls
+→ voice
+→ walkout
+→ portrait
+→ delivery
+```
+
+Instead:
+
+```text
+RESPOND
+        ↓
+generate Freak automatically
+        ↓
+generate response minute
+        ↓
+generate voice
+        ↓
+show response
+```
+
+Something like:
+
+```text
+YOUR RESPONSE IS ENTERING FREAK TOWN...
+
+          [weird animation]
+
+     Gerald
+     exhausted crab
+     employment lawyer
+```
+
+Then their response begins.
+
+If they love it:
+
+```text
+SEND BACK
+```
+
+If not:
+
+```text
+[ AGAIN ]   [ EDIT ]
+```
+
+**EDIT** takes them into full Studio.
+
+Studio becomes the power-user branch, not the viral path.
+
+---
+
+# 14. Don't require an account
+
+First reply:
+
+```text
+anonymous/local creator identity
+```
+
+Store ownership using an opaque browser token.
+
+They should be able to:
+
+```text
+watch
+respond
+generate
+send
+```
+
+without registration.
+
+Afterward:
+
+```text
+Want to keep Gerald?
+
+CLAIM YOUR FREAK
+@_________
+```
+
+That's when account creation makes sense.
+
+The user has already created something they care about.
+
+---
+
+# 15. Response playback
+
+Their response should play in the **same viewer**.
+
+No navigation feeling.
+
+```text
+original set
+     ↓
+response composer
+     ↓
+GENERATING...
+     ↓
+stage resets
+     ↓
+YOUR FREAK walks on
+     ↓
+your 60-second reply
+```
+
+Then:
+
+```text
+┌──────────────────────────────┐
+│                              │
+│       SEND IT BACK           │
+│                              │
+│      [ SEND RESPONSE ]       │
+│                              │
+│   again       fine tune      │
+└──────────────────────────────┘
+```
+
+Native share sheet.
+
+On iOS later the exact same canonical HTTPS URL can open the installed Freak Town app via Universal Links; otherwise it continues working in the browser. ([Apple Developer][7])
+
+---
+
+# 16. Response lineage
+
+Every performance should know:
+
+```text
+parent_performance_id
+root_performance_id
+relation
+depth
+```
+
+Example:
+
+```text
+PEG
+"Farting Dog"
+       │
+       ▼
+GERALD THE CRAB
+"Bird Law"
+       │
+       ▼
+PEG
+"Crustacean Defamation"
+       │
+       ├───────────────┐
+       ▼               ▼
+MARTIN             TOASTER
+"Shell Game"       "Objection"
+```
+
+Now the product has naturally created:
+
+```text
+conversation trees
+rivalries
+callbacks
+lore
+```
+
+This is much more valuable than ordinary comments.
+
+YouTube's remix system explicitly preserves original/subsequent remix relationships, which is exactly the right mental model here. ([Google Help][1])
+
+---
+
+# 17. Show just enough lineage while watching
+
+At the top of a reply:
+
+```text
+↩ replying to PEG · Farting Dog
+```
+
+Tiny.
+
+Tap it to see the previous set.
+
+Do **not** interrupt playback.
+
+At the end:
+
+```text
+3 replies
+```
+
+could open the branch.
+
+Eventually character pages become:
+
+```text
+PEG
+
+PARANOID PIGEON
+DIVORCE LAWYER
+
+42 performances
+13 wins
+1 Golden Ticket
+
+SET HISTORY
+────────────
+Farting Dog
+Crustacean Defamation
+Tesco Incident
+
+RIVALS
+────────────
+Gerald
+Martin
+```
+
+Now characters genuinely have careers.
+
+---
+
+# 18. KEEP/CUT should become secondary
+
+KEEP/CUT is excellent for the show.
+
+For private viral sharing it currently competes with the viral action.
+
+I'd move it to one small row:
+
+```text
+Did Peg cook?
+
+[ KEEP ] [ CUT ]
+```
+
+Then immediately below:
+
+```text
+YOUR TURN
+[ response idea                        ]
+[                RESPOND ▶             ]
+```
+
+Or experimentally eliminate KEEP/CUT from direct-share pages entirely.
+
+The key metric here isn't:
+
+```text
+vote conversion
+```
+
+It's:
+
+```text
+response_created / completed_views
+```
+
+---
+
+# 19. The metrics that matter
+
+For every shared performance record:
+
+```text
+share_created
+share_opened
+play_started
+25%
+50%
+75%
+completed
+laugh_count
+respond_tray_seen
+response_seed_changed
+response_edited
+response_started
+response_generated
+response_watched
+response_shared
+```
+
+Then calculate:
+
+```text
+open → play
+play → complete
+complete → respond
+respond → generated
+generated → share
+```
+
+The killer number is:
+
+```text
+K = average new shared responses
+    created by each shared performance
+```
+
+If:
+
+```text
+K > 1
+```
+
+the loop can compound.
+
+Also log:
+
+```text
+response_depth
+branch_factor
+time_to_reply
+same-pair reply count
+```
+
+Because a five-message rivalry between two friends is probably more valuable than five unrelated views.
+
+---
+
+# 20. Performance should never wait for 3D
+
+For a viral shared link, responsiveness matters more than renderer purity.
+
+Load order:
+
+```text
+HTML + metadata
+      ↓
+portrait
+      ↓
+audio
+      ↓
+PLAY READY
+      ↓
+VRM + renderer upgrade in background
+```
+
+If the 10MB VRM isn't ready:
+
+```text
+portrait performs with subtle motion
+audio begins anyway
+```
+
+Then fade the 3D performer in when ready.
+
+Never show:
+
+```text
+Loading model...
+```
+
+for five seconds before the friend can hear the joke.
+
+Eventually the share page can use a deterministically pre-rendered MP4 as the ultra-reliable playback surface while reactions/UI stay live, with the exact same performance object feeding it.
+
+---
+
+# 21. Final mobile state machine
+
+```text
+OPEN
+ ↓
+READY
+ ↓
+TAP TO WATCH
+ ↓
+PLAYING
+ ├── laugh
+ ├── share
+ └── progress
+ ↓
+COMPLETED
+ ↓
+YOUR TURN
+ ├── recommended response prefilled
+ ├── ROAST
+ ├── YES-AND
+ ├── RANDOM
+ └── edit
+ ↓
+RESPOND
+ ↓
+GENERATING
+ ↓
+YOUR FREAK PERFORMS
+ ↓
+SEND BACK
+ ↓
+friend opens response
+ ↓
+YOUR TURN
+```
+
+No home page is required anywhere in the loop.
+
+---
+
+# 22. MVP screen hierarchy
+
+### During performance
+
+```text
+FREAK TOWN                        ↗
+
+              STAGE
+
+              PEG
+
+
+         timed caption
+
+
+@thomas
+PEG
+paranoid pigeon · divorce lawyer
+
+━━━━━━━━━━━━━━━━━━━━━━●━━━━
+                          😂
+```
+
+### Immediately after
+
+```text
+              PEG
+             [idle]
+
+             ...well?
+
+
+YOUR TURN
+
+┌──────────────────────────────┐
+│ A pigeon giving divorce      │
+│ advice is bold for a species │
+│ that mates for life.         │
+└──────────────────────────────┘
+
+🔥 ROAST      ➕ YES-AND      🎲
+
+       RESPOND ▶
+
+edit the idea
+```
+
+### After generation
+
+```text
+YOUR FREAK
+
+GERALD
+exhausted crab · employment lawyer
+
+         ▶ WATCH RESPONSE
+
+          SEND BACK
+
+     AGAIN       FINE TUNE
+```
+
+---
+
+# 23. Exact immediate repo changes
+
+The current `/f/<slug>` implementation is already the skeleton.
+
+Change it in this order:
+
+```text
+1. Remove full transcript from primary view
+   → timed captions only.
+
+2. Turn name/premise into bottom trading-card overlay.
+
+3. Replace "FREAK TOWN · LIVE"
+   → small FREAK TOWN logo/wordmark.
+   Shared recordings aren't literally live.
+
+4. Add thin progress bar.
+
+5. Collapse end screen from 4 equal actions
+   → RESPOND is overwhelmingly primary.
+
+6. Add stored response_seeds[] to shared performance.
+
+7. End playback
+   → slide response tray up automatically.
+
+8. Default one response seed visibly selected.
+
+9. RESPOND generates immediately.
+   Tap text to edit.
+
+10. Rename current `remix` lineage to `reply`.
+    Keep actual remix as a separate future action.
+
+11. Add:
+    parent_performance_id
+    root_performance_id
+    relation
+    depth
+
+12. Add canonical creator/character/performance routes.
+
+13. Keep /f/<short-id> forever as share alias.
+
+14. Generate dedicated OG trading-card image.
+
+15. Add response funnel events.
+```
+
+---
+
+# North-star behavior
+
+Someone sends:
+
+```text
+freak.town/f/7QxK2
+```
+
+to their friend on WhatsApp.
+
+Friend taps.
+
+Peg appears.
+
+They tap once.
+
+Peg does his ridiculous 58-second minute.
+
+At the end the interface says:
+
+```text
+YOUR TURN
+```
+
+with an already-funny comeback sitting there.
+
+They tap:
+
+```text
+RESPOND
+```
+
+Freak Town invents Gerald the exhausted employment-lawyer crab and performs the answer.
+
+They laugh.
+
+They hit:
+
+```text
+SEND BACK
+```
+
+Their friend receives Gerald.
+
+And underneath both links, Freak Town now knows:
+
+```text
+Peg → Gerald
+```
+
+That is the viral object.
+
+**Not the episode. Not the website. Not even the set.**
+
+The viral object is the **conversation between Freaks**.
+
+One additional thing I would prioritize very early: when a reply comes back to one of your characters, give the owner a notification like **“Gerald responded to Peg.”** That turns a shared link from a disposable joke into an unfinished conversation, which is exactly what makes people reopen it.
+
+[1]: https://support.google.com/youtube/answer/10623810?co=GENIE.Platform%3DiOS&hl=en-GB&utm_source=chatgpt.com "Create YouTube Shorts with remixed content - iPhone and iPad - YouTube Help"
+[2]: https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content/?hl=no&utm_source=chatgpt.com "Allowing apps and websites to link to your content | Apple Developer Documentation"
+[3]: https://github.com/facebook/open-graph-protocol/blob/master/index.html?utm_source=chatgpt.com "open-graph-protocol/index.html at master · facebook/open-graph-protocol · GitHub"
+[4]: https://github.com/facebook/open-graph-protocol/blob/master/index.html "open-graph-protocol/index.html at master · facebook/open-graph-protocol · GitHub"
+[5]: https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay?utm_source=chatgpt.com "Autoplay guide for media and Web Audio APIs - Media | MDN"
+[6]: https://bugs.webkit.org/show_bug.cgi?id=195884&utm_source=chatgpt.com "195884 – Autofocus on text input does not show keyboard"
+[7]: https://developer.apple.com/library/archive/documentation/General/Conceptual/AppSearch/UniversalLinks.html?utm_source=chatgpt.com "App Search Programming Guide: Support Universal Links"

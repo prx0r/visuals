@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Vatulanatha v1 — Sanskrit seat shootout</title>
+<style>
+  body { background:#111; color:#eee; font-family:sans-serif; max-width:860px; margin:40px auto; padding:0 20px; }
+  h1 { font-weight:600; } p.sub { color:#999; }
+  .seat { background:#1c1c1c; border:1px solid #333; border-radius:10px; padding:18px 22px; margin:14px 0; }
+  .seat h2 { margin:0 0 4px; font-size:20px; }
+  .seat .meta { color:#888; font-size:13px; margin-bottom:10px; }
+  audio { width:100%; }
+  button { background:#c22; color:#fff; border:0; border-radius:8px; padding:12px 22px; font-size:16px; cursor:pointer; margin:8px 8px 8px 0; }
+  .note { color:#9a9; font-size:13px; margin-top:24px; }
+</style></head><body>
+<h1>Sanskrit seat shootout — Vātūlanātha sūtra 1</h1>
+<p class="sub">All three locked voices, same text: <em>mahasahasavrttya svarupalabhaḥ</em>. Pick one by ear.</p>
+<button onclick="playAll()">▶ Play all three in order</button>
+<button onclick="document.querySelectorAll('audio').forEach(a=>{a.pause();a.currentTime=0})">■ Stop all</button>
+<div class="seat"><h2>1 · Sadhguru</h2><div class="meta">the primary in shiva-sutras' locked code · speed 1.0</div>
+  <audio controls preload="auto" src="sadhguru_sanskrit_v1.wav"></audio></div>
+<div class="seat"><h2>2 · Osho (Rajnish)</h2><div class="meta">approved alternate · slow 0.85</div>
+  <audio controls preload="auto" src="osho_sanskrit_v1.wav"></audio></div>
+<div class="seat"><h2>3 · Gurudeep</h2><div class="meta">approved alternate · deep-resonant · speed 1.0</div>
+  <audio controls preload="auto" src="gurudeep_sanskrit_v1.wav"></audio></div>
+<p class="note">Verdict goes in chat (“seat = sadhguru/osho/gurudeep”). That voice then reads every verse — owner ear is final (shiva-sutras casting law).</p>
+<script>
+function playAll(){ const a=[...document.querySelectorAll('audio')]; let i=0;
+  a.forEach(x=>{x.currentTime=0;x.onended=null}); 
+  const next=()=>{ if(i>=a.length) return; a[i].play().catch(()=>{}); a[i].onended=()=>{i++;next();}; };
+  next(); }
+</script>
+</body></html>

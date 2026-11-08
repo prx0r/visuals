@@ -1,0 +1,25 @@
+Google auth is wired end to end. Nothing to install — it's stdlib only.
+You paste two lines
+Edit /home/ubuntu/figgsite/.env:
+GOOGLE_CLIENT_ID=<your client ID>.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=<your client secret>
+Then I restart the backend and you're done.
+Redirect URI to put in the Google console:
+https://pog.pet/api/auth/google/callback
+Authorised JavaScript origins:
+https://pog.pet
+https://www.pog.pet
+(The bridge now proxies /api/auth/* ungated — state is the CSRF check, and no user token exists before sign-in, which is why that path had to be special-cased.)
+Verified in Chromium just now
+/?auth=…&handle=prx0r  →  url cleaned to https://pog.pet/
+                         →  "signed in as @prx0r  sign out"
+                         →  key in localStorage
+Google button            present
+click (unconfigured)     stays on page, shows
+                         "set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env"
+errors                   (none)
+So it degrades honestly while you're setting up rather than dumping JSON at you.
+What it does once configured: 302 → Google → callback exchanges the code → looks up the account by email → creates one if it's new (handle derived from the email prefix) → redirects back with the API key → page stores it, strips it from the URL. Existing accounts matched by email log straight in instead of duplicating.
+Also wired: state.apiKey now rides along, so signed-in users are identified by their real handle rather than the random pog_xxxx blob — and claim_owner in the API will move an existing anonymous profile onto the account if you sign up after already sculpting.
+Current state: / /studio/ www all 200, backend 200, auth start returns a clean 501 with instructions, repo secret scan clean, 2,001 files staged-to-be (still nothing committed).
+Paste the two values and say go — I'll restart, click it in the browser, and confirm sign-in lands you as @prx0r.

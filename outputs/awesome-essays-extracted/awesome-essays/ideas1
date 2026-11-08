@@ -1,0 +1,1546 @@
+Yes. After searching the current 2026 ecosystem, I think there are **far more interesting API niches than just MCP directories**.
+
+A major signal is that the plumbing is standardizing. MCP now has an official registry designed as a source of truth that other registries can build on; A2A is being used for cross-agent delegation; Coinbase's x402 lets an agent discover and purchase an API call in the HTTP request flow; and a July 2026 IETF draft proposes `/.well-known/ai` so websites can advertise capabilities directly to agents. ([Model Context Protocol Blog][1])
+
+That means I would **not** spend most of your time making wrappers. Build intelligence *over* this emerging machine web.
+
+## The themes I think have the most legs
+
+| Theme                | Example API        | Gap                 | Difficulty | Monetization |
+| -------------------- | ------------------ | ------------------- | ---------: | -----------: |
+| Agent economics      | `model-deals`      | Very strong         |        Low |        ★★★★★ |
+| API economics        | `api-prices`       | Strong              |        Low |        ★★★★★ |
+| Machine commerce     | `x402-index`       | Very early          |        Low |        ★★★★★ |
+| Tool reliability     | `tool-health`      | Strong              |     Medium |        ★★★★★ |
+| Tool capability      | `capability-graph` | Strong              |     Medium |        ★★★★★ |
+| Agent permissions    | `action-risk`      | Very early          |     Medium |        ★★★★★ |
+| Compliance           | `regulation-api`   | Huge                |     Medium |        ★★★★★ |
+| AI provenance        | `provenance-check` | Exploding now       |     Medium |        ★★★★★ |
+| Machine rights       | `ai-rights`        | Very early          |        Low |        ★★★★☆ |
+| Source authority     | `canonical-source` | Underserved         |     Medium |        ★★★★☆ |
+| Licensing            | `license-intel`    | Underserved         |     Medium |        ★★★★☆ |
+| API fallback         | `fallback-graph`   | Weirdly underserved |        Low |        ★★★★☆ |
+| Schema changes       | `schema-drift`     | Narrow/good         |        Low |        ★★★★☆ |
+| Dataset intelligence | `dataset-rank`     | Fragmented          |     Medium |        ★★★★☆ |
+| Agent reputation     | `agent-reputation` | Huge but hard       |       Hard |        ★★★★★ |
+
+Here are the niches I'd investigate most seriously.
+
+---
+
+# 1. API Price Intelligence
+
+This is actually bigger than LLM Deals.
+
+There is already work trying to make API pricing and rate limits machine-readable: API Evangelist reports generating pricing, rate-limit and FinOps artifacts across **3,837 API providers**. ([API Evangelist][2])
+
+That tells me the raw problem is real.
+
+Build:
+
+```text
+api-prices.org
+
+GET /provider
+GET /product
+GET /pricing
+GET /quota
+GET /rate-limits
+GET /changes
+GET /promotions
+POST /estimate
+POST /cheapest
+```
+
+Normalize:
+
+```json
+{
+  "service": "example",
+  "operation": "search",
+  "unit": "request",
+  "price": 0.001,
+  "free_allowance": 1000,
+  "rate_limit": {},
+  "promotion": null,
+  "observed_at": "...",
+  "source": "...",
+  "confidence": 0.99
+}
+```
+
+Then an agent can ask:
+
+> Find the cheapest currently operational search API that can return 100 results for <$0.01.
+
+That's far more useful than a price-comparison website.
+
+### Vertical clones
+
+Once you've built this engine:
+
+```text
+llmprices
+searchprices
+ocrprices
+speechprices
+embeddingprices
+gpuprices
+sandboxprices
+storageprices
+vectorprices
+browserprices
+```
+
+Same backend.
+
+---
+
+# 2. API Pricing **History**
+
+Even more defensible.
+
+Store every observed:
+
+```text
+price
+quota
+free tier
+promotion
+rate limit
+terms
+model
+endpoint
+```
+
+indefinitely.
+
+Then:
+
+```http
+GET /history/openai/...
+GET /changes?since=...
+GET /price-volatility
+```
+
+A crawler today can reproduce today's prices.
+
+It can't reproduce **the previous 24 months**.
+
+That historical accumulation is the moat.
+
+---
+
+# 3. `AgentFinOps`
+
+Combine prices with usage.
+
+```http
+POST /optimize
+```
+
+Input:
+
+```json
+{
+  "task": "web-search",
+  "expected_calls": 100000,
+  "latency_max_ms": 3000,
+  "budget": 30
+}
+```
+
+Return:
+
+```json
+{
+  "recommended_provider": "...",
+  "expected_cost": 18.21,
+  "free_allowance_used": 10000,
+  "fallback": "...",
+  "saving_vs_current": 11.72
+}
+```
+
+Traditional cloud FinOps exists.
+
+**Agent FinOps across arbitrary paid tools doesn't really have a canonical intelligence layer yet.**
+
+---
+
+# 4. Free-Tier Optimizer
+
+This is wonderfully niche.
+
+Agents could know:
+
+```text
+Provider A:
+500 calls/day
+
+Provider B:
+$5 monthly credit
+
+Provider C:
+free until 10k tokens
+
+Provider D:
+temporary 2× promotion
+```
+
+You calculate the optimal consumption sequence:
+
+```text
+B → A → D → cheapest paid fallback
+```
+
+Expose:
+
+```http
+POST /allocation-plan
+```
+
+This is basically your LLM Deals idea generalized across the agent ecosystem.
+
+---
+
+# 5. x402 Intelligence
+
+This one I'd move quickly on.
+
+Coinbase now explicitly documents x402 as letting a machine discover a resource, see its price, pay and receive it **without signup or a normal checkout**. Their Agentic Wallet tooling even exposes service discovery and automatic payment primitives. ([Coinbase Developer Documentation][3])
+
+So build intelligence over the market:
+
+```text
+x402index
+
+GET /services
+GET /capabilities
+GET /new
+GET /prices
+GET /history
+
+POST /search
+POST /rank
+POST /purchase-decision
+```
+
+Think:
+
+> **Product Hunt + Skyscanner + uptime monitor for machine-purchasable APIs.**
+
+That ecosystem could grow extremely fast.
+
+---
+
+# 6. x402 Price History
+
+Even simpler.
+
+Continuously query paid endpoints and record:
+
+```text
+service
+capability
+price
+chain/payment mechanism
+latency
+availability
+price history
+```
+
+Then:
+
+```http
+GET /cheapest?capability=web-search
+```
+
+Agent pays the cheapest qualifying machine service.
+
+This becomes very interesting because x402 makes **per-request pricing** practical. ([Coinbase Developer Documentation][4])
+
+---
+
+# 7. Machine Service Quality
+
+Price isn't enough.
+
+Imagine:
+
+```http
+GET /service/x/score
+```
+
+returning:
+
+```json
+{
+  "success_rate_7d": 0.997,
+  "latency_p50": 390,
+  "latency_p95": 1202,
+  "schema_stability": 0.92,
+  "price_stability": 0.84,
+  "quality": 0.88
+}
+```
+
+Now your x402 directory becomes **decision infrastructure**.
+
+---
+
+# 8. MCP Uptime
+
+Surprisingly obvious.
+
+Official MCP Registry tells you **what exists**. ([MCP Registry][5])
+
+You tell agents:
+
+> Does it actually work?
+
+Continuously run:
+
+```text
+initialize
+tools/list
+safe synthetic calls
+schema validation
+auth tests
+latency probes
+```
+
+Expose:
+
+```http
+GET /mcp/{id}/health
+```
+
+with:
+
+```text
+30d uptime
+tool success %
+auth failures
+p50/p95
+schema changes
+version changes
+last successful invocation
+```
+
+Benchmarks such as MCP-Atlas now test real MCP servers rather than mocks, which validates the idea that **real-world MCP behavior matters independently from model capability**. ([arXiv][6])
+
+---
+
+# 9. MCP Schema Diff
+
+Tiny product.
+
+Every few hours:
+
+```text
+tools/list
+resources/list
+prompts/list
+```
+
+Hash results.
+
+Detect:
+
+```text
+tool removed
+parameter changed
+new permission
+description changed
+required field added
+return type changed
+```
+
+Then:
+
+```http
+GET /diff/{server}
+GET /breaking/{server}
+```
+
+Webhook:
+
+```text
+github MCP changed create_issue.owner from optional → required
+```
+
+That could be extremely useful for production agents.
+
+---
+
+# 10. Tool Risk Classifier
+
+This is one of my favorites.
+
+Input MCP/OpenAPI/A2A tool:
+
+```json
+{
+  "name": "delete_repository",
+  "description": "...",
+  "schema": {}
+}
+```
+
+Return:
+
+```json
+{
+  "risk": 0.91,
+  "side_effect": true,
+  "reversible": false,
+  "financial": false,
+  "external_communication": false,
+  "data_destructive": true,
+  "human_confirmation": "required"
+}
+```
+
+You're building an **ontology of machine actions**.
+
+Eventually any agent runtime can call you before execution.
+
+---
+
+# 11. Permission Manifest Generator
+
+Related but even simpler:
+
+```http
+POST /analyze-mcp
+```
+
+returns:
+
+```text
+reads local files
+writes local files
+executes processes
+makes network calls
+handles secrets
+deletes resources
+sends messages
+makes purchases
+changes permissions
+```
+
+Basically:
+
+> nutrition labels for tools.
+
+That naturally feeds security systems.
+
+---
+
+# 12. Agent Capability Graph
+
+This becomes increasingly important because MCP and A2A solve **interoperability**, not necessarily intelligent selection.
+
+Google describes A2A as letting independent agents exchange information and coordinate actions. ([Google Developers Blog][7])
+
+Suppose an agent needs:
+
+```text
+"extract a table from a scanned Japanese PDF"
+```
+
+Your graph maps:
+
+```text
+task
+ ↓
+capabilities
+ ↓
+OCR
+table extraction
+Japanese
+PDF
+ ↓
+available tools/agents
+ ↓
+cost/reliability/trust
+```
+
+Then:
+
+```http
+POST /resolve-capability
+```
+
+returns five candidate execution routes.
+
+This could become **DNS for capabilities**.
+
+---
+
+# 13. `/.well-known/ai` Index
+
+This is brand-new enough that I think it's worth watching closely.
+
+A July 28, 2026 IETF draft proposes:
+
+```text
+/.well-known/ai
+```
+
+for websites to expose identity, available actions, authentication requirements and operational hints specifically to autonomous agents. ([IETF Datatracker][8])
+
+Build a crawler **now**:
+
+```text
+GET /.well-known/ai
+```
+
+across the web.
+
+Index:
+
+```text
+domain
+capabilities
+actions
+auth
+MCP
+A2A
+OpenAPI
+commercial terms
+```
+
+If the standard catches on, you already own historical discovery data.
+
+I particularly like this because it's **cheap to build and asymmetric upside**.
+
+---
+
+# 14. Agent-Ready Website API
+
+Take that further.
+
+```http
+GET /agent-readiness/example.com
+```
+
+Return:
+
+```text
+OpenAPI       ✓
+MCP           ✓
+A2A           ✗
+well-known-ai ✓
+structured data ✓
+AI policy     ✓
+machine pricing ✗
+stable IDs    ✓
+robots        ✓
+```
+
+Businesses could buy monitoring.
+
+Agents could use it to decide whether direct machine interaction is safe.
+
+---
+
+# 15. `ai.txt` Index
+
+Another very early standardization direction.
+
+A June 2026 IETF draft proposes `ai.txt` carrying things robots.txt cannot express, including **training, licensing and per-agent policies**. ([IETF Datatracker][9])
+
+Immediately suggests:
+
+```text
+ai-policy-index
+```
+
+Continuously crawl:
+
+```text
+robots.txt
+ai.txt
+HTTP AI policy headers
+terms
+licensing
+```
+
+Normalize them.
+
+---
+
+# 16. Machine Rights API
+
+This could become surprisingly important.
+
+Agent asks:
+
+```http
+POST /rights
+```
+
+```json
+{
+  "url": "...",
+  "purpose": "rag"
+}
+```
+
+You return:
+
+```json
+{
+  "crawl": true,
+  "index": true,
+  "train": false,
+  "summarize": true,
+  "commercial_use": false,
+  "attribution_required": true,
+  "license_required": false,
+  "sources": [...]
+}
+```
+
+Other purpose values:
+
+```text
+training
+search
+RAG
+archival
+republication
+translation
+derivative generation
+commercial agent access
+```
+
+This sits exactly where:
+
+```text
+robots.txt
+ai.txt
+TDM reservations
+copyright
+licensing
+terms
+```
+
+collide.
+
+---
+
+# 17. AI Crawler Policy Monitor
+
+Publishers are actively differentiating AI crawler access, and recent research analyzing publisher robots files treats these declarations as strategic licensing signals. ([FT Strategies][10])
+
+Build:
+
+```http
+GET /domain/{domain}/ai-policy
+GET /changes
+```
+
+Track:
+
+```text
+GPTBot
+ClaudeBot
+Google-Extended
+PerplexityBot
+training allowed?
+retrieval allowed?
+search allowed?
+```
+
+Potential customers:
+
+```text
+publishers
+AI labs
+dataset companies
+search agents
+RAG companies
+licensing companies
+```
+
+---
+
+# 18. AI Compliance API
+
+This has become much more timely **this month**.
+
+EU Article 50 obligations began applying on **August 2, 2026**, and explicitly include machine-readable marking of AI-generated/manipulated content. ([Digital Strategy][11])
+
+Instead of another compliance dashboard:
+
+```http
+POST /requirements
+```
+
+Input:
+
+```json
+{
+  "jurisdiction": "EU",
+  "system": "generative_image",
+  "deployment": "consumer",
+  "launch_date": "2026-08-10"
+}
+```
+
+Return:
+
+```text
+applicable requirements
+effective dates
+marking requirements
+labelling requirements
+records required
+primary legal sources
+uncertainties
+```
+
+Machines consume it directly.
+
+---
+
+# 19. Compliance Changes Feed
+
+Very narrow and sellable:
+
+```http
+GET /changes?since=2026-08-01
+```
+
+Machine-readable regulatory diffs:
+
+```json
+{
+  "jurisdiction": "EU",
+  "rule": "...",
+  "previous": "...",
+  "current": "...",
+  "effective": "...",
+  "affected_systems": [...]
+}
+```
+
+Agents can modify behavior automatically.
+
+---
+
+# 20. AI Content Compliance Checker
+
+Because the current EU requirements explicitly address machine-readable content marking, there's a near-term niche in:
+
+```http
+POST /check-content
+```
+
+Check:
+
+```text
+C2PA
+SynthID-like signals where accessible
+AI disclosure
+required labeling metadata
+provenance validity
+```
+
+C2PA itself provides a standard for provenance/content credentials. ([C2PA][12])
+
+Important distinction:
+
+Don't claim:
+
+> fake / real.
+
+Return:
+
+> **what provenance evidence is present and whether it's cryptographically valid.**
+
+That's much more defensible.
+
+---
+
+# 21. Universal Provenance API
+
+This could be large.
+
+Input arbitrary:
+
+```text
+image
+video
+audio
+PDF
+text
+webpage
+```
+
+Return:
+
+```json
+{
+  "provenance": [],
+  "c2pa": {},
+  "claimed_generators": [],
+  "signatures": [],
+  "transformations": [],
+  "verification": [],
+  "missing_links": []
+}
+```
+
+This field is moving fast: current work is extending machine-readable AI provenance beyond media into research artifacts and agent workflows. ([arXiv][13])
+
+---
+
+# 22. Provenance **Risk**
+
+Interesting because C2PA alone shouldn't be treated as proof that content is true.
+
+A 2026 security analysis found significant limitations in relying upon C2PA for high-stakes authenticity claims. ([arXiv][14])
+
+So your API can distinguish:
+
+```text
+signature valid              yes
+issuer known                  yes
+provenance chain intact       yes
+capture device attested       unknown
+content factually true        NOT DETERMINED
+metadata stripped             no
+```
+
+That's actually useful.
+
+---
+
+# 23. Source Authority API
+
+Another favorite because it's boring.
+
+Agent asks:
+
+```http
+POST /canonical-source
+```
+
+```json
+{
+  "fact": "Cambodia monthly inflation rate"
+}
+```
+
+Returns:
+
+```text
+primary institution
+canonical dataset
+API/data URL identifier
+release frequency
+latest release
+methodology
+secondary mirrors
+```
+
+Do vertical versions:
+
+```text
+economic
+health
+energy
+trade
+climate
+law
+elections
+education
+scientific literature
+```
+
+You're reducing thousands of expensive search-agent runs into one deterministic lookup.
+
+---
+
+# 24. Data Freshness API
+
+Given:
+
+```text
+dataset
+webpage
+API endpoint
+statistic
+```
+
+return:
+
+```text
+last observed
+last changed
+normal update cadence
+expected next release
+is likely stale?
+historical revision rate
+```
+
+Agents desperately need the distinction:
+
+```text
+retrieved today ≠ information current today
+```
+
+---
+
+# 25. Statistical Release Calendar
+
+Highly specific but potentially valuable.
+
+Normalize:
+
+```text
+CPI
+GDP
+trade
+employment
+central-bank decisions
+population
+industry
+energy
+etc.
+```
+
+worldwide.
+
+Agent asks:
+
+```http
+GET /next-release?country=KH&metric=CPI
+```
+
+or:
+
+```http
+GET /staleness?series=...
+```
+
+Much cleaner than repeatedly scraping government sites.
+
+---
+
+# 26. Revision Intelligence
+
+Economic and governmental datasets are revised.
+
+Agents often miss this.
+
+Provide:
+
+```http
+GET /revisions/{series}
+```
+
+```text
+initial release
+revision 1
+revision 2
+final
+magnitude
+normal revision distribution
+```
+
+Then an agent knows:
+
+> Don't strongly act on the first number; historically this series moves ±0.4%.
+
+That's actual **decision intelligence**.
+
+---
+
+# 27. API Alternative Graph
+
+This remains one of the easiest good ideas.
+
+```http
+GET /alternatives/{service}
+```
+
+Response:
+
+```json
+[
+  {
+    "provider": "...",
+    "compatibility": 0.94,
+    "cost_delta": -0.28,
+    "migration_difficulty": 0.12
+  }
+]
+```
+
+Graph relationships:
+
+```text
+exact substitute
+API-compatible
+feature substitute
+partial substitute
+open-source substitute
+self-hosted substitute
+```
+
+Agents can automatically recover from outages or quotas.
+
+---
+
+# 28. API Failure Router Intelligence
+
+Don't actually proxy calls initially.
+
+Just answer:
+
+```http
+POST /fallback
+```
+
+Input:
+
+```text
+service failed
+error
+required functionality
+```
+
+Output:
+
+```text
+best fallback
+mapping from old parameters
+mapping to new result
+expected semantic differences
+```
+
+Way lighter than becoming another API gateway.
+
+---
+
+# 29. API Schema Translation
+
+This could be cool.
+
+Input two OpenAPI schemas:
+
+```http
+POST /adapter
+```
+
+return a normalized mapping:
+
+```text
+provider A.search.query → provider B.q
+provider A.limit → provider B.num_results
+```
+
+Eventually agents dynamically migrate between APIs.
+
+This pairs beautifully with `APIAlternatives`.
+
+---
+
+# 30. Rate-Limit Intelligence
+
+A ridiculously unglamorous dataset:
+
+```text
+requests/minute
+tokens/minute
+concurrency
+daily quotas
+burst limits
+reset behavior
+429 semantics
+tier requirements
+```
+
+across thousands of APIs.
+
+Then:
+
+```http
+POST /capacity
+```
+
+> Can this provider process my planned workload?
+
+Again: **machines need exact facts rather than prose docs**.
+
+---
+
+# 31. Context/Capability Constraint API
+
+Particularly for models.
+
+Normalize weird constraints:
+
+```text
+context
+max output
+structured output
+tool use
+parallel tool calls
+image input
+PDF
+audio
+JSON schema
+streaming
+batch
+regional availability
+data retention
+fine-tuning
+```
+
+Then:
+
+```http
+POST /compatible-models
+```
+
+No benchmark opinions required.
+
+Just constraint solving.
+
+---
+
+# 32. Model Endpoint Status
+
+Models appear/disappear constantly.
+
+Track:
+
+```text
+provider
+model ID
+aliases
+deprecated
+replacement
+version
+context changes
+price changes
+availability
+regions
+```
+
+Endpoint:
+
+```http
+GET /models/{id}/status
+```
+
+This could become something routers consume.
+
+---
+
+# 33. Benchmark Normalization
+
+There are now multiple tool-use benchmarks, including MCP-Bench and MCP-Atlas. ([OpenReview][15])
+
+The opportunity isn't necessarily another benchmark.
+
+Build:
+
+```text
+BenchmarkDB
+```
+
+Normalize:
+
+```text
+benchmark
+version
+model
+provider
+agent scaffold
+tools
+date
+cost
+score
+pass@k
+retries
+```
+
+Then:
+
+```http
+POST /compare
+```
+
+The important bit is knowing when scores are **not comparable**.
+
+---
+
+# 34. Task → Benchmark Resolver
+
+Agent/developer asks:
+
+> Which benchmarks actually measure my use case?
+
+```http
+POST /benchmarks
+```
+
+input:
+
+```text
+coding agent using shell + browser + GitHub
+```
+
+return:
+
+```text
+SWE-bench ...
+Terminal ...
+browser benchmark ...
+tool-use benchmark ...
+```
+
+with applicability scores.
+
+This is small enough to make quickly.
+
+---
+
+# 35. Agent Reputation Graph
+
+Longer-term goldmine.
+
+A2A means agents increasingly interact with agents they don't control. ([Google Developers Blog][16])
+
+Eventually:
+
+```http
+GET /agent/{identity}/reputation
+```
+
+could contain:
+
+```text
+verified identity
+age
+successful tasks
+failed tasks
+uptime
+latency
+security incidents
+disputes
+benchmark results
+price history
+capability claims vs observed performance
+```
+
+The key idea:
+
+**Don't let reputation be self-reported.**
+
+Build observational history.
+
+---
+
+# 36. Capability Claim Verification
+
+An agent says:
+
+```text
+"I can translate legal Japanese."
+```
+
+Your infrastructure asks:
+
+> Has anybody actually verified that?
+
+```http
+GET /claim/{agent}/legal-ja-translation
+```
+
+returns:
+
+```text
+claimed: yes
+observed: yes
+tests: 93
+success: .89
+last_verified: ...
+```
+
+That's a genuinely interesting future primitive.
+
+---
+
+# 37. API/MCP Ownership Intelligence
+
+Supply-chain attacks make ownership significant.
+
+Track:
+
+```text
+publisher
+GitHub org
+domain
+package
+signing identity
+maintainers
+ownership changes
+new maintainer
+domain changes
+package transfer
+```
+
+Return:
+
+```http
+GET /ownership/{tool}
+```
+
+and:
+
+```text
+⚠ maintainer changed 2 days ago
+```
+
+This is something a security agent could consume.
+
+---
+
+# 38. Dependency Blast Radius
+
+Given:
+
+```text
+compromised MCP server/package/API
+```
+
+find:
+
+```text
+agents depending on it
+tools wrapping it
+packages importing it
+services advertising it
+replacement candidates
+```
+
+Basically:
+
+> dependency intelligence for agent stacks.
+
+---
+
+# 39. Agent BOM Database
+
+Generate a canonical machine-readable inventory:
+
+```text
+agent
+ ├ model
+ ├ framework
+ ├ tools
+ ├ MCP
+ ├ A2A peers
+ ├ APIs
+ ├ data sources
+ ├ permissions
+ └ payment methods
+```
+
+Then every other service you've built plugs in:
+
+```text
+risk
+price
+license
+uptime
+regulation
+versions
+```
+
+This could eventually be a foundational enterprise product.
+
+---
+
+# 40. The weird one I particularly like: **Decision Cost API**
+
+An agent can perform a task five ways.
+
+Estimate not merely money, but:
+
+```text
+$
+latency
+token cost
+expected retries
+tool calls
+risk
+failure probability
+human-review probability
+```
+
+Then:
+
+```http
+POST /expected-cost
+```
+
+returns:
+
+```json
+{
+  "route_a": {
+    "money": 0.014,
+    "time_ms": 8800,
+    "success_probability": 0.96
+  },
+  "route_b": {
+    "money": 0.003,
+    "time_ms": 2100,
+    "success_probability": 0.71
+  }
+}
+```
+
+This becomes the foundation for autonomous decision optimization.
+
+---
+
+# The bigger taxonomy
+
+I think your entire niche can be expressed as nine questions:
+
+```text
+DISCOVER
+What exists?
+
+CAPABILITY
+Can it do what I need?
+
+ECONOMICS
+What will it cost?
+
+AVAILABILITY
+Does it currently work?
+
+QUALITY
+How well does it work?
+
+TRUST
+Who runs it and can I trust it?
+
+POLICY
+Am I permitted to use it?
+
+PROVENANCE
+Where did the information/result come from?
+
+DECISION
+Given all of the above, what should I do?
+```
+
+That's a much cleaner way to decide what APIs to batch-build.
+
+---
+
+# And I found what may be the architectural clue
+
+The new `/.well-known/ai` proposal is especially interesting because it formalizes something I've been circling around in this answer: **machine-readable service discovery at the web level**. ([IETF Datatracker][8])
+
+Imagine you crawl:
+
+```text
+MCP Registry
+A2A Agent Cards
+OpenAPI
+/.well-known/ai
+ai.txt
+robots.txt
+x402 services
+GitHub
+provider documentation
+pricing pages
+status pages
+benchmark results
+regulatory sources
+```
+
+into **one graph**.
+
+Then your products aren't actually separate products.
+
+```text
+                    ENTITY
+                      │
+       ┌──────────────┼──────────────┐
+       ↓              ↓              ↓
+      API            TOOL           AGENT
+       │              │              │
+       └──────────────┼──────────────┘
+                      ↓
+                  CAPABILITY
+                      │
+     ┌───────┬────────┼──────┬────────┐
+     ↓       ↓        ↓      ↓        ↓
+   PRICE   TRUST   QUALITY  POLICY  STATUS
+     │       │        │      │        │
+     └───────┴────────┴──────┴────────┘
+                      ↓
+                  DECISION
+```
+
+You could release products almost mechanically:
+
+```text
+/week 1   prices API
+/week 2   deals API
+/week 3   x402 index
+/week 4   MCP health
+/week 5   MCP diffs
+/week 6   AI rights
+/week 7   API alternatives
+/week 8   provenance
+...
+```
+
+while continuously enriching **the same underlying intelligence graph**.
+
+## The first five I'd actually ship
+
+**1. LLM/API Deals + Pricing** — easiest wedge, immediately useful, obvious affiliate/data/subscription monetization.
+
+**2. `/.well-known/ai` + MCP + A2A + x402 capability index** — get in ridiculously early on machine-service discovery. The underlying standards are appearing *right now*. ([IETF Datatracker][8])
+
+**3. MCP/API Health + Schema Drift** — objective data, recurring need, cheap infrastructure, becomes more valuable with history.
+
+**4. AI Rights/Terms API** — `robots + ai.txt + licenses + TOS → can_agent_do(X)?`. Very interesting intersection of agents, content and compliance. ([IETF Datatracker][9])
+
+**5. Machine Commerce Intelligence** — normalize x402 services, pricing, reliability and capability, then eventually build `POST /should_buy`. Coinbase's infrastructure now explicitly allows agents to discover and pay for services automatically, so the missing layer is increasingly **selection intelligence**, not payment plumbing. ([Coinbase Developer Documentation][17])
+
+The strongest meta-strategy is therefore **not “batch produce random APIs.”** It is: **batch-produce narrow intelligence products that all contribute observations to one historical Agent Intelligence Graph.** Each little free API can attract integrations; collectively they build a dataset that's much harder to replicate than any individual endpoint.
+
+[1]: https://blog.modelcontextprotocol.io/posts/2025-09-08-mcp-registry-preview/?utm_source=chatgpt.com "Introducing the MCP Registry | Model Context Protocol Blog"
+[2]: https://apievangelist.com/blog/2026/05/04/publishing-plans-rate-limits-and-finops-for-3837-api-providers/?utm_source=chatgpt.com "Publishing Plans, Rate Limits, and FinOps for ..."
+[3]: https://docs.cdp.coinbase.com/x402/welcome?utm_source=chatgpt.com "Overview - Coinbase Developer Documentation"
+[4]: https://docs.cdp.coinbase.com/x402/how-it-works?utm_source=chatgpt.com "How x402 works - Coinbase Developer Documentation"
+[5]: https://registry.modelcontextprotocol.io/?utm_source=chatgpt.com "Official MCP Registry"
+[6]: https://arxiv.org/pdf/2602.00933?utm_source=chatgpt.com "MCP-Atlas: A Large-Scale Benchmark for Tool-Use ..."
+[7]: https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/?utm_source=chatgpt.com "Announcing the Agent2Agent Protocol (A2A)"
+[8]: https://datatracker.ietf.org/doc/draft-aiendpoint-ai-discovery/?utm_source=chatgpt.com "The AI Discovery Endpoint: A Structured Mechanism for AI ..."
+[9]: https://datatracker.ietf.org/doc/draft-car-ai-txt-wellknown/00/?utm_source=chatgpt.com "draft-car-ai-txt-wellknown-00 - AI.TXT: A Declaration File for ..."
+[10]: https://www.ftstrategies.com/en-gb/insights/robots.txt-as-strategic-intent-analysis-of-large-publishers-practices-and-policies?utm_source=chatgpt.com "Robots.txt as strategic intent: Analysis of large publishers' ..."
+[11]: https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations?utm_source=chatgpt.com "Guidelines on transparency obligations for providers and ..."
+[12]: https://c2pa.org/?utm_source=chatgpt.com "C2PA | Verifying Media Content Sources"
+[13]: https://arxiv.org/abs/2607.25637?utm_source=chatgpt.com "F(AI)2R: Who Did What, and Who Checked? Verifiable AI Provenance as an Executable Skill"
+[14]: https://arxiv.org/abs/2604.24890?utm_source=chatgpt.com "Verifying Provenance of Digital Media: Why the C2PA Specifications Fall Short"
+[15]: https://openreview.net/forum?id=fe8mzHwMxN&utm_source=chatgpt.com "MCP-Bench: Benchmarking Tool-Using LLM Agents with ..."
+[16]: https://developers.googleblog.com/introducing-a2ui-an-open-project-for-agent-driven-interfaces/?utm_source=chatgpt.com "Introducing A2UI: An open project for agent-driven interfaces"
+[17]: https://docs.cdp.coinbase.com/agentic-wallet/mcp/welcome?utm_source=chatgpt.com "Overview - Coinbase Developer Documentation"

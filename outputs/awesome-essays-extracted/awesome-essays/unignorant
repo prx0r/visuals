@@ -1,0 +1,689 @@
+Yes. There is enough open infrastructure that I **would not start Unignorant by scraping random websites**. I’d build an ingestion layer around the structured APIs first, then use scraping only for the genuinely unique human/corporate material.
+
+The strongest finds:
+
+| Priority | Source / repo                                                                          | What Unignorant gets                                                     | Access                     |
+| -------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------- |
+| **S**    | [World Bank Data360 MCP](https://github.com/worldbank/data360-mcp)                     | Poverty, health, gender, climate, economics, development indicators      | API + **official MCP**     |
+| **S**    | [World Bank PIP `pipr`](https://github.com/worldbank/pipr)                             | Actual income/consumption distributions, poverty percentiles, inequality | API                        |
+| **S**    | [OCHA HDX Python API](https://github.com/OCHA-DAP/hdx-python-api)                      | Huge humanitarian dataset catalogue                                      | Python API                 |
+| **S**    | [HDX MCP](https://github.com/dividor/hdx-mcp)                                          | Let an LLM query humanitarian datasets directly                          | MCP                        |
+| **S**    | [Open Supply Hub](https://github.com/opensupplyhub/open-supply-hub)                    | Actual global factories / production facilities                          | API + open code            |
+| **S**    | [OS Hub Python client](https://github.com/opensupplyhub/pyoshub)                       | Easy programmatic factory search                                         | Python                     |
+| **S**    | [GDELT](https://www.gdeltproject.org/)                                                 | Global news + events + places + entities                                 | API / bulk                 |
+| **S**    | [GDELT MCP](https://github.com/cyanheads/gdelt-mcp-server)                             | LLM-accessible world-news search                                         | MCP                        |
+| **S**    | [ILOSTAT R client](https://github.com/ilostat/rilostat)                                | Wages, occupations, hours, unemployment, informality                     | SDMX/data API              |
+| **S**    | [UN Comtrade Python](https://github.com/uncomtrade/comtradeapicall)                    | What every country imports/exports, by product and partner               | API                        |
+| **A**    | [ReliefWeb API](https://apidoc.reliefweb.int/)                                         | Continuously updated humanitarian reports                                | JSON API                   |
+| **A**    | [IATI Datastore](https://iatistandard.org/en/iati-tools-and-resources/iati-datastore/) | **Where international aid money actually goes**                          | JSON/XML/CSV API           |
+| **A**    | [WorldPop](https://github.com/wpgp)                                                    | High-resolution human population maps                                    | Raster/API                 |
+| **A**    | [HOT Raw Data API](https://github.com/hotosm/raw-data-api)                             | Roads, buildings, hospitals, schools etc. from OSM                       | API                        |
+| **A**    | [DHS client](https://github.com/ropensci/rdhs)                                         | Deep household health/living-condition surveys                           | API + controlled microdata |
+| **A**    | [ACLED R tools](https://github.com/cran/acledR)                                        | Geocoded political violence/conflict                                     | API/account                |
+| **A**    | [IPUMS](https://github.com/ipums/ipumsr)                                               | Harmonized census/household microdata                                    | API                        |
+| **B**    | [IATI.cloud](https://github.com/zimmerman-team/IATI.cloud)                             | Preprocessed aid graph in Solr                                           | API/server                 |
+| **B**    | [OpenCorporates → BODS](https://github.com/StephenAbbott/bods-opencorporates)          | Company/officer/ownership graph                                          | API/bulk depending licence |
+| **B**    | [HOT Export Tool](https://github.com/hotosm/osm-export-tool)                           | Geographic extracts around specific communities                          | API/service                |
+| **B**    | [Dollar Street source](https://github.com/Gapminder/dollar-street-framework)           | Reference implementation for household visual reality                    | Source code                |
+
+The standout discovery for your particular architecture is that **World Bank now publishes an official Data360 MCP server**. It lets agents search indicators, inspect metadata/disaggregations, retrieve time series, and work with structured development data instead of an LLM inventing numbers. ([GitHub][1])
+
+### 1. World Bank should be your statistical spine
+
+Clone:
+
+```bash
+git clone https://github.com/worldbank/data360-mcp
+git clone https://github.com/worldbank/pipr
+```
+
+Data360 provides the broad world-state information. The World Bank also exposes the underlying Data360 API. ([World Bank Open Data][2])
+
+PIP is more important than just GDP because it lets you ask:
+
+> What percentage of Bangladeshis consume less than $10/day PPP?
+
+> Where is someone earning $600/month in the global distribution?
+
+> How has the bottom 20% changed?
+
+The official `pipr` client accesses household-survey-derived poverty and inequality estimates for 160+ countries and regions. ([GitHub][3])
+
+That's **Unignorant/MONEY**.
+
+---
+
+# 2. HDX is probably your biggest raw-data goldmine
+
+This is enormous for the project.
+
+Clone:
+
+```bash
+git clone https://github.com/OCHA-DAP/hdx-python-api
+```
+
+OCHA maintains the official Python API for HDX. ([GitHub][4])
+
+It gives you a programmatic route into datasets concerning things like:
+
+* food insecurity
+* humanitarian needs
+* displacement
+* infrastructure
+* health
+* administrative boundaries
+* population
+* conflict-affected areas
+* crisis response
+
+There is even a working dashboard example using the Humanitarian API that displays population, humanitarian needs, food insecurity and operational presence. ([OCHA DAP][5])
+
+And someone has already wrapped HDX in MCP:
+
+```bash
+git clone https://github.com/dividor/hdx-mcp
+```
+
+It exposes HDX queries as tools for AI assistants. ([GitHub][6])
+
+That's nearly plug-and-play for an Unignorant research agent.
+
+---
+
+# 3. Open Supply Hub is ridiculously relevant
+
+This is probably your most important corporate/supply-chain repository.
+
+```bash
+git clone https://github.com/opensupplyhub/open-supply-hub
+git clone https://github.com/opensupplyhub/pyoshub
+git clone https://github.com/opensupplyhub/open-supply-hub-api-examples
+```
+
+The main app is open source. ([GitHub][7])
+
+They explicitly publish a Python library for their API. ([GitHub][8])
+
+And the examples repository contains integration documentation and test material. API access requires obtaining a token. ([GitHub][9])
+
+This gives you:
+
+```text
+Brand
+   ↓
+Supplier
+   ↓
+Facility
+   ↓
+lat/lon
+   ↓
+Industry
+   ↓
+Local community
+```
+
+Then **you** enrich the facility.
+
+```text
+facility
+ ├─ OS Hub
+ ├─ local World Bank poverty
+ ├─ ILO wages
+ ├─ OSM nearby housing/infrastructure
+ ├─ GDELT news
+ ├─ corporate allegations
+ └─ trade flows
+```
+
+That begins turning a pin representing a factory into **a piece of lived reality**.
+
+---
+
+# 4. ILOSTAT tells you what humans actually do all day
+
+Official ILO tooling exists:
+
+```bash
+git clone https://github.com/ilostat/rilostat
+```
+
+ILOSTAT covers essentially the labour questions you need: employment, unemployment, wages, working time, labour productivity and many other labour indicators internationally. ([GitHub][10])
+
+Someone has even built a tiny LLM summarizer over ILOSTAT:
+
+```bash
+git clone https://github.com/justintemps/ilostat-simple-summarizer
+```
+
+It uses AI to summarize ILO labour statistics. ([GitHub][11])
+
+Don't clone its product. Clone the idea:
+
+```text
+ILOSTAT observation
+        ↓
+deterministic calculations
+        ↓
+LLM explanation
+        ↓
+"What this means in ordinary life"
+```
+
+That's **Unignorant/WORK**.
+
+---
+
+# 5. UN Comtrade lets you reconstruct the physical global economy
+
+This is critical.
+
+Official:
+
+```bash
+git clone https://github.com/uncomtrade/comtradeapicall
+```
+
+It is maintained specifically to simplify calls to the UN Comtrade APIs. ([GitHub][12])
+
+Also very useful:
+
+```bash
+git clone https://github.com/harvard-growth-lab/comtrade-downloader
+```
+
+Harvard Growth Lab's implementation handles:
+
+* bilateral trade downloads
+* commodity classifications
+* classification conversion
+* incremental updates
+* aggregation
+
+which saves you building boring ingestion machinery yourself. ([GitHub][13])
+
+Now Unignorant can answer:
+
+> Where does Britain's coffee actually come from?
+
+> Who exports Cambodia's clothes?
+
+> Which countries supply cobalt to China?
+
+> Where do Bangladesh's garments go?
+
+Conceptually:
+
+```text
+mine
+ ↓
+commodity
+ ↓
+exporter
+ ↓
+importer
+ ↓
+manufacturer
+ ↓
+brand
+ ↓
+British consumer
+```
+
+**Comtrade gives you the middle part of that graph.**
+
+---
+
+# 6. GDELT gives you “what is happening there right now”
+
+GDELT describes itself as a real-time database/network representation of global society based on worldwide news. ([GDELT Project][14])
+
+Its geographic datasets alone contain **over 1.6 billion location mentions** from international news coverage. ([GDELT Project][15])
+
+For easy Python usage:
+
+```bash
+git clone https://github.com/alex9smith/gdelt-doc-api
+```
+
+That package wraps the GDELT DOC API. ([GitHub][16])
+
+But this might be even better for your agent architecture:
+
+```bash
+git clone https://github.com/cyanheads/gdelt-mcp-server
+```
+
+It exposes **nine MCP tools** for searching/analyzing GDELT global news. ([GitHub][17])
+
+There is also:
+
+```bash
+git clone https://github.com/shakydata/gdelt-cli
+```
+
+which is explicitly built as an agent-friendly CLI over GDELT. ([GitHub][18])
+
+Someone has already demonstrated an ELT pipeline processing **100,000+ global news events per day**:
+
+```bash
+git clone https://github.com/Mohith-akash/Global-News-Intel-Platform
+```
+
+([GitHub][19])
+
+I would absolutely inspect that ingestion architecture.
+
+---
+
+# 7. ReliefWeb is much cleaner than scraping humanitarian news
+
+This has a proper JSON API:
+
+```text
+https://api.reliefweb.int/v1
+```
+
+The API exposes ReliefWeb's curated, continuously updated archive and is used by ReliefWeb itself and third-party applications. ([Reliefweb API][20])
+
+Existing Go client:
+
+```bash
+git clone https://github.com/reliefweb/api-go-client
+```
+
+([GitHub][21])
+
+So:
+
+```text
+GDELT
+= huge global news firehose
+
+ReliefWeb
+= curated humanitarian reporting
+
+HDX
+= actual underlying crisis datasets
+```
+
+Use all three.
+
+---
+
+# 8. IATI answers “WHERE THE CHARITY/AID MONEY ACTUALLY WENT”
+
+This one is perfect for something you asked earlier.
+
+International Aid Transparency Initiative data contains development activities and transactions from governments, multilaterals, NGOs and other organizations.
+
+Their current datastore can be queried and exported as **JSON, CSV or XML**, and is dynamically updated from the IATI Registry. ([IATI Standard][22])
+
+Open implementations:
+
+```bash
+git clone https://github.com/IATI/IATI-Datastore
+git clone https://github.com/zimmerman-team/IATI.cloud
+```
+
+IATI.cloud ingests published IATI XML into Apache Solr for fast querying. ([GitHub][23])
+
+This gives you something amazing:
+
+```text
+UK government
+   ↓ £50m
+NGO/programme
+   ↓
+country
+   ↓
+sector
+   ↓
+project
+   ↓
+transactions
+```
+
+Eventually Unignorant could have:
+
+# WHERE DOES FOREIGN AID ACTUALLY GO?
+
+rather than people endlessly arguing from vague impressions.
+
+---
+
+# 9. WorldPop + HOT/OSM gives you the physical world people inhabit
+
+WorldPop has a large open GitHub organization and tooling for high-resolution population distributions. ([GitHub][24])
+
+Convenient unofficial Python layer:
+
+```bash
+git clone https://github.com/lungoruscello/worldpoppy
+```
+
+It handles downloading/merging WorldPop rasters for an arbitrary area of interest. ([GitHub][25])
+
+Combine with HOT's excellent APIs:
+
+```bash
+git clone https://github.com/hotosm/raw-data-api
+git clone https://github.com/hotosm/osm-export-tool
+```
+
+The Raw Data API turns OpenStreetMap data into GIS exports programmatically. ([GitHub][26])
+
+That means around a poor community you can actually ask:
+
+```text
+population within 5 km
+roads
+schools
+hospitals/clinics
+water infrastructure
+shops
+buildings
+industrial facilities
+```
+
+This is far richer than saying:
+
+> “Province poverty rate: 38%.”
+
+---
+
+# 10. DHS is where “what households actually live like” gets serious
+
+This may eventually become one of your most valuable sources.
+
+```bash
+git clone https://github.com/ropensci/rdhs
+```
+
+DHS has conducted population surveys across **90+ countries over decades**, including household/health information. ([GitHub][27])
+
+Depending on dataset/access conditions, you can get variables around:
+
+* household assets
+* water source
+* toilet
+* electricity
+* children
+* education
+* maternal health
+* nutrition
+* mortality
+* housing
+
+This is much closer to:
+
+> **what actual humans live like**
+
+than country-level macro data.
+
+IPUMS can also harmonize many forms of microdata:
+
+```bash
+git clone https://github.com/ipums/ipumsr
+```
+
+including international census and health survey collections. ([GitHub][28])
+
+Some microdata requires registration/approval, so don't design your core public pipeline assuming unrestricted redistribution.
+
+---
+
+# 11. Conflict: ACLED
+
+Useful packages already exist:
+
+```bash
+git clone https://github.com/datapartnership/acled_conflict_analysis
+```
+
+It performs extraction, processing, aggregation and visualization over ACLED conflict events. ([GitHub][29])
+
+Official R access also exists. ([GitHub][30])
+
+There's a particularly clever idea already documented by Bellingcat:
+
+> **Conflict Exposure Calculator**
+
+It combines ACLED events with WorldPop population estimates to estimate civilian exposure to conflict. ([GitHub][31])
+
+**That mechanism is worth stealing conceptually.**
+
+Instead of:
+
+> 14 conflict events occurred.
+
+Unignorant says:
+
+> approximately X people live within Y km of recorded conflict events.
+
+Much more human.
+
+---
+
+# 12. Corporate ownership is harder, but there are pieces
+
+OpenCorporates has APIs, though access/licensing is less frictionless than the public UN/World Bank datasets. Existing wrappers and pipelines demonstrate the approach. ([GitHub][32])
+
+This repo is especially interesting:
+
+```bash
+git clone https://github.com/StephenAbbott/bods-opencorporates
+```
+
+It transforms OpenCorporates data into **Beneficial Ownership Data Standard** statements:
+
+```text
+company
+ ↕
+officer/person
+ ↕
+ownership/control
+ ↕
+company
+```
+
+([GitHub][33])
+
+That could eventually give Unignorant a genuine corporate graph rather than a list of brands.
+
+---
+
+## And BHRRC?
+
+**Business & Human Rights Resource Centre is one of the best content datasets for you but one of the less clean ingestion targets.**
+
+Its platform contains ongoing news, allegations and disclosure material concerning **20,000+ companies**. ([Myanmar Centre for Responsible Business][34])
+
+I didn't find a clearly documented general-purpose public API comparable to HDX/ReliefWeb/Data360 in this search.
+
+So I would classify it:
+
+> **scrape/feed/partnership candidate, not foundational API**
+
+And don't indiscriminately scrape it before checking its terms, robots rules and content licensing.
+
+This distinction matters.
+
+---
+
+# I think your actual ingestion architecture is now obvious
+
+Don't create:
+
+```text
+scrapers/
+  random_site_1.py
+  random_site_2.py
+  random_site_3.py
+```
+
+Create:
+
+```text
+sources/
+│
+├── demographics/
+│   ├── worldpop
+│   ├── unwpp
+│   ├── dhs
+│   └── ipums
+│
+├── material_conditions/
+│   ├── worldbank_pip
+│   ├── data360
+│   └── dhs
+│
+├── labour/
+│   └── ilostat
+│
+├── production/
+│   └── opensupplyhub
+│
+├── trade/
+│   └── un_comtrade
+│
+├── companies/
+│   ├── opencorporates
+│   └── bhrrc
+│
+├── aid/
+│   └── iati
+│
+├── humanitarian/
+│   ├── hdx
+│   └── reliefweb
+│
+├── conflict/
+│   └── acled
+│
+├── news/
+│   └── gdelt
+│
+└── geography/
+    ├── osm
+    └── worldpop
+```
+
+Normalize everything to a few entities:
+
+```text
+PersonGroup
+Household
+Place
+Facility
+Company
+Product
+Commodity
+Occupation
+Event
+Project
+Organization
+Indicator
+Observation
+Source
+Claim
+```
+
+Then relationships:
+
+```text
+PERSON_GROUP --works_at--> FACILITY
+FACILITY --supplies--> COMPANY
+FACILITY --produces--> PRODUCT
+PRODUCT --contains--> COMMODITY
+COMMODITY --traded_from--> PLACE
+COMPANY --subject_of--> CLAIM
+EVENT --affects--> PLACE
+PERSON_GROUP --lives_in--> PLACE
+PROJECT --funded_by--> ORGANIZATION
+PROJECT --operates_in--> PLACE
+```
+
+**This graph is Unignorant.**
+
+The frontend is merely different projections of it.
+
+---
+
+# What I'd clone first
+
+If I were starting the repo tonight:
+
+```bash
+mkdir vendor && cd vendor
+
+git clone https://github.com/worldbank/data360-mcp
+git clone https://github.com/OCHA-DAP/hdx-python-api
+git clone https://github.com/dividor/hdx-mcp
+git clone https://github.com/opensupplyhub/pyoshub
+git clone https://github.com/opensupplyhub/open-supply-hub-api-examples
+git clone https://github.com/uncomtrade/comtradeapicall
+git clone https://github.com/harvard-growth-lab/comtrade-downloader
+git clone https://github.com/cyanheads/gdelt-mcp-server
+git clone https://github.com/shakydata/gdelt-cli
+git clone https://github.com/datapartnership/acled_conflict_analysis
+git clone https://github.com/hotosm/raw-data-api
+git clone https://github.com/ropensci/rdhs
+```
+
+Not necessarily as permanent dependencies. **Read their schemas, API clients, pagination, caching and normalization approaches.**
+
+The four I'd actually integrate first are:
+
+**Data360 → baseline reality**
+**ILOSTAT → work**
+**Open Supply Hub → production**
+**GDELT/ReliefWeb → what is changing now**
+
+Then:
+
+**Comtrade → supply-chain flows**
+**HDX → humanitarian conditions**
+**IATI → money/aid**
+**WorldPop/OSM → spatial reality**
+
+And only *after that* start scraping journalistic/accountability sources.
+
+The important realization from this search is that **the data-collection problem is substantially more solved than it initially appeared**. You don't need to invent a database of Earth. Governments, UN agencies, NGOs and researchers have already published surprisingly large fragments of it. The interesting engineering problem is **entity resolution + provenance + joining those fragments into one human-readable world graph.** ([GitHub][1])
+
+I can also track newly released open datasets/repos relevant to Unignorant.
+
+[1]: https://github.com/worldbank/data360-mcp?utm_source=chatgpt.com "Data360 MCP Server"
+[2]: https://data360.worldbank.org/en/api?utm_source=chatgpt.com "API | World Bank Data360"
+[3]: https://github.com/worldbank/pipr?utm_source=chatgpt.com "worldbank/pipr: R client to the PIP API"
+[4]: https://github.com/ocha-dap/hdx-python-api?utm_source=chatgpt.com "OCHA-DAP/hdx-python-api"
+[5]: https://ocha-dap.github.io/hdx-hapi-example/?utm_source=chatgpt.com "HAPI Dashboard"
+[6]: https://github.com/dividor/hdx-mcp?utm_source=chatgpt.com "Humanitarian Data Exchange (HDX) MCP Server"
+[7]: https://github.com/opensupplyhub/open-supply-hub?utm_source=chatgpt.com "opensupplyhub/open-supply-hub"
+[8]: https://github.com/opensupplyhub/pyoshub?utm_source=chatgpt.com "pyoshub, A Python libarary for the OSH API"
+[9]: https://github.com/opensupplyhub/open-supply-hub-api-examples?utm_source=chatgpt.com "opensupplyhub/open-supply-hub-api-examples"
+[10]: https://github.com/ilostat/rilostat?utm_source=chatgpt.com "ilostat/Rilostat: Tools for ILO Open Data via ..."
+[11]: https://github.com/justintemps/ilostat-simple-summarizer?utm_source=chatgpt.com "justintemps/ilostat-simple-summarizer"
+[12]: https://github.com/uncomtrade/comtradeapicall?utm_source=chatgpt.com "UN Comtrade API Package"
+[13]: https://github.com/harvard-growth-lab/comtrade-downloader?utm_source=chatgpt.com "harvard-growth-lab/comtrade-downloader ..."
+[14]: https://www.gdeltproject.org/?utm_source=chatgpt.com "The GDELT Project"
+[15]: https://www.gdeltproject.org/data.html?utm_source=chatgpt.com "Data: Querying, Analyzing and Downloading"
+[16]: https://github.com/alex9smith/gdelt-doc-api?utm_source=chatgpt.com "alex9smith/gdelt-doc-api: A Python client for the GDELT 2.0 ..."
+[17]: https://github.com/cyanheads/gdelt-mcp-server?utm_source=chatgpt.com "cyanheads/gdelt-mcp-server"
+[18]: https://github.com/shakydata/gdelt-cli?utm_source=chatgpt.com "shakydata/gdelt-cli: The command-line ..."
+[19]: https://github.com/Mohith-akash/Global-News-Intel-Platform?utm_source=chatgpt.com "Mohith-akash/Global-News-Intel-Platform: AI ..."
+[20]: https://apidoc.reliefweb.int/?utm_source=chatgpt.com "Reliefweb API - Documentation"
+[21]: https://github.com/reliefweb/api-go-client?utm_source=chatgpt.com "Simple go client for the ReliefWeb API"
+[22]: https://iatistandard.org/en/iati-tools-and-resources/iati-datastore/?utm_source=chatgpt.com "IATI Datastore"
+[23]: https://github.com/zimmerman-team/IATI.cloud?utm_source=chatgpt.com "zimmerman-team/IATI.cloud"
+[24]: https://github.com/wpgp?utm_source=chatgpt.com "WorldPop"
+[25]: https://github.com/lungoruscello/worldpoppy?utm_source=chatgpt.com "lungoruscello/WorldPopPy: Python client to help you work ..."
+[26]: https://github.com/hotosm/raw-data-api?utm_source=chatgpt.com "hotosm/raw-data-api"
+[27]: https://github.com/ropensci/rdhs?utm_source=chatgpt.com "ropensci/rdhs: API Client and Data ..."
+[28]: https://github.com/ipums/ipumsr/?utm_source=chatgpt.com "ipums/ipumsr: Request, download, and read IPUMS data in R"
+[29]: https://github.com/datapartnership/acled_conflict_analysis?utm_source=chatgpt.com "datapartnership/acled_conflict_analysis: This package ..."
+[30]: https://github.com/cran/acledR?utm_source=chatgpt.com "acledR | ACLED's official R package"
+[31]: https://github.com/bellingcat/toolkit/blob/main/gitbook/tools/acled/README.md?utm_source=chatgpt.com "toolkit/gitbook/tools/acled/README.md at main"
+[32]: https://github.com/pjryan126/opyncorporates?utm_source=chatgpt.com "A Python package for accessing the OpenCorporates API · ..."
+[33]: https://github.com/StephenAbbott/bods-opencorporates?utm_source=chatgpt.com "StephenAbbott/bods-opencorporates"
+[34]: https://www.myanmar-responsiblebusiness.org/resources/bhrrc.html?utm_source=chatgpt.com "Business and Human Rights Resource Centre"

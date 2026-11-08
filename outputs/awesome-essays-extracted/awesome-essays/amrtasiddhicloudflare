@@ -1,0 +1,1315 @@
+rom pathlib import Path
+import json, textwrap
+
+root = Path("/mnt/data/amrtasiddhi_multimedium_studio")
+root.mkdir(parents=True, exist_ok=True)
+
+scenes = [
+    {
+        "shot_id": "s001",
+        "chapter": "The Problem of Expenditure",
+        "duration_s": 6.0,
+        "spoken_function": "Establish the medieval yogic world and the problem of mortal expenditure.",
+        "conceptual_transformation": {
+            "before": "abstract title",
+            "operation": "ground doctrine in historical world",
+            "after": "viewer understands this as a specific textual tradition"
+        },
+        "primary_medium": "historical",
+        "secondary_medium": "pil_overlay",
+        "asset_query": ["early hatha yoga manuscript", "medieval Indian ascetic", "palm-leaf yoga manuscript"],
+        "selection_reason": "A historical manuscript or ascetic image supplies period, material reality, and credibility. PIL should only add a restrained title line and a tiny moving axis.",
+        "evidence_role": "historical_context",
+        "historical_requirements": ["repository", "date", "license", "caption"],
+        "silent_test": "A manuscript world is being opened and examined.",
+        "avoid": "AI-generated pseudo-manuscript presented as authentic."
+    },
+    {
+        "shot_id": "s002",
+        "chapter": "The Problem of Expenditure",
+        "duration_s": 5.5,
+        "spoken_function": "Introduce bindu or vital essence as something continually lost.",
+        "conceptual_transformation": {
+            "before": "contained drop",
+            "operation": "descending leakage",
+            "after": "finite reserve being spent"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": None,
+        "selection_reason": "The claim is a process: containment becomes leakage. Exact timing, continuity, and causal direction matter more than pictorial richness.",
+        "evidence_role": "conceptual_model",
+        "pil_scene": "single suspended crimson drop, thin gold vessel, measured descending trail, reserve gauge collapsing",
+        "silent_test": "A finite essence is visibly draining downward.",
+        "avoid": "generic glowing chakra diagram."
+    },
+    {
+        "shot_id": "s003",
+        "chapter": "The Problem of Expenditure",
+        "duration_s": 6.5,
+        "spoken_function": "Show mortality as a hydraulic and thermodynamic problem.",
+        "conceptual_transformation": {
+            "before": "stable reservoir",
+            "operation": "loss into lower fire",
+            "after": "system cannot replenish itself"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": "ai_texture",
+        "selection_reason": "PIL carries the exact hydraulic logic; a generated mineral/alchemical texture may enrich the vessel without taking over the explanation.",
+        "evidence_role": "conceptual_model",
+        "ai_prompt_role": "surface_material_only",
+        "silent_test": "A reservoir empties into a consuming furnace.",
+        "avoid": "literal anatomical realism."
+    },
+    {
+        "shot_id": "s004",
+        "chapter": "The Problem of Expenditure",
+        "duration_s": 6.0,
+        "spoken_function": "Connect the doctrine to alchemical imagery of sun, moon, fire, and nectar.",
+        "conceptual_transformation": {
+            "before": "technical system",
+            "operation": "map process onto historical symbolic vocabulary",
+            "after": "viewer sees doctrine as yogic alchemy"
+        },
+        "primary_medium": "historical",
+        "secondary_medium": "pil_annotation",
+        "asset_query": ["Indian alchemical manuscript sun moon", "rasashastra manuscript illustration", "yogic sun moon diagram"],
+        "selection_reason": "When the narration names inherited symbols, authentic historical imagery has greater authority and visual impact than a newly invented diagram.",
+        "evidence_role": "primary_source_image",
+        "silent_test": "Historical symbols are being linked to the process just shown.",
+        "avoid": "over-annotating or modernizing the source."
+    },
+    {
+        "shot_id": "s005",
+        "chapter": "The Reversal",
+        "duration_s": 5.5,
+        "spoken_function": "Introduce the central reversal: preserve what normally descends.",
+        "conceptual_transformation": {
+            "before": "downward flow",
+            "operation": "seal and reverse",
+            "after": "upward conservation"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": None,
+        "selection_reason": "This is the key operative transformation and must be perfectly legible without narration.",
+        "evidence_role": "technical_diagram",
+        "pil_scene": "vertical axis, descending crimson particles, gold seal closes, current curls upward",
+        "silent_test": "A downward loss is stopped and reversed.",
+        "avoid": "showing an operational bodily technique."
+    },
+    {
+        "shot_id": "s006",
+        "chapter": "The Reversal",
+        "duration_s": 7.0,
+        "spoken_function": "Present mahāmudrā, mahābandha, and mahāvedha as a coordinated system.",
+        "conceptual_transformation": {
+            "before": "three isolated techniques",
+            "operation": "interlock",
+            "after": "one conservation machine"
+        },
+        "primary_medium": "ai_image",
+        "secondary_medium": "pil_semantic_overlay",
+        "selection_reason": "A custom technical plate can give each operation a distinct physical form; PIL then animates their precise interlocking and flow consequences.",
+        "evidence_role": "reconstruction",
+        "ai_prompt_role": "clean technical plate with three distinct mechanical modules, no text, white background",
+        "silent_test": "Three mechanisms lock into one coordinated apparatus.",
+        "avoid": "inventing literal historical machinery or unsafe practice instructions."
+    },
+    {
+        "shot_id": "s007",
+        "chapter": "The Reversal",
+        "duration_s": 5.0,
+        "spoken_function": "Show seal, pressure, and redirected movement.",
+        "conceptual_transformation": {
+            "before": "open channels",
+            "operation": "compression",
+            "after": "central route becomes dominant"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": None,
+        "selection_reason": "Exact changing pressure and route dominance are native strengths of procedural animation.",
+        "evidence_role": "conceptual_model",
+        "silent_test": "Peripheral routes close while one central route opens.",
+        "avoid": "label-heavy anatomical chart."
+    },
+    {
+        "shot_id": "s008",
+        "chapter": "The Reversal",
+        "duration_s": 6.5,
+        "spoken_function": "Give the viewer a visionary, affective image of reversal.",
+        "conceptual_transformation": {
+            "before": "technical compression",
+            "operation": "translate mechanism into imaginal experience",
+            "after": "ascending river of light inside darkness"
+        },
+        "primary_medium": "ai_image",
+        "secondary_medium": "image_to_video_or_pil_parallax",
+        "selection_reason": "This passage is affective rather than evidential. A generated visionary image can create emotional scale, provided it is clearly treated as interpretation.",
+        "evidence_role": "symbolic_interpretation",
+        "ai_prompt_role": "visionary white-and-gold river ascending through a dark red cavern, no human body, painterly but precise",
+        "silent_test": "A normally downward river impossibly rises.",
+        "avoid": "presenting the image as a manuscript or literal yogic anatomy."
+    },
+    {
+        "shot_id": "s009",
+        "chapter": "The Central Channel",
+        "duration_s": 6.0,
+        "spoken_function": "Introduce the central channel as the route that becomes available when dual currents are gathered.",
+        "conceptual_transformation": {
+            "before": "two alternating currents",
+            "operation": "phase-lock and converge",
+            "after": "third central current"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": None,
+        "selection_reason": "Phase relation and convergence must be dynamically demonstrated.",
+        "evidence_role": "technical_diagram",
+        "silent_test": "Two oscillating paths synchronize and generate a central route.",
+        "avoid": "static three-line diagram."
+    },
+    {
+        "shot_id": "s010",
+        "chapter": "The Central Channel",
+        "duration_s": 5.5,
+        "spoken_function": "Show gathered winds entering the central route.",
+        "conceptual_transformation": {
+            "before": "distributed turbulence",
+            "operation": "capture and alignment",
+            "after": "coherent axial flow"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": "generated_particle_texture",
+        "selection_reason": "PIL controls the vector field; generated texture can add smoke-like richness while preserving exact motion.",
+        "evidence_role": "conceptual_model",
+        "silent_test": "Chaotic currents become one coherent stream.",
+        "avoid": "uncontrolled AI video morphing."
+    },
+    {
+        "shot_id": "s011",
+        "chapter": "The Central Channel",
+        "duration_s": 6.0,
+        "spoken_function": "Ground the teaching in an image of an ascetic or yogic lineage.",
+        "conceptual_transformation": {
+            "before": "abstract channel",
+            "operation": "return to human transmission",
+            "after": "doctrine belongs to teachers, bodies, manuscripts, and institutions"
+        },
+        "primary_medium": "historical",
+        "secondary_medium": "subtle_ken_burns",
+        "asset_query": ["Nath yogi painting", "Gorakhnath manuscript painting", "Indian ascetic historical photograph"],
+        "selection_reason": "Use historical imagery when narration refers to people, lineages, places, or transmission rather than an internal causal mechanism.",
+        "evidence_role": "historical_context",
+        "silent_test": "The abstract doctrine returns to a real human tradition.",
+        "avoid": "using a random yogi image without provenance."
+    },
+    {
+        "shot_id": "s012",
+        "chapter": "The Central Channel",
+        "duration_s": 7.0,
+        "spoken_function": "Explain why the body is treated as an alchemical vessel rather than merely flesh.",
+        "conceptual_transformation": {
+            "before": "body as passive container",
+            "operation": "reconfigure into interacting reservoirs, seals, and channels",
+            "after": "body as transformation apparatus"
+        },
+        "primary_medium": "hybrid",
+        "secondary_medium": "ai_base_plus_pil",
+        "selection_reason": "A generated white-background alchemical-body plate supplies visual richness; PIL animates only the doctrinally meaningful reservoirs and flows.",
+        "evidence_role": "reconstruction",
+        "silent_test": "A body-shaped field becomes a working alchemical apparatus.",
+        "avoid": "medical accuracy claims or actionable practice instruction."
+    },
+    {
+        "shot_id": "s013",
+        "chapter": "Nectar and Immortality",
+        "duration_s": 5.5,
+        "spoken_function": "Show the lunar reservoir and the preservation of nectar.",
+        "conceptual_transformation": {
+            "before": "unstable drop",
+            "operation": "suspension",
+            "after": "reserve held outside ordinary expenditure"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": None,
+        "selection_reason": "The visual proof is the exact suspension of a drop while lower processes continue.",
+        "evidence_role": "technical_diagram",
+        "silent_test": "A drop remains suspended while the system below keeps moving.",
+        "avoid": "decorative moon symbol with no process."
+    },
+    {
+        "shot_id": "s014",
+        "chapter": "Nectar and Immortality",
+        "duration_s": 6.5,
+        "spoken_function": "Translate preserved nectar into an imaginal scene of inexhaustibility.",
+        "conceptual_transformation": {
+            "before": "single finite drop",
+            "operation": "recursive reflection without depletion",
+            "after": "one source appearing in many vessels"
+        },
+        "primary_medium": "ai_image",
+        "secondary_medium": "pil_reflection_animation",
+        "selection_reason": "AI can create the poetic material world; PIL guarantees that one source remains undiminished while reflections multiply.",
+        "evidence_role": "symbolic_interpretation",
+        "silent_test": "One source fills many appearances without shrinking.",
+        "avoid": "generic fantasy moon goddess."
+    },
+    {
+        "shot_id": "s015",
+        "chapter": "Nectar and Immortality",
+        "duration_s": 6.0,
+        "spoken_function": "Clarify that immortality here is a technical yogic claim, not ordinary biological invulnerability.",
+        "conceptual_transformation": {
+            "before": "literal eternal body",
+            "operation": "reject and reframe",
+            "after": "conservation, altered temporality, and liberation vocabulary"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": "historical_text_fragment",
+        "selection_reason": "A precise visual negation and reframing is safer and clearer than a generated immortal figure.",
+        "evidence_role": "interpretive_clarification",
+        "silent_test": "A literal endless body model is crossed out and replaced by a conserved-process model.",
+        "avoid": "making medical or longevity promises."
+    },
+    {
+        "shot_id": "s016",
+        "chapter": "Nectar and Immortality",
+        "duration_s": 7.0,
+        "spoken_function": "Show time as expenditure and reversal as a change in the direction of the clock.",
+        "conceptual_transformation": {
+            "before": "reserve decreases as time advances",
+            "operation": "couple clock to flow reversal",
+            "after": "ordinary expenditure ceases to define the system"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": None,
+        "selection_reason": "The relation between time and expenditure must be animated causally, not illustrated.",
+        "evidence_role": "conceptual_model",
+        "silent_test": "A clock advances while a reserve drains; when flow reverses, the clock model changes.",
+        "avoid": "implying scientifically established reversal of aging."
+    },
+    {
+        "shot_id": "s017",
+        "chapter": "Text and Transmission",
+        "duration_s": 6.0,
+        "spoken_function": "Return to manuscript leaves, textual fragments, and the work's historical transmission.",
+        "conceptual_transformation": {
+            "before": "complete conceptual machine",
+            "operation": "reveal fragmentary historical carrier",
+            "after": "viewer distinguishes textual evidence from modern reconstruction"
+        },
+        "primary_medium": "historical",
+        "secondary_medium": "pil_dependency_overlay",
+        "asset_query": ["Amrtasiddhi manuscript folio", "Sanskrit palm leaf manuscript yoga", "Tibetan manuscript Amrtasiddhi"],
+        "selection_reason": "Historical evidence belongs exactly where the essay discusses the text, date, manuscripts, or transmission.",
+        "evidence_role": "primary_source_image",
+        "silent_test": "The modern diagram is traced back to a historical textual object.",
+        "avoid": "fabricating a manuscript if no authentic image is available."
+    },
+    {
+        "shot_id": "s018",
+        "chapter": "Text and Transmission",
+        "duration_s": 6.5,
+        "spoken_function": "Show doctrinal migration into later Haṭhayoga.",
+        "conceptual_transformation": {
+            "before": "one textual node",
+            "operation": "branching transmission",
+            "after": "later texts inherit and modify the system"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": "historical_thumbnails",
+        "selection_reason": "PIL should animate the dependency graph while authentic folio thumbnails anchor each branch.",
+        "evidence_role": "historical_argument",
+        "silent_test": "One text branches into a lineage of later textual forms.",
+        "avoid": "treating influence as a simple one-way certainty when scholarship is disputed."
+    },
+    {
+        "shot_id": "s019",
+        "chapter": "Synthesis",
+        "duration_s": 8.0,
+        "spoken_function": "Reassemble the complete system: moon, drop, fire, seals, central route, and return.",
+        "conceptual_transformation": {
+            "before": "separate motifs from earlier chapters",
+            "operation": "synchronous integration",
+            "after": "one coherent causal circuit"
+        },
+        "primary_medium": "pil",
+        "secondary_medium": "selected_generated_materials",
+        "selection_reason": "The final synthesis must reuse and transform prior continuity systems; procedural control is essential.",
+        "evidence_role": "conceptual_synthesis",
+        "silent_test": "Previously separate systems lock into one functioning circuit.",
+        "avoid": "introducing new imagery in the climax."
+    },
+    {
+        "shot_id": "s020",
+        "chapter": "Synthesis",
+        "duration_s": 8.0,
+        "spoken_function": "End on the contrast between ordinary downward expenditure and the path of return.",
+        "conceptual_transformation": {
+            "before": "two possible system states",
+            "operation": "split, compare, resolve",
+            "after": "the reversed circuit remains as the final image"
+        },
+        "primary_medium": "hybrid",
+        "secondary_medium": "historical_to_pil_dissolve",
+        "selection_reason": "Begin with manuscript material, dissolve into the exact completed PIL circuit, then remove the scaffolding until only the return-path remains.",
+        "evidence_role": "final_synthesis",
+        "silent_test": "A historical doctrine resolves into a clear visual machine of return.",
+        "avoid": "ending on a generic meditating silhouette."
+    }
+]
+
+medium_counts = {}
+for s in scenes:
+    medium_counts[s["primary_medium"]] = medium_counts.get(s["primary_medium"], 0) + 1
+
+medium_map = {
+    "project": "Amṛtasiddhi — Multi-Medium Studio Prototype",
+    "status": "planning prototype",
+    "shot_count": len(scenes),
+    "estimated_runtime_s": sum(s["duration_s"] for s in scenes),
+    "primary_medium_counts": medium_counts,
+    "governing_rule": "Choose the medium by the epistemic and cinematic job of the passage, then use PIL as the semantic control layer whenever a transformation must be exact.",
+    "scenes": scenes
+}
+
+(root / "amrtasiddhi_medium_map.json").write_text(
+    json.dumps(medium_map, indent=2, ensure_ascii=False), encoding="utf-8"
+)
+
+blueprint = """# Amṛtasiddhi Multi-Medium Creative Studio Blueprint
+
+## Central rule
+
+Do not choose a medium because it looks attractive. Choose it because it can perform the exact job of the passage.
+
+| Passage job | Default medium |
+|---|---|
+| Historical person, manuscript, place, object, lineage | Historical asset |
+| Causal process, transformation, comparison, hierarchy | Procedural PIL |
+| New visionary atmosphere or symbolic interpretation | Generated image |
+| Rich technical plate requiring custom forms | AI base + PIL semantic animation |
+| Archive-heavy sequence | Historical slideshow / FableCut |
+| Exact climax that recombines earlier systems | PIL or hybrid with PIL controlling motion |
+
+## Decision order
+
+1. **What claim is being made?**
+2. **What must change visibly?**
+3. **Is the image evidence, reconstruction, model, or atmosphere?**
+4. **Does an authentic source asset exist?**
+5. **Does the scene require exact process control?**
+6. **Would generation add useful material richness or merely introduce uncertainty?**
+7. **Can the shot pass silently?**
+
+## Medium rules
+
+### Historical assets
+
+Use when the narration refers to:
+
+- a real yogi, lineage, manuscript, place, statue, ritual object, or historical period;
+- iconography whose authenticity matters;
+- a factual claim that should be grounded rather than illustrated imaginatively.
+
+Historical images must carry provenance and an evidence role. They should not be stretched into explaining processes they do not actually depict.
+
+### Procedural PIL
+
+Use when the passage contains verbs such as:
+
+- descend, reverse, seal, gather, divide, preserve, suspend;
+- enter, circulate, exhaust, replenish, transform;
+- compare, branch, align, phase-lock, recur.
+
+PIL is the studio's semantic engine because it can make the causal operation exact.
+
+### Generated imagery
+
+Use when the passage needs:
+
+- a visionary or imaginal scene that does not exist historically;
+- a custom material world;
+- a clean technical base plate too expensive to hand illustrate;
+- a one-off symbolic scene with strong art direction.
+
+Generated imagery should be labeled as interpretation or reconstruction and should not masquerade as historical evidence.
+
+### Hybrid shots
+
+The strongest pattern is often:
+
+```text
+historical or AI image supplies material richness
+→ PIL isolates relevant forms
+→ PIL performs the exact transformation
+→ FableCut or ffmpeg assembles and times the shot
+Amṛtasiddhi visual systems
+Lunar reservoir — source of nectar.
+Descending drop — expenditure and mortality.
+Lower fire — consumption.
+Seal system — interruption of ordinary loss.
+Dual currents — oscillating peripheral processes.
+Central route — gathered and redirected flow.
+Alchemical vessel-body — complete transformation apparatus.
+Textual lineage — manuscripts and later inheritance.
+
+These systems recur, but their medium can change. The lunar reservoir may first appear as historical iconography, then as a precise PIL reservoir, then as a generated imaginal moon reflected in many vessels.
+
+Studio architecture
+Essay + research
+→ claim segmentation
+→ evidence-role classification
+→ repository retrieval
+→ ranked medium proposal
+→ asset and expressivity check
+→ medium lock
+→ shot design
+→ render lanes
+→ unified compositing
+→ contact-sheet and silent-motion QC
+Cloudflare responsibilities
+Workflow instance: authoritative durable sequence for each essay.
+Job Durable Object: stage lock, dashboard state, human approval, repair coordination.
+Queues: retrieval, generation, TTS, rendering, and QC fan-out.
+R2: historical assets, generated images, shot clips, storyboards, and final packs.
+D1: asset metadata, provenance, jobs, shot states, scores, and audit trail.
+Vectorize: semantic retrieval over captions, iconography, periods, materials, and previous successful scenes.
+Workers AI: candidate-image generation, captioning, visual QC, embeddings, and lightweight structured planning.
+Container or VPS: Pillow, OpenCV, fonts, and ffmpeg rendering.
+Asset registry
+
+Every historical file should have:
+
+{
+  "asset_id": "hist_...",
+  "r2_key": "library/...",
+  "title": "...",
+  "creator": "...",
+  "date": "...",
+  "region": "...",
+  "tradition": ["hatha-yoga"],
+  "subjects": ["ascetic", "moon", "manuscript"],
+  "object_type": "manuscript_folio",
+  "license": "...",
+  "source_url": "...",
+  "visual_embedding_id": "...",
+  "quality_score": 0.91
+}
+
+The retrieval agent should return candidates, not choose the final crop by itself.
+
+Medium scoring
+
+For each candidate medium score:
+
+claim fidelity
++ transformation expressivity
++ asset authenticity
++ visual impact
++ continuity compatibility
++ silent intelligibility
+- factual ambiguity
+- style drift
+- production risk
+
+A historical image may score highly for authenticity and poorly for transformation. PIL may score highly for transformation and poorly for human atmosphere. A hybrid wins when the roles are kept separate.
+
+What the final Amṛtasiddhi film should feel like
+
+It should not alternate randomly between a slideshow and diagrams. Historical imagery opens the world and periodically returns to establish evidence and transmission. PIL owns the explanatory spine. Generated imagery appears at selected moments where the doctrine becomes visionary or where a custom plate materially enriches a process. The final synthesis returns every medium to one visual grammar: white field, restrained black, crimson and gold, precise directional motion, and recurring continuity systems.
+"""
+(root / "STUDIO_BLUEPRINT.md").write_text(blueprint, encoding="utf-8")
+
+print(root / "amrtasiddhi_medium_map.json")
+print(root / "STUDIO_BLUEPRINT.md")
+
+Yep — continuing properly.
+
+## Short answer
+
+The right studio model is:
+
+* **historical assets** for **evidence / atmosphere / transmission**
+* **PIL procedural visuals** for **process / causality / explanation**
+* **text-to-image** for **custom visionary scenes / technical plates / missing imagery**
+* **hybrids** for the best work:
+
+  * historical image or generated plate gives the **material world**
+  * PIL gives the **semantic motion** and exact transformation
+  * final assembly makes it coherent
+
+And for **Amṛtasiddhi**, the film should be built exactly like that.
+
+---
+
+# 1. The core decision rule
+
+Do **not** choose media by “what looks cool.”
+
+Choose media by **what job the shot has to do**.
+
+## Use historical images when the shot’s job is:
+
+* establish **period, lineage, place, manuscript culture**
+* show a **real yogi, folio, statue, temple, ascetic, map, region**
+* ground a factual statement in something **authentic**
+* create a moment of **weight, world, transmission**
+
+## Use PIL when the shot’s job is:
+
+* explain a **process**
+* show **A becoming B**
+* show causal relations like:
+
+  * descending → sealed → reversed
+  * scattered → gathered
+  * dual current → central current
+  * finite reserve → conservation
+  * branch → lineage
+  * contraction → release
+* pass the **mute test** (“if I turn the audio off, can I still infer the process?”)
+
+## Use text-to-image when the shot’s job is:
+
+* create a **visionary imaginal scene** that has no historical source
+* create a **custom technical plate** or body-diagram base
+* create a symbolic scene that must be **designed specifically for this essay**
+* give affective or mythic scale where PIL alone would feel too dry
+
+## Use hybrids when:
+
+* you need **historical authority + explanatory clarity**
+* or **visual richness + exact semantic animation**
+
+Example hybrid:
+
+* generated or historical base image
+* PIL overlay animates only the meaningful transformation
+* ffmpeg / editor handles timing and compositing
+
+That is probably the strongest general rule you can use across the whole studio.
+
+---
+
+# 2. The proper Cloudflare studio architecture
+
+You want a **media-orchestrating essay factory**, not just a PIL renderer.
+
+## The real pipeline
+
+```text
+Essay
+→ semantic chunking
+→ shot design
+→ medium selection
+→ asset retrieval / generation
+→ render lanes
+→ composition
+→ QC
+→ pack output
+```
+
+## Cloudflare roles
+
+### 1. Durable Object = the job brain
+
+One DO per essay/video.
+
+It stores:
+
+* current stage
+* storyboard
+* shot states
+* asset references
+* selected medium per shot
+* render status
+* QC scores
+* retry count
+
+### 2. D1 = structured memory
+
+Tables for:
+
+* essays
+* shots
+* assets
+* visual motifs
+* prompts
+* render metadata
+* QC results
+* gold-pack comparisons
+
+### 3. R2 = the actual studio drive
+
+Folders like:
+
+* `/historical-assets/`
+* `/generated-images/`
+* `/pil-renders/`
+* `/audio/`
+* `/storyboards/`
+* `/packs/`
+* `/gold-references/`
+
+### 4. Vectorize = semantic retrieval
+
+This is key.
+
+Embed:
+
+* captions of historical art
+* iconographic tags
+* prior scene descriptions
+* gold pack shot summaries
+* essay passage summaries
+
+Then queries like:
+
+* “12th century yogic manuscript with moon symbolism”
+* “ascetic body as vessel”
+* “Indian alchemical image with sun-moon polarity”
+* “previous scene similar to reversal of downward current”
+
+### 5. Workers AI
+
+Use for:
+
+* shot classification
+* prompt drafting
+* captioning assets
+* visual QC
+* similarity checks
+* retrieval reranking
+* maybe TTS if desired, though you can keep Edge TTS externally
+
+### 6. Python render worker / VPS
+
+Keep this for:
+
+* PIL frame rendering
+* ffmpeg
+* font handling
+* final muxing
+* pack generation
+
+Cloudflare is the **control plane**.
+Python is the **render plane**.
+
+That’s the right split.
+
+---
+
+# 3. The key studio abstraction: every shot needs an “evidence role”
+
+This is the thing that will stop random media choices.
+
+For every shot, assign one of these:
+
+* **historical_context**
+* **primary_source_image**
+* **conceptual_model**
+* **technical_diagram**
+* **reconstruction**
+* **symbolic_interpretation**
+* **historical_argument**
+* **conceptual_synthesis**
+* **interpretive_clarification**
+
+Then the medium almost chooses itself.
+
+### Example
+
+If the shot role is **primary_source_image**, don’t generate it unless no real source exists.
+
+If the shot role is **conceptual_model**, PIL should probably dominate.
+
+If the shot role is **symbolic_interpretation**, text-to-image can be very strong.
+
+---
+
+# 4. The Amṛtasiddhi test case
+
+This is a perfect essay to demonstrate the system because it naturally wants **all three media**.
+
+Why?
+
+Because Amṛtasiddhi contains:
+
+1. **historical textual world**
+2. **precise yogic process**
+3. **symbolic/alchemical imagination**
+
+So it should not be “all PIL” and it should not be “all image gen.”
+
+It should be a controlled multi-medium film.
+
+---
+
+# 5. Amṛtasiddhi: medium map by chapter
+
+I’ll give you a concrete version.
+
+---
+
+## Chapter A — Opening the world
+
+**What the narration is doing:** introducing the text, world, transmission, ascetic context.
+
+### Best medium:
+
+**Historical images**
+
+### Why:
+
+You want the viewer to feel:
+
+* this is a real medieval yogic tradition
+* this comes from manuscripts, bodies, practices, lineages
+* not from a purely abstract animation machine
+
+### What to use:
+
+* manuscript folios
+* ascetics / yogis
+* old illustrations
+* temple or regional imagery if relevant
+
+### How to animate:
+
+* slow push
+* slight parallax
+* restrained caption
+* minimal line overlay
+* no over-designed motion
+
+### Rule:
+
+Historical assets here are **world-establishers**, not explainers.
+
+---
+
+## Chapter B — The problem: nectar is being lost
+
+**What the narration is doing:** saying that essence descends, is spent, and mortality is tied to this downward loss.
+
+### Best medium:
+
+**PIL procedural diagram**
+
+### Why:
+
+This is not a “mood” idea. It’s a causal system.
+
+You want the viewer to instantly grasp:
+
+* there is a reservoir
+* something descends
+* descent means depletion
+* depletion means ordinary embodied condition
+
+### PIL visual language:
+
+* upper lunar reservoir
+* descending crimson drop or current
+* lower fire or consumption chamber
+* reserve visibly shrinking
+
+### Why not historical here?
+
+A manuscript may hint at this symbolically but won’t **explain the mechanism** cleanly.
+
+---
+
+## Chapter C — Yogic alchemy vocabulary
+
+**What the narration is doing:** linking process to symbols like moon, sun, fire, nectar, channels, seals.
+
+### Best medium:
+
+**Historical + PIL annotations**
+
+### Why:
+
+This is where you use **real symbolic source material**.
+
+Show:
+
+* the symbols as historically inherited
+* not invented by your studio
+
+Then use PIL to:
+
+* highlight the relevant parts
+* connect the symbol to the mechanism the viewer already learned
+
+This is one of the strongest hybrid modes in the whole system.
+
+---
+
+## Chapter D — Reversal
+
+**What the narration is doing:** the main dramatic turn — what normally descends is sealed and reversed.
+
+### Best medium:
+
+**PIL**
+with maybe a generated texture layer if needed
+
+### Why:
+
+This is the explanatory heart of the essay.
+
+The viewer must feel:
+
+* ordinary flow
+* intervention
+* closure
+* reversal
+* upward return
+
+This is 100% a transformation scene.
+
+### This should pass mute completely.
+
+If you can’t understand it silently, the shot failed.
+
+---
+
+## Chapter E — Mahāmudrā, mahābandha, mahāvedha
+
+**What the narration is doing:** introducing operative yogic means.
+
+### Best medium:
+
+**AI technical plate + PIL semantic animation**
+
+### Why:
+
+This section benefits from a more designed image system because:
+
+* there are multiple distinct “operations”
+* you want them visually distinguished
+* PIL alone can become too sparse
+* but pure image gen will not explain the interlocking logic precisely enough
+
+### Best method:
+
+1. Generate a clean white-background plate
+2. No text or little text
+3. Distinct modules / zones
+4. Use PIL to animate:
+
+   * sealing
+   * pressure
+   * redirection
+   * interlock
+
+This is the ideal “custom diagram” use case for image generation.
+
+---
+
+## Chapter F — Central channel
+
+**What the narration is doing:** showing how dual or peripheral currents are gathered into a central route.
+
+### Best medium:
+
+**PIL**
+
+### Why:
+
+This is vector-field logic.
+
+You need:
+
+* oscillating duality
+* synchronization
+* convergence
+* centralization
+
+PIL is the best because it gives exact control over:
+
+* path
+* rhythm
+* phase
+* emergence of a third channel
+
+### A good silent test:
+
+Can someone infer “two become one and open a new axis” with the audio off?
+
+If yes, it works.
+
+---
+
+## Chapter G — The imaginal body
+
+**What the narration is doing:** treating the body as alchemical apparatus, not just flesh.
+
+### Best medium:
+
+**Hybrid**
+
+* generated base plate
+* PIL animated reservoirs and channels
+
+### Why:
+
+This is where generated imagery is genuinely useful.
+
+You want a body-vessel that feels:
+
+* elegant
+* symbolic
+* not medical
+* not cheesy chakra art
+* more like a sacred technical diagram
+
+Then PIL overlays:
+
+* flow
+* seals
+* conserved drop
+* route changes
+
+This is far stronger than either medium alone.
+
+---
+
+## Chapter H — Nectar / immortality
+
+**What the narration is doing:** making claims about amṛta, preservation, and altered relation to decay.
+
+### Best medium:
+
+Mix of:
+
+* **PIL** for the exact reserve / suspension logic
+* **image generation** for visionary translation
+
+### Why:
+
+There are two jobs here:
+
+1. **explain**
+2. **evoke**
+
+PIL explains:
+
+* a reserve is preserved
+* expenditure is halted or reversed
+
+Generated imagery evokes:
+
+* inexhaustibility
+* reflective multiplicity
+* one source appearing in many vessels
+* lunar stillness
+
+This is where you let the film breathe a bit.
+
+---
+
+## Chapter I — Manuscripts / transmission / influence
+
+**What the narration is doing:** returning to textual history, inheritance, later yoga traditions.
+
+### Best medium:
+
+**Historical images + PIL lineage diagrams**
+
+### Why:
+
+This is not a place for visionary image gen.
+
+Use:
+
+* manuscript folios
+* text thumbnails
+* subtle timeline or branching tree from PIL
+
+You’re showing:
+
+* this text became part of a lineage
+* later works inherit or transform it
+
+This is a historical argument, not a symbolic mood sequence.
+
+---
+
+## Chapter J — Final synthesis
+
+**What the narration is doing:** bringing all the systems together.
+
+### Best medium:
+
+**PIL-dominant hybrid**
+
+### Why:
+
+The ending should recombine the continuity systems:
+
+* moon
+* drop
+* fire
+* seal
+* dual currents
+* central channel
+* return path
+
+You want the final image to feel like:
+“the whole doctrine has become one coherent machine.”
+
+That is classic PIL territory.
+
+You can start with historical echoes or dissolve from a folio, but the final resolved image should be a clean, beautiful, exact procedural synthesis.
+
+---
+
+# 6. The actual medium-selection rubric
+
+This is the practical version another agent could follow.
+
+For each shot, score 1–5:
+
+## A. Historical grounding need
+
+How much does the shot need authenticity?
+
+## B. Transformation complexity
+
+How much exact change over time must be shown?
+
+## C. Visual novelty need
+
+Does the shot require an image that probably doesn’t exist historically?
+
+## D. Silent explainability
+
+Would an explanatory animation help more than a static image?
+
+## E. Atmosphere / visionary need
+
+Does this passage need imaginal scale or emotional atmosphere?
+
+Then choose:
+
+* High A, low B → **historical**
+* Low A, high B → **PIL**
+* Low A, medium B, high C/E → **image generation**
+* High A + high B → **historical + PIL**
+* High B + high C → **AI + PIL**
+* High A + high B + high E → **historical open → PIL explain → visionary close**
+
+That last pattern is often the best one.
+
+---
+
+# 7. The real secret: PIL should be the semantic spine
+
+This is important.
+
+Even when you use all this extra media, **PIL should remain the semantic spine** of the studio.
+
+Why?
+
+Because PIL is what gives you:
+
+* causal clarity
+* continuity
+* process logic
+* exact relation between words and movement
+* no-narration intelligibility
+
+So the rule is:
+
+* **Historical art gives truth-weight**
+* **Image generation gives imaginal richness**
+* **PIL gives meaning-motion**
+
+That triad is the whole studio.
+
+---
+
+# 8. How to stop the film becoming visually chaotic
+
+This is the danger once you add more media.
+
+You solve it with a **global visual grammar**.
+
+For Amṛtasiddhi, I’d enforce:
+
+## Global style rules
+
+* white or parchment-white dominant field
+* black ink structures
+* restrained crimson for bindu / essence / flow
+* muted gold for awakened or conserved states
+* grey for exhausted / ordinary conditions
+* minimal typography
+* no noisy backgrounds
+* no fantasy overload
+* slow, precise motion
+* recurring continuity objects
+
+## Recurring continuity systems
+
+These should recur across media:
+
+1. **upper lunar reservoir**
+2. **descending drop**
+3. **lower consuming fire**
+4. **sealed gate**
+5. **dual side currents**
+6. **central ascending route**
+7. **textual folio / transmission marker**
+
+So even if one scene is a manuscript and the next is a diagram and the next is a generated visionary body, they feel like one film because they reuse the same conceptual actors.
+
+---
+
+# 9. The shot packet schema you probably want
+
+Every shot should carry something like:
+
+```json
+{
+  "shot_id": "amr_014",
+  "spoken_text": "...",
+  "duration_s": 6.5,
+  "claim_type": "conceptual_model",
+  "visual_function": "show preserved nectar as non-depleting source",
+  "medium_primary": "pil",
+  "medium_secondary": "ai_image",
+  "evidence_role": "symbolic_interpretation",
+  "continuity_objects": ["lunar_reservoir", "crimson_drop"],
+  "silent_test": "one source fills many vessels without shrinking",
+  "why_this_medium": "PIL proves non-depletion causally; AI enriches the visionary mood",
+  "forbidden": [
+    "generic meditating silhouette",
+    "stock chakra rainbow",
+    "moon goddess fantasy art"
+  ]
+}
+```
+
+This would make your studio much smarter.
+
+---
+
+# 10. Concrete recommendations for the Amṛtasiddhi studio build
+
+If I were implementing this now, I’d do:
+
+## Phase 1 — Asset intelligence
+
+Build R2 + D1 asset records for:
+
+* manuscript folios
+* yogi / ascetic images
+* alchemical and symbolic images
+* regional landscapes / sacred geography
+* statues / iconography
+
+Each asset gets:
+
+* caption
+* tradition
+* object type
+* source
+* license
+* embedding
+* tags
+
+## Phase 2 — Shot medium classifier
+
+For each passage:
+
+* classify claim type
+* propose top 2 media
+* force a reason
+
+## Phase 3 — Render lanes
+
+Three render lanes:
+
+1. **historical lane**
+2. **PIL lane**
+3. **image-gen lane**
+
+Then a compositor lane.
+
+## Phase 4 — QC
+
+Each shot gets checked for:
+
+* silent intelligibility
+* style coherence
+* evidence honesty
+* continuity usage
+* cliché avoidance
+
+## Phase 5 — Final pack
+
+Output:
+
+* MP4
+* storyboard CSV/JSON
+* visual program JSON
+* asset manifest
+* provenance manifest
+* QC report
+* render script
+* production blueprint
+
+---
+
+# 11. My strongest advice
+
+Don’t think in terms of:
+
+> “Should we use PIL or historical art or image gen?”
+
+Think in terms of:
+
+> “What is the epistemic job of this shot?”
+
+Then the medium becomes obvious.
+
+### If the shot says:
+
+* “this existed” → historical
+* “this happens” → PIL
+* “this feels like” → image gen
+* “this tradition transmitted this doctrine” → historical + PIL
+* “this doctrine forms a coherent machine” → PIL synthesis
+* “this is the imaginal intensity of the doctrine” → image gen, kept honest by context
+
+That’s the clean framework.
+
+---
+
+# 12. Final Amṛtasiddhi verdict
+
+If you asked me how the finished film should break down, roughly:
+
+* **20–30% historical**
+* **45–55% PIL**
+* **15–25% image generation**
+* with many of the best shots being **hybrids**
+
+That feels right.
+
+Because Amṛtasiddhi is:
+
+* too historical to be all generated
+* too procedural to be all archival
+* too imaginal to be all diagram
+
+So it really is the perfect proof-of-concept for a full creative studio.
+
+---
+
+If you want, next I can do one of these two things:
+
+1. **Design the exact Cloudflare/D1/R2 schema and workflow for this studio**, or
+2. **Build a full Amṛtasiddhi shot-by-shot medium map (40–80 shots) with “historical vs PIL vs image-gen” chosen for each shot**.

@@ -1,0 +1,14 @@
+ https://huggingface.co/datasets/SALT-NLP/SWE-chat
+
+The one finding that matters most
+From the SWE-chat extraction: github.com appears in 4,741 out of 10,673 domain events — it dominates because coding agents interact with it constantly. But the more interesting signal is the long tail: agents touch hundreds of unique domains during real work. DomainArena measures whether they understand what those services do from their names alone, which is exactly the signal that determines selection.
+
+Here's everything we've built and collected, clearly laid out:
+Complete data inventory
+#	Dataset	Size	What it proves	Source
+1	SWE-chat domain events	10,673 events, 978 unique domains, 5,594 sessions	Which domains coding agents actually encounter in real work	SALT-NLP/SWE-chat via HF
+2	DomainArena experiment run	Semantic inversion + discovery + execution funnel across 2 model families	Cross-family consensus on domain comprehension; hostname drives selection	CF Workers AI live
+3	Canonical benchmark suite	19 sources / 8,121 cases	Standardized evaluation across adversarial + general NLI + hallucination detection	HF (ANLI, MNLI, SNLI, SciTail, WANLI, QNLI, RTE, CB, HaluEval)
+4	Internal metamorphic splits	dev/heldout/stress/relation/s2_secret/vitaminc	Controlled ground-truth evaluation of FactJudge scorer	Self-generated metamorphic
+5	c026port.wasm artifact	24.3MB, GATE ZERO complete	Working WASM scorer with 100% parity	Our build
+6	Evidence receipts	17 sha256-hashed tamper-evident records	Proof that every experiment ran as claimed	Self-generated

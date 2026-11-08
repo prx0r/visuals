@@ -1,0 +1,23 @@
+Done this round
+Foxit MCP — LIVE with 32 real tools. Installed their official server (fixed their broken package entry-point), verified a genuine MCP handshake with our existing PDF-Services credentials — tool discovery returned upload_document, pdf_from_word, pdf_structural_analysis, compress, and 29 more. Registered into Hermes as foxit-pdf alongside proofdesk (12 tools). Hermes now has 44 tools spanning Foxit's reversible catalog + our gated authority pipeline. This is literally the architecture their challenge describes: "Register it and your agent gets 40 tools for the reversible work."
+Doctavian Mission-1 architecture wired into every generation call: Data Source + Document Solution now wrap each run, with solution GUID captured in artifact metadata for provenance.
+Template v3 with real mdoc syntax — regenerated after fixing a §{!#fc#.idx} escaping bug; verified 6 repeaters + 8 hidden-conditional blocks present.
+Foxit eSign client ready (foxit_esign_real.py) — OAuth2 → createfolder(processTextTags) → sendDraftFolder per their docs.
+All tests green: 38/38.
+Two things blocked on credentials
+1. The OAuth code you pasted was the old one (single-use, already consumed). Fresh link is in my previous message — one click, paste back the new callback URL.
+2. The Foxit creds you sent are the PDF-Services pair (identical to what we already had) — eSign rejected them as invalid_client. eSign needs its own registration: developer-api.foxit.com → eSign section → separate Client ID/Secret.
+
+1️⃣ Doctavian (30 seconds)
+Click this link:
+https://demo.api.doctavian.com/public/v1/auth/microsoft/authorize?client_id=11e71170-3499-43f3-b878-7df343f43d37&redirect_uri=https%3A%2F%2Foauth.pstmn.io%2Fv1%2Fcallback&response_type=code&scope=api%3A%2F%2F40728276-52a7-4932-bf32-76737f1fd01a%2F.default+offline_access&code_challenge=O-wh56P8OSBPJhYhpKn_9jjm-HKbyAS6DFBZbAzRfTY&code_challenge_method=S256
+→ Sign in with Microsoft → Approve → copy the URL in the address bar (starts https://oauth.pstmn.io/v1/callback?code= — must contain a NEW code) → paste it here.
+⚠️ The old link you used before is dead. Only this fresh one works.
+2️⃣ Foxit eSign keys (5 minutes)
+The keys you gave me are the PDF Services ones — eSign needs its own:
+1. Go to https://na1.foxitesign.foxit.com (or developer-api.foxit.com → look for "eSign")
+2. Sign up / log in
+3. Find API settings or Client ID/Secret in account settings
+4. Paste both here, labeled like:
+esign_id: ...
+esign_secret: ...

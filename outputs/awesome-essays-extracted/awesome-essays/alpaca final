@@ -1,0 +1,1526 @@
+Yes. I would make the project much tighter than the previous version:
+
+> **Benchmark 10 literature-derived agent architectures under one controlled trading environment → identify which components actually help → evolve new architectures from those components → freeze the winner → demonstrate it in Alpaca paper trading.**
+
+That gives you a defensible research claim rather than “we threw lots of agents at markets.”
+
+Your current CoGym already has most of the experimental substrate: deterministic `TradingWorld`, point-in-time `MarketPacket`, immutable `Episode`, `AgentSpec`, deterministic scoring, team/social/persistence experiments, successive-halving evolution, and a hash-chained `EventLedger`.
+
+# 1. The exact research claim
+
+The final submission should be able to say:
+
+> We selected ten representative architectures from published agent and financial-agent research: ReAct, Reflexion, FinMem, FinAgent, FinCon, TradingAgents, Multi-Agent Debate, Mixture-of-Agents, Magentic-One and HedgeAgents.
+>
+> We reimplemented them behind a common architecture interface, controlled for model, information, tools and inference budget, and evaluated them on deterministic regime-shift worlds and point-in-time historical market replay.
+>
+> We then treated agent architecture as an evolvable computational graph and searched beyond the ten human-designed systems using ideas from GPTSwarm, AFlow and ADAS.
+>
+> Validated experimental findings were stored in HydraDB and exposed to the architecture proposer, while secret evaluation remained sealed.
+>
+> The final architecture was frozen before forward Alpaca paper evaluation.
+
+That's a legitimately interesting experiment.
+
+---
+
+# 2. The ten seed architectures
+
+These should be the canonical `ARCH-00` through `ARCH-09`.
+
+| ID | Architecture                | Literature basis                | Core hypothesis                                                         | Reuse                           |
+| -- | --------------------------- | ------------------------------- | ----------------------------------------------------------------------- | ------------------------------- |
+| A0 | **ReAct Solo**              | ReAct, arXiv:2210.03629         | One tool-using reasoning agent may already be enough                    | `ysymyth/ReAct`                 |
+| A1 | **Reflexion Solo**          | Reflexion, arXiv:2303.11366     | Outcome reflection + episodic lessons improves sequential decisions     | implement small adapter         |
+| A2 | **FinMem**                  | FinMem, arXiv:2311.13743        | Layered temporal memory beats raw history                               | `wilfrid51/FINMEM`              |
+| A3 | **FinAgent**                | FinAgent, arXiv:2402.18485      | multimodal evidence + fast/slow reflection improves adaptation          | `DVampire/FinAgent`             |
+| A4 | **FinCon**                  | FinCon, arXiv:2407.06567        | manager hierarchy + selective verbal reinforcement improves learning    | FINSABER adapter + paper        |
+| A5 | **TradingAgents**           | TradingAgents, arXiv:2412.20138 | specialist analysts + bull/bear debate + risk review improves decisions | `TauricResearch/TradingAgents`  |
+| A6 | **Adversarial Debate**      | MAD, arXiv:2305.19118           | opposing hypotheses prevent premature convergence                       | `Skytliang/Multi-Agents-Debate` |
+| A7 | **Mixture-of-Agents**       | MoA, arXiv:2406.04692           | independent proposals + aggregation exploit diversity                   | `togethercomputer/MoA`          |
+| A8 | **Dynamic Orchestrator**    | Magentic-One, arXiv:2411.04468  | only invoke specialists when useful                                     | `microsoft/autogen`             |
+| A9 | **Heterogeneous Committee** | HedgeAgents, arXiv:2502.13165   | agents with genuinely different objectives outperform generic analysts  | reproduce architecture          |
+
+These cover fundamentally different hypotheses rather than ten cosmetically different prompts.
+
+ReAct establishes the tool-using single-agent control. ([arXiv][1]) Reflexion adds verbal outcome-driven learning. ([arXiv][2]) FinMem specifically introduces layered temporal financial memory. ([arXiv][3]) FinAgent adds multimodal market intelligence and dual-level reflection. ([arXiv][4]) FinCon adds manager/analyst hierarchy and conceptual verbal reinforcement. ([arXiv][5])
+
+TradingAgents gives you the explicit trading-firm architecture—specialist analysts, bull/bear research debate, risk management and portfolio approval—and its maintained repository is already LangGraph-based. ([arXiv][6]) MAD gives you adversarial debate specifically intended to overcome self-reflection's tendency to get stuck in an initial position. ([arXiv][7]) MoA provides a clean parallel-proposer/aggregator design whose reference implementation is tiny. ([arXiv][8]) Magentic-One gives dynamic orchestrator-driven delegation and replanning. ([arXiv][9]) HedgeAgents contributes heterogeneous specialists and manager-mediated coordination rather than interchangeable analyst agents. ([arXiv][10])
+
+---
+
+# 3. Do NOT clone these as ten independent applications
+
+Clone them as **reference implementations**.
+
+Repository layout:
+
+```text
+cogym/
+├── canonical/
+│   └── cogym/
+│       ├── architectures/
+│       │   ├── genome.py
+│       │   ├── executor.py
+│       │   ├── registry.py
+│       │   └── seeds/
+│       │       ├── react.py
+│       │       ├── reflexion.py
+│       │       ├── finmem.py
+│       │       ├── finagent.py
+│       │       ├── fincon.py
+│       │       ├── tradingagents.py
+│       │       ├── debate.py
+│       │       ├── moa.py
+│       │       ├── orchestrator.py
+│       │       └── heterogeneous.py
+│       │
+│       ├── benchmarks/
+│       │   ├── synthetic_trading.py
+│       │   ├── finsaber.py
+│       │   └── alpaca_replay.py
+│       │
+│       └── evolution/
+│           ├── mutations.py
+│           ├── archive.py
+│           ├── proposer.py
+│           └── search.py
+│
+└── vendor/
+    ├── FINSABER/
+    ├── TradingAgents/
+    ├── FINMEM/
+    ├── FinAgent/
+    ├── Multi-Agents-Debate/
+    ├── MoA/
+    ├── autogen/
+    ├── GPTSwarm/
+    ├── AFlow/
+    └── ADAS/
+```
+
+Pin every reference repo to a commit SHA in:
+
+```yaml
+research/references.lock.yaml
+```
+
+Do not build production logic directly around their internals.
+
+Extract their ideas into one common interface.
+
+---
+
+# 4. FINSABER should become the historical backtesting substrate
+
+This is one of the biggest time-savers I found.
+
+FINSABER is now a KDD 2026 benchmark specifically for comparing traditional, ML and LLM financial strategies. The current FINSABER-2 implementation already provides:
+
+* explicit execution timing;
+* adjusted OHLC handling;
+* slippage;
+* liquidity limits;
+* structured result artifacts;
+* trade/order logs;
+* LLM cost accounting;
+* FinMem, FinAgent and FinCon experimental integrations.
+
+([github.com][11])
+
+So don't reinvent all of that.
+
+Install/vendor:
+
+```text
+waylonli/FINSABER
+```
+
+and make:
+
+```python
+class CoGymStrategy:
+    def decide(packet, architecture, context) -> Decision:
+        ...
+```
+
+FINSABER becomes the execution/accounting engine.
+
+CoGym remains the **experiment/evolution engine**.
+
+---
+
+# 5. One common `ArchitectureGenome`
+
+Every architecture must compile into this representation.
+
+Something like:
+
+```yaml
+id: arch-tradingagents
+
+nodes:
+  - id: technical
+    role: analyst
+    tools: [market]
+    memory: none
+
+  - id: event
+    role: analyst
+    tools: [news]
+    memory: none
+
+  - id: bull
+    role: advocate
+
+  - id: bear
+    role: adversary
+
+  - id: manager
+    role: aggregator
+
+  - id: critic
+    role: risk_critic
+
+edges:
+  - technical -> bull
+  - event -> bull
+  - technical -> bear
+  - event -> bear
+  - bull -> manager
+  - bear -> manager
+  - manager -> critic
+  - critic -> manager
+
+communication:
+  mode: directed
+  max_rounds: 2
+
+memory:
+  type: none
+
+reflection:
+  within_episode: false
+  cross_episode: false
+
+routing:
+  type: static
+
+budget:
+  max_calls: 8
+  max_tokens: 12000
+```
+
+Then FinMem is just another graph:
+
+```text
+market
+  ↓
+temporal memory retrieval
+  ↓
+reasoner
+  ↓
+decision
+  ↓
+memory update
+```
+
+MoA:
+
+```text
+        ┌→ proposer A ─┐
+market ─┼→ proposer B ─┼→ aggregator
+        └→ proposer C ─┘
+```
+
+Magentic:
+
+```text
+market
+  ↓
+orchestrator
+  ├→ technical
+  ├→ event
+  ├→ memory
+  └→ critic
+       ↓
+orchestrator
+```
+
+Now every architecture is comparable and evolvable.
+
+---
+
+# 6. Crucial experimental rule: architecture ≠ strategy
+
+Initially do **not** let the architectures use different trading strategies.
+
+That destroys your causal inference.
+
+For experiment phase 1, everyone receives identical:
+
+```text
+MarketPacket
+PortfolioState
+available tools
+decision horizon
+action schema
+```
+
+and outputs:
+
+```json
+{
+  "stance": "...",
+  "probabilities": {},
+  "expected_return": 0,
+  "confidence": 0,
+  "risk": 0,
+  "claims": [],
+  "falsifiers": [],
+  "uncertainties": []
+}
+```
+
+You already have almost exactly this `Decision` type.
+
+Keep the initial paper-simulation action space deliberately simple.
+
+Only after determining which *reasoning architecture* works should you test more complex paper-only options decision tasks.
+
+---
+
+# 7. Experiment E0 — harness validation
+
+Before comparing anything:
+
+### Objective
+
+Prove architecture runners are being treated identically.
+
+Run:
+
+```text
+same deterministic HarnessTraderModel
+through all 10 architectures
+```
+
+Each should get identical market input.
+
+Check:
+
+```text
+no point-in-time leakage
+same market digest
+same portfolio state
+same action schema
+same model configuration
+same scorer
+replay hash identical
+```
+
+Any architecture violating the experiment boundary gets invalidated.
+
+This directly extends your existing immutable `Episode` and `EventLedger` model.
+
+---
+
+# 8. Experiment E1 — ten-architecture screen
+
+This is the first headline experiment.
+
+## Question
+
+> Which published architecture performs best when model, evidence and task are held constant?
+
+Use your five synthetic hard-world families:
+
+```text
+regime_flip
+base_rate_shift
+confounded_choice
+costly_evidence
+difficulty_weighted_rank
+```
+
+These already exist.
+
+### Sample
+
+Use:
+
+```text
+5 world families
+× 30 seeds
+× 2 stochastic repeats
+= 300 episodes per architecture
+
+10 architectures
+= 3,000 architecture-episodes
+```
+
+If complex architectures make several model calls each, that gives plenty of inference.
+
+### Primary metric
+
+Use:
+
+```text
+paired cumulative regret
+```
+
+because synthetic worlds give you an oracle.
+
+### Secondary
+
+```text
+decision accuracy
+Brier score
+calibration error
+adaptation latency
+drawdown-equivalent penalty
+tokens
+calls
+latency
+```
+
+### Result
+
+Rank all ten.
+
+Do **not** eliminate too aggressively yet.
+
+Keep top six plus at least one qualitatively different architecture.
+
+---
+
+# 9. Experiment E2 — communication topology
+
+This is possibly the cleanest paper-worthy experiment.
+
+Same:
+
+```text
+3 agents
+same model
+same prompts
+same information
+same judge
+```
+
+Only change communication.
+
+Conditions:
+
+```text
+T0 SOLO
+
+T1 PARALLEL
+A ─┐
+B ─┼→ Judge
+C ─┘
+
+T2 CHAIN
+A → B → C → Judge
+
+T3 SHARED CHAT
+A ↔ B ↔ C → Judge
+
+T4 ADVERSARIAL
+Bull ↔ Bear → Judge
+
+T5 STAR
+     A
+     ↓
+B → Manager ← C
+
+T6 DYNAMIC
+Orchestrator chooses who runs
+```
+
+Measure:
+
+```text
+performance
+agent disagreement
+error correlation
+revision quality
+herding
+calls
+tokens
+latency
+```
+
+MAD specifically motivates adversarial discussion because independent self-reflection can converge on an incorrect initial belief. ([arXiv][7])
+
+MoA motivates independent parallel proposals followed by aggregation. ([arXiv][8])
+
+Magentic-One motivates dynamic orchestration rather than executing every specialist every time. ([arXiv][9])
+
+This experiment gives causal evidence about **topology**.
+
+---
+
+# 10. Experiment E3 — memory architecture
+
+Now test memory independently.
+
+Use the winning reasoning architecture from E1/E2.
+
+Conditions:
+
+```text
+M0 no memory
+
+M1 full transcript
+
+M2 sliding window
+
+M3 FinMem temporal layers
+
+M4 Reflexion episodic lessons
+
+M5 Hydra semantic/graph recall
+
+M6 Hydra validated-findings-only
+```
+
+FinMem is the direct literature baseline. ([arXiv][3])
+
+Reflexion is the verbal-learning baseline. ([arXiv][2])
+
+The important novel condition is:
+
+> **validated Hydra memory**
+
+because most agent memories write whatever the agent believes.
+
+CoGym should write only lessons that survive counterfactual evaluation.
+
+---
+
+# 11. Experiment E4 — FinCon learning
+
+Test the actual interesting FinCon mechanism instead of merely copying its architecture.
+
+Sequence:
+
+```text
+Episode
+   ↓
+outcome
+   ↓
+reflection agent
+   ↓
+proposed lesson
+
+"trend-following failed because X"
+
+   ↓
+
+COUNTERFACTUAL VALIDATION
+
+Run paired probes:
+with lesson
+without lesson
+
+   ↓
+positive transfer?
+      ├─ no → REJECT
+      └─ yes → ACCEPT
+```
+
+Compare:
+
+```text
+C0 no learning
+C1 raw Reflexion
+C2 FinCon conceptual verbal reinforcement
+C3 CoGym validated conceptual reinforcement
+```
+
+FinCon's contribution is precisely selective conceptual belief updating and propagation across its hierarchy. ([arXiv][5])
+
+Your `SkillRegistry` already has essentially the correct acceptance mechanism: evidence-gated artifacts, paired deltas, promotion through evidence layers, rejection/regression states.
+
+Reuse it.
+
+Call lessons:
+
+```text
+ReasoningSkill
+```
+
+instead of inventing another mechanism.
+
+---
+
+# 12. Experiment E5 — regime change / memory poisoning
+
+This is probably the best Hydra experiment.
+
+Generate:
+
+```text
+days 1–30
+Regime A
+
+change point
+
+days 31–60
+Regime B
+```
+
+Agents aren't told exactly when it changes.
+
+During Regime A they accumulate memories.
+
+After the switch, those memories become misleading.
+
+Compare:
+
+```text
+no memory
+raw transcript
+FinMem
+Reflexion
+Hydra all-memory
+Hydra recency-biased
+Hydra validated-memory
+```
+
+Primary endpoints:
+
+```text
+change_detection_latency
+adaptation_latency
+post_shift_regret
+stale_memory_usage_rate
+```
+
+Your own current roadmap already identifies memory poisoning and regime change as a planned CoGym experiment.
+
+This is where Hydra becomes scientifically meaningful rather than decorative.
+
+---
+
+# 13. Experiment E6 — specialization
+
+Test whether specialists help because of their **roles**, or merely because they add inference.
+
+Keep total model calls fixed.
+
+Compare:
+
+```text
+S0
+4 generic agents
+
+S1
+technical / event / risk / macro roles
+
+S2
+same roles but all see identical data
+
+S3
+specialists see only relevant evidence
+
+S4
+heterogeneous objectives:
+return / tail-risk / uncertainty / contradiction
+```
+
+TradingAgents motivates domain-specific analysts. ([arXiv][6])
+
+HedgeAgents motivates heterogeneous responsibilities plus centralized portfolio management. ([arXiv][10])
+
+Interesting hypothesis:
+
+> restricted-information specialization may outperform giving every agent everything.
+
+---
+
+# 14. Experiment E7 — reflection depth
+
+Use FinAgent and Reflexion to motivate this.
+
+Conditions:
+
+```text
+R0 no reflection
+
+R1 immediate critique
+
+R2 critique + revision
+
+R3 outcome reflection between episodes
+
+R4 fast + slow reflection
+```
+
+FinAgent explicitly uses dual-level reflection and diversified memory retrieval. ([arXiv][4])
+
+Measure:
+
+```text
+beneficial revisions
+harmful revisions
+decision quality
+overthinking rate
+tokens
+latency
+```
+
+Do not assume more reasoning is better.
+
+Your existing `dose.py` experiment machinery is almost exactly the required primitive.
+
+---
+
+# 15. Then move into real historical replay
+
+Only after synthetic worlds establish the mechanism.
+
+Use FINSABER.
+
+## Stage H1
+
+Top six architectures.
+
+Sample historical decision anchors instead of immediately running every trading day.
+
+Something like:
+
+```text
+4 assets
+× 4 market-regime buckets
+× 25 anchors
+× 2 inference repeats
+= 800 decisions per architecture
+```
+
+Keep top four.
+
+## Stage H2
+
+Run full chronological FINSABER evaluations on top four.
+
+FINSABER already generates:
+
+```text
+run_config.json
+run_manifest.json
+metrics.json
+equity_curve.csv
+trades.csv
+orders.csv
+rejected_orders.csv
+llm_costs.csv
+```
+
+([PyPI][12])
+
+This means CoGym can ingest standardized results instead of implementing its own entire market accounting stack.
+
+---
+
+# 16. Validation must be chronological
+
+Do not random-split market observations.
+
+Use:
+
+```text
+DEV
+architecture mutations allowed
+
+VALIDATION
+selection only
+
+SECRET
+zero feedback to proposer
+
+FORWARD PAPER
+post-freeze
+```
+
+And every architecture gets identical dates.
+
+Architecture search happening on the secret set invalidates the experiment.
+
+Your existing `SealedEval` direction is exactly right.
+
+---
+
+# 17. Now evolution begins
+
+This is where three other papers become relevant.
+
+They are **not additional benchmark architectures**.
+
+They tell us how to search beyond the ten.
+
+## GPTSwarm
+
+arXiv:2402.16823 represents agents as computational graphs and optimizes node prompts and graph connectivity. ([arXiv][13])
+
+## AFlow
+
+arXiv:2410.10762 represents workflows as code graphs and uses an MCTS-like optimizer over operators such as Generate, Review, Revise and Ensemble. ([arXiv][14])
+
+## ADAS
+
+arXiv:2408.08435 allows a meta-agent to generate entirely new agent implementations based on an archive of previous discoveries. ([arXiv][15])
+
+Therefore CoGym's evolution layer should combine the useful parts:
+
+```text
+GPTSwarm
+graph representation
+
++
+
+AFlow
+structured mutation operators/search
+
++
+
+ADAS
+LLM-generated novel architectures
+
++
+
+CoGym
+sealed deterministic evaluation
+```
+
+That's a very compelling lineage.
+
+---
+
+# 18. Mutation space
+
+Start constrained.
+
+Don't allow Hermes to write arbitrary Python initially.
+
+### Structural mutations
+
+```text
+ADD_NODE
+REMOVE_NODE
+
+ADD_EDGE
+REMOVE_EDGE
+
+CHANGE_ROLE
+
+SERIAL_TO_PARALLEL
+PARALLEL_TO_SERIAL
+
+ADD_AGGREGATOR
+ADD_CRITIC
+ADD_ADVERSARY
+
+ENABLE_DYNAMIC_ROUTING
+DISABLE_DYNAMIC_ROUTING
+```
+
+### Cognitive mutations
+
+```text
+ENABLE_MEMORY
+CHANGE_MEMORY_TYPE
+
+ENABLE_REFLECTION
+CHANGE_REFLECTION_DEPTH
+
+CHANGE_DEBATE_ROUNDS
+
+CHANGE_INFORMATION_SCOPE
+
+CHANGE_AGGREGATION
+```
+
+### Efficiency mutations
+
+```text
+CHANGE_MODEL_TIER
+CHANGE_MAX_CALLS
+CHANGE_CONTEXT_BUDGET
+CHANGE_RETRIEVAL_K
+```
+
+Every proposal must contain:
+
+```json
+{
+  "parent": "...",
+  "mutation": "...",
+  "hypothesis": "...",
+  "expected_gain": "...",
+  "expected_cost": "..."
+}
+```
+
+Hermes proposes.
+
+CoGym validates enum legality and evaluates.
+
+This preserves the existing core rule.
+
+---
+
+# 19. Don't use one scalar fitness
+
+Maintain an archive.
+
+Fitness dimensions:
+
+```text
+decision quality
+regime-shift robustness
+calibration
+historical performance
+drawdown
+inference cost
+latency
+```
+
+Maintain elites:
+
+```text
+overall
+low-cost
+low-latency
+best-memory
+best-no-memory
+best-regime-change
+best-solo
+best-team
+```
+
+That preserves stepping stones rather than collapsing evolution onto one lucky configuration.
+
+Your own frontier notes already point in this direction through archive-based evolutionary work.
+
+---
+
+# 20. Evolution campaign
+
+Start with the ten literature architectures as founders.
+
+```text
+GENERATION 0
+
+10 literature seeds
+
+        ↓
+
+each produces 6 mutations
+
+        ↓
+
+60 candidates
+
+        ↓
+synthetic screen
+
+20 survivors
+
+        ↓
+hard synthetic suite
+
+8 survivors
+
+        ↓
+historical DEV
+
+4 elites
+
+        ↓
+
+next generation
+```
+
+Run approximately:
+
+```text
+5 generations
+```
+
+Initially that's plenty for a hackathon story.
+
+Don't search indefinitely.
+
+The final experiment needs to remain interpretable.
+
+---
+
+# 21. Also run **empty-seed evolution**
+
+This is important because of ADAS.
+
+Run two searches.
+
+### EVOLVE-A
+
+Starts from the ten literature architectures.
+
+### EVOLVE-B
+
+Starts from a minimal solo-agent grammar.
+
+Then ask:
+
+> Does evolution rediscover human-designed motifs?
+
+Imagine the result:
+
+```text
+Evolution independently discovered:
+
+parallel analysts
+→ adversarial critic
+→ aggregator
+→ validated memory
+```
+
+That would be fantastic.
+
+Alternatively:
+
+> It discovered something none of the ten papers used.
+
+Even better.
+
+ADAS explicitly motivates searching beyond handcrafted systems and reports transfer of automatically discovered architectures across tasks/models. ([arXiv][15])
+
+---
+
+# 22. HydraDB's exact responsibility
+
+Use three stores.
+
+## 1. EventLedger
+
+Canonical truth.
+
+```text
+what actually happened
+```
+
+## 2. Artifact store
+
+Raw outputs/results/configs.
+
+```text
+what evidence exists
+```
+
+## 3. HydraDB
+
+Scientific learned knowledge.
+
+```text
+what validated relationships have we discovered?
+```
+
+HydraDB should never replace the first two.
+
+---
+
+# 23. Hydra Knowledge
+
+Put the papers and architecture descriptions into Hydra's **knowledge** side:
+
+```text
+ReAct
+Reflexion
+FinMem
+FinAgent
+FinCon
+TradingAgents
+MAD
+MoA
+Magentic-One
+HedgeAgents
+GPTSwarm
+AFlow
+ADAS
+```
+
+Hydra explicitly separates relatively static knowledge from dynamic memories. ([HydraDB SDK][16])
+
+This lets Hermes ask:
+
+> What published mechanisms exist for reducing correlated agent errors?
+
+---
+
+# 24. Hydra Memory
+
+Only project validated CoGym findings.
+
+Example:
+
+```json
+{
+  "finding": "Parallel independent agents outperformed shared-chat agents on regime_flip.",
+  "metadata": {
+    "experiment": "E2",
+    "world_family": "regime_flip",
+    "component": "communication",
+    "comparison": "parallel_vs_shared",
+    "effect": 0.081,
+    "n": 120,
+    "evidence_layer": "VALIDATION_CONFIRMED",
+    "available_at": "...",
+    "artifact_digest": "sha256:..."
+  }
+}
+```
+
+Hydra metadata is useful because deterministic filters are applied before semantic/graph retrieval. ([HydraDB SDK][17])
+
+So during search:
+
+```text
+filter:
+evidence_layer = validated
+world_family = regime_flip
+available_at <= experiment cutoff
+```
+
+Then semantic/graph recall ranks only eligible evidence.
+
+---
+
+# 25. Hydra drives the mutation proposer
+
+Evolution cycle:
+
+```text
+candidate fails
+      ↓
+
+summarize failure mechanically
+      ↓
+
+query Hydra:
+
+"validated findings relevant to
+regime-change failures in architectures
+with shared communication"
+
+      ↓
+
+retrieve:
+- shared chat caused herding
+- critic reduced stale-memory errors
+- recency memory improved adaptation
+
+      ↓
+
+Hermes proposes mutation:
+
+REMOVE shared-chat edge
+ADD critic
+CHANGE memory -> validated_recency
+```
+
+That is what Hydra should do.
+
+It becomes **scientific institutional memory**.
+
+---
+
+# 26. But run a Hydra ablation
+
+Otherwise judges can legitimately ask:
+
+> Did Hydra matter?
+
+Evolution experiment:
+
+```text
+EV-H0
+mutation proposer receives only parent failures
+
+EV-H1
+proposer receives raw previous experiment logs
+
+EV-H2
+proposer receives Hydra validated findings
+```
+
+Compare after identical evolution budgets:
+
+```text
+best validation score
+mutations until improvement
+invalid proposals
+regressions
+secret performance
+```
+
+Now Hydra integration itself has empirical justification.
+
+Excellent hackathon evidence.
+
+---
+
+# 27. Reference repositories to clone
+
+These are the ones I'd actually put in `vendor/` or a separate research workspace:
+
+```text
+https://github.com/waylonli/FINSABER
+https://github.com/TauricResearch/TradingAgents
+https://github.com/wilfrid51/FINMEM
+https://github.com/DVampire/FinAgent
+https://github.com/Skytliang/Multi-Agents-Debate
+https://github.com/togethercomputer/MoA
+https://github.com/microsoft/autogen
+https://github.com/metauto-ai/GPTSwarm
+https://github.com/FoundationAgents/AFlow
+https://github.com/ShengranHu/ADAS
+```
+
+FinCon's official repository does not currently provide a complete production implementation; its README says the authors had delayed full code release because parts rely on commercial data APIs. ([GitHub][18]) Use FINSABER's FinCon integration plus the paper instead of wasting time reconstructing their entire environment.
+
+Inspect each license before copying code into CoGym; otherwise treat it as architectural reference.
+
+---
+
+# 28. Implementation sequence
+
+This is what I would hand to the coding agent.
+
+## Phase 1 — common architecture engine
+
+Build:
+
+```text
+ArchitectureGenome
+ArchitectureNode
+ArchitectureEdge
+ArchitectureExecutor
+ArchitectureRegistry
+```
+
+Acceptance:
+
+```text
+all 10 seed architectures serialize
+all have stable content hashes
+all execute against HarnessTraderModel
+all produce standard Decision
+all generate Episode/EventLedger artifacts
+```
+
+---
+
+## Phase 2 — ten seed architectures
+
+Implement in this order:
+
+```text
+1 ReAct
+2 Debate
+3 MoA
+4 Reflexion
+5 FinMem
+6 TradingAgents
+7 FinCon
+8 FinAgent
+9 Magentic
+10 HedgeAgents
+```
+
+Why?
+
+The first five build almost all reusable primitives.
+
+After that TradingAgents/FinCon/etc. become compositions.
+
+---
+
+## Phase 3 — FINSABER adapter
+
+Implement:
+
+```text
+CoGymFinsaberStrategy
+FinsaberWorldAdapter
+FinsaberResultImporter
+```
+
+CoGym architecture:
+
+```text
+MarketPacket
+→ architecture
+→ Decision
+```
+
+FINSABER:
+
+```text
+Decision
+→ simulation/execution
+→ metrics
+```
+
+---
+
+## Phase 4 — frozen experiments
+
+Create:
+
+```text
+experiments/arch-001-literature-screen/
+experiments/arch-002-topology/
+experiments/arch-003-memory/
+experiments/arch-004-verbal-learning/
+experiments/arch-005-regime-memory/
+experiments/arch-006-specialization/
+experiments/arch-007-reflection/
+```
+
+Every directory uses your existing protocol:
+
+```text
+PROTOCOL.md
+materials/
+outputs/
+run-log.txt
+REVIEW.md
+```
+
+That's already the canonical CoGym workflow.
+
+---
+
+## Phase 5 — Hydra
+
+Extend the existing:
+
+```text
+culture/hydra.py
+```
+
+rather than creating another subsystem.
+
+Current CoGym already has `HydraProjectionRecord` and explicitly says only validated findings should enter Hydra.
+
+Implement:
+
+```text
+project_experiment_finding()
+recall_relevant_findings()
+build_proposer_context()
+cutoff_safe_recall()
+```
+
+---
+
+## Phase 6 — evolution
+
+Add:
+
+```text
+ArchitectureMutation
+ArchitectureArchive
+ArchitectureProposer
+ArchitectureEvolutionCampaign
+```
+
+Reuse current campaign engine/successive halving.
+
+Do not create a separate evolutionary framework.
+
+---
+
+## Phase 7 — secret historical evaluation
+
+Freeze:
+
+```text
+top 3 architectures
+```
+
+No Hydra writes from secret data.
+
+No mutation feedback.
+
+No prompt tuning.
+
+Generate immutable receipts.
+
+---
+
+## Phase 8 — Alpaca paper demonstration
+
+Only then connect the frozen champion to Alpaca paper trading for the hackathon demo.
+
+Keep this a paper/simulation system; the scientific result should not depend on live-money execution.
+
+---
+
+# 29. What the final results table should look like
+
+This one table should basically sell the project:
+
+| Architecture         | Literature     | Synthetic regret ↓ | Historical risk-adjusted score ↑ | Regime adaptation ↑ | Calibration ↑ | Calls ↓ |  Cost ↓ |
+| -------------------- | -------------- | -----------------: | -------------------------------: | ------------------: | ------------: | ------: | ------: |
+| ReAct                | Yao et al.     |                    |                                  |                     |               |         |         |
+| Reflexion            | Shinn et al.   |                    |                                  |                     |               |         |         |
+| FinMem               | Yu et al.      |                    |                                  |                     |               |         |         |
+| FinAgent             | Zhang et al.   |                    |                                  |                     |               |         |         |
+| FinCon               | Yu et al.      |                    |                                  |                     |               |         |         |
+| TradingAgents        | Xiao et al.    |                    |                                  |                     |               |         |         |
+| MAD                  | Liang et al.   |                    |                                  |                     |               |         |         |
+| MoA                  | Wang et al.    |                    |                                  |                     |               |         |         |
+| Magentic             | Fourney et al. |                    |                                  |                     |               |         |         |
+| HedgeAgents          | Li et al.      |                    |                                  |                     |               |         |         |
+| **CoGym-Evolved-17** | **ours**       |            **...** |                          **...** |             **...** |       **...** | **...** | **...** |
+
+Then immediately beneath it:
+
+```text
+CoGym-Evolved-17 lineage:
+
+TradingAgents
+   ↓ REMOVE shared debate
+MoA
+   ↓ ADD adversarial critic
+FinMem
+   ↓ REPLACE raw memory with validated Hydra recall
+Magentic
+   ↓ ADD conditional routing
+Champion
+```
+
+That lineage visualization is far more compelling than a generic equity curve.
+
+---
+
+# 30. The four findings I'd aim to discover
+
+Don't predetermine them, but these would make exceptionally strong experimental outcomes:
+
+**Finding 1 — Independent reasoning beats conversation.**
+
+```text
+parallel proposals > shared group chat
+```
+
+because shared chat causes correlated errors/herding.
+
+**Finding 2 — More reasoning has diminishing returns.**
+
+```text
+one critic round good
+three debate rounds bad
+```
+
+**Finding 3 — Raw memory hurts under regime change.**
+
+```text
+validated + recency-aware memory
+>
+retrieve-everything memory
+```
+
+**Finding 4 — Dynamic orchestration preserves quality at much lower cost.**
+
+```text
+conditional specialists
+≈ full committee quality
+
+but
+
+40–60% fewer calls
+```
+
+Even if only one or two emerge, that's already a meaningful contribution.
+
+---
+
+# 31. Canonical scope
+
+I would explicitly **not** spend this week on:
+
+```text
+RL weight training
+fine-tuning
+complex strategy discovery
+hundreds of financial indicators
+live execution
+massive web-news pipelines
+social-agent economies
+arbitrary agent-generated Python
+```
+
+The interesting object is:
+
+> **architecture effectiveness under controlled uncertainty.**
+
+Then once the architecture is scientifically established, CoGym can later become a general-purpose reasoning laboratory for other worlds as originally intended.
+
+The clean architecture is therefore:
+
+```text
+                 COGYM
+
+         10 literature seeds
+                  │
+                  ▼
+       common ArchitectureGenome
+                  │
+                  ▼
+      deterministic experiments
+                  │
+                  ▼
+          FINSABER replay
+                  │
+                  ▼
+       validated experiment graph
+                  │
+               HydraDB
+                  │
+                  ▼
+       architecture evolution
+     GPTSwarm/AFlow/ADAS-inspired
+                  │
+                  ▼
+            sealed holdout
+                  │
+                  ▼
+          frozen champion
+                  │
+                  ▼
+        Alpaca paper demonstration
+```
+
+**That is the development plan I'd make canonical.** The biggest immediate engineering work is not the Alpaca connection; it's building `ArchitectureGenome + ArchitectureExecutor + ten seed adapters + FINSABER adapter`. Once those exist, your existing CoGym evaluation/evolution infrastructure can do most of the interesting work.
+
+[1]: https://arxiv.org/abs/2210.03629?utm_source=chatgpt.com "ReAct: Synergizing Reasoning and Acting in Language Models"
+[2]: https://arxiv.org/abs/2303.11366?utm_source=chatgpt.com "Reflexion: Language Agents with Verbal Reinforcement Learning"
+[3]: https://arxiv.org/abs/2311.13743?utm_source=chatgpt.com "FinMem: A Performance-Enhanced LLM Trading Agent with Layered Memory and Character Design"
+[4]: https://arxiv.org/abs/2402.18485?utm_source=chatgpt.com "A Multimodal Foundation Agent for Financial Trading: Tool-Augmented, Diversified, and Generalist"
+[5]: https://arxiv.org/abs/2407.06567?utm_source=chatgpt.com "FinCon: A Synthesized LLM Multi-Agent System with Conceptual Verbal Reinforcement for Enhanced Financial Decision Making"
+[6]: https://arxiv.org/abs/2412.20138?utm_source=chatgpt.com "TradingAgents: Multi-Agents LLM Financial Trading Framework"
+[7]: https://arxiv.org/abs/2305.19118?utm_source=chatgpt.com "Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate"
+[8]: https://arxiv.org/abs/2406.04692?utm_source=chatgpt.com "Mixture-of-Agents Enhances Large Language Model Capabilities"
+[9]: https://arxiv.org/abs/2411.04468?utm_source=chatgpt.com "Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks"
+[10]: https://arxiv.org/abs/2502.13165?utm_source=chatgpt.com "HedgeAgents: A Balanced-aware Multi-agent Financial Trading System"
+[11]: https://github.com/waylonli/FINSABER?utm_source=chatgpt.com "GitHub - waylonli/FINSABER: Codes and data for KDD 2026 paper \"Can LLM-based Financial Investing Strategies Outperform the Market in Long Run?\". · GitHub"
+[12]: https://pypi.org/project/finsaber/?utm_source=chatgpt.com "finsaber · PyPI"
+[13]: https://arxiv.org/abs/2402.16823?utm_source=chatgpt.com "Language Agents as Optimizable Graphs"
+[14]: https://arxiv.org/abs/2410.10762?utm_source=chatgpt.com "AFlow: Automating Agentic Workflow Generation"
+[15]: https://arxiv.org/abs/2408.08435?utm_source=chatgpt.com "Automated Design of Agentic Systems"
+[16]: https://docs.hydradb.com/index?utm_source=chatgpt.com "Introduction - HydraDB SDK"
+[17]: https://docs.hydradb.com/essentials/metadata?utm_source=chatgpt.com "Metadata - HydraDB SDK"
+[18]: https://github.com/The-FinAI/FinCon/blob/main/README.md?utm_source=chatgpt.com "FinCon/README.md at main · The-FinAI/FinCon · GitHub"

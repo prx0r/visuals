@@ -1,0 +1,2870 @@
+The correct system is not a knowledge graph of topics. It is an **inference-audit engine** organized around the pressure ladder.
+
+Its atomic research object is:
+
+[
+\boxed{
+\text{an attempted transition from one established claim to a stronger claim}
+}
+]
+
+The system should make it impossible for an agent to silently move from:
+
+[
+\text{organisation}
+]
+
+to:
+
+[
+\text{phenomenal unity}
+]
+
+or from:
+
+[
+\text{reflexivity}
+]
+
+to:
+
+[
+\text{universal consciousness}
+]
+
+without explicitly storing the missing premise.
+
+# FRONTIER PRESSURE GRAPH
+
+## Formal Research Specification
+
+---
+
+# 1. Purpose
+
+The Frontier Pressure Graph is a permanent, auditable system for advancing a philosophical enquiry through contested inferential transitions.
+
+It preserves the established pressure sequence:
+
+[
+\boxed{
+\begin{aligned}
+P_01&=\text{Manifestation}\
+P_02&=\text{Organisation}\
+P_03&=\text{Perspective}\
+P_04&=\text{Presence}\
+P_05&=\text{Co-presence}\
+P_06&=\text{Persistence}\
+P_07&=\text{Ownership}\
+P_08&=\text{Agency}\
+P_09&=\text{Universalisation}\
+P_{10}&=\text{Freedom}
+\end{aligned}
+}
+]
+
+The system does not assume that every pressure follows from the previous one.
+
+Instead, every edge is treated as a disputed research problem:
+
+[
+E_n:
+P_n
+\stackrel{?}{\longrightarrow}
+P_{n+1}.
+]
+
+The main task is to determine:
+
+[
+\boxed{
+\text{What exact premise would make this transition valid?}
+}
+]
+
+---
+
+# 2. Governing principles
+
+## 2.1 Preserve the pressure ladder
+
+Agents may add:
+
+* subpressures;
+* branch pressures;
+* backward dependencies;
+* alternative paths;
+* cross-pressure arguments.
+
+They may not casually replace the ten-pressure ladder.
+
+The ladder is the stable coordinate system of the enquiry.
+
+---
+
+## 2.2 Arguments, not theories, are the primary units
+
+The system does not store:
+
+> IIT says consciousness is integrated information.
+
+It stores:
+
+[
+A_1,A_2,\ldots,A_n
+\rightarrow
+C.
+]
+
+Every argument must separate:
+
+1. what the source explicitly claims;
+2. what the reconstructed argument claims;
+3. what the premises validly establish;
+4. what remains unsupported.
+
+---
+
+## 2.3 Every stronger claim must expose its bridge
+
+Suppose:
+
+[
+A\rightarrow B.
+]
+
+The system must store:
+
+* (A): antecedent;
+* (B): consequent;
+* (H): hidden or bridging premise;
+* (K): strongest countermodel.
+
+The operative structure is:
+
+[
+A+H\rightarrow B.
+]
+
+If (H) is missing or unsupported, the edge remains open.
+
+---
+
+## 2.4 Countermodels have priority
+
+A countermodel is not merely an objection.
+
+It is a model satisfying the antecedent while denying the consequent:
+
+[
+K\models A
+]
+
+and:
+
+[
+K\not\models B.
+]
+
+If such a model is coherent, then:
+
+[
+A\not\Rightarrow B.
+]
+
+This is the system’s primary method for detecting invalid transitions.
+
+---
+
+## 2.5 Text, evidence and reconstruction must remain distinct
+
+The graph must never merge:
+
+* a Sanskrit passage;
+* a translation;
+* a scholar’s interpretation;
+* an agent’s formal reconstruction;
+* an empirical result;
+* a metaphysical inference.
+
+Each receives a separate object and provenance chain.
+
+---
+
+## 2.6 Checkpoints are compiled, not authored freely
+
+A checkpoint is generated from the argument graph.
+
+It may contain only:
+
+* conclusions marked as surviving;
+* explicit failure boundaries;
+* unresolved bridge premises;
+* live countermodels;
+* newly generated frontier pressures.
+
+A checkpoint cannot promote a claim merely because an agent wrote it persuasively.
+
+---
+
+# 3. Core graph
+
+The graph contains seven main object classes:
+
+[
+\boxed{
+\text{Pressure},
+\text{Claim},
+\text{Inference},
+\text{Argument},
+\text{Source},
+\text{Evidence},
+\text{ResearchBranch}.
+}
+]
+
+Supporting objects include:
+
+[
+\text{Countermodel},
+\text{Discriminator},
+\text{Term},
+\text{Passage},
+\text{Checkpoint},
+\text{AgentRun}.
+]
+
+---
+
+# 4. Pressure object
+
+A pressure is a stable explanatory demand.
+
+It is not a doctrine and not an answer.
+
+```yaml
+pressure:
+  pressure_id: P05
+  name: Phenomenal Co-Presence
+
+  canonical_question:
+    What constitutes the relation by which multiple contents are
+    jointly manifest within one phenomenal domain?
+
+  established_input:
+    - Manifest experiential contents occur.
+    - Some contents are experienced together.
+    - Other possible contents are phenomenally absent.
+
+  target_explanation:
+    A criterion determining phenomenal inclusion and exclusion.
+
+  distinctions:
+    - temporal simultaneity
+    - causal interaction
+    - informational integration
+    - report availability
+    - phenomenal co-presence
+    - ownership
+
+  forbidden_collapses:
+    - simultaneity_is_not_co_presence
+    - integration_is_not_yet_manifestness
+    - access_is_not_yet_phenomenal_unity
+
+  parent_pressures:
+    - P04
+
+  child_pressures:
+    - P06
+
+  branch_pressures:
+    - BP-P05-TRANSITIVITY
+    - BP-P05-EXCLUSION
+    - BP-P05-SCALE
+    - BP-P05-OVERLAP
+
+  status: open
+```
+
+---
+
+# 5. Pressure-edge object
+
+The pressure edge is the principal research object.
+
+```yaml
+pressure_edge:
+  edge_id: E04-05
+
+  antecedent_pressure: P04
+  consequent_pressure: P05
+
+  antecedent_claim:
+    Manifest contents possess perspectival presence.
+
+  consequent_claim:
+    Multiple contents form one unified phenomenal domain.
+
+  exact_question:
+    What makes distinct manifest contents co-present rather than merely
+    simultaneous or causally connected?
+
+  default_non_entailment:
+    perspectival_presence_does_not_entail_co_presence
+
+  required_bridge_type:
+    phenomenal_binding_principle
+
+  edge_status: open
+
+  strongest_live_bridges:
+    - maximal_intrinsic_causal_integration
+    - global_broadcast
+    - recurrent_integration
+    - one_synthesising_subject
+    - temporal_gestalt
+    - participated_manifest_unity
+
+  strongest_countermodel_classes:
+    - integrated_zombie_system
+    - multiple_locally_reflexive_states
+    - non_transitive_unity
+    - causal_coordination_without_co_consciousness
+
+  residual_pressure:
+    What fact constitutes phenomenal inclusion?
+```
+
+---
+
+# 6. Claim object
+
+Every claim must be atomic enough to be assessed independently.
+
+```yaml
+claim:
+  claim_id: CL-P05-003
+
+  statement:
+    Maximal intrinsic causal irreducibility constitutes one phenomenal domain.
+
+  claim_type: identity_claim
+
+  pressure_id: P05
+
+  asserted_by:
+    - ARG-IIT-EXCLUSION-01
+
+  dependencies:
+    - CL-IIT-CAUSE-EFFECT-POWER
+    - CL-IIT-INTEGRATION
+    - CL-IIT-EXCLUSION
+
+  status: contested
+
+  confidence:
+    logical: low
+    textual: high
+    empirical: medium
+    phenomenological: low
+
+  scope:
+    systems: physical
+    temporality: synchronic
+    modality: nomological
+
+  negation:
+    Maximal intrinsic causal irreducibility can occur without phenomenal unity.
+```
+
+---
+
+# 7. Inference object
+
+The inference object represents one inferential move.
+
+```yaml
+inference:
+  inference_id: INF-IIT-05
+
+  from_claims:
+    - CL-IIT-INTRINSIC-CAUSE
+    - CL-IIT-IRREDUCIBILITY
+    - CL-IIT-MAXIMALITY
+
+  to_claim:
+    CL-P05-003
+
+  inference_form:
+    identity_inference
+
+  explicit_bridge:
+    Intrinsic causal unity is identical with phenomenal unity.
+
+  bridge_status:
+    unsupported
+
+  validity_status:
+    invalid_without_bridge
+
+  failure_description:
+    The premises characterize intrinsic causal structure but do not
+    independently establish phenomenal co-presence.
+
+  countermodels:
+    - CM-INTEGRATED-NONPHENOMENAL
+
+  burden:
+    Show why causal irreducibility constitutes rather than correlates
+    with phenomenal unity.
+
+  generated_branch:
+    RB-P05-INTRINSICNESS
+```
+
+---
+
+# 8. Argument object
+
+An argument stores one source-grounded proof attempt.
+
+```yaml
+argument:
+  argument_id: ARG-UTPALADEVA-SYNTHESIS-01
+
+  title:
+    Synthesis requires one apprehending unity
+
+  tradition:
+    pratyabhijna
+
+  proponents:
+    - Utpaladeva
+    - Abhinavagupta
+
+  pressure_edge:
+    E04-05
+
+  argument_kind:
+    transcendental
+
+  textual_thesis:
+    Recognition, memory, comparison and coordinated cognition require
+    a unity that relates multiple cognitive events.
+
+  premises:
+    - premise_id: P1
+      claim:
+        Isolated cognitions cannot relate themselves to cognitions from
+        which they are numerically and temporally distinct.
+      support:
+        - passage_id: PASS-UTP-001
+      status: contested
+
+    - premise_id: P2
+      claim:
+        Recognition and comparison require that multiple cognitions be
+        apprehended together.
+      support:
+        - passage_id: PASS-UTP-002
+      status: plausible
+
+    - premise_id: P3
+      claim:
+        Only one continuing apprehending subject can perform this synthesis.
+      support:
+        - passage_id: PASS-ABH-003
+      status: unsupported_bridge
+
+  textual_conclusion:
+    One subject connects and synthesises multiple cognitions.
+
+  validly_established_conclusion:
+    A complete account must explain relations of comparison, recognition
+    and ownership across cognitive events.
+
+  unsupported_edge:
+    Functional or phenomenal synthesis requires one numerically identical
+    enduring subject.
+
+  hidden_premises:
+    - Synthesis cannot be implemented by a temporally extended process.
+    - Relation requires an entity numerically present in every related event.
+    - A dynamically continuous pattern cannot ground first-personal attribution.
+
+  strongest_countermodels:
+    - CM-DYNAMIC-RECURRENT-INTEGRATION
+    - CM-BUDDHIST-CAUSAL-STREAM
+    - CM-BHARTIHARI-HOLISTIC-MEANING
+
+  verdict:
+    status: partially_survives
+    survives:
+      - The synthesis problem is genuine.
+      - Isolated information persistence is insufficient.
+    fails:
+      - Numerical subject identity is not established.
+```
+
+---
+
+# 9. Source object
+
+A source object stores bibliographic and reliability information.
+
+```yaml
+source:
+  source_id: SRC-UTP-IPK
+
+  source_type: primary_text
+
+  author: Utpaladeva
+
+  title:
+    Isvarapratyabhijnakarika
+
+  language:
+    Sanskrit
+
+  edition:
+    editor: null
+    publisher: null
+    year: null
+
+  canonical_locator_system:
+    chapter_verse
+
+  reliability:
+    primary_text: true
+    critical_edition: unknown
+    translation_quality: unassessed
+    textual_completeness: partial
+
+  files:
+    - file_id: FILE-IPK-SKT
+    - file_id: FILE-IPK-TRANS
+
+  citation_policy:
+    exact_locator_required: true
+    Sanskrit_required: true
+    translation_required: true
+    translator_must_be_named: true
+```
+
+---
+
+# 10. Passage object
+
+Passages must remain separate from arguments.
+
+```yaml
+passage:
+  passage_id: PASS-UTP-001
+
+  source_id: SRC-UTP-IPK
+
+  locator:
+    chapter: null
+    verse: null
+    commentary_section: null
+
+  original_language:
+    text: null
+    normalized: null
+
+  translation:
+    text: null
+    translator: null
+    translation_type: published
+
+  immediate_context:
+    preceding: null
+    following: null
+
+  key_terms:
+    - anusandhana
+    - pramatr
+    - smrti
+
+  explicit_claims:
+    - null
+
+  inferential_function:
+    Supports the claim that cross-temporal synthesis requires explanation.
+
+  interpretation_status:
+    passage_not_yet_retrieved
+
+  prohibited_use:
+    Cannot be cited as proving universal subject identity until exact text
+    and commentarial context are retrieved.
+```
+
+A passage with `passage_not_yet_retrieved` cannot support a promoted conclusion.
+
+---
+
+# 11. Evidence object
+
+Empirical evidence must record what was actually measured.
+
+```yaml
+evidence:
+  evidence_id: EV-SPLITBRAIN-001
+
+  evidence_type: experiment
+
+  source_id: SRC-STUDY-001
+
+  pressure_id: P05
+
+  measured_variables:
+    - interhemispheric_information_access
+    - verbal_report
+    - behavioural_coordination
+
+  inferred_target:
+    phenomenal_unity
+
+  directness:
+    indirect
+
+  result_summary:
+    Behavioural dissociations were observed after commissurotomy.
+
+  supports:
+    - Phenomenal unity may depend on interhemispheric organisation.
+
+  does_not_support:
+    - Exactly two phenomenal subjects exist.
+    - Phenomenal unity is necessarily transitive.
+    - Report dissociation equals subject division.
+
+  confounds:
+    - response_modality
+    - residual_cross_cueing
+    - task_structure
+    - inferential_distance_from_phenomenology
+
+  evidential_weight:
+    medium
+```
+
+---
+
+# 12. Countermodel object
+
+A countermodel must explain the antecedent while denying the consequent.
+
+```yaml
+countermodel:
+  countermodel_id: CM-DYNAMIC-RECURRENT-INTEGRATION
+
+  target_inference:
+    INF-UTPALADEVA-SYNTHESIS
+
+  accepts:
+    - Cognitive events are related across time.
+    - Recognition requires retained information.
+    - Ownership has a first-personal form.
+
+  rejects:
+    - One numerically identical subject must exist throughout.
+
+  alternative_mechanism:
+    A temporally extended organismic process maintains bodily continuity,
+    source monitoring, memory traces and a present self-model.
+
+  model_equation:
+    input:
+      - memory_trace
+      - body_continuity
+      - current_self_model
+      - source_attribution
+    output:
+      - first_personal_memory_format
+
+  explanatory_gain:
+    Explains diachronic attribution without an unchanging bearer.
+
+  unresolved_cost:
+    Does not yet explain why the reconstructed attribution is phenomenally
+    manifest as mine.
+
+  logical_effect:
+    Blocks the inference from phenomenal ownership to numerical identity.
+```
+
+---
+
+# 13. Discriminator object
+
+A discriminator specifies what could distinguish live models.
+
+```yaml
+discriminator:
+  discriminator_id: DIS-P05-OVERLAP
+
+  pressure_id: P05
+
+  question:
+    Can phenomenal unity be non-transitive?
+
+  models:
+    model_a:
+      name: equivalence_class_subjects
+      predicts:
+        - If x is co-conscious with y and y with z, x must be co-conscious with z.
+
+    model_b:
+      name: layered_overlap
+      predicts:
+        - x can be unified with y and y with z without x being unified with z.
+
+  required_evidence:
+    - neurological cases with partial integration
+    - precise first-person reports
+    - behaviour distinguishing local from global access
+    - formal analysis of co-consciousness relations
+
+  decision_rule:
+    Reproducible non-transitive cases weaken partition models of subjecthood.
+
+  feasibility:
+    empirical: medium
+    conceptual: high
+```
+
+---
+
+# 14. Research-branch object
+
+A research branch is generated by one residual pressure.
+
+```yaml
+research_branch:
+  branch_id: RB-P05-INTRINSICNESS
+
+  generated_by:
+    - INF-IIT-05
+    - ARG-UTPALADEVA-SYNTHESIS-01
+
+  question:
+    What distinguishes intrinsically manifest integration from integration
+    that is merely externally describable?
+
+  exact_search_targets:
+    science:
+      - intrinsic causal power consciousness
+      - integrated information exclusion critique
+      - causal structure without consciousness
+      - consciousness intrinsic perspective
+
+    Sanskrit:
+      - svaprakasa
+      - svasamvedana
+      - vimarsa
+      - ajadatva
+      - prakasa
+      - anusandhana
+
+    phenomenology:
+      - prereflective self-awareness
+      - anonymous consciousness
+      - phenomenal for-me-ness
+
+  completion_conditions:
+    - retrieve at least two primary scientific theories
+    - retrieve at least two primary Sanskrit arguments
+    - construct at least one countermodel for each
+    - identify one shared unsupported premise
+    - generate one discriminator
+
+  branch_status:
+    queued
+```
+
+---
+
+# 15. Epistemic status system
+
+The system requires a controlled status vocabulary.
+
+## 15.1 Claim statuses
+
+```yaml
+claim_status:
+  - source_attested
+  - textually_ambiguous
+  - reconstructed
+  - phenomenologically_secure
+  - empirically_supported
+  - empirically_contested
+  - logically_valid
+  - logically_underdetermined
+  - metaphysical_hypothesis
+  - rejected
+  - superseded
+```
+
+These may be combined.
+
+Example:
+
+```yaml
+status:
+  - source_attested
+  - reconstructed
+  - logically_underdetermined
+```
+
+---
+
+## 15.2 Argument verdicts
+
+```yaml
+argument_verdict:
+  - survives
+  - partially_survives
+  - blocked_by_countermodel
+  - missing_bridge
+  - invalid
+  - textually_unconfirmed
+  - empirically_underdetermined
+  - obsolete
+```
+
+---
+
+## 15.3 Edge statuses
+
+```yaml
+edge_status:
+  - unopened
+  - mapping
+  - live
+  - narrowed
+  - provisionally_closed
+  - reopened
+  - dissolved
+```
+
+A pressure edge is `provisionally_closed` only when:
+
+1. the antecedent is secure;
+2. a bridge is explicit;
+3. major countermodels fail;
+4. evidence discriminates in favour of the bridge;
+5. no unresolved equivocation remains.
+
+---
+
+# 16. Provenance model
+
+Every assertion must include a provenance path.
+
+```yaml
+provenance:
+  provenance_id: PROV-001
+
+  object_id: CL-P05-003
+
+  origin:
+    agent_run_id: RUN-2026-001
+    generated_at: 2026-07-28T00:00:00+07:00
+
+  source_chain:
+    - source_id: SRC-PAPER-001
+      relation: explicit_claim
+      locator: page_12
+
+    - source_id: SRC-PAPER-002
+      relation: empirical_support
+      locator: figure_3
+
+  transformations:
+    - type: paraphrase
+      performed_by: agent
+    - type: formal_reconstruction
+      performed_by: agent
+    - type: logical_audit
+      performed_by: critic_agent
+
+  human_review:
+    status: pending
+    reviewer: null
+```
+
+No claim can be promoted into a checkpoint without provenance.
+
+---
+
+# 17. Source authority hierarchy
+
+The retrieval agent must prioritize:
+
+## Sanskrit and historical traditions
+
+1. critical edition;
+2. primary text;
+3. authorial commentary;
+4. close historical commentary;
+5. peer-reviewed translation;
+6. specialist scholarship;
+7. general secondary summary.
+
+## Science
+
+1. primary experiment;
+2. preregistered adversarial test;
+3. systematic review or consensus report;
+4. primary theoretical paper;
+5. specialist critique;
+6. general review;
+7. popular summary.
+
+## Philosophy
+
+1. primary argument;
+2. peer-reviewed specialist reconstruction;
+3. direct critical response;
+4. reference work;
+5. general exposition.
+
+Lower-level sources may locate material but cannot carry major inferential weight alone.
+
+---
+
+# 18. Quotation and translation rules
+
+For every Sanskrit or Pāli argument:
+
+```yaml
+text_requirements:
+  original_required: true
+  exact_locator_required: true
+  published_translation_required: preferred
+  literal_agent_translation_allowed: true
+  literal_translation_must_be_labelled: true
+  context_window_required: true
+  variant_readings_recorded: when_relevant
+```
+
+The system must store:
+
+[
+\text{original}
+\neq
+\text{translation}
+\neq
+\text{interpretation}
+\neq
+\text{formal premise}.
+]
+
+An agent may not cite an English doctrinal slogan as if it were the direct statement of a Sanskrit passage.
+
+---
+
+# 19. Agent architecture
+
+The system uses specialized agents rather than one unrestricted researcher.
+
+[
+\boxed{
+\text{Coordinator}
+\rightarrow
+\text{Retrievers}
+\rightarrow
+\text{Reconstructors}
+\rightarrow
+\text{Critics}
+\rightarrow
+\text{Frontier Compiler}
+}
+]
+
+---
+
+## 19.1 Frontier Coordinator
+
+The coordinator selects one pressure edge.
+
+It provides:
+
+* antecedent;
+* consequent;
+* known arguments;
+* known countermodels;
+* exact missing bridge;
+* permitted search scope.
+
+It must not ask agents to “research consciousness.”
+
+Example task:
+
+> Determine whether any current theory derives phenomenal co-presence from independently characterized causal, informational or metaphysical relations.
+
+---
+
+## 19.2 Science Retriever
+
+The science retriever searches by transition.
+
+Bad query:
+
+> consciousness theories
+
+Good queries:
+
+> experiments testing boundaries of one phenomenal field
+
+> split-brain evidence non-transitive consciousness unity
+
+> integrated information exclusion principle subject individuation
+
+> global workspace phenomenal unity versus access unity
+
+Its output contains only:
+
+* source;
+* exact thesis;
+* method;
+* measured variables;
+* direct result;
+* inferential distance from the pressure.
+
+---
+
+## 19.3 Sanskrit Retriever
+
+The Sanskrit retriever searches by inferential function, not loose resemblance.
+
+For (P_05), search terms may include:
+
+[
+\textit{anusaṃdhāna},
+\quad
+\textit{ekapramātṛ},
+\quad
+\textit{vimarśa},
+\quad
+\textit{svasaṃvedana},
+\quad
+\textit{sambandha}.
+]
+
+Its task is:
+
+> Find passages arguing that comparison, recognition, memory or action require a unifying apprehender.
+
+It must not retrieve passages merely because they contain words translated as “unity” or “consciousness.”
+
+---
+
+## 19.4 Argument Reconstructor
+
+The reconstructor receives source packets and outputs:
+
+```yaml
+reconstruction:
+  textual_conclusion: null
+  premises_explicit_in_source: []
+  premises_implied_by_source: []
+  hidden_premises: []
+  strongest_valid_conclusion: null
+  stronger_claim_not_established: null
+  ambiguities: []
+```
+
+It may not evaluate the tradition globally.
+
+---
+
+## 19.5 Adversarial Critic
+
+The critic must construct the strongest model satisfying the premises while rejecting the conclusion.
+
+Its required output:
+
+```yaml
+critique:
+  target_argument: null
+  countermodel: null
+  accepted_premises: []
+  denied_conclusion: null
+  exact_blocking_point: null
+  repair_options: []
+```
+
+The critic is rewarded for narrowness.
+
+“Physicalism rejects this” is not a valid critique.
+
+“A dynamically continuous process explains synthesis without numerical identity” is.
+
+---
+
+## 19.6 Cross-Tradition Collider
+
+The collider compares arguments only where they address the same edge.
+
+Example:
+
+[
+\text{IIT exclusion}
+]
+
+versus:
+
+[
+\text{Utpaladeva synthesis}
+]
+
+versus:
+
+[
+\text{Krama temporal cycle}
+]
+
+versus:
+
+[
+\text{Proclean participation}
+]
+
+versus:
+
+[
+\text{Buddhist causal stream}.
+]
+
+It produces:
+
+```yaml
+collision:
+  shared_antecedent: null
+  differing_bridges: []
+  differing_consequents: []
+  shared_failure_point: null
+  strongest_surviving_claim: null
+```
+
+It must not compare entire traditions.
+
+---
+
+## 19.7 Frontier Compiler
+
+The compiler updates:
+
+* surviving claims;
+* blocked inferences;
+* new bridge premises;
+* discriminators;
+* branch queue.
+
+It then proposes a checkpoint delta.
+
+It cannot alter canonical checkpoints directly.
+
+---
+
+# 20. Five-pass research protocol
+
+Every pressure edge receives five mandatory passes.
+
+---
+
+## Pass 1 — Frontier map
+
+Identify the strongest current attempts to cross the edge.
+
+Output:
+
+```yaml
+frontier_map:
+  edge_id: E04-05
+  candidate_bridges:
+    - theory: IIT
+      bridge: maximal causal irreducibility
+    - theory: GNWT
+      bridge: global broadcasting
+    - theory: Pratyabhijna
+      bridge: synthesising subject
+    - theory: Krama
+      bridge: temporal whole
+    - theory: Proclus
+      bridge: participated unity
+```
+
+---
+
+## Pass 2 — Source acquisition
+
+Retrieve primary material.
+
+Minimum packet:
+
+```yaml
+source_packet:
+  primary_science_sources: 3
+  primary_text_passages: 3
+  specialist_interpretations: 2
+  major_criticisms: 2
+```
+
+Counts are defaults, not substitutes for quality.
+
+---
+
+## Pass 3 — Formal reconstruction
+
+Each argument becomes:
+
+[
+P_1+P_2+\cdots+P_n
+\rightarrow
+C.
+]
+
+Required distinctions:
+
+[
+C_{\text{text}}
+]
+
+[
+C_{\text{valid}}
+]
+
+[
+C_{\text{metaphysical}}
+]
+
+where:
+
+* (C_{\text{text}}): what the source concludes;
+* (C_{\text{valid}}): what the premises securely establish;
+* (C_{\text{metaphysical}}): the stronger ontological claim.
+
+---
+
+## Pass 4 — Countermodel collision
+
+For every argument:
+
+[
+K\models P_1,\ldots,P_n
+]
+
+while:
+
+[
+K\not\models C.
+]
+
+If no coherent countermodel is found, the argument advances in status.
+
+If a countermodel is found, the system extracts the missing premise.
+
+---
+
+## Pass 5 — Frontier extraction
+
+The final output is restricted to:
+
+1. established antecedent;
+2. strongest surviving bridge;
+3. exact unsupported premise;
+4. strongest countermodel;
+5. possible discriminator;
+6. next research branch.
+
+No generic summary is allowed.
+
+---
+
+# 21. Hallucination controls
+
+## Rule 1 — No passage, no textual proof
+
+An agent may say:
+
+> A passage likely exists concerning synthesis.
+
+It may not say:
+
+> Utpaladeva proves synthesis in IPK 1.x.x
+
+without retrieving and storing the exact passage.
+
+---
+
+## Rule 2 — No source inflation
+
+A source that mentions a concept cannot automatically support an argument.
+
+```yaml
+support_relation:
+  - explicit_premise
+  - explicit_conclusion
+  - contextual_support
+  - scholarly_reconstruction
+  - analogy_only
+```
+
+Only the first four count as argument support.
+
+---
+
+## Rule 3 — No analogy promotion
+
+Structural resemblance must be stored as:
+
+```yaml
+relation_type: structural_analogy
+```
+
+It cannot be promoted to:
+
+```yaml
+relation_type: doctrinal_identity
+```
+
+Example:
+
+[
+\text{predictive restriction}
+\sim
+\text{kañcuka structure}
+]
+
+does not establish:
+
+[
+\text{predictive processing}
+============================
+
+\text{Māyā}.
+]
+
+---
+
+## Rule 4 — No evidence-target substitution
+
+If an experiment measures reportability, it cannot be entered as direct evidence for phenomenal unity.
+
+The evidence object must record:
+
+[
+\text{measured variable}
+\neq
+\text{inferred phenomenon}.
+]
+
+---
+
+## Rule 5 — No hidden universalization
+
+The following transitions must always trigger an audit:
+
+[
+\text{some}
+\rightarrow
+\text{all},
+]
+
+[
+\text{local}
+\rightarrow
+\text{universal},
+]
+
+[
+\text{structural similarity}
+\rightarrow
+\text{numerical identity},
+]
+
+[
+\text{epistemic independence}
+\rightarrow
+\text{causal independence},
+]
+
+[
+\text{causal power}
+\rightarrow
+\text{unrestricted freedom}.
+]
+
+---
+
+## Rule 6 — No checkpoint promotion from one agent
+
+Checkpoint promotion requires:
+
+* source agent;
+* reconstruction agent;
+* countermodel agent;
+* logical critic;
+* compiler;
+* human approval or explicit autonomous threshold.
+
+---
+
+# 22. Inference-risk detectors
+
+The graph should automatically flag recurrent invalid transitions.
+
+```yaml
+risk_patterns:
+  - risk_id: TYPE_TOKEN
+    pattern:
+      shared_structure -> numerical_identity
+
+  - risk_id: FUNCTION_PHENOMENOLOGY
+    pattern:
+      functional_capacity -> phenomenal_property
+
+  - risk_id: CORRELATION_IDENTITY
+    pattern:
+      empirical_correlation -> metaphysical_identity
+
+  - risk_id: LOCAL_UNIVERSAL
+    pattern:
+      local_reflexivity -> universal_subject
+
+  - risk_id: SELF_PRESENT_FREEDOM
+    pattern:
+      epistemic_self_presence -> causal_sovereignty
+
+  - risk_id: ORGANISATION_SUBJECT
+    pattern:
+      operational_boundary -> phenomenal_boundary
+
+  - risk_id: CESSATION_GROUND
+    pattern:
+      ego_dissolution -> universal_consciousness
+
+  - risk_id: PARTICIPATION_METAPHOR
+    pattern:
+      shared_source -> explained_local_instantiation
+
+  - risk_id: CLASSIFICATION_CAUSATION
+    pattern:
+      taxonomy_of_limits -> mechanism_of_contraction
+```
+
+---
+
+# 23. Checkpoint object
+
+A checkpoint is a versioned graph compilation.
+
+```yaml
+checkpoint:
+  checkpoint_id: CP-020
+
+  title:
+    From Perspectival Partition to Participated Unity
+
+  parent_checkpoint:
+    CP-010
+
+  graph_commit:
+    git_sha: null
+
+  scope:
+    pressures:
+      - P03
+      - P04
+      - P05
+      - P09
+
+  promoted_claims:
+    - claim_id: CL-PARTICIPATION-001
+      promoted_status: provisionally_established
+
+  blocked_inferences:
+    - inference_id: INF-UNIVERSAL-NUMERICAL-IDENTITY
+    - inference_id: INF-PARTICIPATION-PHENOMENALITY
+
+  newly_opened_bridges:
+    - BRIDGE-UNIVERSAL-SOURCE-LOCAL-MANIFESTATION
+    - BRIDGE-PARTICIPANT-INDIVIDUATION
+
+  checkpoint_theorem:
+    Local subjects may share a causal or manifest ground without being
+    numerically identical or phenomenally co-present.
+
+  residual_frontier:
+    What individuates a participant-specific actualization of manifest capacity?
+
+  confidence:
+    overall: medium
+    textual: medium
+    logical: high
+    empirical: low
+
+  approval:
+    status: draft
+    reviewer: null
+```
+
+---
+
+# 24. Checkpoint compiler rules
+
+A claim may enter `promoted_claims` only if:
+
+```yaml
+promotion_requirements:
+  provenance_complete: true
+  source_support: sufficient
+  countermodel_reviewed: true
+  hidden_premises_exposed: true
+  scope_defined: true
+  contradiction_check_passed: true
+```
+
+The compiler generates five sections automatically:
+
+1. **Established**
+2. **Eliminated transitions**
+3. **Live countermodels**
+4. **New theorem**
+5. **Residual frontier**
+
+This preserves the architecture that made the checkpoints useful.
+
+---
+
+# 25. Checkpoint delta
+
+Every checkpoint should store only the conceptual advance beyond its parent.
+
+```yaml
+checkpoint_delta:
+  parent: CP-010
+  child: CP-020
+
+  retained:
+    - Phenomenal domains require a law of inclusion and exclusion.
+    - Functional boundaries do not establish phenomenal boundaries.
+
+  revised:
+    - old:
+        Universal manifestation must be either numerically one subject
+        or genuinely many subjects.
+      new:
+        Participation provides a third relation between separation and
+        numerical identity.
+
+  rejected:
+    - Shared manifest ground entails one phenomenal field.
+
+  added:
+    - universal_source_vs_universal_subject
+    - participation_relation
+    - mode_specific_reception
+    - participant_individuation_problem
+
+  frontier_shift:
+    from:
+      What creates phenomenal partitions?
+    to:
+      What individuates a participant-specific actualization of a
+      universal capacity?
+```
+
+This prevents each checkpoint from becoming a recap.
+
+---
+
+# 26. The ten canonical pressure edges
+
+---
+
+## E01-02 — Manifestation to Organisation
+
+[
+\text{manifestness}
+\stackrel{?}{\longrightarrow}
+\text{structured differentiation}.
+]
+
+### Exact question
+
+Why is manifestation articulated rather than featureless?
+
+### Live bridges
+
+* *vimarśa*;
+* intentional structure;
+* fundamental identity–difference;
+* informational differentiation;
+* Limit and Unlimited.
+
+### Failure point
+
+[
+\text{manifestness}
+\not\Rightarrow
+\text{determinate articulation}.
+]
+
+### Frontier
+
+Is differentiation intrinsic to manifestation or added by organisation?
+
+---
+
+## E02-03 — Organisation to Perspective
+
+[
+\text{integrated organisation}
+\stackrel{?}{\longrightarrow}
+\text{one operational standpoint}.
+]
+
+### Live bridges
+
+* Markov blankets;
+* active inference;
+* multiscale control;
+* cognitive light cones;
+* embodied self-location.
+
+### Failure point
+
+[
+\text{organisation}
+\not\Rightarrow
+\text{one privileged perspective}.
+]
+
+### Frontier
+
+What selects one scale as the operative centre?
+
+---
+
+## E03-04 — Perspective to Presence
+
+[
+\text{functional standpoint}
+\stackrel{?}{\longrightarrow}
+\text{phenomenal presence}.
+]
+
+### Live bridges
+
+* recurrent processing;
+* higher-order theories;
+* intrinsic causal power;
+* prereflective self-presence;
+* *svasaṃvedana*;
+* *prakāśa*.
+
+### Failure point
+
+[
+\text{self-location}
+\not\Rightarrow
+\text{manifestness}.
+]
+
+### Frontier
+
+What distinguishes intrinsic appearance from functional self-relation?
+
+---
+
+## E04-05 — Presence to Co-Presence
+
+[
+\text{manifest contents}
+\stackrel{?}{\longrightarrow}
+\text{one phenomenal field}.
+]
+
+### Live bridges
+
+* IIT exclusion;
+* global broadcasting;
+* recurrent integration;
+* synthesising subject;
+* temporal gestalt;
+* participated unity.
+
+### Failure point
+
+[
+\text{multiple manifest events}
+\not\Rightarrow
+\text{joint manifestation}.
+]
+
+### Frontier
+
+What constitutes phenomenal inclusion?
+
+---
+
+## E05-06 — Co-Presence to Persistence
+
+[
+\text{synchronic field}
+\stackrel{?}{\longrightarrow}
+\text{diachronic stream}.
+]
+
+### Live bridges
+
+* retention;
+* working memory;
+* autonoetic memory;
+* invariance through transformation;
+* Krama cycle;
+* Spanda;
+* process continuity.
+
+### Failure point
+
+[
+\text{synchronic unity}
+\not\Rightarrow
+\text{diachronic identity}.
+]
+
+### Frontier
+
+What persists: substance, pattern, relation or reconstruction?
+
+---
+
+## E06-07 — Persistence to Ownership
+
+[
+\text{continuing stream}
+\stackrel{?}{\longrightarrow}
+\text{my stream}.
+]
+
+### Live bridges
+
+* source monitoring;
+* bodily continuity;
+* minimal for-me-ness;
+* affective concern;
+* *asmimāna*;
+* appropriation;
+* *anusaṃdhāna*.
+
+### Failure point
+
+[
+\text{continuity}
+\not\Rightarrow
+\text{mineness}.
+]
+
+### Frontier
+
+Does mattering presuppose or construct an owner?
+
+---
+
+## E07-08 — Ownership to Agency
+
+[
+\text{mine}
+\stackrel{?}{\longrightarrow}
+\text{I act}.
+]
+
+### Live bridges
+
+* policy selection;
+* motor control;
+* intention;
+* *vimarśa* as determination;
+* *kriyāśakti*;
+* self-causing systems.
+
+### Failure point
+
+[
+\text{ownership}
+\not\Rightarrow
+\text{causal authorship}.
+]
+
+### Frontier
+
+What distinguishes ownership attribution from genuine agency?
+
+---
+
+## E08-09 — Agency to Universalisation
+
+[
+\text{local subjectivity and agency}
+\stackrel{?}{\longrightarrow}
+\text{universal ground or subject}.
+]
+
+### Live bridges
+
+* universal manifestation;
+* monad and series;
+* cosmopsychism;
+* common intrinsic nature;
+* participation;
+* impossibility of externally bounded consciousness.
+
+### Failure point
+
+[
+\text{shared capacity}
+\not\Rightarrow
+\text{numerical identity}.
+]
+
+### Frontier
+
+Duplication, identity or participation?
+
+---
+
+## E09-10 — Universalisation to Freedom
+
+[
+\text{universal source}
+\stackrel{?}{\longrightarrow}
+\text{unrestricted self-determination}.
+]
+
+### Live bridges
+
+* *svātantrya*;
+* *vimarśa* as action;
+* productive abundance;
+* perfection;
+* self-constitution;
+* final causality.
+
+### Failure point
+
+[
+\text{universal presence}
+\not\Rightarrow
+\text{cosmic agency}.
+]
+
+### Frontier
+
+Why should manifestation or unity be productive?
+
+---
+
+# 27. Cross-edge dependencies
+
+The ladder is sequential, but arguments may depend on non-adjacent pressures.
+
+Example:
+
+[
+P_07
+\rightarrow
+P_03
+]
+
+because ownership can stabilize perspective.
+
+[
+P_08
+\rightarrow
+P_02
+]
+
+because agency can help constitute organisation.
+
+[
+P_05
+\rightarrow
+P_03
+]
+
+because co-presence may define the standpoint rather than follow from it.
+
+Store these as:
+
+```yaml
+cross_dependency:
+  dependency_id: XD-001
+  source_pressure: P07
+  target_pressure: P03
+  relation:
+    recursive_stabilisation
+  claim:
+    Recurrent affective ownership may help construct the operative perspective.
+```
+
+The pressure ladder is therefore a research order, not a commitment to simple linear causation.
+
+---
+
+# 28. Branch pressure system
+
+A branch pressure is generated when an edge decomposes.
+
+Example:
+
+```yaml
+branch_pressure:
+  branch_pressure_id: BP-P05-EXCLUSION
+
+  parent_pressure: P05
+
+  question:
+    What excludes an otherwise possible content from a phenomenal domain?
+
+  generated_by:
+    - CM-NONTRANSITIVE-UNITY
+    - ARG-IIT-EXCLUSION-01
+
+  branch_type:
+    decomposition
+
+  resolution_effect:
+    Resolving this branch would constrain E04-05 and E05-06.
+```
+
+Branch types:
+
+```yaml
+branch_types:
+  - decomposition
+  - countermodel
+  - textual_ambiguity
+  - empirical_discriminator
+  - formal_problem
+  - ontology_split
+```
+
+---
+
+# 29. Query-generation protocol
+
+The agent must generate queries from the missing bridge.
+
+Template:
+
+```yaml
+query_generation:
+  antecedent: integrated organisation
+  consequent: phenomenal co-presence
+  missing_bridge: intrinsic phenomenal binding
+
+  science_queries:
+    - theories deriving co-consciousness from causal integration
+    - empirical subject boundary integration exclusion
+    - phenomenal unity non-transitive split brain
+    - causal integration without consciousness objection
+
+  Sanskrit_queries:
+    - anusaṃdhāna relation multiple cognitions
+    - ekapramatr recognition comparison
+    - vimarsa synthesis cognition
+    - sambandha consciousness relation
+    - krama sequence unity cognition
+
+  philosophy_queries:
+    - co-consciousness relation
+    - phenomenal unity transitivity
+    - subject individuation exclusion
+    - unity without owner
+```
+
+The agent should never issue a generic query until exact-edge queries fail.
+
+---
+
+# 30. Search stopping rule
+
+Research does not stop because the agent has collected many sources.
+
+It stops when one of these occurs:
+
+```yaml
+stopping_conditions:
+  - a major live model has been reconstructed
+  - a decisive countermodel has been found
+  - an exact hidden premise has been isolated
+  - available evidence cannot discriminate
+  - source retrieval has reached a documented textual gap
+  - new results become redundant
+```
+
+The result may be:
+
+[
+\boxed{
+\text{underdetermined}
+}
+]
+
+That is a valid research conclusion.
+
+---
+
+# 31. Frontier scoring
+
+Research branches should be prioritized using:
+
+[
+F
+=
+
+## I\times D\times R\times A
+
+C,
+]
+
+where:
+
+* (I): inferential importance;
+* (D): discriminability;
+* (R): research tractability;
+* (A): number of downstream edges affected;
+* (C): cost.
+
+Example:
+
+```yaml
+frontier_score:
+  branch_id: BP-P05-TRANSITIVITY
+
+  inferential_importance: 5
+  discriminability: 4
+  research_tractability: 4
+  downstream_impact: 5
+  cost: 2
+
+  score_formula:
+    multiplication_then_subtraction
+
+  total:
+    398
+```
+
+Exact numerical scales may be adjusted. The key is to prioritize branches that can change multiple later arguments.
+
+---
+
+# 32. Contradiction engine
+
+The graph should detect contradictions between promoted claims.
+
+Example:
+
+```yaml
+contradiction:
+  contradiction_id: CON-001
+
+  claim_a:
+    Phenomenal unity is an equivalence relation.
+
+  claim_b:
+    Phenomenal unity can be non-transitive.
+
+  contradiction_type:
+    direct
+
+  resolution_required:
+    - restrict_scope
+    - downgrade_claim
+    - split_concept
+    - reject_one_claim
+```
+
+Many apparent contradictions will require scope distinctions.
+
+Example:
+
+[
+\text{local phenomenal unity may be transitive}
+]
+
+while:
+
+[
+\text{layered unity may be non-transitive}.
+]
+
+---
+
+# 33. Concept registry
+
+Terms must have stable, versioned meanings.
+
+```yaml
+term:
+  term_id: TERM-VIMARSA
+
+  label: vimarsa
+
+  language: Sanskrit
+
+  definitions:
+    - definition_id: DEF-VIM-01
+      text:
+        Manifestation's non-inert apprehensive character.
+      strength:
+        minimal
+
+    - definition_id: DEF-VIM-02
+      text:
+        Manifestation's power of differentiation and synthesis.
+      strength:
+        intermediate
+
+    - definition_id: DEF-VIM-03
+      text:
+        Unrestricted self-determining creative freedom.
+      strength:
+        maximal
+
+  prohibited_equations:
+    - vimarsa_is_not_merely_metacognition
+    - vimarsa_is_not_automatically_prediction
+    - minimal_vimarsa_does_not_entail_svatantrya
+
+  related_pressures:
+    - P01
+    - P04
+    - P05
+    - P08
+    - P10
+```
+
+Every argument must specify which definition it uses.
+
+This prevents a word from silently changing meaning across premises.
+
+---
+
+# 34. Formal proof representation
+
+Arguments should be stored in both readable and machine-checkable form.
+
+```yaml
+formalisation:
+  vocabulary:
+    Cx: x_is_a_conscious_cognition
+    Rx: x_is_intrinsically_self_present
+    Iy_x: y_represents_x
+    Mx: x_is_manifest
+
+  premises:
+    - forall x: Cx -> Mx
+    - forall x: Mx -> (Rx or exists y: Iy_x)
+    - forall x,y: Iy_x -> My
+    - no_infinite_explanatory_regress
+
+  conclusion:
+    forall x: Cx -> Rx
+
+  proof_status:
+    requires_regress_principle
+
+  ambiguity:
+    The premises may establish non-objective self-presence without establishing
+    ontological fundamentality.
+```
+
+A theorem prover can check formal consistency, but philosophical premises still require evaluation.
+
+---
+
+# 35. Database implementation
+
+A practical implementation can use:
+
+* PostgreSQL for canonical objects;
+* JSONB for flexible argument structures;
+* a graph layer such as Apache AGE or Neo4j for dependencies;
+* Git for checkpoint snapshots and source files;
+* object storage for PDFs and scanned texts;
+* embeddings only for retrieval, never as canonical truth.
+
+Suggested core tables:
+
+```text
+pressures
+pressure_edges
+claims
+inferences
+arguments
+premises
+countermodels
+sources
+passages
+evidence
+discriminators
+research_branches
+terms
+checkpoints
+checkpoint_deltas
+agent_runs
+provenance
+reviews
+```
+
+Essential graph relations:
+
+```text
+CLAIM SUPPORTS CLAIM
+CLAIM CONTRADICTS CLAIM
+ARGUMENT ATTEMPTS EDGE
+ARGUMENT USES PASSAGE
+COUNTERMODEL BLOCKS INFERENCE
+EVIDENCE SUPPORTS CLAIM
+EVIDENCE UNDERDETERMINES CLAIM
+PRESSURE GENERATES BRANCH
+CHECKPOINT PROMOTES CLAIM
+CHECKPOINT REJECTS INFERENCE
+TERM DEFINES CLAIM
+```
+
+---
+
+# 36. Minimal repository structure
+
+```text
+frontier-pressure-graph/
+├── README.md
+├── schema/
+│   ├── pressure.schema.json
+│   ├── edge.schema.json
+│   ├── claim.schema.json
+│   ├── argument.schema.json
+│   ├── source.schema.json
+│   ├── evidence.schema.json
+│   └── checkpoint.schema.json
+├── ontology/
+│   ├── pressures.yaml
+│   ├── terms.yaml
+│   ├── inference-risks.yaml
+│   └── status-vocabulary.yaml
+├── graph/
+│   ├── edges/
+│   ├── claims/
+│   ├── arguments/
+│   ├── countermodels/
+│   └── branches/
+├── sources/
+│   ├── primary/
+│   ├── translations/
+│   ├── scholarship/
+│   └── science/
+├── checkpoints/
+│   ├── CP-001/
+│   ├── CP-002/
+│   ├── CP-010/
+│   └── CP-020/
+├── runs/
+│   └── RUN-YYYY-NNN/
+├── prompts/
+│   ├── coordinator.md
+│   ├── science-retriever.md
+│   ├── sanskrit-retriever.md
+│   ├── reconstructor.md
+│   ├── critic.md
+│   └── compiler.md
+└── tests/
+    ├── provenance-tests/
+    ├── contradiction-tests/
+    ├── promotion-tests/
+    └── hallucination-tests/
+```
+
+---
+
+# 37. Filled research object: universalisation
+
+```yaml
+pressure_edge:
+  edge_id: E08-09
+  antecedent_pressure: P08
+  consequent_pressure: P09
+
+  antecedent_claim:
+    Local experiential systems exhibit manifestation, synthesis and agency.
+
+  consequent_claim:
+    Local subjects derive from one universal subject or manifest ground.
+
+  exact_question:
+    What relation, if any, connects locally manifest subjects to one
+    universal principle?
+
+  candidate_models:
+
+    - model_id: MOD-INDEPENDENT-DUPLICATION
+      thesis:
+        Manifest capacity is independently instantiated in each subject.
+      gain:
+        Preserves privacy and numerical plurality.
+      burden:
+        Explains neither the common intrinsic character nor why multiple
+        independent instantiations exist.
+
+    - model_id: MOD-NUMERICAL-IDENTITY
+      thesis:
+        All local manifestation belongs to one numerically identical subject.
+      gain:
+        Provides maximal unity.
+      burden:
+        Explains neither informational privacy nor local phenomenal exclusion.
+
+    - model_id: MOD-PROCLEAN-PARTICIPATION
+      thesis:
+        Local subjects participate in one universal source without being
+        numerically identical with it or one another.
+      gain:
+        Preserves common ground and genuine plurality.
+      burden:
+        Must explain what individuates each mode of participation.
+
+    - model_id: MOD-NEUTRAL-MONISM
+      thesis:
+        Physical and phenomenal domains are aspects of one neutral ground.
+      gain:
+        Avoids brute emergence and cosmic subject identity.
+      burden:
+        Requires a precise aspect-individuation law.
+
+  arguments:
+
+    - argument_id: ARG-UTP-UNIVERSAL-01
+      premises:
+        - Every cognition is reflexively manifest.
+        - Manifestness is not a determinate content.
+        - Determinate boundaries appear within manifestation.
+      textual_conclusion:
+        All cognition belongs to one universal subject.
+      validly_established_conclusion:
+        Local experiences share a non-objective manifest character.
+      unsupported_edge:
+        Shared manifest character entails numerical subject identity.
+      countermodel:
+        Proclean participation in a common manifest source.
+      verdict:
+        blocked_by_type_token_gap
+
+    - argument_id: ARG-PROCLUS-PARTICIPATION-01
+      premises:
+        - A common cause can remain undivided while producing many effects.
+        - Participants receive the cause according to their capacities.
+        - Shared causal source does not erase participant distinction.
+      conclusion:
+        Local subjects can share one source without numerical identity.
+      validly_established_conclusion:
+        Participation is a coherent alternative to duplication and identity.
+      unsupported_edge:
+        A universal manifest source actually exists.
+      verdict:
+        coherent_metaphysical_model_not_proven
+
+  discriminators:
+    - id: DIS-E08-09-01
+      question:
+        Does recognition of a common ground imply access to other local fields?
+      implication:
+        Lack of such access pressures numerical identity more than participation.
+
+    - id: DIS-E08-09-02
+      question:
+        Can a theory derive participant boundaries independently of assuming
+        already individuated subjects?
+      implication:
+        Failure indicates circular participation or contraction accounts.
+
+  frontier:
+    What individuates a local actualisation of manifest capacity?
+```
+
+---
+
+# 38. Filled research object: freedom
+
+```yaml
+pressure_edge:
+  edge_id: E09-10
+
+  antecedent_claim:
+    A universal source of manifestation or unity exists.
+
+  consequent_claim:
+    The source possesses unrestricted creative freedom.
+
+  candidate_inferences:
+
+    - inference_id: INF-SHAIVA-FREEDOM
+      premises:
+        - Consciousness is intrinsically self-present.
+        - Determinate manifestation is an act of articulation.
+        - All reality is manifestation.
+      conclusion:
+        Consciousness freely manifests all reality.
+      hidden_premises:
+        - Articulation is genuine causal action.
+        - The source of articulation is causally independent.
+        - No constraint external to consciousness exists.
+        - Universal causal independence entails unrestricted freedom.
+      status:
+        missing_multiple_bridges
+
+    - inference_id: INF-PROCLUS-ABUNDANCE
+      premises:
+        - A perfect cause lacks nothing.
+        - A perfect cause possesses productive power.
+        - Eternal perfect power cannot remain unrealised.
+      conclusion:
+        The perfect cause necessarily produces through abundance.
+      hidden_premises:
+        - Unactualised power is incompatible with perfection.
+        - The produced order follows necessarily from the cause's nature.
+      status:
+        metaphysically_systematic_but_contested
+
+  countermodels:
+    - universal_manifest_presence_without_causal_sovereignty
+    - universal_ground_with_law_governed_expression
+    - non_agentive_neutral_ground
+    - necessary_structure_without_freedom
+
+  frontier:
+    What distinguishes universal productive structure from free agency?
+```
+
+---
+
+# 39. Agent run contract
+
+Every agent run must return:
+
+```yaml
+agent_run:
+  run_id: RUN-2026-001
+
+  assigned_edge: E04-05
+
+  objective:
+    Determine whether phenomenal co-presence can be derived from independently
+    characterised integration.
+
+  allowed_outputs:
+    - source_packet
+    - argument_reconstruction
+    - countermodel
+    - discriminator
+    - research_branch
+
+  forbidden_outputs:
+    - checkpoint_promotion
+    - uncited_primary_text_claim
+    - whole_tradition_verdict
+    - generic_consciousness_summary
+
+  completion_report:
+    sources_examined: []
+    arguments_added: []
+    claims_revised: []
+    countermodels_added: []
+    unresolved_gaps: []
+    recommended_next_branch: null
+```
+
+---
+
+# 40. Human audit interface
+
+The reviewer should see one edge at a time.
+
+```text
+EDGE E04-05
+Presence → Co-Presence
+
+ESTABLISHED
+Some contents are jointly manifest.
+
+PROPOSED BRIDGE
+Maximal intrinsic causal integration.
+
+ARGUMENT
+P1 ...
+P2 ...
+P3 ...
+
+TEXTUAL/EMPIRICAL SUPPORT
+[linked sources]
+
+VALID CONCLUSION
+The system is causally irreducible.
+
+UNSUPPORTED TRANSITION
+Causal irreducibility = phenomenal co-presence.
+
+STRONGEST COUNTERMODEL
+Causally irreducible non-conscious system.
+
+DISCRIMINATOR
+Does the theory uniquely predict subject division/fusion cases?
+
+DECISION
+[Promote] [Narrow] [Reject] [Request research]
+```
+
+This keeps the review philosophical rather than database-oriented.
+
+---
+
+# 41. The checkpoint-generation algorithm
+
+```text
+1. Select all claims changed since parent checkpoint.
+2. Exclude claims lacking complete provenance.
+3. Group claims by pressure edge.
+4. Separate:
+   a. survived claims,
+   b. blocked inferences,
+   c. new distinctions,
+   d. live countermodels.
+5. Find the smallest premise shared by the remaining blocked arguments.
+6. Promote that premise into the residual frontier.
+7. Generate the checkpoint theorem.
+8. Run contradiction and scope checks.
+9. Require audit approval.
+10. Commit checkpoint and graph snapshot.
+```
+
+The critical operation is step 5.
+
+The next frontier is not invented creatively.
+
+It is compiled from the smallest common unresolved premise.
+
+---
+
+# 42. Frontier-extraction algorithm
+
+Given arguments:
+
+[
+A_1,\ldots,A_n,
+]
+
+extract their unsupported bridge sets:
+
+[
+H_1,\ldots,H_n.
+]
+
+Find:
+
+[
+H^\ast
+======
+
+\operatorname{MinimalCommonPressure}
+(H_1,\ldots,H_n).
+]
+
+Example:
+
+```text
+IIT:
+causal integration → phenomenal unity
+
+GNWT:
+global access → phenomenal unity
+
+Utpaladeva:
+synthesis → one subject
+
+Proclus:
+participated unity → local field
+```
+
+Shared unresolved pressure:
+
+[
+\boxed{
+\text{What constitutes phenomenal inclusion?}
+}
+]
+
+That becomes the next branch.
+
+---
+
+# 43. Quality tests
+
+## Test 1 — Countermodel completeness
+
+Every major inference must have at least one serious countermodel.
+
+## Test 2 — Source locality
+
+Every textual claim must point to a precise passage.
+
+## Test 3 — Bridge exposure
+
+Every nontrivial inference must state its bridge premise.
+
+## Test 4 — Scope consistency
+
+A claim about local cognition cannot silently become universal.
+
+## Test 5 — Measurement discipline
+
+Measured variables must remain distinct from inferred phenomenology.
+
+## Test 6 — Terminological stability
+
+Every technical term must reference a definition version.
+
+## Test 7 — Checkpoint inheritance
+
+A child checkpoint must state what it:
+
+* retains;
+* revises;
+* rejects;
+* adds.
+
+## Test 8 — Frontier minimality
+
+The residual frontier must be the smallest unresolved premise, not a broad topic.
+
+---
+
+# 44. What the system should refuse
+
+The agent must reject requests such as:
+
+> Find parallels between IIT and Tantra.
+
+It should transform them into:
+
+> Compare IIT’s inference from intrinsic causal integration to one phenomenal domain with Pratyabhijñā’s inference from synthesis to one apprehending subject.
+
+It must reject:
+
+> Research universal consciousness.
+
+It should transform it into:
+
+> Compare duplication, numerical identity, participation and neutral-ground models of the relation among locally manifest subjects.
+
+It must reject:
+
+> Summarize Proclus.
+
+It should transform it into:
+
+> Test whether participation explains shared manifest ground without global phenomenal co-presence.
+
+---
+
+# 45. Minimal viable version
+
+The first operational version needs only:
+
+1. the ten pressures;
+2. nine canonical edges;
+3. claims;
+4. arguments;
+5. countermodels;
+6. passages;
+7. evidence;
+8. research branches;
+9. checkpoints;
+10. provenance.
+
+Do not initially build:
+
+* autonomous theorem proving;
+* elaborate visualisation;
+* complex multi-agent voting;
+* automatic metaphysical scoring;
+* huge ontologies.
+
+The first success criterion is simple:
+
+[
+\boxed{
+\text{Can the system prevent unsupported inferential drift}
+}
+]
+
+[
+\boxed{
+\text{between checkpoints?}
+}
+]
+
+---
+
+# 46. Recommended first implementation sequence
+
+## Stage 1 — Encode the existing checkpoints
+
+Convert Checkpoints 1, 2, 10 and 20 into:
+
+* promoted claims;
+* blocked inferences;
+* countermodels;
+* residual frontiers.
+
+Do not add new research yet.
+
+## Stage 2 — Populate three decisive edges
+
+Start with:
+
+[
+E03-04:
+\text{Perspective}\rightarrow\text{Presence},
+]
+
+[
+E04-05:
+\text{Presence}\rightarrow\text{Co-presence},
+]
+
+[
+E08-09:
+\text{Agency}\rightarrow\text{Universalisation}.
+]
+
+These contain the project’s deepest unresolved transitions.
+
+## Stage 3 — Attach primary sources
+
+Populate exact:
+
+* Utpaladeva passages;
+* Abhinavagupta passages;
+* Ñāṇananda sermons;
+* Ñāṇavīra notes;
+* Proclus propositions;
+* relevant contemporary science.
+
+## Stage 4 — Run the first autonomous branch
+
+Recommended first branch:
+
+[
+\boxed{
+\text{What constitutes phenomenal inclusion?}
+}
+]
+
+This branch has the highest downstream impact.
+
+## Stage 5 — Generate Checkpoint 21
+
+Checkpoint 21 should not be manually conceived.
+
+It should be compiled from the first populated branch.
+
+---
+
+# 47. Final system theorem
+
+The Frontier Pressure Graph is governed by:
+
+[
+\boxed{
+\textbf{No conclusion advances merely because it is coherent,}
+}
+]
+
+[
+\boxed{
+\textbf{textually prestigious, phenomenologically compelling}
+}
+]
+
+[
+\boxed{
+\textbf{or scientifically fashionable.}
+}
+]
+
+It advances only when:
+
+[
+\boxed{
+\text{antecedent}
++
+\text{explicit bridge}
++
+\text{source support}
++
+\text{countermodel survival}
+\rightarrow
+\text{consequent}.
+}
+]
+
+Every failure produces useful information:
+
+[
+\boxed{
+\text{failed inference}
+\rightarrow
+\text{missing premise}
+\rightarrow
+\text{new frontier}.
+}
+]
+
+That is the engine that generated the checkpoints informally.
+
+The formal system makes it permanent:
+
+[
+\boxed{
+\text{pressure}
+\rightarrow
+\text{argument}
+\rightarrow
+\text{countermodel}
+\rightarrow
+\text{failure boundary}
+\rightarrow
+\text{discriminator}
+\rightarrow
+\text{new pressure}.
+}
+]
+
+The graph does not attempt to store “the truth.”
+
+It stores:
+
+[
+\boxed{
+\textbf{exactly how far each argument currently reaches.}
+}
+]
+
+The strongest implementation choice is to begin with YAML files in Git rather than a database. That makes every inference readable, diffable and version-controlled. PostgreSQL or a graph database should come only after the schemas survive several real research cycles.

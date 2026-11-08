@@ -1,0 +1,914 @@
+# GEODROP — INSTALLED-BASE NICHE OWNERSHIP ENGINE
+
+## MISSION
+
+Discover and fully justify country-specific ecommerce niches where we can plausibly become the canonical compatibility and purchase layer rather than merely another seller.
+
+Do not search for “winning products.”
+
+Search for neglected INSTALLED BASES.
+
+The atomic opportunity is:
+
+COUNTRY
+× INSTALLED ASSET
+× GENERATION / REVISION
+× LIFECYCLE TRIGGER
+× COMPONENT
+× COMPATIBILITY UNCERTAINTY
+× LOCAL SUPPLIER GRAPH
+
+The target pattern is:
+
+1. A durable asset/system was installed in meaningful numbers over many years.
+2. The installed asset remains in use much longer than individual components, consumables or technologies.
+3. Owners eventually need a filter, hose, control, sensor, motor, cartridge, valve, board, adapter, receiver, accessory, successor unit, upgrade or other specific component.
+4. Determining the correct component requires model/generation/revision/interface/supersession knowledge.
+5. The wrong part creates meaningful friction, delay, return cost or equipment downtime.
+6. Good local physical supply exists.
+7. Existing suppliers are operationally competent but their consumer-facing data is fragmented, trade-oriented, PDF-bound, poorly localized, inconsistent or difficult for agents to reason over.
+8. No excellent local merchant currently owns the end-to-end identity → compatibility → exclusion → supersession → availability → checkout decision.
+9. We can model the important decision surface with a relatively bounded catalog rather than an enormous undifferentiated marketplace.
+10. We can compile the resulting graph into Google Merchant Center, Shopify Catalog, native-language web pages and agent-readable endpoints.
+
+The company being built is a COMPATIBILITY COMMERCE COMPILER.
+
+Each accepted niche is a bounded country/product subgraph generated from one canonical backend.
+
+---
+
+## CORE DOCTRINE
+
+We do not want to compete.
+
+We want to find commercial objects that SHOULD exist but do not.
+
+Reject categories where success depends primarily on:
+
+* cheaper prices;
+* prettier branding;
+* generic SEO;
+* generic product descriptions;
+* broad catalog size;
+* influencer marketing;
+* undifferentiated dropshipping;
+* competing against excellent specialist merchants;
+* generic visual identification alone.
+
+Visual identification is an input, not the moat.
+
+The moat is:
+
+authoritative identity
+
+* positive compatibility
+* negative compatibility
+* generation/revision conditions
+* supersession history
+* required adapters/accessories
+* source provenance
+* live local supply
+* current price
+* delivery state
+* transaction path
+* observed purchase/return outcomes.
+
+---
+
+## STRICT EPISTEMIC RULES
+
+Use live web research.
+
+Research in the native language of every target country as well as English.
+
+Prefer primary sources:
+
+1. OEM manuals, catalogs, old manuals, service documentation and replacement guides.
+2. Manufacturer product pages and archived model documentation.
+3. Official distributors and wholesalers.
+4. Current retailers and comparison engines.
+5. Government/trade/industry installed-base statistics.
+6. Repair/service specialists.
+7. Trade forums and technical communities.
+8. Reddit and homeowner/operator communities for first-hand friction.
+9. Search result composition and marketplaces.
+10. High-quality secondary research only when primary evidence is unavailable.
+
+Every material fact must have:
+
+* source URL;
+* observation date;
+* source type;
+* evidence grade;
+* exact model/country context;
+* independence cluster.
+
+UNKNOWN beats assumption.
+
+Never invent:
+
+* installed base;
+* search volume;
+* CPC;
+* conversion rate;
+* supplier cost;
+* margin;
+* reseller status;
+* stock;
+* failure rate;
+* replacement interval;
+* return rate.
+
+Do not treat five retailers using the same distributor feed as five independent supply sources.
+
+---
+
+## PHASE 0 — PRIOR-STATE / NOVELTY
+
+Read the existing GeoDrop candidate and evidence registry before searching.
+
+Reconstruct:
+
+* countries already scanned;
+* installed assets already considered;
+* OEMs;
+* component families;
+* killed candidates;
+* kill reasons;
+* supplier clusters;
+* unresolved hypotheses;
+* prior search queries;
+* accepted graph patterns.
+
+Semantically deduplicate.
+
+Do not rediscover Allaway under a different wording.
+
+Prefer information gain over novelty for novelty's sake.
+
+---
+
+## PHASE 1 — MASS INSTALLED-BASE SCAN
+
+Scan affluent ecommerce markets, initially emphasizing:
+
+Finland
+Norway
+Sweden
+Denmark
+Netherlands
+Germany
+Austria
+Switzerland
+Belgium
+UK
+Ireland
+Australia
+New Zealand
+
+Discover other countries when evidence warrants.
+
+Do NOT restrict discovery to predefined industries.
+
+Search for historical installed assets and systems with long survival periods and component replacement tails.
+
+Useful seed categories may include HVAC, ventilation, heat pumps, central vacuums, pumps, water systems, marine equipment, workshop equipment, security systems, access control, garage equipment, irrigation, building controls, fireplaces, boilers, plumbing systems, specialist appliances, farm equipment and analogous categories.
+
+These are SEEDS, not a whitelist.
+
+Prefer evidence-driven discovery of unexpected categories.
+
+Look for phrases in local language equivalent to:
+
+old model
+discontinued
+replacement
+successor
+spare part
+which part fits
+compatible with
+does this fit
+replacement filter
+replacement remote
+old series
+new version
+adapter required
+obsolete
+superseded
+service manual
+parts catalog
+type plate
+serial number
+production year
+replacement kit.
+
+For every candidate generate the exact atom:
+
+country
+× OEM
+× installed asset/family
+× generation
+× component
+× lifecycle trigger.
+
+Do not accept broad categories such as “Finnish HVAC parts.”
+
+---
+
+## PHASE 2 — INSTALLED-BASE PROOF
+
+Establish whether a meaningful cohort actually exists.
+
+Seek:
+
+* OEM disclosed unit counts;
+* annual/historical sales;
+* housing/building installation statistics;
+* trade association statistics;
+* government registers;
+* historical catalogs;
+* service network size;
+* replacement guides referring to tens/hundreds of thousands of units;
+* discontinued model archives;
+* reseller/service evidence.
+
+Record:
+
+* estimated installed base;
+* source;
+* relevant generation;
+* installation years;
+* uncertainty;
+* expected surviving cohort only if defensibly estimable.
+
+Never infer current surviving units merely from historic sales without an explicit survival model.
+
+A large installed base alone is insufficient.
+
+---
+
+## PHASE 3 — LIFECYCLE TRIGGER PROOF
+
+Determine WHY someone buys.
+
+Map:
+
+installed asset
+→ component/problem
+→ failure/replenishment/upgrade trigger
+→ purchase decision.
+
+Classify trigger:
+
+CONSUMABLE
+WEAR_PART
+FAILURE
+OBSOLESCENCE
+SUCCESSOR_MIGRATION
+COMPATIBILITY_UPGRADE
+REGULATORY_REPLACEMENT
+ACCESSORY_EXPANSION
+DAMAGE
+OTHER.
+
+Find evidence for frequency or urgency.
+
+Distinguish:
+
+* routine low-value commodity maintenance;
+* uncertain compatibility replacement;
+* forced/urgent replacement;
+* high-value successor migration.
+
+Never assume a replacement interval across models.
+
+---
+
+## PHASE 4 — COMPATIBILITY GRAPH
+
+This is the central phase.
+
+Construct nodes for:
+
+OEM
+AssetFamily
+AssetModel
+Generation
+Revision
+ProductionRange
+SerialRange
+Interface
+Connector
+ComponentFamily
+Part
+LegacyPart
+CurrentPart
+Adapter
+Accessory
+SuccessorAsset
+Manual
+Document
+VisualCue.
+
+Construct evidence-backed edges:
+
+FITS
+DOES_NOT_FIT
+SUPERSEDES
+SUPERSEDED_BY
+REPLACED_BY
+REQUIRES_ADAPTER
+REQUIRES_PART
+ACCESSORY_FOR
+SAME_AS
+DIFFERENT_FROM
+VALID_BEFORE_DATE
+VALID_AFTER_DATE
+VALID_FOR_SERIAL_RANGE.
+
+Every edge must include:
+
+* conditions;
+* evidence source;
+* source type;
+* observed date;
+* confidence.
+
+Negative compatibility is especially valuable.
+
+Search deliberately for look-alikes and confusing near-matches.
+
+Capture how a human can identify the asset:
+
+* front;
+* rear;
+* connectors;
+* dimensions;
+* label/type plate;
+* model markings;
+* distinguishing colors/shapes;
+* production stickers;
+* installation arrangement.
+
+Never use visual similarity itself as proof of fitment.
+
+---
+
+## PHASE 5 — LOCAL SUPPLY GRAPH
+
+For every part map:
+
+OEM
+→ importer
+→ distributor
+→ wholesaler
+→ retailer
+→ warehouse
+→ offer.
+
+Collapse shared upstream suppliers.
+
+Capture:
+
+* supplier name;
+* SKU;
+* OEM MPN;
+* GTIN;
+* local trade identifier;
+* price;
+* whether VAT included;
+* stock;
+* stock timestamp;
+* warehouse location;
+* dispatch time;
+* shipping destinations;
+* return/RMA terms;
+* warranty handling;
+* reseller/dealer eligibility;
+* MOQ/MOV;
+* dealer/net price;
+* dropship/blind-ship availability;
+* CSV/XML/API/feed availability.
+
+Public retail availability does NOT prove reseller access.
+
+If economics require supplier contact, emit HUMAN_ACTION_REQUIRED.
+
+---
+
+## PHASE 6 — OWNERSHIP-GAP AUDIT
+
+Search aggressively for the strongest incumbent.
+
+Do not ask “how many sellers exist?”
+
+Ask:
+
+“Does anyone already solve the entire decision exceptionally well?”
+
+Audit the best 5–10 independent merchants for:
+
+model identification
+historical aliases
+type-plate help
+production-year distinctions
+positive fitment
+negative fitment
+supersession
+replacement chains
+adapter requirements
+accessory requirements
+technical specs
+manuals/evidence
+local language
+stock
+delivery ETA
+returns
+reviews/trust
+mobile UX
+checkout
+AI/structured product legibility.
+
+Separate:
+
+CONTENT GAP
+from
+MERCHANT GAP.
+
+Weak informational content with excellent ecommerce is not necessarily an opportunity.
+
+Many sellers with terrible fitment support can be an excellent opportunity.
+
+HARD KILL if one competent local specialist already owns the full decision path and we would merely be incrementally better.
+
+Also adversarially search:
+
+* OEM DTC;
+* Amazon/marketplace coverage;
+* manufacturer dealer network;
+* hidden trade stores;
+* large cross-border specialists;
+* price-comparison engines;
+* service-company parts sales;
+* strong foreign specialists shipping locally.
+
+Explain WHY the gap exists.
+
+---
+
+## PHASE 7 — DEMAND SURFACE
+
+Generate native-language query families for each exact installed-base atom.
+
+Separate:
+
+TRANSACTIONAL
+COMPATIBILITY
+REPLACEMENT
+SUCCESSOR
+PROBLEM/SYMPTOM
+SUPPORT
+EDUCATIONAL.
+
+Examples of patterns:
+
+[OEM] [model] [part]
+[OEM] [model] replacement
+which [part] fits [model]
+does [part] fit [model]
+[legacy part number] replacement
+[old model] new model
+[model] spare parts
+[model] filter/hose/remote/sensor/etc.
+
+Seek legitimate demand evidence from:
+
+* authenticated Google Ads data when available;
+* Google Trends;
+* Search Console once live;
+* comparison engines;
+* commercial SERP composition;
+* retailer review counts;
+* marketplace sales evidence where legitimate;
+* forum/community recurrence.
+
+Never hallucinate Keyword Planner values.
+
+Support queries are not automatically purchase demand.
+
+---
+
+## PHASE 8 — ECONOMICS
+
+Use verified values only.
+
+Compute:
+
+net_revenue
+= retail_price excluding recoverable VAT/tax where appropriate
+
+pre_ad_contribution
+= net_revenue
+
+* supplier_cost
+* inbound/freight allocation
+* outbound shipping subsidy
+* payment fees
+* expected returns/RMA reserve
+* variable support cost.
+
+Then, only when real acquisition inputs exist:
+
+break_even_CAC = pre_ad_contribution
+
+break_even_CPC = realistic_CVR × pre_ad_contribution.
+
+Never call a retail-minus-public-retail-price difference “margin.”
+
+Dealer pricing unknown = MARGIN UNKNOWN.
+
+Do not promote to launchable while commercial access is unresolved.
+
+---
+
+## PHASE 9 — DISTRIBUTION COMPILER
+
+For every accepted product generate projections from the canonical graph.
+
+### GOOGLE MERCHANT CENTER
+
+Verify the current specification at run time.
+
+Map only truthful relevant data.
+
+Use where appropriate:
+
+* brand;
+* MPN;
+* GTIN;
+* availability;
+* price;
+* shipping;
+* product_detail;
+* question_and_answer;
+* document_link;
+* related_product;
+* variants/grouping.
+
+Do not fill fields simply to hit maximum counts.
+
+Do not duplicate information across fields contrary to current Google guidance.
+
+Only submit documentation where licensing/marketing rights permit it.
+
+Remember:
+Google Merchant Center is a projection of the canonical graph, NOT the canonical compatibility database.
+
+Relationships to historical assets that are not inventory products may need to live in our own product data, PDP, compatibility graph or API rather than related_product.
+
+### SHOPIFY
+
+Map:
+
+* products;
+* variants;
+* metafields;
+* metaobjects;
+* identifiers;
+* price;
+* inventory;
+* market localization;
+* compatibility records;
+* evidence references where appropriate;
+* Shopify Catalog mappings.
+
+### WEB
+
+Compile:
+
+* canonical PDP;
+* legacy model page;
+* compatibility matrix;
+* successor page;
+* “how to identify your model” page;
+* exact-model replacement pages;
+* structured data;
+* evidence pages;
+* native-language FAQs;
+* agent-readable API.
+
+The PDP is an interface to the graph, not the source of truth.
+
+---
+
+## PHASE 10 — GOOGLE ADS VALIDATION
+
+Do not default to PMax.
+
+Verify current Google Ads features and language eligibility at run time.
+
+For a new native-language niche begin with the narrowest experiment capable of falsifying the thesis.
+
+Prefer:
+
+1. Free Merchant Center listings when possible.
+2. Native-language exact/phrase Search for model/part/replacement/compatibility intent.
+3. Standard Shopping once truthful price/stock feeds exist.
+4. More automated campaign types only after sufficient product/query evidence or when they are specifically the variable being tested.
+
+Build Search ad groups around:
+
+OEM + exact model
+OEM + legacy part number
+OEM + model + component
+legacy model + replacement
+legacy part + successor
+compatibility question.
+
+Build negatives aggressively.
+
+Do not assume CPC is cheap because a country is Nordic or a niche is obscure.
+
+Derive spend from:
+
+* maximum acceptable experiment loss;
+* contribution;
+* expected information value.
+
+Capture every search term.
+
+Classify every query as:
+NEW_ALIAS
+NEW_MODEL
+NEW_COMPONENT
+NEW_COMPATIBILITY_EDGE
+NEW_NEGATIVE_EDGE
+NEW_FAQ
+NEW_TRIGGER
+IRRELEVANT.
+
+Feed useful observations back into the graph.
+
+---
+
+## PHASE 11 — AGENT-DISCOVERY TEST
+
+Once pages and feeds are live, test a fixed prompt suite against current supported shopping/search surfaces.
+
+Examples:
+
+“I have [legacy model]. Which replacement filter fits?”
+“What replaced [old MPN]?”
+“Does [part X] fit [model Y]?”
+“I have this old [OEM] machine. What is the current replacement?”
+“Where can I buy [part] locally in [country]?”
+
+Record:
+
+* products recommended;
+* cited domains;
+* compatibility correctness;
+* price correctness;
+* stock correctness;
+* whether our entity was retrieved;
+* whether the agent exposed incorrect substitutes.
+
+Never treat one model answer as ranking proof.
+
+Track changes longitudinally.
+
+---
+
+## PHASE 12 — OUTCOME FLYWHEEL
+
+Every real transaction creates evidence.
+
+Capture:
+
+query
+→ identified asset
+→ selected part
+→ compatibility reasoning
+→ supplier
+→ delivered item
+→ fit success/failure
+→ return reason
+→ support interaction.
+
+Use this to discover:
+
+* new aliases;
+* ambiguous labels;
+* unsupported generations;
+* wrong compatibility assumptions;
+* supplier reliability;
+* actual failure/replacement patterns;
+* commonly purchased combinations.
+
+A confirmed fit should strengthen an edge but must not override authoritative contrary evidence blindly.
+
+Wrong-part returns are high-value graph corrections.
+
+---
+
+## HARD GATES BEFORE SCORING
+
+Candidate cannot score as launchable unless all are resolved:
+
+G1 INSTALLED BASE EXISTS
+G2 REAL LIFECYCLE PURCHASE TRIGGER
+G3 NONTRIVIAL COMPATIBILITY/IDENTITY PROBLEM
+G4 REAL LOCAL SUPPLY
+G5 GENUINE OWNERSHIP/MERCHANT GAP
+G6 LEGITIMATE RESELLER/TRANSACTION PATH
+G7 VIABLE OR AT LEAST TESTABLE ECONOMICS
+G8 MANAGEABLE RETURNS/RMA/REGULATORY BURDEN.
+
+If any required gate is UNKNOWN, preserve UNKNOWN.
+
+Do not compensate for a failed gate using a high weighted score.
+
+---
+
+## OWNABILITY SCORE — ONLY AFTER HARD GATES
+
+Score /130:
+
+Installed-base strength: 12
+Lifecycle trigger strength: 10
+Compatibility complexity/value: 15
+Wrong-part/decision cost: 10
+Legacy/supersession depth: 10
+Merchant ownership gap: 15
+Local supply quality/resilience: 10
+Supplier-data normalization leverage: 8
+Native-language/geographic asymmetry: 8
+Commercial demand evidence: 10
+Unit economics: 10
+Agent/distribution leverage: 7
+Operational simplicity: 5
+
+Do not convert score into probability.
+
+Penalize UNKNOWN rather than assuming best case.
+
+---
+
+## KILL CONDITIONS
+
+Kill or freeze a niche when:
+
+* an excellent end-to-end specialist already owns it;
+* a marketplace resolves compatibility and fulfillment reliably;
+* OEM DTC already provides excellent fitment + stock + checkout;
+* compatibility is effectively universal/simple;
+* apparent scarcity is caused by negligible demand;
+* reseller authorization fails;
+* supplier economics fail;
+* stock is structurally fragile;
+* RMA/service burden destroys contribution;
+* mandatory installation/licensing makes lightweight ecommerce unrealistic;
+* exact-model traffic is predominantly informational rather than commercial;
+* the graph would require thousands of poorly evidenced SKUs before being useful;
+* a stronger candidate has materially higher expected value of information.
+
+KILL is a successful research outcome.
+
+---
+
+## ACCEPTED CAMPAIGN PACK
+
+For every candidate that survives, output:
+
+### 1. EXECUTIVE THESIS
+
+One paragraph describing the exact installed-base arbitrage.
+
+### 2. WHY THIS EXISTS
+
+Installed base, asset age, lifecycle trigger and market mechanism.
+
+### 3. CANONICAL ATOM
+
+country × OEM × asset × generation × component × trigger.
+
+### 4. LIVE EVIDENCE
+
+Compact table of primary facts and sources.
+
+### 5. COMPATIBILITY GRAPH
+
+Models, parts, positive edges, negative edges, adapters, supersessions, unresolved edges.
+
+### 6. VISUAL IDENTIFICATION PLAN
+
+Exact views/type plates/connectors/look-alikes required.
+
+### 7. LOCAL SUPPLY GRAPH
+
+Independent suppliers, warehouse/stock/price/ETA/feed/reseller status.
+
+### 8. COMPETITOR / OWNERSHIP AUDIT
+
+Strongest merchants and exact reasons none already owns the decision.
+
+### 9. DEMAND SURFACE
+
+Native queries and observed demand evidence.
+
+### 10. ECONOMICS
+
+Verified values and UNKNOWN values clearly separated.
+
+### 11. PRODUCT GRAPH COVERAGE PLAN
+
+Minimum useful set of models/SKUs required to cover the niche.
+
+### 12. CANONICAL PDP
+
+Exact information hierarchy.
+
+### 13. GMC PROJECTION
+
+Feed fields and relationships to compile.
+
+### 14. SHOPIFY PROJECTION
+
+Products/metafields/metaobjects/catalog representation.
+
+### 15. WEB/AGENT PROJECTION
+
+Model pages, compatibility pages, JSON-LD/API.
+
+### 16. GOOGLE ADS PROBE
+
+Campaign/ad-group/query/negative structure, measurement, maximum-loss logic and falsifier.
+
+### 17. AI DISCOVERY PROBE
+
+Fixed prompts and metrics.
+
+### 18. RISKS
+
+Supplier, compatibility, returns, legal, documentation, marketplace and OEM risks.
+
+### 19. HYPOTHESIS LEDGER
+
+H1
+H0
+strongest evidence for
+strongest evidence against
+falsifier
+decisive unknown
+highest-EVI next test.
+
+### 20. DECISION
+
+KILL
+WATCH
+HUMAN_ACTION_REQUIRED
+SUPPLIER_READY
+PROBE_READY
+LAUNCHABLE.
+
+### 21. MACHINE-READABLE JSON
+
+Emit the full canonical GeoDrop campaign schema.
+
+---
+
+## RUN-LEVEL DISCOVERY OUTPUT
+
+Do not pad the report.
+
+A high-quality run should:
+
+* mass-screen a broad set of installed-base × country cells;
+* surface approximately 10–20 genuinely interesting anomalies when evidence permits;
+* adversarially investigate the strongest;
+* deeply construct only the few that clear structural gates;
+* kill aggressively;
+* fully package only those that could plausibly be owned.
+
+Prefer:
+
+100 cells scanned
+→ 15 anomalies
+→ 6 deep audits
+→ 2 exceptional campaigns
+
+over:
+
+20 generic “product ideas.”
+
+At the end output:
+
+BEST NEW OWNABLE NICHE
+BEST NEAR-MISS
+MOST IMPORTANT KILL
+NEW REUSABLE MARKET MECHANISM
+HIGHEST-EVI NEXT RESEARCH ACTION.
+
+The objective is not to discover products.
+
+The objective is to continuously discover **small commercial knowledge graphs that nobody has bothered to own yet — and then own them completely.**

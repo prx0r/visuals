@@ -1,0 +1,619 @@
+{
+  "audio_duration_seconds": 638.6,
+  "video_duration_seconds": 638.6,
+  "final_av_duration_difference_seconds": 0,
+  "shot_clip_duration_checks": [
+    {
+      "shot_id": "s001",
+      "expected": 10.5,
+      "actual": 12.408,
+      "error": 1.908
+    },
+    {
+      "shot_id": "s002",
+      "expected": 9.0,
+      "actual": 9.024,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s003",
+      "expected": 4.0,
+      "actual": 3.048,
+      "error": 0.952
+    },
+    {
+      "shot_id": "s004",
+      "expected": 4.0,
+      "actual": 3.192,
+      "error": 0.808
+    },
+    {
+      "shot_id": "s005",
+      "expected": 4.5,
+      "actual": 4.536,
+      "error": 0.036
+    },
+    {
+      "shot_id": "s006",
+      "expected": 4.2,
+      "actual": 4.152,
+      "error": 0.048
+    },
+    {
+      "shot_id": "s007",
+      "expected": 6.9,
+      "actual": 6.912,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s008",
+      "expected": 10.0,
+      "actual": 10.032,
+      "error": 0.032
+    },
+    {
+      "shot_id": "s009",
+      "expected": 7.2,
+      "actual": 7.2,
+      "error": 0.0
+    },
+    {
+      "shot_id": "s010",
+      "expected": 4.9,
+      "actual": 4.944,
+      "error": 0.044
+    },
+    {
+      "shot_id": "s011",
+      "expected": 4.0,
+      "actual": 3.216,
+      "error": 0.784
+    },
+    {
+      "shot_id": "s012",
+      "expected": 6.8,
+      "actual": 6.816,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s013",
+      "expected": 4.0,
+      "actual": 3.288,
+      "error": 0.712
+    },
+    {
+      "shot_id": "s014",
+      "expected": 10.5,
+      "actual": 10.656,
+      "error": 0.156
+    },
+    {
+      "shot_id": "s015",
+      "expected": 9.6,
+      "actual": 9.624,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s016",
+      "expected": 5.7,
+      "actual": 5.712,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s017",
+      "expected": 10.5,
+      "actual": 11.184,
+      "error": 0.684
+    },
+    {
+      "shot_id": "s018",
+      "expected": 7.1,
+      "actual": 7.056,
+      "error": 0.044
+    },
+    {
+      "shot_id": "s019",
+      "expected": 4.4,
+      "actual": 4.416,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s020",
+      "expected": 6.9,
+      "actual": 6.888,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s021",
+      "expected": 7.5,
+      "actual": 7.464,
+      "error": 0.036
+    },
+    {
+      "shot_id": "s022",
+      "expected": 8.0,
+      "actual": 7.992,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s023",
+      "expected": 4.4,
+      "actual": 4.392,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s024",
+      "expected": 7.5,
+      "actual": 7.464,
+      "error": 0.036
+    },
+    {
+      "shot_id": "s025",
+      "expected": 5.0,
+      "actual": 4.968,
+      "error": 0.032
+    },
+    {
+      "shot_id": "s026",
+      "expected": 5.5,
+      "actual": 5.472,
+      "error": 0.028
+    },
+    {
+      "shot_id": "s027",
+      "expected": 9.2,
+      "actual": 9.216,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s028",
+      "expected": 7.6,
+      "actual": 7.584,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s029",
+      "expected": 6.1,
+      "actual": 6.12,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s030",
+      "expected": 6.6,
+      "actual": 6.6,
+      "error": 0.0
+    },
+    {
+      "shot_id": "s031",
+      "expected": 4.0,
+      "actual": 3.792,
+      "error": 0.208
+    },
+    {
+      "shot_id": "s032",
+      "expected": 5.3,
+      "actual": 5.28,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s033",
+      "expected": 8.1,
+      "actual": 8.112,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s034",
+      "expected": 6.6,
+      "actual": 6.6,
+      "error": 0.0
+    },
+    {
+      "shot_id": "s035",
+      "expected": 8.9,
+      "actual": 8.928,
+      "error": 0.028
+    },
+    {
+      "shot_id": "s036",
+      "expected": 6.6,
+      "actual": 6.552,
+      "error": 0.048
+    },
+    {
+      "shot_id": "s037",
+      "expected": 7.6,
+      "actual": 7.56,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s038",
+      "expected": 5.5,
+      "actual": 5.472,
+      "error": 0.028
+    },
+    {
+      "shot_id": "s039",
+      "expected": 5.9,
+      "actual": 5.88,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s040",
+      "expected": 5.5,
+      "actual": 5.52,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s041",
+      "expected": 5.9,
+      "actual": 5.928,
+      "error": 0.028
+    },
+    {
+      "shot_id": "s042",
+      "expected": 7.4,
+      "actual": 7.44,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s043",
+      "expected": 7.4,
+      "actual": 7.392,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s044",
+      "expected": 8.6,
+      "actual": 8.64,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s045",
+      "expected": 5.9,
+      "actual": 5.904,
+      "error": 0.004
+    },
+    {
+      "shot_id": "s046",
+      "expected": 5.8,
+      "actual": 5.784,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s047",
+      "expected": 6.6,
+      "actual": 6.552,
+      "error": 0.048
+    },
+    {
+      "shot_id": "s048",
+      "expected": 6.1,
+      "actual": 6.12,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s049",
+      "expected": 5.5,
+      "actual": 5.52,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s050",
+      "expected": 8.3,
+      "actual": 8.328,
+      "error": 0.028
+    },
+    {
+      "shot_id": "s051",
+      "expected": 6.9,
+      "actual": 6.864,
+      "error": 0.036
+    },
+    {
+      "shot_id": "s052",
+      "expected": 10.5,
+      "actual": 10.704,
+      "error": 0.204
+    },
+    {
+      "shot_id": "s053",
+      "expected": 5.2,
+      "actual": 5.208,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s054",
+      "expected": 5.0,
+      "actual": 4.992,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s055",
+      "expected": 7.0,
+      "actual": 7.032,
+      "error": 0.032
+    },
+    {
+      "shot_id": "s056",
+      "expected": 6.9,
+      "actual": 6.888,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s057",
+      "expected": 4.0,
+      "actual": 4.008,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s058",
+      "expected": 5.3,
+      "actual": 5.304,
+      "error": 0.004
+    },
+    {
+      "shot_id": "s059",
+      "expected": 4.2,
+      "actual": 4.176,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s060",
+      "expected": 8.9,
+      "actual": 8.856,
+      "error": 0.044
+    },
+    {
+      "shot_id": "s061",
+      "expected": 8.6,
+      "actual": 8.64,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s062",
+      "expected": 10.5,
+      "actual": 11.232,
+      "error": 0.732
+    },
+    {
+      "shot_id": "s063",
+      "expected": 4.8,
+      "actual": 4.776,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s064",
+      "expected": 9.2,
+      "actual": 9.168,
+      "error": 0.032
+    },
+    {
+      "shot_id": "s065",
+      "expected": 4.0,
+      "actual": 3.024,
+      "error": 0.976
+    },
+    {
+      "shot_id": "s066",
+      "expected": 4.0,
+      "actual": 3.384,
+      "error": 0.616
+    },
+    {
+      "shot_id": "s067",
+      "expected": 4.6,
+      "actual": 4.608,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s068",
+      "expected": 4.0,
+      "actual": 2.76,
+      "error": 1.24
+    },
+    {
+      "shot_id": "s069",
+      "expected": 4.0,
+      "actual": 3.48,
+      "error": 0.52
+    },
+    {
+      "shot_id": "s070",
+      "expected": 5.1,
+      "actual": 5.088,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s071",
+      "expected": 5.4,
+      "actual": 5.376,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s072",
+      "expected": 10.1,
+      "actual": 10.056,
+      "error": 0.044
+    },
+    {
+      "shot_id": "s073",
+      "expected": 5.1,
+      "actual": 5.088,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s074",
+      "expected": 7.0,
+      "actual": 6.984,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s075",
+      "expected": 7.1,
+      "actual": 7.08,
+      "error": 0.02
+    },
+    {
+      "shot_id": "s076",
+      "expected": 4.0,
+      "actual": 3.96,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s077",
+      "expected": 6.3,
+      "actual": 6.336,
+      "error": 0.036
+    },
+    {
+      "shot_id": "s078",
+      "expected": 5.2,
+      "actual": 5.208,
+      "error": 0.008
+    },
+    {
+      "shot_id": "s079",
+      "expected": 7.8,
+      "actual": 7.8,
+      "error": 0.0
+    },
+    {
+      "shot_id": "s080",
+      "expected": 8.2,
+      "actual": 8.16,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s081",
+      "expected": 6.4,
+      "actual": 6.384,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s082",
+      "expected": 4.6,
+      "actual": 4.632,
+      "error": 0.032
+    },
+    {
+      "shot_id": "s083",
+      "expected": 7.2,
+      "actual": 7.2,
+      "error": 0.0
+    },
+    {
+      "shot_id": "s084",
+      "expected": 4.0,
+      "actual": 2.256,
+      "error": 1.744
+    },
+    {
+      "shot_id": "s085",
+      "expected": 4.0,
+      "actual": 2.16,
+      "error": 1.84
+    },
+    {
+      "shot_id": "s086",
+      "expected": 4.2,
+      "actual": 4.152,
+      "error": 0.048
+    },
+    {
+      "shot_id": "s087",
+      "expected": 6.6,
+      "actual": 6.552,
+      "error": 0.048
+    },
+    {
+      "shot_id": "s088",
+      "expected": 6.8,
+      "actual": 6.84,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s089",
+      "expected": 5.0,
+      "actual": 5.016,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s090",
+      "expected": 4.7,
+      "actual": 4.656,
+      "error": 0.044
+    },
+    {
+      "shot_id": "s091",
+      "expected": 5.1,
+      "actual": 5.088,
+      "error": 0.012
+    },
+    {
+      "shot_id": "s092",
+      "expected": 4.8,
+      "actual": 4.848,
+      "error": 0.048
+    },
+    {
+      "shot_id": "s093",
+      "expected": 5.8,
+      "actual": 5.784,
+      "error": 0.016
+    },
+    {
+      "shot_id": "s094",
+      "expected": 4.2,
+      "actual": 4.176,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s095",
+      "expected": 4.0,
+      "actual": 2.256,
+      "error": 1.744
+    },
+    {
+      "shot_id": "s096",
+      "expected": 4.0,
+      "actual": 3.816,
+      "error": 0.184
+    },
+    {
+      "shot_id": "s097",
+      "expected": 8.8,
+      "actual": 8.76,
+      "error": 0.04
+    },
+    {
+      "shot_id": "s098",
+      "expected": 4.0,
+      "actual": 3.0,
+      "error": 1.0
+    },
+    {
+      "shot_id": "s099",
+      "expected": 4.9,
+      "actual": 4.896,
+      "error": 0.004
+    },
+    {
+      "shot_id": "s100",
+      "expected": 9.0,
+      "actual": 9.024,
+      "error": 0.024
+    },
+    {
+      "shot_id": "s101",
+      "expected": 4.0,
+      "actual": 3.624,
+      "error": 0.376
+    },
+    {
+      "shot_id": "s102",
+      "expected": 4.0,
+      "actual": 3.552,
+      "error": 0.448
+    }
+  ]
+}

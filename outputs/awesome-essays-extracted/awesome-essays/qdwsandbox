@@ -1,0 +1,1628 @@
+Yes. The recent QDW structure is now good enough that I would **stop adding top-level systems for every new idea**. The correct move is to make LifeGit, Wrapped, Idea Cemetery, HumanOracle, PainMap, etc. **projections and producers around one shared evidence graph**.
+
+Your repo already establishes the canonical flow:
+
+> `world → intelligence → ideas → factory → product`
+
+and the integration test explicitly treats that as “the most important test in QDW.”
+
+The architecture I would evolve it toward is:
+
+```text
+                           REALITY
+
+ Public internet     Personal life       Humans         Systems
+ GitHub / HN /       ChatGPT / email     tasks/data     API/model
+ APIs / papers       calendar/photos     evidence       measurements
+      │                    │                 │               │
+      └────────────────────┴─────────────────┴───────────────┘
+                               │
+                               ▼
+                         OBSERVATIONS
+                               │
+                         ┌─────┴─────┐
+                         ▼           ▼
+                       CLAIMS      METRICS
+                         │           │
+                         └─────┬─────┘
+                               ▼
+                       TEMPORAL REALITY
+                     events / states / facts
+                               │
+                   ┌───────────┴───────────┐
+                   ▼                       ▼
+               TENSIONS               CAPABILITIES
+                   │                       │
+                   └────────────┬──────────┘
+                                ▼
+                           OPPORTUNITIES
+                                │
+                                ▼
+                     PRODUCT HYPOTHESES
+                           ("ideas")
+                                │
+                        review / experiment
+                                │
+                                ▼
+                       FACTORY → PRODUCT
+                                │
+                                ▼
+                             OUTCOME
+                                │
+                                └────→ world model
+
+        PERSONAL PROJECTIONS                  MARKET PROJECTIONS
+        ────────────────────                  ──────────────────
+        LifeGit                              PainMap
+        Wrapped                              GitGoblin
+        Idea Cemetery                        AlternativeAPI
+        My Questions                         opportunity radar
+        CareerGit
+        Past Me
+```
+
+That is how I would make the whole thing cohere.
+
+## What QDW already has right
+
+The WorldStore is already the right bottom layer. It separates sources from `observations`, then allows evidence-derived `claims`, canonical `entities`, and relationships. It also correctly distinguishes source error from successful empty results.
+
+Your global migration already gives you most of the nouns:
+
+`observations → claims → pain_clusters → capabilities/resources → opportunities → ideas → products → outcomes`, plus HumanQueue and Watch.
+
+So **do not throw this away**.
+
+But there are several structural changes I would make before building LifeGit.
+
+---
+
+# 1. Kill `problem_key` as canonical identity
+
+This is currently the weakest part.
+
+PainFinder takes arbitrary text like:
+
+> “I hate manually configuring MCP servers”
+
+removes stop words, grabs frequent tokens and produces a string `problem_key`. It then clusters solely by exact equality of that generated string. Intensity, recurrence, solvability and verifiability are also supplied directly by the caller.
+
+That's fine for a bootstrap test.
+
+It is **not** a durable ontology.
+
+You want:
+
+```text
+observation
+    ↓
+claim
+    ↓
+state
+    ↓
+tension
+```
+
+So replace the conceptual role of:
+
+```text
+problem_key
+```
+
+with:
+
+```text
+tension_id
+```
+
+A tension is something concrete like:
+
+```yaml
+tension:
+  subject: segment/heavy_ai_users
+
+  dimension: information_retrieval
+
+  observed_state:
+    concept: valuable_ideas_fragmented_across_chats
+
+  desired_state:
+    concept: valuable_ideas_recoverable
+
+  evidence:
+    observations: [...]
+    claims: [...]
+    metrics: [...]
+
+  prevalence: 0.31
+  recurrence: 0.74
+  severity: 0.56
+  persistence: 0.81
+  confidence: 0.87
+```
+
+Now Idea Cemetery doesn't solve a string.
+
+It:
+
+```text
+ADDRESSES → tension_381
+```
+
+---
+
+# 2. Add a tiny ontology registry
+
+This solves the exact issue you raised about arbitrary strings.
+
+Don't let every subsystem invent:
+
+```text
+"pain"
+"problem"
+"wants"
+"needs"
+"supports"
+"solves"
+"uses"
+"depends"
+```
+
+as arbitrary strings.
+
+Add:
+
+```sql
+ontology_terms
+--------------
+term_id
+kind
+canonical_key
+label
+parent_term_id
+schema_version
+status
+```
+
+Kinds might be:
+
+```text
+PREDICATE
+DIMENSION
+STATE_TYPE
+EVENT_TYPE
+TENSION_TYPE
+OBJECT_TYPE
+PRODUCT_FORM
+EVIDENCE_ROLE
+RELATION_TYPE
+```
+
+For example:
+
+```text
+pred.addresses
+pred.requires
+pred.enables
+pred.derived_from
+pred.produces
+pred.consumes
+pred.supports
+pred.contradicts
+pred.resolves
+
+event.project_started
+event.idea_expressed
+event.question_asked
+event.problem_resolved
+
+dimension.social_connection
+dimension.api_cost
+dimension.information_retrieval
+```
+
+You can still add new concepts freely, but they're **registered objects**, not random strings appearing in Python.
+
+---
+
+# 3. Introduce a universal cross-QDW edge table
+
+Right now `relations` only connect entity → entity.
+
+And `idea_relations` independently connect idea → idea using an arbitrary `relation_type` plus freeform `rationale`.
+
+That fragmentation will become painful immediately.
+
+Add:
+
+```sql
+object_edges
+------------
+edge_id
+subject_type
+subject_id
+predicate_term_id
+object_type
+object_id
+supporting_claim_id
+confidence
+created_at
+```
+
+Then:
+
+```text
+idea_7
+  ──addresses──> tension_18
+
+idea_7
+  ──requires──> capability_22
+
+idea_7
+  ──consumes──> data_class_chat_history
+
+idea_7
+  ──derived_from──> personal_idea_811
+
+product_9
+  ──implements──> idea_7
+
+human_submission_88
+  ──supports──> claim_41
+
+capability_29
+  ──enables──> idea_7
+```
+
+This gives you the **Idea Genome graph** almost for free.
+
+---
+
+# 4. Keep `ideas`, but redefine what they mean
+
+Currently an idea is identified using:
+
+```text
+problem_key
+solution_key
+customer
+product_form
+```
+
+and the fingerprint is literally a normalized hash of those strings.
+
+I would make QDW `ideas` mean specifically:
+
+> **ProductHypothesis**
+
+Not every thought someone has.
+
+Canonical form:
+
+```yaml
+product_hypothesis:
+  idea_id: idea_x
+
+  addresses:
+    - tension_123
+
+  audience:
+    - segment_77
+
+  intervention:
+    mechanism_id: mechanism_resurface_history
+
+  requires:
+    - capability_temporal_clustering
+    - capability_semantic_extraction
+
+  consumes:
+    - data_class_ai_conversations
+
+  produces:
+    - artifact_recovered_idea
+    - artifact_idea_genealogy
+
+  derived_from:
+    - semantic_object_993
+
+  status: PROPOSED
+```
+
+Then `title`, `summary`, `domain`, one-line pitch etc. are **presentation fields**.
+
+They should never determine the underlying identity.
+
+---
+
+# 5. Do NOT put ordinary LifeGit ideas in `ideas`
+
+This is important.
+
+If somebody says in ChatGPT:
+
+> “Wouldn't it be cool to build an AI DJ?”
+
+that's a personal intellectual artifact.
+
+It is **not yet a QDW ProductHypothesis**.
+
+Create:
+
+```sql
+semantic_objects
+----------------
+object_id
+space_id
+object_type_term_id
+subject_entity_id
+canonical_key
+content_json
+first_observed_at
+last_observed_at
+status
+confidence
+created_at
+updated_at
+```
+
+Controlled object types:
+
+```text
+QUESTION
+IDEA
+DISCOVERY
+DECISION
+GOAL
+COMMITMENT
+ACHIEVEMENT
+HYPOTHESIS
+PREFERENCE
+```
+
+Then:
+
+```text
+semantic_object_77
+type = IDEA
+
+   ↓ promoted / derived_from
+
+idea_819
+type = ProductHypothesis
+```
+
+This is perfect for LifeGit.
+
+---
+
+# 6. Add temporal primitives before LifeGit
+
+Current QDW stores observations at times, but does not really represent **a world changing through time**.
+
+LifeGit absolutely needs:
+
+### Events
+
+```sql
+events
+------
+event_id
+space_id
+event_type_term_id
+subject_entity_id
+object_entity_id
+started_at
+ended_at
+attributes_json
+confidence
+created_at
+```
+
+Examples:
+
+```text
+project_started
+project_finished
+moved_location
+question_answered
+idea_abandoned
+problem_resolved
+role_started
+achievement
+discovery
+```
+
+### States
+
+```sql
+states
+------
+state_id
+space_id
+subject_entity_id
+dimension_term_id
+value_json
+valid_from
+valid_until
+confidence
+created_at
+```
+
+Example:
+
+```text
+project X
+status = active
+Jan → Apr
+```
+
+or:
+
+```text
+person
+interest_in = Sanskrit
+strength = .84
+2025-08 → present
+```
+
+Then a LifeGit timeline is **not an LLM-generated essay**.
+
+It is a projection over:
+
+```text
+events + state transitions
+```
+
+---
+
+# 7. Add `space`
+
+This is probably the single most important LifeGit/privacy addition.
+
+Right now WorldStore is implicitly one world.
+
+Add:
+
+```sql
+spaces
+------
+space_id
+kind
+owner_entity_id
+default_visibility
+policy_id
+created_at
+```
+
+Examples:
+
+```text
+world:public
+
+life:tom
+
+company:acme
+
+research:private-x
+```
+
+Every observation/claim/event/state/semantic object gets a `space_id`.
+
+So:
+
+```text
+ChatGPT raw history
+→ life:person123
+```
+
+never accidentally leaks into:
+
+```text
+world:public
+```
+
+This is the foundation for:
+
+```text
+LifeGit private mode
+CareerGit work mode
+public profile
+friend shares
+market aggregation
+```
+
+---
+
+# 8. LifeGit becomes an ingestion + interpretation subsystem
+
+I would NOT make the core package:
+
+```text
+qdw/lifegit/
+```
+
+because LifeGit is a product.
+
+Make the infrastructure:
+
+```text
+qdw/personal/
+```
+
+Something like:
+
+```text
+qdw/personal/
+    ingest/
+        chatgpt.py
+        claude.py
+        email.py
+        calendar.py
+        github.py
+        photos.py
+
+    extract/
+        events.py
+        semantic_objects.py
+        states.py
+        tensions.py
+        entities.py
+
+    resolve/
+        identity.py
+        temporal.py
+        threads.py
+
+    privacy/
+        spaces.py
+        policies.py
+        grants.py
+
+    reports/
+        engine.py
+```
+
+Then:
+
+```text
+lifegit.com
+```
+
+is simply a product built against `qdw.personal`.
+
+---
+
+# 9. Wrapped products should be report definitions, not new schemas
+
+This avoids enormous duplication.
+
+Add:
+
+```sql
+report_definitions
+------------------
+report_type
+version
+query_spec_json
+schema_json
+```
+
+and:
+
+```sql
+report_runs
+-----------
+report_run_id
+report_type
+space_id
+period_start
+period_end
+input_snapshot_hash
+output_artifact_hash
+created_at
+```
+
+Then:
+
+### `life_wrapped`
+
+queries:
+
+```text
+events
+states
+semantic_objects
+tensions
+projects
+people
+places
+```
+
+### `idea_cemetery`
+
+queries:
+
+```text
+semantic_objects
+WHERE type = IDEA
+AND no implementing ProductHypothesis/Product
+AND last_observed_at old enough
+```
+
+### `my_questions`
+
+queries:
+
+```text
+semantic_objects
+WHERE type = QUESTION
+```
+
+then resolves:
+
+```text
+OPEN
+ANSWERED
+TRANSFORMED
+RECURRING
+ABANDONED
+```
+
+### `career_git`
+
+queries only data authorized for:
+
+```text
+visibility_class = WORK
+```
+
+Same graph. Different report.
+
+This is a **huge architectural win**.
+
+---
+
+# 10. Add LifeGit `threads`
+
+Events alone aren't enough.
+
+You want to reconstruct:
+
+> “This problem started in January, got worse in February, user tried three things, and disappeared in April.”
+
+That's an arc.
+
+Add:
+
+```sql
+threads
+-------
+thread_id
+space_id
+thread_type_term_id
+primary_subject_id
+started_at
+ended_at
+status
+confidence
+```
+
+and:
+
+```sql
+thread_members
+--------------
+thread_id
+member_type
+member_id
+role_term_id
+ordinal
+```
+
+Then you can represent:
+
+```text
+PROBLEM THREAD
+ ├─ complaint Jan 3
+ ├─ complaint Jan 19
+ ├─ attempted solution Feb 2
+ ├─ changed strategy Feb 11
+ └─ resolution Apr 4
+```
+
+or:
+
+```text
+IDEA THREAD
+ ├─ idea born
+ ├─ independently rediscovered
+ ├─ merged with other idea
+ ├─ project started
+ └─ product shipped
+```
+
+That's **Life Git literally implemented as history**, rather than just branding.
+
+---
+
+# 11. This is where your human-sensor model slots in
+
+The attached design already moves HumanQueue toward a much broader concept: a generic requirement resolver capable of buying human work, existing data, evidence, or assets—not merely waiting for manual approval. 
+
+Current QDW HumanQueue is much narrower:
+
+```text
+REQUESTED
+→ APPROVED
+→ COMPLETED
+```
+
+with arbitrary `instructions_json` and `result_json`.
+
+**Keep that queue.**
+
+It's useful as the durable approval state machine.
+
+But put something above it:
+
+# `ResolutionBroker`
+
+```text
+REQUIREMENT
+     │
+     ▼
+ResolutionBroker
+     │
+ ┌───┼────────┬────────┬────────┐
+ ▼   ▼        ▼        ▼        ▼
+LLM  API     HUMAN    DATA     ASSET
+```
+
+Schema:
+
+```sql
+requirements
+------------
+requirement_id
+requester_type
+requester_id
+requirement_type_term_id
+spec_json
+acceptance_spec_hash
+max_cost_usd
+deadline
+space_id
+status
+created_at
+```
+
+Then:
+
+```sql
+fulfillments
+------------
+fulfillment_id
+requirement_id
+provider_type
+provider_id
+estimated_cost
+expected_success
+expected_evidence_quality
+selected_at
+status
+```
+
+HumanQueue is just one fulfillment backend.
+
+---
+
+# 12. Upgrade humans from “actions” to evidence producers
+
+This is crucial.
+
+Today:
+
+```text
+human completes action
+→ result_json
+→ done
+```
+
+Instead:
+
+```text
+human completes task
+       ↓
+submission
+       ↓
+verification
+       ↓
+OBSERVATION
+       ↓
+CLAIM / METRIC
+       ↓
+QDW WORLD
+```
+
+Add:
+
+```sql
+human_submissions
+-----------------
+submission_id
+action_id
+contributor_entity_id
+submitted_at
+artifact_ref
+status
+verification_receipt_id
+```
+
+Completion should not merely write:
+
+```json
+{"worked": true}
+```
+
+It should create proper QDW evidence.
+
+That makes **humans first-class reality sensors**.
+
+---
+
+# 13. Data bounties become incredibly clean with LifeGit
+
+Suppose market intelligence needs evidence:
+
+> “Do developers actually struggle to recover old AI-chat ideas?”
+
+Open:
+
+```text
+requirement_981
+type = EVIDENCE
+```
+
+Potential sources:
+
+```text
+Reddit       expected confidence .45
+GitHub       .33
+survey       .76
+LifeGit      .91
+```
+
+LifeGit sees matching private tensions among consenting users.
+
+But this MUST happen like:
+
+```text
+PRIVATE LIFE SPACE
+
+raw ChatGPT messages
+       │
+       ▼
+private derived tension
+       │
+       ▼
+bounty match
+       │
+       ▼
+USER CONSENT / POLICY
+       │
+       ▼
+privacy transformation
+       │
+       ▼
+derived observation
+       │
+       ▼
+MARKET AGGREGATE SPACE
+```
+
+Never:
+
+```text
+raw chat → purchaser
+```
+
+---
+
+# 14. Add rights/grants as proper schema
+
+This is necessary for the data-market vision from the attached HumanOracle/DataGoblin architecture. 
+
+Minimal:
+
+```sql
+data_grants
+-----------
+grant_id
+owner_entity_id
+source_space_id
+grantee_entity_id
+purpose_term_id
+scope_json
+allowed_operations_json
+raw_access INTEGER
+training_allowed INTEGER
+redistribution_allowed INTEGER
+valid_from
+valid_until
+revoked_at
+rights_backend
+created_at
+```
+
+Then LifeGit can support:
+
+```text
+personal only
+work profile
+friends
+research
+aggregate market
+licensed agent access
+```
+
+all through the same policy primitive.
+
+---
+
+# 15. Reality sensing now has four symmetric producers
+
+This is where QDW becomes very coherent:
+
+```text
+                    REALITY SENSORS
+
+GitGoblin
+  technical world
+       │
+
+Market/Public Sources
+  human expressed demand
+       │
+
+LifeGit
+  private longitudinal experience
+       │
+
+HumanOracle
+  commissioned reality observations
+       │
+       ▼
+                 WorldStore
+```
+
+They all ultimately produce:
+
+```text
+Observation
+Claim
+Metric
+Event
+State
+```
+
+They **do not get their own incompatible truth formats**.
+
+That is the rule I'd enforce.
+
+---
+
+# 16. PainFinder should become `TensionSynthesizer`
+
+Keep PainFinder as one extractor.
+
+Its job:
+
+```text
+unstructured complaint
+    ↓
+candidate tension evidence
+```
+
+It should no longer own the canonical problem.
+
+So:
+
+```text
+PainFinder
+RedditMiner
+LifeGitExtractor
+SurveyImporter
+HumanSubmission
+        │
+        ▼
+TensionSynthesizer
+```
+
+All contribute evidence.
+
+Then:
+
+```text
+tension_928
+```
+
+can have evidence from:
+
+```text
+37 Reddit observations
+81 ChatGPT-derived consenting observations
+14 GitHub issues
+2 formal surveys
+7 human research bounties
+```
+
+**Now your opportunity score actually means something.**
+
+---
+
+# 17. OpportunityStore is mostly correct already
+
+I like that it freezes:
+
+```text
+features
+score
+feature_snapshot_hash
+evidence_snapshot_hash
+```
+
+and explicitly links supporting evidence.
+
+That's a good **decision snapshot**.
+
+Don't normalize those snapshots away.
+
+Instead change the inputs from:
+
+```text
+problem_key
+```
+
+to:
+
+```text
+tension_ids[]
+capability_ids[]
+segment_ids[]
+```
+
+Then compute the feature snapshot from current graph state.
+
+For example:
+
+```json
+{
+  "prevalence": 0.31,
+  "severity": 0.63,
+  "recurrence": 0.81,
+  "spending_signal": 0.28,
+  "source_breadth": 0.92,
+  "solution_gap": 0.74,
+  "new_capability": 0.87,
+  "confidence": 0.89
+}
+```
+
+The frozen JSON is good because you can later ask:
+
+> Why did QDW believe this was promising on August 18, 2026?
+
+---
+
+# 18. Idea review should then review graph facts, not prose
+
+The current staged pipeline is good:
+
+```text
+DISCOVERY
+EVIDENCE_REVIEW
+ADVERSARIAL_REVIEW
+PORTFOLIO_REVIEW
+ARCHITECTURE_REVIEW
+BUILD_READY
+```
+
+Keep it.
+
+But each stage gets structured contracts.
+
+### DISCOVERY
+
+Requires:
+
+```text
+>=1 tension
+>=1 target segment
+```
+
+### EVIDENCE_REVIEW
+
+Requires:
+
+```text
+minimum independent evidence families
+minimum confidence
+no unsupported market metrics
+```
+
+### ADVERSARIAL_REVIEW
+
+Find:
+
+```text
+counter-evidence
+existing alternatives
+reason tension may not imply demand
+```
+
+### PORTFOLIO_REVIEW
+
+Calculate:
+
+```text
+primitive reuse
+data already available
+distribution overlap
+existing product overlap
+```
+
+### ARCHITECTURE_REVIEW
+
+Resolve:
+
+```text
+capabilities
+resources
+APIs
+repos
+humans
+data requirements
+```
+
+### BUILD_READY
+
+Produces a frozen implementation hypothesis.
+
+Much harder for an agent to bullshit.
+
+---
+
+# 19. Cemetery becomes significantly more powerful
+
+Your current cemetery already stores:
+
+```text
+reason_code
+assumptions
+revisit_triggers
+next_review_at
+```
+
+and revives dormant ideas on triggers.
+
+That's excellent.
+
+Now connect those assumptions to graph objects.
+
+Instead of:
+
+```json
+{"cost": 1000}
+```
+
+store:
+
+```text
+assumption:
+resource_x.cost > $1000
+```
+
+Watch:
+
+```text
+resource_measurement(resource_x, cost)
+```
+
+When GitGoblin/AlternativeAPI updates the capability graph:
+
+```text
+$1000 → $11
+```
+
+Watch fires.
+
+Then:
+
+# Idea Weather
+
+> 7 dormant ideas became newly feasible today.
+
+That is directly supported by infrastructure you already have.
+
+---
+
+# 20. The personal Idea Cemetery is a different view of the same logic
+
+LifeGit:
+
+```text
+semantic_object
+type = IDEA
+```
+
+has temporal evidence.
+
+Then personal Idea Cemetery computes:
+
+```text
+idea expressed
+AND
+no implementation edge
+AND
+no recent activity
+```
+
+Possible statuses:
+
+```text
+ACTIVE
+DORMANT
+MERGED
+REDISCOVERED
+IMPLEMENTED
+ABANDONED
+CONTRADICTED
+```
+
+And:
+
+```text
+personal idea
+     ↓ promoted
+QDW ProductHypothesis
+     ↓
+factory
+     ↓
+product
+```
+
+Now the user's private thought history can literally generate internal product hypotheses.
+
+That's fantastic.
+
+---
+
+# 21. CareerGit fits perfectly
+
+Work Mode becomes a **permissioned projection over the same personal space**.
+
+No separate career database.
+
+```text
+LifeGit
+  ├─ private personal graph
+  │
+  └─ Work Grant
+       │
+       ▼
+Career projection
+```
+
+Derived facts:
+
+```text
+projects
+roles
+technologies
+research topics
+outputs
+commits
+achievements
+credentials
+```
+
+Each career claim is backed by:
+
+```text
+claim
+    ↓
+evidence
+```
+
+So:
+
+> “Worked extensively on agent evaluation”
+
+can link to:
+
+```text
+GitHub events
+project events
+approved chat-derived research history
+documents
+credentials
+```
+
+without exposing the original private chats.
+
+---
+
+# 22. Add a generic `share_package`
+
+For Wrapped, friend sharing, CareerGit, public profiles:
+
+```sql
+share_packages
+--------------
+share_id
+source_space_id
+audience_type
+policy_snapshot_hash
+selection_spec_json
+artifact_hash
+expires_at
+revoked_at
+created_at
+```
+
+A Wrapped share card is a package.
+
+A CV is a package.
+
+A recruiter-readable CareerGit endpoint is a package.
+
+A “Our Year Together” friend report is a package.
+
+**One primitive.**
+
+---
+
+# 23. Fix `QDWSystem` composition now
+
+This is an actual structural issue in the current code.
+
+`QDWSystem` currently composes core WorkGraph, HotSwap, factories and economics—but it does **not instantiate WorldStore, PainFinder, StackOracle, OpportunityStore, IdeaService, HumanQueue, ProductRegistry, Watch, etc.**
+
+Yet your new architecture intends those modules to be the global infrastructure.
+
+I'd immediately make:
+
+```python
+self.world
+self.ontology
+self.temporal
+self.tensions
+
+self.stack_oracle
+self.opportunities
+
+self.ideas
+self.idea_reviews
+self.idea_library
+
+self.requirements
+self.resolution_broker
+self.humans
+self.rights
+
+self.personal
+
+self.products
+self.watch
+```
+
+all live under the composition root.
+
+Then every API/MCP/agent uses **one QDW instance**.
+
+This is probably the highest-priority structural change.
+
+---
+
+# 24. The migrations I'd make next
+
+Not 40 new modules.
+
+### `0003_semantic_core.sql`
+
+Add:
+
+```text
+ontology_terms
+spaces
+object_edges
+evidence_links
+events
+states
+semantic_objects
+threads
+thread_members
+tensions
+```
+
+### `0004_rights_and_resolution.sql`
+
+Add:
+
+```text
+requirements
+fulfillments
+human_submissions
+data_grants
+```
+
+### `0005_reports.sql`
+
+Add:
+
+```text
+report_definitions
+report_runs
+share_packages
+```
+
+That's enough to unlock almost everything we've discussed.
+
+---
+
+# 25. New canonical E2E tests
+
+Your existing canonical E2E should remain.
+
+Add these five alongside it.
+
+### `test_market_reality_to_product`
+
+```text
+source
+→ observation
+→ claim/metric
+→ state
+→ tension
+→ opportunity
+→ product hypothesis
+→ product
+```
+
+### `test_lifegit_to_wrapped`
+
+```text
+ChatGPT fixture
+→ private observation
+→ question/idea/project extraction
+→ temporal graph
+→ Wrapped report
+```
+
+Assert every report claim has evidence.
+
+### `test_lifegit_to_market_with_consent`
+
+```text
+private tension
+→ open data bounty
+→ permission grant
+→ privacy-safe derived observation
+→ aggregate market tension
+```
+
+Assert raw private text is **not queryable** from public space.
+
+### `test_human_sensor_to_world`
+
+```text
+requirement
+→ HumanQueue
+→ submission
+→ verification
+→ observation
+→ claim
+```
+
+### `test_cemetery_capability_revival`
+
+```text
+idea dormant because capability too expensive
+→ new resource measurement
+→ Watch fires
+→ idea marked REVIEW_REQUIRED
+```
+
+Not automatically BUILD_READY.
+
+That keeps the human/agent review boundary sensible.
+
+---
+
+# The resulting QDW mental model
+
+I think this is the cleanest version yet:
+
+```text
+QDW DOES NOT STORE "GOOD IDEAS".
+
+QDW stores reality.
+
+Reality produces:
+    tensions
+    capabilities
+    constraints
+    resources
+    needs
+
+Those produce:
+    opportunities
+
+Opportunities produce:
+    product hypotheses
+
+Hypotheses produce:
+    experiments/products
+
+Products produce:
+    outcomes
+
+Outcomes alter:
+    reality
+```
+
+And LifeGit is extremely important because it gives QDW a second kind of reality that the public Internet cannot provide:
+
+```text
+PUBLIC REALITY
+what people publicly say/do
+
++
+
+PRIVATE REALITY
+what consenting people actually experience longitudinally
+
++
+
+COMMISSIONED REALITY
+what humans are paid to investigate/verify
+```
+
+That makes the HumanOracle concept from your attached architecture substantially more powerful: humans aren't an exception to QDW; **they are another SourceResult-producing sensor and fulfillment backend**, alongside APIs, models and GitHub. 
+
+The branded products then become almost beautifully thin:
+
+```text
+lifegit.com
+    = personal-space graph explorer
+
+wrapped
+    = temporal report projection
+
+ideacemetery.com
+    = IDEA semantic-object projection
+
+myquestions
+    = QUESTION projection
+
+careergit
+    = work-permission projection
+
+painmap
+    = aggregate TENSION projection
+
+gitgoblin
+    = technology/repository observation producer
+
+alternativeapi
+    = capability/resource projection + resolver
+
+humanoracle
+    = requirement fulfillment backend
+
+cuntgoblin
+    = allocator/controller over all of it
+```
+
+**That is the integration I'd freeze.** The next build should be the semantic core (`spaces + ontology + events/states + tensions + universal edges`) rather than another product-specific subsystem. Once that's present, LifeGit, Wrapped, Idea Cemetery and the reality marketplace become natural queries over QDW instead of parallel projects.

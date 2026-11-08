@@ -1,0 +1,1139 @@
+Yes. Looking at the repo **as it exists right now**, I would change the advice materially.
+
+You are **much further along structurally than the previous architecture answer implied**, but the repo currently has a dangerous gap between **“implemented interfaces”** and **“implemented reality.”**
+
+## Current state, in one sentence
+
+```text
+master          = genuinely solid WorkerKit kernel
+ethonline-2026  = excellent integration scaffold, but key learning pieces are simulated
+oracle          = genuinely useful data product, separate history/service
+mwmarket        = genuinely useful market primitives, separate history/service
+```
+
+The move now is **not more architecture**.
+
+It is:
+
+> **Make `ethonline-2026` the integration line and ruthlessly replace every fake/simulated boundary with one real Letta → WorkerKit → evaluation → Hydra → learning cycle.**
+
+---
+
+# 1. `master`: KEEP IT BORING
+
+`master` is probably the cleanest part of the project.
+
+The current WorkerKit kernel already gives you:
+
+```text
+WorkOrder
+WorkerEvent
+ArtifactRef
+CostEvent
+VerificationResult
+CommitDecision
+SubmissionReceipt
+OutcomeReceipt
+SettlementReceipt
+WorkerRun
+```
+
+with canonical hashing and event-chain semantics.
+
+And `sdk.py` actually does useful concrete things:
+
+* computes artifact hashes itself;
+* enforces run cost ceilings;
+* records events;
+* checks verification;
+* gates irreversible actions;
+* verifies the event chain before issuing a receipt.
+
+**Do not contaminate this with Letta reasoning or Hydra querying.**
+
+Keep WorkerKit as:
+
+```text
+economic + execution evidence kernel
+```
+
+That earlier instinct was right.
+
+---
+
+# 2. `ethonline-2026` should become your canonical integration branch
+
+It is eight commits ahead of `master`, and its latest commit already adds the conceptual objects we've been discussing:
+
+* Letta adapter;
+* Lab;
+* Hydra store;
+* `cg`;
+* Worker bundle;
+* fleet;
+* evidence;
+* dstack;
+* learning loop.
+
+So I would **stop creating another architecture branch**.
+
+Use:
+
+```text
+ethonline-2026
+```
+
+as:
+
+> **Moltwork integrated reference implementation**
+
+and eventually merge it to `master` once its critical paths are real.
+
+But right now **do not merge it**.
+
+Because several things in it are fake enough that merging would give you false confidence.
+
+---
+
+# 3. The biggest naming bug: `HydraStore` IS NOT HYDRADB
+
+This should be fixed immediately.
+
+Current:
+
+```python
+class HydraStore:
+```
+
+is literally SQLite.
+
+It creates tables such as:
+
+```text
+lab_agents
+lab_runs
+lab_memory_revisions
+lab_insights
+lab_worker_versions
+...
+```
+
+using `sqlite3`.
+
+That's fine as a local projection.
+
+But don't call it Hydra.
+
+Rename:
+
+```text
+HydraStore
+```
+
+to:
+
+```text
+LabProjection
+```
+
+or:
+
+```text
+LocalLabStore
+```
+
+Then introduce an actual interface:
+
+```python
+class LabProjection:
+    project_event(...)
+    rebuild(...)
+    query(...)
+```
+
+with implementations:
+
+```text
+SQLiteLabProjection
+HydraLabProjection
+```
+
+This gives you:
+
+```text
+WorkerKit canonical events
+          │
+          ├── SQLite projection   development/tests
+          │
+          └── HydraDB projection  real Lab graph
+```
+
+Much cleaner.
+
+---
+
+# 4. There's also a correctness contradiction inside that store
+
+The file says:
+
+> “Runs — the core immutable record”
+
+but writes them with:
+
+```sql
+INSERT OR REPLACE
+```
+
+which is the opposite of immutable.
+
+Same problem for worker versions, submissions, evaluations, experiments.
+
+Don't treat these projection tables as canonical objects.
+
+You already have the answer in WorkerKit:
+
+```text
+append-only events = truth
+projection = disposable view
+```
+
+So I'd make:
+
+```text
+WorkerEvent ledger
+      ↓
+projector
+      ↓
+Hydra
+```
+
+and **never manually mutate Lab history**.
+
+---
+
+# 5. The Letta implementation needs replacing, not extending
+
+The current `LettaAdapter` is useful as a proof of interface, but I would retire most of its internals.
+
+It currently:
+
+* directly hits older `/v1/agents` REST endpoints;
+* finds the first agent if none is specified;
+* sends directly to `/messages`;
+* treats `.af` parsing as primary state introspection;
+* and, most seriously, if no Letta server exists, returns an `ExecutionResult(ok=True)` containing `[letta-stub]`.
+
+That last behavior needs to die.
+
+This:
+
+```python
+no Letta
+→ ok=True
+```
+
+is exactly the kind of thing WorkerKit was designed to prevent.
+
+Make it:
+
+```text
+NO_RUNTIME
+NOT_EXECUTED
+FAIL
+```
+
+never success.
+
+---
+
+# 6. Replace `adapters/letta.py` with the new Letta Agent SDK boundary
+
+I would not keep growing the Python REST adapter.
+
+Make:
+
+```text
+services/runtime-letta/
+```
+
+in TypeScript.
+
+That service owns:
+
+```text
+Moltwork Worker ID
+        ↕
+Letta Agent ID
+```
+
+and exposes only:
+
+```text
+create_worker
+open_run
+execute
+snapshot
+apply_learning
+export_trajectory
+health
+```
+
+Your Python side talks to that.
+
+Critically:
+
+```text
+worker_123
+```
+
+must map to exactly:
+
+```text
+letta_agent_abc
+```
+
+Never:
+
+> list agents and pick first.
+
+That becomes catastrophic the second you have five Workers.
+
+---
+
+# 7. Do not make `.af` the primary live-state mechanism
+
+Keep `.af`.
+
+It's useful.
+
+But your current adapter is over-centered on it.
+
+Use:
+
+```text
+.af
+```
+
+for:
+
+* export;
+* portability;
+* checkpoints;
+* marketplace packages.
+
+Live Worker identity should be:
+
+```text
+Moltwork Worker
+    │
+    ├── Letta agent ID
+    ├── MemFS commit
+    ├── skill root
+    ├── runtime version
+    └── optional .af checkpoint
+```
+
+The durable identity stays above all those.
+
+---
+
+# 8. `cg/evolve.py` is currently NOT `cg`
+
+This is probably the biggest reality check.
+
+Current `Replay.run()` generates its score using:
+
+```python
+hash(worker + fixture + evaluator)
+→ integer
+→ pseudo score between 0 and 1
+```
+
+and `EvolutionLab.step()` does effectively the same thing for candidate evaluation.
+
+So at present:
+
+```text
+cg does not test whether a Worker performs better.
+```
+
+It tests deterministic hashing.
+
+That's useful for validating orchestration/determinism.
+
+But it is **not evidence of learning**.
+
+I would rename the current implementation:
+
+```text
+DeterministicMockEvaluator
+```
+
+and preserve it for tests.
+
+Then build:
+
+```python
+class Evaluator:
+    evaluate(
+        worker_version,
+        fixture
+    ) -> EvaluationResult
+```
+
+where it really performs:
+
+```text
+fixture
+   ↓
+Letta worker executes
+   ↓
+Artifact
+   ↓
+actual evaluator
+   ↓
+scores
+```
+
+---
+
+# 9. This also means the claimed “v7 beats v1” proof is currently fake
+
+The learning test literally contains:
+
+```python
+v1_score, v7_score = 0.65, 0.82
+```
+
+and then checks:
+
+```python
+v7_score > v1_score
+```
+
+It also contains multiple assertions that are simply:
+
+```python
+test(..., True)
+```
+
+including key conceptual claims.
+
+So I would **stop quoting `321 tests` as evidence that the learning system works.**
+
+It proves:
+
+> interfaces compose and code paths don't explode.
+
+That's valuable.
+
+But the one thing we care about has not been demonstrated yet:
+
+> **experience made the Worker better.**
+
+That should now become the entire focus.
+
+---
+
+# 10. `lab/reflection.py` is also only a skeleton
+
+Current logic:
+
+```text
+same failure_reason occurs 3 times
+        ↓
+CandidateLesson(content=failure_reason)
+```
+
+and then `promote()` just changes:
+
+```text
+status = proven
+```
+
+No actual `cg` connection exists there yet.
+
+So turn this into a proper state machine:
+
+```text
+OBSERVED
+   ↓
+PROPOSED
+   ↓
+UNDER_TEST
+   ↓
+VALIDATED
+or
+REJECTED
+```
+
+A proposed lesson should include:
+
+```python
+LearningProposal(
+    worker_id,
+    parent_version,
+    kind,
+    patch,
+    hypothesis,
+    source_runs,
+    evaluation_plan
+)
+```
+
+And only `cg` can transition:
+
+```text
+UNDER_TEST → VALIDATED
+```
+
+---
+
+# 11. `LabContext` needs real retrieval
+
+The current implementation searches for a task-family string inside serialized run dictionaries:
+
+```python
+task_family.lower() in json.dumps(r).lower()
+```
+
+and failure patterns are literally buckets like:
+
+```text
+low_score_3
+low_score_4
+```
+
+Again: good API scaffold.
+
+Not real Lab intelligence.
+
+The interface itself is excellent:
+
+```text
+recall_similar_runs()
+get_task_priors()
+get_failure_patterns()
+get_best_skill()
+brief()
+```
+
+**Keep those exact methods.**
+
+Replace their internals.
+
+Eventually:
+
+```text
+recall_similar_runs
+    ↓
+Hydra graph constraints
++ task embedding similarity
++ TaskFamily
++ WorkerVersion
++ outcome/evaluation filters
+```
+
+The agent should never know how that retrieval happened.
+
+---
+
+# 12. Your actual first Hydra schema should be SMALLER than what you've built
+
+Right now you have many SQL tables trying to model everything.
+
+I'd reduce the true Hydra projection initially to:
+
+```text
+Worker
+WorkerVersion
+Opportunity
+Run
+Artifact
+Evaluation
+Outcome
+Asset
+```
+
+Edges:
+
+```text
+WorkerVersion -[:VERSION_OF]-> Worker
+WorkerVersion -[:MUTATED_FROM]-> WorkerVersion
+
+WorkerVersion -[:EXECUTED]-> Run
+Run -[:TARGETED]-> Opportunity
+Run -[:PRODUCED]-> Artifact
+Run -[:USED]-> Asset
+Artifact -[:RECEIVED]-> Evaluation
+Run -[:RESULTED_IN]-> Outcome
+```
+
+Then add:
+
+```text
+MemoryRevision
+SkillVersion
+Experiment
+Finding
+```
+
+only once the real learning cycle works.
+
+---
+
+# 13. Your existing CapabilityTracker should be deprecated
+
+Current:
+
+```text
+successful_runs / total_runs
+```
+
+drives a capability's success rate and confidence.
+
+We've now identified why that is wrong.
+
+A high-quality submission can lose.
+
+A terrible submission can win in a weak field.
+
+Replace:
+
+```text
+CapabilityTracker
+```
+
+with a derived model over:
+
+```text
+intrinsic quality
+requirements coverage
+review scores
+external outcome
+economic payout
+cost
+task family
+```
+
+Something like:
+
+```python
+CapabilityEvidence(
+    capability,
+    worker_version,
+    task_family,
+
+    evaluator_score,
+    outcome,
+    payout,
+    cost,
+
+    evidence_strength
+)
+```
+
+Then derive capability estimates separately.
+
+---
+
+# 14. `ProcessVersion` is worth keeping and expanding
+
+This is one of the best existing pieces.
+
+You already model:
+
+* process steps;
+* tools;
+* models;
+* components;
+* total runs;
+* success rate;
+* costs.
+
+That maps perfectly to the new system.
+
+Just evolve it to include:
+
+```text
+context policy
+candidate count
+review policy
+stopping rule
+skill versions
+Briefing dependencies
+```
+
+Then a learning experiment can mutate a **ProcessVersion** without modifying the Worker itself.
+
+This distinction will be useful:
+
+```text
+Worker learned something
+```
+
+versus:
+
+```text
+Lab discovered a better process
+```
+
+---
+
+# 15. `mwmarket` should be imported almost wholesale conceptually
+
+The independent `mwmarket` branch is actually good.
+
+Its current `AssetVersion` already gives you:
+
+```text
+immutable version
+kind
+owner
+package hash
+input/output schemas
+worker binding
+lineage
+originating receipts
+licensing
+Merkle root
+```
+
+and listings/access/invocations/leasing.
+
+That's almost exactly the market model we need now.
+
+**Don't redesign it.**
+
+Just add kinds:
+
+```text
+BRIEFING
+REVIEW
+SCHOOL
+```
+
+The existing kinds already cover:
+
+```text
+ARTIFACT
+DATA
+PROCESS
+SKILL
+WORKER
+VERIFIER
+SERVICE
+```
+
+---
+
+# 16. `context_pack.py` is now much more important than when it was written
+
+This file has basically already built the first Briefing primitive.
+
+It supports:
+
+```text
+oracle
+monitor
+dataset
+evidence_pack
+context_pack
+index
+classifier
+transformer
+synthesis
+```
+
+plus:
+
+* freshness;
+* provenance;
+* price;
+* dependencies;
+* purchase counts;
+* production cost;
+* demand signals.
+
+I would **not rewrite this**.
+
+Internally retain:
+
+```text
+ContextPack
+```
+
+as the general structured object.
+
+User-facing:
+
+```text
+Briefing
+```
+
+can just be a marketplace product class.
+
+Then add one critical dataset:
+
+```text
+RunDependency
+```
+
+so we can prove:
+
+```text
+Run X USED ContextPack Y
+```
+
+That's what's currently missing.
+
+---
+
+# 17. The Market and Oracle branch topology needs cleaning up
+
+At repo level, this is messy right now.
+
+You have:
+
+```text
+master
+ethonline-2026
+oracle
+mwmarket
+mwgo
+```
+
+and `oracle` / `mwmarket` aren't normal descendants of `master`; they're effectively independent histories sitting under one GitHub repo namespace.
+
+I wouldn't try to perform a giant Git history merge.
+
+Treat them as donor/service branches.
+
+New canonical layout:
+
+```text
+mw/
+  workerkit/
+  lab/
+  market/
+  runtimes/
+  protocols/
+
+oracle/
+  separate deployment/service
+```
+
+I actually prefer keeping Oracle operationally separate.
+
+It's already a real data product with **440 canonical opportunities, 626 skills, 127 categories and append-only opportunity observations/events**.
+
+Don't import that crawler/storage mess into WorkerKit.
+
+Consume it via:
+
+```text
+Oracle API
+```
+
+---
+
+# 18. So the repo boundary should become
+
+```text
+              ORACLE SERVICE
+                   │
+                   │ API
+                   ▼
+              ┌─────────┐
+              │   MW    │
+              └─────────┘
+                   │
+        ┌──────────┼──────────┐
+        ▼          ▼          ▼
+    WorkerKit     Lab       Market
+        │          │
+        ▼          ▼
+      Letta      Hydra
+        │
+        ▼
+       cg
+```
+
+One control-plane repo.
+
+Oracle remains a data service.
+
+That is cleaner than a giant monolith.
+
+---
+
+# 19. Phala should now STOP temporarily
+
+You already have substantial TEE/evidence code in `ethonline-2026`.
+
+Don't delete it.
+
+But don't work on it next.
+
+The system currently cannot yet prove:
+
+```text
+memory change
+→ actual better work
+```
+
+Attesting a simulated learning process is pointless.
+
+Priority:
+
+```text
+real cognition
+→ real learning
+→ then attest it
+```
+
+not:
+
+```text
+perfect attestation
+→ fake cognition
+```
+
+---
+
+# 20. The exact milestone I would implement next
+
+Forget five Workers.
+
+Forget marketplace UI.
+
+Forget ERC extras.
+
+Take **one Researcher**.
+
+Create 20 realistic tasks:
+
+```text
+10 train/history
+5 validation
+5 hidden
+```
+
+Something you can actually evaluate reasonably well.
+
+Example:
+
+```text
+API/hackathon research submissions
+```
+
+Then:
+
+### Baseline
+
+Run:
+
+```text
+Researcher v1
+```
+
+against all validation/hidden fixtures.
+
+Actually invoke Letta.
+
+Actually produce artifacts.
+
+Actually evaluate them.
+
+Persist:
+
+```text
+Run
+Artifact
+Evaluation
+cost
+trajectory
+```
+
+### Experience
+
+Give the Worker several training runs.
+
+Let it inspect:
+
+```text
+feedback
+its own artifacts
+reviews
+LabContext
+```
+
+Ask Letta for exactly one proposed change:
+
+```text
+"construct an explicit requirements matrix before drafting"
+```
+
+### Candidate
+
+Branch:
+
+```text
+Researcher v1
+       │
+       └── candidate v2
+```
+
+Apply the actual Letta memory/skill patch.
+
+### Replay
+
+Run **both** versions on the same unseen fixtures:
+
+```text
+v1
+vs
+v2
+```
+
+Actual executions.
+
+Not hashes.
+
+### Promote
+
+Only if:
+
+```text
+quality improves
+AND no important gate regresses
+AND cost regression acceptable
+```
+
+promote v2.
+
+Then Hydra records:
+
+```text
+v2 MUTATED_FROM v1
+
+v2 IMPROVED_ON api-research
+
+Finding:
+requirements matrix improved coverage
+```
+
+That is your first real Moltwork scientific result.
+
+---
+
+# 21. The next test suite should be much smaller and harsher
+
+I would distinguish:
+
+```text
+UNIT TESTS
+```
+
+from:
+
+```text
+SYSTEM EVIDENCE
+```
+
+Current 321 count mixes too many concepts.
+
+You want a report like:
+
+```text
+WorkerKit invariants            PASS
+Market invariants               PASS
+Hydra projector roundtrip       PASS
+Letta live execution            PASS
+Letta state persistence         PASS
+
+Learning experiment:
+v1 hidden mean                  .71
+v2 hidden mean                  .82
+difference                     +.11
+cost delta                     +$0.03
+n                              20
+bootstrap CI                   [...]
+regressions                    none
+
+PROMOTED                       YES
+```
+
+**That is infinitely more impressive than 500 tests.**
+
+---
+
+# 22. Specific changes I'd make now
+
+If I were handing instructions to the coding agent, they would be:
+
+1. Rename `hydra/store.py` → `lab/local_projection.py`; stop implying SQLite is HydraDB.
+2. Add `lab/hydra_projection.py` that talks to **actual HydraDB**.
+3. Preserve WorkerKit event ledger as canonical.
+4. Replace Python Letta REST execution with `services/runtime-letta` using current Agent SDK.
+5. Remove all successful stub execution paths.
+6. Introduce explicit `Worker` → `RuntimeBinding` mapping.
+7. Add `RunDependency` and record exact Skill/Briefing/Process/Memory/Reviewer versions on every run.
+8. Replace `cg` hash evaluator with an evaluator interface; keep hash evaluator only under `tests/mocks/`.
+9. Replace the current `test_learning_lab.py` with an actual live experiment harness.
+10. Turn `ReflectionPipeline.promote()` into a controlled transition requiring an `ExperimentResult`.
+11. Keep `LabContext` API but replace substring matching with real Hydra retrieval.
+12. Import `mwmarket`'s `AssetVersion`, `Listing`, `AccessGrant`, `Invocation`, `CapabilityLease`; don't redesign them.
+13. Keep `context_pack.py`; attach usage/effect evidence to it.
+14. Stop adding chain/TEE functionality until the real learning experiment passes.
+15. After that, put the **exact proven WorkerVersion** inside dstack and attest it.
+
+---
+
+# Where I think the repo actually is
+
+I'd score the current pieces roughly:
+
+| Component         |    Architecture | Real implementation |
+| ----------------- | --------------: | ------------------: |
+| WorkerKit         |        **9/10** |            **8/10** |
+| Oracle            |        **8/10** |            **7/10** |
+| Market            |        **8/10** |            **6/10** |
+| Letta integration |        **7/10** |            **2/10** |
+| Lab model         |        **8/10** |            **2/10** |
+| HydraDB           |   **8/10 idea** |     **0/10 actual** |
+| `cg` integration  |   **8/10 idea** |     **1/10 actual** |
+| Learning flywheel | **9/10 design** |      **0/10 proof** |
+| Phala/evidence    |        **8/10** |            **4/10** |
+
+And that is not a bad position.
+
+The important realization is:
+
+> **You don't need another architecture sprint.**
+
+You already have most of the shapes.
+
+The next repo milestone should be brutally narrow:
+
+```text
+REAL LETTA WORKER
+       ↓
+REAL TASKS
+       ↓
+REAL ARTIFACTS
+       ↓
+REAL EVALUATION
+       ↓
+REAL EXPERIENCE
+       ↓
+REAL MEMORY/SKILL PATCH
+       ↓
+REAL HELD-OUT REPLAY
+       ↓
+MEASURABLE IMPROVEMENT
+```
+
+Once that is real, **Hydra, Schools, Briefings, reviewer reputation, marketplace attribution and Phala suddenly have real data to operate on instead of being sophisticated scaffolding around simulations.**
+
+That is where I would put essentially all development attention next.

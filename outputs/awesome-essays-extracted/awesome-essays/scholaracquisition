@@ -1,0 +1,1081 @@
+Yes. After reviewing the Pāṭala vision across the project chats and researching the scholarly-publishing side, I think there is a **much bigger opportunity here than “make a better Academia.edu.”**
+
+The strongest version is:
+
+> **Pāṭala becomes the rights-cleared scholarly commons + provenance graph + economic layer for Tantra.**
+>
+> Scholars don't merely upload PDFs. They retain a canonical profile, deposit whatever version they legally can, contribute corrections/editions/reviews, and receive money when their scholarship creates value downstream.
+
+That fits the direction Pāṭala was already moving toward: canonical identifiers, provenance, named human judgments, correction history, scholar profiles, and eventually a network covering papers, books, editions, manuscripts, talks and media—not merely another PDF store.
+
+## First: your Academia.edu hypothesis is only partly right
+
+> “When a paper is only found on Academia.edu, it is usually because the author is bending/breaking copyright rules.”
+
+**Sometimes. But “usually” is too strong.**
+
+The underlying mess is that there are often **three different objects** people casually call “the paper”:
+
+```text
+PREPRINT
+author's manuscript before peer review
+
+        ↓
+
+AAM / POSTPRINT
+accepted manuscript after peer review
+but before publisher typesetting
+
+        ↓
+
+VOR
+Version of Record
+publisher-designed PDF
+```
+
+The author may have radically different rights for each.
+
+Springer Nature, for example, explicitly allows authors to self-archive their **accepted manuscript** on their personal website or institutional repository after the applicable embargo. Cambridge likewise has Green OA provisions for pre-final versions. Oxford University Press explicitly allows certain accepted manuscripts in non-commercial repositories after embargo while restricting uploads to **commercial websites/repositories** unless there is an agreement. ([Springer Nature Support][1])
+
+That creates the slightly absurd situation:
+
+> **An author might legally be able to put the accepted manuscript on alexissanderson.com or Oxford's repository while not being permitted to put exactly that version—or especially the publisher PDF—on Academia.edu.**
+
+Academia is not magically exempt from copyright. Its copyright policy says it responds to infringement notices and can terminate repeat infringers. ([Academia][2])
+
+And we've seen this mechanism operate at scale. In December 2013 Elsevier sent Academia.edu roughly **2,800 takedown requests in a few weeks** concerning copies Elsevier asserted rights over. ResearchGate later faced major publisher litigation over essentially the same problem; Elsevier, ACS and ResearchGate reached a settlement in 2023. ([The Washington Post][3])
+
+So Academia's architecture has historically been approximately:
+
+```text
+AUTHOR UPLOADS FILE
+       ↓
+Academia hosts it
+       ↓
+copyright holder may object
+       ↓
+DMCA / other legal process
+       ↓
+Academia removes it
+```
+
+rather than:
+
+```text
+Academia has negotiated permission
+for every PDF on Academia
+```
+
+That's an important distinction.
+
+---
+
+# So why is Sanderson's work on Academia but not alexissanderson.com?
+
+This is where it gets interesting.
+
+I think there are **at least six mechanisms**, and copyright is only one.
+
+### 1. Academia solved distribution
+
+An author's personal website has essentially no network effect.
+
+Academia currently claims **65 million hosted papers and 310 million members**, and it explicitly sells itself to researchers on visibility, audience growth and impact tracking. ([Academia][4])
+
+Upload once and the paper becomes attached to:
+
+```text
+Alexis Sanderson
+    ↓
+Śaivism
+    ↓
+Tantra
+    ↓
+Kashmir
+    ↓
+people following Sanderson
+    ↓
+people following related subjects
+    ↓
+Google search
+```
+
+A PDF sitting in `/uploads/6/2/7/...` on a professor's old website doesn't have that machinery.
+
+### 2. Academia gives scholars vanity/impact signals
+
+Academia explicitly provides:
+
+* views;
+* downloads;
+* search terms;
+* reader information;
+* mentions;
+* profile visitors;
+* analytics.
+
+Some of the deeper analytics are Premium features. ([Academia Support][5])
+
+That sounds trivial until you realize academics otherwise often publish something and have almost no idea who actually reads it.
+
+### 3. Personal academic websites die
+
+This is exactly what we just experienced with Sanderson.
+
+```text
+alexissanderson.com
+        ↓
+PDF uploaded
+        ↓
+years pass
+        ↓
+domain/site infrastructure changes
+        ↓
+old URLs die
+```
+
+Meanwhile Academia keeps the profile alive.
+
+That is a **preservation problem**, not merely a copyright problem.
+
+### 4. Authors may not understand their own publication contracts
+
+Scholarly publishing rights are genuinely complicated. Creative Commons' OA educational materials note that traditional publication frequently involves authors transferring copyright or granting exclusive publishing rights. ([Creative Commons][6])
+
+Then policies differ by:
+
+```text
+publisher
+journal
+year
+article type
+preprint/AAM/VOR
+embargo
+repository type
+licence
+funder
+country
+```
+
+It is unsurprising that academics sometimes just upload the PDF they have.
+
+### 5. Enforcement isn't instantaneous
+
+Copyright systems generally do not imply that every unauthorized file is detected the moment someone uploads it.
+
+The historical Academia and ResearchGate disputes demonstrate that large collections can exist until publishers identify files and initiate takedown processes. ([The Scholarly Kitchen][7])
+
+### 6. Academia gives scholars something publishers don't
+
+Publishers mainly optimize around:
+
+> publication.
+
+Academia optimizes around:
+
+> **the scholar.**
+
+That's why the profile is so powerful.
+
+And this connects directly to your earlier idea of putting **every Tantra scholar's canonical page on Pāṭala**, then pulling together books, papers, manuscripts, translations, YouTube lectures, Google Scholar records, Academia records, institutional pages etc.
+
+---
+
+# The Pāṭala opportunity
+
+Don't build:
+
+> Academia.edu but Tantra.
+
+Build:
+
+> **the place where tantric scholarship actually lives economically and epistemically.**
+
+Academia's fundamental unit is:
+
+```text
+PDF
+```
+
+Pāṭala's unit should be:
+
+```text
+SCHOLAR
+   │
+   ├── WORK
+   │    ├── edition
+   │    ├── AAM
+   │    ├── VOR
+   │    └── rights
+   │
+   ├── TEXT
+   │    └── passages
+   │
+   ├── CLAIMS
+   │
+   ├── TRANSLATIONS
+   │
+   ├── REVIEWS
+   │
+   ├── CORRECTIONS
+   │
+   ├── TALKS
+   │
+   └── MEDIA
+```
+
+That is far more defensible.
+
+---
+
+# And yes: **pay the scholars**
+
+This is the piece almost nobody has properly solved.
+
+Academia monetizes researcher attention. Its Premium product currently monetizes things like analytics, readers and mentions. ([Academia Support][5])
+
+Pāṭala could invert that:
+
+```text
+CURRENT MODEL
+
+scholar
+  ↓
+creates knowledge
+  ↓
+publisher / platform
+  ↓
+captures economic value
+
+
+PĀṬALA
+
+scholar
+  ↓
+creates knowledge
+  ↓
+Pāṭala distributes + structures + explains it
+  ↓
+economic value
+  ↓
+some value flows BACK TO SCHOLAR
+```
+
+That is a credible recruiting proposition.
+
+---
+
+# But don't literally pay per PDF download
+
+That would create horrible incentives.
+
+You'd rapidly get:
+
+```text
+clickbait topics
+duplicate uploads
+download gaming
+salami papers
+citation circles
+popular ≠ important
+```
+
+And Sanderson working for ten years on an obscure Śaiva manuscript might earn less than somebody writing “Tantric Sex Explained.”
+
+Completely backwards.
+
+Instead, create a **Pāṭala Scholar Dividend**.
+
+---
+
+# The economic engine
+
+I would use **five revenue streams**.
+
+## 1. Media
+
+This is where your YouTube idea becomes genuinely interesting.
+
+Imagine:
+
+```text
+Sanderson paper
+     ↓
+Pāṭala evidence graph
+     ↓
+15-minute documentary:
+"How Buddhism Borrowed from Śaiva Tantra"
+     ↓
+1,000,000 views
+     ↓
+advertising / sponsorship / membership revenue
+```
+
+Every factual dependency in the script knows its provenance:
+
+```text
+VIDEO
+ ↓
+SCRIPT CLAIM
+ ↓
+PĀṬALA PROPOSITION
+ ↓
+Sanderson 2009 p. 124
+ ↓
+primary Sanskrit passage
+```
+
+You can therefore calculate which scholarship materially supported the content.
+
+That allows **machine-accountable revenue attribution**.
+
+This is much cooler than generic creator royalties.
+
+---
+
+# Example
+
+Suppose a Pāṭala documentary earns:
+
+```text
+$4,000 attributable net revenue
+```
+
+and its evidence graph contains:
+
+```text
+Sanderson       38% evidential dependency
+Goodall         22%
+Bisschop        12%
+Acharya          8%
+Pāṭala original 20%
+```
+
+You **shouldn't mechanically pay those percentages**, because citations don't equal creative contribution.
+
+But they can feed a revenue-allocation system.
+
+For example, hypothetically:
+
+```text
+$4,000
+
+30% Scholar Dividend Pool       $1,200
+10% primary text / edition pool   $400
+10% reviewers/editors             $400
+50% Pāṭala production/platform  $2,000
+```
+
+Then the $1,200 scholar pool is divided according to transparent contribution rules.
+
+**Those percentages are illustrative, not something existing evidence tells us is optimal.**
+
+---
+
+# Better still: combine three kinds of scholar payment
+
+## A. Guaranteed bounty
+
+For valuable work:
+
+> “Produce an authoritative English guide to the Jayadrathayāmala manuscript tradition.”
+
+Pāṭala pays:
+
+```text
+$500
+$1,000
+$2,500
+etc.
+```
+
+upfront.
+
+That rewards scholarship that might never be popular.
+
+## B. Usage dividend
+
+If the contribution later powers:
+
+* translations;
+* datasets;
+* APIs;
+* essays;
+* videos;
+* courses;
+* AI retrieval;
+* research reports;
+
+the scholar accumulates a usage dividend.
+
+## C. Stewardship payment
+
+Pay scholars specifically for **verification**.
+
+For example:
+
+```text
+$40 — adjudicate disputed reading
+$70 — validate alignment
+$150 — review translation section
+$300 — review complete short text
+$1,000+ — major edition/translation audit
+```
+
+Again, those numbers are examples rather than market estimates.
+
+This is particularly compatible with Pāṭala because your scarce resource isn't PDFs.
+
+It's:
+
+> **trusted human judgments attached to identifiable claims.**
+
+That's your moat.
+
+---
+
+# The crucial thing: separate rights
+
+Every Pāṭala work gets a rights object.
+
+Something like:
+
+```json
+{
+  "work": "sanderson:2007:saiva-exegesis",
+  "version": "AAM",
+  "copyright_holder": "Alexis Sanderson",
+  "hosting_permission": true,
+  "redistribution": true,
+  "ai_indexing": true,
+  "ai_training": false,
+  "derivative_media": true,
+  "commercial_use": false,
+  "licence": "...",
+  "evidence": "signed agreement / publisher policy"
+}
+```
+
+This would immediately make Pāṭala technologically superior to Academia for machine research.
+
+An AI can ask:
+
+> Can I retrieve this?
+
+> Can I quote this?
+
+> Can I train on this?
+
+> Can I create derivative educational media?
+
+> Who should receive attribution?
+
+> Is remuneration required?
+
+and get a deterministic answer.
+
+---
+
+# And Pāṭala can solve the publisher problem for scholars
+
+Imagine the upload screen.
+
+Scholar enters DOI:
+
+```text
+10.xxxx/whatever
+```
+
+Pāṭala discovers the publication and says:
+
+> **You cannot legally upload this publisher PDF.**
+
+> But under your publisher's policy you can deposit your accepted manuscript after 12 months.
+
+> Drop your Word/PDF AAM here.
+
+Or:
+
+> This article is CC BY. Upload the Version of Record.
+
+Or:
+
+> We cannot host the article, but we can create its canonical record and link to the publisher.
+
+That alone is useful.
+
+Sherpa already maintains machine-readable information concerning publisher open-access/self-archiving policies, demonstrating that this kind of rights-resolution layer is feasible. ([Sherpa][8])
+
+And rights-retention strategies go further: cOAlition S explicitly promotes mechanisms by which authors retain sufficient rights to make accepted manuscripts openly available under CC BY. ([cOAlition S][9])
+
+---
+
+# The really clever move: **Pāṭala Author Editions**
+
+For an older Academia-only paper where the VOR can't legally be mirrored, don't necessarily fight the publisher.
+
+Ask the scholar:
+
+> Give Pāṭala a new open contribution.
+
+It could be:
+
+**“The Śaiva Literature — 2027 Pāṭala Addendum”**
+
+where Sanderson says:
+
+```text
+Since the 2014 article:
+
+• manuscript X has been identified
+• dating of Y has changed
+• claim Z should be qualified
+• new edition A supersedes B
+• here is my current stemma
+```
+
+Now Pāṭala owns/hosts a **new, intentionally open scholarly object**, under terms agreed with the author.
+
+And critically:
+
+```text
+2014 ARTICLE
+     ↓
+2027 AUTHOR ADDENDUM
+     ↓
+correction history
+     ↓
+Pāṭala canonical graph
+```
+
+Academia cannot compete with that by merely hosting the 2014 PDF.
+
+---
+
+# This extends naturally into living editions
+
+Imagine Goodall deposits:
+
+```text
+Niśvāsatattvasaṃhitā
+edition v1.0
+```
+
+Then:
+
+```text
+2028 correction
+2029 manuscript witness added
+2030 reading changed
+```
+
+Pāṭala stores:
+
+```text
+who
+what
+why
+evidence
+previous reading
+current reading
+reviewers
+downstream consequences
+```
+
+Scholar gets attribution **every time that judgment propagates through the system**.
+
+That is much closer to GitHub than Academia.
+
+---
+
+# There are good economic precedents — but nobody has combined them this way
+
+### arXiv
+
+arXiv demonstrates that researchers will adopt a field repository as **infrastructure** rather than merely another publication venue. It is community-supported and institutionally funded; Cornell describes its current annual budget as around $6 million and funding from multiple sources. ([Cornell Tech][10])
+
+### Zenodo
+
+Zenodo demonstrates:
+
+```text
+free deposit
++
+persistent preservation
++
+DOI/citation
++
+research reporting integration
+```
+
+It is operated through CERN/OpenAIRE infrastructure and explicitly emphasizes giving researchers credit through citable outputs. ([Zenodo][11])
+
+### Humanities Commons
+
+This is particularly relevant because **the humanities are different from physics**. Humanities Commons is a nonprofit professional network combining profiles, discussion and a repository rather than merely hosting preprints. ([Humanities Commons][12])
+
+### PubPub
+
+PubPub demonstrates the possibility of an open-source, community-run scholarly publishing infrastructure covering journals, books, manuscripts, annotations, peer review and other objects. ([PubPub][13])
+
+### Subscribe to Open
+
+Subscribe to Open demonstrates another important principle: **institutions can collectively pay so that everybody gets access**. Existing subscribers continue funding a publication; when sufficient support exists, the content becomes openly accessible. ([The Scholarly Kitchen][14])
+
+### Knowledge Unlatched
+
+Similar collective-funding ideas have also been applied to scholarly books through libraries pooling resources to make titles OA. ([Katina Magazine][15])
+
+None of these by itself is your model.
+
+But together they establish the pieces.
+
+---
+
+# Pāṭala could combine them
+
+```text
+             PĀṬALA
+
+        ┌──── Repository ────┐
+        │                    │
+       arXiv               Zenodo
+        │                    │
+        └────────┬───────────┘
+                 │
+          canonical corpus
+                 │
+       ┌─────────┴─────────┐
+       │                   │
+ scholarly graph      scholar profiles
+       │                   │
+   OpenAlex-ish       Humanities Commons-ish
+       │                   │
+       └────────┬──────────┘
+                │
+        structured review
+                │
+            PubPub-ish
+                │
+                ▼
+         PĀṬALA UNIQUE LAYER
+                │
+       ┌────────┼────────┐
+       │        │        │
+     APIs     media   education
+       │        │        │
+       └────────┼────────┘
+                ↓
+             REVENUE
+                ↓
+         SCHOLAR DIVIDEND
+```
+
+**That last loop is the genuinely new part.**
+
+---
+
+# I would not make advertising the fundamental economic model
+
+YouTube revenue is excellent **additional money**.
+
+It's a bad foundation for scholarly compensation.
+
+Otherwise:
+
+```text
+importance → money
+```
+
+gets replaced with:
+
+```text
+attention → money
+```
+
+And tantra is especially vulnerable to this because:
+
+```text
+careful philology:
+"Dating the Niśvāsatattvasaṃhitā"
+
+vs
+
+algorithm:
+"SECRET TANTRIC SEX RITUAL REVEALED"
+```
+
+You know which one gets clicks.
+
+So use media revenue as **one input into a larger scholar pool**, never as the sole determinant.
+
+---
+
+# I'd give Pāṭala four economic legs
+
+### 1. Public media
+
+```text
+YouTube
+podcasts
+documentaries
+books
+courses
+public explainers
+```
+
+### 2. Institutional money
+
+Universities and libraries pay for:
+
+```text
+API
+MCP
+bulk export
+citation infrastructure
+institutional dashboards
+research graph
+preservation
+advanced search
+```
+
+while the scholarship itself remains open where rights permit.
+
+Open scholarly infrastructure already demonstrates that institutions can collectively support resources they regard as essential; arXiv is the obvious large-scale example. ([arXiv Info][16])
+
+### 3. Philanthropy / grants / patrons
+
+Fund specific corpus goals:
+
+```text
+$30,000
+Digitize the early Śaiva Siddhānta corpus
+
+$20,000
+Critical Sanskrit–English alignment of X
+
+$5,000
+Resolve 200 disputed readings
+```
+
+The deliverable remains open.
+
+### 4. Commercial machine layer
+
+This is potentially huge later:
+
+```text
+OpenAI
+Anthropic
+Google
+universities
+publishers
+research agents
+```
+
+may want:
+
+> **authoritative, provenance-rich, rights-cleared Indian-text data.**
+
+Don't sell access to the Sanskrit.
+
+Sell:
+
+```text
+verification
+provenance
+SLAs
+high-volume API
+rights metadata
+resolved entities
+canonical identifiers
+structured expert judgments
+enterprise integration
+```
+
+That is exactly compatible with the existing Pāṭala moat.
+
+---
+
+# You can then promise scholars something Academia cannot
+
+Not:
+
+> Upload your paper here.
+
+But:
+
+> **We will preserve your life's scholarship, make it machine-readable without stripping its context, trace every downstream use back to you, let you correct how AI represents your work, and return part of the economic value it generates.**
+
+That is an extremely strong proposition.
+
+Especially for a field like Tantra where a small number of people have spent decades deciphering manuscripts that the coming generation of AI systems will otherwise ingest without understanding provenance.
+
+---
+
+# The scholar profile becomes extremely powerful
+
+Imagine:
+
+## Alexis Sanderson
+
+```text
+WORKS                           83
+OPEN FULL TEXT                  41
+RIGHTS-CLEARED AAM              18
+MANUSCRIPT CITATIONS         3,821
+PĀṬALA ASSERTIONS            8,412
+CONFIRMED JUDGMENTS            934
+OPEN QUESTIONS                 126
+CORRECTIONS                     27
+
+Texts
+Śaiva Siddhānta
+Vidyāpīṭha
+Trika
+Krama
+Buddhist Tantra
+...
+
+Downstream impact
+────────────────────────────
+Research papers              391
+Pāṭala translations          244
+AI queries                84,291
+Educational views      11,820,000
+
+Scholar dividend
+────────────────────────────
+Lifetime                    £X
+2028                        £Y
+```
+
+Now scholarship has a completely different **economic surface area**.
+
+And crucially, popularity isn't the only thing generating credit.
+
+An obscure philological correction that changes 50 downstream translations could be worth enormous epistemic weight.
+
+---
+
+# This could actually become Pāṭala's network effect
+
+We've previously described the moat roughly as:
+
+[
+M = D \times P \times V \times N \times A
+]
+
+where the hard things to copy are provenance, verified judgments, network participation and adoption.
+
+Add economics:
+
+[
+M = D \times P \times V \times N \times A \times I
+]
+
+with
+
+[
+I=\text{aligned scholar incentives}.
+]
+
+Because once scholars themselves maintain their authoritative Pāṭala identities:
+
+```text
+new work
+    ↓
+scholar deposits it
+    ↓
+Pāṭala identifiers
+    ↓
+citations
+    ↓
+machine use
+    ↓
+media use
+    ↓
+revenue
+    ↓
+scholar
+    ↓
+more incentive to maintain Pāṭala
+```
+
+you have a **flywheel**, not merely a corpus.
+
+---
+
+# Start ridiculously narrow
+
+Do **not** compete with Academia.edu globally.
+
+Start with:
+
+> **Every serious piece of scholarship ever produced on Śaiva Tantra.**
+
+Maybe 100 scholars.
+
+Build canonical profiles for:
+
+```text
+Sanderson
+Goodall
+Torella
+Ratié
+Törzsök
+Acharya
+Bisschop
+Vasudeva
+Hatley
+Brunner
+Padoux
+Dyczkowski
+Bäumer
+Goudriaan
+Ganesan
+Rastelli
+...
+```
+
+Then ingest the whole scholarly neighbourhood.
+
+For each publication:
+
+```text
+metadata                 ALWAYS
+
+full text                if legally hostable
+
+AAM                      if permitted
+
+external canonical link  otherwise
+
+copyright owner          known
+
+rights state             explicit
+
+Sanskrit citations       resolved
+
+claims                    extracted
+
+primary passages          linked
+
+reviews/corrections       attached
+```
+
+And invite the scholar:
+
+> **Claim your Pāṭala profile.**
+
+They don't even need to upload anything initially.
+
+---
+
+# Then make the killer offer
+
+Once the site is useful:
+
+> **Claim your profile and receive 100% of your accumulated Scholar Dividend.**
+
+In other words, Pāṭala can attribute value before signup:
+
+```text
+Alexis Sanderson
+unclaimed balance: £___
+```
+
+But do **not** imply the scholar endorsed anything before claiming it.
+
+Once claimed, they can:
+
+```text
+verify bibliography
+upload legal manuscripts
+change rights preferences
+add corrections
+review graph claims
+license lectures
+approve media participation
+receive payouts
+```
+
+That could be a remarkably effective scholar-acquisition mechanism.
+
+---
+
+# One thing I would change from Academia radically
+
+**Never make “uploaded PDF” equivalent to “Pāṭala verified.”**
+
+The system you've already been building has exactly the right distinction:
+
+```text
+DISCOVERED
+≠
+HOSTED
+≠
+AUTHOR-CLAIMED
+≠
+RIGHTS-CLEARED
+≠
+SCHOLAR-REVIEWED
+≠
+PĀṬALA-VERIFIED
+```
+
+Academia largely solves discovery/distribution.
+
+Pāṭala can solve **authority**.
+
+That is the more valuable problem in an AI world.
+
+---
+
+## The deepest opportunity
+
+The transformation isn't actually:
+
+> Academia.edu → Pāṭala.
+
+It's:
+
+```text
+ACADEMIA.EDU
+"Here is Sanderson's PDF."
+
+             ↓
+
+PĀṬALA
+"Here is Sanderson's work;
+here are the versions and rights;
+here are the Sanskrit passages it depends upon;
+here are its claims;
+here are later corrections;
+here are scholars who agree/disagree;
+here is every machine output dependent on it;
+here is every public explanation derived from it;
+and here is the economic value returned to the humans
+who produced and verified that knowledge."
+```
+
+**That is a substantially more ambitious institution.**
+
+And I think Tantra is unusually suitable as the starting wedge because it's small enough that you could plausibly map a very high fraction of the serious scholarly network, while the primary-source/provenance problem is unusually difficult and therefore valuable. Once that machinery works, expanding from Tantra → Śaivism → Indian philosophy/religion → humanities scholarship becomes much more plausible than trying to launch as a horizontal Academia competitor from day one.
+
+[1]: https://support.springernature.com/en/support/solutions/articles/6000257341-self-archiving?utm_source=chatgpt.com "Self-archiving - Springer Nature Support"
+[2]: https://www.academia.edu/copyright?utm_source=chatgpt.com "Copyright Policy"
+[3]: https://www.washingtonpost.com/news/the-switch/wp/2013/12/19/how-one-publisher-is-stopping-academics-from-sharing-their-research/?utm_source=chatgpt.com "How one publisher is stopping academics from sharing ..."
+[4]: https://www.academia.edu/ABOUT?utm_source=chatgpt.com "Academia.edu | About"
+[5]: https://support.academia.edu/hc/en-us/articles/29326396366231-What-Advanced-Analytics-features-are-included-with-Premium?utm_source=chatgpt.com "What Advanced Analytics features are included with ..."
+[6]: https://creativecommons.org/course/cc-cert-edu/unit-5-cc-for-academic-librarians/5-1-open-access-to-scholarship/?utm_source=chatgpt.com "5.1 Open Access to Scholarship"
+[7]: https://scholarlykitchen.sspnet.org/2013/12/11/has-elsevier-signaled-a-new-era-for-academia-edu-and-other-professional-networks/?utm_source=chatgpt.com "The End of an Era for Academia.edu and Other Academic ..."
+[8]: https://v2.sherpa.ac.uk/id/publisher_policy/1107?utm_source=chatgpt.com "Policy B Self archiving policy - Hybrid - 12 months embargo"
+[9]: https://www.coalition-s.org/rights-retention-strategy/?utm_source=chatgpt.com "Plan S Rights Retention Strategy"
+[10]: https://tech.cornell.edu/arxiv/?utm_source=chatgpt.com "arXiv - Cornell Tech"
+[11]: https://about.zenodo.org/?utm_source=chatgpt.com "Zenodo: About"
+[12]: https://hcommons.org/?utm_source=chatgpt.com "Knowledge Commons - Open access, open source, open to all"
+[13]: https://www.pubpub.org/?utm_source=chatgpt.com "PubPub · Community Publishing"
+[14]: https://scholarlykitchen.sspnet.org/2022/04/28/annual-reviews-subscribe-to-open/?utm_source=chatgpt.com "Annual Reviews' Subscribe To Open: From Idea To Full ..."
+[15]: https://katinamagazine.org/content/article/open-knowledge/2025/the-story-of-knowledge-unlatched?utm_source=chatgpt.com "The Story of Knowledge Unlatched"
+[16]: https://info.arxiv.org/about/reports/2019_update.html?utm_source=chatgpt.com "arXiv Annual Update, January 2019"

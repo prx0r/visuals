@@ -1,0 +1,1256 @@
+Yes. Your instinct is correct. The repo has become much more scientifically disciplined at the **infrastructure level**, but the central experimental object is still wrong.
+
+The crucial distinction is:
+
+> **“Which tool would you use?” is not agent behavior.**
+>
+> **The tool the agent actually invokes, with what arguments, what happens to the environment, and whether the requested state is achieved is agent behavior.**
+
+Right now AgentSEOLab is dangerously close to producing very careful statistics about **stated preferences**.
+
+## My assessment
+
+I would rate the current state roughly:
+
+| Area                                   | Status                                      |
+| -------------------------------------- | ------------------------------------------- |
+| Provenance / immutable records         | **Strong**                                  |
+| Self-invalidation / scientific honesty | **Strong**                                  |
+| Position/name controls                 | **Good**                                    |
+| Cross-model testing                    | **Good idea, weak interpretation**          |
+| Statistical plumbing                   | **Improved substantially**                  |
+| Trace capture                          | **Promising**                               |
+| Construct validity                     | **Poor**                                    |
+| Definition of task success             | **Currently invalid**                       |
+| Execution-grounded evaluation          | **Missing**                                 |
+| Generalization across tasks            | **Missing**                                 |
+| Causal claims                          | **Not ready**                               |
+| Frontier alignment                     | **Architecture yes; actual experiments no** |
+
+The repository itself correctly says it has **zero replicated findings** and that the next experiment needs to establish “Selection ≠ execution.”
+
+That should no longer be “next experiment.”
+
+**It should become the entire center of the project.**
+
+---
+
+# The biggest wake-up call
+
+The current main experiment literally does this:
+
+> task description → two textual tool descriptions → asks the model **“Which tool do you use?”** → parses `A`, `B`, or abstain.
+
+No tool exists. Nothing is invoked. Nothing happens. No task gets completed.
+
+The brand-new cross-family runner still does exactly the same thing: it asks which tool the model would use and calls the answer a tool preference.
+
+That can be a legitimate **L0 psychological probe**:
+
+> Given two textual descriptions, which one does model M report preferring?
+
+It is **not** evidence for:
+
+> Agents prefer evidence-backed tools.
+
+And definitely not:
+
+> Evidence-backed descriptions cause agents to use those tools more.
+
+Those are entirely different estimands.
+
+AgentSearchBench, published in 2026 and directly relevant to your project, reaches essentially the same motivation empirically: textual/semantic relevance and actual execution performance diverge, while execution-aware signals improve agent ranking. ([arXiv][1])
+
+That paper is almost a direct warning against what AgentSEOLab is currently measuring.
+
+---
+
+# Worse: your current `task_success` is not task success
+
+I found the most important implementation bug/conceptual bug.
+
+In `runner/field.py`, field success is currently:
+
+```text
+task_success = 1 if named else ...
+```
+
+where `named` is basically URLs appearing in the agent's final response.
+
+So an agent can:
+
+1. browse around;
+2. misunderstand something;
+3. invent an endpoint;
+4. put a URL in the final response;
+
+and receive:
+
+**TASK SUCCESS = 1**
+
+That destroys the meaning of the field metric.
+
+The recent commit then reports a `task_success` rate of 0.667 across the field batch.
+
+But that number currently means approximately:
+
+> 66.7% produced a final report containing a URL.
+
+It does **not** mean:
+
+> 66.7% successfully found a functioning capability that satisfies the task.
+
+This metric should be renamed immediately to something like:
+
+`FINAL_URL_REPORTED`
+
+and historical `task_success` derived this way should be invalidated.
+
+---
+
+# Your ontology is better than your implementation
+
+This part of `AGENTS.md` is excellent:
+
+```text
+SEARCH_RESULT_EXPOSED
+SEARCH_RESULT_OPENED
+SOURCE_READ
+SOURCE_USED
+SOURCE_CITED
+CAPABILITY_SELECTED
+CAPABILITY_INVOKED
+EXECUTION_SUCCEEDED
+TASK_VERIFIED
+```
+
+And it explicitly says these must never be collapsed.
+
+That is exactly the right philosophy.
+
+But the implementation doesn't yet satisfy the philosophy.
+
+For example, your actual field trace classified navigating to a Google search URL as a search-results event, even though the trace says Google was CAPTCHA-blocked.
+
+Similarly, `field.py` mechanically extracts URLs from tool outputs and emits them as `citation` events.
+
+But:
+
+> URL appeared in tool output ≠ source cited
+> search engine URL opened ≠ results exposed
+> agent mentioned URL ≠ capability selected
+> capability selected ≠ invoked
+> tool returned HTTP 200 ≠ task succeeded
+
+Your ontology understands this. Your event extractor needs to catch up.
+
+---
+
+# What the frontier is doing instead
+
+There is now a very consistent pattern across serious agent evaluation work.
+
+### τ-bench
+
+τ-bench doesn't ask whether the agent thinks it completed the task.
+
+It compares the **actual final database state** against the desired goal state. It also uses repeated runs and `pass^k` to capture reliability. ([arXiv][2])
+
+### ToolSandbox
+
+ToolSandbox provides **stateful tool execution**, tracks intermediate state dependencies, and evaluates milestones across the actual trajectory rather than merely scoring the final prose. ([arXiv][3])
+
+### WebArena / OSWorld
+
+These put agents into executable environments and use functional/evaluator scripts to determine whether tasks were actually accomplished. ([arXiv][4])
+
+### Toolathlon
+
+This is even closer to where AgentSEOLab should go: 600+ tools, realistic MCP-style environments, long-horizon tool calling, and **dedicated execution-based verifier scripts for each task**. ([arXiv][5])
+
+### Agent-Diff, 2026
+
+This one is especially important.
+
+Its core design is:
+
+> Do not evaluate the trace against some expected trajectory. Evaluate the **state diff produced by the agent** against the expected state diff.
+
+That separates **process from outcome**. ([arXiv][6])
+
+This is exactly the primitive I would steal.
+
+---
+
+# AgentSEOLab should become a state-transition science lab
+
+Instead of:
+
+```text
+PROMPT
+  ↓
+“What would you choose?”
+  ↓
+TEXT ANSWER
+  ↓
+STATISTICS
+```
+
+you want:
+
+```text
+INITIAL ENVIRONMENT STATE S₀
+
+        +
+TASK
+
+        +
+AVAILABLE CAPABILITIES
+        ↓
+
+AUTONOMOUS AGENT
+
+        ↓
+ action₁
+        ↓
+S₁
+        ↓
+ action₂
+        ↓
+S₂
+        ↓
+ ...
+        ↓
+Sₙ
+
+        ↓
+
+HIDDEN DETERMINISTIC VERIFIER
+
+EXPECTED ΔSTATE
+vs
+ACTUAL ΔSTATE
+
+        ↓
+
+PASS / FAIL / PARTIAL / SIDE-EFFECT FAILURE
+```
+
+The model's explanation is optional observational data.
+
+**Never use it to determine the ground truth.**
+
+---
+
+# The new Prime Directive
+
+I would replace the present scientific directive with:
+
+> **No agent-behavior claim may be based primarily on what an agent says it would do. A behavioral claim requires an observable environment action. A performance claim requires a verifier external to the agent.**
+
+And add:
+
+> **Agent statements are telemetry, never ground truth.**
+
+That one rule would prevent a huge class of errors.
+
+---
+
+# You should keep L0 — but demote it brutally
+
+The existing pairwise machinery isn't useless.
+
+Rename it.
+
+### L0 — Preference probe
+
+Measures:
+
+`P(textual_selection | description, task, model)`
+
+Allowed conclusions:
+
+> “Under this forced-choice prompt, Llama X selected description A 82% of the time.”
+
+Forbidden conclusion:
+
+> “Agents are 82% more likely to use tools with property A.”
+
+That sounds pedantic, but it is the difference between an actual scientific result and benchmark theatre.
+
+L0 becomes extremely cheap **hypothesis generation**.
+
+It does **not** enter the main evidence ledger as agent behavior.
+
+---
+
+# Then build four real levels
+
+## L1 — Simulated invocation
+
+Give the model actual function definitions.
+
+Don't ask it which tool it wants.
+
+Give it something like:
+
+```text
+tools:
+
+tool_7f3(...)
+tool_d12(...)
+tool_ab8(...)
+tool_931(...)
+...
+```
+
+Then simply say:
+
+> Complete the task.
+
+Observe whether the model emits an actual function call.
+
+Primary measurement:
+
+`CAPABILITY_INVOKED`
+
+Now you know what it **did**, rather than what it said.
+
+---
+
+## L2 — Stateful sandbox
+
+This is where science starts getting interesting.
+
+Each candidate capability has real behavior.
+
+Example task:
+
+> Determine whether `foo-test-91827.example` is available and return registrar evidence.
+
+Candidate A:
+
+```text
+description: extremely persuasive
+behavior: returns stale cached result
+```
+
+Candidate B:
+
+```text
+description: plain
+behavior: performs authoritative lookup
+```
+
+Candidate C:
+
+```text
+description: plausible
+behavior: requires credentials
+```
+
+Candidate D:
+
+```text
+description: plausible but wrong task
+behavior: finds mentions of domains
+```
+
+Agent gets all four.
+
+You do not ask it which is best.
+
+You tell it:
+
+> Complete the task.
+
+Then record:
+
+```text
+SELECTED
+INVOKED
+PARAMETERS_VALID
+EXECUTION_RETURNED
+OUTPUT_VALID
+FINAL_STATE_CORRECT
+RETRY_OCCURRED
+RECOVERED_FROM_FAILURE
+```
+
+Now your canary taxonomy suddenly becomes scientifically useful.
+
+---
+
+# And the primary endpoint becomes state-based
+
+For almost every experiment:
+
+```text
+TASK_VERIFIED ∈ {0,1}
+```
+
+should be primary.
+
+Secondary:
+
+```text
+correct_tool_invoked
+time_to_first_useful_action
+number_of_calls
+tokens
+latency
+cost
+recovery_attempts
+invalid_calls
+irreversible_side_effects
+```
+
+Mechanistic:
+
+```text
+tool_searches
+descriptions_exposed
+descriptions_opened
+selection order
+parameter corrections
+fallback behavior
+```
+
+Self-report:
+
+```text
+rationale
+confidence
+stated preference
+```
+
+And self-report goes at the **bottom**.
+
+---
+
+# This lets you study something much cooler
+
+There is an excellent experiment hiding here.
+
+Measure:
+
+```text
+P(stated_selection = X)
+
+vs
+
+P(first_invocation = X)
+
+vs
+
+P(final_success | first_invocation = X)
+```
+
+Now you can empirically measure the:
+
+# intention–action gap
+
+For each agent/model:
+
+```text
+Stated preference
+       ↓
+Actual first choice
+       ↓
+Actual execution
+       ↓
+Successful outcome
+```
+
+That is genuinely interesting research.
+
+You may discover that models say:
+
+> “I prefer tools with verified evidence.”
+
+but actually invoke:
+
+> the first semantically obvious tool.
+
+That discrepancy is itself publishable/useful.
+
+---
+
+# Current cross-family “replication” also needs tightening
+
+There is another issue.
+
+Your newest runner executes the **same cancellation prompt repeatedly**, across model families.
+
+That estimates something like:
+
+`P(response=A | this exact prompt, model family)`
+
+It does not establish generalization across tasks.
+
+Twenty identical-task samples are not twenty independent scientific replications of the underlying hypothesis.
+
+Your actual independent unit should generally be:
+
+```text
+task × initial_state × treatment_assignment
+```
+
+not:
+
+```text
+model call
+```
+
+Repeated model calls are valuable for estimating stochasticity.
+
+But they do not make the task population larger.
+
+---
+
+# Use a hierarchy like this
+
+Suppose the hypothesis is:
+
+> Explicit evidence provenance in capability descriptions increases successful tool use.
+
+Test:
+
+```text
+20 task templates
+×
+5 instantiated states/template
+×
+2 description conditions
+×
+4 model families
+×
+3 independent rollouts
+```
+
+Now you have variation across:
+
+* tasks;
+* state;
+* domain;
+* model;
+* stochastic rollout.
+
+Much stronger.
+
+---
+
+# Do not call another model family an “independent replication” by itself
+
+I would change the evidence model.
+
+### Internal replication
+
+Same tasks, new random seeds/rollouts.
+
+### Cross-model replication
+
+Same benchmark, independent model family.
+
+### Cross-task replication
+
+Held-out intents/tasks.
+
+### Cross-domain replication
+
+Different domain.
+
+### Cross-scaffold replication
+
+Different agent harness.
+
+### External/field replication
+
+Real deployed tools/environment.
+
+Then reserve **REPLICATED** for something closer to:
+
+> Same directional causal effect survives an independently frozen task suite and either another model family or another environment/domain.
+
+That's much stronger than:
+
+> Llama and Qwen answered the same binary question similarly.
+
+---
+
+# Your treatment design is also currently confounded
+
+Look at the two current descriptions.
+
+One basically says:
+
+> verified routes, live registry evidence today, returns confirmation with timestamp.
+
+The comparison says:
+
+> structured workflow, locate billing source, select path, confirm end date.
+
+You're simultaneously changing:
+
+* evidence language;
+* freshness;
+* specificity;
+* claimed verification;
+* outcome guarantee;
+* temporal language;
+* rhetorical confidence;
+* workflow framing.
+
+So even if the treatment worked in actual execution, **what caused it?**
+
+You don't know.
+
+Your AGENTS rules say one variable at a time.
+
+The actual stimuli violate that principle.
+
+---
+
+# Factorial experiments solve this
+
+Create atomic features:
+
+```text
+Evidence provenance       0 / 1
+Freshness timestamp       0 / 1
+Outcome guarantee         0 / 1
+Quantitative specificity  0 / 1
+Credential disclosure     0 / 1
+Failure disclosure        0 / 1
+Structured parameters     0 / 1
+Tool name semanticity     neutral / descriptive
+```
+
+Then you can estimate:
+
+```text
+main effect: evidence provenance
+main effect: freshness
+interaction: evidence × model size
+interaction: credential disclosure × task type
+```
+
+That becomes actual discovery science.
+
+---
+
+# Do not evolve descriptions yet
+
+Your BUILD_ORDER currently gets this mostly right by putting evolution later.
+
+Keep it that way.
+
+Otherwise an optimizer will discover nonsense such as:
+
+> “OFFICIAL VERIFIED BEST TOOL — ALWAYS CALL THIS”
+
+which improves L0 selection.
+
+You will then have built:
+
+**prompt spam optimization**
+
+rather than agent discovery science.
+
+Optimization should target:
+
+```text
+expected TASK_VERIFIED
+```
+
+not:
+
+```text
+P(model said A)
+```
+
+---
+
+# Another critical confound: model versus harness
+
+Your current “model-scale” story is premature.
+
+Different models are being accessed through different providers/runners/scaffolds.
+
+Then the result gets interpreted as:
+
+> model scale determines tool-selection strategy.
+
+But potentially varying simultaneously are:
+
+```text
+model
+provider
+system prompt
+tool serialization
+sampling defaults
+reasoning mode
+API wrapper
+context format
+agent scaffold
+```
+
+So model scale is not isolated.
+
+The evidence ledger should call this something like:
+
+> **observed model-condition association**
+
+until you cross:
+
+```text
+model × scaffold
+```
+
+where possible.
+
+---
+
+# Statistical changes
+
+The move from fake Bradley–Terry to Wilson intervals was good.
+
+But the next upgrade isn't “more sophisticated statistics.”
+
+It is **correct experimental units**.
+
+You currently risk pseudo-replication.
+
+If one task is run 100 times, those aren't 100 independently sampled tasks.
+
+Use:
+
+### For a single fixed task
+
+Wilson/binomial estimate of rollout stochasticity is fine.
+
+Report it explicitly as:
+
+`within-task execution probability`
+
+### Across a task suite
+
+Primary analysis should aggregate at **task level**.
+
+Use paired treatment differences and bootstrap over tasks, not individual calls.
+
+Better still, when there is enough data:
+
+```text
+mixed-effects logistic regression
+
+success ~ treatment
+        + model_family
+        + treatment:model_family
+        + (1 | task)
+        + (1 | task_template)
+```
+
+You don't need that on day one.
+
+A stratified paired bootstrap over tasks is already much better.
+
+---
+
+# And stop using arbitrary `n >= 30` as scientific magic
+
+Thirty is not a validity threshold.
+
+Use two stages.
+
+### Pilot
+
+Estimate baseline rate and variance.
+
+### Preregistered confirmatory run
+
+Specify:
+
+* primary outcome;
+* minimum practically interesting effect;
+* α;
+* power target;
+* sample-size calculation;
+* stopping rule;
+* exclusions;
+* failure handling.
+
+If compute is cheap, I'd rather have:
+
+> 40 genuinely different tasks × 3 rollouts
+
+than:
+
+> 1 task × 120 rollouts.
+
+---
+
+# Reliability matters independently of mean success
+
+τ-bench's `pass^k` idea matters here. ([arXiv][2])
+
+And 2026 work is pushing agent evaluation toward explicit reliability profiles rather than one accuracy number: repeated execution, perturbation robustness, fault tolerance and consistency. ([arXiv][7])
+
+For every AgentSEOLab treatment calculate both:
+
+```text
+pass@1
+```
+
+Probability at least one attempt works — capability-ish.
+
+and
+
+```text
+pass^k
+```
+
+Probability **all k attempts work** — reliability.
+
+A tool description that changes:
+
+```text
+success 72% → 78%
+```
+
+but produces much less consistent behavior may be worse in an agent economy.
+
+---
+
+# Add perturbation tests
+
+Every confirmed effect should survive metamorphic variants.
+
+For example:
+
+```text
+"I need to check whether x.com is free"
+"Can you see if x.com can be registered?"
+"Determine x.com's registration availability."
+```
+
+Semantically equivalent task.
+
+Expected state identical.
+
+The treatment effect should not disappear because one phrase changed.
+
+ReliabilityBench's concept of evaluating robustness under semantic perturbation and API failures is highly applicable here. ([arXiv][7])
+
+---
+
+# Add fault injection
+
+This is another huge experimental program.
+
+A real agent ecosystem contains:
+
+```text
+timeout
+429
+500
+malformed JSON
+missing field
+schema change
+stale result
+credential failure
+partial response
+tool removed
+tool renamed
+slow response
+```
+
+Then measure:
+
+```text
+failure detected?
+retry?
+same tool retry?
+switch capability?
+parameters corrected?
+task eventually recovered?
+```
+
+That is much more valuable than another 1,000 binary description selections.
+
+---
+
+# The field system should remain, but as observation, not proof
+
+The Hermes field traces are genuinely useful.
+
+You already capture actual browser/tool calls.
+
+Keep that.
+
+But make field runs follow:
+
+```text
+raw trace
+↓
+deterministic event parser
+↓
+environment verifier
+↓
+verified outcome
+```
+
+Not:
+
+```text
+raw trace
+↓
+final answer contains URL
+↓
+success
+```
+
+And write adversarial trace fixtures:
+
+* URL hallucinated;
+* URL returns 404;
+* API exists but does different job;
+* auth impossible;
+* source opened but not read;
+* search page CAPTCHA;
+* correct service mentioned but never executed;
+* correct service executed with invalid args;
+* incorrect answer despite successful call.
+
+Every one should produce the correct event states.
+
+---
+
+# Your tests currently test machinery more than validity
+
+`test_field_protocol.py` has good tests for things like:
+
+* session attribution;
+* idempotent ingestion;
+* event-vocabulary conformance;
+* merging subagents;
+* frozen-intent hashes.
+
+Excellent engineering.
+
+But there are almost no **semantic oracle tests**.
+
+You need tests saying:
+
+```text
+given this known trajectory,
+CAPABILITY_INVOKED must equal X
+
+given this environment outcome,
+TASK_VERIFIED must be false
+
+given this CAPTCHA page,
+SEARCH_RESULT_EXPOSED must be false
+```
+
+That's the scientific unit-testing layer.
+
+---
+
+# I would freeze most of the current experiment backlog
+
+Don't run ASL-002 through ASL-008 yet.
+
+Don't do 100k L0 sweeps.
+
+Don't build fancy evolution.
+
+Don't spend much more time on sentinel infrastructure.
+
+Do this sequence instead:
+
+## P0 — invalidate bad semantics
+
+1. Rename all current pairwise results to `STATED_SELECTION`.
+2. Remove them from agent-behavior claims.
+3. Invalidate historical `task_success` computed from URL presence.
+4. Rename those historical observations `FINAL_URL_REPORTED`.
+5. Fix search/citation event semantics.
+
+## P1 — build one tiny executable world
+
+Not a big framework.
+
+Four MCP tools.
+
+One task family.
+
+One hidden deterministic state verifier.
+
+Resettable environment.
+
+Full trace.
+
+## P2 — prove the pipeline
+
+Run:
+
+```text
+10 tasks
+× 2 conditions
+× 3 models
+× 3 rollouts
+```
+
+Do not ask for rationale.
+
+Simply:
+
+> Complete this task.
+
+Record actual calls.
+
+## P3 — ASL-001 becomes rigorous
+
+Hypothesis:
+
+> Stated tool preference imperfectly predicts actual tool invocation and verified task success.
+
+Measure:
+
+```text
+agreement(stated_selection, first_invocation)
+agreement(stated_selection, successful_capability)
+P(success | stated preferred)
+P(success | actual first invocation)
+```
+
+That could become your first genuinely interesting result.
+
+## P4 — description causal test
+
+Only after execution works.
+
+Manipulate **one description feature**.
+
+Randomized paired design.
+
+Measure `TASK_VERIFIED`.
+
+## P5 — held-out replication
+
+New tasks the builder/evolution agent never saw.
+
+Different model family.
+
+Frozen spec.
+
+Then call something replicated.
+
+---
+
+# The experiment object should look like this
+
+Something approximately:
+
+```text
+ExperimentSpec
+├── hypothesis
+├── estimand
+├── treatment
+├── control
+├── primary_endpoint = TASK_VERIFIED
+├── secondary_endpoints[]
+├── unit_of_randomization
+├── unit_of_analysis
+├── task_population
+├── task_split
+│   ├── development
+│   ├── validation
+│   └── secret_holdout
+├── model_matrix
+├── scaffold_matrix
+├── rollout_count
+├── initial_state_generator
+├── environment_version
+├── tool_registry_version
+├── verifier_hash
+├── randomization_seed
+├── exclusion_policy
+├── stopping_rule
+├── effect_size_threshold
+└── preregistration_hash
+```
+
+Notice `unit_of_analysis`.
+
+That is currently missing conceptually and it matters enormously.
+
+---
+
+# Separate four things in the database
+
+I'd make these explicit:
+
+```text
+Episode
+    one autonomous attempt
+
+Action
+    observable agent action
+
+StateTransition
+    S_t → action → S_t+1
+
+Evaluation
+    independent verifier result
+```
+
+Then:
+
+```text
+Agent utterance
+```
+
+is merely another observation inside the Episode.
+
+It has no privileged status.
+
+---
+
+# The thing AgentSEOLab can uniquely own
+
+I would narrow the scientific question substantially.
+
+Not:
+
+> SEO for agents.
+
+Not even:
+
+> what descriptions agents like.
+
+But:
+
+> **What machine-readable signals causally change autonomous-agent discovery, invocation and successful execution?**
+
+Then the complete funnel is:
+
+```text
+DISCOVERED
+↓
+EXPOSED
+↓
+INSPECTED
+↓
+SELECTED
+↓
+INVOKED
+↓
+EXECUTED
+↓
+VERIFIED
+↓
+REUSED
+```
+
+And AgentSEOLab experimentally mutates:
+
+```text
+name
+description
+schema
+examples
+provenance
+freshness
+price
+latency
+reliability
+permissions
+verification
+reputation
+failure disclosure
+```
+
+to determine effects at every stage.
+
+That is much more ambitious and much more defensible.
+
+---
+
+# The first genuinely great paper/result could be
+
+### “Agents don't use what they say they would use”
+
+Run the same subjects in two conditions.
+
+**Survey condition**
+
+> Which capability would you use?
+
+**Behavior condition**
+
+> Complete the task.
+
+Same candidate set.
+
+Then compare:
+
+```text
+stated preference
+vs
+actual invocation
+vs
+verified task outcome
+```
+
+Across:
+
+* model families;
+* task domains;
+* tool-set sizes;
+* capability quality levels.
+
+My expectation is that the gap will be large enough to be interesting.
+
+And unlike the current evidence-led-vs-process-led tests, it tests something fundamental about agent evaluation methodology.
+
+---
+
+# One final important point
+
+The repo has actually demonstrated one thing very well already:
+
+**it is willing to falsify itself.**
+
+The original canary was invalidated after a scorer defect was found, and the results ledger retained the failure instead of hiding it.
+
+Keep that culture.
+
+But apply it one level higher now:
+
+> **The problem is no longer primarily bugs in the scorer. The problem is whether the scorer is measuring the construct at all.**
+
+That's the next maturation step.
+
+## Instructions I would send the autonomous AgentSEO builder right now
+
+**STOP optimizing experiment volume. STOP promoting forced-choice responses as agent behavior. STOP treating final-answer URLs as task success.**
+
+For the next sprint, the only P0 objective should be:
+
+> **Create a resettable execution environment in which an agent receives a task and real tools, makes autonomous tool calls, changes observable state, and is scored by a deterministic verifier that never consults the agent's self-report.**
+
+Everything else becomes subordinate to that.
+
+Once that works, AgentSEOLab goes from an interesting collection of LLM preference probes into something that actually resembles the frontier of agent science. ([arXiv][6])
+
+And yes: **your intuition that observing what agents actually do is categorically more important than asking what they say they would do is exactly right.**
+
+[1]: https://arxiv.org/abs/2604.22436?utm_source=chatgpt.com "AgentSearchBench: A Benchmark for AI Agent Search in the Wild"
+[2]: https://arxiv.org/abs/2406.12045?utm_source=chatgpt.com "$τ$-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains"
+[3]: https://arxiv.org/abs/2408.04682?utm_source=chatgpt.com "ToolSandbox: A Stateful, Conversational, Interactive Evaluation Benchmark for LLM Tool Use Capabilities"
+[4]: https://arxiv.org/abs/2307.13854?utm_source=chatgpt.com "WebArena: A Realistic Web Environment for Building Autonomous Agents"
+[5]: https://arxiv.org/abs/2510.25726?utm_source=chatgpt.com "The Tool Decathlon: Benchmarking Language Agents for Diverse, Realistic, and Long-Horizon Task Execution"
+[6]: https://arxiv.org/abs/2602.11224?utm_source=chatgpt.com "Agent-Diff: Benchmarking LLM Agents on Enterprise API Tasks via Code Execution with State-Diff-Based Evaluation"
+[7]: https://arxiv.org/abs/2601.06112?utm_source=chatgpt.com "ReliabilityBench: Evaluating LLM Agent Reliability Under Production-Like Stress Conditions"

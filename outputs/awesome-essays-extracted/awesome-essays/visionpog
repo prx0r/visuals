@@ -1,0 +1,65 @@
+Here's the full picture:
+Cards — Dead Simple via Prodigi
+Step	What Happens
+1	Customer sends photo
+2	Meshy generates chibi figure
+3	Render figure on white bg → card front design
+4	Upload to Prodigi API
+5	Prodigi prints A5 card + envelope
+6	Ships to customer
+Prodigi SKU: Fine art greetings card (5×7")
+Cost: ~£1.50
+Your price: $5.99
+The "different ball game" is just: render your character on a white background with a Christmas border → that's the card front. Prodigi handles the rest.
+agents.pog.pet — The Vision
+This is pog.town in action. The flow:
+User: "Make me a Christmas card for my dog Max"
+    ↓
+Agent (Muse/Grok) calls your API:
+    - Fetches Max's stored mesh
+    - Generates chibi render with Christmas theme
+    - Creates card design
+    - Shows preview
+    - User customizes: "add a Santa hat, make it funny"
+    - Agent regenerates
+    - User approves
+    - Prodigi prints + ships
+Same stack as PogPet, just conversational:
+What User Says	What Agent Does	What Gets Made
+"Make me a card for my cat"	Fetches mesh → renders card design	Greeting card
+"Turn Max into a wizard"	Retextures mesh → shows preview	3D figure
+"Make a funny video of my dog"	Generates video using mesh	MP4 video
+"Create a Christmas ornament"	Renders mesh as ornament	3D printed ornament
+"Write a roast about my pet"	LLM generates comedy set	Comedy video
+The Products Agent Can Create
+User Prompt	Agent Action	Product
+"Card for my dog's birthday"	Render mesh + birthday theme → card design	Card
+"Make Max a wizard"	Retexture mesh → show preview → order figure	Figure
+"Funny video of my cat"	Generate video using mesh + voice	MP4
+"Christmas ornament of my pet"	Render mesh as ornament → order print	Ornament
+"Stickers of my dog"	Render expressions → sticker sheet	Stickers
+"Roast my pet"	LLM writes comedy → animate mesh	Comedy video
+This Is the PogTown Play
+pog.pet (Etsy store)
+├── Static listings
+├── Manual upload → mesh → buy
+└── Validates demand
+
+agents.pog.pet (AI agent)
+├── Conversational interface
+├── "Make me X for my pet"
+├── Agent calls your API stack
+├── Shows preview → user customizes → orders
+└── The platform
+
+pog.town (community)
+├── Gallery of everyone's creations
+├── Shared meshes
+├── Creator tools
+├── The destination
+What To Build (Priority)
+Priority	What	Why
+1	PogPet Etsy store (done)	Revenue now
+2	Keychain + wrapping paper + stickers + cards	Expand catalogue
+3	agents.pog.pet MVP	The real product
+4	pog.town community	The platform

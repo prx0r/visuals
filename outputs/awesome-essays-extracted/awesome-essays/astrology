@@ -1,0 +1,1271 @@
+Yes. The AI needs to act less like a “reader” and more like a **compiler**.
+
+The pipeline should be:
+
+```text
+book text
+→ concepts
+→ rules
+→ required chart data
+→ if/then procedures
+→ interpretive claims
+→ source locations
+→ conflicts between sources
+→ engine-readable rule objects
+→ final chart reading
+```
+
+Do **not** let the model jump from book → prose reading. That will produce hallucinated slop.
+
+## Core principle
+
+Every generated interpretation must be traceable to:
+
+```text
+1. chart fact
+2. source rule
+3. timing activation
+4. confidence level
+```
+
+So a final claim should never be:
+
+```text
+Mars means conflict in career.
+```
+
+It should be:
+
+```text
+Claim:
+Mars is a major career significator in this chart.
+
+Evidence:
+- Mars is in the 10th whole sign house.
+- Mars is out of sect.
+- Mars aspects the ruler of the Ascendant.
+- The 10th house is activated by annual profection this year.
+- Current Saturn transits configure Mars by square.
+
+Source rule basis:
+- planets in houses signify topics of that house
+- sect modifies benefic/malefic expression
+- timing techniques activate natal potentials
+
+Confidence:
+Strong.
+```
+
+That is the engine.
+
+---
+
+# 1. Break the books into roles
+
+Do not feed every book into the same extraction prompt. Each book has a different job.
+
+| Source                                | Engine role                                                            |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| Brennan                               | Framework, vocabulary, historical reconstruction, technique map        |
+| Demetra George Vol. I                 | Planetary condition, dignity, sect, phase, visibility                  |
+| Demetra George Vol. II                | Houses, topics, rulers, synthesis workflow                             |
+| Valens                                | Combinations, lots, time-lords, practical examples                     |
+| Ptolemy                               | Planetary qualities, temperament, bodily/soul topics, causal theory    |
+| Dorotheus                             | Practical event/topic delineation, elections, concrete outcomes        |
+| Firmicus                              | Planet/house/sign delineations, traditional judgments                  |
+| Greenbaum                             | Fortune/Daimon axis, fate vs agency, lots, Good/Bad Daimon             |
+| Ficino                                | Planetary soul-care, spiritus, music, images, harmonization            |
+| Agrippa                               | Planetary correspondences, genius/daimon names, magical-symbolic layer |
+| Picatrix                              | Astral image/correspondence layer, heavily filtered                    |
+| Iamblichus/Plotinus/Proclus/Hermetica | Theurgic/neoplatonic interpretation layer                              |
+
+So the AI should not ask:
+
+```text
+What does this book say about astrology?
+```
+
+It should ask:
+
+```text
+What operational rules does this book contribute to this specific engine layer?
+```
+
+---
+
+# 2. Use five extraction passes per book
+
+## Pass 1 — Concept map
+
+Goal: identify what the book contains.
+
+Output:
+
+```json
+{
+  "book": "Demetra George, Ancient Astrology Vol. II",
+  "major_concepts": [
+    "houses",
+    "angularity",
+    "house rulers",
+    "planets in houses",
+    "domicile lord",
+    "topics of life",
+    "rulers of the nativity"
+  ],
+  "engine_modules_relevant_to": [
+    "house_topic_analysis",
+    "natal_synthesis",
+    "ruler_condition"
+  ]
+}
+```
+
+## Pass 2 — Rule extraction
+
+Turn prose into rules.
+
+```json
+{
+  "concept": "House topic delineation",
+  "rule_type": "topic_analysis",
+  "required_inputs": [
+    "house sign",
+    "planets in house",
+    "ruler of house",
+    "condition of ruler",
+    "aspects to ruler"
+  ],
+  "procedure": [
+    "Identify the house corresponding to the life topic.",
+    "Check whether any planets occupy the house.",
+    "Identify the domicile ruler of the house.",
+    "Assess the condition of that ruler.",
+    "Synthesize occupants and ruler condition."
+  ],
+  "interpretive_consequence": "The house topic is judged through both direct occupants and the condition of its ruler.",
+  "source_location": {
+    "chapter": "...",
+    "start_phrase": "...",
+    "end_phrase": "..."
+  }
+}
+```
+
+## Pass 3 — Algorithmic translation
+
+Turn rules into pseudo-code.
+
+```text
+IF topic = career
+THEN inspect 10th house, ruler of 10th, planets in 10th, Lot of Spirit, ruler of Spirit.
+
+IF 10th ruler is angular AND in sect AND dignified
+THEN increase career topic strength.
+
+IF 10th ruler is cadent AND maltreated by out-of-sect malefic
+THEN mark career topic as pressured/delayed/unstable.
+```
+
+## Pass 4 — Conflict detection
+
+Sources will disagree. That is fine.
+
+The AI should produce:
+
+```json
+{
+  "conflict": "House system emphasis",
+  "source_a": "Brennan",
+  "source_b": "Ptolemy",
+  "issue": "Whole sign houses vs quadrant-based approaches",
+  "engine_resolution": "Use whole sign houses as default for Hellenistic natal topic analysis; retain MC degree as floating point for career/public visibility."
+}
+```
+
+## Pass 5 — Engine integration
+
+Each rule gets assigned to an engine module.
+
+```json
+{
+  "module": "daimonic_axis",
+  "rules": [
+    "Lot of Daimon signifies intention/action/vocation",
+    "Lot of Fortune signifies body/circumstance/material fate",
+    "11th house relates to Good Daimon",
+    "12th house relates to Bad Daimon"
+  ]
+}
+```
+
+---
+
+# 3. Master extraction prompt
+
+Use this for each chunk of each book.
+
+You are compiling traditional astrology source material into an engine-readable rule system.
+
+Do not write a birth chart reading.
+
+Do not summarize loosely.
+
+Do not invent missing doctrines.
+
+Do not modernize the material unless explicitly asked.
+
+Your task is to extract operational rules from the provided source passage.
+
+For every usable rule, produce a structured record with the following fields:
+
+1. source_title
+
+2. author
+
+3. tradition_or_layer:
+
+   * Hellenistic natal
+   * Hellenistic timing
+   * Lots / Fortune / Daimon
+   * Ficinian planetary magic
+   * Renaissance astral magic
+   * Neoplatonic / theurgic cosmology
+   * Planetary correspondences
+   * Other
+
+4. concept_name
+
+5. rule_type:
+
+   * calculation
+   * planetary_condition
+   * house_topic
+   * dignity
+   * sect
+   * aspect
+   * lot
+   * timing_activation
+   * daimonic_interpretation
+   * planetary_magic
+   * correspondence
+   * warning_or_exception
+   * example_judgment
+
+6. required_chart_inputs:
+   List the exact data needed to apply the rule.
+
+7. procedure:
+   Rewrite the rule as a step-by-step method.
+
+8. if_then_logic:
+   Convert the rule into if/then form.
+
+9. interpretive_consequence:
+   Explain what the rule allows the engine to infer.
+
+10. strength:
+    Mark as:
+
+* core
+* supporting
+* optional
+* symbolic
+* background
+
+11. confidence:
+    Mark as:
+
+* explicit in source
+* inferred from source
+* uncertain
+* conflicting
+
+12. source_location:
+    Give chapter/section/page if available.
+    Also give the starting phrase and ending phrase of the relevant passage so another AI can find it.
+    Do not reproduce long copyrighted passages.
+
+13. related_engine_modules:
+    Choose from:
+
+* natal_architecture
+* planetary_condition
+* house_topic_analysis
+* lots
+* fortune_daimon_axis
+* rulers_of_nativity
+* annual_profections
+* solar_return
+* zodiacal_releasing
+* transits
+* phase_detection
+* testimony_scoring
+* ficinian_alignment
+* planetary_magic_symbolism
+* daimonic_name_module
+* imaginal_synthesis
+
+14. possible_conflicts:
+    Note whether this rule may conflict with another known source or method.
+
+15. safe_usage_note:
+    Especially for magical, medical, talismanic, or ritual material, explain how to use it symbolically and safely without giving harmful or coercive instructions.
+
+Output only JSON records.
+
+---
+
+# 4. Book-specific extraction instructions
+
+You should prepend one of these to the master prompt depending on the book.
+
+## Brennan
+
+Ask for:
+
+```text
+Extract framework rules:
+- sect
+- house systems
+- planets
+- signs
+- houses
+- aspects
+- lots
+- annual profections
+- zodiacal releasing
+- interpretive hierarchy
+- historical uncertainty
+```
+
+Engine role:
+
+```text
+Define the grammar of the system.
+```
+
+## Demetra George Vol. I
+
+Ask for:
+
+```text
+Extract planetary condition rules:
+- essential dignity
+- sect
+- benefic/malefic condition
+- phase/visibility
+- speed
+- retrograde
+- angularity
+- bonification/maltreatment
+- how to judge whether a planet can act well
+```
+
+Engine role:
+
+```text
+Judge the condition and capacity of each planet.
+```
+
+## Demetra George Vol. II
+
+Ask for:
+
+```text
+Extract house/topic synthesis:
+- houses and topics
+- planets in houses
+- rulers of houses
+- angularity
+- favorability
+- witnessing/aspects
+- outcome of topics
+- rulers of nativity
+```
+
+Engine role:
+
+```text
+Turn chart placements into life-topic analysis.
+```
+
+## Valens
+
+Ask for:
+
+```text
+Extract combination logic:
+- lots
+- planetary combinations
+- time-lord periods
+- eminence
+- fortune
+- action
+- examples of judgment
+- repeated patterns
+```
+
+Engine role:
+
+```text
+Build testimony stacking and timing logic.
+```
+
+## Greenbaum
+
+Ask for:
+
+```text
+Extract daimonic rules:
+- Daimon vs Fortune
+- Lot of Daimon
+- Lot of Fortune
+- Good Daimon / Bad Daimon
+- fate vs agency
+- intention vs circumstance
+- philosophical meaning of lots
+```
+
+Engine role:
+
+```text
+Add the fate-agency axis.
+```
+
+## Ficino
+
+Ask for:
+
+```text
+Extract planetary harmonization principles:
+- spiritus
+- planetary music
+- colors
+- images
+- temperament
+- melancholy
+- solar/Jupiter/Venus remedies
+- safe symbolic practices
+- distinction between natural/spiritual magic and coercive/demonic magic
+```
+
+Engine role:
+
+```text
+Translate chart activations into planetary soul-care.
+```
+
+## Agrippa
+
+Ask for:
+
+```text
+Extract symbolic magical correspondences:
+- planetary intelligences
+- genius/daimon
+- Hebrew-letter name methods
+- planetary hierarchy
+- correspondences
+- angelic/sephirotic associations
+- warnings
+```
+
+Engine role:
+
+```text
+Generate symbolic daimonic and planetary imagery after the objective chart reading.
+```
+
+## Picatrix
+
+Ask for:
+
+```text
+Extract only symbolic and historical correspondences:
+- planetary images
+- planetary virtues
+- elections
+- astral imagination
+- cosmology of images
+
+Filter out:
+- coercive magic
+- harmful operations
+- enemy magic
+- medical/herbal instructions
+- anything unsafe or illegal
+```
+
+Engine role:
+
+```text
+Symbolic image layer only.
+```
+
+---
+
+# 5. Rule object schema
+
+This is the object you want all book extraction to produce.
+
+```json
+{
+  "id": "rule_auto_generated",
+  "source": {
+    "title": "",
+    "author": "",
+    "book_or_chapter": "",
+    "source_location": {
+      "page": null,
+      "section": "",
+      "start_phrase": "",
+      "end_phrase": ""
+    }
+  },
+  "tradition_layer": "",
+  "concept": "",
+  "rule_type": "",
+  "required_inputs": [],
+  "procedure": [],
+  "if_then_logic": [],
+  "interpretive_consequence": "",
+  "engine_module": "",
+  "priority": 0,
+  "confidence": "",
+  "is_symbolic": false,
+  "is_core_delineation": false,
+  "possible_conflicts": [],
+  "safety_filter": "",
+  "example_application": ""
+}
+```
+
+---
+
+# 6. Consolidation prompt
+
+After extraction, run a second AI pass that merges duplicates and resolves conflicts.
+
+You are consolidating extracted astrology rules from multiple traditional sources into a coherent engine.
+
+You will receive many rule records.
+
+Your task is to merge duplicates, detect conflicts, rank rules by usefulness, and assign them to modules.
+
+Do not create new doctrine.
+
+Do not invent source support.
+
+For each cluster of related rules:
+
+1. Give the canonical rule name.
+2. List all supporting sources.
+3. Identify whether the rule is:
+
+   * universally used in our engine
+   * source-specific
+   * optional
+   * symbolic
+   * disputed
+4. Produce the clean engine version of the rule.
+5. Preserve source differences.
+6. State the engine resolution:
+
+   * use Brennan default
+   * use Demetra George workflow
+   * use Valens as timing testimony
+   * use Greenbaum only for daimonic interpretation
+   * use Ficino only for planetary alignment
+   * use Agrippa/Picatrix only for symbolic correspondence
+7. Assign the rule to one or more modules:
+
+   * natal_architecture
+   * planetary_condition
+   * house_topic_analysis
+   * lots
+   * fortune_daimon_axis
+   * rulers_of_nativity
+   * annual_profections
+   * solar_return
+   * zodiacal_releasing
+   * transits
+   * phase_detection
+   * testimony_scoring
+   * ficinian_alignment
+   * planetary_magic_symbolism
+   * daimonic_name_module
+   * imaginal_synthesis
+8. Assign a priority from 1 to 10.
+9. Assign a hallucination risk:
+
+   * low
+   * medium
+   * high
+10. Explain what chart data is required to apply the rule.
+
+Output a clean JSON array of consolidated rules.
+
+---
+
+# 7. The engine should not produce prose until it has evidence
+
+Before final prose, force the AI to produce a **claim ledger**.
+
+Example:
+
+```json
+{
+  "claim": "The native has a strong 9th-house orientation toward study, doctrine, travel, and spiritual systems.",
+  "topic": "study / religion / higher knowledge",
+  "chart_evidence": [
+    "Sun in 9th house",
+    "Mercury rules Ascendant and is connected to 9th-house topics",
+    "9th ruler condition is strong"
+  ],
+  "source_rules_used": [
+    "house_topic_analysis.house_9",
+    "planet_in_house",
+    "ascendant_ruler_signification"
+  ],
+  "strength": "strong",
+  "confidence": "high",
+  "should_include_in_final_reading": true
+}
+```
+
+Only after this ledger exists should the AI write the reading.
+
+---
+
+# 8. Final reading prompt
+
+This is the main synthesis prompt.
+
+You are a source-grounded traditional astrology synthesis engine.
+
+You will receive:
+
+1. Computed natal chart data.
+2. Computed timing data.
+3. Extracted source rules.
+4. A claim ledger generated from chart evidence.
+
+You must write an extensive analysis, but every major claim must be grounded in chart evidence and source rules.
+
+Do not calculate planetary positions yourself.
+
+Do not invent missing placements.
+
+Do not use vague horoscope language.
+
+Do not overstate certainty.
+
+Do not collapse different source traditions into one voice. Keep these layers distinct:
+
+* Hellenistic technical judgment
+* Fortune/Daimon interpretation
+* Ficinian planetary alignment
+* Renaissance magical-symbolic correspondences
+* Neoplatonic/theurgic imaginal synthesis
+
+Required output structure:
+
+# 1. Natal Architecture
+
+Explain sect, Ascendant, luminaries, planetary condition, major angular houses, and dominant rulers.
+
+# 2. Planetary Condition
+
+For each traditional planet:
+
+* placement
+* condition
+* sect status
+* dignity/debility if known
+* house topics ruled
+* what it can do well
+* where it is strained
+
+# 3. House Topic Analysis
+
+Analyze major life topics using:
+
+* house
+* planets in house
+* ruler of house
+* condition of ruler
+* aspects/configurations
+* relevant lots
+
+# 4. Fortune and Daimon
+
+Distinguish:
+
+* Lot of Fortune: body, circumstance, material fate, what befalls
+* Lot of Daimon/Spirit: intention, action, vocation, guiding intelligence
+  Explain how Fortune and Daimon cooperate or conflict.
+
+# 5. Timing and Current Phase
+
+Do not produce daily horoscope material.
+Analyze:
+
+* current annual profection
+* lord of the year
+* solar return themes if provided
+* zodiacal releasing if provided
+* slow planet transits
+* transits to activated natal factors
+* coming 3 months
+* coming 12 months
+* coming 3 years
+
+For each phase, state:
+
+* start
+* peak
+* end
+* activated natal factors
+* activated topics
+* supporting testimonies
+* contradictions
+* confidence
+
+# 6. Ficinian Planetary Alignment
+
+Identify the currently emphasized planetary spheres.
+For each:
+
+* natal root
+* current activation
+* virtue of the planet
+* distortion of the planet
+* safe Ficinian alignment modes:
+
+  * music
+  * study
+  * contemplation
+  * color/image atmosphere
+  * ethical discipline
+  * devotional or symbolic practice
+    Do not give medical, herbal, coercive, or dangerous instructions.
+
+# 7. Daimonic Work
+
+Explain what the native is being asked to enact rather than merely experience.
+Distinguish:
+
+* fate
+* agency
+* vocation
+* compulsion
+* genuine daimonic direction
+
+# 8. Imaginal Synthesis
+
+Write a vivid but disciplined symbolic synthesis.
+Use the planetary and daimonic evidence.
+Do not invent claims not supported by the evidence.
+
+# 9. Evidence Table
+
+End with a table of the strongest claims, their chart evidence, source-rule basis, and confidence.
+
+Tone:
+Clear, serious, traditional, non-generic, non-fatalistic.
+
+---
+
+# 9. Anti-slop rules
+
+Hard-code these:
+
+```text
+The AI may not interpret a planet unless it has:
+- planet
+- sign
+- house
+- ruler/dispositor
+- sect status
+- aspects or lack of aspects
+```
+
+```text
+The AI may not interpret a life topic unless it has:
+- house
+- ruler of house
+- condition of ruler
+- planets in house if any
+```
+
+```text
+The AI may not interpret timing unless it has:
+- natal promise
+- activated factor
+- technique of activation
+- start/peak/end window
+```
+
+```text
+The AI may not use Ficino/Agrippa/Picatrix until:
+- the relevant planetary sphere has been established technically
+```
+
+That last one is crucial.
+
+Do not let it say:
+
+```text
+You should work with Venus because Venus is nice.
+```
+
+It must say:
+
+```text
+Venus is relevant because:
+- Venus is lord of the year
+- Venus rules the Lot of Daimon
+- Venus is activated by transit
+- Venus governs the natal 9th and 2nd topics
+Therefore the Ficinian Venus layer is appropriate.
+```
+
+---
+
+# 10. The final engine modules
+
+I’d structure it like this:
+
+```text
+source_compiler
+- extracts rules from books
+
+rule_consolidator
+- merges duplicate/conflicting rules
+
+chart_calculator
+- calculates natal chart, lots, houses, aspects
+
+condition_engine
+- evaluates planetary condition
+
+topic_engine
+- evaluates houses and life topics
+
+timing_engine
+- profections, solar returns, zodiacal releasing, transits
+
+testimony_engine
+- scores convergence of techniques
+
+phase_engine
+- clusters activations into coherent time windows
+
+daimon_engine
+- Fortune/Daimon, Good/Bad Daimon, vocation/fate-agency
+
+ficino_engine
+- planetary sphere alignment
+
+magic_symbol_engine
+- Agrippa/Picatrix symbolic correspondences only
+
+synthesis_engine
+- writes final human reading from evidence ledger
+```
+
+The most important part is the **testimony engine**.
+
+```text
+One indication = weak.
+Two unrelated indications = moderate.
+Three or more converging techniques = strong.
+Converging natal + timing + daimonic + Ficinian evidence = major phase.
+```
+
+---
+
+# 11. Example of a good final claim
+
+```text
+This is a Mercury-led vocational phase, not merely a generic “communication” period.
+
+Evidence:
+- Mercury rules the Ascendant, so it signifies the native’s direction and embodiment.
+- Mercury also rules the 10th house, tying speech, analysis, writing, trade, or technical skill to public action.
+- The annual profection activates a Mercury-ruled sign.
+- The solar return repeats Mercury emphasis.
+- Saturn’s transit to Mercury suggests structure, difficulty, discipline, and serious study rather than easy expression.
+- Ficinianly, Mercury should be worked through ordered study, language, craft, interpretation, and careful mediation between worlds.
+
+Confidence:
+Strong.
+```
+
+That’s the kind of output you want.
+
+Not:
+
+```text
+Mercury means you are smart and should communicate more.
+```
+
+---
+
+# 12. The real instruction to the AI
+
+The master command is:
+
+```text
+Never interpret from symbolism alone.
+Interpret from calculated condition + source rule + activated testimony.
+```
+
+That sentence should be in every prompt.
+
+Your engine’s north star:
+
+```text
+A chart reading is not prose generated from placements.
+A chart reading is a ranked set of source-backed testimonies translated into clear human language.
+
+
+Yes — **one book = one engine = one astrologer** is the right move.
+
+Do **not** try to ingest the whole tradition at once. You’ll get blended sludge. Build separate interpretive engines, compare their outputs, then synthesize.
+
+## My recommended order
+
+### 1. **Christopher Brennan — *Hellenistic Astrology***
+
+Start here.
+
+Reason: it gives the cleanest **shared grammar** for everything else: sect, whole sign houses, rulers, lots, profections, zodiacal releasing, benefics/malefics, timing, and the fate/fortune frame. The book is explicitly a broad treatment of Hellenistic history, philosophy, and techniques, with emphasis on how core western astrology concepts originate in the Hellenistic period. ([Google Books][1])
+
+This becomes your **baseline astrologer**.
+
+Call it:
+
+```text
+Engine 1: Brennan Engine
+Role: Core Hellenistic natal + timing framework
+```
+
+It should answer:
+
+```text
+What is the objective chart structure?
+What planets dominate?
+What houses/topics are activated?
+What timing techniques matter?
+What is the natal promise?
+```
+
+Use this first because every later book can plug into its vocabulary.
+
+---
+
+### 2. **Dorian Greenbaum — *The Daimon in Hellenistic Astrology***
+
+Add this second, not later.
+
+Reason: this gives the exact new axis your project needs: **Fortune vs Daimon**, fate vs agency, what happens to the person vs what the person is called to enact. Greenbaum’s Fortune/Daimon work explicitly treats how Fortune and Daimon contribute to Hellenistic lots and ideas of personal destiny. ([Culture and Cosmos][2])
+
+Call it:
+
+```text
+Engine 2: Greenbaum Daimon Engine
+Role: Fortune/Daimon, fate/agency, vocation, guiding intelligence
+```
+
+It should answer:
+
+```text
+What belongs to Fortune?
+What belongs to Daimon?
+Where is the person acted upon?
+Where are they called to act?
+What is the chart’s daimonic direction?
+```
+
+This gives the system soul immediately.
+
+---
+
+### 3. **Marsilio Ficino — *Three Books on Life***
+
+Add this third.
+
+Reason: once Brennan has identified the active planets, and Greenbaum has clarified the daimonic/fate axis, Ficino tells you **how to work with the planets**. This is where the engine becomes your thing: planetary alignment, spiritus, music, imagination, soul-care, symbolic harmonization.
+
+Call it:
+
+```text
+Engine 3: Ficino Planetary Alignment Engine
+Role: Planetary soul-care, magical-symbolic harmonization, working with active spheres
+```
+
+It should answer:
+
+```text
+Which planetary sphere is active?
+How does the native harmonize with it?
+What music, images, study, contemplation, discipline, atmosphere, or symbolic practice fits?
+What is the planet’s virtue and distortion?
+```
+
+This is the bridge into Imaginarium.
+
+---
+
+### 4. **Demetra George — *Ancient Astrology Vol. I & II***
+
+Add this fourth.
+
+Reason: this is the precision upgrade. Volume Two is especially useful because it focuses on the ancient house system and synthesizing planet-based and house-based delineation. ([Booktopia][3])
+
+Call it:
+
+```text
+Engine 4: Demetra George Delineation Engine
+Role: Planetary condition + house topic analysis
+```
+
+It should answer:
+
+```text
+How strong or weak is each planet?
+Can the planet act well?
+How do planets, houses, and rulers combine?
+What is the correct procedure for judging each life topic?
+```
+
+This engine will probably make your readings much more technically accurate.
+
+---
+
+### 5. **Vettius Valens — *Anthologies***
+
+Add this fifth.
+
+Reason: Valens is dense and weird, but extremely valuable once your system already has structure. His work is one of the most extensive surviving practical astrological texts, with lots of example-based and combinatorial material. A paper on Valens argues that his planetary combinations show a consistent internal logic rather than random lore. ([arXiv][4])
+
+Call it:
+
+```text
+Engine 5: Valens Testimony Engine
+Role: Ancient combinations, lots, timing, practical chart examples
+```
+
+It should answer:
+
+```text
+What combinations repeat?
+What testimonies converge?
+Which factors are actually important?
+How do ancient delineations combine positive and negative indications?
+```
+
+This is where your scoring system gets stronger.
+
+---
+
+### 6. **Agrippa — *Three Books of Occult Philosophy***
+
+Add this sixth.
+
+Reason: Agrippa is not for ordinary chart judgment. He is for the **symbolic magical layer**: planetary correspondences, genius/daimon names, angelic/intelligential structures, Hebrew-letter methods, talismanic imagination.
+
+Call it:
+
+```text
+Engine 6: Agrippa Symbolic Daimon Engine
+Role: Planetary correspondences, genius-name extraction, imaginal/magical signatures
+```
+
+It should answer:
+
+```text
+What symbolic planetary intelligence is implied?
+What name/image/correspondence cluster belongs to this chart?
+What angelic or daimonic symbolic signature emerges?
+```
+
+Use only after the technical chart has already been judged.
+
+---
+
+### 7. **Ptolemy — *Tetrabiblos***
+
+Add this seventh.
+
+Reason: Ptolemy is extremely important, but he is more systematic/theoretical than directly useful for your first engine. Use him as a later stabilizer: planetary qualities, temperament, body/soul, causal reasoning. The *Tetrabiblos* is structured as a foundational four-book account of astrology, beginning with philosophical justification and essential doctrines. ([Google Books][1])
+
+Call it:
+
+```text
+Engine 7: Ptolemy Natural-Causal Engine
+Role: Planetary qualities, temperament, body/soul, causal theory
+```
+
+It should answer:
+
+```text
+What is the native’s temperament?
+What are the bodily/soul qualities?
+How do planetary qualities combine materially?
+```
+
+---
+
+## The actual order I would build
+
+```text
+1. Brennan Engine
+2. Greenbaum Daimon Engine
+3. Ficino Planetary Alignment Engine
+4. Demetra George Delineation Engine
+5. Valens Testimony Engine
+6. Agrippa Symbolic Daimon Engine
+7. Ptolemy Temperament Engine
+```
+
+This is the best order **for your project**, not for a generic astrology app.
+
+For a normal astrology app I’d say:
+
+```text
+Brennan → Demetra George → Valens → Ptolemy
+```
+
+But for **Ficino / daimon / working with planetary spheres**, I’d say:
+
+```text
+Brennan → Greenbaum → Ficino → Demetra George → Valens → Agrippa → Ptolemy
+```
+
+## Why Brennan first
+
+Brennan gives you the operating system.
+
+Without it, Greenbaum’s Daimon layer floats too abstractly. Ficino becomes poetic planetary advice without chart discipline. Agrippa becomes magical noise. Valens becomes too dense.
+
+So first build:
+
+```text
+Brennan-only reading engine
+```
+
+It should produce:
+
+```text
+# Natal Structure
+# Planetary Condition
+# House Topics
+# Lots
+# Annual Profection
+# Major Timing Windows
+# Final Hellenistic Synthesis
+```
+
+No Ficino yet. No Agrippa yet. No daimonic name yet.
+
+Then add Greenbaum as a second independent reading:
+
+```text
+# Fortune
+# Daimon
+# Lot of Spirit
+# Lot of Fortune
+# Good Daimon / Bad Daimon houses
+# Fate vs Agency
+# Daimonic Vocation
+```
+
+Then synthesize:
+
+```text
+Brennan says: these topics are activated.
+Greenbaum says: this is where Fortune/Daimon operates.
+Ficino says: this is how to work with the active planetary sphere.
+```
+
+That is the product.
+
+## Treat each book as an astrologer
+
+Exactly like this:
+
+```text
+Brennan Astrologer:
+technical Hellenistic structure
+
+Greenbaum Astrologer:
+daimon, destiny, Fortune/Spirit
+
+Ficino Astrologer:
+planetary soul-care and magical alignment
+
+Demetra Astrologer:
+precise condition and topic delineation
+
+Valens Astrologer:
+ancient combinations and testimony stacking
+
+Agrippa Astrologer:
+symbolic magical name/image/correspondence
+
+Ptolemy Astrologer:
+temperament, qualities, natural causality
+```
+
+Then final synthesis asks:
+
+```text
+Where do they agree?
+Where do they disagree?
+Which claims are supported by multiple engines?
+Which claims are only symbolic?
+Which claims should be ignored as weak/noisy?
+```
+
+## First milestone
+
+Do this first:
+
+```text
+Build Brennan Engine v1.
+```
+
+Inputs:
+
+```text
+birth chart JSON
+current date
+current planetary positions
+annual profection
+lots
+transits to natal planets/lots/angles
+```
+
+Outputs:
+
+```text
+1. natal promise
+2. active topics
+3. coming 12 months
+4. coming 3 years
+5. evidence ledger
+```
+
+Once that works, add Greenbaum.
+
+That sequence is clean, testable, and not slop.
+
+[1]: https://books.google.com/books/about/Hellenistic_Astrology.html?id=GjI8DgAAQBAJ&utm_source=chatgpt.com "Hellenistic Astrology: The Study of Fate and Fortune"
+[2]: https://cultureandcosmos.org/pdfs/11/11_Greenbaum_Lots_of_Fortune_and_Daimon_Vol11.pdf?utm_source=chatgpt.com "Calculating the Lots of Fortune and Daemon in Hellenistic ..."
+[3]: https://www.booktopia.com.au/ancient-astrology-in-theory-and-practice-demetra-george/book/9780995124554.html?srsltid=AfmBOoqCIHAYztMrPJTvzubuXI0K1dth4nLRU__WI_jji2OpFxr_hB2P&utm_source=chatgpt.com "Ancient Astrology in Theory and Practice by Demetra George"
+[4]: https://arxiv.org/abs/2205.07616?utm_source=chatgpt.com "The logic of planetary combination in Vettius Valens"
+
+```

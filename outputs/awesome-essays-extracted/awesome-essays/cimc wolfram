@@ -1,0 +1,1415 @@
+4 seconds
+Hi everyone. Well, sorry I can't be there in person. Um, I thought I would talk about a few things that I think might be relevant to machine
+0:12
+12 seconds
+consciousness. Uh, we'll see. So, I'm going to start with some things that uh are from a long time ago and I'm going
+0:20
+20 seconds
+to end with some things that I just made about 15 minutes ago. So, we'll see we'll see what happens with that.
+0:27
+27 seconds
+So long time ago I got interested in the question of kind of how can we understand things in the natural world
+0:36
+36 seconds
+complicated things and so on what's what's this is sort of the goal of theoretical science is to be able to understand the natural world recording in progress
+0:44
+44 seconds
+the uh the role of science in general to be um uh to sort of find a bridge
+0:52
+52 seconds
+between what actually happens in the world and the kinds of things that we can fit as narratives in our minds.
+1:00
+1 minute
+That's kind of the the the the role that science plays is to make that bridge. So the question is sort of what's the right raw material to use for for that bridge.
+1:09
+1 minute, 9 seconds
+And the thing that I got to thinking at the beginning of the 1980s now is uh let's generalize from the kinds of things that we get in mathematics. Let's
+1:18
+1 minute, 18 seconds
+uh use arbitrary kinds of rules to describe what might be happening in the natural world. And so that got me into
+1:25
+1 minute, 25 seconds
+the whole business of thinking about sort of the computational universe and what's out there in the computational universe. Let me see if I can show you
+1:34
+1 minute, 34 seconds
+some things. So um uh started kind of pointing sort of a computational telescope out into the
+1:42
+1 minute, 42 seconds
+computational universe see what's out there. You can uh start with very simple kinds of rules like the one at the bottom here. This is a typical cell
+1:50
+1 minute, 50 seconds
+automaton rule um where you have the simple rule for what the color of each successive cell will be. You start off
+1:57
+1 minute, 57 seconds
+with one black cell, you end up just with um uh a simple a simple pattern there. So the question then is well what
+2:07
+2 minutes, 7 seconds
+what happens if we think about this process of going from rules to their consequences? We can think of that in
+2:15
+2 minutes, 15 seconds
+modern times. The best metaphor we have for that is computation. But the basic idea is we've defined some rules. Now we
+2:23
+2 minutes, 23 seconds
+want to run those rules and see their consequences. And so the one very basic question that one can ask is if one just
+2:31
+2 minutes, 31 seconds
+looks at lots of typical simple rules, what kinds of behavior does one see? And so, uh, it's an experiment I did a
+2:39
+2 minutes, 39 seconds
+really long time ago. Let's just look at all possible rules of the kind that I just showed you and see what kinds of things happened. Well, actually, uh, it
+2:49
+2 minutes, 49 seconds
+will be, um, 42 years ago on Monday that I saw this thing. It's, um, kind of to
+2:58
+2 minutes, 58 seconds
+me the most sort of surprising and remarkable science discovery I've ever been able to make. And it's sort of led
+3:05
+3 minutes, 5 seconds
+us over the course of many years not quite to the answer to life, the universe and everything. But uh at 42 years, we're getting a lot closer. And I wanted to talk a bit about that today.
+3:17
+3 minutes, 17 seconds
+What's surprising about this? What's surprising is that even though the rule by which this picture is generated is that simple thing at the bottom of the
+3:25
+3 minutes, 25 seconds
+page, the picture once generated is something very complicated. It's a thing. It's sort of a remarkable phenomenon that even though one can have
+3:33
+3 minutes, 33 seconds
+very simple rules, the behavior one gets is very complicated. That's uh uh that's sort of a a key discovery that will lead
+3:41
+3 minutes, 41 seconds
+to everything I'm going to talk about and will lead to thinking about what minds are like, what the universe is like and so on. So this turns out to be
+3:50
+3 minutes, 50 seconds
+a very generic thing in the world of simple programs. It's not something that we have been very familiar with because the the kinds of things that we set up
+3:59
+3 minutes, 59 seconds
+for engineering, for technology and so on tend to be things where we can kind of readily foresee what the consequences of the things we build are. And so we
+4:08
+4 minutes, 8 seconds
+don't end up building things where we just set up rules and then let those rules run and see what happens. It's kind of we I think we've lived in a kind
+4:16
+4 minutes, 16 seconds
+of unique hundredyear period since the industrial revolution of a time when one can expect to understand the devices
+4:24
+4 minutes, 24 seconds
+one's making. I mean one's using you know before that time you would like ride a horse you could know how to control the horse a bit. You wouldn't
+4:32
+4 minutes, 32 seconds
+know how the horse you wouldn't expect to know how sort of the horse works inside. But then sort of with the industrial revolution, we got to the
+4:39
+4 minutes, 39 seconds
+point where there are cogs and levers and so on where you can kind of look inside the machine and see what happens.
+4:46
+4 minutes, 46 seconds
+Well, in the computational universe of possible programs, most programs in the end won't have that characteristic.
+4:53
+4 minutes, 53 seconds
+They'll be more like this rule 30 uh program here where you can set up the rules. The rules are very simple, but
+5:00
+5 minutes
+the behavior you get can be very complicated. That's the generic thing that you see in the computational universe. This has many consequences. So
+5:09
+5 minutes, 9 seconds
+one question you might ask is okay uh given how how much can we predict given the rules what a system will do. That's
+5:17
+5 minutes, 17 seconds
+kind of been the conceit of traditional theoretical science. It's all about kind of reductionism and getting down to
+5:24
+5 minutes, 24 seconds
+those sort of simple rules, simple laws that describe a system. And the idea is once you found those simple laws then
+5:33
+5 minutes, 33 seconds
+you can immediately deduce everything about what the system will do. That's been the thing that sort of worked in mathematical science in the late 1600s
+5:40
+5 minutes, 40 seconds
+and so on for things like celestial mechanics. And the question is how general is that phenomenon? How general is it that you can go from sort of the
+5:48
+5 minutes, 48 seconds
+underlying laws the underlying rules per system to figure out the behavior of that system? Well, one of the surprises
+5:55
+5 minutes, 55 seconds
+is that kind of in the computational universe, uh, it is not the case that you can readily go from those underlying
+6:02
+6 minutes, 2 seconds
+laws immediately to the consequences of what happens. Instead, you can certainly find out what will happen by just using
+6:10
+6 minutes, 10 seconds
+the rule and and going step by step and seeing what the consequences of the rule will be. But you won't in general be able to kind of jump ahead and
+6:19
+6 minutes, 19 seconds
+immediately say, given the rule, I know what's going to happen. So I call this phenomenon computational irreducibility.
+6:25
+6 minutes, 25 seconds
+The idea that to know what will happen, you have to kind of follow each step and see what happens. It's something which I think has sort of fundamental
+6:34
+6 minutes, 34 seconds
+consequences for for lots and lots of things, but but two that I'll mention.
+6:38
+6 minutes, 38 seconds
+One of them has to do with kind of the the dichotomy between things like free will and determinism. The picture we're seeing here is a picture which is
+6:47
+6 minutes, 47 seconds
+completely deterministic. given the underlying rule, it's inevitable that the bits will will be the way that they are in this in this image. But so you
+6:56
+6 minutes, 56 seconds
+might say, well, that means that given this underlying rule, it's completely determined kind of what this uh
+7:04
+7 minutes, 4 seconds
+idealized creature in a sense will in some idealized sense think. But the fact is you can't know what this thing will
+7:12
+7 minutes, 12 seconds
+do except by essentially running it at each step and seeing what it does. And I think that's sort of the essence of how it can be the case that a system which
+7:21
+7 minutes, 21 seconds
+even though it has underlying determinism can still seem as if it's free of that underlying determinism as if the only way that it can know what it
+7:29
+7 minutes, 29 seconds
+will do is to do it it is to actually do it itself. So this phenomenon of computational irreducibility, as I say,
+7:37
+7 minutes, 37 seconds
+lots of consequences. If you're interested in things like AIs and trying to get AIs to do the things that you want them to do and not the things you
+7:45
+7 minutes, 45 seconds
+don't want them to do, well, computational irreducibility kind of has a thing to say about that. It kind of says that there's there will always be
+7:54
+7 minutes, 54 seconds
+surprises. There will always be things where you can only know what will happen by explicitly running the system and seeing what it does. So in a sense if
+8:03
+8 minutes, 3 seconds
+you're building something like an AI you kind of have a choice you can either say oh I don't want it ever to do anything
+8:09
+8 minutes, 9 seconds
+which will be a surprise okay you can achieve that by making the system computationally reducible make it behave
+8:17
+8 minutes, 17 seconds
+in some way that is very readily predictable or you can say well actually I'm I want the system to do sort of the
+8:25
+8 minutes, 25 seconds
+richest and most sophisticated things it can but then you are inevitably faced with computational irreducibility and it's inevitable that there will be
+8:33
+8 minutes, 33 seconds
+things that the system can do that will surprise you.
+8:37
+8 minutes, 37 seconds
+So, you know, lots of things you can ask in in terms of of computational irreducibility. I just made this picture a few minutes ago just uh as an example
+8:46
+8 minutes, 46 seconds
+of something where you could uh look at the top of this picture and you could say what's going to happen and you'll say well I don't really know. Well, how
+8:54
+8 minutes, 54 seconds
+can I find out? Well, I can just run the the rule for this picture and just see what happens. I think I I picked out another couple here of um well, you can
+9:03
+9 minutes, 3 seconds
+kind of see examples. Here's here's one where it's it kind of looks um in that top red piece that it's just going to do
+9:11
+9 minutes, 11 seconds
+something really really simple, but then it surprises us and it keeps surprising us. You know, if you had your AI set up
+9:19
+9 minutes, 19 seconds
+and you thought it was going to do just that simple red thing, then you would be surprised because something different
+9:26
+9 minutes, 26 seconds
+would happen. And that's an inevitable feature of computational reducibility.
+9:31
+9 minutes, 31 seconds
+Well, okay. So, given our understanding that even very simple rules can do very complicated things, an obvious question
+9:39
+9 minutes, 39 seconds
+to ask if you want to go big is what about the whole universe? Could it be the case that our whole universe is actually the result of just running some
+9:48
+9 minutes, 48 seconds
+very simple rule over and over again and that everything we see in the universe is a consequence of the output from that
+9:55
+9 minutes, 55 seconds
+from that rule from essentially the computation that's done in the the successive application of that rule. So
+10:03
+10 minutes, 3 seconds
+about six years ago made sort of a big breakthrough in understanding the answer to that question. And I have to say I I
+10:11
+10 minutes, 11 seconds
+was not expecting this to be anything like as comparatively easy as it was.
+10:15
+10 minutes, 15 seconds
+But I think we managed to kind of figure out what sort of the machine code of the universe looks like. What exists
+10:23
+10 minutes, 23 seconds
+underneath space and time and quantum mechanics and so on, what the kind of raw material that the universe is made of is like. So there are many different
+10:32
+10 minutes, 32 seconds
+ways that one can sort of present the answer to that. But the one that I think is most accessible as far as I can tell
+10:39
+10 minutes, 39 seconds
+to us humans is to think about sort of space and everything in it as consisting of kind of these discrete elements where
+10:47
+10 minutes, 47 seconds
+all you know is kind of how those elements are related to each other. Back in antiquity there was a a sort of big debate about is the universe
+10:55
+10 minutes, 55 seconds
+fundamentally discrete or fundamentally continuous. By the end of the 19th century, that question had been answered for matter or knew that matter was
+11:04
+11 minutes, 4 seconds
+discreet and made of atoms and molecules and so on. Beginning of the 20th century, most people thought that space would turn out to be discreet as well.
+11:12
+11 minutes, 12 seconds
+But at the time, the kind of mathematical methods couldn't really figure that out. 100 years later, we have been able to figure that out. And
+11:20
+11 minutes, 20 seconds
+we can say that we can sort of understand the machine code of the universe as being something where sort of everything in the universe is a
+11:27
+11 minutes, 27 seconds
+feature of the structure of space and space is something which is made of discrete elements and where what
+11:34
+11 minutes, 34 seconds
+describes the structure of space is kind of the relations between those discrete elements.
+11:39
+11 minutes, 39 seconds
+So a bit like a cellular automatum where you're just following a rule over and over again. You can say, well, how would this giant network that represents space
+11:47
+11 minutes, 47 seconds
+and everything in it, how would it get built up? Well, you could have some very simple rule perhaps that uh replaces one piece of a network with another piece of
+11:56
+11 minutes, 56 seconds
+network. You run that rule for a while and you'll start getting more and more complicated structures that um uh will
+12:03
+12 minutes, 3 seconds
+eventually build up something that um uh one can think of as corresponding to the to the structure of space. So, for
+12:11
+12 minutes, 11 seconds
+example, I' probably got a picture So that's kind of a a a view of sort of the the very beginning of the universe as uh uh at the very very lowest level.
+12:24
+12 minutes, 24 seconds
+I mean the the picture that we're seeing in all that wobbling around and so on is just kind of the bridge to kind of human understanding of uh trying to render
+12:33
+12 minutes, 33 seconds
+what is fundamentally just a set of connections between sort of the the fundamental atoms of space.
+12:40
+12 minutes, 40 seconds
+Well, so one of the big things that I first kind of sort of figured out in the 1990s but really became clear only about
+12:48
+12 minutes, 48 seconds
+six years ago is the question of well what happens if you have all these atoms of space and all these rewrite rules and
+12:55
+12 minutes, 55 seconds
+so on. What what is that like when you have uh immense numbers of those uh
+13:01
+13 minutes, 1 second
+atoms of space? Well, there's a close analogy to this, which is what happens if you look at a fluid like water or
+13:09
+13 minutes, 9 seconds
+something. It consists of a whole bunch of discrete molecules bouncing around.
+13:13
+13 minutes, 13 seconds
+But a surprising fact is that all of those discrete molecules when you look at them on a large scale seem to correspond to something that's like a
+13:21
+13 minutes, 21 seconds
+continuously flowing fluid and that obeys the equations of fluid dynamics.
+13:25
+13 minutes, 25 seconds
+Well, if you work out the same kind of thing for these discrete hyperraphs and so on, these discrete networks and such
+13:32
+13 minutes, 32 seconds
+like, then it turns out that the analog of the sort of large scale limit corresponding to a fluid and fluid
+13:40
+13 minutes, 40 seconds
+dynamics is that the large scale limit corresponds to what we know about space time and what we know about things like the Einstein equations for the structure
+13:48
+13 minutes, 48 seconds
+of spaceime. So what we're saying is that that we have sort of this picture of what the universe is fundamentally
+13:55
+13 minutes, 55 seconds
+made of. It's fundamentally made of these atoms of space related by these uh uh uh with with these relations between
+14:03
+14 minutes, 3 seconds
+them. Well, it turns out that one of the other things that happens is sort of the
+14:10
+14 minutes, 10 seconds
+progress of time in the universe in this kind of model is a sort of computationally irreducible process of
+14:17
+14 minutes, 17 seconds
+the successive rewriting of this network that represents the structure of space.
+14:22
+14 minutes, 22 seconds
+So the passage of time is sort of the doing of the computation that corresponds to applying the underlying rules for this network and for the
+14:30
+14 minutes, 30 seconds
+universe. Well, one of the things that happens is there are these rules that you're applying to different uh to to
+14:37
+14 minutes, 37 seconds
+this network saying whenever you see a little piece of network that looks like that, replace it by one that looks like that and so on. Well, one of the things
+14:45
+14 minutes, 45 seconds
+about that is there isn't a unique way to do that. You could apply one rule here, another rule there, and so on. you actually build up kind of a multi-way
+14:54
+14 minutes, 54 seconds
+graph of different possibilities for kind of the progression of the universe, different threads of time, different
+15:00
+15 minutes
+kind of paths of history. And there many places where this kind of multi-way process uh can be seen. So for example,
+15:08
+15 minutes, 8 seconds
+if you're if you have sort of an idealized game of tic-tac-toe simplified a bit here, you can say, well, what are all the possible moves you could make in
+15:16
+15 minutes, 16 seconds
+that game of tic-tac-toe? Those can be represented by this multi-way graph. You can think about each possible game play
+15:23
+15 minutes, 23 seconds
+for tic-tac-toe as corresponding to a possible sort of path of history, a possible thread of history, a possible
+15:30
+15 minutes, 30 seconds
+uh kind of progression of time. So when you start thinking about this kind of whole structure of the universe in terms
+15:38
+15 minutes, 38 seconds
+of uh this network of that represents the structure of space and then the rewriting of that network with many
+15:46
+15 minutes, 46 seconds
+paths of history. It turns out that this picture of many paths of history that branch and merge and so on. This turns
+15:53
+15 minutes, 53 seconds
+out to show one the kind of path to quantum mechanics. quantum mechanics.
+15:58
+15 minutes, 58 seconds
+The sort of essential feature of it is that it involves many paths of history.
+16:02
+16 minutes, 2 seconds
+When people thought about things like the many worlds theory of quantum mechanics, they kind of missed the point that in a discrete universe, you don't
+16:10
+16 minutes, 10 seconds
+just have branching of different possible histories. You also have merging of different possible histories.
+16:15
+16 minutes, 15 seconds
+And that's kind of critical to kind of knitting together this what we call branchial space, the space of quantum branches. So one of the things that um
+16:25
+16 minutes, 25 seconds
+that then happens is when it comes to how do we perceive quantum mechanics, we're kind of somewhere embedded in the space of all possible quantum branches.
+16:35
+16 minutes, 35 seconds
+Actually our minds are branching and merging just like the universe is branching and merging. And so sort of the story of quantum mechanics between
+16:44
+16 minutes, 44 seconds
+becomes a story of kind of how do branching and merging minds perceive a branching and merging universe. And uh one of the things that is sort of
+16:53
+16 minutes, 53 seconds
+critical is that we believe that we experience a single thread of history.
+16:58
+16 minutes, 58 seconds
+So we're always trying to take everything that might happen with all those different threads of history and sort of compress them down, conflate
+17:05
+17 minutes, 5 seconds
+them into a single path of history. And um if we had kind of quantum brains,
+17:12
+17 minutes, 12 seconds
+then we would be perfectly well able to deal with many threads of history simultaneously. That's what sort of happens inside a quantum computer. The
+17:20
+17 minutes, 20 seconds
+challenge for quantum computers, what I think is in practice rather hard to achieve is kind of to knit together those different kind of paths of quantum
+17:29
+17 minutes, 29 seconds
+history to get out a definite answer that brains like ours that experience a single thread of history find satisfactory.
+17:39
+17 minutes, 39 seconds
+Well, okay. So then the the question might be okay we have this um uh this we
+17:46
+17 minutes, 46 seconds
+have this idea that um we can generate the laws of physics and so on from some underlying rule just applying that rule
+17:56
+17 minutes, 56 seconds
+over and over again getting the structure of space quantum mechanics gravity all those kinds of good things.
+18:02
+18 minutes, 2 seconds
+But the question then that you could ask is well why did our universe get one particular rule and not another one? I was very confused about that for quite a
+18:11
+18 minutes, 11 seconds
+while. But then I realized just like in quantum mechanics, one is applying all these different possible applying these
+18:18
+18 minutes, 18 seconds
+underlying rules in all different possible places. So similarly, one can say what about applying all possible rules in all
+18:27
+18 minutes, 27 seconds
+possible ways. So the result of of that process of applying all possible rules in all possible ways is what I call the
+18:34
+18 minutes, 34 seconds
+roulead. It's the entangled limit of all possible computational processes. So for example, you could represent it in terms
+18:43
+18 minutes, 43 seconds
+of let's say touring machines just looking at all possible rules for touring machines, applying them and generating this whole structure. What
+18:52
+18 minutes, 52 seconds
+gives this thing sort of interesting structure is the fact that two different touring machines may end up generating
+19:00
+19 minutes
+the same state. So you don't just have kind of the branching of all possible different rules. You also have merging of equivalent rules. Well, so kind of
+19:09
+19 minutes, 9 seconds
+the the picture that emerges is the set of all possible computations. The rouad is kind of the underlying stuff from
+19:18
+19 minutes, 18 seconds
+which everything gets made. And so we talk about the sort of elements the data structure on which the the individual
+19:26
+19 minutes, 26 seconds
+sort of atoms of of the data structure on which the rouad operates as being the EMS the the underlying elements which in
+19:35
+19 minutes, 35 seconds
+the case of physical space are interpreted as atoms of space. uh in in other cases they're interpreted in different ways but in the end they're
+19:43
+19 minutes, 43 seconds
+sort of these these fundamental indivisible uh elements whose only feature is that they have a certain identity and they're
+19:51
+19 minutes, 51 seconds
+related to other such elements but one builds up sort of everything that is conceivable is this rouad object and the
+20:00
+20 minutes
+thing that's kind of remarkable about it is it's a unique object there's just one of it once you have kind of the idea of computational rules it then becomes ine
+20:08
+20 minutes, 8 seconds
+inevitable that you will be able to build or you could will build the rouad and it will be just the rouad and nothing but the rouad so to speak. So in
+20:17
+20 minutes, 17 seconds
+a sense when you ask questions about sort of why is the universe the way it is well the only thing that can be is
+20:25
+20 minutes, 25 seconds
+this rouad object but then the question is given that sort of necessary object
+20:32
+20 minutes, 32 seconds
+how do we perceive that object? We are observers somehow embedded within the rouad. And the question then is about
+20:40
+20 minutes, 40 seconds
+how we perceive the rulad. How observers like us perceive the rouad. And in a sense what we want to know if we want to
+20:47
+20 minutes, 47 seconds
+understand the laws of physics that we perceive is how does an observer like us perceive what's happening in this
+20:55
+20 minutes, 55 seconds
+inevitable necessary object that is the rouad. And this is something that I have to say I absolutely did not see coming.
+21:02
+21 minutes, 2 seconds
+But I find it very kind of exciting that this is how things seem to work. That it turns out that for observers who are
+21:10
+21 minutes, 10 seconds
+even roughly like us, it becomes inevitable that what we must perceive in the rouad is something that follows the laws of physics that we know.
+21:21
+21 minutes, 21 seconds
+So actually there are there are two characteristics of observers like us that I know for sure are important. One is that we are computationally bounded.
+21:32
+21 minutes, 32 seconds
+In other words, there's kind of a limit to the amount of computation that gets done in our minds. And so that means for example that if we're confronted with a
+21:41
+21 minutes, 41 seconds
+whole lot of computational irreducibility, we can't kind of unravel all that computational irreducibility.
+21:47
+21 minutes, 47 seconds
+We with our minds can only do computation at a certain small rate. We can only do kind of simple computations
+21:56
+21 minutes, 56 seconds
+with our minds. So the first thing is we are computationally bounded. The second thing is we believe we experience things
+22:04
+22 minutes, 4 seconds
+in a sort of single thread of experience. We we kind of and and that that thread of experience is persistent
+22:11
+22 minutes, 11 seconds
+through time. that that's a a feature of uh the way that we that we are we are
+22:19
+22 minutes, 19 seconds
+presumably made of different atoms of space at every successive moment of time but nevertheless we have the belief that
+22:26
+22 minutes, 26 seconds
+we are experiencing things persistently through time that we exist persistently through time. So these two features that
+22:34
+22 minutes, 34 seconds
+of observers like us that we're computationally bounded and that we believe we are persistent in time and we have this single thread of experience
+22:42
+22 minutes, 42 seconds
+through time. Those two features of observers turn out to imply that such
+22:51
+22 minutes, 51 seconds
+observers observing the rouad inevitably must perceive it turns out the laws of physics that we know to be the case. So that's a that's a very remarkable thing.
+23:02
+23 minutes, 2 seconds
+It means that it is inevitable for observers like us that we must perceive physics the way that phys we perceive physics. In other words, we're able to
+23:11
+23 minutes, 11 seconds
+derive the laws of physics. The laws of physics aren't just something that happens to be given to us by the universe. The laws of physics are
+23:18
+23 minutes, 18 seconds
+inevitable for observers like us. So there's one case of this that's somewhat easy to see which is what happens with
+23:25
+23 minutes, 25 seconds
+the second law of thermodynamics. So the second law of thermodynamics says if you have some collection of things, let's
+23:32
+23 minutes, 32 seconds
+say molecules, and they start off in some very orderly configuration, chances are they'll end up looking random after
+23:40
+23 minutes, 40 seconds
+a while. And you can characterize that by saying that the entropy, the number of states of the system consistent with what you know about it increases. Things tend to get more random through time.
+23:50
+23 minutes, 50 seconds
+That's the kind of what the second law of thermodynamics says. Well, you can kind of reduce things down to, for example, just a simple cellular
+23:58
+23 minutes, 58 seconds
+automaton where you start off with some kind of orderly initial condition and the cellular automaton is microscopically reversible. So if you've
+24:06
+24 minutes, 6 seconds
+got any particular state of the system, you could in principle go backwards and figure out that it came from that simple initial state. But the point is that if
+24:15
+24 minutes, 15 seconds
+you're a computationally bounded observer, you can't do that. A computationally bounded observer when confronted with something that is sort
+24:24
+24 minutes, 24 seconds
+of many steps down in this evolution will just have to say I can't tell what's going on. That just seems random
+24:31
+24 minutes, 31 seconds
+to me. And so the the sort of origin of the second law of thermodynamics is that the underlying dynamics of molecules and
+24:40
+24 minutes, 40 seconds
+things like that is computationally irreducible. But we are computationally bounded observers. So it inevitably
+24:47
+24 minutes, 47 seconds
+becomes the case that we can't kind of untangle decode that irreducible evolution of those molecules and so we
+24:55
+24 minutes, 55 seconds
+just say that it seems like things are getting more random. So the second world thermodynamics wouldn't be the way it is if we were not computationally bounded
+25:04
+25 minutes, 4 seconds
+observers. If we were able to be computationally sophisticated enough to untangle all of that irreducible computation that's going on then we
+25:13
+25 minutes, 13 seconds
+wouldn't believe in the second order of thermodynamics. We would just say we know that this particular configuration of molecules came from this very simple thing. But it's because we are
+25:22
+25 minutes, 22 seconds
+computationally bounded that we believe in the second order of thermodynamics.
+25:25
+25 minutes, 25 seconds
+The second law of thermodynamics is an inevitable consequence of our computational boundedness given the kind of inevitability of computational
+25:34
+25 minutes, 34 seconds
+irreducibility in the underlying dynamics of the system. Well, the big surprise is that that same argument can
+25:43
+25 minutes, 43 seconds
+be used for general relativity, theory of space-time and quantum mechanics.
+25:48
+25 minutes, 48 seconds
+Both of those, in fact, sort of all three of the key theories of 20th century physics turn out to be, it
+25:55
+25 minutes, 55 seconds
+seems, derivable from the underlying idea of the rouad plus the fact that we are observers of the kind we are.
+26:05
+26 minutes, 5 seconds
+Well, it's uh there sort of a question of uh if if we look at kind of the the
+26:13
+26 minutes, 13 seconds
+whole when we think about sort of what are minds like well we might say you know what's great about minds is that they
+26:21
+26 minutes, 21 seconds
+can follow rules and do computations and we've got all these neurons in our in our brains that are firing in all these patterns that follow certain laws of
+26:29
+26 minutes, 29 seconds
+physics and that like the cellular automter and other things that I've shown you even Although their rules might be simple, they can do all kinds
+26:36
+26 minutes, 36 seconds
+of complicated things. Well, the thing to understand is the universe is full of computation. The the the whole the whole
+26:45
+26 minutes, 45 seconds
+operation of the universe we can think of as a computation. And a question that we might ask is what's is is the
+26:52
+26 minutes, 52 seconds
+computation that's done in our brains kind of something very sophisticated relative to the rest of the universe or is it actually something very special
+27:00
+27 minutes
+and and specific relative to the rest of the universe? I think it's something very specific. I think if we look at kind of the universe as a whole, there's
+27:08
+27 minutes, 8 seconds
+an immense amount of computation going on in it at all times. What's special about the computation that is embodied
+27:16
+27 minutes, 16 seconds
+in our minds and that we kind of that gives us our perception of consciousness and so on. I think that there are a
+27:24
+27 minutes, 24 seconds
+couple of things that are special. two very immediate things that are special are we're computationally bounded and we believe we we experience things in this
+27:32
+27 minutes, 32 seconds
+single thread of time. Those are those those two features make us very specific relative to all the computation that's
+27:40
+27 minutes, 40 seconds
+going on in the universe. You know, we might say as sort of an apherism, you know, the weather has a mind of its own, but the weather is is this thing that
+27:47
+27 minutes, 47 seconds
+has all of these different uh sort of pockets of of air flowing around and so on. It's lots of things doing doing lots
+27:55
+27 minutes, 55 seconds
+of things kind of separately. The thing that I think is sort of special about us and the way that we sort of operate as observers of the universe is first that
+28:03
+28 minutes, 3 seconds
+we're computationally bounded and second that we try and crush things down to the point where we have this kind of single thread of experience. I mean I think my
+28:11
+28 minutes, 11 seconds
+my sort of picture of what what minds and our brains do is they take all kinds of of of input. you know, every second
+28:20
+28 minutes, 20 seconds
+we're getting millions of of bytes of of input from our eyes and ears and so on.
+28:25
+28 minutes, 25 seconds
+And our brains go to a lot of trouble to sort of crush that down to the point where, you know, 10 times a second or something, we are deciding to actuate
+28:34
+28 minutes, 34 seconds
+this muscle or that muscle. It's a it's a big process of kind of compressing all of this input that we have down to this
+28:42
+28 minutes, 42 seconds
+sort of single thread of what we consider to be our inner experience. And I think that's sort of the essence of of
+28:48
+28 minutes, 48 seconds
+what makes us special relative to kind of all the computation that's happening in the universe. Perhaps a bit disappointing because it's not like we're saying we're we're bigger and
+28:57
+28 minutes, 57 seconds
+better and we do more than what's happening in the rest of the universe.
+29:00
+29 minutes
+Actually, quite the contrary, we're doing something quite specific relative to what happens in the rest of the universe. Well, you kind of get some
+29:08
+29 minutes, 8 seconds
+idea. Uh if you think about the rouad, we each mind is kind of uh uh exists at
+29:15
+29 minutes, 15 seconds
+some point in the rouad and is kind of tracing some path through the history of the rulad. And you can kind of try and get some idea what's out there in the
+29:24
+29 minutes, 24 seconds
+space of possible minds. Here's one very simple experiment you can do. You could just say let's take a generative AI
+29:30
+29 minutes, 30 seconds
+system and let's ask it to make uh uh images and let's look at kind of the the
+29:37
+29 minutes, 37 seconds
+space of of possible images that it can make kind of its the expand its its latent space. what you can ask the
+29:45
+29 minutes, 45 seconds
+question well if you do that uh you know the the center of this is a as a cat and a party hat but as you go out away from
+29:53
+29 minutes, 53 seconds
+that these are things which that that that um are kind of we can think of as a very very tiny corner of the rouad that
+30:01
+30 minutes, 1 second
+we're exploring as we look at these different pictures. So one question you can ask even for something like a a simple image generation system is what
+30:10
+30 minutes, 10 seconds
+fraction of the images that the image generation system can generate are actually things that we humans for
+30:17
+30 minutes, 17 seconds
+example have words for or can be described. So you know there may be 5,000 pictureable nouns. Those are in
+30:25
+30 minutes, 25 seconds
+this whole space of possible images this little tiny corner of the rouad that that corresponds to. what what fraction
+30:32
+30 minutes, 32 seconds
+of of those of that um of those possible images are things for which we have names. The answer is unbelievably small.
+30:41
+30 minutes, 41 seconds
+Even in some very simple system it might be 10 the minus 500 of the of the possible images of things for which we
+30:48
+30 minutes, 48 seconds
+as humans have currently come up with words. So in a sense that's that's where we've colonized in the rouad so to speak
+30:55
+30 minutes, 55 seconds
+are just those places where we have uh particular words for things and and a lot of what we see even in this tiny corner that corresponds to something
+31:04
+31 minutes, 4 seconds
+that we've generated from from uh generative AI that we've trained on on human images and so on even in uh sort
+31:12
+31 minutes, 12 seconds
+of that tiny corner we have things for which we don't have words. Now as sort of uh uh civilization progresses maybe
+31:20
+31 minutes, 20 seconds
+some of these things will seem significant enough that we will make up words for them. Maybe our AIs will will show us that this is a thing that's
+31:29
+31 minutes, 29 seconds
+really a useful kind of concept to have and we'll introduce that will add it to the collection of words that we have in in our language. I mean I think brains
+31:37
+31 minutes, 37 seconds
+of our size probably do get to deal with maybe 50,000 words. I don't think brains of our size do very well with many more than that. Um it's uh and you know it's
+31:46
+31 minutes, 46 seconds
+an interesting question what kind of structures beyond the kind of compositional language that we have can one get that go beyond kind of words and
+31:54
+31 minutes, 54 seconds
+the constructions we have of words. Well so this this idea of kind of um sort of
+32:03
+32 minutes, 3 seconds
+what's out there in the space of possible minds what's out there in the rouad. How do we perceive the rouad? Uh,
+32:10
+32 minutes, 10 seconds
+one of the things that is notable is when we have sort of nearby minds, they perceive the rule in in very much the
+32:18
+32 minutes, 18 seconds
+same way. It's kind of like being laid out in physical space because we're all on this one planet in this one galaxy.
+32:27
+32 minutes, 27 seconds
+We observe the universe in a particular way and we all kind of agree about roughly which stars are in the night sky and so on. But if we were and that's a
+32:35
+32 minutes, 35 seconds
+consequence of the fact that we're all pretty nearby in physical space. Well, it's the same thing in the rouad. We're all in a sense minds, human minds are
+32:44
+32 minutes, 44 seconds
+all pretty nearby in the kind of space of possible minds in the rouad. And I think that's sort of why we get to believe in objective reality. It's
+32:53
+32 minutes, 53 seconds
+because we can kind of because our sort of we're all sort of close together in in the rouad. we all kind of can we can
+33:01
+33 minutes, 1 second
+we all sort of agree about what is going on in the rouad and we can all kind of decide that yes that's really what's going on that's objective reality so one
+33:10
+33 minutes, 10 seconds
+of the surprises about that is to have this collection of similar minds we have to have things that go rather beyond
+33:18
+33 minutes, 18 seconds
+physics to have a collection of similar minds you kind of have to have biology and so then that leads one to the question of okay given the rulad what
+33:27
+33 minutes, 27 seconds
+can we say about kind of biology and life and so on. It's been surprising to me that we end up being able to say quite a few things about it. Let me um
+33:36
+33 minutes, 36 seconds
+quickly talk about that. So, so this is what we're thinking about and we're going to come around to talking about kind of what's what minds like ours are
+33:45
+33 minutes, 45 seconds
+like and maybe I'll show you some things that I just made this afternoon that uh have something to say about that. Um so
+33:54
+33 minutes, 54 seconds
+this is kind of a very idealized version of biology. So over on the left is a very simple genome. It's a cellular automaton rule. Over on the right is
+34:03
+34 minutes, 3 seconds
+kind of what the development of the kind of idealized organism with that genome will be like. And so this organism
+34:10
+34 minutes, 10 seconds
+starts from that little seed. It it it grows for a while then it dies out.
+34:14
+34 minutes, 14 seconds
+Okay. So imagine that we're doing very simple kind of biological evolution.
+34:18
+34 minutes, 18 seconds
+We're just mutating bits in the rule that that uh determines the the the genome for the system.
+34:27
+34 minutes, 27 seconds
+Well, we can we can keep doing that.
+34:29
+34 minutes, 29 seconds
+Every dot here corresponds to a possible mutation. Most of the time we don't make a better organism where better in this
+34:36
+34 minutes, 36 seconds
+case is defined as living longer. And but sometimes we there's a breakthrough and we and we get to have a a fitter
+34:44
+34 minutes, 44 seconds
+organism and we can see kind of the sequence of kind of progressively fitter organisms that we produce. Well,
+34:52
+34 minutes, 52 seconds
+uh, every time kind of we roll the dice, we'll get a different sequence of organisms. The thing that I find sort of remarkable about this is that the, um,
+35:01
+35 minutes, 1 second
+uh, the that that that kind of you you kind of as as you develop through kind of biological evolutionary time, you're
+35:10
+35 minutes, 10 seconds
+kind of coming up with different ideas which you then build on to make sort of a fitter and fitter organism. And what we've realized recently, okay, these are
+35:17
+35 minutes, 17 seconds
+some pictures I just made a few minutes ago. Um these are just examples of uh kind of um uh what happens when you uh
+35:26
+35 minutes, 26 seconds
+run different kinds of rules. Um these are rules that have been evolved to live a long time and then and then die out.
+35:34
+35 minutes, 34 seconds
+This is kind of some of what they do and there are lots of very surprising things that happen. Uh one of the things that's kind of notable, let's see what else
+35:41
+35 minutes, 41 seconds
+goes on here. I haven't looked at all of these yet. Um so there any more remarkable creatures?
+35:47
+35 minutes, 47 seconds
+Okay, there's a pretty surprising creature that just uh you know who would have imagined, you know, in the case of this creature, you might say, well, you
+35:55
+35 minutes, 55 seconds
+know, can you explain the mechanism by which this creature operates? Well, maybe a little bit with this one.
+36:02
+36 minutes, 2 seconds
+Probably not with one like this. You just have to say, well, it lives for a lot of steps and then it dies out. Um,
+36:09
+36 minutes, 9 seconds
+and uh uh but in any case, the the thing I think this is actually a pretty good model for a lot of things that emerge.
+36:16
+36 minutes, 16 seconds
+That's one I showed earlier. Um that uh that um uh emerge in in biology. Um and
+36:23
+36 minutes, 23 seconds
+it's kind of a uh well there's there's lots to say about that, but in any case,
+36:29
+36 minutes, 29 seconds
+the the um uh the main point is that what we're getting in biology is this
+36:37
+36 minutes, 37 seconds
+sort of big stack of of discoveries. I don't know whether the stack of discoveries made in the history of of three billion years of biological
+36:45
+36 minutes, 45 seconds
+history is larger than or smaller than the stack of discoveries that makes modern technology. I'm guessing biology is still ahead but probably not by very
+36:53
+36 minutes, 53 seconds
+much. Um but any case the the uh the thing that we see is that sort of biology is using computational
+37:00
+37 minutes
+irreducibility. It's kind of finding ways to take sort of lumps of computational irreducibility and stick them together in ways that achieve the
+37:08
+37 minutes, 8 seconds
+purposes it wants to achieve of being a fitter organism. Well, turns out machine learning is doing very much the same
+37:15
+37 minutes, 15 seconds
+thing. So, you take, you know, your your typical uh uh your typical neural net um and uh you can it's kind of hard to tell
+37:24
+37 minutes, 24 seconds
+what neural nets are doing, but you can kind of simplify them. just make sort of a grid of of uh of neurons and uh you
+37:32
+37 minutes, 32 seconds
+can simplify them even further and just make a completely discrete uh kind of system that seems to behave uh much like
+37:40
+37 minutes, 40 seconds
+a neural net. In fact, probably if the technology was built out, you'd be able to make sort of completely discrete AI systems. Um this is a this is an example
+37:50
+37 minutes, 50 seconds
+of uh sort of the uh progressive evolution of the pattern of weights effectively in this completely discrete
+37:57
+37 minutes, 57 seconds
+system. What's notable is if you ask if you run the system a bunch of times and you say learn to in this case I think it
+38:05
+38 minutes, 5 seconds
+was just live for 30 steps and then die out for any initial pattern then the uh uh the way that it does that is is
+38:14
+38 minutes, 14 seconds
+complicated. It's it's like what we see in biology. It's kind of harnessing computational irreducibility to do the thing it wants to do. And my guess is
+38:22
+38 minutes, 22 seconds
+that that's sort of typical of kind of how brains work is that inside there's sort of lumps of computational
+38:31
+38 minutes, 31 seconds
+irreducibility being put together to achieve the purposes we want to achieve.
+38:35
+38 minutes, 35 seconds
+And the reason that it works is that the purposes we want to achieve are computationally quite simple. In other words, we're trying to train a neural
+38:42
+38 minutes, 42 seconds
+net to, you know, recognize cats from dogs. The ultimate computational abilities of the neural net of the underlying computational system in the neural net are vastly greater than that.
+38:52
+38 minutes, 52 seconds
+We're simply giving it some very coarse thing that we want it to do. And that very coarse thing we can find ways to do
+38:59
+38 minutes, 59 seconds
+by finding sort of lumps of computational irreducibility that can fit together to achieve that. I kind of view machine learning as being like if you want to build a wall, you can do it.
+39:10
+39 minutes, 10 seconds
+not by making a series of kind of very precisely defined bricks, but instead by just picking up randomly shaped rocks from the ground and trying to fit them
+39:19
+39 minutes, 19 seconds
+together to make a stone wall. So, it's kind of that that's kind of the picture that that the way that minds work like
+39:27
+39 minutes, 27 seconds
+ours is by this process of sort of fitting together these lumps of computational irreducibility. So, one question you can ask is one sort of old question in uh I suppose in philosophy.
+39:38
+39 minutes, 38 seconds
+This is sort of a philosophy experiment.
+39:39
+39 minutes, 39 seconds
+ism. This afternoon's results um has to do with if you are kind of uh training
+39:46
+39 minutes, 46 seconds
+let's say a neural net to [clears throat] do so to compute some particular function let's say what are all the different ways that it can
+39:53
+39 minutes, 53 seconds
+compute that kind of like asking if you were a human and you learn the color red do we all think about the color red in
+40:01
+40 minutes, 1 second
+the same way do we all have the same sort of inner experience of the color red well you can do kind of a a piece of experimental philosophy so to speak in a
+40:09
+40 minutes, 9 seconds
+modern sense to answer that question with with a neural net. So here what what I've been doing is to just say this is uh lots of different training runs
+40:18
+40 minutes, 18 seconds
+effectively for a particular neural net learning to reproduce this rather boring function here. And as the loss goes
+40:26
+40 minutes, 26 seconds
+down, as it gets better at reproducing it, things go more purple. And so here is uh what you can see is there are many
+40:33
+40 minutes, 33 seconds
+different paths that all lead to sort of the success in reproducing this function that all kind of learn the color red but
+40:40
+40 minutes, 40 seconds
+they do it in different ways. And so you can kind of look at uh kind of the the patterns of sort of different ways you
+40:47
+40 minutes, 47 seconds
+can learn the same thing. And so here are a few examples. Let's see I think I might have a nice example here. These are examples with different activation functions and so on. Different
+40:56
+40 minutes, 56 seconds
+structures of networks. Some of what you see here is just a consequence of simple permutation symmetries and so on inside the network. But some of what you see is
+41:04
+41 minutes, 4 seconds
+kind of how how how complicated is the pattern of of ways in which you can understand that same concept.
+41:12
+41 minutes, 12 seconds
+So, okay. Well, I think I'm about to run out of time, so I should probably um uh um what what does all of this kind of
+41:21
+41 minutes, 21 seconds
+computational thinking about things, where does it take us with respect to the minds, AIs, consciousness and so on.
+41:30
+41 minutes, 30 seconds
+I mean I think there's a sort of a question um of when we build artificial
+41:37
+41 minutes, 37 seconds
+minds we build AIs things like that we are building them in a way that is still very close to us in the rouad they're
+41:44
+41 minutes, 44 seconds
+minds very very close in rule space to us as we start exploring the rulad more broadly we are effectively creating more
+41:53
+41 minutes, 53 seconds
+and more alien minds in things in the computational experiments I've done for years one's effectively going out and
+42:00
+42 minutes
+sort of going to to create sort of explore artificial universes, artificial minds and we're just jumping anywhere in
+42:08
+42 minutes, 8 seconds
+the rouad. The the challenge of jumping anywhere in the rouad is what you get to is not very human. It's not um it's you
+42:16
+42 minutes, 16 seconds
+don't get to kind of uh uh take what we humans sort of understand and appreciate and and sort of map that into what you
+42:25
+42 minutes, 25 seconds
+observe when you jump to some sort of random place in the rouad. And the way I see sort of the progress of knowledge is as a progressive sort of expansion of
+42:34
+42 minutes, 34 seconds
+our domain in the rulard. Just as we send out sort of spacecraft to expand our domain in physical space, so we're sort of inventing new paradigms for
+42:42
+42 minutes, 42 seconds
+thinking about things. And that's kind of expanding our domain in in rural space. And so as we build out sort of
+42:49
+42 minutes, 49 seconds
+more and more sophisticated AIs, so to speak, we can think of them potentially as exploring more and more of rural space. Well, you might say that's that's
+42:58
+42 minutes, 58 seconds
+great and that's going to be very impressive and so on. But the thing to realize is most of the computation that goes on in the rouad is computation that
+43:07
+43 minutes, 7 seconds
+is very nonhuman and is sort of irrelevant to us. So we build our AIs, we try and build these more and more sophisticated computational systems. We
+43:15
+43 minutes, 15 seconds
+end up with things which are much more like nature than they are like minds that we recognize. It's like
+43:22
+43 minutes, 22 seconds
+computations that are just running, but the computations are very non-human.
+43:26
+43 minutes, 26 seconds
+They're computations that are sort of out there in the rulad, but not computations that we that uh are aligned
+43:34
+43 minutes, 34 seconds
+with with the way that we humans are. I think it's worth understanding, you know, when people sort of wonder what will it be like, it already is the case
+43:42
+43 minutes, 42 seconds
+that there are sort of more AIs running than there are human minds, but uh what will it be sort of like when much of the world is is kind of operating in this
+43:51
+43 minutes, 51 seconds
+kind of computational structure of this kind of AI civilization that is um uh that is something that we humans uh
+43:59
+43 minutes, 59 seconds
+can't really understand the details of just as we can't understand any of these computationally irreducible processes.
+44:06
+44 minutes, 6 seconds
+es we can't understand many of the kinds of things that happen in nature. Well, we can do our best to find kind of try
+44:14
+44 minutes, 14 seconds
+and find scientific laws, natural laws that allow us to make this bridge between sort of what h actually happens
+44:22
+44 minutes, 22 seconds
+in these possible minds and what we can understand with human minds. But it's worth sort of understanding that a lot of the things that happen in those
+44:31
+44 minutes, 31 seconds
+possible minds are things that we humans just don't care about. There are things, you know, as human civilization progresses, the set of things that we
+44:39
+44 minutes, 39 seconds
+care about evolves quite slowly. And it's kind of something where there's a continuity of kind of the things that we care about over time. And that
+44:48
+44 minutes, 48 seconds
+continuity as we as we think about sort of the the continuation of that, we can kind of see where that will go. But actually, we don't know where that will
+44:56
+44 minutes, 56 seconds
+go, but we can see that's a a sort of a small path through the set of all possible minds. Anyway, I that was a very quick uh trip through a few uh
+45:05
+45 minutes, 5 seconds
+kinds of ideas that perhaps might have some relevance to the types of things that you guys are interested in and I hope we have time for at least
+45:14
+45 minutes, 14 seconds
+microscopic amount of time for questions and comments and so on.
+45:17
+45 minutes, 17 seconds
+We do definitely um but thank you so much Stephen. Seriously,
+45:22
+45 minutes, 22 seconds
+[applause]
+45:27
+45 minutes, 27 seconds
+thank you so much for being here with us today virtually. Um, I have so many questions but uh I'm only pointing at at
+45:35
+45 minutes, 35 seconds
+a couple things like at which level in the rouad or in the computations do we see the first control structures emerge or in the automata space as well.
+45:44
+45 minutes, 44 seconds
+Another one is related to um uh when you say the mind is a multi-base system very similar to the branching universe. The
+45:52
+45 minutes, 52 seconds
+brain of course is not very good at handling that many superp positions. So it's going to yield with a very finite subspread resolution that the brain is
+46:00
+46 minutes
+supporting for these branches. Uh how many branches do you actually have sometimes and how deep do they go before they die out. And another question is
+46:08
+46 minutes, 8 seconds
+very tiny and technical and it's uh when you define your rul you say that you just need relationships and identities.
+46:15
+46 minutes, 15 seconds
+What do you need identities for? Why can the locations these atoms of space uh not just be defined by the relations?
+46:23
+46 minutes, 23 seconds
+Okay, I'll take those last first. So the ultimate atoms of existence
+46:31
+46 minutes, 31 seconds
+what is important about those atoms of existence is that they are distinct.
+46:36
+46 minutes, 36 seconds
+That's it. They're distinct and they have relations to other atoms of space or atoms of existence. There is no place
+46:45
+46 minutes, 45 seconds
+that they are. The place is defined by relations between to other atoms of existence. There is no sense in which
+46:53
+46 minutes, 53 seconds
+you are placing these atoms of existence because there is no space. It is the relations between these atoms of existence that make space. So the thing
+47:02
+47 minutes, 2 seconds
+that's important to understand about them is is that they have an identity.
+47:06
+47 minutes, 6 seconds
+They are distinct and you can so you can say it's this atom of existence that's related to this other atom of existence.
+47:14
+47 minutes, 14 seconds
+Let's see. So that that was that's that one the um with respect to uh multi-way systems and brains. No, I think the
+47:22
+47 minutes, 22 seconds
+whole point is that it's sort of a critical feature of of consciousness as we experience it that we have one basic thread of experience. we crush down
+47:31
+47 minutes, 31 seconds
+everything to one basic thread of experience. What is uh what what happens is is something like the following. When
+47:38
+47 minutes, 38 seconds
+we look at a fluid uh we perceive only the overall velocity field of a bunch of molecules. We perceive only the average
+47:46
+47 minutes, 46 seconds
+of many molecules. That's because we're pretty big compared to those molecules.
+47:50
+47 minutes, 50 seconds
+We're we're aggregating the effect of many molecules. So I think what happens in these multi-way graphs is that our
+47:56
+47 minutes, 56 seconds
+brains in effect the span this this region of branchial space that is large compared to the individual threads of
+48:05
+48 minutes, 5 seconds
+history. And so we're doing that same kind of averaging over threads of history that happens when we make averages over individual molecules in a
+48:13
+48 minutes, 13 seconds
+in in space. And so what's what's what's then happening is yes, we are crushing everything down to a single experience,
+48:21
+48 minutes, 21 seconds
+a single thread of experience. And there's a lot of detail about sort of what happens when you insist that things
+48:27
+48 minutes, 27 seconds
+be consistent. We say it's all crushed down to this one thread of experience.
+48:32
+48 minutes, 32 seconds
+Well, that might not be consistent. It's just like we might say we're describing a fluid just in terms of a velocity field, but that might not be enough.
+48:40
+48 minutes, 40 seconds
+Somewhere inside the thing that's making up that velocity field, the molecules might all gang up together and make themselves do something which cannot be described by a simple velocity field.
+48:51
+48 minutes, 51 seconds
+But it's kind of the the scientific result is that that doesn't happen. It's sort of a consequence of computational irreducibility that that doesn't happen.
+48:59
+48 minutes, 59 seconds
+And I think it's the same thing with these threads of history that at least locally we can conflate together those different threads of history. If our
+49:07
+49 minutes, 7 seconds
+minds were spread too widely in branchial space, we wouldn't be able to do that. Just like if if we were sort of
+49:14
+49 minutes, 14 seconds
+spread too wide in in physical space, we would conclude very different things about how physical space works. And uh
+49:21
+49 minutes, 21 seconds
+the the other thing you asked was about control structures. I don't know exactly what that means.
+49:26
+49 minutes, 26 seconds
+um the uh you know if you ask about sort of any computational phenomenon then you can ask can you achieve that
+49:33
+49 minutes, 33 seconds
+computational phenomenon in a system like this and the answer is always yes and there's a question how difficult is
+49:41
+49 minutes, 41 seconds
+it to achieve that that's an interesting question actually I studied that recently um the question is uh kind of if you're undergoing adaptive evolution
+49:50
+49 minutes, 50 seconds
+for example how hard is it to get to a certain kind of outcome and you can kind of define a mutational complexity of
+49:57
+49 minutes, 57 seconds
+things which is sort of how hard is it to reach that thing by doing adaptive evolution. Um and that's and I think one
+50:04
+50 minutes, 4 seconds
+of the one of the big conclusions there okay is relevant to biology and probably a bunch of other things is that if you
+50:12
+50 minutes, 12 seconds
+have a system which is adaptively evolved to achieve a simple to describe purpose then that fact alone independent
+50:20
+50 minutes, 20 seconds
+of what that purpose is has implications for the structure of the system and seems to imply that there will be sort of certain elements of apparent
+50:29
+50 minutes, 29 seconds
+mechanism in the behavior of the system even though the overall behavior of the system will be computationally irreducible. I'm I'm I'm skipping, you
+50:38
+50 minutes, 38 seconds
+know, the equivalent of thousands of pages of detail here, but that's a that's an attempt to kind of uh um address a couple of those those
+50:46
+50 minutes, 46 seconds
+questions. And I think, you know, one of the things that is uh a challenge right now and an interesting one is is the
+50:52
+50 minutes, 52 seconds
+existence of observers like us and many of them inevitable in the rouad and I think the answer will be yes. But that's
+51:01
+51 minutes, 1 second
+something that we can scientifically address. And we can address, you know, given that we can also say, well, there'll be a bunch of other observers too that correspond to kind of alien
+51:10
+51 minutes, 10 seconds
+minds. And we can ask, well, how far away in rural space are those alien minds? What is the possibility that we could communicate with those alien
+51:18
+51 minutes, 18 seconds
+minds? You know, forget the uh sort of the light years of physical space separating us from, you know, other stars or whatever else. uh when we are
+51:28
+51 minutes, 28 seconds
+dealing with sort of alien minds that uh we might say well they follow the same they what you know how far away are they
+51:36
+51 minutes, 36 seconds
+what's the distribution of alien minds in the universe or in the rulag so these are things where I think there
+51:44
+51 minutes, 44 seconds
+is my my feeling is that that one of the big things that we're we're going to discover is that just as the the core
+51:51
+51 minutes, 51 seconds
+laws of physics are consequences of the fact that we are observing observers of the kind we are. My guess is that many
+51:59
+51 minutes, 59 seconds
+details of the universe as we perceive it are also consequences of the fact that we are contingently so to speak observers of the way we are. So for
+52:07
+52 minutes, 7 seconds
+example, one of the one of the things I realized recently is sort of obvious at some level is the fact that we perceive the universe the way we do is a
+52:15
+52 minutes, 15 seconds
+consequence of the fact that we have non-zero mass. It's not obvious that we would have non-zero mass. We could be out of purely made of photons. If we were purely made of photons, we simply
+52:23
+52 minutes, 23 seconds
+wouldn't perceive uh we we we would not perceive time. Um we would uh uh and things would be very different. The fact
+52:32
+52 minutes, 32 seconds
+that we have mass is a an important part of the way that we perceive the universe. The thing I'm really chasing is why do we perceive the universe to
+52:41
+52 minutes, 41 seconds
+have three dimensions of space or at least in our models roughly three dimensions of space. My guess is that in the end that will be a painfully obvious feature of the way we are as observers.
+52:52
+52 minutes, 52 seconds
+I mean we can we can start listing ways in which we're sort of things we assume about ourselves. So for example, another critical assumption in science is that
+53:00
+53 minutes
+we have the free will to do any experiment we want. In other words, it's not the case that every experiment we do is kind of pre-wired. we imagine that we
+53:09
+53 minutes, 9 seconds
+can sort of poke at the universe and kind of sample different things and then use some kind of scientific induction to deduce what's going on as opposed to the
+53:18
+53 minutes, 18 seconds
+idea that we're sort of constantly puppeted to do just the particular experiment we do. So there's a there's a long list of these kinds of things. But uh I I think sort of the the thing
+53:26
+53 minutes, 26 seconds
+that's perhaps interesting from a sort of an arc of the of the story of science is that what is becoming clear is that
+53:33
+53 minutes, 33 seconds
+to understand more about the foundations of science, we have to understand more about ourselves and the way that that sort of the the the the way that we
+53:42
+53 minutes, 42 seconds
+perceive the universe is inevitably a consequence of the way that we are. It's not something where we can say the universe fundamentally is this way. The
+53:51
+53 minutes, 51 seconds
+only thing we can say is fundamentally there's the rouad, but then the question of how we perceive it and what slice of it we're in is something that depends on kind of our nature as as observers.
+54:03
+54 minutes, 3 seconds
+I I I I should say that I think um this kind of whole uh effort of kind of doing um um ah we have somebody with a
+54:12
+54 minutes, 12 seconds
+microphone. All right, let's um uh please is this on? Yeah. Hey, this is Gil Verden. Uh nice to see you again from
+54:18
+54 minutes, 18 seconds
+Mixtropic. Um so you applied the um the rulead and and the multi-way graph to
+54:26
+54 minutes, 26 seconds
+explaining quantum mechanics but as we know the brain is a stochastic thermodynamic system. It's it's not necessarily the quantum mechanics gets
+54:33
+54 minutes, 33 seconds
+kind of averaged out. Uh it's a messcale system. Have you thought about uh connecting your theory to stoastic thermodynamics or out of equilibrium
+54:41
+54 minutes, 41 seconds
+thermodynamics? because it it seems like a a stochcastic path integral to me and then there could be some interesting connections to Friston's work on uh the
+54:50
+54 minutes, 50 seconds
+generalized free energy principle and the maximum caliber principle there and and some formal connections to to basian inference potentially. Uh but I don't
+54:57
+54 minutes, 57 seconds
+know if you thought about exploring machine learning through that that that that path. Yeah, not as deeply as I think you've thought
+55:06
+55 minutes, 6 seconds
+about it. [laughter] um the uh I think um uh so I shouldn't you know the whole question about
+55:14
+55 minutes, 14 seconds
+quantum mechanics and brains I don't think quantum mechanics is relevant to most of what happens in brains if we imagined that it was uh you know if you
+55:24
+55 minutes, 24 seconds
+and that there was something sort of very magic about brains that needed sort of new physics that was different from the everyday I think that the success of
+55:32
+55 minutes, 32 seconds
+LLM is kind of the last nail in that coffin right you know it doesn't the the brain doesn't need anything special in terms
+55:38
+55 minutes, 38 seconds
+of physics. Now the question of of what uh you know studying the kinds of systems I've looked at and and uh
+55:47
+55 minutes, 47 seconds
+looking at kind of stochasticity I'm never a big believer in fundamental stochasticity because I think when you're looking at fundamental science
+55:56
+55 minutes, 56 seconds
+not technology that's a quite different story kind of to say that something is stochastic is to say oh there's something happening in the system that I
+56:04
+56 minutes, 4 seconds
+don't have a model for. I'm just going to say that it's random. So in in a lot of systems, one of the big sort of
+56:11
+56 minutes, 11 seconds
+discoveries is that sort of randomness very close to you know very good randomness is very easy to get. And so
+56:20
+56 minutes, 20 seconds
+when you look at sort of thermodynamic systems and so on. I mean the the you know my sort of derivation of the second law of thermodynamics relies on the idea
+56:29
+56 minutes, 29 seconds
+that everything is completely deterministic. But the the to the observer like us who is computationally
+56:36
+56 minutes, 36 seconds
+bounded it is something that appears stochastic because we can't untangle it to say no no no we know what the
+56:43
+56 minutes, 43 seconds
+underlying rule is. Now to the question of of what um um uh kind of how
+56:51
+56 minutes, 51 seconds
+observers like us perceive that and and what you know what aspects of that underlying system we can perceive. I
+56:58
+56 minutes, 58 seconds
+think this is I think this is what Carl Pristen uh likes to think about and so on. Um I'm not sure that I have maybe he
+57:06
+57 minutes, 6 seconds
+has better characterizations of sort of what all the possible things that minds like ours can perceive from from these
+57:14
+57 minutes, 14 seconds
+underlying systems are like but and I don't know um okay so so I've studied a
+57:21
+57 minutes, 21 seconds
+bit um things like when you have these kinds of systems that we're looking at things
+57:28
+57 minutes, 28 seconds
+about um uh uh So things like what what
+57:36
+57 minutes, 36 seconds
+effects do perturbivations have? So I'll show you one thing maybe. Um can I ask you a related question to what you just said? Yeah. Yeah.
+57:43
+57 minutes, 43 seconds
+So I agree with almost everything you said about related. By the way, Andrew Kitch, nice to meet you. Um also agree that thermodynamics, you the second law
+57:51
+57 minutes, 51 seconds
+being entailed from being computationally bounded and having singlethreaded memory. But I don't agree with you that relativity and quantum
+57:59
+57 minutes, 59 seconds
+mechanics are entailed by those properties of us as observers. So my two questions for you are number one, is there not part of the rulad with minds
+58:08
+58 minutes, 8 seconds
+very similar to ours running on Newtonian mechanics on a flat spacetime and no quantum?
+58:14
+58 minutes, 14 seconds
+Uh and if yes, my second question is how then do our observer properties entail quantum and relativity as distinct from Newtonian mechanics?
+58:24
+58 minutes, 24 seconds
+Right? So it is completely not obvious that uh you know computational irreducibility plus observers like us
+58:33
+58 minutes, 33 seconds
+plus you know represented in terms of hyperraphs and hyperraph rewriting implies relativity in quantum mechanics.
+58:39
+58 minutes, 39 seconds
+It's completely not obvious. Okay it's I mean in fact one of my big efforts right now is to kind of build a more and more
+58:48
+58 minutes, 48 seconds
+rigorous stack to be able to make that argument. I mean we can make that argument at so in in the typical uh way
+58:56
+58 minutes, 56 seconds
+that sort of a lot of science progresses you know there's a physicist way of making an argument and then there's the pure mathematician's way of making the
+59:04
+59 minutes, 4 seconds
+argument we are I would say roughly at the physicist level of making the argument and not at the pure mathematician level of making the
+59:12
+59 minutes, 12 seconds
+argument now to make one feel better about that the derivation of fluid mechanics from molecular dynamics has
+59:19
+59 minutes, 19 seconds
+never been got to the pure mathematician level. That's always been an argument that is uh in fact the things I' I've tried to do um are the closest we're
+59:28
+59 minutes, 28 seconds
+getting to having a really rigorous argument for why the second law of thermodynamics works and so on, why you can get fluid mechanics from discrete
+59:35
+59 minutes, 35 seconds
+microamics. So now the question of how do you get relativity and so on from discrete hypography writing all that
+59:41
+59 minutes, 41 seconds
+kind of thing um it's I mean it's a tolerably simple argument that I could give you in maybe 10 minutes with a bit
+59:50
+59 minutes, 50 seconds
+of vagueness about how that works kind of an intuitive argument for why that works um to give something more rigorous
+59:58
+59 minutes, 58 seconds
+there's kind of we already know the the 10-hour version of that we are working on the the multimonth word version of
+1:00:06
+1 hour, 6 seconds
+that which really involves building what we call infrared geometry. So basic point is in traditional differential
+1:00:13
+1 hour, 13 seconds
+geometry for example on which things like general relativity are built one starts from a manifold where little tiny patches of the manifold look just like
+1:00:22
+1 hour, 22 seconds
+you could in space and the um uh what we have is something where little tiny patches of space look like pieces of
+1:00:30
+1 hour, 30 seconds
+hyperraph and so you have to end up building this this basically actually it's kind of fun I've been going back to literally what Uklid said he starts with
+1:00:38
+1 hour, 38 seconds
+his first his first kind of statement is a point is that which has no part which for us isn't even true. So we have to
+1:00:47
+1 hour, 47 seconds
+kind of recapitulate Uklid and build this whole stack of mathematics to get to the point where we can make a rigorous argument for what's going on.
+1:00:54
+1 hour, 54 seconds
+Can you could you make Newtonian mechanics in a way that that uh uh uh fits into these the system we're
+1:01:02
+1 hour, 1 minute, 2 seconds
+building? No, you cannot. It just won't work. It's it's um what ends up happening is the causal relations
+1:01:10
+1 hour, 1 minute, 10 seconds
+between uh rewriting events uh essentially define a sort of a graph of
+1:01:16
+1 hour, 1 minute, 16 seconds
+causality and that graph of causality is it is inevitable that you have to get relativistic mechanics not Newtonian
+1:01:25
+1 hour, 1 minute, 25 seconds
+mechanics from that again not this is not obvious it's not it's not uh I I I can't just by saying it I'm not making
+1:01:33
+1 hour, 1 minute, 33 seconds
+the argument so to speak But um uh I think that is something that will probably have an increasingly rigorous way of of showing that that's the way things work.
+1:01:43
+1 hour, 1 minute, 43 seconds
+Well, thank you so much, Stephen, for joining us virtually. Um thank you so much for your talk and for the question.

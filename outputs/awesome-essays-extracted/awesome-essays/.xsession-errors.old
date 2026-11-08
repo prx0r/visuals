@@ -1,0 +1,593 @@
+Xsession: X session started for box at Sun  1 Nov 09:05:31 +07 2026
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+dbus-update-activation-environment: setting DISPLAY=:0
+dbus-update-activation-environment: setting XAUTHORITY=/home/box/.Xauthority
+localuser:box being added to access control list
+dbus-update-activation-environment: setting XDG_DATA_DIRS=/usr/share/xfce4:/usr/local/share/:/usr/share/
+dbus-update-activation-environment: setting QT_ACCESSIBILITY=1
+/usr/bin/x-session-manager: X server already running on display :0
+** Message: 09:05:32.341: Failed to fetch _NET_NUMBER_OF_DESKTOPS; assuming 1
+** Message: 09:05:32.342: Failed to get _NET_WORKAREA; using full screen dimensions
+** Message: 09:05:32.342: Failed to fetch _NET_CURRENT_DESKTOP; assuming 0
+** Message: 09:05:32.342: Failed to fetch _NET_CURRENT_DESKTOP; assuming 0
+/usr/bin/iceauth:  creating new authority file /run/user/1000/ICEauthority
+xfce4-session-Message: 09:05:32.355: SSH authentication agent is already running
+gpg-agent: a gpg-agent is already running - not starting a new one
+** Message: 09:05:32.834: Failed to fetch _NET_CURRENT_DESKTOP; assuming 0
+
+(xfce4-session:1577): xfce4-session-WARNING **: 09:05:34.477: Unable to launch "start-pulseaudio-x11" (specified by autostart/pulseaudio.desktop): Failed to execute child process “start-pulseaudio-x11” (No such file or directory)
+basic: Setting gid to: 1001
+
+(polkit-mate-authentication-agent-1:1738): GLib-CRITICAL **: 09:05:34.603: g_variant_new_string: assertion 'string != NULL' failed
+
+(polkit-mate-authentication-agent-1:1738): polkit-mate-1-WARNING **: 09:05:34.608: Failed to register client: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SessionManager was not provided by any .service files
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "=== Started ==="}
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "App version: \"v2.22.10\""}
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "Platform: \"xcb\""}
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "OS Version: \"Linux #1 SMP PREEMPT_RT Debian 6.12.105-1 (2026-08-24)\""}
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "Distribution: \"Debian GNU/Linux 13 (trixie)\""}
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "CPU architecture: \"x86_64\""}
+{"tm": "2026-11-01 09:05:34.716", "lvl": "info", "mod": "basic", "msg": "UI languages: QList(\"en-Latn-GB\", \"en-GB\", \"en-Latn-US\", \"en-US\", \"en-Latn\", \"en\")"}
+{"tm": "2026-11-01 09:05:34.719", "lvl": "debug", "mod": "basic", "msg": "No extra config found"}
+{"tm": "2026-11-01 09:05:34.719", "lvl": "debug", "mod": "basic", "msg": "DpiScaleManager::constructor -> DPI: 96 ; scale: 1 ; devicePixelRatio: 1"}
+{"tm": "2026-11-01 09:05:34.731", "lvl": "debug", "mod": "basic", "msg": "GUI pid:  1732"}
+{"tm": "2026-11-01 09:05:34.733", "lvl": "info", "mod": "basic", "msg": "GUI settings {\"appSkin\":0,\"appSkinDesc\":\"Alpha\",\"backgroundSettings\":{\"aspectRatioMode\":1,\"connectedBackgroundType\":1,\"disconnectedBackgroundType\":1},\"isAutoConnect\":false,\"isAutoSecureNetworks\":true,\"isDockedToTray\":false,\"isHideFromDock\":false,\"isLaunchOnStartup\":true,\"isMinimizeAndCloseToTray\":false,\"isShowLocationHealth\":false,\"isShowNotifications\":false,\"isStartMinimized\":false,\"multiDesktopBehaviour\":0,\"orderLocation\":0,\"orderLocationDesc\":\"Geography\",\"shareProxyGateway\":{\"isEnabled\":false,\"port\":0,\"proxySharingMode\":0,\"proxySharingModeDesc\":\"HTTP\",\"whileConnected\":false},\"shareSecureHotspot\":{\"isEnabled\":false,\"passwordDesc\":\"empty\",\"ssidDesc\":\"empty\"},\"soundSettings\":{\"connectedSoundType\":0,\"disconnectedSoundType\":0},\"splitTunneling\":{\"apps\":[],\"networkRoutes\":[],\"settings\":{\"active\":false,\"mode\":0,\"modeDesc\":\"Exclude\"}},\"trayIconColour\":0,\"trayIconColourDesc\":\"White\",\"version\":7}"}
+blueman-applet 09.05.35 WARNING  PluginManager:153 __load_plugin: Not loading PPPSupport because its conflict has higher priority
+blueman-applet 09.05.35 WARNING  PluginManager:153 __load_plugin: Not loading DhcpClient because its conflict has higher priority
+{"tm": "2026-11-01 09:05:36.415", "lvl": "debug", "mod": "basic", "msg": "Backend::init()"}
+{"tm": "2026-11-01 09:05:36.418", "lvl": "info", "mod": "basic", "msg": "Engine settings {\"amneziawgPreset\":\"A - No Junk Russia Primary\",\"connectedDnsInfo\":{\"controldApiKey\":\"\",\"hostnames\":[],\"isSplitDns\":false,\"type\":0,\"upStream1\":\"\",\"upStream2\":\"\"},\"connectionSettings\":{\"isAutomatic\":true,\"port\":443,\"protocol\":5,\"protocolDesc\":\"WireGuard\"},\"decoyTrafficSettings\":{\"isEnabled\":false,\"volume\":0},\"dnsManagerDesc\":\"Auto\",\"dnsPolicy\":2,\"dnsPolicyDesc\":\"Cloudflare\",\"firewallSettings\":{\"mode\":1,\"modeDesc\":\"Auto\",\"when\":0,\"whenDesc\":\"Before Connection\"},\"isAllowLanTraffic\":false,\"isAntiCensorship\":false,\"isIgnoreSslErrors\":false,\"isKeepAliveEnabled\":false,\"isTerminateSockets\":true,\"language\":\"en\",\"macAddrSpoofing\":{\"isAutoRotate\":false,\"isEnabled\":false,\"macAddress\":\"\",\"networkInterfaces\":[{\"friendlyName\":\"\",\"networkOrSsid\":\"\"},{\"friendlyName\":\"Wi-Fi\",\"networkOrSsid\":\"Sun & Roots Lodge 1\"}],\"selectedNetworkInterface\":{\"friendlyName\":\"\",\"networkOrSsid\":\"\"}},\"networkPreferredProtocols\":{},\"packetSize\":{\"isAutomatic\":true,\"mtu\":-1},\"protocolTweaksMethod\":0,\"protocolTweaksMethodDesc\":\"Auto\",\"proxySettings\":{\"address\":\"\",\"option\":0,\"optionDesc\":\"None\",\"port\":0},\"serverRoutingMethod\":0,\"serverRoutingMethodDesc\":\"Auto\",\"tapAdapter\":2,\"updateChannel\":0,\"updateChannelDesc\":\"Release\",\"version\":10}"}
+/opt/windscribe/windscribeopenvpn: /lib/x86_64-linux-gnu/libnl-genl-3.so.200: no version information available (required by /opt/windscribe/windscribeopenvpn)
+/opt/windscribe/windscribeopenvpn: /lib/x86_64-linux-gnu/libnl-3.so.200: no version information available (required by /opt/windscribe/windscribeopenvpn)
+{"tm": "2026-11-01 09:05:36.503", "lvl": "info", "mod": "wsnet", "msg": "wsnet version: v2.22.10-0-g8dcabaa"}
+{"tm": "2026-11-01 09:05:36.504", "lvl": "info", "mod": "wsnet", "msg": "c-ares version: 1.34.5"}
+{"tm": "2026-11-01 09:05:36.507", "lvl": "info", "mod": "wsnet", "msg": "DNS servers in channel: 117.120.24.1:53,117.120.24.2:53"}
+{"tm": "2026-11-01 09:05:36.557", "lvl": "info", "mod": "wsnet", "msg": "openssl version: 3.6.1"}
+{"tm": "2026-11-01 09:05:36.559", "lvl": "info", "mod": "wsnet", "msg": "curl version: 8.19.0"}
+{"tm": "2026-11-01 09:05:36.562", "lvl": "info", "mod": "wsnet", "msg": "Base platform: linux"}
+{"tm": "2026-11-01 09:05:36.562", "lvl": "info", "mod": "wsnet", "msg": "Platform name: linux_deb_x64"}
+{"tm": "2026-11-01 09:05:36.562", "lvl": "info", "mod": "wsnet", "msg": "Use staging domains: false"}
+{"tm": "2026-11-01 09:05:36.562", "lvl": "info", "mod": "wsnet", "msg": "App version: 2.22.10"}
+{"tm": "2026-11-01 09:05:36.562", "lvl": "info", "mod": "wsnet", "msg": "OpenVpn version: 2.6.17"}
+{"tm": "2026-11-01 09:05:36.562", "lvl": "info", "mod": "wsnet", "msg": "Language: en"}
+{"tm": "2026-11-01 09:05:36.564", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI settings settled sucessfully"}
+{"tm": "2026-11-01 09:05:36.565", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI_impl::ServerAPI_impl, use a failover from settings"}
+{"tm": "2026-11-01 09:05:36.573", "lvl": "debug", "mod": "basic", "msg": "setWindowPosFromPersistent() - screen \"eDP-1\" - geometry QRect(0,0 1366x768) - virtualGeometry QRect(0,0 1366x768) - logicalDotsPerInch 96 - devicePixelRatio 1"}
+{"tm": "2026-11-01 09:05:36.575", "lvl": "debug", "mod": "basic", "msg": "setWindowPosFromPersistent() - restored app geometry: QRect(446,100 350x279)"}
+{"tm": "2026-11-01 09:05:36.575", "lvl": "info", "mod": "basic", "msg": "connected to helper socket"}
+{"tm": "2026-11-01 09:05:36.585", "lvl": "debug", "mod": "basic", "msg": "Windscribe helper connected ok"}
+{"tm": "2026-11-01 09:05:36.585", "lvl": "info", "mod": "basic", "msg": "Helper version \"Linux helper\""}
+{"tm": "2026-11-01 09:05:36.763", "lvl": "warning", "mod": "qt.qpa.theme.gnome", "msg": "dbus reply error: [ \"org.freedesktop.DBus.Error.AccessDenied\" ] \"Portal operation not allowed: Unable to open /proc/1732/root\""}
+{"tm": "2026-11-01 09:05:36.809", "lvl": "debug", "mod": "basic", "msg": "DpiScaleManager::setMainWindow -> no DPI or pixel ratio changes"}
+{"tm": "2026-11-01 09:05:37.446", "lvl": "info", "mod": "basic", "msg": "Changed DNS servers for DnsResolver to: QList(\"1.1.1.1\", \"1.0.0.1\")"}
+{"tm": "2026-11-01 09:05:37.446", "lvl": "info", "mod": "wsnet", "msg": "Set dns servers by client: 1.1.1.1,1.0.0.1"}
+{"tm": "2026-11-01 09:05:37.554", "lvl": "debug", "mod": "basic", "msg": "ImageResourcesSvg::run() - all SVGs loaded"}
+{"tm": "2026-11-01 09:05:37.574", "lvl": "info", "mod": "basic", "msg": "Turning boot firewall off for non-always-on mode"}
+{"tm": "2026-11-01 09:05:37.584", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI_impl::setIgnoreSslErrors, false"}
+{"tm": "2026-11-01 09:05:37.585", "lvl": "info", "mod": "wsnet", "msg": "BridgeAPI_impl::setIgnoreSslErrors, false"}
+{"tm": "2026-11-01 09:05:37.585", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI_impl::setApiResolutionsSettings, default behavior, no overridden domains"}
+{"tm": "2026-11-01 09:05:37.585", "lvl": "debug", "mod": "best_location", "msg": "Best location loaded from settings:  \"231Hong Kong - Victoria\""}
+{"tm": "2026-11-01 09:05:37.731", "lvl": "warning", "mod": "qt.qpa.services", "msg": "Failed to register with host portal QDBusError(\"org.freedesktop.portal.Error.Failed\", \"Could not register app ID: Unable to open /proc/1732/root\")"}
+{"tm": "2026-11-01 09:05:38.279", "lvl": "info", "mod": "basic", "msg": "Firewall state from last app start: false launched on startup: true"}
+{"tm": "2026-11-01 09:05:38.314", "lvl": "info", "mod": "firewall_controller", "msg": "firewall off"}
+{"tm": "2026-11-01 09:05:38.315", "lvl": "debug", "mod": "cli_ipc", "msg": "IPC server for CLI started"}
+{"tm": "2026-11-01 09:05:38.331", "lvl": "info", "mod": "basic", "msg": "Turning boot firewall off for non-always-on mode"}
+{"tm": "2026-11-01 09:05:38.379", "lvl": "debug", "mod": "basic", "msg": "Use all API resources from the previous run"}
+{"tm": "2026-11-01 09:05:38.413", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+{"tm": "2026-11-01 09:05:38.468", "lvl": "info", "mod": "wsnet", "msg": "Trying: dyn: dns"}
+{"tm": "2026-11-01 09:05:38.468", "lvl": "info", "mod": "wsnet", "msg": "DNS servers in channel are changed: 1.1.1.1:53,1.0.0.1:53"}
+{"tm": "2026-11-01 09:05:38.480", "lvl": "debug", "mod": "basic", "msg": "Engine::onHostIPsChanged, ips count: 2"}
+{"tm": "2026-11-01 09:05:38.481", "lvl": "debug", "mod": "basic", "msg": "Return to WhitelistIpsCallback in wsnet"}
+{"tm": "2026-11-01 09:05:38.551", "lvl": "info", "mod": "basic", "msg": "Network Changed:  Index:  2 , Network/SSID:  \"Sun & Roots Lodge 1\" , MAC:  \"7C:D1:C3:DF:7A:ED\"  friendly:  \"Sun & Roots Lodge 1\""}
+{"tm": "2026-11-01 09:05:38.620", "lvl": "info", "mod": "wsnet", "msg": "  Trying e5183d4c0648fb48d7445d2407e0f462:443...\n"}
+{"tm": "2026-11-01 09:05:38.755", "lvl": "debug", "mod": "basic", "msg": "Engine::onHostIPsChanged, ips count: 5"}
+{"tm": "2026-11-01 09:05:38.755", "lvl": "debug", "mod": "basic", "msg": "Return to WhitelistIpsCallback in wsnet"}
+{"tm": "2026-11-01 09:05:39.219", "lvl": "info", "mod": "wsnet", "msg": "  Trying a2b5403928fc3b5fb9011e633a9700ee:443...\n"}
+{"tm": "2026-11-01 09:05:39.256", "lvl": "debug", "mod": "basic", "msg": "All API resources have been updated"}
+{"tm": "2026-11-01 09:05:39.302", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+{"tm": "2026-11-01 09:05:39.732", "lvl": "info", "mod": "wsnet", "msg": "InventoryParser::parseServers: loaded 62 servers, revision 14043"}
+{"tm": "2026-11-01 09:05:39.792", "lvl": "debug", "mod": "basic", "msg": "Received Check Update Answer"}
+{"tm": "2026-11-01 09:05:39.792", "lvl": "debug", "mod": "basic", "msg": "Installer URL:  \"https://deploy.totallyacdn.com/desktop-apps/2.24.12/windscribe_2.24.12_amd64.deb\""}
+{"tm": "2026-11-01 09:05:39.792", "lvl": "debug", "mod": "basic", "msg": "Installer Hash:  \"9a27a51ede9cb24f5ffbc830db890c380700f328248b94351bd48e9811dbf2f4\""}
+{"tm": "2026-11-01 09:05:39.792", "lvl": "info", "mod": "basic", "msg": "Update available"}
+{"tm": "2026-11-01 09:05:39.829", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+{"tm": "2026-11-01 09:05:40.485", "lvl": "info", "mod": "wsnet", "msg": "ApiResourcesManager::onInventoryLocationsAnswer: locations unchanged, suppressing kLocationsUpdated"}
+{"tm": "2026-11-01 09:05:51.372", "lvl": "debug", "mod": "basic", "msg": "Backend::cleanup()"}
+{"tm": "2026-11-01 09:05:51.372", "lvl": "info", "mod": "basic", "msg": "Firewall on next startup:  false"}
+{"tm": "2026-11-01 09:05:51.373", "lvl": "debug", "mod": "basic", "msg": "Cleanup started"}
+{"tm": "2026-11-01 09:05:51.447", "lvl": "info", "mod": "wsnet", "msg": "wsnet cleanup"}
+{"tm": "2026-11-01 09:05:51.447", "lvl": "info", "mod": "wsnet", "msg": "wsnet io_context_.stop"}
+{"tm": "2026-11-01 09:05:51.447", "lvl": "info", "mod": "wsnet", "msg": "wsnet thread_.join"}
+{"tm": "2026-11-01 09:05:51.447", "lvl": "info", "mod": "wsnet", "msg": "PingManager destructor started"}
+{"tm": "2026-11-01 09:05:51.447", "lvl": "info", "mod": "wsnet", "msg": "PingManager destructor finished"}
+{"tm": "2026-11-01 09:05:51.447", "lvl": "info", "mod": "wsnet", "msg": "CurlNetworkManager destructor started"}
+{"tm": "2026-11-01 09:05:51.448", "lvl": "info", "mod": "wsnet", "msg": "CurlNetworkManager destructor finished"}
+{"tm": "2026-11-01 09:05:51.448", "lvl": "info", "mod": "wsnet", "msg": "DnsResolver_cares destructor started"}
+{"tm": "2026-11-01 09:05:51.448", "lvl": "info", "mod": "wsnet", "msg": "DnsResolver_cares destructor finished"}
+{"tm": "2026-11-01 09:05:51.448", "lvl": "info", "mod": "basic", "msg": "Cleanup, connection manager no need disconnect"}
+{"tm": "2026-11-01 09:05:51.522", "lvl": "info", "mod": "basic", "msg": "close main window"}
+{"tm": "2026-11-01 09:05:51.566", "lvl": "info", "mod": "basic", "msg": "stunnel stopped"}
+{"tm": "2026-11-01 09:05:51.597", "lvl": "info", "mod": "basic", "msg": "wstunnel stopped"}
+{"tm": "2026-11-01 09:05:51.738", "lvl": "info", "mod": "basic", "msg": "Cleanup finished"}
+{"tm": "2026-11-01 09:05:51.738", "lvl": "info", "mod": "basic", "msg": "Backend Cleanup Finished"}
+{"tm": "2026-11-01 09:05:51.780", "lvl": "debug", "mod": "basic", "msg": "Engine destructor finished"}
+{"tm": "2026-11-01 09:05:51.785", "lvl": "debug", "mod": "cli_ipc", "msg": "IPC server for CLI stopped"}
+{"tm": "2026-11-01 09:05:51.785", "lvl": "debug", "mod": "basic", "msg": "Cleaning up current sound data"}
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+[2362:2390:1101/090559.442045:ERROR:gles2_cmd_decoder.cc(5185)] Error: 3 for Command kBlitFramebufferCHROMIUM
+[1.102] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[2362:2390:1101/090600.618762:ERROR:gles2_cmd_decoder.cc(5185)] Error: 3 for Command kBlitFramebufferCHROMIUM
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/blueman/plugins/applet/TransferService.py", line 235, in _on_dbus_name_appeared
+    self._manager = Manager()
+                    ~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/blueman/gobject.py", line 11, in __call__
+    cls._instance = super().__call__(*args, **kwargs)
+                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/blueman/bluez/obex/Manager.py", line 29, in __init__
+    self._object_manager = Gio.DBusObjectManagerClient.new_for_bus_sync(
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        Gio.BusType.SESSION, Gio.DBusObjectManagerClientFlags.NONE,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.__bus_name, '/', None, None, None)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gi.repository.GLib.GError: g-io-error-quark: Timeout was reached (24)
+[21.308] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[21.313] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.423] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[21.425] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.425] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.425] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.433] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.433] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.434] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.434] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.434] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.434] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.437] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.437] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[21.460] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[21.460] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[21.460] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[21.460] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[1.432] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[12.526] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[12.526] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.865] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[12.866] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.871] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[13.206] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 09:06:37.560: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 09:06:37.637: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 09:06:37.725: Unable to replace properties on 0: Error getting properties for ID
+[1.519] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[0.903] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[12.356] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[12.356] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.572] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[12.572] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.572] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.572] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.572] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.572] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.576] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.576] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.576] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.576] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.583] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.780] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.781] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[12.781] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[12.781] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[12.781] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.155] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.155] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.420] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.420] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.437] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.441] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.450] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.459] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.470] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.470] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.482] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.489] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.489] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.678] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[211.529] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[9686.098] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Fontconfig error: Cannot load default config file: No such file: (null)
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:47:49.600: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:47:58.291: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:47:58.866: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:47:59.915: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:48:00.382: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:48:31.779: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:48:34.017: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[13455.527] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:34.744: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:37.818: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:38.400: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:38.751: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:39.216: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:39.760: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:40.198: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:40.809: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:41.671: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:42.135: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:42.666: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:43.693: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:44.248: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:44.784: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:45.216: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:46.157: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:46.648: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:47.050: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:48.378: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:48.888: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:50.165: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:59.271: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:51:59.798: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:00.174: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:00.624: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:01.046: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:01.455: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:01.839: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:02.208: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:02.563: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:11.720: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:12.581: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:12.779: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:13.068: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:13.345: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+flameshot: info: Capture saved as /home/box/Pictures/2026-11-01_12-52.png
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:30.476: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:32.620: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:38.415: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:52:41.260: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+QPainter::begin: Paint device returned engine == 0, type: 2
+QPainter::setRenderHint: Painter must be active to set rendering hints
+QPainter::setCompositionMode: Painter not active
+QPainter::translate: Painter not active
+QPainter::setPen: Painter not active
+QPainter::setBrush: Painter not active
+QPainter::setBrush: Painter not active
+flameshot: info: Capture saved as /home/box/Pictures/dsdsdsds.png
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:53:01.364: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[Parent 27961, Main Thread] WARNING: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding': 'glib warning', file toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox-esr:27961): GLib-GObject-CRITICAL **: 12:53:03.148: g_object_set_is_valid_property: object class 'GtkImage' has no property named 'padding'
+[15212.141] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[15234.477] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+qt.text.font.db: OpenType support missing for "Unifont", script 17
+qt.text.font.db: OpenType support missing for "Unifont-JP", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Sans", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Sans", script 17
+qt.text.font.db: OpenType support missing for "URW Gothic", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Sans Narrow", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei", script 17
+qt.text.font.db: OpenType support missing for "Loma", script 17
+qt.text.font.db: OpenType support missing for "IPAGothic", script 17
+qt.text.font.db: OpenType support missing for "FreeSans", script 17
+qt.text.font.db: OpenType support missing for "FreeSerif", script 17
+qt.text.font.db: OpenType support missing for "FreeMono", script 17
+qt.text.font.db: OpenType support missing for "IPAPGothic", script 17
+qt.text.font.db: OpenType support missing for "Quicksand", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Math TeX Gyre", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Sans Mono", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Serif", script 17
+qt.text.font.db: OpenType support missing for "Liberation Mono", script 17
+qt.text.font.db: OpenType support missing for "Liberation Sans", script 17
+qt.text.font.db: OpenType support missing for "Liberation Serif", script 17
+qt.text.font.db: OpenType support missing for "Noto Sans Mono", script 17
+qt.text.font.db: OpenType support missing for "D050000L", script 17
+qt.text.font.db: OpenType support missing for "Standard Symbols PS", script 17
+qt.text.font.db: OpenType support missing for "C059", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Mono PS", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Roman", script 17
+qt.text.font.db: OpenType support missing for "P052", script 17
+qt.text.font.db: OpenType support missing for "Noto Mono", script 17
+qt.text.font.db: OpenType support missing for "Droid Sans Fallback", script 17
+qt.text.font.db: OpenType support missing for "Unifont Sample", script 17
+qt.text.font.db: OpenType support missing for "Courier 10 Pitch", script 17
+qt.text.font.db: OpenType support missing for "Bitstream Charter", script 17
+qt.text.font.db: OpenType support missing for "Unifont CSUR", script 17
+qt.text.font.db: OpenType support missing for "Unifont Upper", script 17
+qt.text.font.db: OpenType support missing for "Liberation Sans Narrow", script 17
+qt.text.font.db: OpenType support missing for "Quicksand Medium", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei Mono", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei Sharp", script 17
+qt.text.font.db: OpenType support missing for "Quicksand Light", script 17
+qt.text.font.db: OpenType support missing for "URW Bookman", script 17
+qt.text.font.db: OpenType support missing for "Z003", script 17
+qt.text.font.db: OpenType support missing for "Noto Color Emoji", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+[32501:32501:1101/134740.514139:ERROR:interface_endpoint_client.cc(707)] Message 5 rejected by interface blink.mojom.WidgetHost
+[16909.455] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[16912.892] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[17248.508] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[19037.795] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[19388.352] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[19395.988] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[20065.527] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[20073.183] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:34:34.439: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:34:36.118: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:34:36.236: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:34:36.308: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:42:26.523: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:42:26.611: Unable to replace properties on 0: Error getting properties for ID
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 15:42:36.705: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 16:04:09.422: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 16:04:11.825: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 16:04:12.032: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 16:14:20.119: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 16:14:20.213: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1776): LIBDBUSMENU-GLIB-WARNING **: 16:14:30.642: Unable to replace properties on 0: Error getting properties for ID
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+Ignoring invalid item in FilePickerController::accepted(QStringList): 
+[36881.526] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38076.451] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38136.776] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38171.812] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38210.925] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38680.301] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38683.585] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38685.739] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38691.233] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38693.317] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38695.439] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38700.585] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38713.744] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38716.410] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38719.018] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38725.131] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38734.347] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38737.038] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38745.710] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38750.453] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38756.974] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38764.980] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38780.565] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38783.062] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38819.696] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39011.063] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39016.967] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39020.658] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39023.849] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39034.559] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39037.031] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39042.160] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39058.759] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39065.418] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39067.708] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39072.482] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39075.111] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39085.167] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39089.048] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39096.784] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39356.977] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39552.922] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39713.896] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39730.454] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39740.625] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39742.759] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39747.962] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+js: Error with Permissions-Policy header: Unrecognized feature: 'payment'.
+js: Error with Permissions-Policy header: Unrecognized feature: 'usb'.
+js: Failed to create WebGPU Context Provider
+js: [DOM] Found 2 elements with non-unique id #CaptchaToken: (More info: https://goo.gl/9p2vKq) %o %o
+js: [DOM] Found 2 elements with non-unique id #Context: (More info: https://goo.gl/9p2vKq) %o %o
+js: [DOM] Found 2 elements with non-unique id #Facebook: (More info: https://goo.gl/9p2vKq) %o %o
+js: [DOM] Found 2 elements with non-unique id #Google: (More info: https://goo.gl/9p2vKq) %o %o
+js: [DOM] Found 2 elements with non-unique id #Password: (More info: https://goo.gl/9p2vKq) %o %o
+js: [DOM] Found 2 elements with non-unique id #Twitch: (More info: https://goo.gl/9p2vKq) %o %o
+js: [DOM] Found 2 elements with non-unique id #Twitter: (More info: https://goo.gl/9p2vKq) %o %o
+js: Error with Permissions-Policy header: Unrecognized feature: 'payment'.
+js: Error with Permissions-Policy header: Unrecognized feature: 'usb'.
+js: Failed to create WebGPU Context Provider
+js: %c%d font-size:0;color:transparent NaN
+js: %c%d font-size:0;color:transparent NaN
+js: %c%o font-size:0;color:transparent [object Object]
+js: %c%o font-size:0;color:transparent [object Object]
+js: %c%d font-size:0;color:transparent NaN
+js: %c%d font-size:0;color:transparent NaN
+js: %c%o font-size:0;color:transparent [object Object]
+js: %c%o font-size:0;color:transparent [object Object]
+js: Unrecognized feature: 'payment'.
+[1.440] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+
+(xfdesktop:1728): libxfce4ui-WARNING **: 01:24:07.879: ICE I/O Error
+X connection to :0.0 broken (explicit kill or server shutdown).
+X connection to :0 broken (explicit kill or server shutdown).
+XIO:  fatal IO error 0 (Success) on X server ":0"
+      after 3570671 requests (3570671 known processed) with 0 events remaining.
+X connection to :0 broken (explicit kill or server shutdown).

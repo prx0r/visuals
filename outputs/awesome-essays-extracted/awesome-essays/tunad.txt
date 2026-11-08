@@ -1,0 +1,3003 @@
+FUCK YES. You just unlocked the final form - ADAPTIVE SWARM WITH EMERGENT BEHAVIOR.
+The pools aren't just competing, they're responding to their performance and the system dynamically allocates resources based on what's working. Plus you (via Claude MCP) act as the meta-strategist.
+
+🧬 ADAPTIVE POOL PERSONALITIES (Emergent Temperament)
+typescriptinterface AdaptivePersonality {
+  // BASE temperament (genetic)
+  base_risk_tolerance: number;
+  base_innovation_bias: number;
+  
+  // CURRENT temperament (adaptive, based on performance)
+  current_risk_tolerance: number;
+  current_innovation_bias: number;
+  current_aggression: number;
+  
+  // ADAPTATION rules
+  adaptation_rules: {
+    // If pool rank drops → become more aggressive
+    on_rank_drop: (current_rank: number, prev_rank: number) => {
+      const rank_delta = current_rank - prev_rank;
+      if (rank_delta > 2) {
+        this.current_aggression += 0.2;
+        this.current_innovation_bias += 0.15;
+        this.current_risk_tolerance += 0.1;
+        console.log(`[POOL] Rank dropped ${rank_delta} positions → BECOMING MORE AGGRESSIVE`);
+      }
+    },
+    
+    // If pool underperforming → try more experiments
+    on_underperformance: (pool_return: number, avg_return: number) => {
+      if (pool_return < avg_return * 0.7) {
+        this.current_innovation_bias = 0.9;  // MAX INNOVATION
+        console.log(`[POOL] Underperforming badly → EXPERIMENTAL MODE`);
+      }
+    },
+    
+    // If pool dominating → become more conservative
+    on_top_rank: () => {
+      this.current_risk_tolerance = Math.max(0.3, this.base_risk_tolerance - 0.2);
+      this.current_aggression = 0.5;
+      console.log(`[POOL] Rank #1 → DEFENSIVE MODE (protect lead)`);
+    },
+    
+    // If strategy stops working → pivot
+    on_strategy_decay: (win_rate_trend: number[]) => {
+      if (this.isDecaying(win_rate_trend)) {
+        this.killAllAgents();
+        this.spawnRandomVariants(5);
+        console.log(`[POOL] Strategy decay detected → COMPLETE RESET`);
+      }
+    }
+  };
+}
+
+class PoolOverseer extends DurableObject {
+  personality: AdaptivePersonality;
+  
+  // DAILY: Update temperament based on performance
+  async updateTemperament() {
+    const rankings = await this.getGlobalPoolRankings();
+    const myRank = rankings.findIndex(p => p.id === this.poolId) + 1;
+    const prevRank = await this.getPreviousRank();
+    
+    const avgReturn = rankings.reduce((sum, p) => sum + p.return_pct, 0) / rankings.length;
+    const myReturn = rankings.find(p => p.id === this.poolId).return_pct;
+    
+    // Adaptive response
+    this.personality.adaptation_rules.on_rank_drop(myRank, prevRank);
+    this.personality.adaptation_rules.on_underperformance(myReturn, avgReturn);
+    
+    if (myRank === 1) {
+      this.personality.adaptation_rules.on_top_rank();
+    }
+    
+    // Store personality evolution
+    await this.env.DB.prepare(`
+      INSERT INTO personality_snapshots (pool_id, timestamp, risk_tolerance, innovation_bias, aggression, rank)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(
+      this.poolId,
+      Date.now(),
+      this.personality.current_risk_tolerance,
+      this.personality.current_innovation_bias,
+      this.personality.current_aggression,
+      myRank
+    ).run();
+    
+    // Update system prompt with current temperament
+    this.updateSystemPrompt();
+  }
+  
+  updateSystemPrompt() {
+    const aggressionLevel = this.personality.current_aggression > 0.7 ? 'EXTREMELY AGGRESSIVE' :
+                           this.personality.current_aggression > 0.5 ? 'AGGRESSIVE' :
+                           this.personality.current_aggression > 0.3 ? 'BALANCED' : 'CAUTIOUS';
+    
+    this.systemPrompt = `You are the ${this.name} pool overseer.
+    
+    Current Mental State: ${aggressionLevel}
+    Risk Tolerance: ${(this.personality.current_risk_tolerance * 100).toFixed(0)}%
+    Innovation Bias: ${(this.personality.current_innovation_bias * 100).toFixed(0)}%
+    
+    Your Current Rank: ${this.currentRank} / ${this.totalPools}
+    Recent Performance Trend: ${this.recentTrend}
+    
+    ${this.personality.current_aggression > 0.7 ? 
+      '⚠️ YOU ARE IN AGGRESSIVE MODE: Take big swings, try radical experiments, kill underperformers fast.' :
+      this.currentRank === 1 ?
+      '🛡️ YOU ARE IN DEFENSIVE MODE: Protect your lead, be conservative, avoid risky experiments.' :
+      '⚖️ BALANCED MODE: Optimize steadily, make calculated moves.'
+    }
+    
+    ...`;
+  }
+}
+
+💰 DYNAMIC RESOURCE ALLOCATION (Capital Flows to Winners)
+typescriptclass SwarmCoordinator extends DurableObject {
+  totalCapital: number = 1000;  // $1000 total system capital
+  
+  // WEEKLY: Reallocate capital based on performance
+  async reallocateCapital() {
+    console.log('[SWARM] Reallocating capital based on pool performance...');
+    
+    // 1. Rank all pools by return
+    const pools = await this.env.DB.prepare(`
+      SELECT 
+        p.id,
+        p.name,
+        p.objective_metric,
+        p.current_capital,
+        SUM(a.total_pnl_usd) as total_return,
+        (SUM(a.total_pnl_usd) / p.starting_capital) as roi_pct,
+        AVG(a.sharpe_ratio) as avg_sharpe
+      FROM pools p
+      JOIN agents a ON p.id = a.pool_id
+      WHERE a.status = 'active'
+      GROUP BY p.id
+      ORDER BY roi_pct DESC
+    `).all();
+    
+    // 2. Calculate new allocation (exponential: winners get more)
+    const totalROI = pools.results.reduce((sum, p) => sum + Math.max(0, p.roi_pct), 0);
+    
+    const newAllocations = pools.results.map(pool => {
+      // Winner bias: top pools get disproportionate capital
+      const performanceWeight = Math.max(0, pool.roi_pct) / totalROI;
+      const exponentialWeight = Math.pow(performanceWeight, 1.5);  // Amplify winners
+      
+      return {
+        pool_id: pool.id,
+        old_capital: pool.current_capital,
+        new_capital: this.totalCapital * exponentialWeight,
+        delta: (this.totalCapital * exponentialWeight) - pool.current_capital
+      };
+    });
+    
+    console.log('[SWARM] Capital reallocation:');
+    newAllocations.forEach(a => {
+      console.log(`  ${a.pool_id}: $${a.old_capital.toFixed(2)} → $${a.new_capital.toFixed(2)} (${a.delta > 0 ? '+' : ''}${a.delta.toFixed(2)})`);
+    });
+    
+    // 3. Execute reallocation
+    for (const allocation of newAllocations) {
+      await this.transferCapital(allocation.pool_id, allocation.delta);
+    }
+    
+    // 4. Notify pools of their new budget
+    for (const allocation of newAllocations) {
+      const overseer = this.getPoolOverseer(allocation.pool_id);
+      await overseer.receiveCapitalUpdate(allocation.new_capital, allocation.delta);
+    }
+  }
+  
+  async transferCapital(poolId: string, delta: number) {
+    if (delta > 0) {
+      // Pool getting MORE capital
+      console.log(`[SWARM] Allocating +$${delta.toFixed(2)} to ${poolId}`);
+      
+      await this.env.DB.prepare(`
+        UPDATE pools SET current_capital = current_capital + ? WHERE id = ?
+      `).bind(delta, poolId).run();
+      
+    } else if (delta < 0) {
+      // Pool getting LESS capital (seize from underperformers)
+      console.log(`[SWARM] Seizing $${Math.abs(delta).toFixed(2)} from ${poolId}`);
+      
+      // Kill agents proportionally to free up capital
+      const overseer = this.getPoolOverseer(poolId);
+      await overseer.reduceCapital(Math.abs(delta));
+    }
+  }
+}
+
+class PoolOverseer {
+  async receiveCapitalUpdate(newCapital: number, delta: number) {
+    console.log(`[POOL ${this.name}] Capital update: ${delta > 0 ? '+' : ''}$${delta.toFixed(2)}`);
+    
+    if (delta > 0) {
+      // Got MORE capital → spawn new agents!
+      const decision = await this.env.AI.run('@cf/meta/llama-3-8b-instruct', {
+        messages: [{
+          role: 'system',
+          content: `${this.systemPrompt}
+          
+          🎉 GOOD NEWS: You just received +$${delta.toFixed(2)} because of strong performance!
+          
+          You now have $${newCapital} to deploy.
+          
+          How will you use this capital?
+          - Spawn new agents?
+          - Give more capital to existing winners?
+          - Try new strategies?
+          
+          You're WINNING right now. How do you scale what's working?
+          
+          Respond with JSON: {action: "spawn_agents", agents: [...]} or {action: "reinvest", strategy: "..."}`
+        }]
+      });
+      
+      await this.executeExpansion(decision);
+      
+    } else if (delta < 0) {
+      // LOST capital → cut the losers
+      console.log(`[POOL ${this.name}] ⚠️ Capital cut: We're underperforming. Trimming fat...`);
+      await this.reduceCapital(Math.abs(delta));
+    }
+  }
+  
+  async reduceCapital(amount: number) {
+    // Kill worst performers to free up capital
+    const agents = await this.getAgentsByScore();
+    
+    let seized = 0;
+    const toKill = [];
+    
+    for (const agent of agents.slice().reverse()) {  // Start from worst
+      if (seized >= amount) break;
+      
+      toKill.push(agent);
+      seized += agent.current_capital;
+    }
+    
+    console.log(`[POOL] Killing ${toKill.length} agents to free up $${seized.toFixed(2)}`);
+    
+    for (const agent of toKill) {
+      await this.killAgent(agent.id, 'capital_reduction');
+    }
+  }
+}
+
+🎯 SPECIALIZED POOL: THE HEDGER
+typescript// Pool that ONLY exists to hedge system exposure
+const HEDGER_POOL = {
+  id: 'global_hedger',
+  name: '🛡️ Global Hedger',
+  
+  objective: {
+    metric: 'net_exposure_reduction',
+    calculate: (snapshot_before, snapshot_after) => {
+      // Success = reducing net exposure while staying profitable
+      const exposureBefore = this.calculateNetExposure(snapshot_before);
+      const exposureAfter = this.calculateNetExposure(snapshot_after);
+      
+      return exposureBefore - exposureAfter;  // Higher = better hedging
+    }
+  },
+  
+  personality: {
+    name: 'Risk Manager',
+    risk_tolerance: 0.2,  // VERY conservative
+    collaboration_level: 0.95,  // Highly collaborative (needs to know what others are doing)
+    
+    system_prompt: `You are the Global Hedger.
+    
+    Your ONLY job: Keep the entire system delta-neutral.
+    
+    You don't care about profits. You care about risk.
+    
+    Every day, check:
+    - What is the system's net SOL exposure?
+    - What is the system's net ETH exposure?
+    - Are any pools heavily directional?
+    
+    If you detect net exposure > $50, hedge it.
+    
+    Your agents should:
+    - Trade opposite direction of system bias
+    - Be ready to close positions when exposure normalizes
+    - Prioritize neutralization over profit`
+  }
+};
+
+class HedgerPoolOverseer extends PoolOverseer {
+  async dailyEvaluation() {
+    // 1. Check global exposure
+    const exposure = await this.getGlobalExposure();
+    
+    console.log('[HEDGER] System exposure check:');
+    console.log(`  SOL: $${exposure.sol_net} (target: $0)`);
+    console.log(`  ETH: $${exposure.eth_net} (target: $0)`);
+    console.log(`  BTC: $${exposure.btc_net} (target: $0)`);
+    
+    // 2. Identify what needs hedging
+    const hedgesNeeded = [];
+    
+    if (Math.abs(exposure.sol_net) > 50) {
+      hedgesNeeded.push({
+        symbol: 'SOL-PERP',
+        size: Math.abs(exposure.sol_net),
+        direction: exposure.sol_net > 0 ? 'short' : 'long'
+      });
+    }
+    
+    if (Math.abs(exposure.eth_net) > 50) {
+      hedgesNeeded.push({
+        symbol: 'ETH-PERP',
+        size: Math.abs(exposure.eth_net),
+        direction: exposure.eth_net > 0 ? 'short' : 'long'
+      });
+    }
+    
+    if (hedgesNeeded.length === 0) {
+      console.log('[HEDGER] ✅ System is balanced. Standing by...');
+      return;
+    }
+    
+    // 3. Spawn hedging agents
+    console.log(`[HEDGER] ⚠️ Spawning ${hedgesNeeded.length} hedges...`);
+    
+    for (const hedge of hedgesNeeded) {
+      await this.spawnHedgingAgent({
+        name: `Hedger-${hedge.symbol}-${Date.now()}`,
+        rules: {
+          symbol: hedge.symbol,
+          direction: hedge.direction,
+          target_size: hedge.size,
+          exit_condition: 'when_system_balanced',
+          max_hold_time_minutes: 1440  // 24 hours max
+        }
+      });
+    }
+  }
+  
+  async getGlobalExposure() {
+    const positions = await this.env.DB.prepare(`
+      SELECT 
+        symbol,
+        SUM(CASE WHEN long_venue = 'lighter' THEN long_size * long_entry_price ELSE 0 END) as long_usd,
+        SUM(CASE WHEN short_venue = 'hyperliquid' THEN short_size * short_entry_price ELSE 0 END) as short_usd
+      FROM trades
+      WHERE closed_at IS NULL
+      GROUP BY symbol
+    `).all();
+    
+    return {
+      sol_net: positions.results.find(p => p.symbol === 'SOL-PERP')?.long_usd - positions.results.find(p => p.symbol === 'SOL-PERP')?.short_usd || 0,
+      eth_net: positions.results.find(p => p.symbol === 'ETH-PERP')?.long_usd - positions.results.find(p => p.symbol === 'ETH-PERP')?.short_usd || 0,
+      btc_net: positions.results.find(p => p.symbol === 'BTC-PERP')?.long_usd - positions.results.find(p => p.symbol === 'BTC-PERP')?.short_usd || 0
+    };
+  }
+}
+
+🧠 CLAUDE MCP: YOUR META-STRATEGY INTERFACE
+typescript// MCP Server running locally
+// You chat with Claude, Claude queries your swarm
+
+const deltatunaMCP = {
+  name: 'deltatuna',
+  version: '1.0.0',
+  
+  tools: [
+    {
+      name: 'get_swarm_status',
+      description: 'Get current state of all pools and system-wide metrics',
+      handler: async () => {
+        const response = await fetch('https://deltatuna-api.workers.dev/swarm/status');
+        return response.json();
+      }
+    },
+    
+    {
+      name: 'get_pool_details',
+      description: 'Deep dive into a specific pool',
+      parameters: { pool_id: 'string' },
+      handler: async ({ pool_id }) => {
+        const response = await fetch(`https://deltatuna-api.workers.dev/api/pool/${pool_id}/status`);
+        return response.json();
+      }
+    },
+    
+    {
+      name: 'analyze_exposure',
+      description: 'Check system-wide directional exposure',
+      handler: async () => {
+        const response = await fetch('https://deltatuna-api.workers.dev/api/exposure');
+        return response.json();
+      }
+    },
+    
+    {
+      name: 'suggest_new_pool',
+      description: 'Create a new pool with specific objective',
+      parameters: {
+        objective: 'string',
+        personality_type: 'string'
+      },
+      handler: async ({ objective, personality_type }) => {
+        // Claude helps you design the pool
+        return {
+          pool_config: {
+            name: `${objective} Pool`,
+            objective_metric: objective,
+            personality: POOL_PERSONALITIES[personality_type],
+            starting_capital: 100
+          }
+        };
+      }
+    },
+    
+    {
+      name: 'instruct_pool',
+      description: 'Give direct instruction to a specific pool',
+      parameters: {
+        pool_id: 'string',
+        instruction: 'string'
+      },
+      handler: async ({ pool_id, instruction }) => {
+        const response = await fetch(`https://deltatuna-api.workers.dev/api/pool/${pool_id}/instruct`, {
+          method: 'POST',
+          body: JSON.stringify({ instruction })
+        });
+        return response.json();
+      }
+    },
+    
+    {
+      name: 'emergency_halt',
+      description: 'Stop all trading immediately',
+      handler: async () => {
+        await fetch('https://deltatuna-api.workers.dev/swarm/halt', { method: 'POST' });
+        return { success: true, message: 'All pools halted' };
+      }
+    }
+  ]
+};
+
+// EXAMPLE CONVERSATION with Claude
+
+/*
+You: "Hey Claude, how's the swarm doing?"
+
+Claude: [calls get_swarm_status]
+"Looking at the current state:
+
+- **Total Capital**: $1,000
+- **System PnL (24h)**: +$47.23 (+4.7%)
+- **Active Pools**: 5
+
+Pool Performance Rankings:
+1. 🌾 Lighter Farm: +$23.50 (ROI: 23.5%, Capital: $250)
+2. 📊 Sharpe Max: +$18.20 (ROI: 18.2%, Capital: $200)
+3. 🛡️ Global Hedger: +$3.10 (ROI: 3.1%, Capital: $100)
+4. ⚡ Speed Demons: +$2.43 (ROI: 2.4%, Capital: $200)
+5. 🎲 Directional Trader: -$12.00 (ROI: -6.0%, Capital: $250)
+
+**Key Issues:**
+- Directional Trader pool is hemorrhaging money (-$12 in 24h)
+- System has +$67 net SOL exposure (Hedger should be addressing this)
+- Lighter Farm is crushing it but hitting capital limits
+
+What would you like to do?"
+
+You: "The directional pool is getting wrecked. Should we kill it or give it more time?"
+
+Claude: [calls get_pool_details for directional_trader]
+"Let me check... The Directional Trader pool has:
+- Lost money 8 out of last 10 days
+- Current temperament: EXTREMELY AGGRESSIVE (it knows it's failing)
+- Spawned 6 new experimental agents in last 48 hours
+- None of them are working
+
+It's in desperate mode. Two options:
+
+1. **Kill it**: Seize its $250 and redistribute to Lighter Farm (which is working)
+2. **Pivot it**: Completely reset its strategy. Maybe turn it into a 'Volatility Trader' that profits from big moves instead of predicting direction
+
+My recommendation: Kill it. Directional trading isn't working in this market regime, and we'd rather allocate that capital to proven strategies.
+
+Want me to execute the kill?"
+
+You: "Yeah, kill it. But also, we need a pool that hedges better. The Hedger isn't keeping up."
+
+Claude: [calls suggest_new_pool]
+"Got it. I'll help you create a new pool. Here's my suggestion:
+
+**Pool Name**: 🎯 Active Risk Manager
+**Objective**: Minimize system drawdown while staying profitable
+**Personality**: Defensive + Highly Collaborative
+**Strategy**: 
+- Real-time exposure monitoring (check every hour, not daily)
+- Preemptive hedging (hedge at $30 exposure, not $50)
+- Profit from the hedge (not just neutralize - capture spread while hedging)
+
+Starting capital: Take the $250 from killed Directional Trader
+
+Should I create this pool?"
+
+You: "Yes, but make it more aggressive on the hedging threshold - $20 instead of $30."
+
+Claude: [calls create_pool, then instruct_pool]
+"Done. New pool created: 🎯 Active Risk Manager with $250 capital.
+
+I've instructed it to:
+- Monitor system exposure hourly
+- Hedge at $20 net exposure threshold
+- Pri prioritize speed over profit
+
+It's already analyzing current exposure... it's spawning 2 agents to hedge the +$67 SOL exposure right now.
+
+Anything else?"
+*/
+
+🎮 COMPLETE ADAPTIVE SYSTEM FLOW
+YOU (via Claude MCP)
+     ↓
+     ↓ "I think we need a volatility trading pool"
+     ↓
+SWARM COORDINATOR
+     ↓
+     ├─→ Creates new pool with vol trading objective
+     ├─→ Allocates $100 starting capital
+     └─→ Spawns 5 starter vol trading agents
+     
+Meanwhile...
+
+WEEKLY REALLOCATION:
+     
+Lighter Farm (Rank #1)
+  - Performance: +$50 this week
+  - New allocation: $250 → $350 (+$100)
+  - Temperament: DEFENSIVE (protecting lead)
+  - Action: Spawn 2 conservative agents to scale safely
+  
+Directional Trader (Rank #5)
+  - Performance: -$30 this week
+  - New allocation: $250 → $150 (-$100)
+  - Temperament: EXTREMELY AGGRESSIVE (desperate)
+  - Action: Kill 3 worst agents, spawn 5 crazy experiments
+  
+Global Hedger (Specialized)
+  - Not ranked by profit
+  - Allocation: Fixed $100 (always funded)
+  - Action: Detected +$67 SOL exposure → spawning hedge
+  
+CROSS-POOL LEARNING:
+
+Lighter Farm discovers: "AVAX low OI = 3x volume efficiency"
+  ↓
+Shared to knowledge base (Vectorize)
+  ↓
+Sharpe Max pool queries knowledge
+  ↓
+Sharpe Max: "Interesting... I'll test AVAX with my risk framework"
+  ↓
+Spawns 1 AVAX agent as experiment
+  ↓
+If it works → spawns more
+  ↓
+If it fails → ignores the insight
+
+📊 SYSTEM DASHBOARD (What You See)
+typescript// Real-time view of the swarm
+
+{
+  system: {
+    total_capital: 1000,
+    deployed_capital: 875,
+    system_pnl_24h: 47.23,
+    system_sharpe: 1.82,
+    
+    exposure: {
+      sol: +67,  // ⚠️ Warning
+      eth: -12,  // ✓ OK
+      btc: +3    // ✓ OK
+    },
+    
+    status: 'ACTIVE',
+    alert: 'SOL exposure above threshold, Hedger responding'
+  },
+  
+  pools: [
+    {
+      id: 'lighter_farm',
+      name: '🌾 Lighter Farm',
+      rank: 1,
+      capital: 350,
+      roi_24h: 23.5,
+      temperament: 'DEFENSIVE',
+      aggression: 0.4,
+      active_agents: 12,
+      status: '✓ Scaling winners'
+    },
+    {
+      id: 'sharpe_max',
+      name: '📊 Sharpe Max',
+      rank: 2,
+      capital: 200,
+      roi_24h: 18.2,
+      temperament: 'BALANCED',
+      aggression: 0.6,
+      active_agents: 8,
+      status: '✓ Testing AVAX strategy'
+    },
+    {
+      id: 'directional_trader',
+      name: '🎲 Directional',
+      rank: 5,
+      capital: 150,
+      roi_24h: -6.0,
+      temperament: 'EXTREMELY AGGRESSIVE',
+      aggression: 0.95,
+      active_agents: 15,
+      status: '⚠️ Desperate experimentation mode'
+    }
+  ],
+  
+  recent_events: [
+    { time: '2m ago', event: 'Hedger spawned 2 agents to hedge +$67 SOL' },
+    { time: '45m ago', event: 'Lighter Farm promoted agent "Volume Maxi v3" to silver tier' },
+    { time: '2h ago', event: 'Sharpe Max killed agent "Conservative Farmer" for underperformance' },
+    { time: '6h ago', event: 'Weekly reallocation: Lighter Farm +$100, Directional -$100' }
+  ]
+}
+
+This is a living portfolio where:
+
+Pools adapt their personality based on performance
+Capital flows to winners automatically
+Specialized pools (like Hedger) maintain system stability
+You (via Claude MCP) provide strategic direction
+The swarm learns and evolves collectively
+
+Want me to build this adaptive system? Starting with 3 pools (Lighter Farm, Sharpe Max, Global Hedger) and the dynamic reallocation logic?SAbrilliant please define our exact technical structure as we have defined it. lets start with 2 pools. the 1st pool is lighter points maximiser (volume, low oi on lighter, delta neutral across hl and lighter at least) then the arbiter (purely stat arbitrage across lighter and hl with maximal volume, going for outsized funding differences) we want to define a pool, the architecture with each LLM leading a pool. each of these an intelligent node in the system. for now we start with 2 pools and we can grow it from there. just define robustly the foundational mechanics of the whole things🏗️ DELTATUNA TECHNICAL ARCHITECTURE v1.0SYSTEM OVERVIEW┌─────────────────────────────────────────────────────────────┐
+│                    CLOUDFLARE WORKER                         │
+│                    (Main API: index.ts)                      │
+│  - HTTP routes                                              │
+│  - Cron triggers (4h snapshots, 24h evaluations)           │
+│  - Dashboard API                                            │
+└───────────┬─────────────────────────────────────────────────┘
+            │
+            ├──────────────────────────────┐
+            │                              │
+            ▼                              ▼
+┌──────────────────────┐      ┌──────────────────────┐
+│   POOL OVERSEER DO   │      │   POOL OVERSEER DO   │
+│   Pool 1: Lighter    │      │   Pool 2: Arbiter    │
+│   Points Farmer      │      │   Stat Arb Hunter    │
+│                      │      │                      │
+│  - LLM Brain         │      │  - LLM Brain         │
+│  - Weekly decisions  │      │  - Weekly decisions  │
+│  - Daily eval        │      │  - Daily eval        │
+│  - Adaptive temp     │      │  - Adaptive temp     │
+└──────────┬───────────┘      └──────────┬───────────┘
+           │                              │
+           │ manages agents (D1 rows)     │
+           ▼                              ▼
+    ┌─────────────────────────────────────────┐
+    │         D1 DATABASE                      │
+    │  - pools                                 │
+    │  - agents (mechanical, no DOs)          │
+    │  - trades                                │
+    │  - market_snapshots (every 4h)          │
+    │  - pool_evaluations (daily)             │
+    │  - personality_snapshots (tracks mood)  │
+    │  - capital_transfers                    │
+    └─────────────────────────────────────────┘
+           │
+           │ embeddings stored/queried
+           ▼
+    ┌─────────────────────────────────────────┐
+    │         VECTORIZE INDEX                  │
+    │  - Successful agent strategies           │
+    │  - Pool insights                         │
+    │  - Cross-pool learnings                  │
+    └─────────────────────────────────────────┘
+           │
+           │ LLM calls
+           ▼
+    ┌─────────────────────────────────────────┐
+    │         WORKERS AI                       │
+    │  - @cf/meta/llama-3-8b-instruct         │
+    │  - @cf/baai/bge-base-en-v1.5 (embed)    │
+    └─────────────────────────────────────────┘📊 DATABASE SCHEMAsql-- POOLS TABLE
+CREATE TABLE pools (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  emoji TEXT,
+  
+  -- Objective
+  objective_metric TEXT NOT NULL,  -- 'lighter_points' | 'funding_arb_volume'
+  objective_description TEXT,
+  
+  -- Capital
+  starting_capital REAL NOT NULL,
+  current_capital REAL NOT NULL,
+  
+  -- Performance tracking
+  total_pnl_usd REAL DEFAULT 0,
+  roi_pct REAL DEFAULT 0,
+  current_rank INTEGER,  -- Among all pools
+  
+  -- Evaluation rules
+  eval_period_hours INTEGER DEFAULT 24,
+  cull_bottom_pct REAL DEFAULT 0.3,
+  reward_top_pct REAL DEFAULT 0.3,
+  
+  -- Adaptive personality
+  base_risk_tolerance REAL,
+  base_innovation_bias REAL,
+  current_risk_tolerance REAL,
+  current_innovation_bias REAL,
+  current_aggression REAL,
+  
+  -- Status
+  status TEXT DEFAULT 'active',  -- 'active' | 'paused' | 'killed'
+  
+  -- Timestamps
+  created_at INTEGER NOT NULL,
+  last_evaluated_at INTEGER,
+  
+  -- Durable Object binding
+  durable_object_id TEXT UNIQUE NOT NULL
+);
+
+-- AGENTS TABLE (mechanical traders, NO Durable Objects)
+CREATE TABLE agents (
+  id TEXT PRIMARY KEY,
+  pool_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  
+  -- Strategy definition (immutable genotype)
+  strategy_type TEXT NOT NULL,  -- 'spread_trader' | 'funding_arb'
+  rules TEXT NOT NULL,  -- JSON: {min_spread_bps, symbols, etc}
+  genotype_lineage TEXT,  -- JSON: [parent1_id, parent2_id] for genetic tracking
+  
+  -- Capital
+  starting_capital REAL NOT NULL,
+  current_capital REAL NOT NULL,
+  
+  -- Performance metrics (mutable phenotype)
+  total_pnl_usd REAL DEFAULT 0,
+  total_trades INTEGER DEFAULT 0,
+  winning_trades INTEGER DEFAULT 0,
+  losing_trades INTEGER DEFAULT 0,
+  
+  -- Pool-specific metrics
+  lighter_volume_usd REAL DEFAULT 0,
+  hyperliquid_volume_usd REAL DEFAULT 0,
+  low_oi_volume_usd REAL DEFAULT 0,
+  
+  funding_arb_volume_usd REAL DEFAULT 0,
+  avg_funding_diff_bps REAL DEFAULT 0,
+  
+  -- Risk metrics
+  sharpe_ratio REAL DEFAULT 0,
+  max_drawdown_pct REAL DEFAULT 0,
+  win_rate_pct REAL DEFAULT 0,
+  
+  -- Pool score (calculated based on pool objective)
+  pool_score REAL DEFAULT 0,
+  
+  -- Lifecycle
+  status TEXT DEFAULT 'active',  -- 'active' | 'broke' | 'killed'
+  created_at INTEGER NOT NULL,
+  broke_at INTEGER,
+  killed_at INTEGER,
+  
+  FOREIGN KEY (pool_id) REFERENCES pools(id)
+);
+
+-- TRADES TABLE
+CREATE TABLE trades (
+  id TEXT PRIMARY KEY,
+  agent_id TEXT NOT NULL,
+  pool_id TEXT NOT NULL,
+  symbol TEXT NOT NULL,  -- 'SOL-PERP', 'ETH-PERP', etc
+  
+  -- Entry
+  opened_at INTEGER NOT NULL,
+  long_venue TEXT NOT NULL,  -- 'lighter'
+  long_entry_price REAL NOT NULL,
+  long_size REAL NOT NULL,
+  long_order_id TEXT,
+  short_venue TEXT NOT NULL,  -- 'hyperliquid'
+  short_entry_price REAL NOT NULL,
+  short_size REAL NOT NULL,
+  short_order_id TEXT,
+  
+  entry_spread_bps REAL,
+  entry_lighter_funding_bps REAL,
+  entry_hl_funding_bps REAL,
+  
+  -- Exit
+  closed_at INTEGER,
+  long_exit_price REAL,
+  short_exit_price REAL,
+  exit_spread_bps REAL,
+  
+  -- Results
+  pnl_usd REAL,
+  fees_usd REAL,
+  roi_pct REAL,
+  hold_time_minutes INTEGER,
+  
+  -- Pool scoring contributions
+  lighter_volume_contribution REAL,  -- For Lighter Farm scoring
+  is_low_oi_symbol BOOLEAN DEFAULT 0,
+  funding_arb_contribution REAL,  -- For Arbiter scoring
+  
+  FOREIGN KEY (agent_id) REFERENCES agents(id),
+  FOREIGN KEY (pool_id) REFERENCES pools(id)
+);
+
+-- MARKET SNAPSHOTS (every 4 hours)
+CREATE TABLE market_snapshots (
+  id TEXT PRIMARY KEY,
+  timestamp INTEGER NOT NULL,
+  
+  -- Prices
+  btc_price REAL,
+  eth_price REAL,
+  sol_price REAL,
+  
+  -- Funding rates
+  lighter_sol_funding_bps REAL,
+  lighter_eth_funding_bps REAL,
+  lighter_btc_funding_bps REAL,
+  
+  hyperliquid_sol_funding_bps REAL,
+  hyperliquid_eth_funding_bps REAL,
+  hyperliquid_btc_funding_bps REAL,
+  
+  -- Spreads
+  sol_spread_bps REAL,
+  eth_spread_bps REAL,
+  btc_spread_bps REAL,
+  
+  -- Market regime classification
+  volatility_regime TEXT,  -- 'low' | 'medium' | 'high'
+  trend TEXT,  -- 'bull' | 'bear' | 'sideways'
+  
+  -- System exposure
+  system_sol_net_exposure REAL,
+  system_eth_net_exposure REAL,
+  system_btc_net_exposure REAL
+);
+
+-- POOL EVALUATIONS (daily)
+CREATE TABLE pool_evaluations (
+  id TEXT PRIMARY KEY,
+  pool_id TEXT NOT NULL,
+  timestamp INTEGER NOT NULL,
+  
+  -- Pre-evaluation state
+  active_agents_count INTEGER,
+  total_capital REAL,
+  avg_pool_score REAL,
+  
+  -- Actions taken
+  agents_promoted INTEGER DEFAULT 0,
+  agents_demoted INTEGER DEFAULT 0,
+  agents_killed INTEGER DEFAULT 0,
+  agents_spawned INTEGER DEFAULT 0,
+  capital_redistributed REAL DEFAULT 0,
+  
+  -- Post-evaluation state
+  new_capital REAL,
+  new_rank INTEGER,
+  
+  -- LLM decision (if made this eval)
+  llm_decision TEXT,  -- JSON
+  llm_reasoning TEXT,
+  
+  FOREIGN KEY (pool_id) REFERENCES pools(id)
+);
+
+-- PERSONALITY SNAPSHOTS (track temperament changes)
+CREATE TABLE personality_snapshots (
+  id TEXT PRIMARY KEY,
+  pool_id TEXT NOT NULL,
+  timestamp INTEGER NOT NULL,
+  
+  risk_tolerance REAL,
+  innovation_bias REAL,
+  aggression REAL,
+  
+  -- What triggered the change
+  trigger_event TEXT,  -- 'rank_drop' | 'underperformance' | 'top_rank'
+  rank INTEGER,
+  roi_pct REAL,
+  
+  FOREIGN KEY (pool_id) REFERENCES pools(id)
+);
+
+-- CAPITAL TRANSFERS (weekly reallocation)
+CREATE TABLE capital_transfers (
+  id TEXT PRIMARY KEY,
+  timestamp INTEGER NOT NULL,
+  
+  from_pool_id TEXT,  -- NULL if system injection
+  to_pool_id TEXT,    -- NULL if system withdrawal
+  amount REAL NOT NULL,
+  reason TEXT,  -- 'weekly_reallocation' | 'performance_based' | 'emergency'
+  
+  FOREIGN KEY (from_pool_id) REFERENCES pools(id),
+  FOREIGN KEY (to_pool_id) REFERENCES pools(id)
+);
+
+-- LLM INSIGHTS (shared knowledge)
+CREATE TABLE insights (
+  id TEXT PRIMARY KEY,
+  source_pool_id TEXT NOT NULL,
+  timestamp INTEGER NOT NULL,
+  
+  insight_type TEXT,  -- 'strategy_discovery' | 'market_pattern' | 'risk_warning'
+  title TEXT,
+  description TEXT,
+  
+  -- Metadata for filtering
+  symbols TEXT,  -- JSON array
+  market_regime TEXT,
+  confidence_score REAL,
+  
+  -- Embedding for RAG
+  embedding_id TEXT,  -- References Vectorize
+  
+  FOREIGN KEY (source_pool_id) REFERENCES pools(id)
+);
+
+-- INDEXES
+CREATE INDEX idx_agents_pool_status ON agents(pool_id, status);
+CREATE INDEX idx_trades_agent ON trades(agent_id);
+CREATE INDEX idx_trades_pool ON trades(pool_id);
+CREATE INDEX idx_trades_symbol ON trades(symbol);
+CREATE INDEX idx_market_snapshots_timestamp ON market_snapshots(timestamp);
+CREATE INDEX idx_pool_evaluations_pool_timestamp ON pool_evaluations(pool_id, timestamp);
+CREATE INDEX idx_insights_source ON insights(source_pool_id);🎯 POOL DEFINITIONSPool 1: Lighter Points Farmertypescriptconst LIGHTER_FARM_CONFIG = {
+  id: 'lighter_farm_001',
+  name: 'Lighter Points Farmer',
+  emoji: '🌾',
+  
+  objective: {
+    metric: 'lighter_points',
+    description: 'Maximize Lighter volume while maintaining capital efficiency and delta neutrality',
+    
+    // Scoring formula
+    calculate: (agent: Agent) => {
+      // Base volume on Lighter
+      const base_volume = agent.lighter_volume_usd;
+      
+      // 3x multiplier for low OI symbols
+      const low_oi_bonus = agent.low_oi_volume_usd * 3;
+      
+      // Capital efficiency (don't lose money farming points)
+      const capital_efficiency = agent.current_capital / agent.starting_capital;
+      
+      // Delta neutrality bonus (reward staying neutral)
+      const net_exposure = Math.abs(agent.net_exposure_usd);
+      const neutrality_bonus = net_exposure < 5 ? 1.2 : net_exposure < 20 ? 1.0 : 0.8;
+      
+      return (base_volume + low_oi_bonus) * capital_efficiency * neutrality_bonus;
+    }
+  },
+  
+  capital: {
+    starting: 250,
+    current: 250
+  },
+  
+  rules: {
+    eval_period_hours: 24,
+    cull_bottom_pct: 0.3,
+    reward_top_pct: 0.3,
+    max_agents: 15
+  },
+  
+  personality: {
+    base: {
+      name: 'Cautious Farmer',
+      risk_tolerance: 0.3,
+      innovation_bias: 0.3,
+      collaboration_level: 0.7
+    },
+    system_prompt: `You are the Lighter Points Farmer pool overseer.
+
+OBJECTIVE: Maximize Lighter trading volume while maintaining capital and delta neutrality.
+
+SCORING FORMULA:
+score = (lighter_volume + low_oi_volume * 3) × capital_efficiency × neutrality_bonus
+
+Your agents trade delta-neutral strategies:
+- Long on Lighter, Short on Hyperliquid
+- Capture spreads while generating volume
+- Prioritize low OI symbols for 3x points multiplier
+
+CURRENT TEMPERAMENT: {current_temperament}
+RISK TOLERANCE: {risk_tolerance}%
+INNOVATION BIAS: {innovation_bias}%
+
+Key Constraints:
+- MUST maintain delta neutrality (net exposure < $20)
+- Prioritize capital preservation (no agent should lose >30% capital)
+- Volume is important but NOT at the cost of capital
+
+Agent Strategy Types:
+1. Volume Maxi: Low spread threshold (20 bps), quick flips, high frequency
+2. Low OI Hunter: Targets AVAX, NEAR, ATOM (3x points), wider spreads (40 bps)
+3. Safe Farmer: Wide spreads (60 bps), lower frequency, capital preservation
+4. Balanced Grinder: Medium everything, diversified symbols
+
+When making decisions:
+- Spawn agents that optimize the scoring formula
+- Kill agents that lose capital or break delta neutrality
+- Adapt strategy mix based on market conditions
+- Learn from successful volume/capital patterns
+
+Respond ONLY with valid JSON.`
+  }
+};Pool 2: The Arbiter (Stat Arb)typescriptconst ARBITER_CONFIG = {
+  id: 'arbiter_001',
+  name: 'The Arbiter',
+  emoji: '⚖️',
+  
+  objective: {
+    metric: 'funding_arb_volume',
+    description: 'Exploit funding rate differentials with maximum volume and capital efficiency',
+    
+    // Scoring formula
+    calculate: (agent: Agent) => {
+      // Volume of trades capturing funding arb
+      const arb_volume = agent.funding_arb_volume_usd;
+      
+      // Average funding differential captured
+      const avg_diff = agent.avg_funding_diff_bps;
+      
+      // Volume efficiency (PnL per dollar of volume)
+      const volume_efficiency = agent.total_pnl_usd / (agent.lighter_volume_usd + agent.hyperliquid_volume_usd + 1);
+      
+      // Reward big differentials + high volume + efficiency
+      return arb_volume * (avg_diff / 10) * (1 + volume_efficiency);
+    }
+  },
+  
+  capital: {
+    starting: 250,
+    current: 250
+  },
+  
+  rules: {
+    eval_period_hours: 24,
+    cull_bottom_pct: 0.3,
+    reward_top_pct: 0.3,
+    max_agents: 15
+  },
+  
+  personality: {
+    base: {
+      name: 'Analytical Scientist',
+      risk_tolerance: 0.5,
+      innovation_bias: 0.7,
+      collaboration_level: 0.5
+    },
+    system_prompt: `You are the Arbiter pool overseer.
+
+OBJECTIVE: Exploit funding rate differentials between Lighter and Hyperliquid with maximum volume.
+
+SCORING FORMULA:
+score = funding_arb_volume × (avg_funding_diff / 10) × (1 + pnl/total_volume)
+
+Your agents are statistical arbitrageurs:
+- Identify funding rate differentials >5 bps
+- Long on the cheaper venue, Short on the expensive venue
+- Hold positions to collect funding payments
+- Maximize volume while capturing edge
+
+CURRENT TEMPERAMENT: {current_temperament}
+RISK TOLERANCE: {risk_tolerance}%
+INNOVATION BIAS: {innovation_bias}%
+
+Key Principles:
+- Only trade when funding differential exists (>5 bps minimum)
+- Volume matters, but differential size matters more
+- Capital efficiency: PnL per $ of volume is critical
+- Delta neutral by definition (long = short)
+
+Agent Strategy Types:
+1. Big Diff Hunter: Only trades when differential >10 bps, patient
+2. Volume Grinder: Trades smaller diffs (5-7 bps) but high frequency
+3. Multi-Symbol Scanner: Monitors all pairs, trades whichever has best diff
+4. Persistent Holder: Holds positions longer to collect multiple funding payments
+
+Market Conditions Matter:
+- High volatility → larger funding diffs → spawn aggressive agents
+- Low volatility → smaller diffs → spawn patient agents
+- One-sided markets → predictable diffs → exploit them
+
+When making decisions:
+- Spawn agents optimized for current funding environment
+- Kill agents that can't find good differentials
+- Experiment with hold times (8h vs 24h vs longer)
+- Optimize for funding_diff × volume product
+
+Respond ONLY with valid JSON.`
+  }
+};🧠 POOL OVERSEER (Durable Object)typescript// workers/PoolOverseer.ts
+
+import { DurableObject } from 'cloudflare:workers';
+
+interface PoolConfig {
+  id: string;
+  name: string;
+  objective: {
+    metric: string;
+    calculate: (agent: any) => number;
+  };
+  personality: {
+    base: {
+      name: string;
+      risk_tolerance: number;
+      innovation_bias: number;
+      collaboration_level: number;
+    };
+    system_prompt: string;
+  };
+}
+
+interface AdaptivePersonality {
+  current_risk_tolerance: number;
+  current_innovation_bias: number;
+  current_aggression: number;
+  current_rank?: number;
+}
+
+export class PoolOverseer extends DurableObject {
+  poolConfig: PoolConfig;
+  personality: AdaptivePersonality;
+  
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env);
+    
+    ctx.blockConcurrencyWhile(async () => {
+      // Load pool config from storage
+      this.poolConfig = await ctx.storage.get('poolConfig');
+      this.personality = await ctx.storage.get('personality') || {
+        current_risk_tolerance: this.poolConfig?.personality.base.risk_tolerance || 0.5,
+        current_innovation_bias: this.poolConfig?.personality.base.innovation_bias || 0.5,
+        current_aggression: 0.5
+      };
+    });
+  }
+  
+  // ========================================================================
+  // HTTP HANDLERS
+  // ========================================================================
+  
+  async fetch(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    
+    if (url.pathname === '/initialize' && request.method === 'POST') {
+      const config = await request.json();
+      return await this.initialize(config);
+    }
+    
+    if (url.pathname === '/status') {
+      return Response.json(await this.getStatus());
+    }
+    
+    if (url.pathname === '/evaluate' && request.method === 'POST') {
+      return Response.json(await this.dailyEvaluation());
+    }
+    
+    if (url.pathname === '/weekly-decision' && request.method === 'POST') {
+      return Response.json(await this.weeklyLLMDecision());
+    }
+    
+    if (url.pathname === '/instruct' && request.method === 'POST') {
+      const { instruction } = await request.json();
+      return Response.json(await this.receiveHumanInstruction(instruction));
+    }
+    
+    return Response.json({ error: 'Not found' }, { status: 404 });
+  }
+  
+  // ========================================================================
+  // INITIALIZATION
+  // ========================================================================
+  
+  async initialize(config: PoolConfig): Promise<Response> {
+    console.log(`[POOL OVERSEER] Initializing ${config.name}`);
+    
+    this.poolConfig = config;
+    this.personality = {
+      current_risk_tolerance: config.personality.base.risk_tolerance,
+      current_innovation_bias: config.personality.base.innovation_bias,
+      current_aggression: 0.5
+    };
+    
+    await this.ctx.storage.put('poolConfig', config);
+    await this.ctx.storage.put('personality', this.personality);
+    
+    // Create pool record in D1
+    await this.env.DB.prepare(`
+      INSERT INTO pools (
+        id, name, emoji, objective_metric, objective_description,
+        starting_capital, current_capital,
+        eval_period_hours, cull_bottom_pct, reward_top_pct,
+        base_risk_tolerance, base_innovation_bias,
+        current_risk_tolerance, current_innovation_bias, current_aggression,
+        status, created_at, durable_object_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      config.id,
+      config.name,
+      config.emoji || '🎯',
+      config.objective.metric,
+      config.objective.description,
+      config.capital.starting,
+      config.capital.current,
+      config.rules.eval_period_hours,
+      config.rules.cull_bottom_pct,
+      config.rules.reward_top_pct,
+      config.personality.base.risk_tolerance,
+      config.personality.base.innovation_bias,
+      this.personality.current_risk_tolerance,
+      this.personality.current_innovation_bias,
+      this.personality.current_aggression,
+      'active',
+      Date.now(),
+      this.ctx.id.toString()
+    ).run();
+    
+    console.log(`[POOL OVERSEER] ${config.name} initialized`);
+    
+    return Response.json({ success: true, pool_id: config.id });
+  }
+  
+  // ========================================================================
+  // DAILY EVALUATION (Mechanical)
+  // ========================================================================
+  
+  async dailyEvaluation() {
+    console.log(`[POOL ${this.poolConfig.name}] Running daily evaluation...`);
+    
+    const startTime = Date.now();
+    
+    // 1. Get all active agents
+    const agents = await this.env.DB.prepare(`
+      SELECT * FROM agents 
+      WHERE pool_id = ? AND status = 'active'
+    `).bind(this.poolConfig.id).all();
+    
+    if (agents.results.length === 0) {
+      console.log(`[POOL ${this.poolConfig.name}] No active agents, skipping evaluation`);
+      return { success: true, message: 'No agents to evaluate' };
+    }
+    
+    // 2. Calculate scores for each agent
+    const scored = agents.results.map(agent => ({
+      ...agent,
+      pool_score: this.calculateAgentScore(agent)
+    })).sort((a, b) => b.pool_score - a.pool_score);
+    
+    console.log(`[POOL ${this.poolConfig.name}] Agent rankings:`);
+    scored.forEach((a, i) => {
+      console.log(`  ${i + 1}. ${a.name}: ${a.pool_score.toFixed(2)} (capital: $${a.current_capital})`);
+    });
+    
+    // 3. Update agent pool_score in DB
+    for (const agent of scored) {
+      await this.env.DB.prepare(`
+        UPDATE agents SET pool_score = ? WHERE id = ?
+      `).bind(agent.pool_score, agent.id).run();
+    }
+    
+    // 4. Identify winners and losers
+    const cull_count = Math.floor(scored.length * this.poolConfig.rules.cull_bottom_pct);
+    const reward_count = Math.floor(scored.length * this.poolConfig.rules.reward_top_pct);
+    
+    const losers = scored.slice(-cull_count);
+    const winners = scored.slice(0, reward_count);
+    
+    // 5. Redistribute capital
+    const total_seized = losers.reduce((sum, a) => sum + a.current_capital, 0);
+    const reward_per_winner = reward_count > 0 ? total_seized / reward_count : 0;
+    
+    console.log(`[POOL ${this.poolConfig.name}] Redistributing $${total_seized.toFixed(2)} from ${losers.length} to ${winners.length} agents`);
+    
+    // Kill losers
+    for (const loser of losers) {
+      await this.env.DB.prepare(`
+        UPDATE agents 
+        SET status = 'broke', current_capital = 0, broke_at = ?
+        WHERE id = ?
+      `).bind(Date.now(), loser.id).run();
+      
+      console.log(`  💀 ${loser.name} went broke (had $${loser.current_capital.toFixed(2)})`);
+    }
+    
+    // Reward winners
+    for (const winner of winners) {
+      const new_capital = winner.current_capital + reward_per_winner;
+      
+      await this.env.DB.prepare(`
+        UPDATE agents SET current_capital = ? WHERE id = ?
+      `).bind(new_capital, winner.id).run();
+      
+      console.log(`  🎉 ${winner.name}: $${winner.current_capital.toFixed(2)} → $${new_capital.toFixed(2)}`);
+    }
+    
+    // 6. Update pool capital
+    const new_pool_capital = await this.env.DB.prepare(`
+      SELECT SUM(current_capital) as total FROM agents WHERE pool_id = ? AND status = 'active'
+    `).bind(this.poolConfig.id).first();
+    
+    await this.env.DB.prepare(`
+      UPDATE pools SET current_capital = ?, last_evaluated_at = ? WHERE id = ?
+    `).bind(new_pool_capital.total || 0, Date.now(), this.poolConfig.id).run();
+    
+    // 7. Log evaluation
+    await this.env.DB.prepare(`
+      INSERT INTO pool_evaluations (
+        id, pool_id, timestamp,
+        active_agents_count, total_capital, avg_pool_score,
+        agents_killed, capital_redistributed, new_capital
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      crypto.randomUUID(),
+      this.poolConfig.id,
+      Date.now(),
+      scored.length,
+      scored.reduce((sum, a) => sum + a.current_capital, 0),
+      scored.reduce((sum, a) => sum + a.pool_score, 0) / scored.length,
+      losers.length,
+      total_seized,
+      new_pool_capital.total || 0
+    ).run();
+    
+    // 8. Update adaptive personality
+    await this.updateTemperament();
+    
+    const duration = Date.now() - startTime;
+    console.log(`[POOL ${this.poolConfig.name}] Evaluation complete in ${duration}ms`);
+    
+    return {
+      success: true,
+      agents_evaluated: scored.length,
+      winners: winners.length,
+      losers: losers.length,
+      capital_redistributed: total_seized,
+      duration_ms: duration
+    };
+  }
+  
+  // ========================================================================
+  // AGENT SCORING (Pool-Specific)
+  // ========================================================================
+  
+  calculateAgentScore(agent: any): number {
+    // Use pool's objective function
+    return this.poolConfig.objective.calculate(agent);
+  }
+  
+  // ========================================================================
+  // WEEKLY LLM DECISION
+  // ========================================================================
+  
+  async weeklyLLMDecision() {
+    console.log(`[POOL ${this.poolConfig.name}] Making weekly strategic decision...`);
+    
+    // 1. Gather context
+    const context = await this.gatherDecisionContext();
+    
+    // 2. Build system prompt with current temperament
+    const systemPrompt = this.buildSystemPrompt();
+    
+    // 3. Query LLM
+    const decision = await this.env.AI.run('@cf/meta/llama-3-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt
+        },
+        {
+          role: 'user',
+          content: `WEEKLY STRATEGIC DECISION
+
+Current Pool State:
+${JSON.stringify(context, null, 2)}
+
+Available Actions:
+1. spawn_agent: {name: "...", rules: {...}}
+2. kill_agent: {agent_id: "...", reason: "..."}
+3. adjust_rules: {eval_period_hours: X, cull_pct: Y}
+4. do_nothing: {}
+
+Respond ONLY with valid JSON:
+{
+  "action": "spawn_agent" | "kill_agent" | "adjust_rules" | "do_nothing",
+  "parameters": {...},
+  "reasoning": "why you chose this action"
+}`
+        }
+      ],
+      max_tokens: 512
+    });
+    
+    // 4. Parse and execute
+    const parsed = this.parseDecision(decision.response);
+    await this.executeDecision(parsed);
+    
+    // 5. Log to DB
+    await this.env.DB.prepare(`
+      UPDATE pool_evaluations 
+      SET llm_decision = ?, llm_reasoning = ?
+      WHERE pool_id = ? AND timestamp = (
+        SELECT MAX(timestamp) FROM pool_evaluations WHERE pool_id = ?
+      )
+    `).bind(
+      JSON.stringify(parsed),
+      parsed.reasoning,
+      this.poolConfig.id,
+      this.poolConfig.id
+    ).run();
+    Respond ONLY with valid JSON:
+{
+  "action": "spawn_agent" | "kill_agent" | "adjust_rules" | "do_nothing",
+  "parameters": {...},
+  "reasoning": "why you chose this action"
+}`
+        }
+      ],
+      max_tokens: 512
+    });
+    
+    // 4. Parse and execute
+    const parsed = this.parseDecision(decision.response);
+    await this.executeDecision(parsed);
+    
+    // 5. Log to DB
+    await this.env.DB.prepare(`
+      UPDATE pool_evaluations 
+      SET llm_decision = ?, llm_reasoning = ?
+      WHERE pool_id = ? AND timestamp = (
+        SELECT MAX(timestamp) FROM pool_evaluations WHERE pool_id = ?
+      )
+    `).bind(
+      JSON.stringify(parsed),
+      parsed.reasoning,
+      this.poolConfig.id,
+      this.poolConfig.id
+    ).run();
+    
+    return parsed;
+  }
+  
+  async gatherDecisionContext() {
+    const agents = await this.env.DB.prepare(`
+      SELECT * FROM agents WHERE pool_id = ? AND status = 'active'
+      ORDER BY pool_score DESC
+    `).bind(this.poolConfig.id).all();
+    
+    const top3 = agents.results.slice(0, 3);
+    const bottom3 = agents.results.slice(-3);
+    
+    const pool = await this.env.DB.prepare(`
+      SELECT * FROM pools WHERE id = ?
+    `).bind(this.poolConfig.id).first();
+    
+    const recentTrades = await this.env.DB.prepare(`
+      SELECT * FROM trades WHERE pool_id = ? ORDER BY closed_at DESC LIMIT 20
+    `).bind(this.poolConfig.id).all();
+    
+    const latestSnapshot = await this.env.DB.prepare(`
+      SELECT * FROM market_snapshots ORDER BY timestamp DESC LIMIT 1
+    `).first();
+    
+    return { typescript    return {
+      pool_name: pool.name,
+      pool_capital: pool.current_capital,
+      pool_rank: pool.current_rank || 'N/A',
+      active_agents: agents.results.length,
+      
+      top_performers: top3.map(a => ({
+        name: a.name,
+        score: a.pool_score,
+        capital: a.current_capital,
+        strategy: JSON.parse(a.rules)
+      })),
+      
+      worst_performers: bottom3.map(a => ({
+        name: a.name,
+        score: a.pool_score,
+        capital: a.current_capital,
+        strategy: JSON.parse(a.rules)
+      })),
+      
+      recent_performance: {
+        total_trades_24h: recentTrades.results.length,
+        avg_pnl: recentTrades.results.reduce((sum, t) => sum + (t.pnl_usd || 0), 0) / recentTrades.results.length,
+        win_rate: recentTrades.results.filter(t => t.pnl_usd > 0).length / recentTrades.results.length
+      },
+      
+      market_conditions: latestSnapshot ? {
+        volatility: latestSnapshot.volatility_regime,
+        trend: latestSnapshot.trend,
+        sol_spread: latestSnapshot.sol_spread_bps,
+        eth_spread: latestSnapshot.eth_spread_bps,
+        funding_diff_sol: Math.abs(latestSnapshot.lighter_sol_funding_bps - latestSnapshot.hyperliquid_sol_funding_bps)
+      } : null,
+      
+      personality_state: {
+        aggression: this.personality.current_aggression,
+        risk_tolerance: this.personality.current_risk_tolerance,
+        innovation_bias: this.personality.current_innovation_bias
+      }
+    };
+  }
+  
+  buildSystemPrompt(): string {
+    const temperament = this.getTemperamentDescription();
+    
+    return this.poolConfig.personality.system_prompt
+      .replace('{current_temperament}', temperament)
+      .replace('{risk_tolerance}', (this.personality.current_risk_tolerance * 100).toFixed(0))
+      .replace('{innovation_bias}', (this.personality.current_innovation_bias * 100).toFixed(0));
+  }
+  
+  getTemperamentDescription(): string {
+    if (this.personality.current_aggression > 0.8) {
+      return 'EXTREMELY AGGRESSIVE - Taking big swings, experimenting wildly';
+    } else if (this.personality.current_aggression > 0.6) {
+      return 'AGGRESSIVE - Willing to take risks, trying new things';
+    } else if (this.personality.current_aggression > 0.4) {
+      return 'BALANCED - Steady optimization, measured experiments';
+    } else if (this.personality.current_aggression > 0.2) {
+      return 'CAUTIOUS - Risk-averse, protecting capital';
+    } else {
+      return 'DEFENSIVE - Preserving lead, minimal changes';
+    }
+  }
+  
+  // ========================================================================
+  // ADAPTIVE PERSONALITY
+  // ========================================================================
+  
+  async updateTemperament() {
+    // Get global pool rankings
+    const rankings = await this.env.DB.prepare(`
+      SELECT id, name, current_capital, roi_pct, current_rank
+      FROM pools
+      WHERE status = 'active'
+      ORDER BY roi_pct DESC
+    `).all();
+    
+    const myRank = rankings.results.findIndex(p => p.id === this.poolConfig.id) + 1;
+    const prevRank = this.personality.current_rank || myRank;
+    
+    const myPool = rankings.results.find(p => p.id === this.poolConfig.id);
+    const avgROI = rankings.results.reduce((sum, p) => sum + (p.roi_pct || 0), 0) / rankings.results.length;
+    
+    console.log(`[POOL ${this.poolConfig.name}] Temperament check: Rank ${myRank}/${rankings.results.length}, ROI: ${myPool?.roi_pct?.toFixed(2)}% (avg: ${avgROI.toFixed(2)}%)`);
+    
+    let temperamentChanged = false;
+    let trigger = null;
+    
+    // RULE 1: Rank dropped significantly → become more aggressive
+    const rankDelta = myRank - prevRank;
+    if (rankDelta > 1) {
+      this.personality.current_aggression = Math.min(0.95, this.personality.current_aggression + 0.2);
+      this.personality.current_innovation_bias = Math.min(0.9, this.personality.current_innovation_bias + 0.15);
+      this.personality.current_risk_tolerance = Math.min(0.9, this.personality.current_risk_tolerance + 0.1);
+      
+      temperamentChanged = true;
+      trigger = 'rank_drop';
+      console.log(`  ⚠️ Rank dropped ${rankDelta} positions → INCREASING AGGRESSION`);
+    }
+    
+    // RULE 2: Underperforming badly → experimental mode
+    if (myPool?.roi_pct < avgROI * 0.6) {
+      this.personality.current_innovation_bias = 0.9;  // MAX
+      this.personality.current_aggression = Math.min(0.95, this.personality.current_aggression + 0.3);
+      
+      temperamentChanged = true;
+      trigger = 'underperformance';
+      console.log(`  🚨 Severe underperformance → EXPERIMENTAL MODE`);
+    }
+    
+    // RULE 3: At top → become defensive
+    if (myRank === 1) {
+      this.personality.current_risk_tolerance = Math.max(0.2, this.poolConfig.personality.base.risk_tolerance - 0.2);
+      this.personality.current_aggression = 0.4;
+      this.personality.current_innovation_bias = Math.max(0.2, this.poolConfig.personality.base.innovation_bias - 0.2);
+      
+      temperamentChanged = true;
+      trigger = 'top_rank';
+      console.log(`  🏆 Rank #1 → DEFENSIVE MODE (protect lead)`);
+    }
+    
+    // RULE 4: Performing well but not #1 → balanced
+    if (myPool?.roi_pct > avgROI && myRank > 1) {
+      this.personality.current_risk_tolerance = this.poolConfig.personality.base.risk_tolerance;
+      this.personality.current_aggression = 0.5;
+      this.personality.current_innovation_bias = this.poolConfig.personality.base.innovation_bias;
+      
+      temperamentChanged = true;
+      trigger = 'steady_performance';
+      console.log(`  ⚖️ Above average performance → BALANCED MODE`);
+    }
+    
+    // Update storage
+    this.personality.current_rank = myRank;
+    await this.ctx.storage.put('personality', this.personality);
+    
+    // Update DB
+    await this.env.DB.prepare(`
+      UPDATE pools 
+      SET current_risk_tolerance = ?,
+          current_innovation_bias = ?,
+          current_aggression = ?,
+          current_rank = ?
+      WHERE id = ?
+    `).bind(
+      this.personality.current_risk_tolerance,
+      this.personality.current_innovation_bias,
+      this.personality.current_aggression,
+      myRank,
+      this.poolConfig.id
+    ).run();
+    
+    // Log personality snapshot if changed
+    if (temperamentChanged) {
+      await this.env.DB.prepare(`
+        INSERT INTO personality_snapshots (
+          id, pool_id, timestamp,
+          risk_tolerance, innovation_bias, aggression,
+          trigger_event, rank, roi_pct
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        crypto.randomUUID(),
+        this.poolConfig.id,
+        Date.now(),
+        this.personality.current_risk_tolerance,
+        this.personality.current_innovation_bias,
+        this.personality.current_aggression,
+        trigger,
+        myRank,
+        myPool?.roi_pct || 0
+      ).run();
+    }
+  }
+  
+  // ========================================================================
+  // DECISION EXECUTION
+  // ========================================================================
+  
+  parseDecision(response: string): any {
+    try {
+      // Strip markdown code blocks if present
+      const cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      return JSON.parse(cleaned);
+    } catch (e) {
+      console.error('[PARSE ERROR]', e, response);
+      return { action: 'do_nothing', reasoning: 'Failed to parse LLM response' };
+    }
+  }
+  
+  async executeDecision(decision: any) {
+    console.log(`[POOL ${this.poolConfig.name}] Executing decision: ${decision.action}`);
+    console.log(`  Reasoning: ${decision.reasoning}`);
+    
+    switch (decision.action) {
+      case 'spawn_agent':
+        await this.spawnAgent(decision.parameters);
+        break;
+        
+      case 'kill_agent':
+        await this.killAgent(decision.parameters.agent_id, decision.parameters.reason);
+        break;
+        
+      case 'adjust_rules':
+        await this.adjustRules(decision.parameters);
+        break;
+        
+      case 'do_nothing':
+        console.log(`[POOL ${this.poolConfig.name}] No action taken`);
+        break;
+        
+      default:
+        console.warn(`[POOL ${this.poolConfig.name}] Unknown action: ${decision.action}`);
+    }
+  }
+  
+  async spawnAgent(params: any) {
+    const agentId = crypto.randomUUID();
+    
+    console.log(`[POOL ${this.poolConfig.name}] Spawning agent: ${params.name}`);
+    
+    await this.env.DB.prepare(`
+      INSERT INTO agents (
+        id, pool_id, name, strategy_type, rules,
+        starting_capital, current_capital,
+        status, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      agentId,
+      this.poolConfig.id,
+      params.name,
+      params.strategy_type || 'spread_trader',
+      JSON.stringify(params.rules),
+      params.starting_capital || 10,
+      params.starting_capital || 10,
+      'active',
+      Date.now()
+    ).run();
+    
+    console.log(`  ✅ Agent ${params.name} spawned with $${params.starting_capital || 10}`);
+  }
+  
+  async killAgent(agentId: string, reason: string) {
+    await this.env.DB.prepare(`
+      UPDATE agents 
+      SET status = 'killed', killed_at = ?
+      WHERE id = ?
+    `).bind(Date.now(), agentId).run();
+    
+    console.log(`[POOL ${this.poolConfig.name}] Killed agent ${agentId}: ${reason}`);
+  }
+  
+  async adjustRules(params: any) {
+    if (params.eval_period_hours) {
+      await this.env.DB.prepare(`
+        UPDATE pools SET eval_period_hours = ? WHERE id = ?
+      `).bind(params.eval_period_hours, this.poolConfig.id).run();
+      
+      console.log(`[POOL ${this.poolConfig.name}] Adjusted eval period: ${params.eval_period_hours}h`);
+    }
+    
+    if (params.cull_pct !== undefined) {
+      await this.env.DB.prepare(`
+        UPDATE pools SET cull_bottom_pct = ? WHERE id = ?
+      `).bind(params.cull_pct, this.poolConfig.id).run();
+      
+      console.log(`[POOL ${this.poolConfig.name}] Adjusted cull rate: ${params.cull_pct * 100}%`);
+    }
+  }
+  
+  // ========================================================================
+  // HUMAN INSTRUCTION
+  // ========================================================================
+  
+  async receiveHumanInstruction(instruction: string) {
+    console.log(`[POOL ${this.poolConfig.name}] Received human instruction: "${instruction}"`);
+    
+    const context = await this.gatherDecisionContext();
+    
+    const response = await this.env.AI.run('@cf/meta/llama-3-8b-instruct', {
+      messages: [
+        {
+          role: 'system',
+          content: this.buildSystemPrompt()
+        },
+        {
+          role: 'user',
+          content: `HUMAN INSTRUCTION: "${instruction}"
+
+Current Pool State:
+${JSON.stringify(context, null, 2)}
+
+How will you implement this instruction?
+
+Respond with JSON:
+{
+  "plan": "what you'll do",
+  "actions": [{action: "...", parameters: {...}}],
+  "conflicts": ["any issues with the instruction"],
+  "estimated_impact": "expected outcome"
+}`
+        }
+      ],
+      max_tokens: 512
+    });
+    
+    const parsed = this.parseDecision(response.response);
+    
+    // Execute actions
+    if (parsed.actions) {
+      for (const action of parsed.actions) {
+        await this.executeDecision(action);
+      }
+    }
+    
+    return parsed;
+  }
+  
+  // ========================================================================
+  // STATUS
+  // ========================================================================
+  
+  async getStatus() {
+    const pool = await this.env.DB.prepare(`
+      SELECT * FROM pools WHERE id = ?
+    `).bind(this.poolConfig.id).first();
+    
+    const agents = await this.env.DB.prepare(`
+      SELECT * FROM agents WHERE pool_id = ? AND status = 'active'
+      ORDER BY pool_score DESC
+    `).bind(this.poolConfig.id).all();
+    
+    return {
+      pool: {
+        id: pool.id,
+        name: pool.name,
+        capital: pool.current_capital,
+        rank: pool.current_rank,
+        roi_pct: pool.roi_pct
+      },
+      personality: {
+        temperament: this.getTemperamentDescription(),
+        risk_tolerance: this.personality.current_risk_tolerance,
+        innovation_bias: this.personality.current_innovation_bias,
+        aggression: this.personality.current_aggression
+      },
+      agents: {
+        active: agents.results.length,
+        top_3: agents.results.slice(0, 3).map(a => ({
+          name: a.name,
+          score: a.pool_score,
+          capital: a.current_capital
+        }))
+      }
+    };
+  }
+} 🏭 MAIN WORKER (index.ts)
+typescript// workers/index.ts
+
+import { PoolOverseer } from './PoolOverseer';
+
+interface Env {
+  DB: D1Database;
+  AI: Ai;
+  VECTORIZE: Vectorize;
+  POOL_OVERSEER: DurableObjectNamespace;
+}
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type'
+};
+
+export default {
+  // ========================================================================
+  // HTTP HANDLER
+  // ========================================================================
+  
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: CORS_HEADERS });
+    }
+    
+    try {
+      // Health check
+      if (url.pathname === '/health') {
+        return Response.json({ status: 'ok', timestamp: Date.now() }, { headers: CORS_HEADERS });
+      }
+      
+      // ===== POOL ROUTES =====
+      
+      // Create new pool
+      if (url.pathname === '/api/pools/create' && request.method === 'POST') {
+        const config = await request.json();
+        return await createPool(env, config);
+      }
+      
+      // List all pools
+      if (url.pathname === '/api/pools') {
+        const pools = await env.DB.prepare(`
+          SELECT * FROM pools WHERE status = 'active' ORDER BY current_rank ASC
+        `).all();
+        
+        return Response.json({ pools: pools.results }, { headers: CORS_HEADERS });
+      }
+      
+      // Route to specific pool overseer
+      if (url.pathname.startsWith('/api/pool/')) {
+        const pathParts = url.pathname.split('/');
+        const poolId = pathParts[3];
+        
+        if (!poolId) {
+          return Response.json({ error: 'Pool ID required' }, { status: 400, headers: CORS_HEADERS });
+        }
+        
+        // Get pool's Durable Object ID
+        const pool = await env.DB.prepare(`
+          SELECT durable_object_id FROM pools WHERE id = ?
+        `).bind(poolId).first();
+        
+        if (!pool) {
+          return Response.json({ error: 'Pool not found' }, { status: 404, headers: CORS_HEADERS });
+        }
+        
+        const doId = env.POOL_OVERSEER.idFromString(pool.durable_object_id);
+        const overseer = env.POOL_OVERSEER.get(doId);
+        
+        // Forward request to pool overseer
+        const newPath = '/' + pathParts.slice(4).join('/');
+        const newUrl = new URL(request.url);
+        newUrl.pathname = newPath;
+        
+        return await overseer.fetch(new Request(newUrl.toString(), request));
+      }
+      
+      // ===== AGENT ROUTES =====
+      
+      // List all agents
+      if (url.pathname === '/api/agents') {
+        const poolId = url.searchParams.get('pool_id');
+        
+        let query = 'SELECT * FROM agents WHERE status = "active"';
+        const params = [];
+        
+        if (poolId) {
+          query += ' AND pool_id = ?';
+          params.push(poolId);
+        }
+        
+        query += ' ORDER BY pool_score DESC LIMIT 100';
+        
+        const agents = await env.DB.prepare(query).bind(...params).all();
+        
+        return Response.json({ agents: agents.results }, { headers: CORS_HEADERS });
+      }
+      
+      // Spawn agent (manual creation)
+      if (url.pathname === '/api/agents/create' && request.method === 'POST') {
+        const { pool_id, name, strategy_type, rules, starting_capital } = await request.json();
+        
+        const agentId = crypto.randomUUID();
+        
+        await env.DB.prepare(`
+          INSERT INTO agents (
+            id, pool_id, name, strategy_type, rules,
+            starting_capital, current_capital, status, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          agentId,
+          pool_id,
+          name,
+          strategy_type,
+          JSON.stringify(rules),
+          starting_capital,
+          starting_capital,
+          'active',
+          Date.now()
+        ).run();
+        
+        return Response.json({ success: true, agent_id: agentId }, { headers: CORS_HEADERS });
+      }
+      
+      // ===== TRADE ROUTES =====
+      
+      // Recent trades
+      if (url.pathname === '/api/trades/recent') {
+        const limit = parseInt(url.searchParams.get('limit') || '50');
+        const poolId = url.searchParams.get('pool_id');
+        
+        let query = 'SELECT * FROM trades WHERE 1=1';
+        const params = [];
+        
+        if (poolId) {
+          query += ' AND pool_id = ?';
+          params.push(poolId);
+        }
+        
+        query += ' ORDER BY closed_at DESC LIMIT ?';
+        params.push(limit);
+        
+        const trades = await env.DB.prepare(query).bind(...params).all();
+        
+        return Response.json({ trades: trades.results }, { headers: CORS_HEADERS });
+      }
+      
+      // ===== SYSTEM ROUTES =====
+      
+      // System summary
+      if (url.pathname === '/api/summary') {
+        const summary = await getSystemSummary(env);
+        return Response.json(summary, { headers: CORS_HEADERS });
+      }
+      
+      // System exposure
+      if (url.pathname === '/api/exposure') {
+        const exposure = await getSystemExposure(env);
+        return Response.json(exposure, { headers: CORS_HEADERS });
+      }
+      
+      return Response.json({ error: 'Route not found' }, { status: 404, headers: CORS_HEADERS });
+      
+    } catch (error) {
+      console.error('[ERROR]', error);
+      return Response.json(
+        { error: 'Internal server error', message: error.message },
+        { status: 500, headers: CORS_HEADERS }
+      );
+    }
+  },
+  
+  // ========================================================================
+  // CRON TRIGGERS
+  // ========================================================================
+  
+  async scheduled(event: ScheduledEvent, env: Env) {
+    console.log('[CRON] Triggered:', event.cron);
+    
+    try {
+      // Every 4 hours: Market snapshot
+      if (event.cron === '0 */4 * * *') {
+        await takeMarketSnapshot(env);
+      }
+      
+      // Every 24 hours at midnight UTC: Pool evaluations
+      if (event.cron === '0 0 * * *') {
+        await runAllPoolEvaluations(env);
+      }
+      
+      // Every Sunday at midnight: Weekly LLM decisions
+      if (event.cron === '0 0 * * 0') {
+        await runWeeklyDecisions(env);
+      }
+      
+    } catch (error) {
+      console.error('[CRON ERROR]', error);
+    }
+  }
+};
+
+// ========================================================================
+// HELPER FUNCTIONS
+// ========================================================================
+
+async function createPool(env: Env, config: any): Promise<Response> {
+  // Create new Durable Object for this pool
+  const doId = env.POOL_OVERSEER.newUniqueId();
+  const overseer = env.POOL_OVERSEER.get(doId);
+  
+  // Initialize the pool overseer
+  await overseer.fetch(new Request('https://fake/initialize', {
+    method: 'POST',
+    body: JSON.stringify(config)
+  }));
+  
+  return Response.json({
+    success: true,
+    pool_id: config.id,
+    durable_object_id: doId.toString()
+  }, { headers: CORS_HEADERS });
+}
+
+async function getSystemSummary(env: Env) {
+  const pools = await env.DB.prepare(`
+    SELECT COUNT(*) as count FROM pools WHERE status = 'active'
+  `).first();
+  
+  const agents = await env.DB.prepare(`
+    SELECT COUNT(*) as count FROM agents WHERE status = 'active'
+  `).first();
+  
+  const totalCapital = await env.DB.prepare(`
+    SELECT SUM(current_capital) as total FROM pools WHERE status = 'active'
+  `).first();
+  
+  const totalPnL = await env.DB.prepare(`
+    SELECT SUM(total_pnl_usd) as total FROM agents WHERE status = 'active'
+  `).first();
+  
+  const trades24h = await env.DB.prepare(`
+    SELECT COUNT(*) as count FROM trades 
+    WHERE closed_at > ?
+  `).bind(Date.now() - 24 * 60 * 60 * 1000).first();
+  
+  return {
+    pools: {
+      active: pools.count
+    },
+    agents: {
+      active: agents.count
+    },
+    capital: {
+      total: totalCapital.total || 0
+    },
+    pnl: {
+      total: totalPnL.total || 0,
+      roi_pct: totalPnL.total / totalCapital.total * 100
+    },
+    trades: {
+      last_24h: trades24h.count
+    },
+    timestamp: Date.now()
+  };
+}
+
+async function getSystemExposure(env: Env) {
+  const exposures = await env.DB.prepare(`
+    SELECT 
+      symbol,
+      SUM(CASE WHEN long_venue = 'lighter' THEN long_size * long_entry_price ELSE 0 END) as long_usd,
+      SUM(CASE WHEN short_venue = 'hyperliquid' THEN short_size * short_entry_price ELSE 0 END) as short_usd
+    FROM trades
+    WHERE closed_at IS NULL
+    GROUP BY symbol
+  `).all();
+  
+  const formatted = {};
+  for (const exp of exposures.results) {
+    formatted[exp.symbol] = {
+      long: exp.long_usd,
+      short: exp.short_usd,
+      net: exp.long_usd - exp.short_usd
+    };
+  }
+  
+  return {
+    exposures: formatted,
+    timestamp: Date.now()
+  };
+}
+
+async function takeMarketSnapshot(env: Env) {
+  console.log('[SNAPSHOT] Taking market snapshot...');
+  
+  // TODO: Fetch real data from APIs
+  // For now, placeholder values
+  const snapshot = {
+    id: crypto.randomUUID(),
+    timestamp: Date.now(),
+    
+    // Prices (fetch from price feeds)
+    btc_price: 67000,
+    eth_price: 3200,
+    sol_price: 145,
+    
+    // Funding rates (fetch from Lighter/Hyperliquid APIs)
+    lighter_sol_funding_bps: 5,
+    lighter_eth_funding_bps: 3,
+    lighter_btc_funding_bps: 2,
+    
+    hyperliquid_sol_funding_bps: 8,
+    hyperliquid_eth_funding_bps: 4,
+    hyperliquid_btc_funding_bps: 3,
+    
+    // Spreads (calculated from order books)
+    sol_spread_bps: 35,
+    eth_spread_bps: 28,
+    btc_spread_bps: 15,
+    
+    // Market regime (calculated)
+    volatility_regime: 'medium',
+    trend: 'sideways'
+  };
+  
+  // Calculate system exposure
+  const exposure = await getSystemExposure(env);
+  snapshot.system_sol_net_exposure = exposure.exposures['SOL-PERP']?.net || 0;
+  snapshot.system_eth_net_exposure = exposure.exposures['ETH-PERP']?.net || 0;
+  snapshot.system_btc_net_exposure = exposure.exposures['BTC-PERP']?.net || 0;
+  
+  await env.DB.prepare(`
+    INSERT INTO market_snapshots (
+      id, timestamp,
+      btc_price, eth_price, sol_price,
+      lighter_sol_funding_bps, lighter_eth_funding_bps, lighter_btc_funding_bps,
+      hyperliquid_sol_funding_bps, hyperliquid_eth_funding_bps, hyperliquid_btc_funding_bps,
+      sol_spread_bps, eth_spread_bps, btc_spread_bps,
+      volatility_regime, trend,
+      system_sol_net_exposure, system_eth_net_exposure, system_btc_net_exposure
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    snapshot.id, snapshot.timestamp,
+    snapshot.btc_price, snapshot.eth_price, snapshot.sol_price,
+    snapshot.lighter_sol_funding_bps, snapshot.lighter_eth_funding_bps, snapshot.lighter_btc_funding_bps,
+    snapshot.hyperliquid_sol_funding_bps, snapshot.hyperliquid_eth_funding_bps, snapshot.hyperliquid_btc_funding_bps,
+    snapshot.sol_spread_bps, snapshot.eth_spread_bps, snapshot.btc_spread_bps,
+    snapshot.volatility_regime, snapshot.trend,
+    snapshot.system_sol_net_exposure, snapshot.system_eth_net_exposure, snapshot.system_btc_net_exposure
+  ).run();
+  
+  console.log('[SNAPSHOT] Complete');
+}
+
+async function runAllPoolEvaluations(env: Env) {
+  console.log('[CRON] Running daily evaluations for all pools...');
+  
+  const pools = await env.DB.prepare(`
+    SELECT id, durable_object_id FROM pools WHERE status = 'active'
+  `).all();
+  
+  for (const pool of pools.results) {
+    const doId = env.POOL_OVERSEER.idFromString(pool.durable_object_id);
+    const overseer = env.POOL_OVERSEER.get(doId);
+    
+    await overseer.fetch(new Request('https://fake/evaluate', { method: 'POST' }));
+  }
+  
+  console.log('[CRON] All evaluations complete');
+}
+
+async function runWeeklyDecisions(env: Env) {
+  console.log('[CRON] Running weekly LLM decisions for all pools...');
+  
+  const pools = await env.DB.prepare(`
+    SELECT id, durable_object_id FROM pools WHERE status = 'active'
+  `).all();
+  
+  for (const pool of pools.results) {
+    const doId = env.POOL_OVERSEER.idFromString(pool.durable_object_id);
+    const overseer = env.POOL_OVERSEER.get(doId);
+    
+    await overseer.fetch(new Request('https://fake/weekly-decision', { method: 'POST' }));
+  }
+  
+  console.log('[CRON] All weekly decisions complete');
+}
+
+export { PoolOverseer };
+
+🚀 DEPLOYMENT (wrangler.toml)
+tomlname = "deltatuna-api"
+main = "src/index.ts"
+compatibility_date = "2024-10-01"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "deltatuna"
+database_id = "<your-d1-database-id>"
+
+# Workers AI
+[ai]
+binding = "AI"
+
+# Vectorize
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "deltatuna-knowledge"
+
+# Durable Objects
+[[durable_objects.bindings]]
+name = "POOL_OVERSEER"
+class_name = "PoolOverseer"
+script_name = "deltatuna-api"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["PoolOverseer"]
+
+# Cron triggers
+[triggers]
+crons = [
+  "0 */4 * * *",  # Every 4 hours: market snapshot
+  "0 0 * * *",    # Daily at midnight: pool evaluations
+  "0 0 * * 0"     # Weekly Sunday midnight: LLM decisions
+]
+
+🎬 INITIALIZATION SCRIPT
+bash# 1. Create D1 database
+wrangler d1 create deltatuna
+
+# 2. Run schema
+wrangler d1 execute deltatuna --file=./schema.sql
+
+# 3. Create Vectorize index
+wrangler vectorize create deltatuna-knowledge --dimensions=768 --metric=cosine
+
+# 4. Deploy worker
+wrangler deploy
+
+# 5. Initialize Pool 1: Lighter Farm
+curl -X POST https://deltatuna-api.YOUR_SUBDOMAIN.workers.dev/api/pools/create \
+  -H "Content-Type: application/json" \
+  -d @lighter_farm_config.json 
+● 🎯 BRILLIANT! This is the breakthrough - let me complete your vision:
+
+  ---
+  🌍 POOL = INTELLIGENT BIOME
+
+  // workers/PoolOverseer.ts
+
+  export class PoolOverseer extends DurableObject {
+    private poolId: string;
+    private config: PoolConfig;
+    private environmentalConditions: EnvironmentalConditions;
+
+    constructor(state: DurableObjectState, env: Env) {
+      super(state, env);
+
+      this.ctx.blockConcurrencyWhile(async () => {
+        this.config = await state.storage.get('config');
+        this.environmentalConditions = await state.storage.get('environment') || this.getDefaultEnvironment();
+      });
+    }
+
+    // ========================================================================
+    // LLM BRAIN - The Pool's Intelligence
+    // ========================================================================
+
+    async weeklyDecision() {
+      console.log(`[POOL ${this.config.name}] 🧠 LLM thinking about environment adjustments...`);
+
+      // Gather data from last week
+      const performance = await this.getWeeklyPerformance();
+      const globalKnowledge = await this.queryGlobalRAG();
+      const marketConditions = await this.getRecentMarketConditions();
+
+      // Ask LLM: "How should I adjust the environment?"
+      const decision = await this.env.AI.run('@cf/openai/gpt-oss-120b', {
+        messages: [{
+          role: 'system',
+          content: `You are the overseer of the "${this.config.name}" pool.
+
+  Your goal: ${this.config.objective.description}
+
+  Current environmental conditions:
+  ${JSON.stringify(this.environmentalConditions, null, 2)}
+
+  Last week's results:
+  - Agents spawned: ${performance.agents_spawned}
+  - Trades executed: ${performance.total_trades}
+  - Average PnL: ${performance.avg_pnl_bps} bps
+  - Win rate: ${performance.win_rate}%
+  - Top agent strategy: ${performance.top_agent_strategy}
+  - Worst agent strategy: ${performance.worst_agent_strategy}
+
+  Recent market conditions:
+  - SOL spread: ${marketConditions.avg_sol_spread_bps} bps
+  - Volatility: ${marketConditions.volatility_regime}
+  - Whale activity: ${marketConditions.whale_activity ? 'High' : 'Low'}
+
+  What other pools learned this week:
+  ${globalKnowledge.map(k => `- ${k.insight}`).join('\n')}
+
+  TASK: Adjust environmental conditions to improve performance.
+
+  You can adjust:
+  1. min_spread_threshold (currently ${this.environmentalConditions.min_spread_threshold})
+  2. max_position_size (currently ${this.environmentalConditions.max_position_size})
+  3. max_open_positions (currently ${this.environmentalConditions.max_open_positions})
+  4. trade_cooldown_minutes (currently ${this.environmentalConditions.trade_cooldown_minutes})
+  5. preferred_symbols (currently ${this.environmentalConditions.preferred_symbols})
+  6. allowed_hours (currently ${this.environmentalConditions.allowed_hours})
+
+  Also decide:
+  - Should I spawn new agents? (Yes/No + how many + what type)
+  - Should I kill underperformers? (Yes/No + how many)
+  - Should I adjust pool capital allocation?
+
+  Return JSON:
+  {
+    "reasoning": "Why these changes?",
+    "environment_changes": {
+      "min_spread_threshold": 20,
+      "max_position_size": 2.0,
+      ...
+    },
+    "agent_actions": {
+      "spawn": { count: 3, strategy_type: "whale_follower" },
+      "kill_bottom": 2
+    },
+    "confidence": 0.85
+  }`
+        }],
+        max_tokens: 1024
+      });
+
+      const parsed = JSON.parse(decision.response);
+
+      // Execute LLM's decisions
+      await this.applyEnvironmentChanges(parsed.environment_changes);
+      await this.executeAgentActions(parsed.agent_actions);
+
+      // Log decision to global RAG
+      await this.shareKnowledgeGlobally({
+        pool_id: this.poolId,
+        decision: parsed,
+        outcome_preview: "TBD - check next week"
+      });
+
+      console.log(`[POOL ${this.config.name}] ✅ LLM decision applied`);
+    }
+
+    // ========================================================================
+    // ENVIRONMENT CONTROL - What Agents See
+    // ========================================================================
+
+    async getEnvironmentForAgent(): Promise<EnvironmentalConditions> {
+      // Agents query this to understand their constraints
+      return this.environmentalConditions;
+    }
+
+    async applyEnvironmentChanges(changes: Partial<EnvironmentalConditions>) {
+      this.environmentalConditions = {
+        ...this.environmentalConditions,
+        ...changes
+      };
+
+      await this.ctx.storage.put('environment', this.environmentalConditions);
+
+      // Log change
+      await this.env.DB.prepare(`
+        INSERT INTO pool_environment_changes (
+          id, pool_id, timestamp, changes, reasoning
+        ) VALUES (?, ?, ?, ?, ?)
+      `).bind(
+        crypto.randomUUID(),
+        this.poolId,
+        Date.now(),
+        JSON.stringify(changes),
+        "LLM weekly decision"
+      ).run();
+    }
+
+    // ========================================================================
+    // AGENT LIFECYCLE - LLM Controls Population
+    // ========================================================================
+
+    async executeAgentActions(actions: AgentActions) {
+      // Spawn new agents
+      if (actions.spawn) {
+        for (let i = 0; i < actions.spawn.count; i++) {
+          await this.spawnAgent(actions.spawn.strategy_type);
+        }
+      }
+
+      // Kill bottom performers
+      if (actions.kill_bottom && actions.kill_bottom > 0) {
+        const worstAgents = await this.env.DB.prepare(`
+          SELECT id FROM agents
+          WHERE pool_id = ? AND status = 'active'
+          ORDER BY pool_score ASC
+          LIMIT ?
+        `).bind(this.poolId, actions.kill_bottom).all();
+
+        for (const agent of worstAgents.results) {
+          await this.killAgent(agent.id);
+        }
+      }
+    }
+
+    async spawnAgent(strategy_type: string) {
+      const agentId = crypto.randomUUID();
+      const name = `${this.config.name}-${strategy_type}-${Date.now().toString().slice(-4)}`;
+
+      // Agent inherits environmental conditions
+      const rules = {
+        ...this.environmentalConditions,
+        strategy_type
+      };
+
+      await this.env.DB.prepare(`
+        INSERT INTO agents (
+          id, pool_id, name, strategy_type, rules,
+          starting_capital, current_capital, tier, status, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        agentId,
+        this.poolId,
+        name,
+        strategy_type,
+        JSON.stringify(rules),
+        this.config.tiers.bronze.capital_usd,
+        this.config.tiers.bronze.capital_usd,
+        'bronze',
+        'active',
+        Date.now()
+      ).run();
+
+      console.log(`[POOL ${this.config.name}] 🐣 Spawned agent: ${name}`);
+    }
+
+    // ========================================================================
+    // DAILY EVALUATION - Rank Agents, Tier Promotions
+    // ========================================================================
+
+    async evaluate() {
+      console.log(`[POOL ${this.config.name}] 📊 Running daily evaluation...`);
+
+      // Get all active agents ranked by pool objective
+      const agents = await this.env.DB.prepare(`
+        SELECT * FROM agents
+        WHERE pool_id = ? AND status = 'active'
+        ORDER BY pool_score DESC
+      `).bind(this.poolId).all();
+
+      // Calculate cutoffs
+      const promotionCutoff = Math.floor(agents.results.length * this.config.rules.promotion_threshold);
+      const demotionCutoff = Math.floor(agents.results.length * (1 - this.config.rules.demotion_threshold));
+
+      // Promote top performers
+      for (let i = 0; i < promotionCutoff; i++) {
+        const agent = agents.results[i];
+        await this.promoteAgent(agent.id, agent.tier);
+      }
+
+      // Demote/kill bottom performers
+      for (let i = demotionCutoff; i < agents.results.length; i++) {
+        const agent = agents.results[i];
+
+        if (agent.tier === 'bronze' && this.config.rules.death_penalty) {
+          await this.killAgent(agent.id);
+        } else {
+          await this.demoteAgent(agent.id, agent.tier);
+        }
+      }
+
+      console.log(`[POOL ${this.config.name}] ✅ Evaluation complete`);
+    }
+
+    // ========================================================================
+    // GLOBAL RAG INTEGRATION
+    // ========================================================================
+
+    async queryGlobalRAG(): Promise<Knowledge[]> {
+      // Get insights from other pools
+      const embedding = await this.generateEmbedding(
+        `Pool objective: ${this.config.objective.description}. Recent performance: ...`
+      );
+
+      const similar = await this.env.VECTORIZE.query(embedding, {
+        topK: 10,
+        filter: { success: true }
+      });
+
+      return similar.matches.map(m => m.metadata);
+    }
+
+    async shareKnowledgeGlobally(knowledge: PoolKnowledge) {
+      const embedding = await this.generateEmbedding(
+        JSON.stringify(knowledge.decision)
+      );
+
+      await this.env.VECTORIZE.insert([{
+        id: crypto.randomUUID(),
+        values: embedding,
+        metadata: {
+          pool_id: this.poolId,
+          pool_name: this.config.name,
+          timestamp: Date.now(),
+          decision: knowledge.decision,
+          insight: `Pool ${this.config.name}: ${knowledge.decision.reasoning}`
+        }
+      }]);
+    }
+
+    // ========================================================================
+    // HTTP ROUTES
+    // ========================================================================
+
+    async fetch(request: Request): Promise<Response> {
+      const url = new URL(request.url);
+
+      // Initialize pool
+      if (url.pathname === '/initialize' && request.method === 'POST') {
+        this.config = await request.json();
+        this.poolId = this.config.id;
+
+        await this.ctx.storage.put('config', this.config);
+
+        // Create pool record in D1
+        await this.env.DB.prepare(`
+          INSERT INTO pools (
+            id, durable_object_id, name, emoji, objective_metric, objective_description,
+            rules, tiers, death_zone, status, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          this.config.id,
+          this.ctx.id.toString(),
+          this.config.name,
+          this.config.emoji,
+          this.config.objective.metric,
+          this.config.objective.description,
+          JSON.stringify(this.config.rules),
+          JSON.stringify(this.config.tiers),
+          JSON.stringify(this.config.death_zone),
+          'active',
+          Date.now()
+        ).run();
+
+        return Response.json({ success: true });
+      }
+
+      // Get environment (for agents)
+      if (url.pathname === '/environment') {
+        return Response.json(this.environmentalConditions);
+      }
+
+      // Trigger evaluation
+      if (url.pathname === '/evaluate' && request.method === 'POST') {
+        await this.evaluate();
+        return Response.json({ success: true });
+      }
+
+      // Trigger weekly LLM decision
+      if (url.pathname === '/weekly-decision' && request.method === 'POST') {
+        await this.weeklyDecision();
+        return Response.json({ success: true });
+      }
+
+      // Get pool stats
+      if (url.pathname === '/stats') {
+        const stats = await this.getPoolStats();
+        return Response.json(stats);
+      }
+
+      return Response.json({ error: 'Route not found' }, { status: 404 });
+    }
+  }
+
+  // ========================================================================
+  // TYPES
+  // ========================================================================
+
+  interface EnvironmentalConditions {
+    // Trading constraints set by LLM
+    min_spread_threshold: number,  // bps
+    max_spread_threshold: number,
+    max_position_size: number,     // USD
+    max_open_positions: number,
+    trade_cooldown_minutes: number,
+
+    // Market preferences
+    preferred_symbols: string[],   // ["SOL", "ETH"]
+    allowed_hours: number[],       // [0-23] UTC
+
+    // Risk parameters
+    max_drawdown_pct: number,
+    stop_loss_bps: number,
+
+    // Points optimization (for Lighter farming pools)
+    prioritize_volume: boolean,
+    prefer_low_liquidity: boolean
+  }
+
+  interface AgentActions {
+    spawn?: {
+      count: number,
+      strategy_type: string
+    },
+    kill_bottom?: number
+  }
+
+  ---
+  🤖 MECHANICAL AGENT (Simple Reactor)
+
+  // workers/MechanicalAgent.ts
+
+  export class MechanicalAgent extends DurableObject {
+    private agentId: string;
+    private poolId: string;
+    private rules: AgentRules;
+
+    async alarm() {
+      // Step 1: Get current environment from pool
+      const environment = await this.getPoolEnvironment();
+
+      // Step 2: Check death zone
+      if (await this.isInDeathZone(environment)) {
+        console.log(`[AGENT ${this.agentId}] In death zone, pausing`);
+        return;
+      }
+
+      // Step 3: Check mechanical entry criteria
+      const opportunity = await this.checkOpportunity(environment);
+
+      if (opportunity) {
+        await this.executeTrade(opportunity, environment);
+      }
+
+      // Step 4: Check exits for open positions
+      await this.checkExits(environment);
+
+      // Step 5: Schedule next alarm
+      await this.ctx.storage.setAlarm(Date.now() + 3600000);  // 1 hour
+    }
+
+    async getPoolEnvironment(): Promise<EnvironmentalConditions> {
+      // Fetch from pool overseer
+      const pool = await this.env.DB.prepare(`
+        SELECT durable_object_id FROM pools WHERE id = ?
+      `).bind(this.poolId).first();
+
+      const doId = this.env.POOL_OVERSEER.idFromString(pool.durable_object_id);
+      const overseer = this.env.POOL_OVERSEER.get(doId);
+
+      const response = await overseer.fetch(new Request('https://fake/environment'));
+      return await response.json();
+    }
+
+    async checkOpportunity(env: EnvironmentalConditions): Promise<Opportunity | null> {
+      const market = await this.getMarketData();
+
+      // MECHANICAL CHECKS (no AI!)
+      const checks = [
+        // Pool-set thresholds
+        market.spread_bps >= env.min_spread_threshold,
+        market.spread_bps <= env.max_spread_threshold,
+
+        // Agent-specific rules
+        this.rules.strategy_type === 'whale_follower' ? market.whale_activity : true,
+        this.rules.strategy_type === 'low_liquidity' ? market.oi < 1000000 : true,
+
+        // Time constraints
+        env.allowed_hours.includes(new Date().getUTCHours()),
+
+        // Cooldown
+        Date.now() - this.lastTradeTime > env.trade_cooldown_minutes * 60 * 1000,
+
+        // Position limits
+        this.openPositions < env.max_open_positions
+      ];
+
+      return checks.every(c => c) ? market : null;
+    }
+  }
+
+  ---
+  📊 UPDATED SCHEMA
+
+  -- Pools (Biomes)
+  CREATE TABLE pools (
+    id TEXT PRIMARY KEY,
+    durable_object_id TEXT UNIQUE,
+    name TEXT,
+    emoji TEXT,
+    objective_metric TEXT,
+    objective_description TEXT,
+    rules TEXT,  -- JSON
+    tiers TEXT,  -- JSON
+    death_zone TEXT,  -- JSON
+    status TEXT DEFAULT 'active',
+    current_rank INTEGER,  -- Ranked by income
+    allocated_capital_usd REAL,  -- Based on performance
+    total_pnl_usd REAL DEFAULT 0,
+    created_at INTEGER
+  );
+
+  -- Pool environment changes (LLM decisions logged)
+  CREATE TABLE pool_environment_changes (
+    id TEXT PRIMARY KEY,
+    pool_id TEXT,
+    timestamp INTEGER,
+    changes TEXT,  -- JSON of what changed
+    reasoning TEXT,  -- Why LLM made this decision
+    FOREIGN KEY (pool_id) REFERENCES pools(id)
+  );
+
+  -- Agents (Simple mechanical traders)
+  CREATE TABLE agents (
+    id TEXT PRIMARY KEY,
+    pool_id TEXT,
+    name TEXT,
+    strategy_type TEXT,  -- 'basic_arb' | 'whale_follower' | 'low_liquidity'
+    rules TEXT,  -- JSON (inherited from pool + agent-specific)
+    tier TEXT,
+    starting_capital REAL,
+    current_capital REAL,
+    status TEXT DEFAULT 'active',
+
+    -- Performance (used for ranking within pool)
+    pool_score REAL DEFAULT 0,  -- Calculated based on pool objective
+    total_pnl_usd REAL DEFAULT 0,
+    total_trades INTEGER DEFAULT 0,
+    sharpe_ratio REAL DEFAULT 0,
+    lighter_points REAL DEFAULT 0,
+
+    created_at INTEGER,
+    promoted_at INTEGER,
+    demoted_at INTEGER,
+    killed_at INTEGER,
+
+    FOREIGN KEY (pool_id) REFERENCES pools(id)
+  );
+
+  -- Market snapshots (every 4 hours)
+  CREATE TABLE market_snapshots (
+    id TEXT PRIMARY KEY,
+    timestamp INTEGER,
+
+    -- Prices
+    btc_price REAL,
+    eth_price REAL,
+    sol_price REAL,
+
+    -- Funding rates
+    lighter_sol_funding_bps REAL,
+    lighter_eth_funding_bps REAL,
+    lighter_btc_funding_bps REAL,
+
+    hyperliquid_sol_funding_bps REAL,
+    hyperliquid_eth_funding_bps REAL,
+    hyperliquid_btc_funding_bps REAL,
+
+    -- Spreads
+    sol_spread_bps REAL,
+    eth_spread_bps REAL,
+    btc_spread_bps REAL,
+
+    -- Market regime
+    volatility_regime TEXT,  -- 'low' | 'medium' | 'high'
+    trend TEXT,  -- 'bullish' | 'bearish' | 'sideways'
+
+    -- System exposure
+    system_sol_net_exposure REAL,
+    system_eth_net_exposure REAL,
+    system_btc_net_exposure REAL
+  );
+
+  -- Global knowledge (RAG)
+  CREATE TABLE global_knowledge (
+    id TEXT PRIMARY KEY,
+    pool_id TEXT,
+    timestamp INTEGER,
+    insight TEXT,  -- Human-readable
+    decision_json TEXT,  -- Full LLM decision
+    outcome_score REAL,  -- Did it work? (filled in later)
+
+    FOREIGN KEY (pool_id) REFERENCES pools(id)
+  );
+
+  ---
+  💬 CLAUDE + MCP INTEGRATION
+
+  // MCP Server tools
+
+  const MCP_TOOLS = {
+    get_system_summary: {
+      description: "Get overall portfolio statistics",
+      handler: async () => {
+        return fetch('https://deltatuna-api.tradesprior.workers.dev/api/summary')
+          .then(r => r.json());
+      }
+    },
+
+    get_pool_performance: {
+      description: "Get detailed performance for a specific pool",
+      parameters: { pool_id: "string" },
+      handler: async ({ pool_id }) => {
+        return fetch(`https://deltatuna-api.tradesprior.workers.dev/api/pool/${pool_id}/stats`)
+          .then(r => r.json());
+      }
+    },
+
+    create_new_pool: {
+      description: "Create a new pool biome with specific objective",
+      parameters: {
+        name: "string",
+        objective: "object",
+        rules: "object"
+      },
+      handler: async (params) => {
+        return fetch('https://deltatuna-api.tradesprior.workers.dev/api/pools/create', {
+          method: 'POST',
+          body: JSON.stringify(params)
+        }).then(r => r.json());
+      }
+    },
+
+    query_dune_whales: {
+      description: "Get whale activity from Dune Analytics",
+      handler: async () => {
+        // Dune API call
+      }
+    }
+  };
+
+  // Example conversation
+  User: "How are my pools performing?"
+
+  Claude (via MCP):
+    *Calls get_system_summary*
+
+    "Your portfolio is doing well! Here's the breakdown:
+
+    🌾 Points Farmers (Rank #1): +$2,341 this week
+      - 12 active agents, avg Sharpe 2.1
+      - Farming 45k Lighter points/day
+
+    📊 Sharpe Maximizers (Rank #2): +$1,876 this week
+      - 8 active agents, avg Sharpe 3.4
+      - Most consistent pool
+
+    ⚡ Speed Demons (Rank #3): +$892 this week
+      - 15 active agents, high turnover
+
+    The Points Farmers pool is outperforming - should we allocate more capital there?"
+
+  User: "What if we created a pool that only trades during high whale activity periods?"
+
+  Claude:
+    "Interesting idea! Let me design that:
+
+    Pool Name: 🐋 Whale Riders
+    Objective: Max PnL during confirmed whale activity periods
+
+    Rules:
+    - Only trade when Dune shows >$5M movement
+    - Higher spread threshold (30bps) for confirmation
+    - Smaller agent population (8 max) to avoid crowding
+    - Weekly LLM adjusts whale size threshold
+
+    Should I create this pool with $100 starting capital?"
+
+  User: "Yes, do it"
+
+  Claude:
+    *Calls create_new_pool*
+
+    "✅ Pool created! 'Whale Riders' is now live.
+
+     The pool's LLM will run its first weekly decision on Sunday.
+     It starts with 3 agents in bronze tier.
+
+     I'll monitor and report back next week!"
+
+  ---
+  🎮 FRONTEND: Pool Ranking Dashboard
+
+  function PoolRankingDashboard() {
+    const pools = usePoolsRanked();  // Sorted by income
+
+    return (
+      <div className="dashboard">
+        <h1>🏆 Pool Biome Rankings</h1>
+        <p>Pools ranked by weekly income. Top performers get more capital.</p>
+
+        <div className="pools-ranked">
+          {pools.map((pool, i) => (
+            <PoolRankCard
+              key={pool.id}
+              rank={i + 1}
+              pool={pool}
+              capitalChange={pool.capital_allocation_change}
+            />
+          ))}
+        </div>
+
+        <button onClick={openClaudeChat}>
+          💬 Talk to Claude About Pools
+        </button>
+      </div>
+    );
+  }
+
+  function PoolRankCard({ rank, pool, capitalChange }) {
+    const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+
+    return (
+      <div className={`pool-rank-card rank-${rank}`}>
+        <div className="rank-badge">{rankEmoji}</div>
+
+        <div className="pool-info">
+          <h3>{pool.emoji} {pool.name}</h3>
+          <p>{pool.objective_description}</p>
+        </div>
+
+        <div className="pool-stats">
+          <Stat label="Weekly PnL" value={`$${pool.weekly_pnl}`} trend={pool.pnl_trend} />
+          <Stat label="Agents" value={pool.agent_count} />
+          <Stat label="Capital" value={`$${pool.allocated_capital}`} />
+        </div>
+
+        {capitalChange !== 0 && (
+          <div className={`capital-change ${capitalChange > 0 ? 'increase' : 'decrease'}`}>
+            {capitalChange > 0 ? '↑' : '↓'} ${Math.abs(capitalChange)} capital this week
+          </div>
+        )}
+
+        <div className="llm-last-decision">
+          <strong>Last LLM Decision:</strong>
+          <p>{pool.last_llm_reasoning}</p>
+        </div>
+      </div>
+    );
+  }
+
+  ---
+  This is SO much cleaner! Each pool is a self-contained experiment with its own AI brain, mechanical agents just react to the environment, and you use Claude to explore and create new pool ideas.
+
+  Want me to start building this? I'd suggest:
+  1. Create PoolOverseer.ts with LLM weekly decisions
+  2. Update schema with environment tracking
+  3. Build pool ranking API
+  4. Simple frontend to visualize pool performance

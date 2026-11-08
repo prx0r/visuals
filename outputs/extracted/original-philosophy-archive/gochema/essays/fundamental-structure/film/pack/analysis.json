@@ -1,0 +1,199 @@
+{
+  "version": "1.0",
+  "genre": "constructive-formal-treatise",
+  "title": "Fundamental Structure — Static and Dynamic Aspects",
+  "centralThesis": "A thing is represented not by a fixed symbol alone but by an invariant system of transformations whose recursive structure generates distinction, reflexion, duration and temporal order.",
+  "continuityObjects": [
+    {
+      "id": "o",
+      "meaning": "this / current priority / present member",
+      "appearance": "hollow circle"
+    },
+    {
+      "id": "x",
+      "meaning": "that / displaced priority / alternate member",
+      "appearance": "cross"
+    },
+    {
+      "id": "T",
+      "meaning": "operation transforming one member into another",
+      "appearance": "thin gold exchange arrow"
+    },
+    {
+      "id": "frame",
+      "meaning": "the invariant whole",
+      "appearance": "graphite square boundary"
+    },
+    {
+      "id": "weight",
+      "meaning": "relative intensity of determinations",
+      "appearance": "line thickness and node area"
+    }
+  ],
+  "staticBeats": [
+    [
+      "s01",
+      "One thing",
+      "Introduce o without spatial interpretation.",
+      "symbol"
+    ],
+    [
+      "s02",
+      "Another thing",
+      "Introduce x because repetition of o cannot distinguish.",
+      "distinction"
+    ],
+    [
+      "s03",
+      "This and that",
+      "Priority, not location, differentiates two things.",
+      "priority"
+    ],
+    [
+      "s04",
+      "Difference as operation",
+      "o and x define the invariant transformation between them.",
+      "operation"
+    ],
+    [
+      "s05",
+      "First and second",
+      "oo and ox secure precedence without location.",
+      "pairing"
+    ],
+    [
+      "s06",
+      "The tetrad",
+      "Four symbols support three independent pairings.",
+      "tetrad"
+    ],
+    [
+      "s07",
+      "Row, column, diagonal",
+      "Derive the three mutually independent interchanges.",
+      "klein-four"
+    ],
+    [
+      "s08",
+      "Four-member thing",
+      "Superpose zero and three interchange operations.",
+      "superposition"
+    ],
+    [
+      "s09",
+      "Sixteen-member reflexion",
+      "A tetrad of tetrads repeats the same structure.",
+      "recursive-grid"
+    ],
+    [
+      "s10",
+      "Indefinite expansion",
+      "4,16,64,256… members arise recursively.",
+      "recursive-growth"
+    ],
+    [
+      "s11",
+      "Invariant whole",
+      "Any member transformation permutes the set without changing it.",
+      "group-action"
+    ],
+    [
+      "s12",
+      "Structure of structure",
+      "Immediate and reflexive structure share one form.",
+      "self-similarity"
+    ],
+    [
+      "s13",
+      "Infinite hierarchy",
+      "Particular/general and reflexive hierarchies extend indefinitely.",
+      "hierarchy"
+    ]
+  ],
+  "dynamicBeats": [
+    [
+      "d01",
+      "Duration",
+      "Unchange and change are one invariant transformation.",
+      "duration"
+    ],
+    [
+      "d02",
+      "Repeated moments",
+      "Column interchange repeats while the whole remains unchanged.",
+      "moment-cycle"
+    ],
+    [
+      "d03",
+      "No finite duration",
+      "Two rates of change do not produce true duration.",
+      "cogwheel-rejection"
+    ],
+    [
+      "d04",
+      "Accelerating infinity",
+      "Infinite moments converge by geometric acceleration.",
+      "zeno-series"
+    ],
+    [
+      "d05",
+      "Three temporal levels",
+      "Eternal, regular and accelerating levels coexist.",
+      "three-level"
+    ],
+    [
+      "d06",
+      "No absolute outside",
+      "The hierarchy extends both ways with no universal present.",
+      "nested-time"
+    ],
+    [
+      "d07",
+      "Irreversible alternation",
+      "o vanishes, x becomes the new o; the system is not reversible.",
+      "replacement"
+    ],
+    [
+      "d08",
+      "Intensity hierarchy",
+      "This has weight 2/3 and that 1/3; lower orders sum to unity.",
+      "weights"
+    ],
+    [
+      "d09",
+      "Generality as time",
+      "Nested squares alternate between depth hierarchy and temporal corridor.",
+      "perspective-switch"
+    ],
+    [
+      "d10",
+      "Past-present-future",
+      "All exist in the present as over-, fully-, and under-determined.",
+      "temporal-tetrad"
+    ],
+    [
+      "d11",
+      "Three weighted interchanges",
+      "One this remains invariant while three thats vary.",
+      "weighted-klein"
+    ],
+    [
+      "d12",
+      "Identity by negation",
+      "The chair remains chair through shifting relative determinations.",
+      "negative-definition"
+    ],
+    [
+      "d13",
+      "Selection by repeated squaring",
+      "Weights 3:2:1 become 9:4:1, then 81:16:1 until one operation dominates.",
+      "winner-selection"
+    ],
+    [
+      "d14",
+      "Unfinished frontier",
+      "Intention, action and choice require the continuation.",
+      "frontier"
+    ]
+  ]
+}

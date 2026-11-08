@@ -1,0 +1,30 @@
+{
+ "id": "pt:argument:bhairavastava:bh-p10",
+ "work_id": "bhairavastava",
+ "passage_id": "bhairavastava:bh-p10",
+ "title": "bhairavastava — bh-p10",
+ "kind": "entailment",
+ "question": "In the month of Pauṣa, on the dark tenth, Abhinavagupta made this hymn. The pervasive, compassionate Lord pacifies the world's desert-heat — instantly.",
+ "issue": "Derived from L2 text (no argmap). In the month of Pauṣa, on the dark tenth, Abhinavagupta made this hymn. The pervasive, compassionate Lord pacifies the world's desert-heat — instantly.",
+ "premises": [
+  {
+   "text": "vasurasapauṣe kṛṣṇadaśamyām abhinavaguptaḥ stavam imam akarot yena vibhuḥ bhavati janasya arusantāpaṃ śamayati jhaṭiti dayāluḥ",
+   "label": "Sanskrit source",
+   "passage_id": "bhairavastava:bh-p10"
+  }
+ ],
+ "inference": "derived from L2 prose (no argmap reconstruction)",
+ "conclusion": {
+  "text": "In the month of Pauṣa, on the dark tenth, Abhinavagupta made this hymn. The pervasive, compassionate Lord pacifies the world's desert-heat — instantly.",
+  "passage_id": "bhairavastava:bh-p10"
+ },
+ "unresolved": "",
+ "argument_text": "In the month of Pauṣa, on the dark tenth, Abhinavagupta made this hymn. The pervasive, compassionate Lord pacifies the world's desert-heat — instantly.",
+ "tension_id": null,
+ "strength": "MACHINE_DRAFT",
+ "strength_basis": "derived from L2 prose (no argmap reconstruction); premises = Sanskrit source; no human review",
+ "status": "MACHINE_DRAFT",
+ "source_passage": "bhairavastava:bh-p10",
+ "sanskrit": "vasurasapauṣe kṛṣṇadaśamyām abhinavaguptaḥ stavam imam akarot yena vibhuḥ bhavati janasya arusantāpaṃ śamayati jhaṭiti dayāluḥ",
+ "license": "CC BY-NC-SA 4.0"
+}

@@ -1,0 +1,665 @@
+Gold Prompt 2: Agent-Native Services
+
+*For autonomous exploration of local service markets*
+
+---
+
+## The Thesis
+
+There exists a class of services where:
+- High ticket value (£500-£5,000)
+- Fragmented supplier base (many small operators)
+- Phone-tag friction (customers call, operators miss calls)
+- Predictable service area (geographic constraint)
+- Structured qualification (OZEV, MCS, certifications)
+- Measurable provider quality (ratings, completion rates)
+
+The opportunity is to be the **provider the agent can transact with cleanly**, rather than hoping it chooses a random contractor.
+
+---
+
+## The Exploration Protocol
+
+### Phase 1: Service Category Discovery
+
+For each country:
+
+```
+1. What high-ticket services exist?
+   - EV charger installation
+   - Heat pump installation
+   - Solar panel installation
+   - Boiler replacement
+   - Electrical upgrades
+   - Garage doors
+   - Roofing
+   - Drainage
+
+2. What's the ticket size?
+   - £500-£5,000 range
+   - Enough to fund acquisition
+   - Not so high that disputes are catastrophic
+
+3. What's the supplier fragmentation?
+   - Many small operators
+   - No dominant national player
+   - Local service areas
+```
+
+### Phase 2: Qualification Mapping
+
+For each service × country:
+
+```
+1. What certifications exist?
+   - OZEV-approved installers
+   - MCS-certified installers
+   - Electrical qualifications
+   - Gas safety certificates
+
+2. Where is the data?
+   - Government directories
+   - Trade associations
+   - Manufacturer lists
+   - Company registries
+
+3. Can it be structured?
+   - Postcode-searchable
+   - Certification-verified
+   - Availability-checkable
+```
+
+### Phase 3: Economics Check
+
+For each service × location:
+
+```
+1. What's the typical job value?
+   - £800-£1,500 for EV installation
+   - £3,000-£8,000 for heat pump
+   - £200-£500 for electrical
+
+2. What's the platform take?
+   - 8-12% of completed job
+   - £80-£120 per EV install
+   - £300-£800 per heat pump
+
+3. What's the dispute risk?
+   - Single £1,000 loss = 10 successful jobs
+   - Need installation evidence
+   - Need clear scope/change-order rules
+```
+
+### Phase 4: Supply Graph Construction
+
+For each service × location:
+
+```
+1. Find providers
+   - Government directories (OZEV, MCS)
+   - Company registries
+   - Google Business
+   - Trade associations
+
+2. Verify qualifications
+   - Certification status
+   - Insurance
+   - Reviews
+   - Response time
+
+3. Build service graph
+   - Provider → service area
+   - Provider → qualifications
+   - Provider → availability
+   - Provider → pricing
+   - Provider → quality score
+```
+
+### Phase 5: Hypothesis Generation
+
+```
+H1: [specific claim about service market]
+H0: [what would explain the data without our claim]
+Falsifier: [concrete condition that would kill H1]
+
+Evidence:
+- [observation 1]
+- [observation 2]
+- ...
+
+Status: OPEN / SUPPORTED / FALSIFIED
+```
+
+---
+
+## Example: UK EV Charger Installation
+
+### Service Category
+- Ticket: £800-£1,500
+- Fragmentation: ~2,074 OZEV-approved installers
+- Qualification: OZEV-approved, BS 7671 compliant
+- Service area: Postcode-based
+
+### Supplier Graph
+```
+OZEV Directory → 2,074 installers
+    ↓
+Postcode coverage
+    ↓
+Charger compatibility
+    ↓
+Quote bands
+    ↓
+Availability
+    ↓
+Quality score
+```
+
+### Economics
+- Job value: £1,100
+- Platform take: £88 (8%)
+- Dispute risk: £1,000 (10 jobs)
+- Net per job: £88
+
+### Hypothesis
+
+```
+H1: UK homeowners will use an AI agent to find, compare and book
+    OZEV-approved EV charger installers at an acquisition cost
+    below £88 per completed job.
+
+H0: Rightcharge and similar services already solve this adequately.
+
+Falsifier: >=3 OZEV-approved installers with <48h availability
+    found in any single postcode area.
+```
+
+---
+
+## The Service Graph
+
+```
+Postcode: NG7 (Nottingham)
+ └─ EV charger installation
+      ├─ Installer A
+      │   ├─ OZEV approved
+      │   ├─ service radius: 15km
+      │   ├─ next availability: Thursday
+      │   ├─ accepted chargers: Zappi, Ohme, Hypervolt
+      │   ├─ installation types: tethered, untethered
+      │   ├─ typical price: £900-£1,100
+      │   ├─ acceptance rate: 85%
+      │   ├─ cancellation rate: 5%
+      │   └─ rating: 4.8/5
+      │
+      ├─ Installer B
+      └─ Installer C
+```
+
+---
+
+## The Contractor OS
+
+Offer: **"We'll give you an AI front desk."**
+
+It handles:
+- Missed calls
+- Booking
+- Rescheduling
+- Quote follow-up
+- SMS
+- FAQs
+- Lead qualification
+- Diary
+- Reminders
+- Invoice chasing
+- Review requests
+- Basic CRM
+
+In exchange you obtain:
+- Availability
+- Service area
+- Jobs accepted/rejected
+- Pricing ranges
+- Skills
+- Equipment supported
+- Response time
+- Completion data
+- Conversion rate
+
+---
+
+## Output Format
+
+```json
+{
+  "country": "GB",
+  "service": "ev_charger_installation",
+  "ticket_value": 1100,
+  "platform_take": 88,
+  "provider_count": 2074,
+  "provider_density": "high",
+  "qualification": "OZEV-approved",
+  "hypothesis": "UK homeowners will use AI agent...",
+  "falsifier": ">=3 installers with <48h availability",
+  "status": "OPEN"
+Gold Prompt 1: Agent-Native Commerce
+
+*For autonomous exploration of specialist product markets*
+
+---
+
+## The Thesis
+
+There exists a class of products where:
+- High purchase intent exists (search demand)
+- Technical complexity creates decision friction
+- Existing merchants inadequately resolve the decision
+- Localized specialist positioning creates margin
+- AI can provide the decision engine that merchants cannot
+
+These are **compatibility-heavy, specification-driven products** where the buyer needs help choosing, not just browsing.
+
+---
+
+## The Exploration Protocol
+
+### Phase 1: Installed Base Discovery
+
+For each country × ecosystem combination:
+
+```
+1. What large physical systems exist?
+   - Heat pumps
+   - EV chargers
+   - Solar panels
+   - Weather stations
+   - Security systems
+   - Smart home devices
+
+2. What lifecycle events do they generate?
+   - Replacement (age/failure)
+   - Maintenance (filters, cleaning)
+   - Upgrade (new features)
+   - Compatibility (new components)
+   - Repair (breakdown)
+
+3. What's the installed base size?
+   - Official statistics (SSB, StatFin, ONS)
+   - Industry reports
+   - Sales data
+```
+
+### Phase 2: Merchant Gap Detection
+
+For each ecosystem × country:
+
+```
+1. Count total sellers
+   - Google Shopping
+   - Price comparison sites
+   - Marketplace listings
+
+2. Count good sellers (quality > 70)
+   - Specialist positioning
+   - Technical content
+   - Local language
+   - Real reviews
+
+3. Calculate merchant gap
+   gap = (demand - good_sellers) / demand
+
+4. Flag if gap > 0.5
+```
+
+### Phase 3: Search Demand Validation
+
+For each ecosystem × country:
+
+```
+1. Generate native-language queries
+   - Product names
+   - Compatibility queries
+   - Problem/solution queries
+   - Comparison queries
+
+2. Check search volume
+   - Google Keyword Planner
+   - Google Trends
+   - Comparison sites
+
+3. Check commercial intent
+   - Transactional queries
+   - Shopping results
+   - Price comparison presence
+```
+
+### Phase 4: Economics Check
+
+For each product × country:
+
+```
+1. Get retail price from observations
+2. Get supplier cost (if known)
+3. Calculate margin
+4. Check if margin > break-even
+5. Flag if margin < 0
+```
+
+### Phase 5: Hypothesis Generation
+
+For each promising opportunity:
+
+```
+H1: [specific claim about market]
+H0: [what would explain the data without our claim]
+Falsifier: [concrete condition that would kill H1]
+
+Evidence:
+- [observation 1]
+- [observation 2]
+- ...
+
+Status: OPEN / SUPPORTED / FALSIFIED
+```
+
+---
+
+## Example: Finland Heat Pump Controllers
+
+### Installed Base
+- 1.8M heat pumps installed
+- 112,000 sold in 2025 (+63% YoY)
+- 33% are replacements
+- 8-year avg age → replacement wave starting
+
+### Merchant Gap
+- 3 known merchants (Pihabotti, Finnparttia, Staypro)
+- Specialist positioning unclear
+- Gap likely exists
+
+### Search Demand
+- "lämpöpumppu ohjain" (heat pump controller)
+- "varmepumppu kauko-ohjaus" (heat pump remote)
+- "lämpöpumppu suodatin" (heat pump filter)
+
+### Economics
+- Retail: €250
+- Supplier: €80 (assumed)
+- Shipping: €15
+- Margin: €88.25 (44.1%)
+- Break-even CAC: €88.25
+
+### Hypothesis
+
+```
+H1: Finnish heat pump owners will convert through a
+    compatibility/remote-control decision service at
+    an acquisition cost below €88.25.
+
+H0: Existing merchants already solve the compatibility
+    problem adequately.
+
+Falsifier: >=3 good online sellers found for heat pump
+    controllers in Finland.
+```
+
+---
+
+## The Query Forest
+
+For each ecosystem, generate native-language queries:
+
+```
+heat_pump:
+  FI: "lämpöpumppu ohjain", "varmepumppu kauko-ohjaus", "daikin lämpöpumppu"
+  NO: "varmepumpe kontroller", "varmepumpe kjerne", "daikin varmepumpe"
+  DE: "wärmepumpe controller", "wärmepumpe fernbedienung", "daikin wärmepumpe"
+  DK: "varmepumpe controller", "varmepumpe fjernbetjening", "daikin varmepumpe"
+```
+
+---
+
+## The Merchant Gap Detection
+
+For each ecosystem × country:
+
+```
+1. Count total sellers (Google Shopping, comparison sites)
+2. Count good sellers (quality > 70)
+3. Calculate merchant gap = (demand - good_sellers) / demand
+4. Flag if gap > 0.5
+```
+
+---
+
+## The Economics Check
+
+For each product × country:
+
+```
+1. Get retail price from observations
+2. Get supplier cost (if known)
+3. Calculate margin
+4. Check if margin > break-even
+5. Flag if margin < 0
+```
+
+---
+
+## Output Format
+
+```json
+{
+  "country": "FI",
+  "ecosystem": "heat_pump",
+  "installed_base": 1800000,
+  "merchant_gap": 0.65,
+  "search_volume": 5000,
+  "retail_price": 250,
+  "supplier_cost": 80,
+  "margin": 88.25,
+  "break_even_cac": 88.25,
+  "hypothesis": "Finnish heat pump owners will convert...",
+  "falsifier": ">=3 good sellers found",
+  "status": "OPEN"
+}
+```
+ Gold Prompt 3: Agent-Native Supplier OS
+
+*For autonomous exploration of contractor operations tools*
+
+---
+
+## The Thesis
+
+Contractors lose money on:
+- Missed calls (estimated 30-50% of inbound leads)
+- Quote follow-up (hours of unbillable time)
+- Scheduling coordination (phone tag)
+- Invoice chasing (cash flow delay)
+- Review management (reputation risk)
+- CRM maintenance (data entry burden)
+
+The opportunity is to provide an **AI front desk** that handles all of this, in exchange for **live proprietary supply data**.
+
+---
+
+## The Exploration Protocol
+
+### Phase 1: Contractor Pain Mapping
+
+For each service category × country:
+
+```
+1. What's the average job value?
+   - £800-£1,500 for EV installation
+   - £3,000-£8,000 for heat pump
+   - £200-£500 for electrical
+
+2. What's the missed call rate?
+   - Industry average: 30-50% of inbound leads
+   - Each missed call = lost revenue
+
+3. What's the quote follow-up time?
+   - Average: 2-3 days
+   - Customer expectation: same day
+
+4. What's the invoice collection time?
+   - Average: 30-60 days
+   - Cash flow impact: significant
+```
+
+### Phase 2: AI Receptionist Value Proposition
+
+For each contractor type:
+
+```
+1. What does the AI handle?
+   - Missed calls → callback
+   - Booking → calendar
+   - Rescheduling → calendar
+   - Quote follow-up → SMS/email
+   - FAQs → instant answers
+   - Lead qualification → scoring
+   - Diary management → calendar
+   - Reminders → automated
+   - Invoice chasing → automated
+   - Review requests → automated
+   - Basic CRM → contact management
+
+2. What does the contractor get?
+   - Time savings (hours/week)
+   - Higher conversion rate
+   - Faster quote response
+   - Better customer experience
+   - Repeat business
+
+3. What do we get?
+   - Availability data
+   - Service area data
+   - Pricing data
+   - Quality data
+   - Completion data
+   - Conversion data
+```
+
+### Phase 3: Supply Graph Construction
+
+For each contractor:
+
+```
+1. Basic info
+   - Company name
+   - Qualifications
+   - Insurance
+   - Service area
+
+2. Capacity
+   - Current availability
+   - Typical lead time
+   - Max jobs per week
+
+3. Pricing
+   - Typical job value
+   - Quote range
+   - Payment terms
+
+4. Quality
+   - Completion rate
+   - Cancellation rate
+   - Customer rating
+   - Repeat rate
+```
+
+### Phase 4: Platform Economics
+
+```
+1. Revenue model
+   - Platform fee: 8-12% of completed job
+   - AI receptionist: included in fee
+   - No upfront cost to contractor
+
+2. Unit economics
+   - Average job: £1,100
+   - Platform take: £88 (8%)
+   - Dispute risk: £1,000 (10 jobs)
+   - Net per job: £88
+
+3. Flywheel
+   - More contractor usage → better supply graph
+   - Better supply graph → better agent answers
+   - Better agent answers → more bookings
+   - More bookings → more contractor demand
+   - More contractor demand → more contractor usage
+```
+
+### Phase 5: Hypothesis Generation
+
+```
+H1: [specific claim about contractor tool adoption]
+H0: [what would explain the data without our claim]
+Falsifier: [concrete condition that would kill H1]
+
+Evidence:
+- [observation 1]
+- [observation 2]
+- ...
+
+Status: OPEN / SUPPORTED / FALSIFIED
+```
+
+---
+
+## Example: UK EV Charger Installer AI Receptionist
+
+### Contractor Pain
+- Missed calls: 30-50% of inbound leads
+- Quote follow-up: 2-3 days average
+- Invoice collection: 30-60 days
+- Customer expectation: same-day response
+
+### AI Receptionist Value
+- Handles missed calls → callback
+- Booking → calendar
+- Quote follow-up → SMS
+- FAQs → instant answers
+- Lead qualification → scoring
+
+### What We Get
+- Availability data
+- Service area data
+- Pricing data
+- Quality data
+- Completion data
+- Conversion data
+
+### Hypothesis
+
+```
+H1: UK EV charger installers will adopt an AI receptionist
+    that provides live availability and pricing data in
+    exchange for reduced admin burden.
+
+H0: Contractors prefer manual phone/email and won't adopt
+    automated systems.
+
+Falsifier: <10% of contacted installers express interest
+    in AI receptionist after 30-day outreach.
+```
+
+---
+
+## Output Format
+
+```json
+{
+  "country": "GB",
+  "service": "ev_charger_installation",
+  "contractor_count": 2074,
+  "avg_job_value": 1100,
+  "missed_call_rate": 0.4,
+  "ai_receptionist_value": "high",
+  "hypothesis": "UK EV installers will adopt AI receptionist...",
+  "falsifier": "<10% interest after 30-day outreach",
+  "status": "OPEN" 

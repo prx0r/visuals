@@ -1,0 +1,379 @@
+Sanskritree already has **more locked down than I expected**. It is not just a thesis doc. It has the skeleton of an actual proof/truth-compression engine.
+
+## What is already locked down
+
+### 1. The core philosophy is correct
+
+The project is explicitly not trying to “prove mystical claims.” It is trying to classify claims honestly as:
+
+```txt
+PROVED
+UNPROVED
+PARTIAL
+HOLLOW
+OUTSIDE_FORMAL
+REFUTED
+```
+
+That is the exact discipline Truthcore needs. The important line is: **“The goal is honesty, not proofs.”** PARTIAL and OUTSIDE_FORMAL are treated as valid findings, not failures. ([GitHub][1])
+
+This means Sanskritree already solves the biggest danger in Imaginarium: **turning symbolic/metaphysical claims into fake certainty.**
+
+---
+
+### 2. It has a real typed graph schema
+
+It already has tables/entities for:
+
+```txt
+nodes
+edges
+terms
+contradictions
+bridge_index
+traces
+validation_set
+primitives
+ground_truth
+claims
+decompositions
+negative_controls
+failure_log
+primitive_candidates
+claim_relations
+```
+
+That is basically the database substrate for Truthcore. Especially important: it already has **terms scoped by tradition**, contradiction tracking, bridge indexing, decompositions, residue, negative controls, and traces. ([GitHub][2])
+
+So we do **not** need to invent Truthcore schema from scratch. We should adapt this.
+
+---
+
+### 3. It has the right oracle separation
+
+Sanskritree already separates roles:
+
+```txt
+Lean = formal oracle
+Human = semantic oracle
+LLM = decomposition/template assistant, never proof source
+```
+
+That is absolutely crucial. The LLM is allowed to suggest sayability, decomposition, and templates, but not to act as the proof authority. ([GitHub][3])
+
+This maps perfectly into Imaginarium:
+
+```txt
+LLM can generate path candidates.
+SourceRef grounds them.
+Sanskritree classifies them.
+Human promotes or rejects.
+Lean proves only narrow formal spines.
+```
+
+---
+
+### 4. It has a three-tier ground-truth plan
+
+The build order is already sane:
+
+```txt
+Tier 1: Mathlib + PhysLean proved items
+Tier 2: functional primitives
+Tier 3: tradition/source-specific claim files
+```
+
+Then every claim gets decomposed into primitives, with leftover residue recorded. The residue is explicitly where new primitives or HOLLOW findings emerge. ([GitHub][4])
+
+This is exactly how Truthcore should work:
+
+```txt
+Do not start with giant metaphysical truths.
+Start with tiny reusable primitives.
+Then let traditions and conversations map onto them.
+```
+
+---
+
+### 5. It has decomposition machinery
+
+There is already a decomposition loop:
+
+```txt
+raw claim
+→ auto-formalize
+→ primitive check
+→ Lean assembly
+→ Pantograph attempt
+→ informalization gate
+→ commit or failure log
+```
+
+The decomposition code already forces LLM output to map only to an existing primitive list, and unmapped material becomes residue/primitive candidate instead of being hallucinated into a bridge. ([GitHub][5])
+
+This is a big deal. It means we can use it as the **claim digestion engine** for Imaginarium.
+
+---
+
+### 6. It has bridge probing
+
+There is already a bridge probe that only compares claims sharing at least one primitive. It tries:
+
+```txt
+A → B
+B → A
+A → ¬B
+```
+
+Then classifies the relation as:
+
+```txt
+BRIDGES
+SUBSUMES
+CONTRADICTS
+OVERLAPS
+```
+
+That is basically the formal version of “does this Buddhist claim actually align with Levin/FEP/Plato, or are we forcing it?” ([GitHub][6])
+
+This should become the **anti-slop engine** for Imaginarium.
+
+---
+
+### 7. It has an informalization gate
+
+Before committing a formalized claim, Sanskritree turns the Lean type back into natural language and compares it to the original claim. The stated purpose is to prevent “plausible garbage.” ([GitHub][7])
+
+This is exactly the step that stops the classic failure mode:
+
+```txt
+beautiful mystical sentence
+→ over-compressed Lean type
+→ false bridge
+```
+
+It is not perfect yet, but the architecture is right.
+
+---
+
+### 8. It has working installation status, but with caveats
+
+The repo says the installation test was last run on **2026-03-03**, with **15 OK, 0 FAIL, 1 WARN**. Lean 4.28.0, lake, elan, Pantograph, Loogle, HeritagePlatform, SQLite, and the proof engine were reported as working. LeanSearch had a 403 warning and falls back to Loogle + DB. Mathlib4 is listed as optional/not installed. ([GitHub][8])
+
+So: the skeleton is working, but I would not yet treat it as production. It is a research engine with several pieces still rough.
+
+---
+
+## What is not locked down yet
+
+The main missing/weak parts are:
+
+```txt
+1. FOL → Lean bridge for Navya-Nyāya is still the novel missing piece.
+2. Mathlib4 is not fully installed into the project yet.
+3. Bridge axioms extraction is marked placeholder.
+4. Informalization fallback is just word-overlap if no LLM is used.
+5. LeanSearch currently has a 403 warning.
+6. Some status naming is inconsistent: schema says PROVED/PARTIAL/etc., but code commits some claims as AXIOM.
+7. Sanskrit semantic validation still needs a stronger source/provenance layer.
+```
+
+The repo itself says the missing technical piece is roughly a 200-line FOL → Lean mapping for Navya-Nyāya operators like `avacchedaka`, `pratiyogin`, `anuyogin`, and `sambandha`. ([GitHub][9])
+
+So the project is not “done,” but it has the correct bones.
+
+---
+
+## How we can use it for Imaginarium
+
+Do **not** merge Sanskritree into hxrmxs. Use it as a separate service.
+
+```txt
+hxrmxs = conversation/path/pedagogy engine
+Sanskritree = truth/provenance/formal-boundary engine
+SourceRef = evidence anchor
+Truthcore = promoted, scoped claim object
+```
+
+The flow should be:
+
+```txt
+User conversation
+→ hxrmxs compresses into path/claim candidates
+→ SourceRefs are attached
+→ Sanskritree decomposes each claim
+→ primitives/residue/contradictions are returned
+→ hxrmxs uses that to generate better responses
+→ trace is saved
+```
+
+In practice:
+
+```txt
+ConversationPath creates:
+- ClaimCandidate
+- SourceRef
+- PedagogyMove
+- CompressionNode
+
+Sanskritree returns:
+- status
+- primitives used
+- residue
+- contradiction edges
+- bridge candidates
+- trace
+```
+
+Then hxrmxs can say:
+
+```txt
+This aligns structurally with Levin through CausalPower,
+but the “cosmic intelligence” part remains OUTSIDE_FORMAL/HOLLOW.
+```
+
+That is the voice we want.
+
+---
+
+## The key design move
+
+Use Sanskritree to classify every big Imaginarium claim into three layers:
+
+```txt
+Formal spine:
+What can be typed, decomposed, or proved?
+
+Source-bound doctrine:
+What is true only inside a tradition/text/commentary?
+
+Residue:
+What is metaphorical, experiential, empirical, poetic, or outside formalization?
+```
+
+Example:
+
+```txt
+Claim:
+“The avatar feeds experience back into the higher-order pattern.”
+
+Possible decomposition:
+- embodied system produces state changes
+- state changes alter higher-order model
+- feedback loop between local action and global pattern
+
+Potential primitives:
+- CausalPower
+- Feedback
+- Integration
+- Hierarchy
+- StateTransition
+
+Residue:
+- “avatar”
+- “higher-order pattern” unless defined
+- “soul/daimon” unless tradition-scoped
+```
+
+So it does not kill the imaginal language. It **keeps the poetry**, but separates it from formal commitment.
+
+---
+
+## What to build next
+
+The immediate integration should be very simple:
+
+```txt
+1. Add SourceRef table/object to hxrmxs.
+2. Add ClaimCandidate table/object.
+3. Add a Sanskritree adapter.
+4. Send claim candidates to Sanskritree.
+5. Store returned status/primitives/residue.
+6. Only promote to Truthcore after source/human/formal validation.
+```
+
+Minimal interface:
+
+```ts
+type SanskritreeRequest = {
+  claim: string
+  source_refs: string[]
+  tradition?: string
+  domain?: "dhamma" | "sanskrit" | "science" | "imaginarium" | "conversation"
+}
+
+type SanskritreeResponse = {
+  status: "PROVED" | "UNPROVED" | "PARTIAL" | "HOLLOW" | "OUTSIDE_FORMAL" | "REFUTED"
+  primitives: string[]
+  residue: string[]
+  contradictions: string[]
+  bridges: string[]
+  trace_id: string
+}
+```
+
+Then hxrmxs can use it during retrieval:
+
+```txt
+Retrieve not just similar conversations,
+but similar verified structures.
+```
+
+That means the system stops saying:
+
+```txt
+This sounds like Plato + Levin + Tantra.
+```
+
+And starts saying:
+
+```txt
+This shares the primitive Feedback/Integration structure with Levin,
+but the tantric identity claim remains tradition-scoped and not formally bridged.
+```
+
+That is the difference between Imaginarium becoming a serious engine versus becoming mystical RAG slop.
+
+---
+
+## Final verdict
+
+Sanskritree already has the **Truthcore spine**:
+
+```txt
+typed nodes
+scoped traditions
+source anchors
+status semantics
+decomposition
+residue
+negative controls
+bridge probing
+contradiction tracking
+trace emission
+Lean/human/LLM role separation
+```
+
+What hxrmxs/Imaginarium should borrow is not “Sanskrit.” It should borrow the **discipline**:
+
+```txt
+Every claim must become:
+source-grounded,
+scoped,
+decomposed,
+status-labelled,
+residue-aware,
+and contradiction-preserving.
+```
+
+So yes: Sanskritree is the right backend logic for Truthcore. Hxrmxs is the runtime/pedagogy layer. SourceRef is the provenance layer. Truthcore is what gets promoted only after Sanskritree-style classification.
+
+[1]: https://raw.githubusercontent.com/prx0r/sanskritree/main/THESIS.md "raw.githubusercontent.com"
+[2]: https://raw.githubusercontent.com/prx0r/sanskritree/main/proof_engine/db.py "raw.githubusercontent.com"
+[3]: https://raw.githubusercontent.com/prx0r/sanskritree/main/SCHEMA.md "raw.githubusercontent.com"
+[4]: https://raw.githubusercontent.com/prx0r/sanskritree/main/BUILD_ORDER.md "raw.githubusercontent.com"
+[5]: https://raw.githubusercontent.com/prx0r/sanskritree/main/proof_engine/decomposition.py "raw.githubusercontent.com"
+[6]: https://raw.githubusercontent.com/prx0r/sanskritree/main/proof_engine/bridge_probe.py "raw.githubusercontent.com"
+[7]: https://raw.githubusercontent.com/prx0r/sanskritree/main/proof_engine/informalization.py "raw.githubusercontent.com"
+[8]: https://raw.githubusercontent.com/prx0r/sanskritree/main/INSTALL_STATUS.md "raw.githubusercontent.com"
+[9]: https://raw.githubusercontent.com/prx0r/sanskritree/main/instruction.md "raw.githubusercontent.com"

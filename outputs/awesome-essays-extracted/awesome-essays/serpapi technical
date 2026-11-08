@@ -1,0 +1,2260 @@
+Yes. Below is the technical version I would hand directly to the coding agent working on `prx0r/livellm`.
+
+The main change I would make to the current repo is: **stop treating SerpApi as one generic `SearchHit[]` API**. Different SerpApi engines have materially different contracts. Preserve those structures and normalize only at the boundary where the rest of LiveLLM needs common semantics.
+
+Your current `SerpApiProvider` throws most of that information away by reducing everything to `news_results ?? organic_results`.
+
+# 1. Runtime stack
+
+Keep this boring:
+
+```json id="up6qoa"
+{
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "radar": "tsx src/cli.ts radar",
+    "replay": "tsx src/cli.ts radar --mode replay",
+    "record": "tsx src/cli.ts radar --mode record"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12",
+    "cheerio": "^1",
+    "p-limit": "^7",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7",
+    "@types/node": "^24",
+    "tsx": "^4",
+    "typescript": "^5",
+    "vitest": "^3"
+  }
+}
+```
+
+Directory structure:
+
+```text id="28yy5q"
+src/
+  cli.ts
+
+  serpapi/
+    client.ts
+    common.ts
+    account.ts
+    archive.ts
+    google-light.ts
+    news-light.ts
+    search-index.ts
+    trends.ts
+    trends-autocomplete.ts
+    ai-mode.ts
+    ai-overview.ts
+
+  discovery/
+    query-registry.ts
+    query-scheduler.ts
+    normalize-url.ts
+    prefilter.ts
+    candidate-builder.ts
+    expand-query.ts
+
+  sources/
+    fetch.ts
+    ssrf.ts
+    extract.ts
+    relevant-content.ts
+
+  facts/
+    schema.ts
+    extract-ai.ts
+    validate.ts
+    supersede.ts
+
+  db/
+    db.ts
+    migrations.ts
+    repositories/
+
+  pipeline/
+    radar.ts
+    investigate.ts
+    verify.ts
+
+tests/
+  unit/
+  contract/
+  replay/
+  integration/
+  e2e/
+
+fixtures/
+  serpapi/
+  sources/
+```
+
+---
+
+# 2. Don't use `Record<string, unknown>` as the main SerpApi contract
+
+Define common metadata first.
+
+```ts id="pn2j1w"
+import { z } from "zod";
+
+export const SerpMetadataSchema = z.object({
+  id: z.string(),
+  status: z.string(),
+  created_at: z.string().optional(),
+  processed_at: z.string().optional(),
+  total_time_taken: z.number().optional(),
+}).passthrough();
+
+export type SerpMetadata = z.infer<typeof SerpMetadataSchema>;
+
+export type FreshnessPolicy =
+  | "cache_ok"
+  | "force_fresh"
+  | "replay";
+
+export interface SerpObservation {
+  searchId: string;
+  engine: string;
+  freshness: FreshnessPolicy;
+  observedAt: string;
+  durationMs?: number;
+
+  localCacheHit: boolean;
+  serpApiCacheAllowed: boolean;
+
+  requestHash: string;
+  rawHash: string;
+}
+```
+
+Don't call this:
+
+```ts id="6kx64l"
+fromCache: boolean
+```
+
+as the current repo does.
+
+You need to distinguish:
+
+```text id="k8f2hj"
+replay
+local cache
+SerpApi request with cache permitted
+forced-fresh SerpApi request
+```
+
+---
+
+# 3. Generic SerpApi transport
+
+Keep engine-specific parsing out of transport.
+
+```ts id="ks76op"
+type SerpParams = Record<
+  string,
+  string | number | boolean | undefined
+>;
+
+export class SerpApiClient {
+  constructor(
+    private readonly apiKey: string,
+    private readonly baseUrl = "https://serpapi.com"
+  ) {}
+
+  async json<T>(
+    params: SerpParams,
+    options: {
+      timeoutMs?: number;
+    } = {}
+  ): Promise<T> {
+    const url = new URL("/search.json", this.baseUrl);
+
+    url.searchParams.set("api_key", this.apiKey);
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined) {
+        url.searchParams.set(key, String(value));
+      }
+    }
+
+    if (
+      params.no_cache === true &&
+      params.async === true
+    ) {
+      throw new Error(
+        "SerpApi does not allow async=true with no_cache=true"
+      );
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      options.timeoutMs ?? 15_000
+    );
+
+    try {
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          accept: "application/json",
+          "user-agent": "LiveLLM/1.0"
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error(`SerpApi HTTP ${res.status}`);
+      }
+
+      const body = await res.json();
+
+      if (
+        typeof body === "object" &&
+        body &&
+        "error" in body
+      ) {
+        throw new Error(String(body.error));
+      }
+
+      return body as T;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async markdown(
+    params: SerpParams,
+    options: {
+      timeoutMs?: number;
+    } = {}
+  ): Promise<string> {
+    const url = new URL("/search.md", this.baseUrl);
+
+    url.searchParams.set("api_key", this.apiKey);
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined) {
+        url.searchParams.set(key, String(value));
+      }
+    }
+
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(options.timeoutMs ?? 15_000),
+      headers: {
+        accept: "text/markdown"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`SerpApi HTTP ${res.status}`);
+    }
+
+    return res.text();
+  }
+}
+```
+
+This fixes an immediate flaw in current `livellm`: your adapter always calls `res.json()`, so letting callers pass `output=md` would break it.
+
+SerpApi supports Markdown on its APIs through `/search.md`, `output=md`, or the Markdown `Accept` header. It is specifically optimized for LLM/agent consumption. ([SerpApi][1])
+
+---
+
+# 4. Integration A — Account API / quota governor
+
+Endpoint:
+
+```http id="6m1n46"
+GET https://serpapi.com/account.json?api_key=...
+```
+
+SerpApi says this API is free and does not count against monthly quota. It currently exposes fields including `total_searches_left`, `plan_searches_left`, `this_month_usage`, `this_hour_searches`, and `account_rate_limit_per_hour`. ([SerpApi][2])
+
+Schema:
+
+```ts id="08ddis"
+export const AccountSchema = z.object({
+  plan_renewal_date: z.string().nullable().optional(),
+  searches_per_month: z.number().optional(),
+  plan_searches_left: z.number().optional(),
+  extra_credits: z.number().optional(),
+  total_searches_left: z.number(),
+  this_month_usage: z.number().optional(),
+  this_hour_searches: z.number().optional(),
+  last_hour_searches: z.number().optional(),
+  account_rate_limit_per_hour: z.number().optional()
+}).passthrough();
+```
+
+Governor:
+
+```ts id="yvbd71"
+export function allowedSearches(
+  account: z.infer<typeof AccountSchema>,
+  desired: number,
+  reserve = 20
+) {
+  const remaining = Math.max(
+    0,
+    account.total_searches_left - reserve
+  );
+
+  if (remaining === 0) return 0;
+  if (account.total_searches_left <= 50)
+    return Math.min(1, desired, remaining);
+
+  if (account.total_searches_left <= 100)
+    return Math.min(2, desired, remaining);
+
+  return Math.min(desired, remaining);
+}
+```
+
+You already have the start of this in `src/search/account.ts`; keep it but connect it to the actual scheduler.
+
+---
+
+# 5. Integration B — Google Light as the normal broad sensor
+
+Endpoint:
+
+```http id="r9mmfd"
+GET https://serpapi.com/search.json
+  ?engine=google_light
+  &q=("LLM API" OR "AI API") (pricing OR credits OR quota)
+  &hl=en
+  &gl=us
+```
+
+Google Light provides structured:
+
+```text id="v689yz"
+organic_results
+knowledge_graph
+related_questions
+related_searches
+top_stories
+```
+
+rather than only organic links. ([SerpApi][3])
+
+That is important.
+
+Your response should preserve those sections.
+
+```ts id="n8fjud"
+const OrganicResultSchema = z.object({
+  position: z.number().optional(),
+  title: z.string(),
+  link: z.string().url(),
+  snippet: z.string().optional(),
+  source: z.string().optional()
+}).passthrough();
+
+const RelatedQuestionSchema = z.object({
+  question: z.string()
+}).passthrough();
+
+const RelatedSearchSchema = z.object({
+  query: z.string().optional()
+}).passthrough();
+
+export const GoogleLightSchema = z.object({
+  search_metadata: SerpMetadataSchema,
+
+  organic_results:
+    z.array(OrganicResultSchema).default([]),
+
+  related_questions:
+    z.array(RelatedQuestionSchema).default([]),
+
+  related_searches:
+    z.array(RelatedSearchSchema).default([]),
+
+  top_stories:
+    z.array(z.record(z.string(), z.unknown())).default([])
+}).passthrough();
+```
+
+## Use JSON Restrictor
+
+Instead of downloading everything:
+
+```http id="f53g93"
+GET /search.json
+ ?engine=google_light
+ &q=...
+ &json_restrictor=search_metadata,organic_results[].{position,title,link,snippet,source},related_questions,related_searches,top_stories
+```
+
+SerpApi's JSON Restrictor supports selecting entire objects, individual array indexes, slices and selected fields such as:
+
+```text id="843buj"
+organic_results[].{title,snippet}
+```
+
+([SerpApi][4])
+
+That should be the deterministic discovery response.
+
+---
+
+# 6. Query expansion from Google Light
+
+Don't immediately send Related Questions to an LLM.
+
+Persist them as query candidates:
+
+```sql id="8ehm85"
+CREATE TABLE query_expansions (
+    expansion_id TEXT PRIMARY KEY,
+    parent_search_run_id TEXT NOT NULL,
+    source_type TEXT NOT NULL CHECK (
+        source_type IN (
+            'related_question',
+            'related_search',
+            'top_story'
+        )
+    ),
+    text TEXT NOT NULL,
+    canonical_text TEXT NOT NULL,
+    first_seen_at TEXT NOT NULL,
+    promoted INTEGER NOT NULL DEFAULT 0,
+    useful_runs INTEGER NOT NULL DEFAULT 0,
+    total_runs INTEGER NOT NULL DEFAULT 0
+);
+```
+
+Promotion policy:
+
+```text id="bwfaaz"
+new expansion
+→ dedupe
+→ keyword/value classifier
+→ if score >= threshold
+→ schedule at LOW frequency
+→ measure verified event yield
+→ promote/demote
+```
+
+That's how the query registry actually learns.
+
+---
+
+# 7. Integration C — Google News Light
+
+API:
+
+```http id="blpw4e"
+GET https://serpapi.com/search.json
+  ?engine=google_news_light
+  &q=("AI API" OR "LLM API") (pricing OR "free tier" OR quota)
+  &hl=en
+  &gl=us
+```
+
+News Light is explicitly the faster reduced Google News engine. Its response has `news_results` with fields including `position`, `title`, `link`, string `source`, `snippet`, and relative `date`. ([SerpApi][5])
+
+Schema:
+
+```ts id="6rfamy"
+export const NewsLightResultSchema = z.object({
+  position: z.number().optional(),
+  title: z.string(),
+  link: z.string().url(),
+  source: z.string().optional(),
+  snippet: z.string().optional(),
+  date: z.string().optional()
+}).passthrough();
+
+export const NewsLightSchema = z.object({
+  search_metadata: SerpMetadataSchema,
+  news_results:
+    z.array(NewsLightResultSchema).default([])
+}).passthrough();
+```
+
+Keep:
+
+```text id="op9b98"
+publishedAtRaw = "2 hours ago"
+```
+
+rather than pretending that's a reliable absolute timestamp.
+
+If you resolve it to an ISO timestamp, mark the result:
+
+```ts id="eyal8l"
+{
+  publishedAtRaw: "2 hours ago",
+  publishedAtEstimated: "...",
+  publishedTimePrecision: "relative"
+}
+```
+
+---
+
+# 8. Candidate schema
+
+Everything discovered through SerpApi starts unverified.
+
+```ts id="6ov77v"
+export const CandidateSchema = z.object({
+  candidateId: z.string(),
+
+  discoveredAt: z.string().datetime(),
+
+  origin: z.object({
+    engine: z.string(),
+    searchId: z.string(),
+    searchRunId: z.string(),
+    resultPosition: z.number().optional(),
+    resultUrl: z.string().url()
+  }),
+
+  providerHint: z.string().optional(),
+  productHint: z.string().optional(),
+
+  changeType: z.enum([
+    "price",
+    "quota",
+    "free_tier",
+    "subscription",
+    "credits",
+    "model_access",
+    "promotion",
+    "deprecation",
+    "unknown"
+  ]),
+
+  discoveryEvidence: z.object({
+    title: z.string(),
+    snippet: z.string().optional(),
+    source: z.string().optional()
+  }),
+
+  score: z.number(),
+
+  state: z.enum([
+    "discovered",
+    "prefiltered",
+    "investigating",
+    "official_source_found",
+    "fact_proposed",
+    "verified",
+    "rejected"
+  ])
+});
+```
+
+**Never put price values from search snippets straight into `facts`.**
+
+Your current architecture already gets this boundary right.
+
+---
+
+# 9. Integration D — Search Index deep
+
+This should be your **exploration engine**, not ordinary monitoring.
+
+API:
+
+```http id="7lajtm"
+GET https://serpapi.com/search.json
+  ?engine=search_index
+  &q=AI model API pricing free tier credits coding agent subscription
+  &mode=deep
+  &num=25
+```
+
+Official Search Index docs currently specify:
+
+* `engine=search_index`
+* `num` controls result count, default `10`
+* `start` controls pagination
+* `mode=deep` increases recall by decomposing the request into multiple aspects and fan-out subqueries. ([SerpApi][6])
+
+Schema:
+
+```ts id="3qjnlj"
+export const SearchIndexSchema = z.object({
+  search_metadata: SerpMetadataSchema,
+  organic_results: z.array(
+    z.object({
+      position: z.number().optional(),
+      title: z.string(),
+      link: z.string().url(),
+      snippet: z.string().optional()
+    }).passthrough()
+  ).default([])
+}).passthrough();
+```
+
+Run experiments at:
+
+```text id="6ij50p"
+num=10
+num=25
+num=50
+```
+
+and measure:
+
+```text id="vjpe0v"
+new domains/search
+new provider candidates/search
+verified events/search
+false candidate rate
+latency
+```
+
+Don't assume `50` is automatically better.
+
+---
+
+# 10. Search run persistence
+
+Extend your existing `search_runs`. It already contains useful fields such as SerpApi search ID, result count, candidates, verified-change count and raw storage reference.
+
+I would use:
+
+```sql id="8mmu31"
+CREATE TABLE search_runs_v2 (
+    search_run_id TEXT PRIMARY KEY,
+
+    query_id TEXT,
+    query_version INTEGER,
+
+    engine TEXT NOT NULL,
+    request_json TEXT NOT NULL,
+    request_hash TEXT NOT NULL,
+
+    freshness_policy TEXT NOT NULL,
+    output_format TEXT NOT NULL,
+
+    serpapi_search_id TEXT,
+    serpapi_status TEXT,
+
+    submitted_at TEXT NOT NULL,
+    completed_at TEXT,
+
+    duration_ms INTEGER,
+
+    local_cache_hit INTEGER NOT NULL DEFAULT 0,
+    serpapi_cache_allowed INTEGER NOT NULL DEFAULT 1,
+
+    quota_before INTEGER,
+    quota_after INTEGER,
+
+    response_hash TEXT,
+
+    result_count INTEGER NOT NULL DEFAULT 0,
+    new_url_count INTEGER NOT NULL DEFAULT 0,
+    candidate_count INTEGER NOT NULL DEFAULT 0,
+    verified_change_count INTEGER NOT NULL DEFAULT 0,
+
+    raw_storage_ref TEXT,
+
+    error_code TEXT,
+    error_message TEXT
+);
+```
+
+---
+
+# 11. Integration E — Search Archive
+
+Every real SerpApi search should store:
+
+```text id="08nuju"
+search_metadata.id
+```
+
+Archive request:
+
+```http id="ho586v"
+GET https://serpapi.com/searches/{SEARCH_ID}.json
+    ?api_key=...
+```
+
+Search Archive can retrieve JSON or HTML for completed searches for up to 31 days; it can also retrieve searches still queued/processing. ([SerpApi][7])
+
+Client:
+
+```ts id="eihwsw"
+export class SerpArchive {
+  constructor(
+    private apiKey: string,
+    private baseUrl = "https://serpapi.com"
+  ) {}
+
+  async get(searchId: string) {
+    const url = new URL(
+      `/searches/${encodeURIComponent(searchId)}.json`,
+      this.baseUrl
+    );
+
+    url.searchParams.set("api_key", this.apiKey);
+
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error(
+        `Archive HTTP ${res.status}`
+      );
+    }
+
+    return res.json();
+  }
+}
+```
+
+Record fixture immediately:
+
+```text id="5yblqu"
+canonical request
+raw SerpApi JSON
+normalized representation
+search ID
+response hash
+retrieved timestamp
+```
+
+Do not depend on Archive retention for permanent reproducibility.
+
+---
+
+# 12. Forced freshness escalation
+
+For broad discovery:
+
+```text id="o9afbk"
+freshness = cache_ok
+```
+
+For a candidate that matters:
+
+```text id="g967u9"
+freshness = force_fresh
+```
+
+which maps to:
+
+```http id="7n9us6"
+no_cache=true
+```
+
+SerpApi documents that an exactly matching search can be served from its one-hour cache and cached searches do not count against the monthly searches. `no_cache=true` bypasses that cache, while `no_cache` and `async` cannot be combined. ([SerpApi][6])
+
+Implement:
+
+```ts id="ocr0l7"
+function freshnessParams(
+  policy: FreshnessPolicy
+) {
+  switch (policy) {
+    case "cache_ok":
+      return {};
+
+    case "force_fresh":
+      return { no_cache: true };
+
+    case "replay":
+      throw new Error(
+        "Replay must not call SerpApi"
+      );
+  }
+}
+```
+
+---
+
+# 13. Integration F — Google Trends entity resolution
+
+First resolve model/provider names.
+
+```http id="7k3jex"
+GET https://serpapi.com/search.json
+  ?engine=google_trends_autocomplete
+  &q=Claude
+  &hl=en
+```
+
+SerpApi has a dedicated Trends Autocomplete engine for retrieving suggested Trend searches/topics. ([SerpApi][8])
+
+Persist:
+
+```sql id="p3q24x"
+CREATE TABLE trend_entities (
+    entity_id TEXT PRIMARY KEY,
+    canonical_name TEXT NOT NULL,
+
+    trends_query TEXT NOT NULL,
+    trends_query_type TEXT NOT NULL,
+
+    resolved_from TEXT NOT NULL,
+    resolution_search_id TEXT,
+
+    confidence REAL NOT NULL,
+    created_at TEXT NOT NULL
+);
+```
+
+Example:
+
+```json id="rwqoi9"
+{
+  "entity_id": "model:claude",
+  "canonical_name": "Claude",
+  "trends_query": "/g/...",
+  "trends_query_type": "topic",
+  "resolved_from": "Claude",
+  "confidence": 0.95
+}
+```
+
+Do this because comparing ambiguous raw words is a weak analytics system.
+
+---
+
+# 14. Integration G — Trends time series
+
+API:
+
+```http id="19c0q3"
+GET https://serpapi.com/search.json
+ ?engine=google_trends
+ &q=Claude,ChatGPT,Gemini,Kimi,Qwen
+ &date=now 7-d
+ &data_type=TIMESERIES
+```
+
+Google Trends allows up to five queries for `TIMESERIES`; `RELATED_QUERIES` and related-topic modes accept a single query. ([SerpApi][9])
+
+Normalized schema:
+
+```ts id="osgoh5"
+const TrendValueSchema = z.object({
+  query: z.string(),
+  query_index: z.number().optional(),
+  value: z.string(),
+  extracted_value: z.number()
+});
+
+export const TrendsTimelineSchema = z.object({
+  search_metadata: SerpMetadataSchema,
+
+  interest_over_time: z.object({
+    timeline_data: z.array(
+      z.object({
+        date: z.string(),
+        timestamp: z.string(),
+        values: z.array(TrendValueSchema)
+      })
+    )
+  })
+}).passthrough();
+```
+
+Persist observations:
+
+```sql id="8e3897"
+CREATE TABLE trend_observations (
+    observation_id TEXT PRIMARY KEY,
+    entity_id TEXT NOT NULL,
+    search_run_id TEXT NOT NULL,
+    window TEXT NOT NULL,
+
+    timestamp INTEGER NOT NULL,
+    value REAL NOT NULL,
+
+    observed_at TEXT NOT NULL,
+
+    UNIQUE(entity_id, window, timestamp)
+);
+```
+
+---
+
+# 15. Integration H — Trends related queries
+
+```http id="zbbv01"
+GET https://serpapi.com/search.json
+ ?engine=google_trends
+ &q=Claude
+ &date=now 7-d
+ &data_type=RELATED_QUERIES
+```
+
+Results contain separate:
+
+```text id="bpgosx"
+rising
+top
+```
+
+with `query`, display `value`, and numeric `extracted_value`. ([SerpApi][10])
+
+Schema:
+
+```ts id="wtnj4z"
+const RelatedTrendQuery = z.object({
+  query: z.string(),
+  value: z.string(),
+  extracted_value: z.number().optional(),
+  link: z.string().optional()
+});
+
+export const RelatedQueriesSchema = z.object({
+  related_queries: z.object({
+    rising: z.array(RelatedTrendQuery).default([]),
+    top: z.array(RelatedTrendQuery).default([])
+  })
+});
+```
+
+Use:
+
+```text id="1xhdpq"
+rising query
+       ↓
+commercial relevance classifier
+       ↓
+query candidate
+       ↓
+Google Light/News Light radar
+```
+
+So if:
+
+```text id="fv0edk"
+"claude api limits" +400%
+```
+
+appears, the radar can increase coverage automatically.
+
+---
+
+# 16. AI structured fact extraction
+
+For an official provider page, don't ask:
+
+> “What's important?”
+
+Ask for a constrained schema.
+
+```ts id="s6apcc"
+export const ProposedFactSchema = z.object({
+  entity: z.string(),
+
+  field: z.enum([
+    "input_price_usd_per_million",
+    "output_price_usd_per_million",
+    "cached_input_price_usd_per_million",
+    "monthly_price_usd",
+    "included_credit_usd",
+    "requests_per_day",
+    "requests_per_minute",
+    "context_tokens",
+    "promotion_end_at",
+    "availability"
+  ]),
+
+  value: z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.null()
+  ]),
+
+  unit: z.string().nullable(),
+
+  evidence: z.object({
+    quote: z.string().max(500),
+    selectorHint: z.string().optional()
+  }),
+
+  confidence: z.number().min(0).max(1)
+});
+
+export const FactExtractionSchema = z.object({
+  facts: z.array(ProposedFactSchema),
+  ambiguities: z.array(z.string()).default([])
+});
+```
+
+Model output **never writes DB directly**.
+
+---
+
+# 17. Deterministic fact validator
+
+Pipeline:
+
+```ts id="doycis"
+async function validateProposedFact(
+  proposal: ProposedFact,
+  evidenceDocument: EvidenceDocument
+): Promise<ValidationResult> {
+
+  if (
+    !evidenceDocument.text.includes(
+      proposal.evidence.quote
+    )
+  ) {
+    return {
+      accepted: false,
+      reason: "evidence_quote_not_present"
+    };
+  }
+
+  if (
+    proposal.field.endsWith("_usd") &&
+    typeof proposal.value !== "number"
+  ) {
+    return {
+      accepted: false,
+      reason: "numeric_field_not_numeric"
+    };
+  }
+
+  // field-specific range checks...
+  // currency normalization...
+  // unit normalization...
+  // authority checks...
+
+  return {
+    accepted: true
+  };
+}
+```
+
+Then transactions implement temporal fact supersession.
+
+```sql id="bo30vh"
+UPDATE facts
+SET valid_to = :validFrom
+WHERE entity_id = :entityId
+  AND field = :field
+  AND valid_to IS NULL;
+
+INSERT INTO facts (
+    fact_id,
+    entity_id,
+    field,
+    value_json,
+    unit,
+    evidence_id,
+    valid_from,
+    confidence,
+    verification_state
+) VALUES (...);
+```
+
+Only do this when the new validated value differs.
+
+---
+
+# 18. Source fetch must be much harder than current code
+
+Current `pollHttpSource()` hashes any non-304 body, meaning a `503` page can look like a market change.
+
+Use a result union:
+
+```ts id="7ydy0d"
+type PollResult =
+  | {
+      kind: "not_modified";
+      status: 304;
+    }
+  | {
+      kind: "content";
+      status: number;
+      body: string;
+    }
+  | {
+      kind: "gone";
+      status: 404 | 410;
+    }
+  | {
+      kind: "rate_limited";
+      status: 429;
+      retryAfter?: string;
+    }
+  | {
+      kind: "transient_error";
+      status?: number;
+      reason: string;
+    };
+```
+
+Only:
+
+```text id="pnnqqc"
+2xx content
+```
+
+enters content comparison.
+
+A 404/410 may emit:
+
+```text id="8u8q2x"
+SOURCE_UNAVAILABLE
+```
+
+but does not automatically delete facts.
+
+---
+
+# 19. Relevant content extraction
+
+Current implementation hashes the normalized entire page.
+
+Replace:
+
+```text id="r8aw0q"
+regex-remove-tags
+```
+
+with:
+
+```ts id="0xfkum"
+interface SourceExtractor {
+  matches(url: URL): boolean;
+
+  extract(html: string): {
+    relevantText: string;
+    sections: Array<{
+      id: string;
+      text: string;
+    }>;
+  };
+}
+```
+
+Example:
+
+```ts id="i0f81g"
+export class GenericPricingExtractor
+implements SourceExtractor {
+
+  matches() {
+    return true;
+  }
+
+  extract(html: string) {
+    const $ = load(html);
+
+    $("script,style,noscript,nav,footer").remove();
+
+    const candidates = [
+      ...$("table").toArray(),
+      ...$(
+        '[class*="pricing"],' +
+        '[id*="pricing"],' +
+        '[class*="plan"],' +
+        '[class*="rate-limit"]'
+      ).toArray()
+    ];
+
+    const relevantText = candidates
+      .map(el => $(el).text())
+      .join("\n")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return {
+      relevantText,
+      sections: []
+    };
+  }
+}
+```
+
+Then hash:
+
+```text id="vtv2mb"
+rawHash
+normalizedHash
+relevantHash
+```
+
+as your existing design intended.
+
+---
+
+# 20. Integration I — Google AI Mode truth audit
+
+Initial call:
+
+```http id="htbbv8"
+GET https://serpapi.com/search.json
+ ?engine=google_ai_mode
+ &q=What is the current API price for MODEL?
+ &hl=en
+ &gl=us
+ &continuable=true
+```
+
+`continuable=true` returns a `subsequent_request_token`; reuse it with another `q` and matching localization to continue the conversation. ([SerpApi][11])
+
+Response provides rich structures including:
+
+```text id="6j9raq"
+text_blocks
+references
+reconstructed_markdown
+subsequent_request_token
+```
+
+and `text_blocks` link back to the root references by `reference_indexes`. ([SerpApi][12])
+
+Schema:
+
+```ts id="0bv14m"
+const AiReferenceSchema = z.object({
+  title: z.string().optional(),
+  link: z.string().optional(),
+  snippet: z.string().optional(),
+  source: z.string().optional(),
+  index: z.number()
+}).passthrough();
+
+const TextBlockSchema: z.ZodType<any> =
+  z.lazy(() =>
+    z.object({
+      type: z.string(),
+      snippet: z.string().optional(),
+      reference_indexes:
+        z.array(z.number()).optional(),
+
+      text_blocks:
+        z.array(TextBlockSchema).optional(),
+
+      list: z.array(z.unknown()).optional(),
+      table: z.array(z.unknown()).optional()
+    }).passthrough()
+  );
+
+export const AiModeSchema = z.object({
+  search_metadata: SerpMetadataSchema,
+
+  text_blocks:
+    z.array(TextBlockSchema).default([]),
+
+  reconstructed_markdown:
+    z.string().optional(),
+
+  references:
+    z.array(AiReferenceSchema).default([]),
+
+  subsequent_request_token:
+    z.string().optional()
+}).passthrough();
+```
+
+---
+
+# 21. AI truth audit schema
+
+```sql id="7owxu9"
+CREATE TABLE ai_claim_audits (
+    audit_id TEXT PRIMARY KEY,
+
+    entity_id TEXT NOT NULL,
+    question TEXT NOT NULL,
+
+    ai_engine TEXT NOT NULL,
+
+    serpapi_search_id TEXT NOT NULL,
+
+    claim_field TEXT NOT NULL,
+    claimed_value_json TEXT,
+
+    canonical_fact_id TEXT,
+    canonical_value_json TEXT,
+
+    result TEXT NOT NULL CHECK (
+        result IN (
+          'match',
+          'stale',
+          'contradicted',
+          'unsupported',
+          'unparseable'
+        )
+    ),
+
+    evaluated_at TEXT NOT NULL
+);
+```
+
+Example:
+
+```json id="9jr1jm"
+{
+  "field": "input_price_usd_per_million",
+  "ai_claim": 0.40,
+  "verified_fact": 0.25,
+  "status": "stale"
+}
+```
+
+Do not have an LLM arbitrarily decide `stale`.
+
+Use deterministic typed comparison after extracting the AI Mode claim.
+
+---
+
+# 22. AI Mode follow-up test
+
+If first answer is stale:
+
+```http id="ho5or0"
+GET /search.json
+ ?engine=google_ai_mode
+ &q=Has that price changed recently?
+ &subsequent_request_token=TOKEN
+```
+
+Then record:
+
+```text id="g9d3yk"
+initial claim
+initial correctness
+
+follow-up claim
+follow-up correctness
+
+did it self-correct?
+```
+
+Now you have a measurable benchmark:
+
+```text id="evttv2"
+AI Mode initial freshness:     72%
+after prompted re-check:       91%
+```
+
+That's a real experiment.
+
+---
+
+# 23. Integration J — Google AI Overview
+
+First use ordinary Google Search when specifically running the AI-perception benchmark:
+
+```http id="e27zbc"
+GET /search.json
+ ?engine=google
+ &q=current MODEL API pricing
+ &no_cache=true
+```
+
+Sometimes `ai_overview` is embedded directly.
+
+Sometimes SerpApi gives:
+
+```json id="z8hbma"
+{
+  "ai_overview": {
+    "page_token": "...",
+    "serpapi_link": "..."
+  }
+}
+```
+
+Then immediately call:
+
+```http id="uqntgb"
+GET /search.json
+ ?engine=google_ai_overview
+ &page_token=TOKEN
+```
+
+The dedicated AI Overview API requires that page token. ([SerpApi][13])
+
+There is currently a small documentation inconsistency: the dedicated API page says the token expires within about **1 minute**, while another official AI Overview results page describes it as expiring within **4 minutes**. Treat it operationally as **immediate-use** and don't enqueue it for later. ([SerpApi][13])
+
+Implement:
+
+```ts id="rmd0er"
+if (search.ai_overview?.page_token) {
+  await fetchAiOverviewImmediately(
+    search.ai_overview.page_token
+  );
+}
+```
+
+No queue.
+
+No retry 20 minutes later.
+
+---
+
+# 24. Markdown should be a separate LLM path
+
+This is a strong SerpApi-specific optimization.
+
+Deterministic software:
+
+```text id="i60q24"
+JSON + JSON Restrictor
+```
+
+LLM reasoning:
+
+```text id="iyv179"
+Markdown + JSON Restrictor
+```
+
+For example:
+
+```http id="yplr2m"
+GET https://serpapi.com/search.md
+ ?engine=google_light
+ &q=...
+ &json_restrictor=organic_results
+```
+
+SerpApi's published example shows full JSON at 24,723 tokens, Markdown at 6,435, and Markdown plus restricting to organic results at 1,298 tokens for that example. That's not a guaranteed reduction for every query, but it demonstrates why the combination is useful. ([SerpApi][14])
+
+Persist your own measurements:
+
+```sql id="x4u1pc"
+CREATE TABLE payload_metrics (
+    metric_id TEXT PRIMARY KEY,
+    search_run_id TEXT NOT NULL,
+
+    json_bytes INTEGER,
+    restricted_json_bytes INTEGER,
+
+    markdown_bytes INTEGER,
+
+    llm_input_tokens INTEGER,
+
+    created_at TEXT NOT NULL
+);
+```
+
+Then display real project-specific savings.
+
+---
+
+# 25. Core radar orchestration
+
+The actual function should look roughly like:
+
+```ts id="jfin73"
+export async function runRadar(ctx: Context) {
+  const account =
+    await ctx.account.get();
+
+  const budget = allowedSearches(
+    account,
+    ctx.config.dailySearchBudget,
+    ctx.config.reserve
+  );
+
+  if (budget === 0) {
+    return { status: "quota_guard" };
+  }
+
+  const dueQueries =
+    await ctx.scheduler.select(budget);
+
+  const runResults = [];
+
+  for (const query of dueQueries) {
+    const search =
+      await ctx.discovery.run(query);
+
+    const results =
+      await ctx.discovery.persist(search);
+
+    const candidates =
+      await ctx.candidates.fromSearchResults(results);
+
+    for (const candidate of candidates) {
+      const investigation =
+        await ctx.investigator.investigate(candidate);
+
+      if (!investigation.officialSource) {
+        continue;
+      }
+
+      const observation =
+        await ctx.sources.observe(
+          investigation.officialSource
+        );
+
+      if (!observation.materiallyChanged) {
+        continue;
+      }
+
+      const proposals =
+        await ctx.ai.extractFacts(observation);
+
+      const validated =
+        await ctx.factValidator.validate(
+          proposals,
+          observation
+        );
+
+      const changes =
+        await ctx.facts.apply(validated);
+
+      await ctx.derivations.recompute(changes);
+    }
+
+    runResults.push(search);
+  }
+
+  return runResults;
+}
+```
+
+This vertical slice matters more than adding another API.
+
+---
+
+# 26. Testing architecture
+
+Do **not** let normal tests hit SerpApi.
+
+You already correctly planned replay-based deterministic testing.
+
+Use five levels:
+
+| Suite             | Live internet | SerpApi credits | Purpose                 |
+| ----------------- | ------------: | --------------: | ----------------------- |
+| Unit              |            No |               0 | Pure algorithms         |
+| Adapter contract  |            No |               0 | Fixture → schema        |
+| Replay pipeline   |            No |               0 | Full discovery          |
+| Local integration |            No |               0 | SQLite + transactions   |
+| Live smoke        |           Yes |             1–3 | Manual/pre-release only |
+
+---
+
+# 27. Unit tests — canonical request
+
+```ts id="4ybwtl"
+import { describe, expect, it } from "vitest";
+import {
+  canonicalRequest,
+  requestHash
+} from "../../src/search/canonical-request";
+
+describe("canonicalRequest", () => {
+  it("ignores object key ordering", () => {
+    const a = {
+      engine: "google_light",
+      q: "foo",
+      params: { gl: "us", hl: "en" }
+    };
+
+    const b = {
+      engine: "google_light",
+      q: "foo",
+      params: { hl: "en", gl: "us" }
+    };
+
+    expect(requestHash(a))
+      .toBe(requestHash(b));
+  });
+
+  it("normalizes whitespace", () => {
+    expect(
+      requestHash({
+        engine: "google_light",
+        q: "AI   API pricing"
+      })
+    ).toBe(
+      requestHash({
+        engine: "google_light",
+        q: "AI API pricing"
+      })
+    );
+  });
+
+  it("changes when localization changes", () => {
+    const us = requestHash({
+      engine: "google_light",
+      q: "pricing",
+      params: { gl: "us" }
+    });
+
+    const gb = requestHash({
+      engine: "google_light",
+      q: "pricing",
+      params: { gl: "gb" }
+    });
+
+    expect(us).not.toBe(gb);
+  });
+});
+```
+
+---
+
+# 28. Unit tests — invalid SerpApi parameters
+
+```ts id="997goj"
+it("rejects async + forced fresh", async () => {
+  await expect(
+    client.json({
+      engine: "search_index",
+      q: "AI pricing",
+      async: true,
+      no_cache: true
+    })
+  ).rejects.toThrow(
+    /async=true.*no_cache=true/
+  );
+});
+```
+
+This corresponds to SerpApi's documented constraint. ([SerpApi][6])
+
+---
+
+# 29. Contract test — News Light
+
+Fixture:
+
+```json id="b8q94n"
+{
+  "search_metadata": {
+    "id": "abc",
+    "status": "Success"
+  },
+  "news_results": [
+    {
+      "position": 1,
+      "title": "Provider cuts API prices",
+      "link": "https://example.com/news",
+      "source": "Example News",
+      "snippet": "Prices changed today",
+      "date": "2 hours ago"
+    }
+  ]
+}
+```
+
+Test:
+
+```ts id="f2rt7l"
+it("normalizes News Light", () => {
+  const parsed =
+    NewsLightSchema.parse(fixture);
+
+  expect(parsed.news_results[0]).toMatchObject({
+    position: 1,
+    source: "Example News",
+    date: "2 hours ago"
+  });
+});
+```
+
+---
+
+# 30. Contract test — Full News source bug
+
+Current generic code would turn an object into `"[object Object]"`. Fix it.
+
+Fixture:
+
+```json id="bg6adj"
+{
+  "source": {
+    "name": "Tech publication",
+    "authors": ["Alice"]
+  }
+}
+```
+
+Test:
+
+```ts id="uxviq1"
+expect(
+  normalizeNewsSource(fixture.source)
+).toEqual({
+  name: "Tech publication",
+  authors: ["Alice"]
+});
+```
+
+Never:
+
+```text id="1deht9"
+"[object Object]"
+```
+
+---
+
+# 31. Cache tests
+
+```ts id="9i3lql"
+it("singleflights identical concurrent requests", async () => {
+  let calls = 0;
+
+  const inner = {
+    search: async () => {
+      calls++;
+      await new Promise(r =>
+        setTimeout(r, 20)
+      );
+
+      return response;
+    }
+  };
+
+  const cached =
+    new CachedSearchProvider(
+      inner,
+      memoryCache
+    );
+
+  await Promise.all([
+    cached.search(req),
+    cached.search(req),
+    cached.search(req)
+  ]);
+
+  expect(calls).toBe(1);
+});
+```
+
+Your existing implementation already has the `inflight` map needed for this.
+
+---
+
+# 32. Source polling tests
+
+Required:
+
+```text id="k0s77z"
+304
+→ no investigation
+
+200 + same relevant hash
+→ no investigation
+
+200 + changed raw, same relevant
+→ cosmetic only
+
+200 + changed relevant
+→ investigate
+
+404
+→ source unavailable, not price change
+
+429
+→ backoff
+
+503
+→ transient error, not price change
+```
+
+Example:
+
+```ts id="pa1lsi"
+it("does not interpret 503 as content change", async () => {
+  mockFetchResponse(503, "maintenance");
+
+  const result =
+    await pollHttpSource(state);
+
+  expect(result.kind)
+    .toBe("transient_error");
+});
+```
+
+---
+
+# 33. Fact supersession tests
+
+Start:
+
+```text id="20rogr"
+fact A
+price=0.40
+valid_from=t1
+valid_to=NULL
+```
+
+Apply:
+
+```text id="gwm28p"
+price=0.25
+at t2
+```
+
+Expected:
+
+```text id="omv0n6"
+fact A
+price=0.40
+valid_to=t2
+
+fact B
+price=0.25
+valid_from=t2
+valid_to=NULL
+
+CHANGE_EVENT
+before=0.40
+after=0.25
+```
+
+Test the transaction.
+
+Also:
+
+```text id="225si5"
+new observation says 0.40 again
+```
+
+must **not** create another fact.
+
+---
+
+# 34. AI extraction adversarial tests
+
+Official text:
+
+```text id="ppkgue"
+Input tokens: $0.25 / million
+Output tokens: $1.25 / million
+```
+
+Expected proposals:
+
+```json id="tqz7wf"
+[
+  {
+    "field": "input_price_usd_per_million",
+    "value": 0.25
+  },
+  {
+    "field": "output_price_usd_per_million",
+    "value": 1.25
+  }
+]
+```
+
+Then test difficult cases:
+
+```text id="b20rr3"
+"$0.25 per 1M cached tokens"
+"$25 per 100M tokens"
+"Free until September 10"
+"$10/mo includes $60 credit"
+"Up to 1,000 requests/day"
+"starting at $5"
+```
+
+The AI can propose interpretations.
+
+Your deterministic unit-normalizer must decide whether the proposal is valid.
+
+---
+
+# 35. Replay E2E test
+
+Fixture should contain:
+
+```text id="g4e8a5"
+News Light fixture
+↓
+new candidate
+↓
+official pricing-page fixture
+↓
+AI extraction fixture/mock
+↓
+fact change
+```
+
+Test:
+
+```ts id="6r62te"
+it("discovers and verifies a price change", async () => {
+  const result = await runRadar(
+    testContext({
+      searchMode: "replay"
+    })
+  );
+
+  const currentFact =
+    db.prepare(`
+      SELECT *
+      FROM facts
+      WHERE entity_id = ?
+        AND field = ?
+        AND valid_to IS NULL
+    `).get(
+      "provider:model",
+      "input_price_usd_per_million"
+    );
+
+  expect(
+    JSON.parse(currentFact.value_json)
+  ).toBe(0.25);
+
+  const event =
+    db.prepare(`
+      SELECT *
+      FROM change_events
+      WHERE entity_id = ?
+    `).get("provider:model");
+
+  expect(
+    JSON.parse(event.before_json)
+  ).toBe(0.40);
+
+  expect(
+    JSON.parse(event.after_json)
+  ).toBe(0.25);
+});
+```
+
+This is the single most important test in the repo.
+
+---
+
+# 36. Search Index evaluation test
+
+Don't assert that one search engine is “better.”
+
+Use a frozen benchmark corpus.
+
+```ts id="roumpc"
+type Evaluation = {
+  engine: string;
+  searches: number;
+  urls: number;
+  unseenDomains: number;
+  candidates: number;
+  verifiedEvents: number;
+  falseCandidates: number;
+};
+```
+
+Calculate:
+
+```ts id="uvsru1"
+verifiedEventsPerSearch
+newDomainsPerSearch
+candidatePrecision
+```
+
+Then compare:
+
+```text id="1m9mxm"
+google_light
+google_news_light
+search_index
+search_index deep
+```
+
+This is judge-worthy technical evidence.
+
+---
+
+# 37. Trends tests
+
+Contract rules:
+
+```ts id="7f7xgi"
+it("permits <=5 TIMESERIES queries", () => {});
+
+it("rejects >5 TIMESERIES queries", () => {});
+
+it("rejects multiple RELATED_QUERIES queries", () => {});
+```
+
+Those constraints are in the current Trends API contract. ([SerpApi][9])
+
+Trend calculation test:
+
+```ts id="mvl3eh"
+export function momentum(values: number[]) {
+  const midpoint =
+    Math.floor(values.length / 2);
+
+  const early =
+    mean(values.slice(0, midpoint));
+
+  const late =
+    mean(values.slice(midpoint));
+
+  return early === 0
+    ? null
+    : (late - early) / early;
+}
+```
+
+Keep **search interest** separate from economic quality.
+
+---
+
+# 38. AI Mode truth-audit tests
+
+Fixture:
+
+```json id="1mi747"
+{
+  "text_blocks": [
+    {
+      "type": "paragraph",
+      "snippet":
+        "Provider X charges $0.40 per million input tokens.",
+      "reference_indexes": [0]
+    }
+  ],
+  "references": [
+    {
+      "index": 0,
+      "title": "Pricing",
+      "link": "https://provider.example/pricing"
+    }
+  ]
+}
+```
+
+Canonical fact:
+
+```text id="hsd9gq"
+0.25
+```
+
+Expected:
+
+```text id="q0mb8u"
+AI claim = 0.40
+fact = 0.25
+audit = stale/contradicted
+```
+
+Also test:
+
+```text id="53wzje"
+AI has no numeric claim
+→ unparseable
+
+AI gives exact current value
+→ match
+
+AI makes a claim for field with no canonical fact
+→ unsupported
+```
+
+---
+
+# 39. AI Overview token handling test
+
+Mock first Google response:
+
+```json id="mbjyjp"
+{
+  "ai_overview": {
+    "page_token": "TOKEN"
+  }
+}
+```
+
+Assert your code invokes the AI Overview endpoint **immediately in the same orchestration call**, not through the normal queue.
+
+```ts id="vw74li"
+it(
+  "resolves AI Overview page token immediately",
+  async () => {
+    await auditGoogleSearch(query);
+
+    expect(aiOverviewClient.calls)
+      .toHaveLength(1);
+
+    expect(
+      aiOverviewClient.calls[0]
+    ).toEqual({
+      engine: "google_ai_overview",
+      page_token: "TOKEN"
+    });
+  }
+);
+```
+
+---
+
+# 40. Live smoke tests
+
+These are the only tests allowed to spend credits.
+
+Run manually:
+
+```text id="o76jin"
+SERPAPI_LIVE_TESTS=1 npm run test:live
+```
+
+Never CI by default.
+
+Tests:
+
+```text id="e4z1gz"
+Account API returns numeric balance.
+
+Google Light:
+search_metadata.status == Success.
+
+News Light:
+at least response parses correctly.
+
+Search Index:
+normal + deep parse.
+
+Archive:
+run one cached-ok search,
+then retrieve it by search ID.
+
+Trends:
+one TIMESERIES query parses.
+
+AI Mode:
+one simple query parses references.
+```
+
+No assertions on the actual current ranking/result text because live search is nondeterministic.
+
+---
+
+# 41. CI
+
+GitHub workflow:
+
+```yaml id="2xn9ny"
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+```
+
+No SerpApi key needed.
+
+That is important.
+
+---
+
+# 42. The exact implementation order
+
+I would implement in this sequence:
+
+1. `package.json`, TS config, CLI, Vitest.
+2. Generic `SerpApiClient`.
+3. Zod schemas for Account, Google Light, News Light, Search Index.
+4. SQLite migrations + repositories.
+5. Real `SqliteCacheStore`.
+6. Replay fixture loader.
+7. Account quota governor.
+8. Google Light and News Light discovery.
+9. Candidate persistence/dedupe.
+10. hardened official source fetcher.
+11. relevant-content hashing.
+12. AI fact extraction.
+13. deterministic fact validation.
+14. temporal fact supersession.
+15. change event creation.
+16. one replay E2E test covering the whole pipeline.
+17. one real `npm run radar`.
+18. Search Archive provenance.
+19. Search Index deep benchmark.
+20. JSON Restrictor + Markdown metrics.
+21. Trends Autocomplete.
+22. Trends time series + related queries.
+23. AI Mode truth audit.
+24. AI Overview audit.
+25. public Live Radar/Truth dashboard.
+
+Only after those work would I add adaptive/Bayesian scheduling.
+
+---
+
+## The technical bar I would target
+
+A judge should be able to clone it and run:
+
+```bash id="w8iu09"
+npm ci
+npm test
+npm run replay
+```
+
+and see:
+
+```text id="7q91s0"
+SearchRun
+  ↓
+12 SearchResults
+  ↓
+3 Candidates
+  ↓
+1 official source
+  ↓
+2 proposed facts
+  ↓
+2 validated facts
+  ↓
+1 FACT_CHANGED
+  ↓
+economic derivation recomputed
+```
+
+Then with a SerpApi key:
+
+```bash id="3f70up"
+npm run radar
+```
+
+should execute the **same pipeline against the live web**.
+
+That is the distinction between an impressive architecture document and an impressive SerpApi submission. The current repo already has the right conceptual data model; the work now is to make these exact contracts executable and prove them with replayable tests.
+
+[1]: https://serpapi.com/markdown-output?utm_source=chatgpt.com "SerpApi: Markdown Output for AI Agents"
+[2]: https://serpapi.com/account-api?utm_source=chatgpt.com "Account API - SerpApi"
+[3]: https://serpapi.com/google-light-api?utm_source=chatgpt.com "Google Light Search API - SerpApi"
+[4]: https://serpapi.com/json-restrictor "SerpApi: JSON Restrictor"
+[5]: https://us-west.serpapi.com/google-news-light-api?utm_source=chatgpt.com "Google News Light API - SerpApi"
+[6]: https://serpapi.com/search-index-api "Search Index - SerpApi"
+[7]: https://serpapi.com/search-archive-api?utm_source=chatgpt.com "Search Archive API - SerpApi"
+[8]: https://serpapi.com/google-trends-autocomplete?utm_source=chatgpt.com "Google Trends Autocomplete API - SerpApi"
+[9]: https://serpapi.com/google-trends-api?utm_source=chatgpt.com "Google Trends API - SerpApi"
+[10]: https://serpapi.com/google-trends-related-queries?utm_source=chatgpt.com "Google Trends Related Queries API - SerpApi"
+[11]: https://serpapi.com/google-ai-mode-api?utm_source=chatgpt.com "Google AI Mode API - SerpApi"
+[12]: https://serpapi.com/google-ai-mode-api "Google AI Mode API - SerpApi"
+[13]: https://serpapi.com/google-ai-overview-api?utm_source=chatgpt.com "Google AI Overview API - SerpApi"
+[14]: https://serpapi.com/blog/introducing-serpapi-markdown-output/?utm_source=chatgpt.com "Introducing SerpApi's New Markdown Output"

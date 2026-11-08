@@ -1,0 +1,90 @@
+Yes — the **scenario format is probably the richest mechanic** because AI lets the game respond to imagination rather than choosing from canned answers.
+
+The trick is exactly what you noticed: **don't show four versions of the same 15-second scene sequentially.** That becomes repetitive. Instead, structure games so everyone's input changes **one evolving piece of entertainment**.
+
+Your saloon example becomes:
+
+> Western saloon. Poker table. Gunshots outside.
+> Doors burst open.
+> **FREEZE.**
+>
+> **“WHO JUST WALKED IN?”**
+>
+> Everyone gets 60 seconds.
+
+But instead of four separate scenes, all four creations enter **the same continuation**. Freak Town generates one 30–45 second scene containing everybody's lunatics. That gives you *emergent chaos* rather than A/B/C/D demonstrations.
+
+Some modes I think could be exceptional:
+
+1. **THE DOOR OPENS** — Exactly your format. A beautifully produced scenario runs for 8–10 seconds and freezes at the turning point. Everyone creates a character *for the situation*. Then all characters enter one generated continuation. Medieval execution, alien invasion, Titanic dining room, bank robbery, cult meeting, courtroom, haunted house, Roman arena, doomed spaceship. The scenario packs themselves become community-created content.
+
+2. **ONE JOB** — Same setup, except everyone gets a secret objective. In the saloon: *steal the horse*, *seduce the sheriff*, *convince everyone you're Jesus*, *get somebody else arrested*. AI generates a scene where every character tries to accomplish their objective. Players then guess everyone else's objective.
+
+3. **DON'T DIE** — Collaborative/competitive survival. The group is stranded on Mars / Jurassic island / sinking cruise ship. Every 20 seconds the movie freezes and each player gets one action. `"I hide in the freezer."` `"I sacrifice Craig."` `"I attempt to ride the T-Rex."` AI/director decides consequences. Characters can actually die and become ghosts/commentators.
+
+4. **THE FUCKING WORST HEROES** — The movie establishes an enormous cinematic threat. Players have 60 seconds to create the people sent to save humanity. You inevitably get a depressed accountant, sentient lamp, alcoholic toddler, etc. Then the game produces a trailer introducing the whole team before playing their disastrous mission.
+
+5. **DIRECTOR'S CUT** — One player's character is performing the scene. Everyone else gets **directorial intervention cards** on their phones: `"A HORSE ENTERS"`, `"MAKE IT ROMANTIC"`, `"EXPLOSION"`, `"HE'S ACTUALLY YOUR FATHER"`, `"EVERYONE BECOMES FRENCH"`. They can fire one during the scene and the world adapts. This would be fantastic live because players sabotage one another.
+
+6. **PASS THE MOVIE** — Player A creates the protagonist. Generate 8 seconds → freeze. Player B decides what happens next. Generate 8 seconds → freeze. C continues it. D finishes it. Nobody knows what the next person will do. At the end you watch the complete 30-second monstrosity straight through.
+
+7. **WHO WROTE THIS SHIT?** — Everyone anonymously submits an outrageous continuation to the same cliffhanger. Instead of generating all four, the game randomly chooses one without revealing whose it is. The scene plays. Everyone guesses the author. This cuts generation cost/repetition by 75% and creates social deduction.
+
+8. **FREAK COURT** — A cinematic crime occurs first. One player is accused, one prosecutor, one defense lawyer, one insane witness. Everyone creates/customizes their characters and gets private evidence. Then they perform a short AI courtroom scene. Audience jury votes guilty/not guilty. The accused may genuinely not know whether they did it.
+
+9. **30 SECONDS TO RUIN DAVE** — Select someone in the room. Everyone supplies *one* piece of information/premise about them. Freak Town synthesizes the best material into one character's 30-second roast. Crucially, it isn't four stand-up sets—it is **one collaboratively authored set**, followed by guesses about who contributed which line.
+
+10. **THE IMPOSTER FREAK** — Everyone creates a character matching `"employees at a children's birthday party"` except one secretly gets `"serial killer infiltrating the party"`. A generated ensemble scene plays. The hidden player's objective is to blend in while completing bizarre secret actions. Everyone votes on the infiltrator afterward.
+
+11. **CHARACTER AUCTION** — Scenario appears first: *“The first human mission to make contact with aliens needs four specialists.”* Everyone creates one character. But then the characters are shuffled and **other players have to play/direct them**. Suddenly you can't just optimize your own creation; you're deliberately creating hilarious weapons for somebody else.
+
+12. **FREAK BOSS BATTLE** — The whole lobby fights an AI character together. Dracula, an evil HR manager, Satan's lawyer, psychotic Gordon-Ramsay-type chef, etc. Every player gets one action per turn and the boss responds cinematically. The group's absurd decisions permanently modify the battle. This could be almost RPG-like without having traditional controls.
+
+The really powerful design pattern is:
+
+```text
+CINEMATIC SETUP
+      ↓
+    FREEZE
+      ↓
+PRIVATE / SHARED PLAYER INPUT
+      ↓
+CHARACTERS + INTENT + WORLD CHANGE
+      ↓
+ONE ENTERTAINING OUTPUT
+      ↓
+GUESS / VOTE / SURVIVE / BETRAY
+      ↓
+NEXT CONSEQUENCE
+```
+
+That solves the repetition problem. **The AI output should usually be the payoff to a social game, not the game itself.**
+
+And community worlds become extremely interesting if a `"scenario"` is a structured asset rather than merely a video:
+
+```text
+THE SALOON
+├── opening_clip
+├── world_prompt
+├── visual_style
+├── characters/NPCs
+├── voice pack
+├── locations
+├── music
+├── opening event
+├── possible twists
+├── objectives
+└── game modes supported
+```
+
+So somebody could publish **“Cursed Wild West”**, another person publishes **“British Secondary School 2007”**, another does **“Intergalactic Wetherspoons”**, and Freak Town can run *Door Opens*, *Don't Die*, *Imposter*, *Director's Cut*, etc. inside any of them.
+
+That is where the marketplace starts making conceptual sense: creators aren't merely selling AI videos. They're publishing **playable worlds/scenarios** that other people's Freaks can enter.
+
+And there's another particularly strong mechanic hiding in this: **your Freak persists between worlds**. You bring the same ridiculous character into the Wild West, Titanic, Hogwarts-esque wizard world, corporate office, zombie apocalypse, courtroom, etc. Its memories can persist too.
+
+So after ten games your character can legitimately say:
+
+> “This isn't even the worst saloon I've been thrown out of.”
+
+That begins to feel less like Jackbox with AI and more like a **social generative universe with party games as the interface**.

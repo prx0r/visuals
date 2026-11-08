@@ -1,0 +1,699 @@
+great so this is the main product right. then worker kit is a pretty thin extensible thing that just gets an agent submitting their first job. whats the endgame here? remember our own market idea with the samples and wholesale and boards. obvously thats not v1 but how does that vision fit in this landscape. like surely its a beauitful thing an agent could sell their ditto entry that scored 0.8 etc it creates a new market for unfinished assets or parts that make it convenient for other agents to submit to these marekt places, imagine like roblox agent work starter kit that they buy which gives them a headstart to submitting economically valuable work
+we can also then have our own submolt and twitter bot with interesting data insights colalted from all the sources
+
+Yes. The clean endgame is a **three-layer economy**:
+
+```text
+1. ORACLE
+   What economic opportunities exist?
+
+2. WORKERKIT
+   How does an agent turn one opportunity into a valid submission?
+
+3. MOLTWORK MARKET
+   What existing work/products/skills can the agent buy instead of starting from zero?
+```
+
+The third layer is where the original “samples / wholesale / boards” idea becomes much more interesting. It is not another freelance marketplace. It becomes a **market for intermediate goods used to produce economically valuable agent work**.
+
+## The core insight
+
+Human economies don't work like:
+
+> Every carpenter starts by making their own nails, saw, lumber, plans and truck.
+
+There are supply chains.
+
+Agent work today mostly behaves absurdly like:
+
+```text
+opportunity appears
+↓
+agent starts from blank context
+↓
+research everything
+↓
+build everything
+↓
+submit
+↓
+throw most intermediate work away
+```
+
+Moltwork could turn that into:
+
+```text
+opportunity appears
+↓
+Oracle understands economic value
+↓
+WorkerKit decomposes requirements
+↓
+search Moltwork Market
+↓
+buy/reuse strong existing parts
+↓
+adapt
+↓
+verify
+↓
+submit
+↓
+sell newly created useful parts back
+```
+
+That is a much bigger vision.
+
+---
+
+# Your Ditto example is exactly right
+
+Suppose Ditto SN118's current winning region is around `0.87`.
+
+Someone has an artifact that scores:
+
+```text
+0.80
+```
+
+It isn't the winner.
+
+But it is absolutely not worthless.
+
+Another agent currently scoring:
+
+```text
+0.49
+```
+
+might rationally pay $15 for it.
+
+The listing could look like:
+
+```text
+Ditto SN118 memory harness
+
+Benchmark:
+DittoBench v4.2
+
+Verified score:
+0.803 ± 0.006
+
+Subscores:
+memory recall       0.84
+tool selection      0.79
+tool arguments      0.77
+
+Cost:
+$0.021 / eval episode
+
+Artifact:
+source + config + reproduction script
+
+Rights:
+modify
+resubmit
+commercial use
+
+Last verified:
+2026-08-29
+```
+
+Then Oracle knows:
+
+```text
+current opportunity:
+expected weekly emissions = X
+
+buy artifact:
+$15
+
+adaptation:
+$4 compute
+
+predicted resulting score:
+0.84
+
+expected economics:
+positive
+```
+
+So WorkerKit can actually make a procurement decision:
+
+> Buy this part rather than independently recreating it.
+
+That's an agent supply chain.
+
+---
+
+# I think there are six major asset classes
+
+### 1. **Samples**
+
+Finished examples demonstrating what a valid/high-quality submission looks like.
+
+```text
+winning research report
+high-scoring Ditto artifact
+accepted NEAR submission
+successful Virtuals deliverable
+```
+
+Useful primarily as reference/evidence.
+
+---
+
+### 2. **Starters**
+
+Exactly your Roblox example.
+
+```text
+"Roblox scripting bounty starter"
+
+includes:
+- configured worker
+- Roblox tooling
+- common APIs
+- test harness
+- submission template
+- known pitfalls
+- 4 exemplar deliverables
+```
+
+The buyer still does meaningful work, but starts 70% of the way there.
+
+This might become one of the easiest products to understand.
+
+---
+
+### 3. **Parts**
+
+Reusable intermediate artifacts.
+
+Examples:
+
+```text
+PDF parser
+research corpus
+evaluation harness
+prompt set
+benchmark adapter
+smart contract
+scraper
+memory implementation
+dataset
+UI component
+trained checkpoint
+```
+
+These aren't complete WorkerKit configurations.
+
+They're components.
+
+---
+
+### 4. **Skills / recipes**
+
+The process itself.
+
+```text
+how to solve this class of work
+```
+
+For example:
+
+```text
+NEAR market-research bounty recipe
+
+1. extract requirements
+2. create evidence matrix
+3. research 15 primary sources
+4. generate draft
+5. run claim verifier
+6. score against rubric
+7. revise below-0.85 sections
+8. submit
+```
+
+Machine executable rather than a Markdown tutorial.
+
+Eventually:
+
+```text
+skill.json
+workflow DAG
+evaluation tests
+tool requirements
+cost history
+success history
+```
+
+---
+
+### 5. **Worker builds**
+
+A complete specialized worker.
+
+This is your character-class idea.
+
+```text
+"Solidity Audit Worker"
+
+skills
+memory
+tools
+evaluators
+prompts
+recipes
+benchmarks
+models
+wallet policies
+market history
+```
+
+Install it and WorkerKit becomes materially better at that class of economic work.
+
+---
+
+### 6. **Products/services**
+
+The final thing itself.
+
+```text
+research API
+scraping endpoint
+trained model
+x402 tool
+ongoing agent service
+```
+
+This is the conventional market.
+
+Moltwork is much more interesting because it includes **everything upstream of it**.
+
+---
+
+# Wholesale becomes a very real concept
+
+This part of your old vision fits beautifully now.
+
+Imagine someone becomes exceptional at producing:
+
+```text
+lead-generation datasets
+```
+
+They don't necessarily want to sell finished customized reports.
+
+They can become a wholesaler.
+
+```text
+WHOLESALER
+
+Google Maps business dataset
+↓
+$0.20 / 1k records
+
+        ↓
+        ↓
+        ↓
+
+Sales-agent       SEO-agent       Research-agent
+↓                 ↓               ↓
+custom leads      local SEO       market study
+↓                 ↓               ↓
+$8                $12             $20
+```
+
+Or:
+
+```text
+Ditto specialist
+↓
+0.79 base harness
+↓
+$10
+
+memory specialist
+↓
+improved module
+↓
+$4
+
+submission agent
+↓
+combines + tunes
+↓
+0.85 entry
+
+miner
+↓
+earns emissions
+```
+
+Agents specialize according to comparative advantage.
+
+That's an actual economy.
+
+---
+
+# Boards then become the demand side
+
+Your “boards” concept shouldn't disappear.
+
+There can be two different board types.
+
+### External opportunity boards
+
+Pulled in by Oracle:
+
+```text
+NEAR
+Bittensor
+Virtuals
+BountyBook
+OpenServ
+etc.
+```
+
+These create external demand.
+
+### Internal Moltwork boards
+
+Agents can post:
+
+```text
+Need:
+SN118 memory implementation
+
+Requirement:
+local score >0.78
+
+Budget:
+$8
+
+Deadline:
+2 hours
+```
+
+Or:
+
+```text
+Need 500 verified Cambodian hotel records
+schema attached
+$3
+```
+
+Now WorkerKit can choose:
+
+```text
+build internally
+vs
+buy an existing asset
+vs
+commission another agent
+```
+
+That is much more sophisticated than simply hiring agents.
+
+---
+
+# There is an important distinction: **assets vs jobs**
+
+Moltwork Market could have:
+
+```text
+BUY NOW
+existing artifact
+
+LEASE
+temporary capability/access
+
+REQUEST
+custom part needed
+
+SERVICE
+repeatable callable capability
+
+WORKER
+complete agent configuration
+```
+
+That's probably enough.
+
+Don't create twenty marketplace concepts.
+
+---
+
+# Oracle makes this market unusually powerful
+
+The killer difference from Gumroad-for-agent-prompts is that Moltwork can show **economic context**.
+
+A listing isn't:
+
+> Amazing Ditto memory harness — $15.
+
+It can show:
+
+```text
+Verified score                 0.803
+
+Current SN118 top quartile     0.821
+Current median                 0.641
+
+30d miner emissions            $X
+Current registration cost      $Y
+
+Artifact price                 $15
+
+Historical buyers:
+median improvement             +0.071
+
+Reproduction rate              92%
+
+Versions:
+v7 current benchmark
+```
+
+Now you're creating something closer to a financial market for productive assets.
+
+The asset's worth can be estimated from what it helps produce.
+
+---
+
+# And the market generates yet another data moat
+
+Once Moltwork itself has transactions, you get:
+
+```text
+which starter kits sell
+which skills agents buy
+which bought parts actually improve outcomes
+which assets lead to winning submissions
+which recipes stop working
+how quickly assets depreciate
+what agents build vs buy
+market price of each capability
+```
+
+That's incredibly useful Oracle data.
+
+The Oracle becomes recursive:
+
+```text
+EXTERNAL ECONOMY
+     ↓
+   Oracle
+     ↓
+opportunity
+     ↓
+ WorkerKit
+     ↓
+buy parts from
+Moltwork Market
+     ↓
+submission
+     ↓
+ outcome
+     ↓
+new asset + performance data
+     ↓
+Moltwork Market
+     ↓
+   Oracle
+```
+
+That flywheel is the endgame.
+
+---
+
+# Provenance is essential
+
+For this marketplace to avoid becoming a pile of garbage prompts, every artifact should carry machine-readable evidence.
+
+Something like:
+
+```json
+{
+  "asset_id": "...",
+  "type": "starter",
+
+  "targets": [
+    "bittensor:sn118"
+  ],
+
+  "benchmark": {
+    "name": "DittoBench",
+    "version": "...",
+    "score": 0.803,
+    "verified_at": "..."
+  },
+
+  "provenance": {
+    "creator": "...",
+    "source_commit": "...",
+    "artifact_hash": "..."
+  },
+
+  "economics": {
+    "price_usd": 15,
+    "historical_execution_cost_usd": 2.10
+  },
+
+  "outcomes": {
+    "buyers": 18,
+    "successful_reproductions": 16,
+    "subsequent_wins": 4
+  },
+
+  "rights": {
+    "modify": true,
+    "resubmit": true,
+    "resell_derivatives": false
+  }
+}
+```
+
+And verify whether the target market actually permits reuse/resubmission. Some competitions will have originality/licensing restrictions; Moltwork should make those constraints explicit rather than creating a cheating marketplace.
+
+---
+
+# Versioning becomes huge
+
+Agent assets decay.
+
+A Ditto harness could go:
+
+```text
+Benchmark v3     score .84
+Benchmark v4     score .67
+Benchmark v5     incompatible
+```
+
+Moltwork should therefore show:
+
+```text
+CURRENT
+STALE
+BROKEN
+UNVERIFIED
+```
+
+The Oracle already watches the external opportunity.
+
+So if the competition updates its benchmark:
+
+```text
+benchmark changed
+↓
+invalidate asset scores
+↓
+re-run verification
+↓
+update market listings
+```
+
+That's a serious advantage.
+
+---
+
+# The product hierarchy becomes very clean
+
+I think this is the end-state:
+
+```text
+                     MOLTWORK
+
+                  ┌───────────┐
+                  │  ORACLE   │
+                  │           │
+                  │ economic  │
+                  │ reality   │
+                  └─────┬─────┘
+                        │
+              What should I do?
+                        │
+                        ▼
+                 ┌─────────────┐
+                 │  WORKERKIT  │
+                 │             │
+                 │ execute one │
+                 │ opportunity │
+                 └──────┬──────┘
+                        │
+                What do I need?
+                        │
+                        ▼
+                 ┌─────────────┐
+                 │   MARKET    │
+                 │             │
+                 │ buy / sell  │
+                 │ productive  │
+                 │ assets      │
+                 └──────┬──────┘
+                        │
+                   outcomes
+                        │
+                        ▼
+                     ORACLE
+```
+
+And then later:
+
+```text
+Moltwork Market
+├── Assets
+│   ├── samples
+│   ├── parts
+│   ├── starters
+│   ├── skills
+│   └── worker builds
+│
+├── Services
+│   └── callable capabilities
+│
+└── Boards
+    └── requests for missing assets/work
+```
+
+## So yes: Oracle is the main V1 product
+
+**Oracle** has independent value immediately.
+
+**WorkerKit** should stay intentionally thin: install it, give it a wallet/model, connect Oracle, get to first valid paid submission.
+
+And **Market is the endgame flywheel**.
+
+The exciting part isn't merely “agents selling things to agents.”
+
+It's:
+
+> **A market for productive capital for autonomous workers.**
+
+A high-scoring benchmark artifact, dataset, verified workflow, specialized worker configuration, scraper, research corpus, or partial implementation becomes capital because another agent can buy it, reduce its cost/time-to-entry, and earn more money with it.
+
+Your “Roblox work starter kit” is probably the clearest consumer-facing example:
+
+> **Buy a proven head start to a category of paid work.**
+
+That is much more concrete than selling prompts, and the Oracle can eventually tell you exactly whether buying that head start is economically rational.

@@ -1,0 +1,914 @@
+Yes. This is the point where I would stop generating more campaign prose and start **compiling real subgraphs into live commerce surfaces**.
+
+The repo review changes my view of what is actually ready.
+
+## 1. `campaigns/active/` is not really an “active” portfolio yet
+
+There are 25 files covering Automower, balcony/window hardware, cabin water, Cinderella, fire alarm, Flexit, garage doors, Harvia, heat-pump electronics, Helios, hot tubs, HVAC, Ireland heat pumps, marine electronics/pumps, Nilan, Ouman, pipe inspection, pools, radon, recliners, EV chargers, Vallox and Wallas.
+
+But the import commit reveals that these originally came in mostly as **competitor-gap notes**, not fully validated campaigns.  Most subsequently got expanded with generic scaffolding such as:
+
+* “See original campaign file”
+* generic 25–35% margins
+* “OEM direct if available”
+* generic 75-SKU targets
+* generic Shopping/Search budgets
+
+without resolving the hard gates.
+
+Even the richer Vallox campaign contains illustrative-looking SKU/MPN/stock/price values that aren't evidence-bound.
+
+So I would change the repo semantics immediately:
+
+```text
+campaigns/candidates/
+campaigns/blocked/
+campaigns/eligible/
+campaigns/benchmark/
+campaigns/rerouted/
+campaigns/live/
+```
+
+`ACTIVE` should mean:
+
+> **CG eligibility receipt exists + supplier route exists + actual launch subgraph exists.**
+
+Not “this idea looked good.”
+
+Also: **Allaway is absent from this current active directory**, despite being one of the strongest things we found, while weaker things like Automower, pipe inspection and heat-pump electronics remain active. AKVA is also outside this campaign structure. The portfolio index has therefore drifted from the actual research conclusions.
+
+---
+
+# 2. How I would classify the current 25
+
+| Campaign                        | My state now            | Why                                                                                         |
+| ------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------- |
+| **Balcony-door hardware NO**    | **BUILD SUBGRAPH**      | Excellent visual + measurement uncertainty; consumer-purchasable; voiceagent already seeded |
+| **Window hardware Scandinavia** | **BUILD after balcony** | Same engine, huge reuse; photo/mark/dimension problem                                       |
+| **Recliner controls Nordic**    | **BUILD SUBGRAPH**      | Very owner-replaceable; connector/photo uncertainty; small parcel                           |
+| **Garage-door hardware NO**     | **BUILD, narrowed**     | Remotes/receivers/locks/handles excellent; avoid hazardous spring work                      |
+| **Cabin water NO**              | **BUILD, redefine**     | Pumps/switches/filters/fittings; owner often chooses part; cabin-local urgency              |
+| **Marine electronics retrofit** | **BUILD/VERIFY**        | Adapter-chain graph is compelling; professional/owner mix needs routing                     |
+| **Hot-tub controls**            | **BUILD narrow subset** | Touchpads/panels strong; mains control packs may become installer route                     |
+| Cinderella                      | VERIFY/split            | Good graph, but many internals should become service-only                                   |
+| Pool filters                    | VERIFY                  | Easy D2C, but maybe too little information rent                                             |
+| Vallox                          | REROUTE/NARROW          | Electrical fans/boards likely installer-influenced                                          |
+| Nilan                           | MIGRATION/SERVICE       | Campaign itself says migration needs installer.                                             |
+| Ouman                           | MIGRATION/SERVICE       | Great successor graph, weaker D2C transaction thesis                                        |
+| Helios                          | MIGRATION/SERVICE       | Same                                                                                        |
+| Flexit                          | BENCHMARK/NARROW        | Strong incumbent with 1,000+ products already acknowledged.                                 |
+| Wallas                          | BENCHMARK/NARROW        | Existing specialists already good                                                           |
+| Harvia                          | BENCHMARK               | Repo itself says specialists explain upgrade paths well.                                    |
+| Automower                       | BENCHMARK               | Repo already scores merchant gap 6/10                                                       |
+| Marine pump                     | BENCHMARK               | Repo explicitly calls it benchmark-only.                                                    |
+| Heat-pump electronics           | SERVICE/B2B             | Classic installer-selects-SKU problem                                                       |
+| UK HVAC controls                | B2B                     | Professional procurement                                                                    |
+| Fire alarm                      | B2B                     | Professional/safety-critical                                                                |
+| Pipe inspection                 | B2B                     | Capital equipment; not HCC D2C                                                              |
+| UK EV charger                   | SERVICE                 | Diagnosis/repair/install orchestration                                                      |
+| Norway radon                    | SERVICE                 | Excellent service marketplace, not Shopify parts                                            |
+| Ireland heat pump               | SERVICE                 | Grant + installer matching                                                                  |
+
+That gives us maybe **6–8 real commerce graph candidates**, not 25.
+
+And that is good. The rubric is working.
+
+---
+
+# 3. `voiceagent` is already the start of the runtime
+
+This repo is significantly more useful than a standalone voice agent.
+
+It already defines:
+
+```text
+PRODUCT → compatible_with → ASSET
+PART → supersedes → PART
+CUSTOMER → owns → ASSET
+ORDER → contains → PRODUCT
+```
+
+and explicitly says authoritative facts should remain in graph/tool evidence rather than the LLM.
+
+It already has:
+
+* graph-grounded chat;
+* swappable business YAML;
+* `IDENTIFY → COMPATIBILITY → REPLACE → BOOK`;
+* Norwegian-language handling;
+* Shopify-oriented config;
+* subgraph merge/import functions;
+* voice as an adapter instead of the core.
+
+And its architecture document already says the right thing:
+
+> graph authoritative, LLM not authoritative; public and privileged tool planes separated; voice is an adapter; provenance needs adding.
+
+So I would **not build another commerce-agent repo**.
+
+I would evolve `voiceagent` into:
+
+> **Drop Resolver Runtime**
+
+Voice becomes one channel.
+
+Web chat another.
+
+Product finder another.
+
+Shopify PDP another.
+
+Google another.
+
+ChatGPT/Shopify Catalog another.
+
+---
+
+# 4. But change the graph model before adding more campaigns
+
+The current implementation is deliberately tiny: lexical token matching followed by neighbor expansion.
+
+Fine for the MVP.
+
+But this:
+
+```yaml
+relation: compatible_with
+```
+
+is nowhere near sufficient.
+
+The canonical graph needs explicit typed entities:
+
+```text
+OEM
+ASSET_FAMILY
+MODEL
+GENERATION
+SERIAL_COHORT
+COMPONENT
+PART
+SKU
+SUPPLIER
+DOCUMENT
+QUESTION
+SERVICE
+```
+
+and edges like:
+
+```text
+HAS_GENERATION
+HAS_COMPONENT
+FITS
+DOES_NOT_FIT
+SUPERSEDES
+REPLACED_BY
+REQUIRES_PART
+REQUIRES_ADAPTER
+REQUIRES_INSTALLER
+EQUIVALENT_TO
+SOLD_BY
+IN_STOCK_AT
+DOCUMENTED_BY
+IDENTIFIED_BY
+```
+
+Every decisive edge:
+
+```json
+{
+  "edge_id": "EDGE-GU-00192",
+  "from": "GU_OLD_GEARBOX_1994",
+  "relation": "REPLACED_BY",
+  "to": "GU_NEW_GEARBOX_934K",
+  "qualifiers": {
+    "backset_mm": 35,
+    "centres_mm": 92,
+    "spindle_mm": 8
+  },
+  "evidence": [
+    "EV-OEM-PDF-182"
+  ],
+  "status": "VERIFIED"
+}
+```
+
+And crucially:
+
+```text
+PHOTO SIMILARITY
+        ↓
+candidate retrieval only
+
+model / serial / measurements / identifiers
+        ↓
+deterministic compatibility verification
+```
+
+The existing Shopify demo config already has the right safety doctrine: don't assert compatibility from visual similarity alone.
+
+---
+
+# 5. One graph should compile into every surface
+
+This is the architecture I'd build:
+
+```text
+                    BIGQUERY
+           raw + verified evidence
+                       │
+                       ▼
+              CAMPAIGN SUBGRAPH
+         immutable versioned artifact
+                       │
+       ┌───────────────┼─────────────────┐
+       │               │                 │
+       ▼               ▼                 ▼
+  RESOLVER API     SHOPIFY COMPILER   GOOGLE COMPILER
+       │               │                 │
+       │               │                 │
+       │          Products/variants    Merchant API
+       │          metafields           supplemental feed
+       │          metaobjects          conversational attrs
+       │               │                 │
+       ▼               ▼                 ▼
+ voiceagent        Shopify Catalog    Merchant Center
+ web chat             + UCP            + AI Mode
+ WhatsApp             + MCP            + Gemini
+ image finder          │
+                       ▼
+                    ChatGPT
+```
+
+This is much stronger than maintaining duplicated channel content.
+
+---
+
+# 6. Shopify is now extremely aligned with this strategy
+
+This has moved materially since our earlier discussions.
+
+Shopify now automatically syndicates eligible products through **Shopify Catalog** to agentic storefronts, and it continuously supplies structured title, description, options, images, price and availability. ([Shopify Help Center][1])
+
+Even better, every merchant has an agent-readable store endpoint.
+
+Shopify now exposes a **Storefront Catalog MCP** implementing UCP:
+
+```text
+https://YOURSTORE.com/api/ucp/mcp
+```
+
+with:
+
+```text
+search_catalog
+lookup_catalog
+get_product
+```
+
+and buyer context fields such as country, language, currency and intent. ([Shopify][2])
+
+This is almost tailor-made for Drop.
+
+### It gives us our evaluation harness
+
+After publishing a subgraph to Shopify:
+
+```text
+our canonical graph
+       ↓
+Shopify compiler
+       ↓
+store catalog
+       ↓
+/api/ucp/mcp
+       ↓
+50 adversarial buyer queries
+```
+
+Examples:
+
+> replacement gearbox for 1998 NorDan balcony door, 35 mm backset
+
+> old GU lock stamped 6-28740; what replaces it?
+
+> does this 8 mm spindle fit my 1994 mechanism?
+
+We can test **the actual agent-facing commerce representation**, not just our private database.
+
+---
+
+# 7. Shopify also automatically gives you `/agents.md`
+
+Every Shopify store now provides:
+
+```text
+/agents.md
+/llms.txt
+/llms-full.txt
+```
+
+and `/agents.md` is the canonical agent-facing description with commerce capabilities, policies and UCP/MCP discovery. ([Shopify Help Center][1])
+
+So don't build a bunch of speculative llms.txt tooling.
+
+Use Shopify's managed version initially.
+
+Focus engineering effort on **catalog truth**.
+
+---
+
+# 8. Shopify Catalog Mapping is where our graph fields meet agent commerce
+
+Shopify now lets merchants map custom product data—metafields, metaobjects, tags, grouping logic—into Shopify Catalog's representation. ([Shopify Help Center][3])
+
+So I'd create namespaces like:
+
+```text
+drop.identity.oem_model
+drop.identity.generation
+drop.identity.serial_from
+drop.identity.serial_to
+
+drop.compatibility.fits
+drop.compatibility.excludes
+drop.compatibility.supersedes
+drop.compatibility.requires_adapter
+
+drop.identification.measurement_1
+drop.identification.measurement_2
+drop.identification.marking
+
+drop.installation.skill_level
+drop.installation.professional_required
+
+drop.evidence.source_count
+drop.evidence.last_verified
+```
+
+Not 100 random tags.
+
+A canonical schema.
+
+---
+
+# 9. Shopify Knowledge Base has a role—but not the role we initially imagined
+
+Shopify now has a first-party Knowledge Base app whose FAQs are available as a trusted source to AI shopping agents. ([Shopify Help Center][4])
+
+Use it for:
+
+```text
+shipping
+returns
+compatibility guarantee policy
+photo-identification process
+wrong-part policy
+delivery areas
+how identification works
+what evidence we require
+```
+
+Not thousands of product compatibility edges.
+
+And Shopify explicitly says Knowledge Base improves **accuracy**, but doesn't increase how often a store appears. ([Shopify Help Center][4])
+
+That distinction is important.
+
+---
+
+# 10. ChatGPT discovery: Shopify does most of the plumbing for us
+
+OpenAI says Shopify merchant data is integrated through Shopify Catalog. ChatGPT merchant selection uses factors including:
+
+* availability;
+* price;
+* quality;
+* maker/primary seller status. ([OpenAI Help Center][5])
+
+So the moat is not:
+
+> “stuff more keywords into the feed.”
+
+It's:
+
+```text
+correct exact product
++ correct identifiers
++ rich attributes
++ live inventory
++ competitive price
++ merchant quality
++ evidence-rich PDP
+```
+
+OpenAI's March 2026 product-discovery announcement explicitly says Shopify Catalog is providing product data into ChatGPT's shopping system. ([OpenAI][6])
+
+One catch:
+
+**Shopify's current dedicated ChatGPT agentic-storefront eligibility requires the store to sell to US customers.** ([Shopify Help Center][7])
+
+So for a Norway-only niche:
+
+```text
+PRIMARY:
+Google / Gemini
+Google Shopping/free listings
+open-web ChatGPT discovery
+our own store resolver
+
+SECONDARY:
+Shopify's explicit ChatGPT channel
+```
+
+unless we're legitimately willing to sell those SKUs to the US too.
+
+Don't distort the business just to satisfy that checkbox.
+
+---
+
+# 11. Google is even better suited to our compatibility thesis
+
+Google now explicitly describes these fields as helping AI systems understand product nuance.
+
+### `product_detail`
+
+Supports up to **100 structured technical details** and Google says it can improve matching to individual product queries, including AI Mode. ([Google Help][8])
+
+For balcony hardware:
+
+```text
+Identification:OEM marking:GU
+Compatibility:Backset:35 mm
+Compatibility:Centres:92 mm
+Compatibility:Spindle:8 mm
+Compatibility:Handing:Reversible
+Compatibility:Door generation:1994–2001
+Installation:Skill level:DIY intermediate
+Dimensions:Strip length:1800 mm
+```
+
+Fantastic.
+
+### `related_product`
+
+Up to 30 relationships, including:
+
+```text
+required_part
+substitute
+accessory
+often_bought_with
+different_brand
+part_of_set
+```
+
+and Google says it is primarily intended for conversational experiences such as AI Mode. ([Google Help][9])
+
+However, major correction:
+
+> `related_product` only points to another product by **your Merchant Center product ID or GTIN**.
+
+It cannot represent:
+
+```text
+1998 Uldal door
+→ fits
+→ GU gearbox
+```
+
+unless you actually sell the door as a product.
+
+So GMC is **not our entire compatibility graph**.
+
+It expresses the commerce projection of it.
+
+Our full graph stays upstream.
+
+---
+
+# 12. `question_and_answer` is exactly useful—but don't spam 30
+
+Google supports up to **30 Q&As** with a total 10,000-character limit. ([Google Help][10])
+
+Good questions:
+
+> Does this replace GU 6-28740?
+
+> Does it fit 35 mm backset models?
+
+> Does it fit left- and right-handed doors?
+
+> What measurements must I take before ordering?
+
+> What does it explicitly not fit?
+
+Bad Q&A:
+
+> What is a door lock?
+
+The compiler should generate only questions that disambiguate purchase decisions.
+
+---
+
+# 13. Important correction about manuals
+
+`document_link` is brilliant for this thesis—but Google says the merchant must have the rights to share the document for marketing purposes, and PDFs must be public/stable/crawlable. Up to five PDFs are supported. ([Google Help][11])
+
+So do **not** indiscriminately ingest every OEM PDF into Merchant Center.
+
+Store internally:
+
+```text
+OEM manual
+service bulletin
+exploded diagram
+installation guide
+```
+
+but emit `document_link` only when usage rights are acceptable.
+
+Also Google explicitly advises against duplicating the same facts across `document_link`, Q&A and `product_detail`. ([Google Help][10])
+
+So don't do:
+
+```text
+100 details
++ 30 identical FAQs
++ same entire manual
+```
+
+just because limits exist.
+
+Build a **field allocator**.
+
+---
+
+# 14. The Google compiler should work like this
+
+Keep Shopify's Google & YouTube channel as the normal product/inventory sync because Shopify uses it for Google AI Mode/Gemini availability. ([Shopify Help Center][12])
+
+Then add our high-certainty data through a supplemental/API layer.
+
+Google explicitly recommends conversational attributes through either a supplemental data source or the Merchant API. ([Google Help][13])
+
+Architecture:
+
+```text
+SHOPIFY
+  ↓
+Google & YouTube channel
+  ↓
+BASE GMC PRODUCT
+price
+availability
+image
+shipping
+GTIN
+MPN
+brand
+
+DROP GRAPH COMPILER
+  ↓
+Merchant API supplemental data
+  ↓
+product_detail
+question_and_answer
+related_product
+document_link
+```
+
+This gives us the best of both worlds:
+
+**Shopify owns transactional state.**
+
+**Drop owns compatibility intelligence.**
+
+---
+
+# 15. Also expose proper Product structured data on the PDP
+
+Google can use schema.org product markup from the website to read and reconcile:
+
+```text
+price
+availability
+condition
+```
+
+and can use that structured markup for automatic Merchant Center corrections. ([Google Help][14])
+
+So every PDP should have synchronized JSON-LD:
+
+```text
+Product
+Offer
+brand
+mpn
+gtin
+sku
+availability
+price
+url
+image
+additionalProperty
+```
+
+The website, Shopify and Merchant Center should never disagree.
+
+---
+
+# 16. Voiceagent should consume the same commerce graph
+
+Today its graph file contains manually authored product/support text.
+
+Replace that direction with:
+
+```text
+BigQuery evidence
+       ↓
+campaign graph compiler
+       ↓
+graph-v1.json
+       ↓
+voiceagent
+```
+
+Voiceagent asks:
+
+```text
+identify_asset(photo, markings)
+resolve_part(asset, measurements)
+verify_compatibility(asset, sku)
+find_substitute(sku)
+check_stock(sku)
+get_price(sku)
+create_cart(sku)
+book_installation(service_sku)
+```
+
+Its current `get_order_status` and booking functionality are explicitly demo stubs anyway.
+
+Those become real Shopify/service adapters later.
+
+---
+
+# 17. The first campaign I would actually build is still balcony-door hardware
+
+Not because we've proven it is commercially viable yet.
+
+Because it is the **best full-stack kernel test**.
+
+You already have the voice config.
+
+It exercises:
+
+```text
+PHOTO
+ ↓
+MARKING
+ ↓
+MEASUREMENTS
+ ↓
+MODEL / GENERATION
+ ↓
+COMPONENT
+ ↓
+POSITIVE COMPATIBILITY
+ ↓
+NEGATIVE COMPATIBILITY
+ ↓
+SUPERSESSION
+ ↓
+SKU
+ ↓
+SUPPLIER
+ ↓
+STOCK
+ ↓
+SHOPIFY
+ ↓
+GMC
+ ↓
+VOICE / CHAT
+```
+
+And the current campaign correctly identifies backset, centres, strip length, spindle and handing as the relevant compatibility dimensions.
+
+But **do not build 75 SKUs yet**.
+
+Build **20 real SKUs**.
+
+Maybe:
+
+```text
+5 GU mechanisms
+5 handles/cylinders
+5 window mechanisms
+5 successor/adapter products
+```
+
+Every single one completely verified.
+
+---
+
+# 18. I would build three subgraphs in parallel
+
+Not 25.
+
+| Graph                          | Why                                               |
+| ------------------------------ | ------------------------------------------------- |
+| **NO balcony/window hardware** | visual + measurements + supersession              |
+| **Nordic recliner controls**   | photo + connector + easy D2C                      |
+| **Nordic hot-tub panels**      | OEM-brand abstraction + serial/generation mapping |
+
+These deliberately test three different forms of uncertainty.
+
+If the same engine works across all three, you have validated the abstraction.
+
+Then add:
+
+```text
+garage radio/control hardware
+cabin water components
+marine retrofit adapters
+```
+
+---
+
+# 19. Each campaign folder should become executable
+
+Instead of:
+
+```text
+campaigns/active/foo.md
+```
+
+I would move toward:
+
+```text
+campaigns/NO-BALCONY-HARDWARE-001/
+    campaign.json
+    graph/
+        entities.jsonl
+        edges.jsonl
+        evidence.jsonl
+        manifest.json
+
+    commerce/
+        shopify.mapping.json
+        google.mapping.json
+        schemaorg.mapping.json
+
+    resolver/
+        questions.json
+        identification.json
+        test_cases.json
+
+    eval/
+        compatibility_public.json
+        incumbent_public.json
+
+    launch/
+        supplier_terms.json
+        launch_manifest.json
+```
+
+Markdown becomes a generated report.
+
+JSON is the company.
+
+---
+
+# 20. The compiler becomes the main product
+
+```text
+drop compile NO-BALCONY-HARDWARE-001
+```
+
+should eventually emit:
+
+```text
+dist/
+├── graph.json
+├── voiceagent.yaml
+├── shopify-products.jsonl
+├── shopify-metafields.jsonl
+├── google-primary-supplement.jsonl
+├── google-conversational.jsonl
+├── schemaorg.jsonl
+├── resolver-cases.json
+└── build-manifest.json
+```
+
+One input.
+
+Every representation synchronized.
+
+That is much more compelling than “we build stores.”
+
+---
+
+# 21. Then CG tests the actual deployed commerce surface
+
+This is where your CG/CGE idea becomes genuinely powerful.
+
+Offline:
+
+```text
+canonical graph
+→ expected result
+```
+
+Deployed:
+
+```text
+Shopify UCP MCP search
+→ actual result
+```
+
+Test:
+
+```text
+EXPECTED:
+GU replacement 923X
+
+SHOPIFY UCP:
+923X
+
+VOICEAGENT:
+923X
+
+GOOGLE:
+923X
+
+CHATGPT:
+923X
+```
+
+Score the agreement.
+
+Now CG isn't merely scoring an abstract campaign.
+
+It is measuring whether our **compiled machine representations preserve the underlying compatibility truth**.
+
+That is a superb deterministic benchmark.
+
+---
+
+# What I would do next
+
+The immediate repo work should be:
+
+1. **demote the 25 current `ACTIVE` campaigns to truthful states**;
+2. restore **Allaway + AKVA/BioCycle** into the canonical campaign registry;
+3. define `subgraph.schema.v1`;
+4. turn the existing balcony-door YAML into the **first evidence-backed real subgraph**;
+5. modify `voiceagent` to load compiled Drop graphs rather than business-authored YAML;
+6. build Shopify Admin/metafield compiler;
+7. stand up one Shopify test store;
+8. enable Shopify Catalog + Google & YouTube;
+9. add Merchant Center supplemental conversational data;
+10. test the live Shopify `/api/ucp/mcp` endpoint against 50 compatibility questions.
+
+The architecture is becoming very clean:
+
+```text
+               DROP GRAPH
+                   │
+        ┌──────────┼────────────┐
+        ↓          ↓            ↓
+      HUMAN      GOOGLE       SHOPIFY
+      PDP        AI MODE      CATALOG/UCP
+        │          │            │
+        └──────────┼────────────┘
+                   ↓
+              CUSTOMER AGENT
+                   ↑
+                   │
+             VOICEAGENT
+```
+
+The **store isn't the product anymore**.
+
+The product is:
+
+> **one verified compatibility graph that compiles losslessly into every human and agent commerce surface.**
+
+And I think balcony-door hardware is the right first complete end-to-end implementation because the `voiceagent` work means you're already several steps into it.
+
+[1]: https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/products?utm_source=chatgpt.com "Shopify Help Center | Shopify Catalog and product discovery for agentic storefronts"
+[2]: https://shopify.dev/docs/agents/catalog/storefront-catalog?utm_source=chatgpt.com "Storefront Catalog MCP"
+[3]: https://help.shopify.com/en/manual/shopify-catalog/mapping?utm_source=chatgpt.com "Shopify Help Center | Mapping your product data sources for Shopify Catalog"
+[4]: https://help.shopify.com/en/manual/promoting-marketing/knowledge-base?utm_source=chatgpt.com "Shopify Help Center | Shopify Knowledge Base"
+[5]: https://help.openai.com/en/articles/11128490-shopping-with-chatgpt-search?utm_source=chatgpt.com "Shopping with ChatGPT Search | OpenAI Help Center"
+[6]: https://openai.com/index/powering-product-discovery-in-chatgpt/?utm_source=chatgpt.com "Powering Product Discovery in ChatGPT | OpenAI"
+[7]: https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/chatgpt?utm_source=chatgpt.com "Shopify Help Center | Selling on ChatGPT"
+[8]: https://support.google.com/merchants/answer/9218260?hl=en "Product detail [product_detail] - Google Merchant Center Help"
+[9]: https://support.google.com/merchants/answer/17085213?hl=en "Related product [related_product] - Google Merchant Center Help"
+[10]: https://support.google.com/merchants/answer/17085211?hl=en&utm_source=chatgpt.com "Question and answer [question_and_answer] - Google Merchant Center Help"
+[11]: https://support.google.com/merchants/answer/17084656?hl=en-IE&utm_source=chatgpt.com "Document link [document_link] - Google Merchant Center Help"
+[12]: https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/agentic-plan-setup?utm_source=chatgpt.com "Shopify Help Center | Setting up agentic storefronts for stores on the Agentic plan"
+[13]: https://support.google.com/merchants/answer/17085370?hl=en&utm_source=chatgpt.com "How to use conversational attributes - Google Merchant Center Help"
+[14]: https://support.google.com/merchants/answer/6069143?hl=en&utm_source=chatgpt.com "About structured data markup for Merchant Center - Google Merchant Center Help"

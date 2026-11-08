@@ -1,0 +1,149 @@
+
+bxr567@airmail.cc
+https://mail.cock.li/
+
+xxxxxxxx
+mvy789@protonmail.com 1q29V4l65
+dish engine intact olive mimic thought treat obvious surround fragile world solution
+
+4vtL4A4xHMNnc6tqLrg5raXZr4kG4MVdbQyhVK
+
+When configuring your mail client, the server name should be set to "mail.cock.li". If you happen to run into any problems or issues, get fucking good. 
+
+
+servury login:
+z2vb7hle5nyv311kdi99xbtymfzd5svf
+https://servury.com/manage/5a5bd31e/
+
+GithubSSH:
+SHA256:GrbGx0xXVx2hnTiKQxEY4DqOg4cbT13LNMqQYfMJy+s
+
+
+	/home/ai/code/project/
+
+
+
+a5bd31e Debian 12 207.180.58.23 Frankfurt, Germany
+Active
+eu12
+Overview
+Manage
+Console
+Upgrade
+Billing
+Danger Zone
+Machine
+
+Plan
+    VDS-100
+CPU
+    2x Ryzen 9 9900X
+Memory
+    4 GB DDR4
+Storage
+    40 GB NVMe
+Network
+    1 Gbps / Unmetered
+OS
+    Debian 12
+Location
+    Frankfurt, Germany
+
+Connection
+
+IPv4
+    207.180.58.23
+Login
+    root
+Password
+    07IbuJy8M7NjlfX4se6a92GE
+
+ssh root@207.180.58.23
+
+This server runs on a leased node, so password resets and network fixes are done for you from the panel. If you would rather your host had no way to reach inside the machine at all, the Blackbox line runs on our own hardware with encrypted memory and no guest agen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+nct
+5a5bd31e Debian 12 207.180.58.23 Frankfurt, Germany
+Active
+eu12
+Overview
+Manage
+Console
+Upgrade
+Billing
+Danger Zone
+Machine
+
+Plan
+    VDS-100
+CPU
+    2x Ryzen 9 9900X
+Memory
+    4 GB DDR4
+Storage
+    40 GB NVMe
+Network
+    1 Gbps / Unmetered
+OS
+    Debian 12
+Location
+    Frankfurt, Germany
+
+Connection
+
+IPv4
+    207.180.58.23
+Login
+    root
+Password
+    1q29V4l65PtSa21gY3hQEfTL
+
+ssh root@207.180.58.23
+
+This server runs on a leased node, so password resets and network fixes are done for you from the panel. If you would rather your host had no way to reach inside the machine at all, the Blackbox line runs on our own hardware with encrypted memory and no guest agent.
+
+
+
+
+
+
+
+Public SSH Key
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjDr4duGF+uxVT2/BfuFUbj/J1ag2KbmmweR46EK9Os root@debian11
+You'll paste this into the VPS console later.
+
+
+
+
+Everything is prepped. Here's what you have ready:
+Item	Status
+SSH key	✅ ~/.ssh/private-ai-vps
+Public key	✅ Ready to paste
+Tor	✅ Running on 127.0.0.1:9050
+SSH config	✅ Template ready (needs onion address)
+Bootstrap script	✅ ~/vps-bootstrap.sh
+When XMR hits 10/10, do this:
+1. Log into Servury panel with your 32-char credential
+2. Click your VPS → Console
+3. Paste this exact block (all at once):
+apt update && apt upgrade -y && apt install -y tor openssh-server sudo ufw curl git nano ca-certificates && adduser --disabled-password --gecos "" ai && usermod -aG sudo ai && mkdir -p /home/ai/.ssh && chmod 700 /home/ai/.ssh && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGjDr4duGF+uxVT2/BfuFUbj/J1ag2KbmmweR46EK9Os root@debian11" > /home/ai/.ssh/authorized_keys && chmod 600 /home/ai/.ssh/authorized_keys && chown -R ai:ai /home/ai/.ssh && cat >> /etc/tor/torrc << 'EOF'
+
+HiddenServiceDir /var/lib/tor/ssh/
+HiddenServicePort 22 127.0.0.1:22
+EOF
+systemctl restart tor && sleep 3 && echo "=== YOUR .ONION ADDRESS ===" && cat /var/lib/tor/ssh/hostname && echo "=== SAVE THIS ==="
+4. SAVE the .onion address it prints
+5. Tell me the .onion address and I'll update your SSH config

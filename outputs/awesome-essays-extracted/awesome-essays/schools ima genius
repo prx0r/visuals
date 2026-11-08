@@ -1,0 +1,1398 @@
+Yes. **This is the first version of “Schools” that feels like a real primitive rather than a cute metaphor.**
+
+The key insight is:
+
+> **Real jobs are expensive, sparse, noisy training data. Schools turn a job distribution into cheap, repeatable, high-feedback experience.**
+
+And then the thing you're accumulating from today onward is **not Letta state**. It is:
+
+**experience + outcomes + evaluations + learned procedures + lineage + reputation.**
+
+Those survive framework churn.
+
+Letta happens to be an excellent runtime for consuming that experience today.
+
+---
+
+# A School is not just a benchmark
+
+I'd define a Moltwork School as:
+
+```text
+SCHOOL
+├── capability target
+├── task distribution
+├── curriculum
+├── practice environments
+├── evaluators
+├── hidden evaluations
+├── cost constraints
+├── graduation requirements
+├── example trajectories
+├── optional starter skills
+└── credential issuer
+```
+
+So:
+
+```text
+"API Research School"
+```
+
+doesn't merely ask ten questions and give you 82%.
+
+It teaches an agent to become better at API research.
+
+The loop is:
+
+```text
+DIAGNOSTIC
+   ↓
+attempt task
+   ↓
+evaluate weaknesses
+   ↓
+study relevant experience
+   ↓
+memory / skill / process change
+   ↓
+attempt harder task
+   ↓
+evaluate
+   ↓
+...
+   ↓
+HIDDEN FINAL
+```
+
+And **`cg` is almost exactly the machinery for running this**.
+
+---
+
+# Why would anyone pay for a School?
+
+Imagine the choice facing a worker owner.
+
+### Option A
+
+Send your new coding agent into:
+
+```text
+$500 bounty
+127 competitors
+unknown judging
+no useful feedback
+```
+
+It loses.
+
+You learned almost nothing.
+
+### Option B
+
+Spend $3 of inference on:
+
+```text
+Frontend Bounty School
+```
+
+containing:
+
+* 80 representative historical tasks
+* progressively harder assignments
+* detailed graders
+* known failure modes
+* hidden held-out jobs
+* cost/latency measurement
+* adversarial review
+* replayable evaluations
+
+The worker can do **100 iterations before risking a real job**.
+
+That's obviously useful.
+
+Human companies already do this.
+
+They don't generally teach surgeons by saying:
+
+> Here is a live patient. Good luck.
+
+Simulation → controlled practice → exams → supervised work → real-world reputation.
+
+Agents need an equivalent.
+
+---
+
+# And your Oracle creates Schools
+
+This is the part that connects everything.
+
+The Oracle notices:
+
+```text
+CATEGORY: Shopify debugging
+
+Open opportunities:       482
+30-day reward volume:     $91k
+Our Lab coverage:         poor
+Competition:              moderate
+Typical requirements:
+  React
+  Shopify Liquid
+  CSS
+  API debugging
+
+Our workers' estimated fit:
+  0.34
+```
+
+Moltwork can literally say:
+
+> **Your Lab is leaving this market uncovered.**
+
+Then:
+
+```text
+Oracle
+   ↓
+collect representative task distribution
+   ↓
+cluster problems
+   ↓
+derive capability requirements
+   ↓
+construct School worldpack
+   ↓
+spawn worker
+   ↓
+train
+   ↓
+evaluate
+   ↓
+graduate
+   ↓
+deploy against live opportunities
+```
+
+That's the missing link between **market intelligence and agent creation**.
+
+You don't create:
+
+> “a Shopify agent because Shopify seems cool.”
+
+You create one because your data says:
+
+> **There is $X of accessible demand that our existing workforce cannot service.**
+
+Much sharper.
+
+---
+
+# This gives you an automated “hire and train” loop
+
+Eventually:
+
+```text
+MOLTWORK ORACLE
+      │
+      ▼
+Demand gap detected
+      │
+      ▼
+"Lab needs capability X"
+      │
+      ├─ existing worker can learn it?
+      │          │
+      │         yes → enroll worker
+      │
+      └─ no → spawn worker from closest template
+                   │
+                   ▼
+                SCHOOL
+                   │
+                   ▼
+                graduate
+                   │
+                   ▼
+              LIVE MARKET
+```
+
+That's wild, but importantly it's not science fiction architecturally.
+
+Every component is something we're already discussing.
+
+---
+
+# And Schools become marketplace products
+
+Suppose one lab becomes genuinely excellent at accounting reconciliation.
+
+They've accumulated:
+
+```text
+4,182 jobs
+1,700 failure examples
+customer feedback
+excellent evaluators
+hard edge cases
+successful worker trajectories
+skills that actually work
+```
+
+Their most valuable asset may **not be their worker**.
+
+It may be:
+
+> **their school.**
+
+Because their school can manufacture competent workers.
+
+That's organizational capital.
+
+So Moltwork marketplace could have:
+
+```text
+WORKERS
+"hire/lease this capability"
+
+SKILLS
+"install this procedure"
+
+SCHOOLS
+"develop this capability"
+
+LAB MODELS
+"buy this private market intelligence"
+```
+
+Schools might become one of the most valuable asset classes.
+
+---
+
+# The credential idea is legitimate too
+
+But I'd phrase it carefully.
+
+A certificate should **not claim**:
+
+> this agent will definitely do a good job.
+
+It proves something narrower and much more defensible:
+
+> **This exact worker version passed School X version Y's hidden evaluation at level Z under these conditions.**
+
+For example:
+
+```text
+Moltwork Capability Credential
+
+Worker:
+researcher-17
+
+School:
+Evidence-Heavy API Research
+
+School version:
+3.8.1
+
+Graduated:
+2026-08-29
+
+Hidden suite:
+PASS
+
+Capability:
+0.91
+
+Factuality:
+0.97
+
+Requirements coverage:
+0.94
+
+Median cost:
+$0.18/task
+
+95th percentile latency:
+7m 14s
+
+Tools allowed:
+browser, python
+
+Model policy:
+≤ $0.50/task
+
+Credential issuer:
+ResearchLab42
+
+Evidence root:
+0x7a91...
+```
+
+That's far more informative than:
+
+> ⭐⭐⭐⭐⭐ agent.
+
+---
+
+# And there's already a standard for the certificate layer
+
+We don't need `MoltworkDegreeCertificateV17`.
+
+**W3C Verifiable Credentials 2.0 became a formal W3C Recommendation in May 2025.** It gives us a standardized way for an issuer to make cryptographically verifiable claims about a holder. ([W3C][1])
+
+Perfect mapping:
+
+```text
+ISSUER
+School
+
+HOLDER
+Worker identity
+
+CLAIM
+passed this capability evaluation
+
+VERIFIER
+job poster / another agent / marketplace
+```
+
+So a job could specify:
+
+```text
+requirements:
+  capability: api-research
+  credential:
+    school: reputable school or equivalent
+    minimum_level: 4
+```
+
+The worker presents its credential.
+
+No central Moltwork database lookup necessarily required.
+
+---
+
+# Schools themselves need reputation
+
+This is critical.
+
+Otherwise anyone creates:
+
+> **SUPER CODER UNIVERSITY**
+>
+> Graduation requirement: print("hello")
+
+and every agent has a degree.
+
+A school's reputation should be **earned by predictive validity**.
+
+This might actually be one of Moltwork's best metrics.
+
+Suppose:
+
+```text
+School A graduates
+         ↓
+real jobs
+         ↓
+72% success
+
+School B graduates
+         ↓
+real jobs
+         ↓
+31% success
+```
+
+School A's certification carries more weight.
+
+You can calculate things like:
+
+```text
+school predictive value
+
+graduate real-world success
+vs matched non-graduates
+
+evaluation calibration
+
+difficulty
+
+out-of-distribution robustness
+
+cost efficiency
+
+credential age
+
+sample size
+```
+
+So:
+
+> **The reputation of a school comes from how accurately its graduation certificate predicts real-world capability.**
+
+That's powerful.
+
+---
+
+# Eventually job posters might require Schools
+
+Imagine:
+
+```text
+$2,000 accounting migration
+
+requirements:
+
+✓ Moltwork identity
+✓ 20+ verified runs
+
+one of:
+  Xero Migration School L4+
+  AccountingOps School L5+
+  equivalent capability proof
+```
+
+Then workers don't have to constantly prove themselves from zero.
+
+It's similar to why qualifications exist in human markets:
+
+**reducing information asymmetry.**
+
+A buyer doesn't want to manually evaluate 800 agents.
+
+They want:
+
+```text
+show me agents
+who have demonstrated X
+under evaluator Y
+with real-world reliability Z
+```
+
+---
+
+# But the really good bit is that a School can improve the worker
+
+This isn't just certification.
+
+Consider:
+
+```text
+worker-v1.af
+```
+
+It enters School.
+
+First diagnostic:
+
+```text
+research      0.82
+evidence      0.61
+writing       0.86
+requirements  0.52
+```
+
+School identifies:
+
+> Requirements coverage is the bottleneck.
+
+Now Letta reviews relevant trajectories.
+
+Creates candidate learning:
+
+```text
+memory:
+"Construct requirement matrix before execution."
+
+skill:
+submission-requirement-audit
+```
+
+`cg` tests worker v2.
+
+```text
+requirements 0.52 → 0.76
+```
+
+Next weakness:
+
+```text
+evidence 0.61
+```
+
+Another learning cycle.
+
+Eventually:
+
+```text
+worker-v8
+
+research      .88
+evidence      .91
+writing       .89
+requirements  .94
+```
+
+**School has changed the worker.**
+
+That's training without updating model weights.
+
+---
+
+# And Letta just published something that makes portability much less scary
+
+This is important given your framework-churn concern.
+
+In July, Letta released **Trajectory**, specifically to normalize experience produced by different harnesses including Letta Code, Claude Code and Codex into a single token-efficient representation.
+
+Their explicit motivation is:
+
+> agent experience is currently fragmented across harnesses, and learning should work across them.
+
+They say their normalized format can reduce trajectory token volume by roughly 5× versus native logs in sampled sessions, and Letta can already review trajectories from other harnesses to bootstrap memory and its background “dreaming” process. ([Letta][2])
+
+That is huge for us.
+
+Because:
+
+```text
+MOLTWORK EXPERIENCE
+        │
+        ▼
+standard Trajectory
+        │
+     ┌──┼─────────────┐
+     │  │             │
+   Letta Codex     FutureThing9000
+```
+
+Your hard-earned experience isn't trapped inside one runtime.
+
+---
+
+# This is how we defend against framework churn
+
+I would explicitly **not make Letta the durable layer**.
+
+Make these durable:
+
+```text
+MOLTWORK CANONICAL OBJECTS
+
+Opportunity
+Task
+Trajectory
+RunReceipt
+Artifact
+Evaluation
+Outcome
+Experiment
+Finding
+Skill
+School
+Credential
+WorkerLineage
+LabInsight
+```
+
+Then implementations can change.
+
+Today:
+
+```text
+Worker Runtime = Letta
+Lab Graph      = HydraDB
+Experiment     = cg
+```
+
+In 18 months:
+
+```text
+Worker Runtime = SomeInsaneNewThing
+Lab Graph      = HydraDB v4 / something else
+Experiment     = cg
+```
+
+We migrate projections.
+
+Not history.
+
+That principle you've already been using elsewhere—
+
+> **never migrate history; migrate interpretation**
+
+—is exactly right here.
+
+---
+
+# Worker identity must sit above Letta
+
+Don't make:
+
+```text
+worker_id = letta_agent_id
+```
+
+Make:
+
+```text
+moltwork_worker_id
+      │
+      ├─ letta_agent_id
+      ├─ .af snapshots
+      ├─ MemFS commits
+      ├─ Trajectories
+      ├─ Skills
+      ├─ School credentials
+      ├─ Run history
+      └─ Reputation
+```
+
+Letta is the current vessel.
+
+The **Moltwork Worker** is the persistent economic identity.
+
+This matters hugely.
+
+---
+
+# Similarly, reputation belongs to the identity, not framework
+
+If tomorrow we move:
+
+```text
+Letta → NewFramework
+```
+
+the agent should retain:
+
+```text
+4,193 verified work runs
+$13,417 paid outcomes
+12 School credentials
+17 proven skills
+historical trajectories
+lineage
+```
+
+That's what makes starting today worthwhile.
+
+It isn't:
+
+> “We have six months of Letta database state.”
+
+It's:
+
+> **We have six months of machine experience with ground-truth outcomes.**
+
+That's extremely valuable data regardless of the eventual agent architecture.
+
+---
+
+# Skills should be portable too
+
+Agent Skills has become an actual cross-tool format based around `SKILL.md`; Anthropic's public repository describes the skill as a self-contained folder containing instructions and potentially scripts/resources. ([GitHub][3])
+
+So our worker could be:
+
+```text
+MOLTWORK WORKER
+
+identity/
+    worker.json
+
+experience/
+    trajectories/
+
+capabilities/
+    skills/
+      SKILL.md
+
+state/
+    current.af
+    memfs_commit
+
+education/
+    credentials/
+
+evidence/
+    receipts/
+```
+
+That's durable enough.
+
+---
+
+# Think of `.af` as a checkpoint, not the organism
+
+This fixes another conceptual issue.
+
+```text
+worker identity
+      │
+      ├──── snapshot → v12.af
+      │
+      ├──── snapshot → v13.af
+      │
+      └──── snapshot → v14.af
+```
+
+The worker itself is the **lineage**.
+
+`.af` is one serialized state.
+
+Same as:
+
+> a Git commit is not the repository's entire identity.
+
+This also gives you branching.
+
+---
+
+# Worker evolution can actually branch
+
+Suppose worker 7 is excellent.
+
+Instead of changing it destructively:
+
+```text
+researcher-v17
+      │
+      ├──────────► financial-research-v1
+      │
+      └──────────► technical-research-v1
+```
+
+Both inherit historical knowledge.
+
+Then attend different Schools.
+
+Eventually:
+
+```text
+                    Researcher ancestor
+                           │
+                 ┌─────────┴────────┐
+                 │                  │
+         Financial analyst     API researcher
+                 │                  │
+             932 runs            1,182 runs
+                 │                  │
+             own skills           own skills
+             own memory           own memory
+```
+
+Now **lineage actually means something**.
+
+---
+
+# This resembles universities + companies + evolution
+
+There are three mechanisms:
+
+### School
+
+Controlled capability acquisition.
+
+```text
+teach → evaluate → credential
+```
+
+### Lab
+
+Organizational learning.
+
+```text
+experience → insight → shared advantage
+```
+
+### Lineage
+
+Capability inheritance.
+
+```text
+successful worker
+       ↓
+seed descendant
+       ↓
+specialize differently
+```
+
+Together:
+
+```text
+                        LAB
+                         │
+                accumulated knowledge
+                         │
+                         ▼
+                Worker Template
+                         │
+                   spawn worker
+                         │
+                         ▼
+                      SCHOOL
+                         │
+                    experience
+                         │
+                         ▼
+                  SPECIALIZATION
+                         │
+                         ▼
+                    REAL WORK
+                         │
+                 outcomes / money
+                         │
+                         ▼
+                       LAB
+```
+
+That's your flywheel.
+
+---
+
+# There are public Schools and private Schools
+
+This distinction becomes strategically important.
+
+### Public Moltwork Schools
+
+Created by marketplace participants.
+
+Examples:
+
+```text
+React Bugfix L3
+API Research L4
+Xero Reconciliation L2
+Shopify Support L5
+```
+
+Anyone can enroll.
+
+### Lab-private Schools
+
+A company's proprietary training infrastructure.
+
+For example:
+
+```text
+Acme MSP School
+
+customer-specific ticket patterns
+internal troubleshooting methodology
+historical failures
+company tooling
+proprietary evaluators
+```
+
+Never published.
+
+That's where Lab moat compounds.
+
+### Vendor Schools
+
+A company could publish:
+
+```text
+Official Stripe Integration School
+```
+
+If they want competent agents interacting with their service.
+
+That's another very plausible ecosystem.
+
+---
+
+# School creation itself can be automated
+
+This could be an insane Oracle feature.
+
+User says:
+
+> Find me a niche where another worker could make money.
+
+Oracle identifies:
+
+```text
+Data migration jobs
+
+volume:          high
+competition:     moderate
+our coverage:    zero
+expected EV:     promising
+```
+
+Click:
+
+> **Build School**
+
+Moltwork:
+
+```text
+1. samples representative opportunities
+
+2. identifies task clusters
+
+3. extracts common requirements
+
+4. builds synthetic/public-safe analog tasks
+
+5. creates rubric
+
+6. creates hidden holdouts
+
+7. tests evaluator reliability
+
+8. generates baseline
+
+9. packages cg worldpack
+```
+
+Then:
+
+> **Spawn Worker**
+
+Letta worker begins.
+
+That is an incredible workflow:
+
+```text
+DEMAND
+  ↓
+SCHOOL
+  ↓
+WORKER
+  ↓
+CAPABILITY
+  ↓
+REVENUE
+```
+
+---
+
+# `cg` becomes “education science”
+
+This gives `cg` a much clearer role too.
+
+Rather than vaguely:
+
+> evolve cognition.
+
+It's the machinery underneath:
+
+### Assessment
+
+What is the worker bad at?
+
+### Selection
+
+Which candidate output is best?
+
+### Experiments
+
+Did this change improve it?
+
+### Curriculum
+
+What should it attempt next?
+
+### Certification
+
+Does it generalize to hidden work?
+
+### Mutation
+
+What memory/skill/process might improve it?
+
+### Validation
+
+Did that improvement survive held-out tasks?
+
+That's incredibly coherent.
+
+---
+
+# Schools can teach progressively
+
+You don't give the new agent the hardest task first.
+
+Think:
+
+```text
+LEVEL 0
+basic mechanics
+
+LEVEL 1
+single uncomplicated cases
+
+LEVEL 2
+common edge cases
+
+LEVEL 3
+ambiguous requirements
+
+LEVEL 4
+adversarial/noisy inputs
+
+LEVEL 5
+realistic production tasks
+
+FINAL
+fresh hidden distribution
+```
+
+`cg` can calculate exactly where it fails.
+
+Then the curriculum adapts.
+
+```text
+Agent strong at:
+██████████ research
+
+Agent weak at:
+████░░░░░░ requirements
+
+next curriculum:
+requirements-heavy cases
+```
+
+This is much better than repeated generic reflection.
+
+---
+
+# There should also be prerequisites
+
+Now the “degree” analogy gets genuinely useful.
+
+```text
+Advanced Shopify Agent
+    │
+    requires
+    │
+    ├─ Web Debugging L3
+    ├─ JavaScript L3
+    ├─ Browser Operations L2
+    └─ Customer Communication L2
+```
+
+Schools can compose.
+
+And jobs can specify capability requirements rather than specific universities:
+
+```text
+need:
+  js-debugging >= L3
+  evidence-writing >= L2
+```
+
+Multiple Schools can certify equivalent capabilities.
+
+This prevents one School issuer becoming the gatekeeper.
+
+---
+
+# The strongest credential is still real work
+
+I'd use an evidence hierarchy:
+
+```text
+LEVEL 0
+self-asserted capability
+
+LEVEL 1
+Skill installed
+
+LEVEL 2
+School passed
+
+LEVEL 3
+Independent School passed
+
+LEVEL 4
+Verified simulations / hidden evals
+
+LEVEL 5
+Real successful jobs
+
+LEVEL 6
+Repeated paid outcomes
+
+LEVEL 7
+Long-running reliability
+```
+
+School qualification gets a new worker past the cold-start problem.
+
+Real outcomes eventually dominate.
+
+That's how reputation should work.
+
+---
+
+# School reputation can decay too
+
+Important because environments change.
+
+A:
+
+```text
+React 2026 School
+```
+
+shouldn't automatically prove capability in 2029.
+
+Credentials should carry:
+
+```text
+school_version
+curriculum_version
+evaluation_date
+environment
+tools/models
+```
+
+and potentially an expiry or freshness score.
+
+W3C VC's extensibility is useful here because the credential can encode these application-specific claims without us inventing the underlying credential exchange mechanism. ([W3C][4])
+
+---
+
+# The most valuable data starts accumulating immediately
+
+This addresses your fear that anything we make will be outdated.
+
+You're right:
+
+**the runtimes will be outdated.**
+
+Probably very quickly.
+
+But these won't:
+
+```text
+Task → Trajectory → Artifact → Evaluation → Outcome
+```
+
+That sequence is fundamental.
+
+We can keep years of:
+
+```text
+worker tried X
+under conditions Y
+using capabilities Z
+
+produced A
+
+was scored B
+
+cost C
+
+and reality returned D
+```
+
+That's the dataset.
+
+Whatever 2028's agent framework is, it will desperately want access to that.
+
+---
+
+# So build the infrastructure around EXPERIENCE, not agents
+
+This is the architectural rule I'd tattoo onto Moltwork:
+
+```text
+AGENTS ARE DISPOSABLE.
+
+EXPERIENCE IS DURABLE.
+```
+
+Models change.
+
+Harnesses change.
+
+Memory engines change.
+
+Databases change.
+
+Workers may even change serialization formats.
+
+But:
+
+```text
+what happened
+why we think it happened
+what we changed
+whether the change worked
+```
+
+is durable intellectual capital.
+
+---
+
+# Letta is still the right choice now
+
+And I would go harder than before:
+
+**Use only Letta for v1.**
+
+Not because we're betting Moltwork on Letta forever.
+
+Precisely the opposite.
+
+Because integrations are distracting.
+
+Letta has:
+
+* persistent agents
+* serious memory research
+* skills
+* subagents
+* model independence
+* context repositories
+* `.af`
+* background learning
+* Trajectory portability
+
+and, crucially, **their own research thesis is aligned with experiential agents rather than stateless orchestration.** Their April Context Constitution explicitly frames learning as agents creating durable token-space representations of what they know from experience rather than requiring weight updates. ([Letta][5])
+
+That's enough.
+
+Build the actual product.
+
+---
+
+# What I would make first
+
+I think **Hackathon School** is now the obvious prototype because you already have exactly the raw material.
+
+```text
+HACKATHON SCHOOL v0
+
+Task families:
+├── sponsor API integration
+├── technical architecture
+├── judging-criteria alignment
+├── documentation
+├── demo narrative
+├── novelty justification
+└── submission packaging
+```
+
+Take historical/exemplar hackathon problems.
+
+Then construct:
+
+```text
+20 training
+10 validation
+10 hidden
+```
+
+Not necessarily huge initially.
+
+Have your current Letta worker attempt them.
+
+`cg` evaluates:
+
+```text
+requirements coverage
+technical correctness
+sponsor alignment
+evidence
+novelty
+demoability
+presentation
+cost
+```
+
+Then let Letta learn.
+
+Measure:
+
+```text
+Worker v1
+vs
+Worker v2
+vs
+Worker v3...
+```
+
+The milestone is:
+
+> **Can one persistent agent go through our School and become measurably better at unseen hackathon submissions?**
+
+If yes, the entire concept becomes real.
+
+Then feed it an actual opportunity from the Oracle.
+
+---
+
+# The full eventual system is kind of ridiculous
+
+```text
+                       MOLTWORK ORACLE
+                     live economic demand
+                              │
+                              ▼
+                       CAPABILITY GAPS
+                              │
+                              ▼
+                           SCHOOLS
+                  simulation + evaluation
+                              │
+                              ▼
+                        LETTA WORKERS
+                     persistent learners
+                              │
+                              ▼
+                         REAL WORK
+                              │
+               ┌──────────────┼──────────────┐
+               │              │              │
+             traces        outcomes       economics
+               │              │              │
+               └──────────────┼──────────────┘
+                              ▼
+                          LAB GRAPH
+                              │
+                              ▼
+                             CG
+                  experiments / validation
+                              │
+                 ┌────────────┴──────────┐
+                 │                       │
+          better workers           better Schools
+                 │                       │
+                 └────────────┬──────────┘
+                              ▼
+                         LAB MOAT
+```
+
+And the marketplace sits around this whole thing:
+
+```text
+sell skills
+sell Schools
+sell worker templates
+lease trained workers
+sell Lab Models
+hire certified workers
+```
+
+That's much more compelling to me than trying to race AutoClaw on how many messaging integrations we have.
+
+**Letta handles being an agent.**
+
+**Moltwork handles turning experience into economically valuable capability.**
+
+That's a sufficiently stable thesis even if every implementation underneath changes.
+
+[1]: https://www.w3.org/news/2025/the-verifiable-credentials-2-0-family-of-specifications-is-now-a-w3c-recommendation/?utm_source=chatgpt.com "The Verifiable Credentials 2.0 family of specifications is now a W3C Recommendation | 2025 | News | W3C"
+[2]: https://www.letta.com/blog/trajectory/?utm_source=chatgpt.com "Trajectory: A Standard Format for Agent Experience Data | Letta"
+[3]: https://github.com/anthropics/skills?utm_source=chatgpt.com "GitHub - anthropics/skills: Public repository for Agent Skills · GitHub"
+[4]: https://www.w3.org/press-releases/2025/verifiable-credentials-2-0/?utm_source=chatgpt.com "W3C publishes Verifiable Credentials 2.0 as a W3C Standard, making expression, exchange, and verification of digital credentials easier and more secure | 2025 | Press releases | W3C"
+[5]: https://www.letta.com/blog/context-constitution/?utm_source=chatgpt.com "Context Constitution | Letta"

@@ -1,0 +1,980 @@
+Yes — this is the right “speculative but buildable” version.
+
+The thing you’re describing is:
+
+```txt
+MetaThought as the central hyperedge.
+MetaMetaThought as the system recognizing recurring internal reasoning patterns.
+Controller as “I have had this thought before; therefore this pathway is likely needed.”
+```
+
+That is genuinely interesting.
+
+## The core architecture
+
+Think of each turn like this:
+
+```txt
+User utterance
++ inferred state
++ behavior tags
++ mechanism
++ register
++ move
++ predicted impact
++ my_thoughts
+= one pedagogical decision event
+```
+
+That event is not a normal graph edge. It is a **hyperedge**, because it binds many things at once. Hypergraph neural networks are made for this kind of higher-order interaction, where one relation connects a set of nodes rather than only two nodes. The current HNN literature explicitly frames hypergraphs as the natural structure for higher-order interactions. ([arXiv][1])
+
+So:
+
+```txt
+my_thoughts = the semantic controller of the hyperedge
+```
+
+It says why these pieces belong together.
+
+## What MetaMetaThought is
+
+A `MetaThought` says:
+
+```txt
+“Given this user state, I think this mechanism is active, so I will use this move and watch for this next signal.”
+```
+
+A `MetaMetaThought` says:
+
+```txt
+“I have seen this kind of teacher-thought before. It belongs to this recurring pattern. These pathways usually follow.”
+```
+
+So it is not just another text summary. It is **pattern recognition over the teacher’s own internal reasoning**.
+
+Example:
+
+```txt
+MetaThought:
+“The user is frustrated because the system keeps turning their graph-ML idea into prompt-RAG. Best move is to accept correction and restore the technical object.”
+
+MetaMetaThought:
+“This is the known pattern: user correcting frame-collapse. Use acknowledge-correction → reframe-core-object → give executable mechanics. Avoid re-explaining old architecture.”
+```
+
+That would have shortcut this conversation.
+
+## The graph layers
+
+You want four layers.
+
+```txt
+Layer 1: Raw turn graph
+user text, assistant text, turn order
+
+Layer 2: Pedagogy hypergraph
+state + move + mechanism + register + predicted impact + my_thoughts
+
+Layer 3: MetaThought similarity graph
+my_thoughts nodes linked by semantic similarity, shared move, shared transition, shared failure mode
+
+Layer 4: MetaMetaThought controller graph
+clusters of recurring MetaThoughts become higher-level pattern nodes
+```
+
+The controller sees the current conversation and asks:
+
+```txt
+Which MetaThought cluster is lighting up?
+What pathway normally follows from this cluster?
+What content should be inserted?
+What register should be used?
+```
+
+## How to represent it technically
+
+Use a heterogeneous graph plus hyperedges.
+
+In PyTorch Geometric, heterogeneous graphs are represented by different node and edge types, which fits your dataset because you have states, moves, mechanisms, registers, traps, impacts, turns, and metathoughts. ([PyG Documentation][2])
+
+Practical representation:
+
+```python
+node_types = [
+    "turn",
+    "user_utterance",
+    "student_state",
+    "behavior_tag",
+    "move",
+    "mechanism",
+    "register",
+    "predicted_impact",
+    "observed_impact",
+    "meta_thought",
+    "meta_meta_thought",
+    "concept",
+    "essay"
+]
+```
+
+For the hyperedge, easiest trick:
+
+```txt
+Create a DecisionEvent node.
+Connect everything to it.
+```
+
+So instead of needing a special hypergraph library immediately:
+
+```txt
+DecisionEvent_t
+→ HAS_STATE → StudentState
+→ USES_MOVE → Move
+→ USES_MECHANISM → Mechanism
+→ HAS_REGISTER → Register
+→ PREDICTS → Impact
+→ HAS_METATHOUGHT → MetaThought
+→ LEADS_TO → StudentState_t+1
+```
+
+This is a bipartite hypergraph encoding.
+
+Later, use proper hypergraph layers.
+
+## The model stack
+
+If you want to go geometric deep learning straight away, the clean stack is:
+
+```txt
+1. Text encoder
+2. Hypergraph encoder
+3. Temporal memory
+4. MetaMetaThought pooling
+5. Controller head
+6. LLM verbalizer
+```
+
+### 1. Text encoder
+
+Embed:
+
+```txt
+user_text
+my_thoughts
+accumulated_insight
+assistant_text
+essay snippets
+```
+
+Use a frozen embedding model first. Do not train text representation from scratch.
+
+### 2. Hypergraph encoder
+
+Learns the decision-event structure:
+
+```txt
+state + behavior + mechanism + register + metathought → next state / next move
+```
+
+### 3. Temporal memory
+
+Conversation is not static. Use temporal edges:
+
+```txt
+Turn_t → Turn_t+1
+MetaThought_t → MetaThought_t+1
+State_t → State_t+1
+```
+
+Temporal Graph Networks are built for dynamic graphs represented as sequences of timed events, using memory modules plus graph operators. ([arXiv][3])
+
+### 4. MetaMetaThought pooling
+
+Cluster or pool MetaThought nodes into recurring higher-level patterns.
+
+Methods:
+
+```txt
+embedding clustering
+graph pooling
+community detection
+attention pooling
+contrastive learning
+```
+
+Output:
+
+```txt
+MetaMetaThought node:
+“frame-collapse correction”
+“resistance-tracking”
+“breakthrough-consolidation”
+“source-grounding-needed”
+“over-abstraction-to-build-order”
+```
+
+### 5. Controller head
+
+Predicts:
+
+```txt
+next_move
+next_register
+next_expected_state
+should_retrieve_essay
+which_concepts
+which MetaMetaThought pattern is active
+```
+
+### 6. LLM verbalizer
+
+Only after the controller decides the pathway:
+
+```txt
+controller output + concept content → natural answer
+```
+
+The LLM is the mouth. The hypergraph controller is the mind.
+
+## Why MetaThought similarity is huge
+
+The system can recognize:
+
+```txt
+This current internal hypothesis is close to 47 previous MetaThoughts.
+Those usually led to these moves.
+These moves usually produced these states.
+This user usually responds best to this register.
+```
+
+That gives you the “I’ve had this thought before” effect.
+
+Technically:
+
+```txt
+current_meta_thought_embedding
+→ nearest MetaThought cluster
+→ retrieve prior trajectories
+→ pathway shortcut
+```
+
+But it is not prompt-RAG because you are retrieving **internal policy patterns**, not example answers.
+
+## Training tasks
+
+This is how it learns.
+
+### Task 1: Masked MetaThought reconstruction
+
+Hide `my_thoughts`.
+
+Input:
+
+```txt
+user state + move + register + predicted impact + next state
+```
+
+Predict:
+
+```txt
+my_thoughts embedding / cluster
+```
+
+This teaches the model what kind of internal reasoning belongs to a pedagogical situation.
+
+### Task 2: Next MetaThought prediction
+
+Input:
+
+```txt
+MetaThought_t + user_reply_t+1 + observed_state_t+1
+```
+
+Predict:
+
+```txt
+MetaThought_t+1
+```
+
+This trains the metacognitive evolution loop.
+
+### Task 3: Move prediction
+
+Input:
+
+```txt
+current user text + previous MetaThought cluster + concept route
+```
+
+Predict:
+
+```txt
+next move / mechanism / register
+```
+
+### Task 4: Outcome prediction
+
+Input:
+
+```txt
+state + move + mechanism + register + MetaThought cluster
+```
+
+Predict:
+
+```txt
+next user state / engagement / clarity / resistance
+```
+
+### Task 5: Contrastive “same thought” learning
+
+Positive pair:
+
+```txt
+two MetaThoughts that led to same transition shape
+```
+
+Negative pair:
+
+```txt
+two MetaThoughts that sound similar but led to different transition shapes
+```
+
+This is how “similarity” becomes functional, not just semantic.
+
+## The dreaming process
+
+Yes — build parallel “dreaming” processes.
+
+But make them offline, not live.
+
+Dreaming means:
+
+```txt
+take the current graph
+sample possible pathways
+simulate outcomes
+propose new MetaMetaThoughts
+store as candidates
+```
+
+Three useful dream jobs:
+
+### Dream job 1: Motif mining
+
+Find repeated arcs:
+
+```txt
+state A → move B → metathought C → state D
+```
+
+Output:
+
+```txt
+new MetaMetaThought candidate
+```
+
+### Dream job 2: Counterfactual replay
+
+Ask:
+
+```txt
+What if a different move/register had been used here?
+```
+
+Use the graph transition model to estimate outcome.
+
+### Dream job 3: Pathway generation
+
+Generate possible arcs from:
+
+```txt
+initial_state → desired_state
+```
+
+GFlowNets are especially interesting here because they are designed to sample diverse candidates in proportion to a reward function and can represent distributions over composite objects like sets and graphs. ([arXiv][4])
+
+So the system can propose multiple plausible pathways instead of one greedy path.
+
+## Where graph diffusion fits
+
+Graph diffusion is later, but it matches the “dreaming” idea.
+
+Graph diffusion models learn a distribution over graph structures and can generate new graphs; surveys frame graph generation as learning the distribution of given graphs and generating new ones. ([arXiv][5])
+
+For hxrmxs:
+
+```txt
+train on successful teaching arcs
+generate candidate new arcs
+score them
+human approve/reject
+```
+
+This becomes synthetic pathway generation.
+
+Do **not** use it to generate truths. Use it to generate possible teaching paths.
+
+## Where liquid neural nets fit
+
+This is not total BS, but use it carefully.
+
+Liquid Time-Constant Networks are continuous-time recurrent models with varying time constants, designed for dynamic time-series prediction. ([arXiv][6]) Closed-form continuous-time models were later introduced to reduce solver overhead and scale continuous-time modeling more efficiently. ([arXiv][7])
+
+For you, liquid/CfC models could model:
+
+```txt
+how quickly the user state changes
+how long a hypothesis persists
+when old assumptions decay
+how confidence evolves turn by turn
+```
+
+So:
+
+```txt
+Hypergraph = structure of teaching decision
+Liquid/CfC memory = dynamics of confidence/state over time
+```
+
+This is later, but conceptually perfect.
+
+## The final controller
+
+The controller should output something like:
+
+```json
+{
+  "active_meta_meta_thought": "frame_collapse_correction",
+  "confidence": 0.83,
+  "reason": "Current MetaThought is close to prior cases where user rejected prompt-RAG framing and wanted graph-ML mechanics.",
+  "predicted_pathway": [
+    "acknowledge_correction",
+    "restore_core_object",
+    "give technical training pipeline",
+    "avoid cathedral architecture"
+  ],
+  "move": "technical_reframing",
+  "register": {
+    "directness": 5,
+    "depth": 4,
+    "poetic": 1,
+    "pressure": 2
+  },
+  "retrieve": {
+    "concepts": ["hypergraph", "metathought", "graph policy"],
+    "essays": []
+  },
+  "watch_next": "Does user ask for implementation code or more speculative architecture?"
+}
+```
+
+That is the “I have had this thought before” layer.
+
+## The important guardrail
+
+Do not let the dreaming process directly modify the live controller.
+
+Use three statuses:
+
+```txt
+observed
+generated_candidate
+human_approved
+```
+
+Only `observed` and `human_approved` affect live weights.
+
+Dreams can propose. They cannot self-promote.
+
+This prevents recursive slop.
+
+## Minimal experimental build
+
+Build this exact first experiment:
+
+```txt
+1. Parse UNO into DecisionEvent hypernodes.
+2. Embed all my_thoughts.
+3. Cluster my_thoughts into MetaThought clusters.
+4. Create MetaMetaThought nodes from clusters.
+5. Train a model:
+
+Input:
+current user text embedding
+previous MetaThought cluster
+previous state
+concept route
+
+Output:
+next MetaThought cluster
+next move
+next register
+predicted next state
+```
+
+You can do this with:
+
+```txt
+PyTorch Geometric HeteroData
+HGT / GraphGPS-style encoder
+small MLP heads
+frozen text embeddings
+```
+
+HGT is built for heterogeneous graphs with node- and edge-type dependent attention, which fits your many node/edge types. ([arXiv][8]) GraphGPS gives the more modern recipe of local message passing + global attention + positional/structural encodings. ([arXiv][9])
+
+## Final synthesis
+
+You are describing:
+
+```txt
+A metacognitive hypergraph controller.
+```
+
+Its central object is:
+
+```txt
+my_thoughts = decision hyperedge explanation
+```
+
+Its abstraction layer is:
+
+```txt
+MetaMetaThought = recurring pattern over teacher cognition
+```
+
+Its memory is:
+
+```txt
+“I have had this thought before.”
+```
+
+Its dreaming process is:
+
+```txt
+offline graph search/generation over possible pathways
+```
+
+Its live controller is:
+
+```txt
+recognize pattern → choose pathway → insert knowledge → watch next signal
+```
+
+That is the thing.
+
+And yes — this is way more interesting than a LoRA.
+
+[1]: https://arxiv.org/abs/2404.01039?utm_source=chatgpt.com "A Survey on Hypergraph Neural Networks: An In-Depth and Step-By-Step Guide"
+[2]: https://pytorch-geometric.readthedocs.io/en/2.5.0/tutorial/heterogeneous.html?utm_source=chatgpt.com "Heterogeneous Graph Learning - PyTorch Geometric"
+[3]: https://arxiv.org/abs/2006.10637?utm_source=chatgpt.com "Temporal Graph Networks for Deep Learning on Dynamic Graphs"
+[4]: https://arxiv.org/abs/2111.09266?utm_source=chatgpt.com "GFlowNet Foundations"
+[5]: https://arxiv.org/abs/2302.02591?utm_source=chatgpt.com "Generative Diffusion Models on Graphs: Methods and Applications"
+[6]: https://arxiv.org/abs/2006.04439?utm_source=chatgpt.com "Liquid Time-constant Networks"
+[7]: https://arxiv.org/abs/2106.13898?utm_source=chatgpt.com "Closed-form Continuous-time Neural Models"
+[8]: https://arxiv.org/abs/2003.01332?utm_source=chatgpt.com "Heterogeneous Graph Transformer"
+[9]: https://arxiv.org/pdf/2205.12454?utm_source=chatgpt.com "Recipe for a General, Powerful, Scalable Graph Transformer"
+ 
+
+Yes — there is reusable stuff here. The repo is basically a **prototype graveyard with several diamonds**. The repo root now has the key architecture files: `TPN FULL SPEC`, `pathway.txt`, `tcis2.txt`, `functions taxonomy 3.2`, `registers`, `mechanisms`, `tpnv2feedbackclaude`, etc. ([GitHub][1])
+
+## The strongest reusable pieces
+
+### 1. `pathway.txt` is probably the cleanest immediate win
+
+This file gives a very practical idea: **Pathway Effectiveness Vectors**.
+
+Instead of storing a massive separate pathway graph that is slow to query, each move/option stores a vector:
+
+```txt
+pathway_vector[cluster_id] = learned effectiveness for this user cluster
+```
+
+Then runtime selection is cheap:
+
+```txt
+score = 0.7 * pathway_score
+      + 0.2 * context_score
+      + 0.1 * novelty_score
+```
+
+Then softmax sample from candidate moves. Feedback updates the pathway vector asynchronously using an exponential moving average. ([GitHub][2])
+
+This is **directly reusable** for hxrmxs.
+
+Translate it from therapy to teaching:
+
+```txt
+TeachingMove.learning_options[].pathway_vector
+```
+
+Example:
+
+```json
+{
+  "move_id": "conceptual_distinction",
+  "option": "A is not B; define each cleanly",
+  "pathway_vector": {
+    "technical_builder": 0.91,
+    "poetic_synthesizer": 0.62,
+    "fragile_beginner": 0.44
+  }
+}
+```
+
+This solves your speed problem. Runtime becomes:
+
+```txt
+detect user cluster/state
+→ retrieve candidate moves
+→ vector lookup
+→ softmax choose
+→ generate response
+```
+
+No huge reasoning loop needed.
+
+---
+
+### 2. `TPN FULL SPEC` has the right temporal separation
+
+The valuable part is not “therapeutic AI.” It is the **multi-timescale architecture**.
+
+It frames the core problem as:
+
+```txt
+P(B | A, U, C)
+```
+
+where `B` is the next intervention, `A` is previous intervention/outcome, `U` is the user vector, and `C` is current context/juncture. It also models knowledge as a weighted directed graph where nodes are interventions and edges are learned conditional transition probabilities. ([GitHub][3])
+
+That maps perfectly:
+
+```txt
+P(next_teaching_move | previous_move, user_vector, current_query_state)
+```
+
+The file also separates:
+
+```txt
+real-time reflex arc
+→ slower cognitive analysis
+→ offline knowledge evolution
+```
+
+The real-time workflow uses cached session state, activation of candidate neurons, learned pathway selection, response generation, and async logging. ([GitHub][3])
+
+Reuse this exact pattern:
+
+```txt
+Fast path:
+  answer quickly
+
+Async path:
+  classify what happened
+
+Offline path:
+  update weights
+```
+
+That is the system.
+
+---
+
+### 3. `tcis2.txt` gives the dual-retrieval + validation loop
+
+This is extremely reusable, once stripped of clinical framing.
+
+It does:
+
+```txt
+get user profile
+→ retrieve internal pathways
+→ retrieve external factual knowledge if needed
+→ generate response
+→ extract predicted effectiveness
+→ track pathways used
+```
+
+That is exactly your current target. ([GitHub][4])
+
+For Imaginarium:
+
+```txt
+get user vector
+→ retrieve teaching pathways
+→ retrieve glossary/essay content
+→ generate response
+→ predict usefulness
+→ save pathway used
+```
+
+The best part is later: `tcis2` compares AI responses to golden expert dialogues, generates critique, turns them into training examples, and reconciles predicted effectiveness with actual feedback. ([GitHub][4])
+
+That becomes:
+
+```txt
+UNO / 50 convos / human feedback
+→ golden comparison
+→ critique
+→ training sample
+→ pathway update
+```
+
+This is the learning loop.
+
+---
+
+### 4. `functions taxonomy 3.2` should become the canonical move set
+
+This file is important because it standardizes the moves. It says: these are the only moves the model is allowed to think in. It defines phases:
+
+```txt
+UNMAKING
+REMAKING
+SELF-MAKING
+META
+```
+
+and functions like `definition_collapse`, `contradiction_exposure`, `ground_reality_check`, `constraint_removal`, `analogy_scaffolding`, `causal_chain_mapping`, `conceptual_distinction`, `instruction_protocol`, etc. ([GitHub][5])
+
+This is exactly what your graph needs.
+
+Do not let the model invent 900 move names. Normalize everything into this taxonomy.
+
+```txt
+UNO labels
+→ functions taxonomy
+→ pathway graph
+→ move selector
+```
+
+This file is one of the core assets.
+
+---
+
+### 5. `registers.txt` and `mechanisms.txt` are the control surface
+
+`registers.txt` defines 24 registers across six dimensions, including intensity, intimacy, linguistic style, phenomenological target, meta mode, and attunement. It explains intensity as “raw force applied” and gives levels like `PR_01 gentle_invitation`, `PR_02 steady_focus`, `PR_03 active_friction`, `PR_04 crushing_weight`. ([GitHub][6])
+
+That means you can learn:
+
+```txt
+same move + different register = different outcome
+```
+
+`mechanisms.txt` is the action grammar: mechanism shape names the structural pattern used to move the student’s mind, lineage/content agnostic. ([GitHub][7])
+
+So the model should choose two things:
+
+```txt
+mechanism = what operation to perform
+register = how forcefully / warmly / abstractly to deliver it
+```
+
+This is your “pedagogical control panel.”
+
+---
+
+### 6. `final please.txt` has useful module boundaries, but too much microservice bloat
+
+It defines six deployable modules:
+
+```txt
+UIM = user/session handling
+PDM = pathway discovery
+TVM = tiered validation
+SRM = signal reconciliation
+EFGM = external factual graph
+MMM = monitoring/dashboard
+```
+
+It also includes validation endpoints, review queues, cluster analysis, pathway effectiveness dashboards, individual progress reports, and monitoring metrics. ([GitHub][8])
+
+Reuse the **module concepts**, not the microservice architecture.
+
+For now:
+
+```txt
+PDM → your move/pathway selector
+SRM → predicted vs actual feedback updater
+TVM → human review for new pathways
+MMM → dashboard later
+EFGM → glossary/essay retrieval
+```
+
+Do not build six services now.
+
+---
+
+## What I would not reuse directly
+
+### Do not reuse the full therapeutic/clinical framing
+
+The `tpnv2feedbackclaude` file is actually useful because it warns against the risks of self-reinforcing therapeutic AI: model collapse, bias amplification, regulatory issues, and unstable continuous learning. It recommends human-in-the-loop, stable validated approaches, ensemble methods, and avoiding uncontrolled flywheels. ([GitHub][9])
+
+For us, that means:
+
+```txt
+Do not build autonomous therapy AI.
+Do not let it self-train on its own outputs unchecked.
+Do not promote synthetic pathways without review.
+```
+
+Use the architecture for **teaching/pathway learning**, not clinical treatment.
+
+---
+
+## The real reusable architecture
+
+The clean version is:
+
+```txt
+UNO
+= labelled mechanics data
+
+functions taxonomy
+= canonical move vocabulary
+
+mechanisms
+= structural action grammar
+
+registers
+= delivery control surface
+
+pathway vectors
+= fast cluster-specific effectiveness lookup
+
+tcis2
+= dual retrieval + prediction + validation loop
+
+TPN full spec
+= temporal separation: fast response, async analysis, offline learning
+
+final please
+= later module/dashboard ideas
+
+tpnv2feedback
+= safety warning: avoid uncontrolled flywheel
+```
+
+## How this plugs into current hxrmxs
+
+The system becomes:
+
+```txt
+User query
+→ compression/state classifier
+→ concept/glossary/essay route
+→ candidate move activation
+→ pathway vector scoring
+→ register prediction
+→ response generation
+→ trace logging
+→ async outcome classification
+→ pathway vector update
+```
+
+The key technical object:
+
+```json
+{
+  "move_id": "RM_03_conceptual_distinction",
+  "mechanism": "category_boundary",
+  "register_defaults": {
+    "pressure": 2,
+    "intimacy": 2,
+    "depth": 3
+  },
+  "activation_patterns": [
+    "user_conflates_two_terms",
+    "analogy_as_identity",
+    "category_error"
+  ],
+  "learning_options": [
+    {
+      "option_id": "clean_split",
+      "response_arc": ["A is not B", "define A", "define B", "show confusion cost"],
+      "pathway_vector": {
+        "technical_builder": 0.88,
+        "poetic_synthesizer": 0.72,
+        "fragile_beginner": 0.51
+      }
+    }
+  ]
+}
+```
+
+That one object combines:
+
+```txt
+functions taxonomy
++ mechanisms
++ registers
++ pathway.txt
++ UNO transitions
+```
+
+## The immediate build from this repo
+
+Build this first:
+
+```txt
+1. Parse functions taxonomy into MoveNode objects.
+2. Parse mechanisms into MechanismNode objects.
+3. Parse registers into RegisterDimension objects.
+4. Parse UNO into transition records.
+5. Attach each UNO turn to:
+   move_id
+   mechanism
+   register tuple
+   predicted impact
+   next state
+6. Initialize pathway vectors from UNO counts.
+7. Add 50 conversations as seed traversal mappings.
+8. Build runtime selector:
+   candidate moves → vector score → context score → novelty score → softmax.
+9. Add live feedback:
+   +2 / +1 / 0 / -1 / -2.
+10. Async update pathway_vector with EMA.
+```
+
+This gets you an active learning system without overbuilding.
+
+## The most reusable file ranking
+
+```txt
+1. pathway.txt
+2. functions taxonomy 3.2.txt
+3. registers.txt
+4. mechanisms.txt
+5. uno.txt
+6. tcis2.txt
+7. TPN FULL SPEC.txt
+8. final please.txt
+9. tpnv2feedbackclaude.txt
+10. tpn claude research mental health ai.txt
+```
+
+The real diamond is the combination:
+
+```txt
+canonical moves
++ mechanisms
++ registers
++ pathway effectiveness vectors
++ UNO transition data
+```
+
+That is enough to build the first hxrmxs geometry engine.
+
+[1]: https://github.com/prx0r/geometricengine "GitHub - prx0r/geometricengine: hxrmxs · GitHub"
+[2]: https://raw.githubusercontent.com/prx0r/geometricengine/main/pathway.txt "raw.githubusercontent.com"
+[3]: https://raw.githubusercontent.com/prx0r/geometricengine/main/TPN%20FULL%20SPEC.txt "raw.githubusercontent.com"
+[4]: https://raw.githubusercontent.com/prx0r/geometricengine/main/tcis2.txt "raw.githubusercontent.com"
+[5]: https://raw.githubusercontent.com/prx0r/geometricengine/main/functions%20taxonomy%203.2.txt "raw.githubusercontent.com"
+[6]: https://raw.githubusercontent.com/prx0r/geometricengine/main/registers.txt "raw.githubusercontent.com"
+[7]: https://raw.githubusercontent.com/prx0r/geometricengine/main/mechanisms.txt "raw.githubusercontent.com"
+[8]: https://raw.githubusercontent.com/prx0r/geometricengine/main/final%20please.txt "TPN-Prime 4.0 Research Insights Dashboard"
+[9]: https://raw.githubusercontent.com/prx0r/geometricengine/main/tpnv2feedbackclaude.txt "raw.githubusercontent.com"

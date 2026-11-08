@@ -1,0 +1,233 @@
+Yes, the same **Moltwork/WorkerKit thesis can target both**, but I would treat them very differently.
+
+**Algorand is the urgent one. ETHOnline is the important one.**
+
+The Algorand Global x402 Challenge registration closes **September 1 at 11:45 PM EST**. More importantly, registration is not just “put your name down”: the official rules say that to be eligible you need a **paid x402 endpoint already deployed and reachable on Algorand Mainnet, using the GoPlausible facilitator** so transactions can be tracked. 
+
+The eventual prize pool is much larger than a normal weekend hackathon: **$100k for the top five plus 500k ALGO for the top 20 leaderboard endpoints**. Judging is equally weighted across volume, use-case quality, sustained potential, and innovation. 
+
+So I would do this:
+
+1. **Do not port all of WorkerKit to Algorand.**
+2. Extract **one useful WorkerKit primitive** as a paid x402 service.
+3. Get it onto Algorand Mainnet.
+4. Make one genuine payment through GoPlausible.
+5. Get it into Bazaar with the `x402-global-challenge` tag.
+6. Confirm it appears on the leaderboard.
+7. Register before September 1.
+8. Go straight back to making WorkerKit robust.
+
+The Algorand docs explicitly allow three entry shapes: Standard endpoint, Composite endpoints, or an **Orchestrator that coordinates and pays other x402 endpoints**. ([Algorand][1])
+
+### What should the Algorand endpoint actually be?
+
+I would **not** submit “the Oracle.”
+
+I would make:
+
+> **Moltwork Verify — paid verification/provenance for agent work**
+
+Something like:
+
+```text
+POST /v1/verify-run
+
+input:
+  task specification
+  output
+  optional WorkerRun attestation
+
+402:
+  pay $0.01 USDC on Algorand
+
+output:
+  pass/fail
+  quality score
+  criteria breakdown
+  artifact hashes
+  provenance verification
+  signed verification receipt
+```
+
+This fits Algorand's own suggested category almost exactly: they explicitly suggest paid endpoints for **trust scores, proofs, audit trails, reputation checks and validation services**. ([Algorand][1])
+
+And it isn't throwaway work. WorkerKit already has:
+
+```text
+candidate generation
+      ↓
+verifier
+      ↓
+WorkerRun
+      ↓
+attestation
+```
+
+You're just exposing the verifier as an economically consumable service:
+
+```text
+WorkerKit A
+    │
+    ├── needs external verification
+    │
+    ▼
+Moltwork Verify
+   [402]
+    │
+ $0.01 USDC
+    │
+    ▼
+verification receipt
+```
+
+Later another agent can buy exactly the same thing.
+
+That is a genuinely useful Moltwork primitive.
+
+---
+
+## Then ETHOnline is the opposite
+
+ETHOnline starts from the **whole WorkerKit**.
+
+The Hedera $6k Agentic Payments bounty currently asks for a live x402 service **and a platform/agent that discovers and consumes it**, including provider budgeting, agent discovery and verifiable payment audit trails. ([ETHGlobal][2])
+
+So:
+
+```text
+ALGORAND
+
+Moltwork Verify
+=
+one SELLABLE capability
+
+          ↓ feeds into ↓
+
+ETHONLINE
+
+WorkerKit
+=
+economic runtime capable of
+finding + evaluating + BUYING capabilities
+```
+
+That's an excellent progression.
+
+### Same product, two different demonstrations
+
+```text
+                 MOLTWORK
+
+Algorand                         ETHOnline
+────────                         ─────────
+
+SELL side                        BUY/WORK side
+
+x402 endpoint                    WorkerKit runtime
+      │                                │
+verification                     sees paid task
+      │                                │
+paid in USDC                     estimates EV
+      │                                │
+receipt                          discovers tools
+      │                                │
+leaderboard                      BUILD vs BUY
+                                       │
+                                       ▼
+                               purchases x402 service
+                                       │
+                                       ▼
+                                  does the job
+                                       │
+                                       ▼
+                                 proves the run
+```
+
+That is much stronger than making two unrelated hackathon projects.
+
+## Can you reuse it?
+
+**Algorand:** I found no from-scratch requirement in its rules; it is explicitly about deploying and growing an endpoint over months.
+
+**ETHGlobal:** existing WorkerKit code needs to be handled under a suitable **Continuity track** rather than pretending you wrote it during ETHOnline. ETHGlobal explicitly allows existing projects in Continuity tracks, provided you document the existing baseline and build substantive new functionality during the event. ([ETHGlobal][3])
+
+So before ETHOnline:
+
+```bash
+git tag pre-ethonline-2026
+```
+
+Then the ETHOnline work can clearly be things like:
+
+```text
+NEW DURING ETHONLINE
+
+x402 capability discovery
+Hedera Blocky402 adapter
+BUY vs BUILD planner
+autonomous payment
+payment-aware RunMeter
+provider quality feedback
+HCS payment/run audit trail
+```
+
+Very defensible.
+
+---
+
+# What I would do today
+
+Forget the marketplace.
+
+Forget UI.
+
+Forget full ZK.
+
+Forget making Oracle perfect.
+
+**Today + tomorrow:**
+
+```text
+1. WorkerKit verifier
+       ↓
+2. expose as tiny HTTP service
+       ↓
+3. add x402 Algorand middleware
+       ↓
+4. TestNet payment
+       ↓
+5. MainNet deployment
+       ↓
+6. GoPlausible settlement
+       ↓
+7. receive real USDC
+       ↓
+8. Bazaar registration
+       ↓
+9. x402-global-challenge tag
+       ↓
+10. verify leaderboard appearance
+       ↓
+11. REGISTER ALGORAND
+```
+
+The Algorand developer guide has a specific resource-server/client walkthrough for doing exactly this x402 flow. ([Algorand Developer Portal][4])
+
+Then **stop adding Algorand features**.
+
+From September 2–3:
+
+> hammer WorkerKit robustness.
+
+From September 4:
+
+> ETHOnline = turn WorkerKit into an autonomous **buyer and router of x402 capabilities**.
+
+One eligibility caveat: Algorand's official rules require entrants to be **18 or the age of majority**. ETHGlobal's rules are different: under-18 participation is allowed with signed parent/guardian consent.  So only proceed with the Algorand registration if you independently satisfy that requirement.
+
+**Net recommendation: Algorand gets ~1–2 days to ship one real endpoint. ETHOnline gets the serious WorkerKit development.**
+
+[1]: https://algorand.co/global-x402-challenge "Global x402 Challenge"
+[2]: https://ethglobal.com/events/ethonline2026/prizes/hedera?utm_source=chatgpt.com "ETHGlobal"
+[3]: https://ethglobal.com/rules?utm_source=chatgpt.com "ETHGlobal | Code of Conduct"
+[4]: https://dev.algorand.co/resources/x402-on-algorand/?utm_source=chatgpt.com "x402 on Algorand | Algorand Developer Portal"

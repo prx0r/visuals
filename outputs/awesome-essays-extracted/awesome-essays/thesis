@@ -1,0 +1,578 @@
+Yes. This is a much stronger formulation than “predict which stocks will grow.” There is a real academic literature around nearly every link in the chain you are describing, although the strongest finance papers are often NBER/JFE/SSRN rather than arXiv.
+
+The key modification is:
+
+$$
+\boxed{\text{Alpha} \neq W_{\text{future}}-W_{\text{today}}}
+$$
+
+It is closer to:
+
+$$
+\boxed{\text{Alpha} =
+(W_{\text{our probability distribution}}
+-
+W_{\text{market-implied probability distribution}})
+\times
+\text{cash-flow exposure}}
+$$
+
+That distinction is enormous.
+
+## 1. The thesis in finance language
+
+A stock is approximately a claim on discounted future cash flows:
+
+$$
+P_t=\sum_{h=1}^{\infty}\frac{\mathbb{E}_t[CF_{t+h}]}{(1+r_h)^h}
+$$
+
+But the cash flows themselves are conditional on possible future worlds:
+
+$$
+\mathbb{E}[CF]
+=
+\sum_s P(W_s)\,CF(W_s)
+$$
+
+Therefore:
+
+$$
+P_t
+\approx
+\sum_s
+P_{\text{market}}(W_s)
+\sum_h
+\frac{CF_{h}(W_s)}{(1+r)^h}
+$$
+
+Your job isn't really to predict the stock.
+
+It is to estimate:
+
+$$
+P_{\text{you}}(W_s)
+-
+P_{\text{market}}(W_s)
+$$
+
+and then propagate that disagreement through:
+
+**world state → capabilities → costs → behavior → demand → industry revenue pools → individual company cash flows → valuation**
+
+That's a fundamentally different kind of investing.
+
+And there is a particularly interesting asymmetric version:
+
+> You may not have to know **who wins**. You only have to know that an incumbent's current profit pool probably cannot survive the range of plausible future worlds.
+
+Five completely different AI-agent companies might all destroy the same legacy software business. Picking which agent company wins is difficult. Identifying the incumbent whose £3 billion revenue pool becomes hard to justify in *all five* futures may be considerably easier.
+
+---
+
+# 2. The paper I would put at the very centre of this thesis
+
+**Song Ma — “Technological Obsolescence.”**
+
+The result is almost hilariously close to what you described.
+
+Firms exposed to greater technological obsolescence underperform low-obsolescence firms by about **7% annually**, and the paper attributes the effect to analysts **systematically overestimating the future profits of obsolescent firms**. ([SSRN][1])
+
+Read that sentence again in your framework:
+
+> market participants are extrapolating the present world too far into the future.
+
+That is essentially the proposed inefficiency.
+
+And it gets better.
+
+**Haddad, Ho & Loualiche — “Bubbles and the Value of Innovation”** finds an interesting asymmetry: during innovation booms, investors substantially overvalue the innovator's innovation, while **competitors' stock prices react surprisingly little even though their subsequent profits suffer**. ([National Bureau of Economic Research][2])
+
+That's extremely important.
+
+The apparent opportunity may therefore be:
+
+$$
+\text{Don't chase the obvious revolutionary company}
+$$
+
+but instead:
+
+$$
+\boxed{\text{find the overlooked incumbent cash flow that the revolution invalidates}}
+$$
+
+Another study of weekly patent announcements finds competitor innovations generate informed selling in rival firms and predict **lower subsequent returns** for those firms. ([SSRN][3])
+
+There is real empirical support for your intuition.
+
+---
+
+# 3. The most relevant arXiv papers I found
+
+| Paper                                                                                                              | Why it matters for your thesis                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Anticipating Innovation Using Large Language Models (2026)**                                                     | Probably the single most useful technical paper. Future technological combinations leave linguistic traces in patents **years or even decades before emergence**. Their TechToken system learns those convergence patterns. This is literally forecasting future world-state primitives before they become products. ([arXiv][4]) |
+| **Monitoring Transformative Technological Convergence Through LLM-Extracted Semantic Entity Triple Graphs (2025)** | Processes **278,625 arXiv papers + 9,793 patents**, converts them into a temporal graph and detects emerging technological convergence. Very close to an implementable version of your world-state graph. ([arXiv][5])                                                                                                            |
+| **Predictive Patentomics: Forecasting Innovation Success and Valuation with ChatGPT (2023)**                       | LLM patent representations improved prediction of patent value; importantly, the authors find the market doesn't immediately incorporate all patent information and report abnormal returns from predicted acceptance. ([arXiv][6])                                                                                               |
+| **MIRAI: Evaluating LLM Agents for Event Forecasting (2024)**                                                      | Turns historical news + structured geopolitical relationships into a temporal forecasting environment. More interesting architecturally than its raw performance because it treats the world as events and relations rather than a text feed. ([arXiv][7])                                                                        |
+| **AGI Forecasting and Scenario Analysis (2026)**                                                                   | Reviews methods for forecasting AGI and explicitly advocates reasoning over distributions of future scenarios under deep uncertainty rather than choosing one timeline. That is exactly what the investment model needs. ([arXiv][8])                                                                                             |
+| **Can ChatGPT Forecast Stock Price Movements? (2023)**                                                             | Finds LLM interpretation of headlines predicted subsequent returns, particularly where information-processing constraints caused underreaction; their theory predicts broader AI adoption should increase market efficiency. ([arXiv][9])                                                                                         |
+| **ChatGPT and DeepSeek: Can They Predict the Stock Market and Macroeconomy? (2025)**                               | Finds predictive information in WSJ text, with underreaction particularly relevant during uncertainty. Again: information doesn't instantly propagate into prices. ([arXiv][10])                                                                                                                                                  |
+| **Financial Stability Implications of Generative AI (2025)**                                                       | Tests LLM traders experimentally. AI can reduce irrational human herding, but profit-maximizing instructions can cause rational herding and coordinated responses. ([arXiv][11])                                                                                                                                                  |
+| **Can Large Language Models Trade? (2025)**                                                                        | LLM agents interacting through an actual simulated order book produce bubbles, underreaction, price discovery and correlated behaviour depending on their prompts. ([arXiv][12])                                                                                                                                                  |
+| **Agentic Trading (2026)**                                                                                         | Survey of 77 agentic-trading studies. The striking takeaway is how early the field remains: only a tiny subset use proper time-consistent splits, transaction costs, survivorship controls, etc. ([arXiv][13])                                                                                                                    |
+| **Competitive Market Behavior of LLMs (Sep 2026)**                                                                 | Brand-new. Markets populated with LLM agents can converge less efficiently than human markets and model families exhibit materially different market behaviour. ([arXiv][14])                                                                                                                                                     |
+| **The AI Scientist (2024)**                                                                                        | Establishes the primitive of autonomous idea → experiment → result → paper generation. What was originally demonstrated in ML now matters because scientific discovery itself is becoming automatable. ([arXiv][15])                                                                                                              |
+
+There's also a highly relevant supply-chain paper: **Learning Production Functions for Supply Chains with Graph Neural Networks**. Instead of merely predicting demand, it infers hidden mappings from firms' inputs to outputs and forecasts future transactions, outperforming baselines by 11–62% on the studied datasets. ([arXiv][16])
+
+That belongs downstream of the technology graph.
+
+---
+
+# 4. The older finance literature basically supplies the theoretical foundation
+
+The remarkably prescient paper is **Winners and Losers: Creative Destruction and the Stock Market**. Technological progress simultaneously creates huge gains and destroys the value of existing capital, processes and firms. The gains do not distribute symmetrically across publicly investable companies. ([National Bureau of Economic Research][17])
+
+**Displacement Risk and Asset Returns** makes the same argument from another direction: new innovation increases competitive pressure on incumbent firms and erodes existing economic rents. ([National Bureau of Economic Research][18])
+
+And **Productivity Growth and Stock Returns** produces the initially counterintuitive result that technological progress can be fantastic for the economy while being disastrous for many existing shareholders: a small number of winners capture gains while a much larger number of firms get creatively destroyed. ([National Bureau of Economic Research][19])
+
+That matters enormously for the post-AGI thesis:
+
+$$
+\text{GDP ↑ enormously}
+$$
+
+does **not** imply
+
+$$
+\text{current public-equity market ↑ enormously}
+$$
+
+because the present index represents claims owned by today's incumbents.
+
+Future economic value can accrue to consumers, workers, founders, currently private companies, new companies and completely new industries rather than today's shareholders.
+
+---
+
+# 5. And this makes “predict irrelevance” unusually attractive
+
+Imagine the state space in 2031 contains these possibilities:
+
+| Future                          | Probability |
+| ------------------------------- | ----------: |
+| OpenAI dominates agents         |         20% |
+| Anthropic dominates             |         15% |
+| Google dominates                |         20% |
+| open models dominate            |         15% |
+| specialized agents dominate     |         20% |
+| AI progress slows substantially |         10% |
+
+Trying to decide which of the first five wins is unpleasant.
+
+But perhaps **nine of those ten probability points destroy the economics of £120/user/month human-operated workflow software**.
+
+Then you don't need to forecast the winner.
+
+You need to recognize:
+
+$$
+P(\text{legacy workflow survives}) \approx 10\%
+$$
+
+while the stock might implicitly be priced as though:
+
+$$
+P_{\text{market}}(\text{survival}) \approx 80\%
+$$
+
+That is a much more robust bet.
+
+I would call this **obsolescence arbitrage**.
+
+---
+
+# 6. There is a fascinating AI-market paradox emerging
+
+I don't think the evidence currently justifies saying:
+
+> “The stock market has already demonstrably become more reflexive because of AI.”
+
+That is stronger than the empirical literature can support.
+
+But there are **two opposing mechanisms**, both of which now have evidence behind them.
+
+### AI makes markets more efficient
+
+LLMs consume huge documents, earnings calls, headlines, patents and alternative data faster than humans. Lopez-Lira and Tang explicitly predict that widespread LLM adoption reduces the underreaction their strategy exploits. ([arXiv][9])
+
+So:
+
+$$
+\text{half-life of obvious textual alpha}\downarrow
+$$
+
+Reading an SEC filing intelligently used to be valuable.
+
+Soon everyone has an agent reading every filing simultaneously.
+
+---
+
+### But AI can make the market more endogenous/reflexive
+
+The FSB specifically warns that common datasets, models and AI providers could create greater market correlation. ([Federal Savings Bank][20])
+
+The BIS says similar algorithms could create synchronized portfolio responses, liquidity hoarding, fire sales and destabilizing feedback loops. ([Bank for International Settlements][21])
+
+The Bank of England's July 2026 Financial Stability Report says firms are already moving toward more autonomous AI research and decision support, and explicitly worries that more capable models could change the **speed and nature of market adjustment** and produce correlated behaviour. It is now building simulated LLM portfolio markets with the BIS to study this. ([Bank of England][22])
+
+The IMF put it particularly neatly in July:
+
+> AI “compresses time and distance in finance.”
+
+Its argument is that AI accelerates price discovery under normal conditions but may also cause synchronized reactions to shocks. ([IMF][23])
+
+So I think the future looks like:
+
+$$
+\boxed{\text{more efficient most of the time + more discontinuous some of the time}}
+$$
+
+That is different from classical efficient-market intuition.
+
+---
+
+# 7. Navier–Stokes is the perfect example of the second thing you're noticing
+
+And your example isn't hypothetical anymore.
+
+On **September 8, 2026**, OpenAI announced an AI-generated solution to the Navier–Stokes existence-and-smoothness Millennium Prize Problem, including a Lean formalization. OpenAI says the system used was **significantly more capable than GPT-6 Astra**. ([OpenAI][24])
+
+Nature reported it as a potentially historic result while noting that the mathematical community still needs to scrutinize the claim. ([Nature][25])
+
+Reports say roughly **10,000 cooperating agents completed the work in 88 hours**. ([Business Insider][26])
+
+And just one month earlier OpenAI released ten results resolving or materially progressing long-standing mathematical problems. ([OpenAI][27])
+
+This changes something subtle about finance.
+
+Previously you might model technological progress as approximately continuous:
+
+$$
+K_{t+1}=K_t+\Delta K
+$$
+
+Increasingly we need something more like:
+
+$$
+K_{t+1}
+=
+K_t+\Delta K+J_t
+$$
+
+where \(J_t\) is a **jump process**.
+
+Most days:
+
+$$
+J_t=0
+$$
+
+Then one morning:
+
+$$
+J_t \gg 0
+$$
+
+And 20 years of assumed technological runway for an industry can suddenly need repricing.
+
+---
+
+# 8. Which introduces what I'd call **technological duration**
+
+Bond investors think in duration: how sensitive is the bond to changing discount rates?
+
+For post-AGI investing I think companies need a second duration measure:
+
+$$
+\boxed{\text{Technological Duration}}
+$$
+
+roughly:
+
+> How much of this company's valuation depends on its existing technological advantage continuing to exist for a long time?
+
+A $5B company trading at 50× earnings because analysts forecast a particular profit pool through 2040 has enormous technological duration.
+
+A commodity producer selling something physically scarce today at 6× cash flow may have far less.
+
+A sufficiently powerful capability announcement therefore acts almost like a giant rate shock applied specifically to **technologically fragile future cash flows**.
+
+---
+
+# 9. Your cancer example is therefore directionally correct, but needs one important qualification
+
+I assume you meant:
+
+> Anthropic announces that its AI **cured** cancer.
+
+Imagine Anthropic produced a genuinely novel intervention that looked capable of curing a major cancer.
+
+Cancer-treatment equities would not mechanically go to zero merely because Anthropic posted a blog.
+
+Instead the market would suddenly change:
+
+$$
+P(\text{existing therapy cash flows in 2035})
+$$
+
+perhaps dramatically.
+
+The size of the move would depend on the **strength of the evidence**.
+
+An LLM hypothesis might barely matter.
+
+A validated cell result matters somewhat.
+
+Replicated animal evidence matters more.
+
+Human Phase II/III data matters vastly more.
+
+An obviously generalizable, independently replicated cure completely transforms the world-state distribution.
+
+Yet the repricing can happen **years before commercialization**, because today's stock value already contains those future cash flows.
+
+That is the crucial point.
+
+---
+
+# 10. And the losers could conceivably react more violently than the winner
+
+Suppose there are twenty pharmaceutical companies collecting a combined $150B/year from a treatment paradigm.
+
+A new technology appears.
+
+You don't know who ultimately commercializes it.
+
+Maybe:
+
+Anthropic discovers it → university validates it → startup licenses it → Roche buys startup → FDA approves therapy.
+
+Predicting the final winner is complicated.
+
+But you may be able to predict:
+
+$$
+\boxed{\text{the existing \$150B revenue pool is impaired}}
+$$
+
+much earlier.
+
+That's exactly why the **Haddad/Ho/Loualiche result** about competitor profits is so interesting: markets can get excited about an innovator while insufficiently pricing damage to incumbents. ([National Bureau of Economic Research][2])
+
+And pharmaceutical economics already has strong evidence that competition from **newer patented therapies** can destroy the value of existing patented drugs; historically, that between-patent creative destruction has been at least as economically important as generic competition after expiry. ([National Bureau of Economic Research][28])
+
+---
+
+# 11. The investment engine I'd actually build from this
+
+This is where I think your thesis becomes considerably more interesting than another stock-picking LLM.
+
+Don't have it ask:
+
+> “Which stocks will AI benefit?”
+
+Instead construct a continuously updated causal graph:
+
+```text
+WORLD STATE
+    ↓
+scientific capabilities
+    ↓
+technological capabilities
+    ↓
+cost/performance frontiers
+    ↓
+newly feasible products
+    ↓
+substitutable human/product functions
+    ↓
+changing behavior
+    ↓
+changing demand
+    ↓
+profit pools
+    ↓
+companies
+    ↓
+cash flows
+    ↓
+valuation
+```
+
+But alongside every future-state node store two probabilities:
+
+```text
+our_probability
+market_implied_probability
+```
+
+Then the basic signal becomes:
+
+$$
+Signal_{company}
+=
+\sum_s
+(P_{our,s}-P_{market,s})
+\times
+Impact(company,s)
+\times
+CashflowDuration(company)
+$$
+
+That's the entire thesis distilled into one equation.
+
+---
+
+# 12. The really interesting input isn't news
+
+It becomes **evidence that updates future-world probabilities**.
+
+This is why that 2026 TechToken paper is so interesting: future innovations appear to leave faint signals in collective patent language **long before the innovation itself appears**. ([arXiv][4])
+
+And the technological-convergence graph paper independently arrives at a strikingly similar architecture: arXiv papers → patents → extracted entities/relations → temporal graph → emerging convergence. ([arXiv][5])
+
+So instead of Bloomberg-style:
+
+```text
+NEWS
+↓
+sentiment
+↓
+stock
+```
+
+you want:
+
+```text
+papers
+patents
+benchmarks
+model evals
+GitHub
+capital expenditure
+hiring
+scientist movement
+startup funding
+procurement
+FDA trials
+government programs
+supply chains
+earnings calls
+insider activity
+production data
+         ↓
+   evidence updates
+         ↓
+probability distribution over future worlds
+         ↓
+economic consequences
+         ↓
+difference versus market pricing
+```
+
+That's materially more defensible.
+
+---
+
+# 13. And AI actually makes *this particular* strategy more attractive
+
+Because AI commoditizes first-order analysis.
+
+Soon:
+
+**earnings-summary alpha → ~0**
+
+**headline sentiment alpha → ~0**
+
+**SEC-filings extraction alpha → approaching 0**
+
+**basic industry research alpha → approaching 0**
+
+Everyone's agents can do it.
+
+But determining:
+
+> “What does this obscure synthetic-biology result imply about the economics of industrial fermentation seven causal edges away in 2032?”
+
+remains a much harder **world-model + causal-inference + technology-forecasting problem**.
+
+So AI could simultaneously make markets:
+
+$$
+\textbf{much faster at processing facts}
+$$
+
+while leaving them:
+
+$$
+\textbf{surprisingly poor at propagating their distant consequences}
+$$
+
+And accelerating technological change means those distant consequences matter more.
+
+That combination is precisely where I would look for alpha.
+
+## The final thesis
+
+I would therefore tighten your idea into:
+
+$$
+\boxed{
+\text{Find future worlds whose probabilities are being mispriced,
+then find today's cash flows that cannot coexist with those worlds.}
+}
+$$
+
+And perhaps the most useful question to ask repeatedly isn't:
+
+> **What will be valuable?**
+
+It is:
+
+> **What does the market currently assume will still be valuable in 2031 that almost certainly won't be if our model of 2031 is right?**
+
+That is a much easier search space to attack systematically, and the technological-obsolescence literature suggests it may correspond to a genuine behavioral market inefficiency rather than merely a compelling story. ([SSRN][1])
+
+I think the next logical step is to turn these papers into a **formal “Post-AGI World-State → Obsolescence” model** and then actually run today's public equities through it: perhaps 1,000–5,000 companies, generating `market_assumption → future-world contradiction → cashflow_at_risk → evidence → mispricing_score`. That would give us a very different top-20 list from conventional “AI beneficiary” screens.
+
+[1]: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3964128&utm_source=chatgpt.com "Technological Obsolescence by Song Ma :: SSRN"
+[2]: https://www.nber.org/papers/w29917?utm_source=chatgpt.com "Bubbles and the Value of Innovation | NBER"
+[3]: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2883233&utm_source=chatgpt.com "Competitors' Innovation and Informed Trading: Evidence from Weekly Patent Announcements by Zhenyu Gao, Po-Hsuan Hsu, Sahn-Wook Huh :: SSRN"
+[4]: https://arxiv.org/abs/2605.04875?utm_source=chatgpt.com "Anticipating Innovation Using Large Language Models"
+[5]: https://arxiv.org/abs/2510.25370?utm_source=chatgpt.com "Monitoring Transformative Technological Convergence Through LLM-Extracted Semantic Entity Triple Graphs"
+[6]: https://arxiv.org/abs/2307.01202?utm_source=chatgpt.com "Predictive Patentomics: Forecasting Innovation Success and Valuation with ChatGPT"
+[7]: https://arxiv.org/pdf/2407.01231?utm_source=chatgpt.com "MIRAI: Evaluating LLM Agents for Event Forecasting"
+[8]: https://arxiv.org/abs/2604.22766?utm_source=chatgpt.com "Artificial General Intelligence Forecasting and Scenario Analysis: State of the Field, Methodological Gaps, and Strategic Implications"
+[9]: https://arxiv.org/abs/2304.07619?utm_source=chatgpt.com "Can ChatGPT Forecast Stock Price Movements? Return Predictability and Large Language Models"
+[10]: https://arxiv.org/abs/2502.10008?utm_source=chatgpt.com "ChatGPT and Deepseek: Can They Predict the Stock Market and Macroeconomy?"
+[11]: https://arxiv.org/abs/2510.01451?utm_source=chatgpt.com "Financial Stability Implications of Generative AI: Taming the Animal Spirits"
+[12]: https://arxiv.org/abs/2504.10789?utm_source=chatgpt.com "Can Large Language Models Trade? Testing Financial Theories with LLM Agents in Market Simulations"
+[13]: https://arxiv.org/abs/2605.19337?utm_source=chatgpt.com "Agentic Trading: When LLM Agents Meet Financial Markets"
+[14]: https://arxiv.org/abs/2609.02580?utm_source=chatgpt.com "Competitive Market Behavior of LLMs"
+[15]: https://arxiv.org/abs/2408.06292?utm_source=chatgpt.com "The AI Scientist: Towards Fully Automated Open-Ended Scientific Discovery"
+[16]: https://arxiv.org/abs/2407.18772?utm_source=chatgpt.com "Learning production functions for supply chains with graph neural networks"
+[17]: https://www.nber.org/papers/w18671?utm_source=chatgpt.com "Winners and Losers: Creative Destruction and the Stock Market | NBER"
+[18]: https://www.nber.org/papers/w15457?utm_source=chatgpt.com "The Demographics of Innovation and Asset Returns | NBER"
+[19]: https://www.nber.org/papers/w19462?utm_source=chatgpt.com "Productivity Growth and Stock Returns: Firm- and Aggregate-Level Analyses | NBER"
+[20]: https://www.fsb.org/2024/11/fsb-assesses-the-financial-stability-implications-of-artificial-intelligence/?utm_source=chatgpt.com "FSB assesses the financial stability implications of artificial intelligence - Financial Stability Board"
+[21]: https://www.bis.org/speeches/20251008-artificial-intelligence-and-central-banks-monetary-and-financial-stability-implications?utm_source=chatgpt.com "Artificial intelligence and central banks: monetary and financial stability implications | Bank for International Settlements"
+[22]: https://www.bankofengland.co.uk/financial-stability-report/2026/july-2026?utm_source=chatgpt.com "Financial Stability Report - July 2026 | Bank of England – the UK's central bank"
+[23]: https://www.imf.org/en/blogs/articles/2026/07/23/how-central-banks-can-contain-financial-stability-risks-as-ai-accelerates-change?utm_source=chatgpt.com "How Central Banks Can Contain Financial Stability Risks as AI Accelerates Change"
+[24]: https://openai.com/index/navier-stokes-solution/?utm_source=chatgpt.com "On the Navier–Stokes Millennium Prize Problem | OpenAI"
+[25]: https://www.nature.com/articles/d41586-026-02842-5?utm_source=chatgpt.com "OpenAI claims huge maths breakthrough on a famed ‘Millennium Problem’ | Nature"
+[26]: https://www.businessinsider.com/openai-math-problem-solved-tokens-cost-altman-2026-9?utm_source=chatgpt.com "It took OpenAI's agents 130 billion tokens to crack a 90-year-old math problem"
+[27]: https://openai.com/index/ten-advances-in-mathematics/?utm_source=chatgpt.com "Ten advances in mathematics and theoretical computer science | OpenAI"
+[28]: https://www.nber.org/papers/w9303?utm_source=chatgpt.com "The Dual Effects of Intellectual Property Regulations: Within- and Between- Patent Competition in the US Pharmaceuticals Industry | NBER"

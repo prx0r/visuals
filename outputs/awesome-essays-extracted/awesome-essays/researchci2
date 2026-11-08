@@ -1,0 +1,757 @@
+I went through the recent OpenAIRE blog stream, strategy material, Research Intelligence pages, Innovation programme, Graph contribution/quality material, MONITOR cases, EOSC work, MyResearchFolio/RRA material, OpenOrgs, Alien/MCP, SciLifeLab, and their recent technical direction. The conclusion is stronger than before:
+
+# The thing most likely to excite OpenAIRE is **not “Research CI” as a generic researcher utility.**
+
+It is:
+
+# **Pāṭala Research CI — a trust/continuity layer for OpenAIRE-powered research intelligence and AI agents**
+
+### *When upstream research information changes, identify exactly which downstream analyses, indicators, agent memories, and claims need to be reconsidered.*
+
+That distinction matters enormously.
+
+OpenAIRE keeps repeating the same themes across different parts of the organisation:
+
+```text
+OPEN
++
+MACHINE-REUSABLE
++
+TRUSTWORTHY
++
+HUMAN-GOVERNED
++
+CONTINUOUSLY IMPROVING
++
+REUSABLE BY OTHER SERVICES
+```
+
+Research CI lands almost exactly at their current frontier **if you present it as infrastructure that strengthens OpenAIRE**, rather than “a CLI for researchers.”
+
+---
+
+# What OpenAIRE appears obsessed with right now
+
+I found six signals that repeat over and over.
+
+## 1. **Research intelligence has become the product**
+
+This might be the single most important thing.
+
+Their Research Intelligence position says research intelligence now determines funding decisions, assessment, policy, visibility, recognition, and increasingly what AI systems reuse. They explicitly argue that it must be **open, trustworthy, inspectable and governed**, because its assumptions and data flows influence real decisions. ([OpenAIRE][1])
+
+Their Nordic bibliometrics post makes an even sharper point: research analytics is becoming structural infrastructure and therefore **cannot remain a black box**. ([OpenAIRE][2])
+
+That's almost a direct invitation to Pāṭala.
+
+OpenAIRE:
+
+```text
+raw scholarly outputs
+       ↓
+research information
+       ↓
+research intelligence
+       ↓
+decisions / AI
+```
+
+Pāṭala:
+
+```text
+research intelligence
+       ↓
+which observations supported this?
+       ↓
+what changed?
+       ↓
+which derived conclusions depend on it?
+       ↓
+does anything require re-verification?
+```
+
+That is a coherent missing layer.
+
+---
+
+# 2. Trust is increasingly a **system property**, not a badge
+
+This language appears repeatedly.
+
+Their 2025 AI-era research-assessment piece says ethical principles need to be embedded into infrastructure rather than added afterwards, and specifically discusses AI-enabled decision systems, transparent machine-actionable infrastructure, human oversight and accountability. ([OpenAIRE][3])
+
+The euroCRIS write-up says trustworthy research information **doesn't emerge automatically; it must be intentionally designed into infrastructure, policy, and workflows**. ([OpenAIRE][4])
+
+That's exactly why your Wiggly doctrine is relevant:
+
+```text
+tool output ≠ truth
+observation ≠ assertion
+review ≠ mutation
+machine proposal ≠ human authority
+```
+
+That isn't merely Sanskrit architecture anymore.
+
+It fits their institutional philosophy unusually well.
+
+---
+
+# 3. They are already thinking **continuously**, not statically
+
+This was probably the biggest validation for Research CI.
+
+OpenAIRE published an entire piece called **“The OpenAIRE Graph: Why Continuous Validation Matters.”**
+
+Their argument is straightforward: authors change profiles, repositories correct metadata, funders update project information, publishers issue corrections; therefore data gathered once immediately starts becoming stale. Their Graph is continuously validated because static validation is insufficient. ([OpenAIRE][5])
+
+Your idea is a very natural extension:
+
+```text
+OPENAIRE
+continuously validates
+THE GRAPH
+
+PĀṬALA
+continuously validates
+WHAT PEOPLE DERIVED FROM THE GRAPH
+```
+
+That's the proposal in one diagram.
+
+### Their problem
+
+```text
+Did our graph remain valid?
+```
+
+### Your problem
+
+```text
+Given that your graph changed,
+did my conclusion remain valid?
+```
+
+That's excellent alignment.
+
+---
+
+# 4. Their best case studies are **feedback loops**, not dashboards
+
+The SciLifeLab case study is incredibly informative.
+
+At first it sounds like:
+
+> “OpenAIRE made them a dashboard.”
+
+But that wasn't really the interesting part.
+
+They compared OpenAIRE against SciLifeLab's curated knowledge and found:
+
+* missing records;
+* incorrect affiliation associations;
+* unexpected records;
+* incomplete coverage;
+* false positives;
+* differences between local expert knowledge and the global graph.
+
+They then repeatedly:
+
+```text
+deploy
+↓
+compare
+↓
+validate
+↓
+discover mismatch
+↓
+improve rules/data
+↓
+deploy again
+```
+
+OpenAIRE explicitly describes this reconciliation as strengthening both sides rather than undermining confidence. ([openaire.eu][6])
+
+That's **Pāṭala-ish as hell**.
+
+And OpenOrgs already institutionalises the same architecture in one domain:
+
+```text
+algorithm proposes duplicate
+        ↓
+human curator reviews
+        ↓
+accept / reject / modify
+        ↓
+feedback improves curated organisation
+        ↓
+new representative entity enters Graph
+```
+
+([OpenAIRE][7])
+
+So the philosophy behind your:
+
+```text
+machine proposal
+→ proof obligation
+→ human judgment
+→ append-only event
+→ new qualified state
+```
+
+isn't alien to OpenAIRE.
+
+**They already believe in it.**
+
+They've implemented a narrower form themselves.
+
+---
+
+# This suggests a much bigger long-term Pāṭala opportunity
+
+Research CI could eventually become two-way.
+
+### Direction A — downstream trust
+
+```text
+OpenAIRE changes
+       ↓
+Pāṭala detects impact
+       ↓
+my analysis / claim requires review
+```
+
+### Direction B — upstream correction
+
+```text
+Pāṭala discovers discrepancy
+       ↓
+evidence packet
+       ↓
+qualified human validates it
+       ↓
+structured correction proposal
+       ↓
+OpenAIRE/community curation
+```
+
+That gives:
+
+# **continuous verification as a feedback loop between global research infrastructure and its users**
+
+That's much more exciting than “GraphGit.”
+
+---
+
+# 5. AI agents are a strategic priority right now
+
+Their Alien partnership is extremely fresh.
+
+OpenAIRE explicitly says the next problem after openness is helping researchers and agents make sense of the volume of information. Their MCP gives agents authoritative metadata, PIDs and structured relations instead of making them work from random web search. ([OpenAIRE][8])
+
+And their stated next direction includes:
+
+> advanced Python tooling for qualitative and quantitative analysis at scale.
+
+([OpenAIRE Innovation][9])
+
+This changes how I would pitch your user.
+
+Don't make the headline:
+
+> “A researcher tracks a query.”
+
+Make it:
+
+> **“What happens to an AI research agent's memory when its authoritative knowledge source changes?”**
+
+Imagine Alien:
+
+```text
+AGENT
+ │
+ ├─ OpenAIRE query Q1
+ ├─ OpenAIRE query Q2
+ ├─ ScholeXplorer relation R
+ │
+ ▼
+produces:
+ Claim A
+ Claim B
+ Analysis C
+```
+
+Three months later:
+
+```text
+OpenAIRE changes
+```
+
+What happens?
+
+Currently the agent's stored answer may simply persist.
+
+Pāṭala:
+
+```text
+               OpenAIRE
+                    │
+                 changes
+                    │
+                    ▼
+             Research CI
+                    │
+             dependency graph
+                    │
+        ┌───────────┼────────────┐
+        ▼           ▼            ▼
+      Claim A     Claim B     Analysis C
+      CURRENT     STALE       CURRENT
+                     │
+                     ▼
+             proof obligation
+                     │
+                     ▼
+                  agent
+               recomputes
+```
+
+That is **very 2026 OpenAIRE**.
+
+I think they'd care about this considerably more than a living-review CLI.
+
+---
+
+# 6. They want people to **reuse their infrastructure rather than duplicate it**
+
+Their Innovation programme could almost be written specifically as advice to you.
+
+OpenAIRE says:
+
+> use what already works;
+
+> extend existing assets;
+
+> co-create new indicators, tools and services;
+
+> bring domain expertise while OpenAIRE brings data, infrastructure and community.
+
+([OpenAIRE Innovation][10])
+
+That's why your earlier ideas progressively got better as we killed:
+
+```text
+new research graph
+new MCP
+new dashboard
+new dedupe system
+new researcher profile
+new citation network
+```
+
+They already built those.
+
+Research CI is attractive precisely because the architecture becomes:
+
+```text
+OpenAIRE = authoritative research information substrate
+
+Pāṭala = downstream epistemic-state / verification layer
+```
+
+---
+
+# The idea-ranking changes slightly after reading their organisational signals
+
+I would rank **OpenAIRE excitement**, rather than abstract product quality, like this.
+
+| Idea                                            | Likely OpenAIRE interest | Why                                                                             |
+| ----------------------------------------------- | -----------------------: | ------------------------------------------------------------------------------- |
+| **Research CI / Agent Continuity**              |               **9.5/10** | Trust + AI + reuse + evolving Graph + new service                               |
+| **Research CI + community validation feedback** |        **9.5/10 future** | Mirrors SciLifeLab/OpenOrgs philosophy                                          |
+| **Contribution / human adjudication objects**   |               **8.5/10** | Very aligned with RRA/MyResearchFolio, but they are already active here         |
+| **Crux engine**                                 |    **8/10 as component** | Novel verification machinery, but not obviously OpenAIRE-native alone           |
+| **Scholar Relay**                               |               **7.5/10** | Humans + Persons + contribution credit fits strategy; workflow is speculative   |
+| **Manuscript/primary-source bridge**            |                 **7/10** | Fits interoperability/community expansion but not their most urgent AI agenda   |
+| **Sanskrit dataset/community gateway**          |               **6.5/10** | Valid EOSC/CONNECT direction, but less novel for this hackathon                 |
+| **Broker Proof Agent**                          |                 **6/10** | Useful, but OpenAIRE already has human-curated/inferred feedback infrastructure |
+| **AI peer reviewer**                            |                 **4/10** | Crowded and outside their strongest differentiation                             |
+| **Generic GraphGit**                            |                 **3/10** | Versioning/change tracking itself is not new                                    |
+
+---
+
+# The one modification I would now make to Research CI
+
+Right now we have:
+
+```text
+TRACK
+↓
+SNAPSHOT
+↓
+DETECT
+↓
+IMPACT
+↓
+OBLIGE
+```
+
+Add:
+
+```text
+RESOLVE
+```
+
+So the complete conceptual model becomes:
+
+# **TRACK → SNAPSHOT → DETECT → IMPACT → OBLIGE → RESOLVE**
+
+Resolution can be:
+
+```text
+AUTOMATIC_RECOMPUTE
+AGENT_RESEARCH
+HUMAN_VALIDATION
+NO_ACTION
+```
+
+Now you've connected almost all the best Pāṭala technology without actually building it all.
+
+Example:
+
+```text
+PO-172
+
+Claim:
+"Dataset reuse increased after 2024"
+
+Trigger:
+3 supporting relations disappeared.
+
+Impact:
+SOURCE_CHANGED
+
+Resolution class:
+RECOMPUTE
+
+Can agent resolve?
+YES
+
+Required action:
+rerun aggregation against current Graph
+```
+
+Another:
+
+```text
+PO-207
+
+Claim:
+"These two organisations represent
+the same institutional entity."
+
+Trigger:
+new conflicting affiliation evidence
+
+Resolution:
+HUMAN_VALIDATION
+
+Suggested authority:
+institutional curator
+```
+
+That's a much richer **proof obligation protocol**.
+
+---
+
+# And your Pāṭala human-authority code becomes extremely relevant
+
+OpenAIRE's AI/assessment material repeatedly stresses human-centered design, accountability, transparent infrastructure, and avoiding opaque automated judgment. ([OpenAIRE][3])
+
+Your architecture already distinguishes:
+
+```text
+MACHINE
+can propose
+
+HUMAN
+can review
+
+ADJUDICATION
+can resolve dissent
+
+PROMOTION
+changes effective authority
+```
+
+That's exactly how I would describe your future resolution layer.
+
+Not:
+
+> “AI decides whether science is true.”
+
+Instead:
+
+> **“The system determines what needs attention and routes resolution according to the authority required.”**
+
+That is probably much more comfortable culturally for OpenAIRE.
+
+---
+
+# What I'd call the larger concept
+
+Keep the hackathon title:
+
+# **Pāṭala Research CI**
+
+But subtitle it:
+
+### **Continuous trust for OpenAIRE-powered research intelligence**
+
+And define Research CI as:
+
+> **A dependency-aware verification layer that tracks which research intelligence was used to support a conclusion, detects material upstream changes, determines downstream impact, and emits auditable proof obligations for agents or humans to resolve.**
+
+That's much better than:
+
+> semantic diffs for scholarly graphs.
+
+---
+
+# The killer OpenAIRE-specific demonstration
+
+I would no longer make the demo purely:
+
+> Sanskrit NLP software.
+
+Use something connected to **their own activity**.
+
+For example, track an analysis like:
+
+# “Research software as a first-class Open Science output”
+
+Why?
+
+OpenAIRE is currently heavily involved with EVERSE and explicitly pushing research software quality, sustainability and recognition. ([OpenAIRE][11])
+
+Create:
+
+```text
+TrackedAnalysis
+
+Question:
+How visible is software in recent
+EU-funded open-science research?
+
+Claims:
+C1 proportion linked to projects
+C2 proportion linked to datasets
+C3 software with identifiable contributors
+```
+
+Then show a real historical/current OpenAIRE diff.
+
+That immediately feels relevant to them.
+
+Another great one would be a small **Open Science monitoring** analysis, because MONITOR is central to their institutional/funder work. ([OpenAIRE][12])
+
+---
+
+# One feature they might REALLY like: **Trust Receipts**
+
+Not the old generic ProofGraph concept.
+
+A receipt attached to a **derived analysis**.
+
+Example:
+
+```json
+{
+  "claim": "claim:17",
+
+  "derived_from": {
+    "provider": "OpenAIRE",
+    "graph_version": "11.3.0",
+    "query_digest": "...",
+    "result_digest": "..."
+  },
+
+  "dependencies": [
+    "openaire:...",
+    "relation:..."
+  ],
+
+  "last_verified": "...",
+
+  "status": "CURRENT",
+
+  "open_obligations": []
+}
+```
+
+Now an Alien agent could potentially return:
+
+```text
+According to OpenAIRE...
+
+[verification receipt]
+```
+
+and later Pāṭala can update that receipt to:
+
+```text
+SOURCE_CHANGED
+```
+
+without pretending the original statement magically disappeared.
+
+That is a tangible product primitive.
+
+---
+
+# OpenAIRE's assessment work gives you another long-term extension
+
+They are aggressively working on **Responsible Research Assessment**.
+
+MyResearchFolio deliberately moves beyond paper counts toward narrative evidence and diverse contributions like mentoring, leadership, community work, data and software. Future versions are expected to use agents/LLMs to find and organise contributions automatically. ([OpenAIRE][13])
+
+Your Scholar Economics idea is therefore relevant, but **don't compete with MyResearchFolio**.
+
+Instead, eventually emit something MyResearchFolio could represent:
+
+```text
+HumanContribution
+
+type:
+  DATA_VALIDATION
+
+object:
+  relation:XYZ
+
+activity:
+  adjudicated conflicting metadata
+
+evidence:
+  [...]
+
+result:
+  corrected scholarly state
+```
+
+Or:
+
+```text
+type:
+  REPRODUCIBILITY_VALIDATION
+
+type:
+  DATA_CURATION
+
+type:
+  SCHOLARLY_ADJUDICATION
+```
+
+That fits their broader effort to make hidden scholarly contributions visible.
+
+---
+
+# And the manuscript/Sanskrit work still has a place
+
+But after this site-wide review, it is clearly **future case study, not hackathon core**.
+
+OpenAIRE/EOSC actively wants thematic and national research catalogues integrated into the wider federation and has been bringing new domain nodes into the Graph through common guidelines. ([OpenAIRE][14])
+
+So a future:
+
+# **OpenPāṭala Sanskrit Scholarly Commons**
+
+could make sense:
+
+```text
+Pāṭala
+Work
+Witness
+Edition
+EText
+Translation
+Dataset release
+Software
+Scholarship
+        │
+        ▼
+FAIR/DOI research objects
+        │
+        ▼
+OpenAIRE / EOSC
+```
+
+But that's a separate infrastructure/funding story.
+
+For tomorrow, Sanskrit should explain **why your epistemic architecture is unusually rigorous**.
+
+---
+
+# The really important insight from the entire site review
+
+OpenAIRE does **not** seem primarily excited by novelty for novelty's sake.
+
+Their successful collaborations look like:
+
+```text
+PARTNER BRINGS
+specific hard problem
+domain expertise
+local context
+
+       +
+
+OPENAIRE BRINGS
+Graph
+APIs
+infrastructure
+community
+standards
+
+       ↓
+
+CO-CREATED LAYER
+new indicator
+new workflow
+new service
+new feedback loop
+```
+
+SciLifeLab is the clearest example. ([openaire.eu][6])
+
+So your submission should effectively say:
+
+> **You have built an extraordinary open research-intelligence substrate and are now connecting AI agents directly to it. Pāṭala solves the next lifecycle problem: an agent or researcher derives conclusions from that intelligence, but the Graph continues changing. We preserve the dependency between evidence and conclusion, detect material upstream changes, and turn them into explicit, auditable re-verification tasks.**
+
+Then the co-creation proposition:
+
+> **A pilot with OpenAIRE could connect Research CI to Graph releases/Broker events and the Alien research-agent workflow, testing whether persistent AI research outputs can remain synchronized with an evolving scholarly record.**
+
+**That is the version I think they would genuinely get excited about.**
+
+Not because it is flashy.
+
+Because it takes three things OpenAIRE is currently investing heavily in—**AI agents, trustworthy research intelligence, and continuous data quality**—and closes the loop between them. ([OpenAIRE Innovation][9])
+
+And critically, it **needs OpenAIRE to be good** rather than competing with them. That makes it feel like a plausible pilot partnership rather than another hackathon wrapper around their API.
+
+[1]: https://www.openaire.eu/research-intelligence?utm_source=chatgpt.com "Research Intelligence"
+[2]: https://www.openaire.eu/community/blogs/sovereignty-trust-and-the-open-layer-takeaways-from-the-3rd-nordic-bibliometric-infrastructure-meeting?utm_source=chatgpt.com "Sovereignty, Trust and the Open Layer: Takeaways from the 3rd Nordic Bibliometrics Infrastructure Spring Meeting - OpenAIRE Blog"
+[3]: https://www.openaire.eu/community/blogs/key-takeaways-from-the-coara1-ec-enrio-edi-tum-conference?format=print&print=1&tmpl=component&utm_source=chatgpt.com "Building Trust in AI-Era Research Assessment"
+[4]: https://www.openaire.eu/community/blogs/insights-from-eurocris-2025-open-infrastructures-and-the-road-towards-responsible-research-assessment?utm_source=chatgpt.com "Insights from euroCRIS 2025: Open Infrastructures and the road towards Responsible Research Assessment - OpenAIRE Blog"
+[5]: https://www.openaire.eu/the-openaire-graph-why-continuous-validation-matters?utm_source=chatgpt.com "The OpenAIRE Graph: Why Continuous Validation Matters"
+[6]: https://www.openaire.eu/how-scilifelab-and-openaire-co-created-an-open-science-monitor?utm_source=chatgpt.com "How SciLifeLab and OpenAIRE Co-created an Open Science Monitor"
+[7]: https://www.openaire.eu/community/blogs/openorgs-bridging-registries-of-research-organisations?utm_source=chatgpt.com "OpenOrgs: Bridging registries of research organisations - OpenAIRE Blog"
+[8]: https://www.openaire.eu/openaire-and-alien-intelligence-bringing-ai-agents-to-the-openaire-graph?utm_source=chatgpt.com "OpenAIRE and Alien Intelligence: Bringing AI agents to the OpenAIRE Graph"
+[9]: https://innovation.openaire.eu/component/content/article/ai-agents-implementation-on-openaire-graph.html?utm_source=chatgpt.com "AI agents implementation on OpenAIRE Graph"
+[10]: https://innovation.openaire.eu/?utm_source=chatgpt.com "Home"
+[11]: https://www.openaire.eu/community/blogs/two-years-of-everse-making-research-software-a-first-class-pillar-of-research?utm_source=chatgpt.com "Two Years of EVERSE: Making Research Software a First-Class Pillar of Research - OpenAIRE Blog"
+[12]: https://www.openaire.eu/the-italian-research-monitor-building-the-foundations-for-open-monitoring-in-italy-15?utm_source=chatgpt.com "The Italian Research Monitor: Building the Foundations for Open Monitoring in Italy"
+[13]: https://www.openaire.eu/community/blogs/openaire-at-qqml2026-building-open-infrastructure-for-responsible-research-assessment-1?utm_source=chatgpt.com "OpenAIRE at QQML2026: Building Open Infrastructure for Responsible Research Assessment - OpenAIRE Blog"
+[14]: https://www.openaire.eu/community/blogs/expanding-the-openaire-graph-new-data-sources-through-the-eosc-federation?format=amp&utm_source=chatgpt.com "Expanding the OpenAIRE Graph: New Data Sources Through the EOSC Federation - OpenAIRE Blog"

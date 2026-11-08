@@ -1,0 +1,724 @@
+For POW, I’d cut Companies House down aggressively. We do **not** care about generic corporate intelligence. We care about signals for **physical capacity under AGI pressure**: electricians, HVAC, grid work, solar/battery installers, data-centre contractors, electronics repair, machinery repair, telecoms, networking, robotics integration, industrial controls, compute/mining hardware, logistics, and the small-business/sole-trader layer that actually does the work.
+
+The highest-value UK official-data stack is this:
+
+| Feed                                    | What POW extracts                                                     | Access                         |
+| --------------------------------------- | --------------------------------------------------------------------- | ------------------------------ |
+| **Companies House stream**              | new firms, SIC changes, charges, director changes, failures           | real-time stream               |
+| **Companies House filings + documents** | accounts, capital, charges, actual filed docs                         | API + Document API             |
+| **FCA regulated disclosures / NSM**     | director/PDMR dealings, TR-1 holders, results, prospectuses, placings | free search/download           |
+| **FCA short-position data**             | market conviction against UK-listed companies                         | daily CSV/XLSX                 |
+| **Takeover Panel Rule 8**               | hedge-fund/arb positions during takeovers                             | public disclosures             |
+| **Contracts Finder + Find a Tender**    | government demand before revenue appears                              | API/OCDS                       |
+| **ONS/DBT business + self-employment**  | sole traders and trade capacity                                       | downloadable official datasets |
+| **Apprenticeships**                     | future skilled-trade supply                                           | downloadable CSV               |
+| later: planning/grid/Ofgem              | physical buildout                                                     | separate gardens               |
+
+That is much closer to POW.
+
+## Companies House: what I would actually ingest
+
+Forget 90% of Companies House initially.
+
+Run these six streams:
+
+```text
+/companies
+/filings
+/charges
+/insolvency-cases
+/officers
+/persons-with-significant-control
+```
+
+They are all officially supported live streams. ([Company Information Developer Specs][1])
+
+But filter/process them around a **POW SIC universe**.
+
+Think:
+
+```text
+ELECTRICAL
+  electrical installation
+  power infrastructure
+  wiring
+  switchgear
+  motors/generators
+
+COMPUTE_INFRA
+  data processing
+  hosting
+  telecoms
+  networking installation
+
+REPAIR
+  computer/electronics repair
+  appliance repair
+  machinery repair
+  electrical equipment repair
+
+ENERGY
+  solar
+  battery/storage
+  EV charging
+  heat pumps / HVAC
+  generation/distribution
+
+INDUSTRIAL
+  controls
+  automation
+  machinery
+  robotics-adjacent engineering
+
+PHYSICAL_TRADES
+  plumbing
+  heating
+  electrical
+  construction specialists
+```
+
+The useful transformations become very simple:
+
+```text
+NEW_CAPACITY
+new relevant companies / existing relevant companies
+
+CAPITAL_FLOW
+new charges / relevant companies
+
+DISTRESS
+insolvencies / relevant companies
+
+LABOUR_CAPACITY_PROXY
+new firms + apprentices + self-employed
+
+CAPACITY_RESPONSE_LAG
+time between demand shock and firm/capital expansion
+```
+
+That's POW.
+
+### One particularly valuable thing: secured charges
+
+For those sectors, `/charges` is probably more useful than most of Companies House.
+
+You want things like:
+
+```text
+electrical installers:
+new secured lending ↑ 46%
+
+data-centre related contractors:
+new charges ↑ 83%
+
+HVAC:
+new firms flat
+credit ↑
+```
+
+That is **capital flowing into physical capacity**.
+
+Then connect this to listed suppliers.
+
+For example:
+
+```text
+data-centre demand
+    ↓
+electrical contractors
+    ↓
+cooling
+    ↓
+switchgear
+    ↓
+cables
+    ↓
+transformers
+    ↓
+listed UK suppliers
+```
+
+That is the POW trade path.
+
+---
+
+# Important: Companies House does NOT solve sole traders
+
+This is the big caveat.
+
+Companies House is principally the incorporated-company world. It will miss huge chunks of the people you actually care about: self-employed electricians, plumbers, repair technicians, builders, etc.
+
+There is **no complete public database of every UK sole trader**. DBT explicitly says there is no single UK database covering every active business. Its Business Population Estimates combine VAT/PAYE-register information with Labour Force Survey estimates for businesses below those registration thresholds. ([GOV.UK][2])
+
+And this matters enormously: at the start of 2025 the official estimate was about **3.2 million sole proprietorships**, versus about 2.1 million actively trading companies. ([GOV.UK][3])
+
+So for POW:
+
+```text
+Companies House
+= incorporated physical capacity
+
+DBT/ONS + labour datasets
+= total / sole-trader capacity
+```
+
+Use DBT's **Business Population Estimates** as the calibration layer. It explicitly breaks businesses down by legal status, industry, geography and employment. ([GOV.UK][4])
+
+ONS also publishes quarterly low-level geographic business creation/closure data. ([Office for National Statistics][5])
+
+And apprenticeships give you the future supply pipeline; the DfE release lets you download underlying datasets by subject/provider/geography. ([Explore Education Statistics][6])
+
+So one killer POW series becomes:
+
+```text
+ELECTRICIAN CAPACITY
+
+incorporated electrician businesses
++
+estimated sole-trader population
++
+apprentices entering
++
+business formations
++
+business failures
++
+capital raised
+```
+
+Now we're actually measuring whether Britain can produce enough electricians for an electrification / data-centre / robotics buildout.
+
+---
+
+# Your "insider trading" idea: yes, but call it insider transactions
+
+There's a distinction worth making.
+
+You obviously can't legally obtain confidential **illegal insider information**.
+
+But the UK publishes a huge amount of information about transactions by directors, senior management, large shareholders and sophisticated market participants.
+
+And yes: **we should absolutely ingest it.**
+
+## 1. PDMR / director dealings
+
+Under UK MAR, listed companies publish notifications involving **Persons Discharging Managerial Responsibilities** and closely associated persons.
+
+Typical record:
+
+```text
+director/CFO/CEO
+instrument
+buy/sell/award/exercise
+price
+volume
+date
+venue
+```
+
+Here is an actual FCA-stored example containing PDMR name, role, transaction, price, volume, date and venue. ([FCA Data][7])
+
+This is what people colloquially mean when they say "UK insider buying".
+
+For POW-listed stocks:
+
+```text
+director buys £300k
+CEO sells £2m
+3 directors buy within 14 days
+director buys after profit warning
+director buys while sector fundamentals improve
+```
+
+are excellent features.
+
+---
+
+# 2. FCA National Storage Mechanism
+
+This is a goldmine.
+
+The **FCA National Storage Mechanism (NSM)** is the official repository for regulated announcements and documents from listed issuers. ([FCA][8])
+
+It includes material such as:
+
+```text
+annual reports
+regulated announcements
+PDMR dealings
+major holdings
+prospectuses
+results
+capital changes
+corporate actions
+takeover-related filings
+```
+
+You can search by:
+
+```text
+company
+LEI
+filing date
+keywords/document text
+```
+
+and download documents and export search results to CSV for free. ([FCA][8])
+
+Even better: since the 2025 changes, tagged annual financial reports can expose structured underlying information and downloads can include **JSON and CSV** in addition to original formats. ([FCA][8])
+
+This should definitely be a POW garden.
+
+Think:
+
+```text
+NSM
+ ↓
+announcement parser
+ ↓
+PDMR
+TR1
+placing
+buyback
+contract win
+capex
+guidance
+results
+prospectus
+acquisition
+```
+
+Then link by:
+
+```text
+LEI → ISIN → ticker → Companies House number
+```
+
+That's the listed-market bridge.
+
+---
+
+# 3. TR-1 major shareholder disclosures
+
+Very important.
+
+When holdings cross certain disclosure thresholds, holders submit **major shareholding notifications**, commonly known as TR-1s.
+
+The FCA operates the notification portal for these disclosures. ([FCA][9])
+
+POW cares about:
+
+```text
+institution crosses 3%
+institution crosses 5%
+stake increases
+stake collapses
+new strategic shareholder appears
+```
+
+Then your signal is not:
+
+> TR-1 happened.
+
+It becomes:
+
+```text
+PHYSICAL THESIS strengthening
++
+director buying
++
+new institutional owner
++
+short interest falling
++
+underlying sector capacity tightening
+```
+
+Much better.
+
+---
+
+# 4. FCA net-short positions
+
+This is especially interesting right now because the UK regime changed in **July 2026**.
+
+Since 13 July 2026, the FCA publishes **aggregate net short positions** under the new Short Selling Regulations 2025. ([FCA][10])
+
+Every working day from 12:00, the FCA publishes:
+
+```text
+company
+ISIN
+aggregate net short %
+position date
+```
+
+and historical changes.
+
+It's available in **CSV/XLSX machine-readable form**. ([FCA][10])
+
+Important caveat: under the new regime the individual short sellers are anonymised; you're getting aggregate reportable short interest, not "Citadel is short X". ([FCA][10])
+
+Still extremely useful.
+
+Plant it every day.
+
+Create:
+
+```text
+short_interest
+Δ short_interest_1d
+Δ short_interest_5d
+Δ short_interest_20d
+short_acceleration
+```
+
+Then:
+
+```text
+sector fundamentals improving
++
+short interest suddenly falling
+```
+
+is potentially interesting.
+
+---
+
+# 5. Takeover Panel disclosures — weird and excellent
+
+This is a less obvious one.
+
+During UK takeovers, the Takeover Code imposes public dealing/position disclosure rules.
+
+The Takeover Panel's **Form 8.3**, for instance, covers public opening-position/dealing disclosures by persons with **1%+ interests in relevant securities**. ([The Takeover Panel][11])
+
+These can contain:
+
+```text
+long holdings
+short holdings
+cash-settled derivatives
+stock-settled derivatives
+purchases
+sales
+prices
+volumes
+```
+
+You can see actual filings with long and short positions by security. ([FCA Data][12])
+
+That means for takeover situations you can construct:
+
+```text
+offer announced
+ ↓
+hedge funds accumulate
+ ↓
+arbitrage ownership concentration
+ ↓
+deal progression
+```
+
+It isn't central to POW's physical-economy thesis, but for actual trading it's excellent event data.
+
+---
+
+# 6. Government contracts
+
+This is much more relevant to POW than generic Companies House data.
+
+Contracts Finder contains:
+
+```text
+early engagement
+future opportunities
+live opportunities
+awards
+supplier
+contract value
+region
+industry codes
+```
+
+and has machine-readable APIs including OCDS search and daily CSV feeds. ([contractsfinder.service.gov.uk][13])
+
+This means we can identify **demand before revenue reaches suppliers**.
+
+Imagine:
+
+```text
+government suddenly publishes:
+
+£500m grid upgrades
+£200m EV charging
+data-centre infrastructure
+electrical refurbishment
+cyber-physical infrastructure
+robotics procurement
+```
+
+Then map:
+
+```text
+CPV procurement code
+ ↓
+physical constraint
+ ↓
+UK suppliers
+ ↓
+listed beneficiaries
+```
+
+Contracts Finder covers lower-value procurement; GOV.UK directs higher-value contracts to **Find a Tender**, and both have OCDS data outputs. ([GOV.UK][14])
+
+Very POW.
+
+---
+
+# How to get your Companies House streaming key
+
+Your existing API key is **not necessarily a streaming key**. Companies House says REST and streaming credentials are distinct and not interchangeable. ([Company Information Developer Specs][15])
+
+Do this:
+
+1. Open your Companies House Developer Hub.
+2. Open the application you already created.
+3. Choose **Create new key**.
+4. Select client type **Stream key**.
+5. Give it a name such as `pow-ch-stream`.
+6. Save the resulting key.
+
+Companies House currently supports three client types:
+
+```text
+API key
+Stream key
+OAuth web client
+```
+
+([Company Information Developer Hub][16])
+
+Then test:
+
+```bash
+curl -u YOUR_STREAM_KEY: \
+  https://stream.companieshouse.gov.uk/companies
+```
+
+Companies House documents exactly this Basic-auth pattern: the stream key is the username and the password is blank. ([Company Information Developer Specs][15])
+
+The response is essentially an indefinitely running HTTP response, one event at a time. ([Company Information Developer Specs][17])
+
+Don't repeatedly poll/reconnect. They explicitly recommend maintaining the connection and warn that frequent reconnects can be rate-limited. ([Company Information Developer Specs][17])
+
+Store the returned:
+
+```text
+event.timepoint
+```
+
+because when your process restarts:
+
+```bash
+curl -u "$STREAM_KEY:" \
+"https://stream.companieshouse.gov.uk/companies?timepoint=LAST_TIMEPOINT"
+```
+
+lets you resume from that point, provided it is still valid. ([Company Information Developer Specs][18])
+
+That's beautiful for the garden.
+
+---
+
+# And you already have access to the Document API
+
+You don't need another special Companies House document credential.
+
+Your normal Companies House **API key** authenticates requests to the Document API. ([Company Information Developer Specs][19])
+
+Flow:
+
+```text
+filing event
+ ↓
+filing-history entry
+ ↓
+document_metadata link / document_id
+ ↓
+Document API
+```
+
+Then:
+
+```text
+GET
+https://document-api.company-information.service.gov.uk/document/{document_id}
+```
+
+for metadata. ([Company Information Developer Specs][20])
+
+And:
+
+```text
+GET
+https://document-api.company-information.service.gov.uk/document/{document_id}/content
+```
+
+for the actual document. ([Company Information Developer Specs][19])
+
+That means your existing key gives you:
+
+```text
+company API
+filings
+charges
+officers
+PSC
+insolvency
++
+actual filed documents
+```
+
+while the **stream key** gives you the "something changed" firehose.
+
+Perfect architecture:
+
+```text
+STREAM KEY
+   ↓
+event occurred
+   ↓
+company number
+   ↓
+REST API KEY
+   ↓
+enrichment
+   ↓
+Document API
+   ↓
+filing contents
+```
+
+---
+
+# The POW UK intelligence stack I'd actually build
+
+Not fifty datasets. Start with these **seven collectors**:
+
+```text
+1  CH_STREAM
+   physical-business formation / death / changes
+
+2  CH_CHARGES
+   capital flowing into physical capacity
+
+3  CH_DOCUMENTS
+   accounts + actual corporate filings
+
+4  FCA_NSM
+   PDMR + TR1 + results + placings + regulated news
+
+5  FCA_SHORTS
+   daily short-position state
+
+6  UK_PROCUREMENT
+   Contracts Finder + Find a Tender
+
+7  TRADE_CAPACITY
+   DBT sole traders + ONS births/deaths + apprenticeships
+```
+
+Then the canonical object is not a company.
+
+It's:
+
+```text
+POW_CONSTRAINT
+```
+
+For example:
+
+```text
+constraint = UK_ELECTRICAL_LABOUR
+
+demand:
+  data centres ↑
+  grid capex ↑
+  EV infrastructure ↑
+
+capacity:
+  electrician companies
+  sole traders
+  apprentices
+  business births
+  business deaths
+
+capital response:
+  Companies House charges
+
+market exposure:
+  relevant listed firms
+
+market state:
+  L2
+
+ownership:
+  PDMR
+  TR1
+  shorts
+```
+
+Or:
+
+```text
+constraint = DATA_CENTRE_COOLING
+
+procurement ↑
+planning ↑
+contractor formations ↑
+financing ↑
+HVAC apprenticeship supply →
+supplier orders ↑
+
+then:
+
+UK listed HVAC/electrical suppliers
++ PDMR dealings
++ shareholder changes
++ shorts
++ L2
+```
+
+**That's POW.**
+
+And critically, it's now clear what the garden is trying to preserve:
+
+$$
+\boxed{\text{physical demand} \rightarrow \text{constraint} \rightarrow
+\text{capacity response} \rightarrow \text{company cash flow}
+\rightarrow \text{market repricing}}
+$$
+
+Companies House is only one sensor in that chain—not the product itself. 
+
+[1]: https://developer-specs.company-information.service.gov.uk/streaming-api/reference?utm_source=chatgpt.com "Streaming API: Specification summary"
+[2]: https://www.gov.uk/government/statistics/business-population-estimates-2025/business-population-estimates-for-the-uk-and-regions-2025-methodology-note?utm_source=chatgpt.com "Business population estimates for the UK and regions 2025: methodology note - GOV.UK"
+[3]: https://www.gov.uk/government/statistics/business-population-estimates-2025/business-population-estimates-for-the-uk-and-regions-2025-statistical-release?utm_source=chatgpt.com "Business population estimates for the UK and regions 2025: statistical release - GOV.UK"
+[4]: https://www.gov.uk/government/statistics/business-population-estimates-2025?utm_source=chatgpt.com "Business population estimates 2025 - GOV.UK"
+[5]: https://www.ons.gov.uk/businessindustryandtrade/business/activitysizeandlocation/datasets/businessdemographyquarterlyexperimentalstatisticslowlevelgeographicbreakdownuk?utm_source=chatgpt.com "Business demography, quarterly, low-level geographic breakdown, UK - Office for National Statistics"
+[6]: https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships/2025-26?utm_source=chatgpt.com "Release home - Apprenticeships - Explore education statistics - GOV.UK"
+[7]: https://data.fca.org.uk/artefacts/NSM/RNS/8c3731bc-f5ac-42c5-b43f-097f01a6d475.html?utm_source=chatgpt.com "National Storage Mechanism | Additional information"
+[8]: https://www.fca.org.uk/markets/primary-markets/regulatory-disclosures/national-storage-mechanism?utm_source=chatgpt.com "National Storage Mechanism | FCA"
+[9]: https://www.fca.org.uk/markets/primary-markets/regulatory-disclosures/shareholding-notification-disclosure?utm_source=chatgpt.com "Shareholding notification and disclosure | FCA"
+[10]: https://www.fca.org.uk/markets/short-selling/notification-disclosure-net-short-positions?utm_source=chatgpt.com "Notification and disclosure of net short positions | FCA"
+[11]: https://www.thetakeoverpanel.org.uk/disclosure/disclosure-forms?utm_source=chatgpt.com "Disclosure Forms – The Takeover Panel"
+[12]: https://data.fca.org.uk/artefacts/NSM/RNS/c18ea53b-b5b2-49f4-b272-b1d7e0247903.html?utm_source=chatgpt.com "National Storage Mechanism | Additional information"
+[13]: https://www.contractsfinder.service.gov.uk/apidocumentation?utm_source=chatgpt.com "Contracts Finder API Help Page"
+[14]: https://www.gov.uk/contracts-finder?utm_source=chatgpt.com "Contracts Finder - GOV.UK"
+[15]: https://developer-specs.company-information.service.gov.uk/streaming-api/guides/authentication?utm_source=chatgpt.com "Streaming API:"
+[16]: https://developer.company-information.service.gov.uk/how-to-create-an-application?utm_source=chatgpt.com "How to create an application"
+[17]: https://developer-specs.company-information.service.gov.uk/streaming-api/guides/overview?utm_source=chatgpt.com "Streaming API:"
+[18]: https://developer-specs.company-information.service.gov.uk/streaming-api/reference/company-information/stream?utm_source=chatgpt.com "Streaming API: Basic company information stream"
+[19]: https://developer-specs.company-information.service.gov.uk/document-api/reference/document-location/fetch-a-document?utm_source=chatgpt.com "Document API: Fetch a document"
+[20]: https://developer-specs.company-information.service.gov.uk/document-api/reference/document-metadata/fetch-a-documents-metadata?utm_source=chatgpt.com "Document API: Fetch a document's metadata"

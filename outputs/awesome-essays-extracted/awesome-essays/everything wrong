@@ -1,0 +1,2254 @@
+Yes. This should become a distinct adversarial series:
+
+# **Where the Problem Went**
+
+## A systematic audit of theories of consciousness
+
+The governing method is not:
+
+> “This theory is wrong.”
+
+It is:
+
+[
+\boxed{
+\textbf{What does the theory genuinely explain, and where does}
+}
+]
+
+[
+\boxed{
+\textbf{it relocate the original explanatory burden?}
+}
+]
+
+Every essay should reconstruct the strongest version of the target position before attacking it. The recurring structure should be:
+
+1. **Exact contention**
+2. **Strongest argument for the theory**
+3. **What it genuinely solves**
+4. **The hidden relocation**
+5. **Formal failure point**
+6. **Strongest defence**
+7. **Counter-reply**
+8. **What MCPIT retains**
+9. **What MCPIT rejects**
+10. **The unresolved remainder**
+
+The visual grammar should be equally consistent:
+
+* theory shown as a machine receiving the original problem;
+* mechanism shown working;
+* unresolved term moved into another box;
+* red “relocation arrow” exposing where the burden went;
+* final split-screen: genuine progress versus unpaid explanatory debt.
+
+The series should not present MCPIT as already proven. Each essay should end by showing whether MCPIT actually improves on the rival or merely relocates the problem differently.
+
+---
+
+# Series master question
+
+All theories begin with some version of:
+
+[
+\boxed{
+\text{Why is there one private, unified, valenced field}
+}
+]
+
+[
+\boxed{
+\text{corresponding to this concrete process?}
+}
+]
+
+The target explananda are:
+
+[
+D_i
+===
+
+\left\langle
+M_i,U_i,\partial_i,\tau_i,\nu_i,\alpha_i,\rho_i
+\right\rangle.
+]
+
+Where:
+
+* (M_i): manifestness;
+* (U_i): co-presence;
+* (\partial_i): phenomenal boundary;
+* (\tau_i): lived time;
+* (\nu_i): valence;
+* (\alpha_i): agency;
+* (\rho_i): basal self-affection.
+
+A theory fails when it explains one term by silently presupposing another, or replaces an explanatory question with a label.
+
+---
+
+# Essay 1 — Everything Wrong with Analytic Idealism
+
+## Exact contention
+
+Does beginning with universal consciousness solve the hard problem, or merely exchange the emergence problem for the decomposition problem?
+
+Analytic idealism holds that consciousness is fundamental and universal, while individual minds are dissociated segments of the universal field. The physical world is understood as the externally perceived appearance of mental processes. ([Stanford Encyclopedia of Philosophy][1])
+
+Its structure is:
+
+[
+C_\infty
+\xrightarrow{\mathrm{dissociation}}
+D_1,D_2,\ldots,D_n.
+]
+
+## Strongest argument
+
+1. Consciousness is directly known.
+2. Matter is known only as perceived or theoretically inferred structure.
+3. Physics describes relational behaviour, not intrinsic nature.
+4. It is more parsimonious to treat consciousness as fundamental than to derive it from something defined without consciousness.
+5. The world is therefore the extrinsic appearance of universal consciousness.
+6. Organisms are dissociated centres within that field.
+
+This has real force. It avoids:
+
+[
+\text{non-conscious matter}
+\rightarrow
+\text{consciousness}.
+]
+
+## What it genuinely solves
+
+It solves the **constitution problem** by stipulation at the fundamental level:
+
+[
+M\text{ is fundamental}.
+]
+
+It also offers:
+
+* ontological parsimony;
+* no substance interaction problem;
+* a response to the intrinsic-nature gap;
+* a natural explanation for why mental causation is not excluded.
+
+## The hidden relocation
+
+It relocates the central problem from:
+
+[
+\text{How does matter produce consciousness?}
+]
+
+to:
+
+[
+\boxed{
+\text{How does one consciousness become many genuinely}
+}
+]
+
+[
+\boxed{
+\text{private consciousnesses?}
+}
+]
+
+“Dissociation” names the required process, but does not yet explain:
+
+* why dissociation creates phenomenal exclusion;
+* why one alter cannot access another’s contents;
+* why dissociative boundaries correspond to organisms;
+* why there are exactly these alters;
+* whether the alters are numerically new subjects or regions of one subject.
+
+## Formal failure point
+
+Analytic idealism needs:
+
+[
+C_\infty
+\xrightarrow{\Delta_i}
+D_i
+]
+
+where (\Delta_i) must generate:
+
+[
+\partial_i,\quad U_i,\quad \nu_i,\quad \tau_i.
+]
+
+But unless (\Delta_i) is specified, the theory has only moved (\Lambda_P):
+
+[
+\Lambda_P
+\rightarrow
+\Delta_i.
+]
+
+The unexplained law is now called dissociation.
+
+## The strongest defence
+
+The idealist can argue that dissociation is already observed clinically: one mind can form partially isolated centres of cognition. Therefore cosmic dissociation is not unintelligible.
+
+## Counter-reply
+
+Clinical dissociation occurs within an already individuated organism and phenomenal field.
+
+It presupposes:
+
+* one nervous system;
+* one embodied trajectory;
+* existing memory architecture;
+* existing phenomenal boundaries.
+
+It does not show how:
+
+[
+\text{one universal subject}
+\rightarrow
+\text{many numerically distinct subjects}.
+]
+
+It is therefore at most an analogy for partition, not a derivation of partition.
+
+## MCPIT’s correction
+
+MCPIT begins with distinct concrete process-tokens:
+
+[
+O_i^\ast\neq O_j^\ast.
+]
+
+It does not need a universal subject to split.
+
+Its problem is narrower:
+
+[
+\operatorname{Boundary}(O_i^\ast)
+\stackrel{?}{=}
+\partial_i.
+]
+
+This remains unresolved, but the candidate boundary is empirically investigable.
+
+## Essay verdict
+
+[
+\boxed{
+\text{Analytic idealism solves emergence by fundamentalizing}
+}
+]
+
+[
+\boxed{
+\text{consciousness, but relocates the hard problem into}
+}
+]
+
+[
+\boxed{
+\text{phenomenal decomposition and dissociation.}
+}
+]
+
+### Visual sequence
+
+1. Dead matter attempting to generate light.
+2. Idealism flips the scene: one field of light.
+3. Multiple figures emerge behind opaque glass walls.
+4. Label: “Dissociation.”
+5. Camera asks: “What built the walls?”
+6. Final visual: cosmic field on one side; measurable local closure on the other.
+
+---
+
+# Essay 2 — Everything Wrong with Advaita’s Solution
+
+## Exact contention
+
+Does declaring individuality ultimately unreal explain individuality?
+
+## Strongest argument
+
+1. Consciousness is presupposed by every known object.
+2. The witnessing awareness cannot itself be reduced to an object.
+3. Differences belong to objects and limiting adjuncts.
+4. Pure awareness is therefore nondual.
+5. Individuality results from ignorance and superimposition.
+6. Liberation is recognition that ātman is Brahman.
+
+## What it genuinely solves
+
+Advaita gives a powerful account of:
+
+* non-objectifiability of awareness;
+* instability of ego identity;
+* distinction between awareness and its contents;
+* phenomenological selflessness;
+* why the subject cannot be encountered as an ordinary object.
+
+## The hidden relocation
+
+The theory explains plurality through:
+
+[
+avidyā.
+]
+
+But then it must explain:
+
+* what ignorance is;
+* how ignorance can arise in nondual Brahman;
+* whether ignorance is real or unreal;
+* whose ignorance it is;
+* how an unreal principle produces systematic, law-governed experience.
+
+If ignorance is real, nonduality is compromised.
+
+If ignorance is unreal, it cannot perform explanatory work.
+
+## Formal dilemma
+
+[
+avidyā\in Brahman
+\Rightarrow
+Brahman\text{ contains real ignorance}.
+]
+
+But:
+
+[
+avidyā\notin Brahman
+\Rightarrow
+\text{no relation explaining appearance}.
+]
+
+Or:
+
+[
+avidyā\text{ is neither real nor unreal}
+]
+
+which may mark the limit of conceptual categorization but does not provide a mechanism.
+
+## Strongest defence
+
+Advaita is not intended as mechanistic cosmology. Its aim is to expose a category error: demanding a causal explanation for appearance already presupposes the temporal-causal world generated within appearance.
+
+## Counter-reply
+
+This may block the demand for an ultimate causal story, but it cannot explain why experience has:
+
+* stable laws;
+* organism-correlated privacy;
+* memory;
+* differential valence;
+* cross-subject consistency.
+
+The phenomenal and biological architecture still requires explanation at the empirical level.
+
+## MCPIT’s correction
+
+MCPIT distinguishes:
+
+[
+\text{ego-model}
+\neq
+\text{minimal subject}
+\neq
+\text{phenomenal token}.
+]
+
+Ego dissolution therefore does not entail:
+
+[
+D_i=D_j.
+]
+
+It permits nondual phenomenology without inferring numerical identity of all subjects.
+
+## Verdict
+
+[
+\boxed{
+\text{Advaita correctly deconstructs the ego as an ultimate}
+}
+]
+
+[
+\boxed{
+\text{substance, but risks treating the real problem of}
+}
+]
+
+[
+\boxed{
+\text{phenomenal individuation as mere ignorance.}
+}
+]
+
+---
+
+# Essay 3 — Everything Wrong with Full Pratyabhijñā
+
+## Exact contention
+
+Does the universality of conscious powers prove one universal subject?
+
+## Strongest argument
+
+1. Cognition requires manifestation.
+2. Determination requires reflexivity.
+3. Memory requires one self connecting cognitions across time.
+4. Imagination reveals endogenous creative freedom.
+5. Finite beings possess contracted knowledge and action.
+6. These powers are intelligible as contractions of unrestricted consciousness.
+7. Therefore every finite subject is Śiva in contracted form.
+
+## What it genuinely solves
+
+Pratyabhijñā gives the richest functional anatomy:
+
+[
+\text{jñāna}
++
+\text{smṛti}
++
+\text{apohana}
++
+\text{anusandhāna}
++
+\text{vikalpa}
++
+\text{rāga}.
+]
+
+It explains finite consciousness as active articulation, not passive reception.
+
+## The hidden relocation
+
+It moves from:
+
+[
+\text{all subjects instantiate reflexive manifestation}
+]
+
+to:
+
+[
+\text{all subjects are numerically one subject}.
+]
+
+That inference is not automatic.
+
+Many things can instantiate one type without being one token.
+
+[
+\operatorname{Type}(D_i)
+========================
+
+\operatorname{Type}(D_j)
+]
+
+does not entail:
+
+[
+D_i=D_j.
+]
+
+## The internal pressure
+
+If connective synthesis does not cross bodies, then local stream unity is body-conditioned.
+
+That strengthens:
+
+[
+D_i\neq D_j
+]
+
+at the token level, even if the tradition asserts common ground.
+
+## Strongest defence
+
+The Śaiva does not infer universal unity merely from similarity. The claim is that manifestation as such cannot be divided by space, time, or form because those distinctions themselves appear within consciousness.
+
+## Counter-reply
+
+That may establish:
+
+[
+\text{manifestness is not spatially divisible as an object}.
+]
+
+It does not establish:
+
+[
+\text{every manifestation belongs to one numerically identical}
+]
+
+[
+\text{first-person field}.
+]
+
+Ground unity and subject identity remain distinct.
+
+## MCPIT’s correction
+
+Retain the entire finite anatomy.
+
+Suspend:
+
+[
+O_i^\ast
+========
+
+\operatorname{Contraction}*i(C*\infty).
+]
+
+Replace with:
+
+[
+D_i
+\equiv
+O_i^\ast.
+]
+
+Universal consciousness becomes an optional extension, not the explanation of local individuation.
+
+## Verdict
+
+[
+\boxed{
+\text{Pratyabhijñā may explain the common nature of conscious}
+}
+]
+
+[
+\boxed{
+\text{processes without proving that all conscious processes}
+}
+]
+
+[
+\boxed{
+\text{are one subject.}
+}
+]
+
+---
+
+# Essay 4 — Everything Wrong with Yogācāra as “Mind Only”
+
+## Exact contention
+
+Does showing that experienced objects are cognitively constructed eliminate the need for an external causal world or concrete subject bearer?
+
+## Strongest argument
+
+1. We never encounter objects apart from cognition.
+2. Subject and object arise dependently within cognitive events.
+3. Perceived objectivity is structured by latent dispositions and conceptual construction.
+4. A permanent self is unnecessary.
+5. Continuity can be explained by causal streams and seeds.
+
+## What it genuinely solves
+
+It explains:
+
+* constructed objecthood;
+* the instability of subject–object dualism;
+* memory without a substantial ego;
+* perceptual projection;
+* why cognition cannot simply copy a finished world.
+
+## Hidden relocation
+
+The storehouse, seeds, or stream must still explain:
+
+* why one stream is private;
+* how streams interact;
+* why shared worlds are stable;
+* what physically realizes causal continuity;
+* why constructed cognition is manifest.
+
+“Cognition-only” may eliminate mind-independent objects while leaving untouched:
+
+[
+\text{Why is there a manifested cognitive stream?}
+]
+
+## Formal failure
+
+[
+\text{object construction}
+\neq
+\text{subject constitution}.
+]
+
+Explaining:
+
+[
+W_i
+]
+
+does not explain:
+
+[
+D_i.
+]
+
+## MCPIT’s correction
+
+Cognitive construction becomes:
+
+[
+W_i
+===
+
+\Omega/{\sim_i},
+]
+
+but the constructor is one concrete aperture:
+
+[
+O_i^\ast.
+]
+
+The external is not a ready-made object world, but neither is it reducible to private representation.
+
+## Verdict
+
+[
+\boxed{
+\text{Yogācāra brilliantly explains the construction of}
+}
+]
+
+[
+\boxed{
+\text{experienced objects, but risks leaving the concrete}
+}
+]
+
+[
+\boxed{
+\text{individuation and manifestness of the stream unexplained.}
+}
+]
+
+---
+
+# Essay 5 — Everything Wrong with Russellian Monism
+
+## Exact contention
+
+Does placing consciousness in the unknown intrinsic nature of matter explain consciousness, or merely assign it to a hidden variable?
+
+Russellian monism argues that physics describes structural or dispositional features while leaving intrinsic categorical nature underdetermined. Consciousness may reveal or derive from that hidden intrinsic nature. ([Stanford Encyclopedia of Philosophy][2])
+
+## Strongest argument
+
+1. Physics describes relations and dispositions.
+2. Relations require relata with some intrinsic nature.
+3. Consciousness is the only intrinsic nature directly known.
+4. Therefore consciousness or proto-consciousness is a candidate intrinsic nature of physical reality.
+
+## What it genuinely solves
+
+It explains why:
+
+* complete physics might leave consciousness conceptually open;
+* the explanatory gap does not require substance dualism;
+* phenomenal and physical facts could concern one reality.
+
+## Hidden relocation
+
+The unknown intrinsic nature becomes:
+
+[
+Q.
+]
+
+Then the theory claims:
+
+[
+Q\rightarrow D_i.
+]
+
+But unless (Q) is specified, consciousness has been placed inside physics’s blind spot.
+
+If (Q) is already phenomenal, the combination problem appears.
+
+If (Q) is proto-phenomenal, the emergence problem returns.
+
+## Formal dilemma
+
+[
+Q=\text{phenomenal}
+\Rightarrow
+\text{combination problem}.
+]
+
+[
+Q=\text{nonphenomenal}
+\Rightarrow
+\text{hard problem}.
+]
+
+[
+Q=\text{proto-phenomenal}
+\Rightarrow
+\text{undefined bridge}.
+]
+
+## MCPIT’s correction
+
+Do not assign micro-intrinsic properties to each component.
+
+Assign phenomenal identity to the selected macro-process:
+
+[
+\operatorname{Int}(O_i^\ast)=D_i.
+]
+
+This turns Russellian monism into a process-level theory with an individuation rule.
+
+## Verdict
+
+[
+\boxed{
+\text{Russellian monism correctly diagnoses the incompleteness}
+}
+]
+
+[
+\boxed{
+\text{of extrinsic physics, but often relocates consciousness}
+}
+]
+
+[
+\boxed{
+\text{into an unspecified intrinsic categorical base.}
+}
+]
+
+---
+
+# Essay 6 — Everything Wrong with Dual-Aspect Monism
+
+## Exact contention
+
+Does saying reality has mental and physical aspects explain their relation?
+
+## Strongest argument
+
+1. Dualism creates interaction problems.
+2. Reduction loses phenomenology.
+3. One reality can possess both mental and physical aspects.
+4. Correlation follows because both aspects belong to the same event.
+
+## What it genuinely solves
+
+It removes causal interaction between separate substances.
+
+## Hidden relocation
+
+“Aspect” can become a placeholder.
+
+The theory must still answer:
+
+* Which entities have both aspects?
+* Why are aspects paired this way?
+* Why does one physical whole correspond to one mental field?
+* At what scale does the mental aspect occur?
+* Are aspects properties, descriptions, or access relations?
+
+## Formal failure
+
+[
+X
+\rightarrow
+{X_M,X_P}
+]
+
+does not explain:
+
+[
+\operatorname{Boundary}(X_M).
+]
+
+Nor does it explain why:
+
+[
+X_M
+]
+
+is unified.
+
+## MCPIT’s correction
+
+Replace symmetrical aspects with asymmetrical access:
+
+[
+\operatorname{Int}(O_i^\ast)=D_i,
+\qquad
+\operatorname{Ext}(O_i^\ast)=\Sigma_i.
+]
+
+Then specify the token:
+
+[
+O_i^\ast=\operatorname{MaxClosure}(\ldots).
+]
+
+## Verdict
+
+[
+\boxed{
+\text{Dual-aspect theory solves ontological pairing only in}
+}
+]
+
+[
+\boxed{
+\text{outline; without a bearer criterion, “aspect” merely}
+}
+]
+
+[
+\boxed{
+\text{renames the correlation.}
+}
+]
+
+---
+
+# Essay 7 — Everything Wrong with Neutral Monism
+
+## Exact contention
+
+Can something intrinsically neither mental nor physical explain why some organizations are phenomenal?
+
+## Strongest argument
+
+1. Mental and physical may be abstractions from more primitive events.
+2. Starting with neutral elements avoids privileging either domain.
+3. Different organizations yield mental and physical structures.
+
+## What it genuinely solves
+
+It rejects the false choice:
+
+[
+\text{matter or mind}.
+]
+
+It permits one ontology behind both.
+
+## Hidden relocation
+
+The neutral base (N) must become phenomenal under organization:
+
+[
+N+\mathcal O
+\rightarrow D_i.
+]
+
+But if (N) is genuinely nonphenomenal, the hard problem returns.
+
+If it has latent phenomenal nature, neutrality becomes misleading.
+
+## MCPIT’s correction
+
+Processes in general need not be labelled mental or physical.
+
+But once a conscious aperture is selected:
+
+[
+\operatorname{Int}(O_i^\ast)=D_i
+]
+
+is positively phenomenal, not neutral.
+
+## Verdict
+
+[
+\boxed{
+\text{Neutral monism escapes the matter–mind dichotomy but}
+}
+]
+
+[
+\boxed{
+\text{often lacks a principled transition from neutral events}
+}
+]
+
+[
+\boxed{
+\text{to one manifest subject.}
+}
+]
+
+---
+
+# Essay 8 — Everything Wrong with Panpsychism
+
+## Exact contention
+
+Does placing experience everywhere eliminate strong emergence, or create an unsolved combination problem?
+
+Panpsychism treats consciousness or experience as fundamental and ubiquitous. Its best-known challenge is explaining how micro-level experience could constitute macro-level unified subjects. ([Stanford Encyclopedia of Philosophy][3])
+
+## Strongest argument
+
+1. Consciousness cannot emerge from wholly nonconscious properties.
+2. Therefore the fundamental physical basis must contain phenomenal or proto-phenomenal nature.
+3. Complex consciousness results from combination or organization.
+
+## What it genuinely solves
+
+It blocks brute emergence:
+
+[
+\text{zero phenomenality}
+\rightarrow
+\text{phenomenality}.
+]
+
+## Hidden relocation
+
+The problem becomes:
+
+[
+{d_1,d_2,\ldots,d_n}
+\rightarrow
+D_i.
+]
+
+How can many private centres become one centre?
+
+Adding relations among micro-experiences does not obviously create a new subject.
+
+## The subject-summing contradiction
+
+If micro-subjects retain their privacy, they do not become one field.
+
+If they lose their privacy, the theory needs an exclusion or absorption law.
+
+If a new subject simply appears at the macro-scale, strong emergence has returned.
+
+## MCPIT’s correction
+
+Intrinsic existence need not imply micro-subjecthood.
+
+The macro-process is the phenomenal token:
+
+[
+D_i=\operatorname{Int}(O_i^\ast).
+]
+
+Its parts need not be separate conscious subjects.
+
+## Verdict
+
+[
+\boxed{
+\text{Panpsychism solves phenomenal emergence by distributing}
+}
+]
+
+[
+\boxed{
+\text{phenomenality downward, but relocates the central burden}
+}
+]
+
+[
+\boxed{
+\text{into combination, exclusion, and subject summation.}
+}
+]
+
+---
+
+# Essay 9 — Everything Wrong with Cosmopsychism
+
+## Exact contention
+
+Does beginning with one cosmic subject solve combination, or merely reverse it into decomposition?
+
+## Strongest argument
+
+1. Panpsychism cannot combine micro-subjects.
+2. Begin instead with one cosmic consciousness.
+3. Local subjects derive as aspects, restrictions, or perspectives of the whole.
+
+## What it genuinely solves
+
+No micro-combination is required.
+
+## Hidden relocation
+
+The theory must derive:
+
+[
+C_\Omega
+\rightarrow
+D_i.
+]
+
+This is the same decomposition problem faced by analytic idealism.
+
+It must explain:
+
+* privacy;
+* local ignorance;
+* embodiment;
+* asymmetric access;
+* why the cosmos is one subject rather than one non-subjective process.
+
+## MCPIT’s correction
+
+Begin with local closure, not cosmic unity.
+
+The universe may be one physical process without being one phenomenal subject.
+
+## Verdict
+
+[
+\boxed{
+\text{Cosmopsychism solves combination by reversing the arrow,}
+}
+]
+
+[
+\boxed{
+\text{but inherits the equally difficult decomposition problem.}
+}
+]
+
+---
+
+# Essay 10 — Everything Wrong with Whiteheadian Process Philosophy
+
+## Exact contention
+
+Does making basic events experiential explain human consciousness, or reproduce panpsychism in process vocabulary?
+
+## Strongest argument
+
+1. Static substance metaphysics cannot explain becoming.
+2. Actual occasions integrate prior conditions.
+3. Experience and valuation are fundamental aspects of process.
+4. Organisms are structured societies of occasions.
+
+## What it genuinely solves
+
+It offers powerful accounts of:
+
+* temporal becoming;
+* internal relations;
+* value;
+* process;
+* organismic organization.
+
+## Hidden relocation
+
+If actual occasions are experiential, how do they form one enduring human subject?
+
+A society of experiences is not obviously an experience of the society.
+
+## Formal failure
+
+[
+{\text{occasions}}
++
+\text{social order}
+\not\Rightarrow
+D_i.
+]
+
+## MCPIT’s correction
+
+Keep process ontology.
+
+Reject experiential atomism.
+
+Subjecthood appears only at maximal temporally extended closure.
+
+## Verdict
+
+[
+\boxed{
+\text{Whitehead explains becoming better than substance}
+}
+]
+
+[
+\boxed{
+\text{metaphysics, but leaves the relation between experiential}
+}
+]
+
+[
+\boxed{
+\text{occasions and personal phenomenal unity unresolved.}
+}
+]
+
+---
+
+# Essay 11 — Everything Wrong with Computational Functionalism
+
+## Exact contention
+
+Is the right abstract causal organization sufficient for consciousness?
+
+The CF Debate collects major arguments on both sides, including fading qualia and multiple realizability in support, and binding, counterfactual computation, and physics-based objections against computational functionalism. ([The Co-Sentience Initiative][4])
+
+## Strongest argument
+
+1. Mental states are defined by causal roles.
+2. The same roles can be realized in different substrates.
+3. Replacing neurons while preserving function should preserve cognition.
+4. Qualia cannot disappear without producing incoherent self-reports.
+5. Therefore correct computation is sufficient.
+
+## What it genuinely solves
+
+It explains:
+
+* behavioural flexibility;
+* report;
+* cognition;
+* multiple realization;
+* causal role continuity.
+
+## Hidden relocation
+
+It replaces:
+
+[
+\text{Why is this process conscious?}
+]
+
+with:
+
+[
+\text{Which abstract mapping counts as the computation?}
+]
+
+Problems include:
+
+* implementation triviality;
+* inert counterfactual machinery;
+* playback systems;
+* observer-dependent computational descriptions;
+* absence of intrinsic binding;
+* no clear token boundary.
+
+## Counterfactual problem
+
+Two systems may produce the same actual sequence, but one contains unused machinery for alternative inputs.
+
+If consciousness depends on unused capacity, inert structure determines phenomenality.
+
+If it depends only on actual sequence, a recording may become conscious. The CF Debate explicitly highlights this tension. ([The Co-Sentience Initiative][4])
+
+## MCPIT’s correction
+
+Consciousness depends on active concrete closure, not abstract computation.
+
+Multiple realization is allowed only where the aperture-level causal invariants are preserved.
+
+## Verdict
+
+[
+\boxed{
+\text{Computational functionalism explains cognitive role}
+}
+]
+
+[
+\boxed{
+\text{extremely well, but has no non-arbitrary rule identifying}
+}
+]
+
+[
+\boxed{
+\text{the concrete phenomenal bearer.}
+}
+]
+
+---
+
+# Essay 12 — Everything Wrong with IIT
+
+## Exact contention
+
+Does integrated intrinsic cause–effect power explain experience, or mathematically encode the phenomenology into axioms?
+
+## Strongest argument
+
+1. Experience exists intrinsically.
+2. It is structured, informative, unified, and definite.
+3. A physical substrate must instantiate corresponding intrinsic cause–effect structure.
+4. The maximally irreducible cause–effect structure is the experience.
+
+## What it genuinely solves
+
+IIT directly addresses:
+
+* unity;
+* exclusion;
+* intrinsic causal power;
+* subject scale;
+* phenomenal structure.
+
+It is closer to MCPIT than standard functionalism.
+
+## Hidden relocation
+
+The identity:
+
+[
+\Phi\text{-structure}
+=====================
+
+\text{experience}
+]
+
+is asserted through phenomenological postulates.
+
+The theory must justify:
+
+* why causal distinctions are qualities;
+* why maximal (\Phi) selects the correct boundary;
+* why simple systems may receive surprising consciousness assignments;
+* why time, memory, embodiment, value, and agency are secondary;
+* why one mathematical decomposition is ontologically privileged.
+
+## MCPIT’s correction
+
+Integration is necessary but not sufficient.
+
+Subject selection requires closure across:
+
+[
+\text{memory}
++
+\text{value}
++
+\text{counterfactuals}
++
+\text{source}
++
+\text{control}.
+]
+
+## Verdict
+
+[
+\boxed{
+\text{IIT faces the right problems—intrinsic existence, unity,}
+}
+]
+
+[
+\boxed{
+\text{and exclusion—but may overidentify abstract causal}
+}
+]
+
+[
+\boxed{
+\text{structure with phenomenal structure.}
+}
+]
+
+---
+
+# Essay 13 — Everything Wrong with Global Workspace Theory
+
+## Exact contention
+
+Does global availability explain consciousness or merely cognitive access?
+
+## Strongest argument
+
+1. Unconscious modules process information locally.
+2. Some content becomes globally broadcast.
+3. Broadcast enables report, memory, planning, and flexible action.
+4. Consciousness corresponds to global availability.
+
+## What it genuinely solves
+
+GWT explains:
+
+* access;
+* reportability;
+* flexible control;
+* cognitive integration;
+* attentional bottlenecks.
+
+## Hidden relocation
+
+It does not explain why broadcast information is:
+
+* manifest;
+* felt;
+* private;
+* jointly experienced;
+* valenced.
+
+A global workspace can coordinate recipients without becoming one phenomenal field.
+
+## Formal failure
+
+[
+\operatorname{Broadcast}(x)
+\Rightarrow
+\operatorname{Accessible}(x)
+]
+
+but not:
+
+[
+\operatorname{Broadcast}(x)
+\Rightarrow
+\operatorname{Manifest}(x).
+]
+
+## MCPIT’s correction
+
+Broadcast is one mechanism inside:
+
+[
+\mathcal C_i.
+]
+
+It matters only as part of maximal embodied closure.
+
+## Verdict
+
+[
+\boxed{
+\text{GWT explains consciousness-access better than}
+}
+]
+
+[
+\boxed{
+\text{phenomenal consciousness itself.}
+}
+]
+
+---
+
+# Essay 14 — Everything Wrong with Predictive Processing and Active Inference
+
+## Exact contention
+
+Does explaining perception as inference explain experience?
+
+## Strongest argument
+
+1. Organisms infer hidden causes.
+2. Perception is generative modelling.
+3. Action fulfils predictions and preferred states.
+4. Precision determines attention and confidence.
+5. Selfhood emerges from hierarchical predictive regulation.
+
+## What it genuinely solves
+
+It gives powerful models of:
+
+* perception;
+* action;
+* uncertainty;
+* attention;
+* self-models;
+* imagination;
+* valence candidates;
+* agency.
+
+## Hidden relocation
+
+Prediction remains an extrinsic functional relation.
+
+A system can minimize error without:
+
+* experiencing;
+* possessing one field;
+* feeling prediction success;
+* owning its model.
+
+Markov blankets identify many nested boundaries and do not select one subject.
+
+## MCPIT’s correction
+
+Active inference supplies several operators:
+
+[
+\mathcal I_i,\mathcal V_i,\mathcal E_i.
+]
+
+It does not supply the identity:
+
+[
+O_i^\ast=D_i.
+]
+
+## Verdict
+
+[
+\boxed{
+\text{Active inference may provide the strongest functional}
+}
+]
+
+[
+\boxed{
+\text{anatomy of the aperture while remaining neutral on why}
+}
+]
+
+[
+\boxed{
+\text{the aperture is manifest.}
+}
+]
+
+---
+
+# Essay 15 — Everything Wrong with Illusionism
+
+## Exact contention
+
+Can phenomenal consciousness be explained away as a false self-representation?
+
+## Strongest argument
+
+1. Introspection is unreliable.
+2. The brain represents itself as possessing simple ineffable qualities.
+3. These representations produce judgments about qualia.
+4. There need be no additional phenomenal properties beyond these mechanisms.
+
+## What it genuinely solves
+
+It explains:
+
+* reports;
+* metaphysical intuitions;
+* introspective error;
+* why consciousness seems mysterious.
+
+## Hidden relocation
+
+An illusion is still an appearance.
+
+The theory may explain why the system believes:
+
+[
+\text{“I possess qualia.”}
+]
+
+But the belief, representation, and error are themselves presently manifest—or the theory has changed the subject to behaviour alone.
+
+## Dilemma
+
+If illusionism denies all manifestness:
+
+[
+M_i=0,
+]
+
+it conflicts with the datum that anything appears.
+
+If it accepts manifest representation but denies only special properties, it becomes a revisionary theory of qualia rather than elimination of consciousness.
+
+## MCPIT’s correction
+
+Treat self-representations as:
+
+[
+SM_i,
+]
+
+not as the source of manifestness.
+
+## Verdict
+
+[
+\boxed{
+\text{Illusionism can dissolve inflated theories of qualia,}
+}
+]
+
+[
+\boxed{
+\text{but cannot eliminate the occurrence in which the alleged}
+}
+]
+
+[
+\boxed{
+\text{illusion is manifest.}
+}
+]
+
+---
+
+# Essay 16 — Everything Wrong with Substance and Property Dualism
+
+## Exact contention
+
+Does separating mind from matter preserve consciousness at the cost of causal intelligibility?
+
+Dualism holds that mind and body are fundamentally distinct, creating the classic problem of explaining their close interaction. ([Stanford Encyclopedia of Philosophy][5])
+
+## Strongest argument
+
+1. Phenomenal facts are not derivable from physical facts.
+2. Consciousness has properties unlike spatial matter.
+3. Therefore consciousness is a separate substance or irreducible property.
+
+## What it genuinely solves
+
+It refuses to deny the distinctness of phenomenal facts.
+
+## Hidden relocation
+
+It creates:
+
+* causal interaction;
+* pairing;
+* conservation concerns;
+* overdetermination;
+* epiphenomenalism.
+
+If physical causes suffice, mental causation is redundant.
+
+If mental causes alter physics, the mechanism is unexplained.
+
+## MCPIT’s correction
+
+Identity:
+
+[
+D_i=O_i^\ast
+]
+
+preserves irreducible access without ontological separation.
+
+## Verdict
+
+[
+\boxed{
+\text{Dualism preserves consciousness by separating it, but}
+}
+]
+
+[
+\boxed{
+\text{then cannot explain why it maps so precisely onto one}
+}
+]
+
+[
+\boxed{
+\text{causally active body.}
+}
+]
+
+---
+
+# Essay 17 — Everything Wrong with Reductive Physicalism
+
+## Exact contention
+
+Can consciousness be completely captured in an exclusively structural-relational physical vocabulary?
+
+Physicalism broadly holds that everything is physical, but the content of “physical” remains philosophically contested. ([Stanford Encyclopedia of Philosophy][6])
+
+## Strongest argument
+
+1. Consciousness varies reliably with brain states.
+2. Brain intervention changes experience.
+3. Physical causal closure leaves no separate role for mind.
+4. Consciousness is therefore a physical process.
+
+## What it genuinely solves
+
+It correctly emphasizes:
+
+* brain dependence;
+* causal integration;
+* empirical constraint;
+* no need for supernatural interaction.
+
+## Hidden relocation
+
+If “physical” is defined by current physics, it is structural and extrinsic.
+
+Then the claim:
+
+[
+D_i\text{ is physical}
+]
+
+does not explain what physical feature manifestness is.
+
+If “physical” means whatever future science discovers, the theory risks becoming:
+
+[
+\text{everything real is physical by definition}.
+]
+
+## MCPIT’s correction
+
+Accept token identity.
+
+Reject extrinsic completeness.
+
+[
+D_i=O_i^\ast
+]
+
+but:
+
+[
+\operatorname{Ext}(O_i^\ast)
+\neq
+\text{exhaustive intrinsic description}.
+]
+
+## Verdict
+
+[
+\boxed{
+\text{Physicalism is strongest when asserting dependence and}
+}
+]
+
+[
+\boxed{
+\text{identity, weakest when pretending an extrinsic vocabulary}
+}
+]
+
+[
+\boxed{
+\text{already contains first-person existence.}
+}
+]
+
+---
+
+# Essay 18 — Everything Wrong with Enactivism and Autopoiesis
+
+## Exact contention
+
+Does embodied sense-making explain consciousness, or only meaningful agency?
+
+## Strongest argument
+
+1. Cognition is not internal representation alone.
+2. Organisms enact worlds through sensorimotor engagement.
+3. Autonomy creates intrinsic norms.
+4. Meaning arises through organism–environment coupling.
+
+## What it genuinely solves
+
+It explains:
+
+* embodied value;
+* world-enactment;
+* autonomy;
+* situated cognition;
+* why information matters.
+
+## Hidden relocation
+
+Sense-making is still functionally characterizable.
+
+A bacterium can enact a meaningful world without clear evidence of phenomenality.
+
+Thus:
+
+[
+\text{normativity}
+\not\Rightarrow
+\text{feeling}.
+]
+
+## MCPIT’s correction
+
+Enactivism supplies:
+
+[
+Sem_i,\quad V_i,\quad B_i.
+]
+
+MCPIT adds:
+
+* maximal closure;
+* token identity;
+* phenomenal boundary;
+* diachronic source-sensitive memory.
+
+## Verdict
+
+[
+\boxed{
+\text{Enactivism explains how a world matters to a living}
+}
+]
+
+[
+\boxed{
+\text{system, but not why mattering is felt within one field.}
+}
+]
+
+---
+
+# Essay 19 — Everything Wrong with Emergentism
+
+## Exact contention
+
+Does saying consciousness emerges from complexity explain anything?
+
+## Strongest argument
+
+1. New macro-properties appear at higher organizational levels.
+2. Liquidity is not present in individual molecules.
+3. Consciousness may likewise emerge from neural organization.
+
+## What it genuinely solves
+
+It correctly resists reduction to individual components.
+
+## Hidden relocation
+
+“Emergence” can mean:
+
+### Weak emergence
+
+Macro-pattern derivable from lower-level dynamics.
+
+Then the hard problem remains because phenomenal facts are not shown to be derivable.
+
+### Strong emergence
+
+Genuinely new causal or phenomenal properties appear.
+
+Then the theory posits the exact unexplained event:
+
+[
+\text{nonphenomenal}
+\rightarrow
+\text{phenomenal}.
+]
+
+## MCPIT’s correction
+
+Macro-level subjecthood is selected by closure, but phenomenality is not produced as a new additional property.
+
+The macro-process is phenomenality intrinsically.
+
+## Verdict
+
+[
+\boxed{
+\text{Emergentism correctly locates consciousness at organized}
+}
+]
+
+[
+\boxed{
+\text{macro-scales, but “emergence” often names rather than}
+}
+]
+
+[
+\boxed{
+\text{explains the transition.}
+}
+]
+
+---
+
+# Essay 20 — Everything Wrong with the Extended Mind
+
+## Exact contention
+
+If tools and environments participate in cognition, do they enter the conscious subject?
+
+## Strongest argument
+
+1. External resources can perform the same functional role as internal memory.
+2. Cognition is partly constituted by reliable external coupling.
+3. Therefore the mind can extend beyond the body.
+
+## What it genuinely solves
+
+It shows that:
+
+* cognitive function is not skull-bound;
+* tools alter action and memory;
+* world structure can be constitutive of problem solving.
+
+## Hidden relocation
+
+The boundary of cognition is not automatically the boundary of phenomenality.
+
+A notebook may be part of remembering without its pages becoming directly co-present inside the phenomenal field.
+
+Thus:
+
+[
+\partial_i^{\mathrm{cognitive}}
+\neq
+\partial_i^{\mathrm{phen}}.
+]
+
+## MCPIT’s correction
+
+External systems enter the aperture only to the degree they participate in:
+
+* reciprocal control;
+* source-sensitive memory;
+* value closure;
+* developmental continuity;
+* counterfactual policy.
+
+Even then, cognitive extension need not imply subject fusion.
+
+## Verdict
+
+[
+\boxed{
+\text{The extended mind expands cognition, but does not by}
+}
+]
+
+[
+\boxed{
+\text{itself establish an extended phenomenal subject.}
+}
+]
+
+---
+
+# Further traditions to add
+
+The series can expand beyond the original table.
+
+## Indian and Buddhist
+
+* **Madhyamaka:** Does emptiness dissolve ontology or leave manifestness unexplained?
+* **Dignāga–Dharmakīrti:** Can momentary self-awareness explain diachronic ownership?
+* **Advaita:** Does *avidyā* explain or quarantine plurality?
+* **Sāṃkhya:** Why does passive puruṣa appear individually bound to prakṛti?
+* **Nyāya:** Does a substantial self explain memory by positing the bearer?
+* **Jainism:** Can many enduring conscious substances avoid interaction and embodiment problems?
+* **Dzogchen:** Does primordial awareness explain finite delusion?
+* **Huayan:** Does interpenetration explain privacy or eliminate it?
+
+## Western
+
+* **Spinoza:** Do thought and extension explain local minds or merely parallelize them?
+* **Leibniz:** Why are monads private, and how does pre-established harmony avoid explanatory duplication?
+* **Kant:** Does transcendental unity explain consciousness or only conditions of objective judgment?
+* **Hegel:** Does absolute spirit preserve actual first-person plurality?
+* **Bergson:** Does duration explain lived time while leaving subject boundaries vague?
+* **Merleau-Ponty:** Does embodied intertwining explain manifestness?
+* **Michel Henry:** Does auto-affection explain embodiment and individuation?
+* **Deleuze:** Can impersonal difference produce personal phenomenal fields?
+* **Simondon:** Does individuation explain physical individuals but not intrinsic subjects?
+
+## Islamic and esoteric
+
+* **Ibn ʿArabī:** Does cosmic imagination explain why imagined centres are private?
+* **Suhrawardī:** Does the imaginal realm mediate mind and matter or add a third unexplained domain?
+* **Mullā Ṣadrā:** Does substantial motion bridge body and soul or presuppose consciousness?
+* **Corbin:** Does *mundus imaginalis* establish ontology from phenomenological necessity?
+* **Steiner:** Does disciplined imagination produce knowledge, or only internally coherent experience?
+* **Jung:** Do archetypes explain recurrent symbolic form or relocate it into a collective unconscious?
+
+---
+
+# The standard logical template for every essay
+
+Use exactly this structure.
+
+## 1. The exact contention
+
+One sentence only.
+
+Example:
+
+> Can a universal field of consciousness divide into private subjects without presupposing the very partition it was introduced to explain?
+
+## 2. The theory’s strongest argument
+
+Formal premises:
+
+[
+P_1,\ P_2,\ P_3
+\therefore C.
+]
+
+Never attack the popularized caricature.
+
+## 3. What the theory genuinely explains
+
+This prevents every essay becoming polemical dismissal.
+
+## 4. The relocation test
+
+Ask:
+
+[
+\boxed{
+\text{Which original unknown has been renamed?}
+}
+]
+
+Typical relocations:
+
+| Original problem           | New label                |
+| -------------------------- | ------------------------ |
+| Emergence of consciousness | “Dissociation”           |
+| Subject individuation      | “Limiting adjunct”       |
+| Binding                    | “Integration”            |
+| Manifestness               | “Intrinsic nature”       |
+| Felt value                 | “Semantic information”   |
+| Agency                     | “Policy selection”       |
+| Temporal presence          | “Temporal processing”    |
+| Mental causation           | “Supervenience”          |
+| Phenomenal structure       | “Cause–effect structure” |
+| World construction         | “Prediction”             |
+
+## 5. The entailment test
+
+Does the mechanism actually entail the target?
+
+[
+X\Rightarrow Y?
+]
+
+Or merely correlate with it?
+
+[
+X\leftrightarrow Y.
+]
+
+Or simply redescribe it?
+
+[
+X:=Y.
+]
+
+## 6. The scale test
+
+At what scale does the theory apply?
+
+* molecule;
+* cell;
+* circuit;
+* brain;
+* organism;
+* group;
+* cosmos?
+
+Why that scale rather than another?
+
+## 7. The token test
+
+Does it identify one concrete subject, or only a subject-type?
+
+## 8. The exclusion test
+
+Why are neighbouring systems not included?
+
+## 9. The valence test
+
+Why does anything matter or feel good or bad?
+
+## 10. The time test
+
+How does the theory explain lived continuity rather than state succession?
+
+## 11. The agency test
+
+Does it explain authorship or merely action selection?
+
+## 12. MCPIT comparison
+
+Use the same final diagram each time:
+
+[
+\text{Rival mechanism}
+\rightarrow
+\text{what it solves}
+\rightarrow
+\text{where it stops}.
+]
+
+Then:
+
+[
+\text{MCPIT}
+\rightarrow
+\text{what it retains}
+\rightarrow
+\text{its own unpaid debt}.
+]
+
+---
+
+# The visual system for the series
+
+Each essay should use approximately nine scenes.
+
+## Scene 1 — The original mystery
+
+A luminous private field attached to one organism while another remains inaccessible.
+
+## Scene 2 — The rival’s core move
+
+One dominant visual metaphor:
+
+* analytic idealism: ocean splitting into bubbles;
+* panpsychism: sparks assembling;
+* functionalism: software migrating between machines;
+* IIT: causal lattice crystallizing;
+* Advaita: one screen beneath many masks;
+* dualism: two parallel worlds connected by a thin bridge.
+
+## Scene 3 — Strongest argument
+
+Premise blocks entering a conclusion node.
+
+## Scene 4 — Genuine victory
+
+Show the exact problem the theory solves collapsing.
+
+## Scene 5 — Relocation
+
+The unresolved black sphere moves behind the theory and receives a new label.
+
+This should become the series signature.
+
+## Scene 6 — Counterexample
+
+One decisive thought experiment or empirical dissociation.
+
+## Scene 7 — Strongest defence
+
+The rival repairs the model.
+
+## Scene 8 — Residual gap
+
+Show the repaired model still unable to cross one specific bridge.
+
+## Scene 9 — MCPIT comparison
+
+Two machines side by side, with each unpaid debt visible.
+
+---
+
+# Best series ordering
+
+Do not organize it historically. Organize it by the direction in which each theory relocates the problem.
+
+## Arc I — Move consciousness downward
+
+1. Panpsychism
+2. Russellian monism
+3. Whiteheadian process philosophy
+4. Neutral monism
+
+Central question:
+
+[
+\text{Does fundamentalizing intrinsic nature solve combination?}
+]
+
+## Arc II — Move consciousness upward
+
+5. Cosmopsychism
+6. Analytic idealism
+7. Advaita
+8. Pratyabhijñā
+
+Central question:
+
+[
+\text{Does beginning with unity solve decomposition?}
+]
+
+## Arc III — Move consciousness into organization
+
+9. Computational functionalism
+10. Global workspace
+11. Predictive processing
+12. Active inference
+13. IIT
+14. Emergentism
+
+Central question:
+
+[
+\text{Does organization explain manifestness or only function?}
+]
+
+## Arc IV — Deny or separate the problem
+
+15. Illusionism
+16. Reductive physicalism
+17. Property dualism
+18. Substance dualism
+
+Central question:
+
+[
+\text{Can consciousness be denied, reduced, or separated without}
+]
+
+[
+\text{losing causation or the datum itself?}
+]
+
+## Arc V — Dissolve the subject
+
+19. Yogācāra
+20. Madhyamaka
+21. Enactivism
+22. Extended mind
+23. Michel Henry
+24. Phenomenology
+
+Central question:
+
+[
+\text{Does deconstructing the self explain phenomenal privacy?}
+]
+
+## Arc VI — Imaginal and participatory alternatives
+
+25. Ibn ʿArabī
+26. Suhrawardī
+27. Corbin
+28. Jung
+29. Steiner
+30. Proclus and Iamblichus
+
+Central question:
+
+[
+\text{Does participation or imagination mediate reality, or add}
+]
+
+[
+\text{another unexplained ontological layer?}
+]
+
+---
+
+# The overarching thesis of the series
+
+The series should not conclude that every philosophy is useless.
+
+It should demonstrate a recurrent pattern:
+
+[
+\boxed{
+\textbf{Every major theory captures one dimension of the}
+}
+]
+
+[
+\boxed{
+\textbf{aperture and then mistakes that dimension for the}
+}
+]
+
+[
+\boxed{
+\textbf{complete explanation.}
+}
+]
+
+* Idealism captures manifestness.
+* Panpsychism captures intrinsic nature.
+* Functionalism captures causal role.
+* IIT captures integration and exclusion.
+* Active inference captures generation and value.
+* Enactivism captures embodiment and mattering.
+* Phenomenology captures first-person structure.
+* Pratyabhijñā captures reflexive articulation.
+* Advaita captures non-objectifiability.
+* Yogācāra captures construction.
+* Process philosophy captures becoming.
+* Dualism captures irreducibility.
+
+MCPIT’s claim is not that each is simply false.
+
+It is:
+
+[
+\boxed{
+\textbf{none alone identifies the complete concrete token}
+}
+]
+
+[
+\boxed{
+\textbf{whose extrinsic closure and intrinsic phenomenal}
+}
+]
+
+[
+\boxed{
+\textbf{existence are one process.}
+}
+]
+
+The final series title could therefore be:
+
+# **Where the Problem Went**
+
+## How every theory of consciousness solves one mystery by moving another
+
+And the recurring final question should always be:
+
+[
+\boxed{
+\textbf{Did this theory explain the phenomenon—or merely}
+}
+]
+
+[
+\boxed{
+\textbf{give the unexplained bridge a better name?}
+}
+]
+
+[1]: https://plato.stanford.edu/entries/idealism/?utm_source=chatgpt.com "Idealism - Stanford Encyclopedia of Philosophy"
+[2]: https://plato.stanford.edu/entries/russellian-monism/?utm_source=chatgpt.com "Russellian Monism - Stanford Encyclopedia of Philosophy"
+[3]: https://plato.stanford.edu/entries/panpsychism/?utm_source=chatgpt.com "Panpsychism - Stanford Encyclopedia of Philosophy"
+[4]: https://cf-debate.com/view-all/?utm_source=chatgpt.com "All Arguments"
+[5]: https://plato.stanford.edu/entries/dualism/?utm_source=chatgpt.com "Dualism - Stanford Encyclopedia of Philosophy"
+[6]: https://plato.stanford.edu/entries/physicalism/?utm_source=chatgpt.com "Physicalism - Stanford Encyclopedia of Philosophy"

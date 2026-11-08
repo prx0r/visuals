@@ -1,0 +1,266 @@
+Yes. I’d keep the project narrow for the next phase: **prove that Seesaw/resource variables add information beyond ordinary crypto beta before expanding the universe.**
+
+The high-level dev map I’d use is:
+
+1. **Harden the warehouse.** Finish the timestamp/provenance/recoverability fixes, ensure ephemeral feeds append correctly, and freeze canonical IDs/schemas. This makes every subsequent day worth keeping.
+
+2. **Backfill the cheap/reconstructable history.** Get as much historical price, volume, difficulty, hashrate, emission, rewards, protocol events, BTC/ETH, electricity, GPU rental prices, and hardware history as we reasonably can. Don't burn effort recreating L2 that never existed.
+
+3. **Build one canonical research table.** Something like:
+
+```text
+seesaw_panel_1h / seesaw_panel_1d
+
+timestamp
+asset
+
+# market
+price
+return
+volume
+market_cap
+
+# broad market
+btc_return
+btc_volatility
+eth_return
+
+# physical network
+capacity
+hashrate
+difficulty
+emission
+
+# economics
+revenue_per_resource
+electricity_cost
+external_resource_value
+allocation_wedge
+miner_margin
+
+# liquidity
+spread
+depth
+ofi
+aggressive_flow
+
+# resource markets
+gpu_rental_price
+gpu_availability
+energy_price
+
+# event state
+protocol_event
+listing_event
+software_event
+```
+
+Everything downstream uses this rather than custom datasets.
+
+4. **Build the baseline backtest harness.** Before Seesaw, establish how much is explained by boring stuff:
+   `BTC beta`, own momentum, volatility, volume, market-cap/liquidity, simple mean reversion.
+
+This is where your BTC idea is absolutely correct.
+
+For every asset estimate something like:
+
+$$
+r_{asset,t}=\alpha+\beta_{BTC}r_{BTC,t}+\epsilon_t
+$$
+
+Then study the **residual**:
+
+$$
+r^{idio}_t=r_{asset,t}-\hat{\beta}_{BTC}r_{BTC,t}
+$$
+
+That's crucial. If PRL rises 15% while BTC rises 12%, “PRL rose” is much less interesting than if PRL rises 15% while BTC is flat.
+
+Then test Seesaw factors against **BTC-adjusted future returns**, not merely raw returns.
+
+I would go further and create:
+
+```text
+BTC beta rolling 7d / 30d / 90d
+ETH beta
+crypto market beta
+residual return
+residual volatility
+```
+
+That becomes useful both for research and daily content:
+
+> “PRL is up 18%, but only 3% can be explained by the broader crypto move.”
+
+Much better story.
+
+5. **Run the first causal Seesaw tests.** In roughly this order:
+
+```text
+price → profitability
+profitability → capacity/hashrate
+allocation wedge → capacity
+capacity response → future profitability
+capacity overshoot → future residual returns
+emission/depth → future residual returns
+miner flow/depth → future residual returns
+L2 absorption → future short-horizon returns
+```
+
+For each test, run multiple lags and walk-forward validation.
+
+6. **Build event studies.** Before complicated ML, automatically identify:
+
+   * profitability > 2σ,
+   * hashrate change > 2σ,
+   * resource premium > 2σ,
+   * GPU availability shock,
+   * emission-pressure shock,
+   * miner-flow shock,
+   * major software/protocol release.
+
+Then show what happened from `t−7` through `t+30`.
+
+This will probably reveal the interesting relationships fastest.
+
+7. **Only then build Powfolio.** Not as a generic optimizer initially. Make it a **thesis simulator**:
+
+```text
+THESIS:
+scarce compute becomes more valuable
+
+FACTORS:
+GPU rental prices ↑
+availability ↓
+resource premium ↑
+
+EXPRESSION:
+assets with measured exposure to that constraint
+
+INVALIDATION:
+capacity catches demand
+rental prices collapse
+resource premium closes
+```
+
+Then backtest the thesis through historical Seesaw states.
+
+---
+
+### External proxies: yes, but use them deliberately
+
+BTC should be mandatory.
+
+I’d also add a small **macro/resource context layer**, because this is where your Post-AGI work gets interesting:
+
+```text
+BTC / ETH
+Nasdaq
+semiconductor index
+NVIDIA
+memory/DRAM proxy
+electricity
+GPU rental index
+possibly AI/datacenter infrastructure indexes
+```
+
+But these should be **context variables**, not a new stock-data product yet.
+
+For example:
+
+$$
+Corr(
+\Delta GPU\ Rental\ Price,
+\Delta PRL\ ResourcePremium
+)
+$$
+
+or:
+
+$$
+Corr(
+DRAM/Semiconductor\ shock,
+GPU\ compute\ economics
+)
+$$
+
+could uncover useful shared constraints.
+
+The exciting bit would be discovering that a Pow asset is behaving more like **a machine-resource exposure** than ordinary crypto:
+
+```text
+corr(PRL, BTC)       = weak
+corr(PRL, GPU scarcity) = stronger
+```
+
+That would be extremely interesting if it actually occurs.
+
+### I would not expand PowPowPow into equities yet
+
+You don't need stock L2 to test the higher-level thesis. Daily/hourly stock prices, sector ETFs, earnings/capex, memory pricing, semiconductor supply data, etc. are sufficient as explanatory proxies.
+
+US equity Level 2 does exist, but real historical depth typically comes with exchange/vendor licensing and cost. More importantly, it doesn't add much to the unique moat right now because professional firms already warehouse enormous amounts of equity microstructure.
+
+Your advantage is exactly the opposite:
+
+> obscure machine economies where almost nobody is preserving the complete historical state.
+
+So I'd keep:
+
+**stocks = explanatory/context data**
+
+and:
+
+**weird PoW/compute markets = proprietary high-resolution data.**
+
+That keeps the moat concentrated.
+
+### One particularly useful thing to build now
+
+Make every candidate feature go through an **incremental-value test**:
+
+Baseline:
+
+$$
+M_0 =
+BTC + own\ price/volume
+$$
+
+Add resource economics:
+
+$$
+M_1 =
+M_0 + profitability + allocation\ wedge + hashrate
+$$
+
+Add liquidity:
+
+$$
+M_2 =
+M_1 + depth + OFI + miner\ flow
+$$
+
+Add news/events:
+
+$$
+M_3 =
+M_2 + protocol/software/events
+$$
+
+Then evaluate out-of-sample:
+
+```text
+does M1 beat M0?
+does M2 beat M1?
+does M3 beat M2?
+```
+
+That tells us empirically **which data is worth paying to preserve**.
+
+If GPU availability doesn't improve explanations or predictions after a year, deprioritize it. If pool-worker telemetry massively improves hashrate-response estimates, protect that collector like crazy.
+
+So the immediate engineering order I’d use is:
+
+**warehouse integrity → historical backfill → canonical Seesaw panel → BTC/market baselines → event-study/backtest engine → first Seesaw tests → identify missing high-value feeds → content layer.**
+
+That gives PowPowPow a scientific development loop rather than accumulating data speculatively.

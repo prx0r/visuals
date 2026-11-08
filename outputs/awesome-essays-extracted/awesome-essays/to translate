@@ -1,0 +1,502 @@
+## The best untranslated Tantra targets
+
+I’m using **“untranslated” to mean that I found no complete, reliable, published English translation**. Several of these have selected chapters, quotations, thesis translations, provisional web renderings, or unpublished scholarly editions.
+
+The strongest targets are not random obscure Tantras. They form a network around **Kubjikā, Krama, early Trika, the Bhairava Vidyāpīṭha, and the sources quoted by Abhinavagupta**.
+
+# S-tier: go after these first
+
+## 1. **Kularatnoddyota**
+
+This may be the single best first Sanskritree target after seeding the system with Dyczkowski’s *Manthānabhairava*.
+
+It is an early Kubjikā Tantra of roughly 2,500 verses, conceived partly as an exposition or commentary on the *Kubjikāmatatantra*. More than half apparently covers material also found in the *Kubjikāmata*, but it adds substantial new material. Dyczkowski prepared an electronic edition from multiple manuscripts, yet I found no complete English translation. 
+
+### Why it is ideal
+
+* Extremely close vocabulary to your Manthānabhairava seed.
+* Considerably smaller than the Manthānabhairava.
+* Large amounts of parallel material with an already edited and partly translated text.
+* Introduces additional cosmology, iconography and Kubjikā doctrine.
+* Lets Sanskritree test whether it can recognize **expanded restatements of an earlier scripture**.
+
+This is the cleanest experiment:
+
+```text
+Kubjikāmatatantra passage
+        ↕
+Kularatnoddyota expansion
+        ↕
+Manthānabhairava reinterpretation
+        ↕
+Dyczkowski’s English terminology
+```
+
+**Recommendation:** first complete new translation project.
+
+---
+
+## 2. **Ciñcinīmatasārasamuccaya**
+
+This is probably the most intellectually exciting compact target.
+
+Dyczkowski described it as a tract of approximately 2,000 verses and prepared a working edition; an electronic text circulated through Muktabodha. It maps Kaula teachings across the transmissions or *āmnāyas* and contains the *Kālikākramapañcāśikā*, a crucial early account of the twelve Kālīs and the solar Krama. I found translated excerpts and scholarly discussions, but no complete English translation. ([Scribd][1])
+
+### Why it is incredible
+
+It is a **junction text** connecting:
+
+```text
+Kubjikā / Paścimāmnāya
+Kālī / Uttarāmnāya
+Krama
+Kaula
+early Trika-related contemplative structures
+```
+
+Its Kālī material describes consciousness as a solar process, the consumption of mental states, the interval between perceptions and the emergence of the twelve Kālīs. These are exactly the kinds of process architectures Sanskritree could model formally. ([Springer][2])
+
+It would teach the graph how one text can preserve several traditions without collapsing them into one ontology.
+
+**Recommendation:** second target, or parallel with the Kularatnoddyota.
+
+---
+
+## 3. **Kramasadbhāva**
+
+This is a relatively short early Krama scripture whose provisional edition was prepared by Dyczkowski. It is used in modern scholarship to reconstruct the doctrine of the twelve Kālīs and the evolution of Krama consciousness practices. A website is publishing a provisional English rendering, but I found no complete modern critical English translation. ([Springer][2])
+
+### Why Sanskritree would love it
+
+It is compact and philosophically dense:
+
+* sequential consciousness;
+* Kālī as phases of cognition;
+* dissolution and emergence;
+* body and transbodily awareness;
+* ritual sequence mapped onto experiential sequence.
+
+This is exactly where Lean could compare competing translations of *krama*:
+
+```text
+sequence
+process
+ordered emergence
+successive cognition
+ritual succession
+```
+
+Those are not stylistic differences; they produce different formal structures.
+
+**Recommendation:** best small philosophical proof-of-concept.
+
+---
+
+## 4. **Devīpañcaśataka / Kālīkulapañcaśataka**
+
+This is a roughly 500-verse Kālīkrama text. Dyczkowski provisionally edited it for Muktabodha, and scholars use it to reconstruct the early lineage and system of the twelve Kālīs. I found translated passages and doctrinal analyses, but no complete published English translation. ([Springer][2])
+
+### Why it may be the perfect first public release
+
+It is:
+
+* short enough to finish;
+* conceptually profound;
+* directly connected to the Krama behind Abhinavagupta;
+* partially illuminated by existing scholarship;
+* dense with terms concerning consciousness, light, manifestation and the Kālīs.
+
+A 500-verse critical computational translation is much more achievable than beginning with a 20,000-verse monster.
+
+**Recommendation:** strongest “finishable” flagship translation.
+
+---
+
+## 5. **Kubjikāmatatantra — everything outside the translated chapters**
+
+The full Sanskrit text is critically edited and electronically searchable. Chapters 14–16 have a detailed edition and translation devoted to the five cakra systems. Dyczkowski translated many scattered passages elsewhere, but I found no complete verse-by-verse English translation of all 25 chapters. ([Gretil][3])
+
+### Why it is the obvious benchmark
+
+You have:
+
+```text
+complete Sanskrit
+partial gold-standard translation
+many Dyczkowski quotations
+Manthānabhairava parallels
+Ṣaṭsāhasra parallels
+later Kubjikā expansions
+```
+
+Use chapters 14–16 as a hidden evaluation set, then translate the rest.
+
+The especially interesting areas include:
+
+* origin of Kubjikā;
+* *kula* and *akula*;
+* phonemic cosmology;
+* the transmissions;
+* mantra generation;
+* cakra and Yoginī structures;
+* manifestation and reabsorption.
+
+**Recommendation:** first major canonical translation once the smaller pilots work.
+
+---
+
+## 6. **Ṣaṭsāhasrasaṃhitā — chapters after 5**
+
+Schoterman critically edited, translated and annotated chapters 1–5 in 1982. The work is closely connected to the *Kubjikāmatatantra* and appears repeatedly in comparative tables concerning cakras, goddesses and ritual structures. I found no evidence of a complete translation of the remaining work. ([WorldCat][4])
+
+### Why it is strategically brilliant
+
+The first five chapters provide direct calibration:
+
+```text
+chapters 1–5
+    Sanskrit + scholarly translation
+        ↓
+learn vocabulary and structures
+        ↓
+translate remaining chapters
+```
+
+It is almost tailor-made for blind–reveal training and chapter-level evaluation.
+
+**Recommendation:** one of the technically safest projects.
+
+---
+
+# Direct continuation of Dyczkowski’s life work
+
+## 7. **Manthānabhairavatantra — Yogakhaṇḍa and Siddhakhaṇḍa**
+
+Dyczkowski’s enormous published work is explicitly the *Kumārikākhaṇḍa*, the section concerning the Virgin Goddess. The broader Manthānabhairava manuscript tradition includes other major divisions, conventionally called the Yogakhaṇḍa and Siddhakhaṇḍa, but I found no corresponding complete published English translation. ([WorldCat][5])
+
+### Why this is the ultimate target
+
+This would directly continue the exact project Dyczkowski spent decades building.
+
+Your seed corpus would be the best possible preparation:
+
+```text
+Kumārikākhaṇḍa
+Sanskrit ↔ Dyczkowski English
+        ↓
+Kubjikā terminology graph
+        ↓
+Yogakhaṇḍa
+        ↓
+Siddhakhaṇḍa
+```
+
+The challenge is source preparation. Before translation, you must establish whether a clean electronic edition exists for each division and how its chapter numbering relates to Dyczkowski’s witnesses.
+
+**Recommendation:** ultimate long-term flagship, not the first pilot.
+
+---
+
+## 8. **Ūrmikaulārṇava**
+
+This is a surviving fragment of a Kālīkrama/Kaula Tantra attributed to Matsyendranātha. It was edited electronically by Dyczkowski, is quoted by Abhinavagupta in the *Tantrāloka* and by Jayaratha, and contains material on initiation, possession and degrees of spiritual penetration. I found no complete English translation of the surviving text. 
+
+### Why it is disproportionately important
+
+It allows you to reconstruct a source behind the *Tantrāloka*:
+
+```text
+Ūrmikaulārṇava
+        ↓ quoted/reworked in
+Tantrāloka
+        ↓ explained by
+Jayaratha
+        ↓ translated by
+Dyczkowski and others
+```
+
+Sanskritree could show exactly how Abhinavagupta transforms an earlier Kaula scripture into Trika doctrine.
+
+**Recommendation:** small but academically spectacular source-reconstruction project.
+
+---
+
+## 9. **Śrīmatottara textual complex**
+
+This is high-risk, high-reward.
+
+The name *Śrīmatottaratantra* appears in several overlapping ways in the manuscript catalogues: as a Kubjikā text also called *Śrīmatasāra*, as a designation associated with the Manthānabhairava, and as the title or alternative title of a commentary attributed to Rūpaśiva. One palm-leaf witness contains around 81–104 folios, while another incomplete manuscript is explicitly called a Manthānabhairava commentary. ([FDM Webseiten-Archiv][6])
+
+### Why it is gold
+
+Recent research is using unpublished *Śrīmatottara* material to identify Kubjikā’s Yoginī retinues and visual forms. ([Anuttara Trika Kula][7])
+
+But the first job is not translation. It is **textual disentanglement**:
+
+```text
+Which Śrīmatottara?
+root scripture?
+summary?
+recension?
+commentary?
+alternative title for part of MBT?
+```
+
+This is a perfect future critical-edition graph project, but a poor first automatic translation target.
+
+**Recommendation:** bibliographic and manuscript-relation project before translation.
+
+---
+
+# Best bridges into Abhinavagupta and Trika
+
+## 10. **Tantrasadbhāva**
+
+Dyczkowski created an electronic edition based on three Nepalese manuscripts. The text is repeatedly quoted by Kashmirian Śaiva authors and is closely related to the *Svacchandatantra* and *Kubjikāmatatantra*. A Hamburg dissertation critically edited and translated several chapters, but the whole text remains incompletely translated. ([OpenEdition Books][8])
+
+### Why it may be Sanskritree’s best bridge text
+
+It links:
+
+```text
+early Bhairava Śaivism
+Svacchanda
+Kubjikā
+Nepalese transmission
+Kashmiri quotation
+Buddhist Tantric borrowing
+```
+
+It also contains nonstandard *aiśa* Sanskrit, which would force Sanskritree to improve beyond classical grammar assumptions. ([Ediss][9])
+
+**Recommendation:** highest-value bridge after the core Kubjikā pilot.
+
+---
+
+## 11. **Siddhayogeśvarīmata**
+
+This is an early and foundational Trika scripture centered on Yoginīs and supernatural feminine powers. Judit Törzsök critically edited and translated selected chapters in her Oxford thesis; she states that the old thesis contains errors and that an updated full text is in preparation. No complete updated published English translation was located. ([Ephe][10])
+
+### Why it matters
+
+It allows you to see Trika before Abhinavagupta’s grand philosophical synthesis:
+
+* Yoginī systems;
+* ritual efficacy;
+* Trika goddess structures;
+* magical and initiatory categories;
+* early terminology later philosophized by Abhinavagupta.
+
+It is also perfect for detecting the difference between:
+
+```text
+ritual identification
+ontological identity
+visualisation
+metaphorical identity
+```
+
+**Recommendation:** essential Trika-source project.
+
+---
+
+## 12. **Mālinīvijayottaratantra — untranslated chapters**
+
+Somadeva Vasudeva produced a critical edition and English translation of chapters 1–4, 7 and 12–17. The remaining chapters have Sanskrit available through the broader electronic edition but lack a comparable published critical English translation. ([École française d'Extrême-Orient][11])
+
+### Why it is central
+
+Abhinavagupta explicitly structures much of the *Tantrāloka* as an exposition of the *Mālinīvijayottara*. It contains:
+
+* Śaiva yoga;
+* phonemes and mantra;
+* subtle-body ascent;
+* levels of initiation;
+* consciousness and power;
+* practices foundational to later Trika.
+
+The translated chapters give a first-class calibration set, while the missing chapters provide a clean frontier.
+
+**Recommendation:** best direct route from the seed system into the *Tantrāloka*’s principal scripture.
+
+---
+
+# The giant visionary projects
+
+## 13. **Jayadrathayāmala**
+
+This is one of the most astonishing untranslated Sanskrit Tantric corpora: four enormous *ṣaṭkas*, preserved in multiple Nepalese manuscripts. Olga Serbaeva transcribed all four major divisions, and scholars have prepared editions and translations of selected passages such as the *Yoginīsaṃcāraprakaraṇa*, but no complete English translation exists. 
+
+### What is inside
+
+* vast goddess and Bhairava systems;
+* Yoginī encounters;
+* Kālī traditions;
+* mantra systems;
+* visionary ritual geography;
+* transformations of the practitioner;
+* early material incorporated into later Śākta and Trika systems.
+
+It is not one translation project; it is an entire research programme.
+
+**Recommendation:** visionary decade-scale project after the infrastructure matures.
+
+---
+
+## 14. **Brahmayāmala / Picumata**
+
+The *Brahmayāmala* is one of the earliest surviving Śākta Vidyāpīṭha scriptures. Scholars have prepared working editions of dozens of chapters and translated selected chapters in dissertations and articles, but much of its large corpus remains untranslated. ([Cambridge University Press][12])
+
+### Why it is foundational
+
+It preserves an earlier religious world underlying:
+
+* Yoginī cults;
+* cremation-ground ritual;
+* goddess networks;
+* transgressive Kaula systems;
+* the later Bhairava and Śākta Tantra traditions.
+
+It is historically earlier and linguistically rougher than the polished Trika material, making it much harder—but exceptionally valuable.
+
+**Recommendation:** strongest early-historical expansion after Sanskritree proves itself on cleaner texts.
+
+---
+
+## 15. **Svacchandatantra**
+
+A complete Sanskrit edition with Kṣemarāja’s commentary exists and is electronically available, but English translations remain selective rather than complete. It is one of the major Bhairava scriptures and strongly connected with the *Tantrasadbhāva*, *Netratantra* and later Kashmirian Śaivism. ([Academic Journals][13])
+
+### Why it is useful
+
+It provides a huge structured corpus involving:
+
+* cosmology;
+* initiation;
+* mantra;
+* ritual action;
+* yoga;
+* forms of Bhairava;
+* commentary by Kṣemarāja.
+
+The commentary creates a second semantic layer, allowing Sanskritree to distinguish scripture from later Kashmiri interpretation.
+
+**Recommendation:** important, but start with selected chapters rather than the full text.
+
+---
+
+## 16. **Netratantra — especially chapters 9 onward**
+
+A first complete critical edition and English translation of chapters 1–8 is scheduled for **November 11, 2026**. That means chapters 1–8 will soon become an excellent withheld benchmark, while the later chapters remain a major translation frontier. ([Routledge][14])
+
+### Why it is fascinating
+
+The *Netratantra* presents itself as a universal system centered on Amṛteśa, the conqueror of death, and combines ritual, mantra, protection, healing, yoga and cross-traditional synthesis. ([Routledge][15])
+
+**Recommendation:** ingest Sanskrit now, generate blind translations of chapters 1–8, then evaluate against the November 2026 publication before proceeding further.
+
+---
+
+# Living Newar/Krama material
+
+## 17. **Kālīkulakramārcana**
+
+This is a Newar Kālīkrama liturgical work by Vimalaprabodha. It survives in several Nepalese manuscripts. Pongsit Pangsrivongse produced an edition as part of his doctoral work, but I found no complete publicly available English translation. ([Springer][16])
+
+## 18. **Parvatrayavidhāna**
+
+This is a previously unknown work by the same Krama author, also edited in Pangsrivongse’s 2023 thesis. It is used in recent research on Newar ritual philosophy but has not appeared as a complete general English translation. ([Springer][16])
+
+### Why these are special
+
+They connect classical Krama theory to the still-living Newar ritual environment:
+
+```text
+Kashmiri Krama doctrine
+        ↓
+Nepalese transmission
+        ↓
+Newar liturgy
+        ↓
+philosophical verses embedded in ritual
+```
+
+**Recommendation:** collaborator-based project rather than an automated scrape-and-translate target.
+
+---
+
+# My actual development order
+
+## Wave 1: finishable and maximally relevant
+
+```text
+1. Devīpañcaśataka
+2. Kramasadbhāva
+3. Kularatnoddyota
+4. Ciñcinīmatasārasamuccaya
+```
+
+These give you manageable texts, high conceptual density and direct continuity with Dyczkowski.
+
+## Wave 2: canonical Kubjikā expansion
+
+```text
+5. Kubjikāmatatantra remaining chapters
+6. Ṣaṭsāhasrasaṃhitā after chapter 5
+7. Ūrmikaulārṇava
+```
+
+## Wave 3: bridge into Trika
+
+```text
+8. Tantrasadbhāva
+9. Siddhayogeśvarīmata
+10. Mālinīvijayottara untranslated chapters
+```
+
+## Wave 4: the master projects
+
+```text
+11. Manthānabhairava Yogakhaṇḍa
+12. Manthānabhairava Siddhakhaṇḍa
+13. Jayadrathayāmala
+14. Brahmayāmala
+15. Svacchandatantra
+```
+
+# The single best choice
+
+**Start with the Devīpañcaśataka or Kramasadbhāva as the small pilot, then translate the Kularatnoddyota as the first major work.**
+
+The Kularatnoddyota is almost perfect because it sits in the middle of your entire architecture:
+
+```text
+Kubjikāmatatantra
+        ↓ expanded by
+Kularatnoddyota
+        ↓ absorbed and transformed in
+Manthānabhairavatantra
+        ↓ interpreted through
+Dyczkowski’s scholarship
+        ↓ compared with
+Krama and Tantrāloka
+```
+
+That gives Sanskritree enough overlap to learn from existing translations, while still producing something genuinely new.
+
+[1]: https://pt.scribd.com/document/272643166/M-Dyczkowski-Kubjika-the-Erotic-Goddess?utm_source=chatgpt.com "M. Dyczkowski, Kubjika The Erotic Goddess | PDF"
+[2]: https://link.springer.com/article/10.1007/s10781-021-09488-9?utm_source=chatgpt.com "From the Sequence of the Sun-Goddess (bhānavīkrama) to Time-Consumption (kālagrāsa): Some Notes on the Development of the Śākta Doctrine of the Twelve Kālīs | Journal of Indian Philosophy | Springer Nature Link"
+[3]: https://gretil.sub.uni-goettingen.de/gretil/1_sanskr/4_rellit/saiva/kubjt_iu.htm?utm_source=chatgpt.com "Kubjikamatatantra"
+[4]: https://search.worldcat.org/title/The-Sasahasra-sahita-%3A-chapters-1-5/oclc/781482544?utm_source=chatgpt.com "The Ṣaṭsāhasra saṃhitā : chapters 1-5 | WorldCat.org"
+[5]: https://search.worldcat.org/title/422143162?utm_source=chatgpt.com "Manthānabhairavatantram : Kumārikākhaṇḍaḥ = Manthānabhairavatantram : Kumārikākhaṇḍaḥ : the section concerning the virgin goddess of the Tantra of the churning Bhairava | WorldCat.org"
+[6]: https://www-archiv.fdm.uni-hamburg.de/ngmcp/A_176-4_Manth%25C4%2581nabhairavatantra.html?utm_source=chatgpt.com "A 176-4 Manthānabhairavatantra - ngmcp"
+[7]: https://www.anuttaratrikakula.org/elusive-no-more/?utm_source=chatgpt.com "Elusive No More: New Findings on the Material and Manuscript Culture of Kubjikā, Navātman and their Retinue – The Trika Shaivism of Kashmir"
+[8]: https://books.openedition.org/editionsehess/63209?utm_source=chatgpt.com "Visages du dharma - The Ways of the World, the Ways of Śiva. Remarks on the Meaning of Lokadharma/Laukika as Opposed to Śivadharma/Śaiva in Some Early Śaiva Tantric Sources - Éditions de l’École des hautes études en sciences sociales"
+[9]: https://ediss.sub.uni-hamburg.de/handle/ediss/9642?utm_source=chatgpt.com "Selected Chapters from the Tantrasadbhāva, Based on the tradition of 11th century Śaiva Sanskrit Manuscripts in Nepal | ediss.sub.hamburg"
+[10]: https://ephe.academia.edu/JuditTorzsok/Thesis%20Chapters?utm_source=chatgpt.com "Judit Torzsok - Ecole Pratique des Hautes Etudes"
+[11]: https://publications.efeo.fr/en/livres/618_the-yoga-of-the-malinivijayottaratantra-chapters-1-4-7-i2-17?utm_source=chatgpt.com "The Yoga of the Malinivijayottaratantra. Chapters 1-4, 7, I2-17. - École française d'Extrême-Orient"
+[12]: https://www.cambridge.org/core/journals/bulletin-of-the-school-of-oriental-and-african-studies/article/abs/erotic-asceticism-the-razors-edge-observance-asidharavrata-and-the-early-history-of-tantric-coital-ritual1/57F30A1ABFE6A8FC1B63CB8FD91A8A41?utm_source=chatgpt.com "Erotic asceticism: the razor's edge observance (asidhārāvrata) and the early history of tantric coital ritual1 | Bulletin of SOAS | Cambridge Core"
+[13]: https://journals.akademicka.pl/cis/article/view/1535?utm_source=chatgpt.com "On yantras in Early Śaiva Tantras | Cracow Indological Studies"
+[14]: https://www.routledge.com/Routledge-Studies-in-Tantric-Traditions/book-series/RSTT?utm_source=chatgpt.com "Routledge Studies in Tantric Traditions - Book Series - Routledge & CRC Press"
+[15]: https://www.routledge.com/Tantra-in-Medieval-India-and-Nepal-An-annotated-edition-and-translation-of-The-Teaching-of-the-Lord-of-Immortality-the-Netra-Tantra-Chapters-1-8/Flood-Wernicke-Olesen/p/book/9780367709600?utm_source=chatgpt.com "Tantra in Medieval India and Nepal: An annotated edition and translati"
+[16]: https://link.springer.com/article/10.1007/s10781-023-09555-3?utm_source=chatgpt.com "Discerning Philosophy in the Uttarāmnāya Liturgies of the Newars | Journal of Indian Philosophy | Springer Nature Link"

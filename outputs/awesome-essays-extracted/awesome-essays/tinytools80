@@ -1,0 +1,1296 @@
+# TinyTools Opportunity Radar — Run 4
+
+## Cumulative ledger: 80 canonical atoms
+
+The deduplication set now contains **80 distinct capabilities**.
+
+| Range       | First seen               | Canonical keys                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ----------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001–020     | 2026-08-21 21:38 +07     | `web.redirect.explain`, `web.canonical.conflicts`, `web.hreflang.validate_cluster`, `web.indexability.resolve`, `web.sitemap.diff`, `security.securitytxt.validate`, `email.dmarc.explain`, `email.mta_sts.audit`, `dns.caa.authorize`, `domain.lifecycle.events`, `domain.registrable.parse`, `package.version_vulnerabilities`, `package.dependency_risk`, `license.spdx.normalize`, `artifact.sigstore.verify`, `artifact.registry_integrity`, `archive.url_seen`, `archive.origin_history`, `web.content_type.resolve`, `network.service.resolve`                                                                |
+| 021–040     | 2026-08-21 22:39 +07     | `agent.a2a_card.validate`, `api.catalog.discover`, `auth.oauth_resource.discover`, `auth.oauth_server.discover`, `identity.webfinger.resolve`, `mobile.android_assetlinks.audit`, `mobile.apple_universal_links.audit`, `network.ip_specialuse.classify`, `network.ip_registration.lookup`, `network.asn_registration.lookup`, `tls.ct_domain_history`, `web.well_known.inventory`, `web.cors.preflight_simulate`, `web.cacheability.resolve`, `security.csp.effective_policy`, `auth.jwks.inspect`, `international.idna.normalize`, `web.pwa_manifest.audit`, `api.openapi.operations`, `api.openapi.breaking_diff` |
+| 041–060     | 2026-08-21 23:42 +07     | `dns.dnssec.validate`, `dns.https_svcb.resolve`, `tls.ech.readiness`, `tls.dane_tlsa.validate`, `email.tlsrpt.audit`, `email.service_discover`, `acme.caa_constraints`, `web.alt_svc.resolve`, `security.hsts.audit`, `http.digest.verify`, `http.message_signature.verify`, `http.problem.normalize`, `http.sunset.discover`, `http.link_relations.extract`, `http.structured_field.parse`, `international.language_tag.normalize`, `uri.scheme.resolve`, `time.zone_transition`, `http.content_negotiation.resolve`, `email.mx_route.resolve`                                                                      |
+| **061–080** | **2026-08-22 00:39 +07** | **The 20 new atoms below**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+
+This run's strongest cluster is **software-supply-chain evidence + API lifecycle metadata**. OCI 1.1 standardized registry referrer discovery, SPDX 3.0.1 now has profiles covering software, security, datasets, AI and builds, CycloneDX 1.7 is the current BOM specification, and SCITT became RFC 9943 in **June 2026**. ([GitHub][1])
+
+---
+
+## 61. `http.deprecation.discover`
+
+**Capability:** Determine whether an HTTP resource/API is deprecated, the effective deprecation date, and where migration guidance lives.
+
+**Replaces:** changelog hunting and reading provider docs.
+
+**Deterministic reason:** `Deprecation` is published directly by the server.
+
+**Implementation:** HEAD/GET → Structured Field parser → `Deprecation` + `rel="deprecation"` + optional `Sunset`.
+
+**Cost:** one tiny HTTP request.
+
+**Policy:** free.
+
+**MCP:** `http.deprecation_discover(url)`
+
+**Flywheel:** historical endpoint lifecycle dataset; later offer “tell me when any dependency deprecates.”
+
+**Mini-thesis:** This is exceptionally agent-native. RFC 9745, published March 2025, explicitly lets servers tell machine clients that a resource has been or will be deprecated. It also distinguishes deprecation from the later point at which a resource may stop responding. ([RFC Editor][2])
+
+---
+
+## 62. `http.link_template.expand`
+
+**Capability:** Discover templated links advertised by a server and expand them safely from supplied variables.
+
+**Replaces:** documentation lookup for common URL-construction patterns.
+
+**Deterministic reason:** the server advertises the template itself.
+
+**Implementation:** existing `http.structured_field.parse` + RFC 9652 + RFC 6570 expansion.
+
+**Cost:** ≈ zero after obtaining headers.
+
+**Policy:** free.
+
+**MCP:** `http.link_template_expand(url_or_headers, variables, rel?)`
+
+**Flywheel:** API endpoint-template graph.
+
+**Mini-thesis:** RFC 9652 lets HTTP metadata describe *how related URLs can be generated*, not merely link to one static resource. This means agents can discover parameterized operations without feeding API documentation into the model. ([RFC Editor][3])
+
+---
+
+## 63. `api.linkset.resolve`
+
+**Capability:** Retrieve and normalize standalone Linkset documents into typed graph edges.
+
+**Replaces:** bespoke parsing of external relationship metadata.
+
+**Deterministic reason:** relationships are explicitly published.
+
+**Implementation:** discover `rel="linkset"` → parse JSON/text Linkset → feed common relation model.
+
+**Cost:** one or two small HTTP requests.
+
+**Policy:** free.
+
+**MCP:** `api.linkset_resolve(url)`
+
+**Flywheel:** strengthens the domain ↔ API ↔ artifact graph.
+
+**Mini-thesis:** RFC 9264 standardized standalone sets of Web Links, including a JSON representation and a discovery relation. Combined with the prior `http.link_relations.extract`, TinyTools can move from “parse links” to **construct a typed Internet graph**. ([RFC Editor][4])
+
+---
+
+## 64. `supplychain.scitt.receipt_verify`
+
+**Capability:** Verify that a signed supply-chain statement has a valid SCITT transparency receipt.
+
+**Replaces:** bespoke transparency-log tooling.
+
+**Deterministic reason:** cryptographic receipt validation is exact.
+
+**Implementation:** SCITT message/receipt verification + configured transparency-service trust roots.
+
+**Cost:** tiny cryptographic CPU.
+
+**Policy:** free.
+
+**MCP:** `supplychain.scitt_receipt_verify(statement, receipt, trust_roots)`
+
+**Flywheel:** artifact → issuer → transparency service → statement provenance graph.
+
+**Mini-thesis:** **Very strong frontier target.** RFC 9943 was published in June 2026 and describes a generic transparency architecture for signed supply-chain statements. Once registered, a transparency service issues a receipt against an irrevocable statement history. ([RFC Editor][5])
+
+---
+
+## 65. `sbom.spdx.validate`
+
+**Capability:** Validate SPDX 3.0.1 content and return a normalized inventory/relationship summary.
+
+**Replaces:** installing heavyweight SBOM suites merely to inspect one document.
+
+**Deterministic reason:** SPDX has formal profile/conformance rules.
+
+**Implementation:** SPDX 3.0.1 model + schema/SHACL validation.
+
+**Cost:** pure CPU.
+
+**Policy:** free under a generous document-size limit.
+
+**MCP:** `sbom.spdx_validate(document, profiles?)`
+
+**Flywheel:** malformed-BOM corpus and normalized package/build/AI metadata.
+
+**Mini-thesis:** SPDX is broader than “package + license” now. Version 3.0.1 includes Software, Security, Dataset, AI, Build and licensing profiles; its Build model can represent inputs, outputs, tools and actors. ([SPDX][6])
+
+---
+
+## 66. `sbom.cyclonedx.validate`
+
+**Capability:** Validate CycloneDX documents and normalize components, dependencies, services, vulnerabilities and other asset classes.
+
+**Replaces:** schema CLI installs and BOM-dashboard products for a simple validation task.
+
+**Deterministic reason:** CycloneDX is schema-defined.
+
+**Implementation:** v1.x JSON/XML/Proto validators → normalized TinyTools representation.
+
+**Cost:** tiny CPU.
+
+**Policy:** free.
+
+**MCP:** `sbom.cyclonedx_validate(document)`
+
+**Flywheel:** version-independent normalized BOM corpus.
+
+**Mini-thesis:** Current CycloneDX **1.7**, released October 21, 2025, covers software, hardware, services, cryptographic assets and AI models, with dependency and vulnerability information. A stable cross-version projection is useful to coding/security agents. ([CycloneDX][7])
+
+---
+
+## 67. `sbom.vex.resolve`
+
+**Capability:** Answer whether a vulnerability is actually asserted to affect a specific product/component deployment.
+
+**Replaces:** treating every CVE appearing in an SBOM as exploitable.
+
+**Deterministic reason:** VEX explicitly encodes producer assertions such as affected/not-affected.
+
+**Implementation:** CycloneDX VEX first → later adapters for other VEX formats → common state model.
+
+**Cost:** pure parsing.
+
+**Policy:** free.
+
+**MCP:** `sbom.vex_resolve(vex, component, vulnerability)`
+
+**Flywheel:** issuer/product/vulnerability assertion history.
+
+**Mini-thesis:** This composes extremely well with `package.version_vulnerabilities`: OSV can identify that a version is vulnerable; VEX can supply product-specific context about whether that vulnerability affects the deployed product. CycloneDX defines VEX explicitly as an exploitability statement mechanism. ([CycloneDX][8])
+
+---
+
+## 68. `artifact.intoto_attestation.verify`
+
+**Capability:** Verify an in-toto attestation against an artifact and trusted attester identity, then return its authenticated predicate.
+
+**Replaces:** bespoke attestation-envelope and digest verification code.
+
+**Deterministic reason:** signatures, identities and subject digests are cryptographic facts.
+
+**Implementation:** in-toto Attestation Framework + supported envelope verification.
+
+**Cost:** tiny.
+
+**Policy:** free.
+
+**MCP:** `artifact.intoto_attestation_verify(artifact, attestation, trusted_attesters)`
+
+**Flywheel:** artifact → builder → predicate/evidence graph.
+
+**Mini-thesis:** This is particularly timely: the in-toto Attestation Framework released **v1.2.0 on March 18, 2026**, including new predicate work and SPDX 3 integration. ([GitHub][9])
+
+---
+
+## 69. `artifact.oci_referrers.discover`
+
+**Capability:** Given a container/artifact digest, discover attached signatures, SBOMs, attestations and other related OCI artifacts.
+
+**Replaces:** ORAS/Cosign commands and registry-specific UI.
+
+**Deterministic reason:** registry state explicitly lists associations.
+
+**Implementation:** OCI Distribution 1.1 `/v2/<name>/referrers/<digest>` + compatibility fallback.
+
+**Cost:** tiny request.
+
+**Policy:** free.
+
+**MCP:** `artifact.oci_referrers_discover(ref, artifact_type?)`
+
+**Flywheel:** **major composition node:** image → signature/SBOM/attestation/evidence graph.
+
+**Mini-thesis:** This may be the strongest atom this hour. OCI Distribution **1.1 added the Referrers API**, whose response is an image index containing descriptors referring to the subject digest. ([GitHub][1])
+
+---
+
+## 70. `artifact.oci_platform.resolve`
+
+**Capability:** Resolve a multi-platform container tag/index to the exact digest appropriate for OS + architecture + variant.
+
+**Replaces:** manual registry-manifest inspection.
+
+**Deterministic reason:** the image index enumerates supported runtime platforms.
+
+**Implementation:** registry fetch → OCI image-index parser → platform selection.
+
+**Cost:** one small request.
+
+**Policy:** free.
+
+**MCP:** `artifact.oci_platform_resolve(ref, os, architecture, variant?)`
+
+**Flywheel:** track platform support changes over time.
+
+**Mini-thesis:** OCI image indexes describe architecture, operating system and optional CPU variant for each candidate manifest. Deployment agents should consume the exact immutable digest appropriate to their environment rather than blindly use mutable tags. ([GitHub][10])
+
+---
+
+## 71. `artifact.oci_descriptor.verify`
+
+**Capability:** Verify OCI content against descriptor digest, expected byte size and media type.
+
+**Replaces:** custom hashing/plumbing.
+
+**Deterministic reason:** content-addressed verification is exact.
+
+**Implementation:** stream bytes → size check → digest calculation → media-type sanity.
+
+**Cost:** proportional to artifact size.
+
+**Policy:** local/uploaded verification free; 402 for substantial remote bandwidth.
+
+**MCP:** `artifact.oci_descriptor_verify(descriptor, content_or_url)`
+
+**Flywheel:** registry/mirror corruption and reliability observations.
+
+**Mini-thesis:** OCI descriptors explicitly carry the target media type, cryptographic digest and raw byte size, and the specification recommends verifying downloaded content against these values. ([GitHub][11])
+
+---
+
+## 72. `dns.sshfp.verify`
+
+**Capability:** Verify a server's presented SSH host key against DNSSEC-authenticated SSHFP records.
+
+**Replaces:** blindly clicking “yes” on first-connect fingerprints or manually comparing them.
+
+**Deterministic reason:** key algorithm and fingerprint either match the authenticated DNS record or they don't.
+
+**Implementation:** SSH handshake key retrieval + SSHFP + existing `dns.dnssec.validate`.
+
+**Cost:** tiny.
+
+**Policy:** free.
+
+**MCP:** `dns.sshfp_verify(host, port=22)`
+
+**Flywheel:** SSH host-key rotation and configuration history.
+
+**Mini-thesis:** RFC 4255 exists specifically to provide DNSSEC-backed out-of-band SSH host-key verification, making this a perfect composition over the DNSSEC atom already in TinyTools. 
+
+---
+
+## 73. `dns.cds_rollover.audit`
+
+**Capability:** Determine whether CDS/CDNSKEY, DNSKEY and parent DS records describe a coherent DNSSEC rollover/addition/removal state.
+
+**Replaces:** registrar + DNS-host control-panel debugging.
+
+**Deterministic reason:** all relevant delegation records are public state.
+
+**Implementation:** existing DNSSEC stack + CDS/CDNSKEY + parent DS comparison.
+
+**Cost:** a few DNS requests.
+
+**Policy:** free.
+
+**MCP:** `dns.cds_rollover_audit(domain)`
+
+**Flywheel:** registrar/DNS-host automation reliability scores.
+
+**Mini-thesis:** RFC 8078 defines CDS/CDNSKEY mechanisms for automated parent DS management, including initial setup and signaling DS removal. This turns a notoriously annoying operational workflow into one deterministic diagnosis. ([RFC Editor][12])
+
+---
+
+## 74. `acme.directory.discover`
+
+**Capability:** Inspect an ACME server and return supported operation endpoints, terms, CA identities and whether external account binding is mandatory.
+
+**Replaces:** reading CA-specific ACME docs.
+
+**Deterministic reason:** the ACME directory is the protocol's bootstrap object.
+
+**Implementation:** GET directory JSON → normalize `newNonce`, `newAccount`, `newOrder`, revoke/key-change endpoints and metadata.
+
+**Cost:** negligible.
+
+**Policy:** free.
+
+**MCP:** `acme.directory_discover(directory_url)`
+
+**Flywheel:** machine-readable CA capability matrix.
+
+**Mini-thesis:** RFC 8555 explicitly says the directory should be the **only URL needed to configure clients**, and it advertises properties such as CAA identities and `externalAccountRequired`. ([RFC Editor][13])
+
+---
+
+## 75. `web.permissions_policy.resolve`
+
+**Capability:** Answer whether a page/frame may access a browser feature such as camera, microphone, geolocation or USB.
+
+**Replaces:** manually parsing `Permissions-Policy` + iframe `allow`.
+
+**Deterministic reason:** feature access follows explicit allowlists and inheritance.
+
+**Implementation:** response headers + iframe context → policy evaluator.
+
+**Cost:** negligible.
+
+**Policy:** free.
+
+**MCP:** `web.permissions_policy_resolve(page_url, feature, embedded_origin?)`
+
+**Flywheel:** framework and site configuration-error dataset.
+
+**Mini-thesis:** Another excellent **decision atom** rather than a header parser. Permissions Policy can enable/deny features across documents and frames, with inherited policies combined restrictively. ([MDN Web Docs][14])
+
+---
+
+## 76. `web.referrer_policy.resolve`
+
+**Capability:** Given source/destination URLs and policy context, determine exactly what referrer information should be sent.
+
+**Replaces:** browser debugging and vague policy-name reasoning.
+
+**Deterministic reason:** referrer behavior follows formal origin/downgrade/request rules.
+
+**Implementation:** policy parser + URL-origin comparison.
+
+**Cost:** pure CPU.
+
+**Policy:** free.
+
+**MCP:** `web.referrer_policy_resolve(source_url, destination_url, policy, request_type?)`
+
+**Flywheel:** privacy configuration diagnostics.
+
+**Mini-thesis:** Useful because the valuable answer isn't `"strict-origin-when-cross-origin"`—it's **“this request will expose exactly this origin/path information.”**
+
+---
+
+## 77. `web.cross_origin_isolation.audit`
+
+**Capability:** Determine whether a page can achieve cross-origin isolation and identify the exact header/resource blocking it.
+
+**Replaces:** DevTools investigation of COOP/COEP/CORP/CORS relationships.
+
+**Deterministic reason:** browser isolation depends on concrete response policies.
+
+**Implementation:** inspect document COOP/COEP → bounded resource graph → evaluate cross-origin dependencies.
+
+**Cost:** small crawl.
+
+**Policy:** free for bounded graphs; 402 only for unusually large crawls.
+
+**MCP:** `web.cross_origin_isolation_audit(url, max_resources=50)`
+
+**Flywheel:** CDN/framework compatibility dataset.
+
+**Mini-thesis:** This is higher-value than yet another header inspector because it tells an agent whether the **whole deployed page configuration works**.
+
+---
+
+## 78. `web.client_hints.discover`
+
+**Capability:** Report which browser Client Hints an origin requests and their applicability.
+
+**Replaces:** reading `Accept-CH` manually.
+
+**Deterministic reason:** servers advertise desired hints directly.
+
+**Implementation:** request → parse `Accept-CH` + registered hint semantics.
+
+**Cost:** one request.
+
+**Policy:** free.
+
+**MCP:** `web.client_hints_discover(url)`
+
+**Flywheel:** web fingerprinting/privacy/adoption dataset.
+
+**Mini-thesis:** RFC 8942 defines `Accept-CH` so origins can opt into particular client-provided hints on subsequent secure requests. Agents inspecting privacy/performance behavior should call this rather than reason from page code. ([RFC Editor][15])
+
+---
+
+## 79. `http.retry_after.resolve`
+
+**Capability:** Normalize `Retry-After` into an exact earliest retry instant/delay.
+
+**Replaces:** every agent SDK implementing date-vs-seconds parsing separately.
+
+**Deterministic reason:** retry timing is protocol metadata.
+
+**Implementation:** `Retry-After` parser + current request timestamp.
+
+**Cost:** effectively zero.
+
+**Policy:** free.
+
+**MCP:** `http.retry_after_resolve(status, retry_after, received_at)`
+
+**Flywheel:** no serious moat.
+
+**Mini-thesis:** Not a business, but strong TinyTools stdlib. Autonomous agents retry APIs constantly, so having one consistent interpretation improves the whole mesh.
+
+---
+
+## 80. `network.srv_route.resolve`
+
+**Capability:** Convert DNS SRV records into actual ordered connection candidates respecting priority, weight, port and target.
+
+**Replaces:** `dig SRV` + handwritten route-selection code.
+
+**Deterministic reason:** SRV is explicitly a machine routing mechanism.
+
+**Implementation:** DNS SRV query + standards selection + A/AAAA resolution.
+
+**Cost:** negligible.
+
+**Policy:** free.
+
+**MCP:** `network.srv_route_resolve(service, protocol, domain)`
+
+**Flywheel:** service-topology observations.
+
+**Mini-thesis:** This should become the generic lower-level implementation beneath `email.service_discover` and future XMPP/SIP/etc. atoms—evidence that **new TinyTools are starting to compile from old ones instead of being bespoke projects.**
+
+---
+
+# Top 5 — Run 4
+
+|  Rank | Atom                                 | Why it wins                                                                                                                  |
+| ----: | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| **1** | `artifact.oci_referrers.discover`    | Very cheap, standardized, enormous coding-agent relevance, and unlocks every signature/SBOM/attestation verifier downstream. |
+| **2** | `supplychain.scitt.receipt_verify`   | Brand-new June 2026 standards frontier; highly aligned with autonomous verifiable software supply chains.                    |
+| **3** | `artifact.intoto_attestation.verify` | Mature enough to implement now, directly useful to coding/deployment agents, feeds automated policy decisions.               |
+| **4** | `http.deprecation.discover`          | Almost trivial to build yet immediately useful for autonomous API consumers.                                                 |
+| **5** | `sbom.vex.resolve`                   | Solves an important semantic gap between “known CVE” and “actually affected deployed product.”                               |
+
+## The really strong composition
+
+The software-supply-chain tools are no longer random micro-APIs:
+
+```text
+container/image
+      │
+      ▼
+artifact.oci_platform.resolve
+      │
+      ▼
+exact immutable digest
+      │
+      ▼
+artifact.oci_referrers.discover
+      │
+      ├──── SBOM ───────► sbom.spdx.validate
+      │                  sbom.cyclonedx.validate
+      │                         │
+      │                         ▼
+      │                   sbom.vex.resolve
+      │
+      ├──── signature ───► artifact.sigstore.verify
+      │
+      ├──── attestation ─► artifact.intoto_attestation.verify
+      │
+      └──── receipt ─────► supplychain.scitt_receipt_verify
+                              │
+                              ▼
+                    VERIFIED EVIDENCE PACKET
+                              │
+                              ▼
+                         agent decision
+```
+
+That is much more interesting than “80 free APIs.”
+
+TinyTools starts looking like a **deterministic evidence resolution layer**:
+
+> **discover evidence → normalize evidence → verify evidence → compose evidence → let the agent reason over verified facts**
+
+This is potentially a stronger identity than “stdlib for agents.”
+
+## Weak / commoditized watch
+
+No earlier high-value atom appears to have materially weakened since the previous run.
+
+The deliberately commoditized/free infrastructure tier is getting clearer:
+
+`network.service.resolve`, `network.ip_specialuse.classify`, `international.idna.normalize`, `international.language_tag.normalize`, `uri.scheme.resolve`, `http.structured_field.parse`, `http.retry_after.resolve`, and `network.srv_route.resolve`.
+
+These should probably receive **almost zero individual branding or product effort**. Their value is that higher-value resolvers compile out of them.
+
+By contrast, the likely moat tier now contains:
+
+```text
+artifact.oci_referrers.discover
+archive.origin_history
+api.openapi.breaking_diff
+supplychain.scitt_receipt_verify
+artifact.intoto_attestation.verify
+sbom.vex.resolve
+```
+
+because these either accumulate useful historical data or sit at high-value composition boundaries.
+
+The full report was also sent successfully through Gmail to **[tradesprior@gmail.com](mailto:tradesprior@gmail.com)**. One correction to the emailed copy: RFC 9943 SCITT was published in **June 2026**, not July 2026. ([RFC Editor][5])
+
+[1]: https://github.com/opencontainers/distribution-spec/blob/main/spec.md?plain=1&utm_source=chatgpt.com "distribution-spec/spec.md at main · opencontainers/distribution-spec · GitHub"
+[2]: https://www.rfc-editor.org/rfc/rfc9745.html?utm_source=chatgpt.com "RFC 9745: The Deprecation HTTP Response Header Field"
+[3]: https://www.rfc-editor.org/rfc/rfc9652.html?utm_source=chatgpt.com "RFC 9652: The Link-Template HTTP Header Field"
+[4]: https://www.rfc-editor.org/rfc/rfc9264.html?utm_source=chatgpt.com "RFC 9264: Linkset: Media Types and a Link Relation Type for Link Sets"
+[5]: https://www.rfc-editor.org/info/rfc9943/?utm_source=chatgpt.com "RFC 9943: An Architecture for Trustworthy and Transparent Digital Supply Chains | RFC Editor"
+[6]: https://spdx.github.io/spdx-spec/v3.0.1/conformance/?utm_source=chatgpt.com "5. Conformance - SPDX Specification 3.0.1"
+[7]: https://cyclonedx.org/specification/overview/?utm_source=chatgpt.com "Specification Overview | CycloneDX"
+[8]: https://cyclonedx.org/docs/1.7/proto/?utm_source=chatgpt.com "CycloneDX v1.7 Protobuf Reference"
+[9]: https://github.com/in-toto/attestation?utm_source=chatgpt.com "GitHub - in-toto/attestation: in-toto Attestation Framework · GitHub"
+[10]: https://github.com/opencontainers/image-spec/blob/main/image-index.md?utm_source=chatgpt.com "image-spec/image-index.md at main · opencontainers/image-spec · GitHub"
+[11]: https://github.com/opencontainers/image-spec/blob/main/descriptor.md?utm_source=chatgpt.com "image-spec/descriptor.md at main · opencontainers/image-spec · GitHub"
+[12]: https://www.rfc-editor.org/info/rfc8078/?utm_source=chatgpt.com "RFC 8078: Managing DS Records from the Parent via CDS/CDNSKEY | RFC Editor"
+[13]: https://www.rfc-editor.org/info/rfc8555/?utm_source=chatgpt.com "RFC 8555: Automatic Certificate Management Environment (ACME) | RFC Editor"
+[14]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Permissions-Policy?utm_source=chatgpt.com "Permissions-Policy header - HTTP | MDN"
+[15]: https://www.rfc-editor.org/rfc/rfc8942.pdf?utm_source=chatgpt.com "RFC 8942: HTTP Client Hints"
+
+
+# MASTER IDEA INDEX — 80 TOTAL
+
+* **ToolPrice** — Live machine-readable pricing and capability normalization across MCP/API providers so agents can choose the cheapest sufficient tool before invoking it.
+* **ReceiptGraph** — Normalize MPP/x402 payment receipts into a portable ledger showing exactly what an agent bought, why, from whom, and at what cost.
+* **BudgetGuard** — A payment-policy firewall that lets agents autonomously buy capabilities while enforcing spending constraints.
+* **MCPTrust** — Continuously test public MCP servers and publish evidence-backed reliability, security, latency and correctness profiles.
+* **RegistryLens** — Turn the official MCP Registry into a higher-signal discovery layer ranked by demonstrated capability rather than descriptions.
+* **ToolBench** — Execute equivalent tasks across competing MCP/API tools and return empirical quality/latency/cost frontiers.
+* **AgentManifest** — Inspect any website and generate/validate its agent-discovery surface.
+* **LLMSv2Fix** — Automatically migrate and verify websites against current llms.txt discovery conventions.
+* **CrawlerPolicy** — Show precisely which AI agents/crawlers can access a website and identify contradictory policies.
+* **MCPDrift** — Continuously verify that advertised MCP capabilities, schemas, prices and endpoints still behave as published.
+* **MCPFirewall** — Evidence-driven runtime policy layer for deciding which MCP servers/tools an organizational agent may call.
+* **ToolProvenance** — Attach reproducible evidence packages to MCP results.
+* **AgentBrowserCompiler** — Convert browser jobs into the cheapest mixture of deterministic browser operations and expensive autonomous-agent steps.
+* **BrowserBid** — Normalize browser-compute providers and route sessions to the cheapest sufficient environment.
+* **VerifyMail** — Staged email verification with local checks and external escalation only when necessary.
+* **VerifyPhone** — Unified phone-number intelligence escalating from local normalization to premium network/risk data only when required.
+* **GeoRouter** — Route geocoding/place queries between caches, open datasets and commercial APIs according to required quality.
+* **AgentPayCompat** — Compatibility layer allowing services and agents to consume x402/MPP payments across methods.
+* **CapabilityCard** — Publish evidence-backed machine-readable capability cards containing interface, price, limits, freshness, benchmarks and trust.
+* **AgentCheckoutTest** — Verify whether an autonomous agent can discover, authorize, pay for and consume a service end-to-end.
+* **PluginPort** — Convert existing agent skills and MCP configurations into portable Agent Plugins.
+* **PluginCompat** — Execute one Agent Plugin across supported clients and report incompatibilities.
+* **PluginPolicy** — Compile one organization-level plugin policy into client-specific allow/block configuration.
+* **PluginSupplyChain** — Produce an SBOM-like trust report for Agent Plugins.
+* **MCPAuthDoctor** — Execute MCP OAuth flows and pinpoint interoperability/security failures.
+* **MCPAuthBridge** — Put standards-compliant MCP authorization in front of legacy authentication systems.
+* **MCPStatelessUpgrade** — Analyze and migrate session-bound MCP servers to the 2026 stateless protocol.
+* **MRTRGuard** — Test and normalize MCP Multi Round-Trip Request workflows.
+* **MCPHeaderMeter** — Use MCP headers for cheap routing, quotas and metering.
+* **MCPCacheProxy** — Standards-aware caching of MCP tool/resource catalogs.
+* **MCPTaskBridge** — Normalize arbitrary long-running operations into MCP Tasks.
+* **MCPDeprecationRadar** — Map MCP code against current/future specification removals.
+* **AgentUsageLedger** — Normalize agent activity into comparable measurements of actual use.
+* **WebhookVault** — Maintain an immutable independent archive of upstream webhook/event history.
+* **WebhookSchemaGuard** — Detect webhook schema/version changes before they break consumers.
+* **WebhookReplay** — Tiny durable webhook inbox with verified delivery and replay.
+* **OCRRoute** — Route pages/documents to the cheapest extraction model satisfying the requested schema.
+* **DNSMoveGuard** — Verify DNS and endpoint migrations across distributed resolver states.
+* **DNSWriteGuard** — Deterministic safety layer in front of autonomous DNS writes.
+* **APIDriftPatch** — Translate upstream API changes directly into affected code and migration patches.
+* **TraceSanitize** — Redact sensitive agent trace payloads before observability export.
+* **TraceDiff** — Compare agent execution traces and identify behavioral/cost divergence.
+* **EvalFromTrace** — Convert real production agent failures into reproducible regression evals.
+* **AgentTracePort** — Normalize heterogeneous agent telemetry into portable OpenTelemetry GenAI spans.
+* **TraceSampler** — Retain high-value traces while sampling routine runs to minimize observability cost.
+* **ComputerRouter** — Determine whether an agent operation needs a cheap isolate or a full Linux environment.
+* **SandboxConformance** — Expose portability failures across sandbox/container providers.
+* **WorkflowCostLint** — Estimate Cloudflare Workflow step/storage/CPU cost before deployment.
+* **WorkflowStateTrim** — Detect unnecessary persistent workflow state and reduce durable execution cost.
+* **R2SQLGuard** — Estimate compressed bytes scanned before R2 SQL and block/rewrite expensive queries.
+* **IcebergCompactionOracle** — Decide when R2 Data Catalog compaction has positive future cost ROI.
+* **LazyMigrationProof** — Verify incremental object migrations so source storage can be safely retired.
+* **ResidencyGuard** — Compile data-residency requirements into correct infrastructure and verify them continuously.
+* **OAuthRedirectGuard** — Audit OAuth redirect URIs and wildcard behavior for takeover/open-redirect risk.
+* **OAuthRotationTest** — Prove an application survives short-lived access tokens and refresh-token rotation.
+* **DynamicOAuthBroker** — Standardize runtime OAuth client registration for agents against DCR/PKCE providers.
+* **WorkspaceQuotaCompiler** — Translate Workspace agent plans into exact quota/request budgets before execution.
+* **WorkspaceQuotaRouter** — Restructure Workspace agent jobs around cheaper methods, caching and push notifications.
+* **AgentSpendAnomaly** — Detect unexpectedly expensive agent sessions from behavioral baselines.
+* **AgentDataEgressGuard** — Predict and restrict large agent-driven SaaS data extraction before execution.
+* **ModelSunsetGuard** — Detect model deprecations and map them to affected agent workflows before shutdown dates.
+* **NeuronQuote** — Predict Cloudflare Workers AI neuron consumption and dollar cost before inference.
+* **AIUsageReconciler** — Reconcile model-level token/cache usage with billed AI credits across agent runs.
+* **LicenseRangeOracle** — Resolve the effective OSS license for an exact dependency version/range and flag relicense boundaries.
+* **DependencyCooldownOracle** — Recommend evidence-based waiting periods before adopting newly released dependencies.
+* **DualUsePublishDoctor** — Validate security-sensitive npm package declarations and publish requirements before release.
+* **PackageAvailabilityGate** — Make release automation robust to npm publish-time malware-scanning delays.
+* **WorkflowApprovalLint** — Detect CI workflows likely to trip malicious-workflow approval controls.
+* **AgentPRThrottle** — Dynamically cap automated PR generation based on reviewer/CI capacity and repository policy.
+* **RulesetBypassAnomaly** — Detect abnormal repository-ruleset bypass patterns across organizations.
+* **AgentTriggerGuard** — Validate and authorize comment/event-triggered coding-agent automations before execution.
+* **CommerceCatalogProof** — Continuously prove that agent-commerce product price and inventory state matches the merchant backend.
+* **AgentShippingQuote** — Normalize shipping-zone validation and fulfillment quotes for ACP/UCP checkouts.
+* **AgentReturnLedger** — Normalize post-purchase cancellations, returns and refunds across agent-commerce protocols and merchant systems.
+* **FXExecutionOracle** — Compare executable real-time FX quotes with reference rates and historical effective spread before conversion.
+* **DoubleFXGuard** — Detect payment/payout paths that unnecessarily convert the same funds twice and propose same-currency settlement paths.
+* **AgentFraudCanary** — Synthetic agentic-checkout tests that determine whether fraud systems wrongly block legitimate autonomous purchases.
+* **AppStoreEUFeeCompiler** — Calculate the effective Apple commission for alternative payment/distribution choices under changing EU terms.
+* **AppStoreDistributionGuard** — Verify an EU app’s chosen distribution/payment path against current Apple business rules.
+* **DisputeEvidenceVault** — Capture delivery, digital-usage, refund and fulfillment evidence at transaction time so disputes remain provable later.
+
+These stay inside the Foundry doctrine: build the live/persistent/deterministic **external capability**, while leaving semantic reasoning to the frontier model. 
+
+# NEW THIS RUN — 20
+
+## 61. ModelSunsetGuard
+
+**Thesis:** Treat model retirement as dependency breakage, not a changelog someone has to remember.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+GitHub is retiring Gemini 3.1 Pro, multiple Claude 4.5/4.6 variants and Raptor Mini on **September 1, 2026**, with MAI-Code-1-Flash following on **September 10**. GitHub explicitly tells users to update workflows and, for enterprise users, verify that replacement-model policies are enabled. ([The GitHub Blog][1])
+
+**Job:** Scan repos, agent configs, routing tables and org policies → locate dying model IDs → verify replacement exists and is permitted.
+
+**ChatGPT baseline:** Excellent at migration reasoning once told a model is disappearing. Weak at continuously knowing current retirement schedules and proving every dependency has migrated.
+
+**Capability Delta:** live deprecation graph + code/config impact.
+
+**Competition:** maintenance/new-capability.
+
+**Economics:** changelog ingestion and static scanning are near-zero marginal cost; recurring monitoring is legitimate recurring work.
+
+**OSS leverage:** Git, tree-sitter, YAML/TOML/JSON parsers.
+
+**MCP surface:** `model_status`, `scan_dependencies`, `replacement_candidates`, `verify_migration`.
+
+**Defensibility:** normalized model lifecycle history across providers + migration outcomes.
+
+**Build:** Easy–medium.
+
+**Score:** 3/3/3/3/3/3 = **18/18 — BUILD IMMEDIATELY**.
+
+**Could be wrong:** model-routing platforms may make replacement automatic.
+
+---
+
+## 62. NeuronQuote
+
+**Thesis:** Give an agent a pre-execution price estimate for Workers AI.
+
+**Engine:** ECONOMIC GAP.
+
+Cloudflare now presents granular per-model pricing while still billing in backend **Neurons**. Workers AI includes 10,000 Neurons/day free and then charges `$0.011 / 1,000 Neurons`; its model table now exposes explicit token↔neuron equivalents. ([Cloudflare Docs][2])
+
+**Job:** `model + input estimate + output target + cache status → expected neurons / expected dollars`.
+
+**Baseline:** ChatGPT can multiply known rates. It cannot know workload distributions or validate actual neuron consumption.
+
+**Delta:** empirical preflight quote.
+
+**Competition:** cost/packaging.
+
+**Economics:** estimator effectively free.
+
+**OSS:** tokenizer libraries + Cloudflare price metadata + trace observations.
+
+**Tools:** `quote`, `compare_models`, `free_quota_remaining`, `verify_quote`.
+
+**Agent use:** before every substantial inference call.
+
+**Moat:** estimate-versus-realized usage corpus.
+
+**Build:** Easy.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** provider-native quote endpoints could eliminate it.
+
+---
+
+## 63. AIUsageReconciler
+
+**Thesis:** Explain exactly why an AI agent session cost what it did.
+
+**Engine:** PAIN GAP + ECONOMIC GAP.
+
+GitHub added model-by-model input, output, cache-read and cache-write token counts alongside consumed AI credits on August 11 because credits alone made charges difficult to explain. ([The GitHub Blog][3]) GitHub also exposes AI-credit consumption in its metrics/reporting surfaces. ([The GitHub Blog][4])
+
+**Job:** Agent trace → provider token/cache accounting → billed credits → unexplained delta.
+
+**Baseline:** ChatGPT analyzes a ledger well but cannot maintain the joins.
+
+**Delta:** persistent accounting reconciliation.
+
+**Competition:** quality/packaging.
+
+**Economics:** cheap aggregation; retained usage history merits recurring pricing.
+
+**Tools:** `reconcile_run`, `cost_breakdown`, `cache_waste`, `unexplained_charge`.
+
+**Moat:** common cross-provider billing ontology.
+
+**Build:** Medium.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** gateways may standardize this sufficiently.
+
+---
+
+## 64. LicenseRangeOracle
+
+**Thesis:** Agents selecting OSS need the license for **this version**, not a generic project-level label.
+
+**Engine:** CAPABILITY GAP.
+
+GitHub changed its license pipeline this month to prioritize canonical package registries, reducing missing licenses across its 170M-package dependency graph from 45% to 24%. Crucially, it now models **version ranges** because projects can relicense—GitHub gives Grafana's Apache→AGPL transition as its example. ([The GitHub Blog][5])
+
+**Job:** `package@version/range → canonical registry evidence → repository evidence → effective SPDX expression + relicense boundaries`.
+
+**Baseline:** ChatGPT understands licensing, but guessing version-specific licensing is unacceptable.
+
+**Delta:** authoritative evidence.
+
+**Competition:** quality/new capability.
+
+**Economics:** cached registry queries nearly free.
+
+**OSS:** ClearlyDefined, deps.dev, ecosystem registry APIs, SPDX.
+
+**Tools:** `license`, `license_range`, `relicense_boundaries`, `policy_check`.
+
+**Defensibility:** resolution/conflict history across source authorities.
+
+**Build:** Medium.
+
+**Score:** **18/18 — BUILD IMMEDIATELY**.
+
+**Risk:** GitHub/deps.dev themselves could become sufficient.
+
+---
+
+## 65. DependencyCooldownOracle
+
+**Thesis:** Replace one fixed package cooldown with evidence-based adoption timing.
+
+**Engine:** CAPABILITY GAP + ECONOMIC GAP.
+
+Dependabot now defaults to waiting **three days** before issuing ordinary version updates because fresh releases are a common supply-chain attack entry point; security updates remain immediate. ([The GitHub Blog][6])
+
+The Foundry opportunity is the delta above that fixed rule:
+
+`trusted internal library → maybe immediate`
+`maintainer changed + huge install-script diff → wait longer`.
+
+**Baseline:** ChatGPT can assess a supplied diff. It lacks release history, maintainer activity and ecosystem observations.
+
+**Delta:** live package-risk evidence.
+
+**Competition:** quality.
+
+**Economics:** mostly public metadata.
+
+**Tools:** `assess_release`, `recommended_wait`, `watch_release`, `risk_signals`.
+
+**Moat:** release signals correlated with later advisories/retractions.
+
+**Build:** Medium.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** three days may already capture most practical benefit.
+
+---
+
+## 66. DualUsePublishDoctor
+
+**Thesis:** Convert security-sensitive package-publication requirements into deterministic preflight checks.
+
+**Engine:** PAIN GAP.
+
+GitHub/npm has been hardening package publication substantially, including staged publishing, stronger authorization and npm v12 install-script restrictions, against active supply-chain compromise patterns. ([The GitHub Blog][7])
+
+**Job:** inspect package metadata + release tarball + publish mechanism → return missing policy/disclosure/authentication requirements.
+
+**Baseline:** ChatGPT knows documentation but cannot guarantee the actual release artifact conforms.
+
+**Delta:** executable release check.
+
+**Competition:** packaging.
+
+**Economics:** effectively zero.
+
+**Tools:** `inspect_release`, `policy_requirements`, `auth_check`, `publish_preflight`.
+
+**Build:** Easy.
+
+**Score:** **15/18 — BUILD IMMEDIATELY**.
+
+**Risk:** npm CLI can absorb this quickly.
+
+---
+
+## 67. PackageAvailabilityGate
+
+**Thesis:** Release pipelines should distinguish “publish submitted” from “usable downstream.”
+
+**Engine:** PAIN GAP.
+
+The broader npm security hardening trend means publication increasingly contains intermediate authorization/scanning states rather than being conceptually atomic. ([The GitHub Blog][7])
+
+**Job:** publish → probe registry/installability → only release Git tags/deployment once package is genuinely consumable.
+
+**Baseline:** LLM can write retry logic; live availability is still an external state.
+
+**Delta:** registry state.
+
+**Competition:** packaging.
+
+**Economics:** nearly free.
+
+**Tools:** `package_state`, `wait_available`, `release_gate`.
+
+**Build:** Trivial.
+
+**Score:** **14/18 — PROTOTYPE**.
+
+**Risk:** too small to be standalone; better as Foundry infrastructure.
+
+---
+
+## 68. WorkflowApprovalLint
+
+**Thesis:** Predict risky CI workflow activation before GitHub or reviewers discover it at runtime.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+GitHub's 2026 security push is increasingly targeting supply-chain execution paths and suspicious automation, alongside npm hardening and dependency cooldowns. ([The GitHub Blog][7])
+
+**Job:** inspect event provenance, contributor permissions, workflow YAML and changed executable surfaces → identify flows likely to require approval or deserve blocking.
+
+**Baseline:** ChatGPT reviews YAML well; runtime policy behavior and repository identity state remain external.
+
+**Delta:** repository-aware policy evidence.
+
+**Competition:** security/quality.
+
+**Economics:** static analysis free.
+
+**Tools:** `lint_workflow`, `execution_risk`, `approval_required`, `safer_plan`.
+
+**Build:** Medium.
+
+**Score:** **16/18 — BUILD IMMEDIATELY**.
+
+**Risk:** exact platform detection logic may remain intentionally opaque.
+
+---
+
+## 69. AgentPRThrottle
+
+**Thesis:** Coding-agent output should be governed by downstream review capacity.
+
+**Engine:** PAIN GAP.
+
+Agent metrics are becoming first-class GitHub data: Copilot app activity is now broken into session, request, prompt and token usage, while agent surfaces continue expanding. ([The GitHub Blog][8])
+
+**Job:** before opening a PR, inspect existing PR queue, CI backlog, reviewer availability and repository policy → open / batch / defer.
+
+**Baseline:** ChatGPT can reason about congestion; it does not possess live organization capacity.
+
+**Delta:** capacity sensor + deterministic throttling.
+
+**Competition:** agentization.
+
+**Economics:** API calls negligible.
+
+**Tools:** `capacity`, `may_open_pr`, `queue_change`, `batch_tasks`.
+
+**Moat:** relationship between generated changes, review latency and acceptance.
+
+**Build:** Easy–medium.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** simple hard caps may be adequate.
+
+---
+
+## 70. RulesetBypassAnomaly
+
+**Thesis:** “Allowed bypass” does not mean “normal bypass.”
+
+**Engine:** CAPABILITY GAP.
+
+GitHub's August changelog now includes organization-level Rule Insights, reflecting growing platform emphasis on centralized governance observability. ([The GitHub Blog][9])
+
+**Job:** establish normal bypass patterns by actor/repository/rule/time → flag unusual behavior.
+
+**Baseline:** ChatGPT can analyze exported events; persistent baseline is missing.
+
+**Delta:** behavioral state.
+
+**Competition:** security/quality.
+
+**Economics:** tiny streaming analytics.
+
+**Tools:** `record_evaluation`, `bypass_baseline`, `score_bypass`, `explain_anomaly`.
+
+**Build:** Medium.
+
+**Score:** **16/18 — BUILD IMMEDIATELY**.
+
+**Risk:** native Rule Insights may soon include alerts.
+
+---
+
+## 71. AgentTriggerGuard
+
+**Thesis:** Never let natural-language agent triggers become equivalent to unrestricted code execution.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+GitHub's Copilot surface now includes automation triggered from comments, while broader platform investment is moving autonomous-agent activity into governed enterprise workflows. ([The GitHub Blog][10])
+
+**Job:** event/comment → identify actor → parse requested task → inspect repository state, affected resources and maximum cost → allow/deny/escalate.
+
+**ChatGPT baseline:** Model judgment is useful for interpretation but inappropriate as the sole authorization control.
+
+**Delta:** deterministic authority boundary.
+
+**Competition:** security/new capability.
+
+**Economics:** local policy execution.
+
+**OSS:** CEL/OPA-style policy engines + GitHub webhooks.
+
+**Tools:** `authorize_trigger`, `dry_run`, `scope`, `explain_denial`.
+
+**Moat:** practical policy templates for agent actions.
+
+**Build:** Medium.
+
+**Score:** **18/18 — BUILD IMMEDIATELY**.
+
+**Risk:** platform-native controls could close the gap.
+
+---
+
+## 72. CommerceCatalogProof
+
+**Thesis:** Agent commerce creates a new need to prove that machine-facing price/inventory is actually current.
+
+**Engine:** CAPABILITY GAP.
+
+ACP deliberately leaves **price calculation, inventory/availability, payments and fulfillment** with the merchant of record. ([Agentic Commerce Protocol][11]) Stripe's agentic-commerce tooling similarly emphasizes near-real-time product, price and availability information. ([Stripe][12]) Google UCP explicitly requires merchants to perform real-time inventory checks and return `out_of_stock` when appropriate. ([Google for Developers][13])
+
+**Job:** compare agent-facing catalog and checkout state with source-of-truth backend at timestamp.
+
+**Baseline:** ChatGPT can notice differences once data is supplied; cannot establish authoritative current state.
+
+**Delta:** live reconciliation.
+
+**Competition:** quality/new capability.
+
+**Economics:** reads/caching are cheap; monitoring recurring.
+
+**OSS:** ACP Apache-2.0 specification + commerce APIs. ([Agentic Commerce Protocol][14])
+
+**Tools:** `verify_product`, `stale_catalog`, `compare_price`, `inventory_truth`.
+
+**Moat:** backend/protocol adapters + mismatch history.
+
+**Build:** Medium.
+
+**Score:** **18/18 — BUILD IMMEDIATELY**.
+
+**Risk:** commerce platforms could offer sufficiently strong synchronization guarantees.
+
+---
+
+## 73. AgentShippingQuote
+
+**Thesis:** Shipping validity belongs in a reusable external sensor rather than LLM guesswork.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+ACP sellers calculate shipping as part of checkout state. ([Agentic Commerce Protocol][11]) UCP explicitly says merchants—not Google—must validate international addresses and return `address_undeliverable` or `address_unverifiable` for unsupported destinations. ([Google for Developers][13])
+
+**Job:** items + destination → address normalization → merchant zone validation → carrier/merchant fulfillment options → normalized ETA/price.
+
+**Baseline:** ChatGPT understands addresses semantically but cannot guarantee deliverability or live rates.
+
+**Delta:** logistics reality.
+
+**Competition:** packaging/agentization.
+
+**Economics:** local normalization free; paid address/carrier calls metered.
+
+**Tools:** `validate_destination`, `quote_shipping`, `supported_zone`, `delivery_estimate`.
+
+**Moat:** merchant/carrier integrations.
+
+**Build:** Medium.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** most merchants already expose this through their own commerce stack.
+
+---
+
+## 74. AgentReturnLedger
+
+**Thesis:** Standardize post-purchase truth after the checkout protocol ends.
+
+**Engine:** CAPABILITY GAP.
+
+ACP already expects signed order lifecycle events and carries fulfillment status plus refund state in its webhook representation. ([Agentic Commerce Protocol][15])
+
+**Job:** ingest merchant, payment and agent events → output canonical order history, current status and available next actions.
+
+**Baseline:** ChatGPT summarizes events beautifully but needs a complete synchronized ledger.
+
+**Delta:** durable event truth.
+
+**Competition:** packaging/new capability.
+
+**Economics:** storage/event processing cheap; persistence is genuine recurring value.
+
+**Tools:** `ingest_order_event`, `current_order`, `reconcile_refund`, `next_actions`.
+
+**Defensibility:** cross-protocol reconciliation.
+
+**Build:** Medium.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** ACP/UCP may converge on one sufficiently rich lifecycle format.
+
+---
+
+## 75. FXExecutionOracle
+
+**Thesis:** The useful FX number is the executable quote—not a generic exchange-rate search result.
+
+**Engine:** ECONOMIC GAP + CAPABILITY GAP.
+
+**Job:** query available account/provider conversion rails → compare executable rate to reference mid-market rate → show effective spread and execution constraints.
+
+**Baseline:** ChatGPT can reason about FX and reference rates, but cannot manufacture a provider/account-specific executable quote.
+
+**Delta:** live execution evidence.
+
+**Competition:** price optimization.
+
+**Economics:** quote calls are cheap; conversion remains with the existing provider.
+
+**Tools:** `quote_fx`, `effective_spread`, `compare_routes`, `record_execution`.
+
+**Moat:** historical realized spread and latency.
+
+**Build:** Medium.
+
+**Score:** **18/18 — BUILD IMMEDIATELY**.
+
+**Risk:** account-specific authentication makes neutral aggregation harder.
+
+---
+
+## 76. DoubleFXGuard
+
+**Thesis:** Detect needless currency round trips before they happen.
+
+**Engine:** ECONOMIC GAP.
+
+**Job:** model payment currency → settlement currency → treasury balances → payout currency and identify paths where the same economic value gets converted more than once.
+
+**Baseline:** ChatGPT sees the optimization immediately if given all flow state. It does not know current balances, settlement rules and actual spreads.
+
+**Delta:** financial-state sensor.
+
+**Competition:** cost optimization.
+
+**Economics:** graph computation trivial.
+
+**Tools:** `analyze_currency_graph`, `double_fx`, `same_currency_route`, `estimated_savings`.
+
+**Repeatability:** payouts, supplier payments and treasury sweeps.
+
+**Moat:** realized cost history.
+
+**Build:** Medium.
+
+**Score:** **17/18 — BUILD IMMEDIATELY**.
+
+**Risk:** primarily valuable to internationally active merchants.
+
+---
+
+## 77. AgentFraudCanary
+
+**Thesis:** Fraud systems built for humans can create false positives when the customer is an authorized agent.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+Stripe explicitly says AI agents lack the variability of human traffic and therefore can be misclassified as fraudulent; it also warns that agent-specific abuse creates genuinely new risk patterns. ([Stripe][12]) Stripe's current commerce positioning includes agent-specific fraud and delegated-payment signals. ([Stripe][16])
+
+**Job:** authorized synthetic agent checkout → known expected outcome → observe blocks/challenges/reviews → detect regression.
+
+**Baseline:** ChatGPT can reason about why an agent looked unusual; cannot empirically test a merchant's production/sandbox stack.
+
+**Delta:** synthetic evidence.
+
+**Competition:** QA/security.
+
+**Economics:** low-cost test transactions or sandbox runs.
+
+**Tools:** `run_canary`, `fraud_path`, `compare_behavior`, `regression`.
+
+**Moat:** agent-commerce fraud failure taxonomy.
+
+**Build:** Medium–hard.
+
+**Score:** **16/18 — BUILD IMMEDIATELY**.
+
+**Risk:** production fraud systems may restrict safe synthetic testing.
+
+---
+
+## 78. AppStoreEUFeeCompiler
+
+**Thesis:** Turn shifting app-distribution terms into a deterministic economics engine.
+
+**Engine:** PAIN GAP + ECONOMIC GAP.
+
+**Job:** app/business facts + distribution mechanism + payment mechanism + current official business rules → fee components, effective rate and alternative scenarios.
+
+**ChatGPT baseline:** strong at interpreting rules. Weak at guaranteeing that a remembered commission regime is still current.
+
+**Delta:** versioned rules + source provenance.
+
+**Competition:** packaging.
+
+**Economics:** deterministic calculator free; portfolio monitoring could be recurring.
+
+**Tools:** `calculate_fee`, `compare_paths`, `rule_version`, `effective_rate`.
+
+**Defensibility:** rule history and source-linked implementation.
+
+**Build:** Medium.
+
+**Score:** **16/18 — BUILD IMMEDIATELY**.
+
+**Risk:** edge cases may require legal interpretation.
+
+---
+
+## 79. AppStoreDistributionGuard
+
+**Thesis:** Don't discover distribution/payment-rule errors at app-review time.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+**Job:** inspect application configuration, declared distribution path, entitlements and payment links against the exact current business-rule version.
+
+**Baseline:** ChatGPT explains requirements but cannot inspect signed/configured application state automatically.
+
+**Delta:** concrete configuration evidence.
+
+**Competition:** compliance/packaging.
+
+**Economics:** mostly static checks.
+
+**OSS:** Xcode/project/plist parsers + official APIs where accessible.
+
+**Tools:** `inspect_app`, `distribution_path`, `policy_check`, `release_preflight`.
+
+**Build:** Medium.
+
+**Score:** **16/18 — BUILD IMMEDIATELY**.
+
+**Risk:** first-party release validation may already cover the highest-value failures.
+
+---
+
+## 80. DisputeEvidenceVault
+
+**Thesis:** Capture transaction evidence when the event occurs instead of reconstructing history after a dispute.
+
+**Engine:** CAPABILITY GAP + PAIN GAP.
+
+Agentic commerce increases the number of systems involved in one sale—agent, merchant, PSP, inventory, shipping and fulfillment—and ACP itself expects merchants to synchronize fulfillment-grade order truth via signed events. ([Agentic Commerce Protocol][15])
+
+**Job:** transaction/order creation → automatically retain verified delivery events, digital provisioning/usage, refund events, customer-facing order state and hashes.
+
+**Baseline:** ChatGPT can write an excellent dispute explanation but cannot reconstruct evidence that was never retained.
+
+**Delta:** immutable provenance.
+
+**Competition:** evidence/packaging.
+
+**Economics:** event + object storage tiny; retained history is exactly the kind of persistent work the Foundry doctrine says subscriptions can legitimately fund. 
+
+**Tools:** `capture`, `evidence_for_order`, `verify_event`, `export_packet`.
+
+**Moat:** transaction-time provenance and integrations.
+
+**Build:** Medium.
+
+**Score:** **18/18 — BUILD IMMEDIATELY**.
+
+**Risk:** major PSPs may integrate equivalent evidence collection directly.
+
+# TOP 5 TO BUILD NOW
+
+1. **CommerceCatalogProof — 18/18.** The protocols explicitly leave inventory, pricing and fulfillment truth to merchants, creating a clean, objective verification primitive rather than another AI wrapper. ([Agentic Commerce Protocol][11])
+
+2. **AgentTriggerGuard — 18/18.** Natural-language/event-driven coding agents create a new authorization boundary. The LLM can interpret the command; deterministic infrastructure should decide whether it may actually execute it.
+
+3. **LicenseRangeOracle — 18/18.** GitHub's own data-quality work validates the problem directly: licenses are frequently missing and can change across version ranges. This is precisely the kind of factual sensor a coding agent should query before reusing code. ([The GitHub Blog][5])
+
+4. **ModelSunsetGuard — 18/18.** Model turnover is becoming ordinary dependency drift. GitHub has multiple model retirements only days away, and replacements can themselves depend on organization policy. ([The GitHub Blog][1])
+
+5. **DisputeEvidenceVault — 18/18.** It turns a task ChatGPT fundamentally cannot perform retroactively—recover missing historical evidence—into a cheap persistent capability that compounds automatically.
+
+## Highest-signal finding this hour
+
+There is a useful new Foundry rule:
+
+> **Look for obligations that a new protocol intentionally leaves to the implementer.**
+
+ACP standardizes agent checkout, but deliberately leaves sellers responsible for price, inventory, shipping, payments and fulfillment. ([Agentic Commerce Protocol][17]) UCP similarly standardizes the interface while leaving live inventory and shipping-address validity with merchants. ([Google for Developers][13]) GitHub exposes more agent automation and governance data, but organizations still own authorization, queue capacity and dependency policy. Model providers expose rapidly changing catalogs, but users still own migration and spend reconciliation.
+
+Those deliberately unstandardized **responsibilities** are unusually good TinyTool/Foundry targets:
+
+```text
+STANDARD CREATES INTERFACE
+          ↓
+asks implementer to guarantee X
+          ↓
+X requires live state / evidence / enforcement
+          ↓
+frontier LLM can reason about X
+but cannot guarantee X
+          ↓
+BUILD X AS SENSOR
+          ↓
+MCP / API / minimal web
+```
+
+That is essentially your Capability Delta doctrine applied directly to standards archaeology. 
+
+The full report was also sent successfully to **[tradesprior@gmail.com](mailto:tradesprior@gmail.com)** with subject **“Capability Foundry — Hourly Report — 2026-08-22 00:29”**.
+
+[1]: https://github.blog/changelog/2026-07-31-upcoming-august-2026-model-deprecations-in-github-copilot/?utm_source=chatgpt.com "Upcoming August 2026 model deprecations in GitHub Copilot - GitHub Changelog"
+[2]: https://developers.cloudflare.com/workers-ai/platform/pricing/?utm_source=chatgpt.com "Pricing · Cloudflare Workers AI docs"
+[3]: https://github.blog/changelog/2026-08-11-per-model-token-breakdown-in-the-usage-report/?utm_source=chatgpt.com "Per-model token breakdown in the usage report - GitHub Changelog"
+[4]: https://github.blog/changelog/2026-06-19-ai-credits-consumed-per-user-now-in-the-copilot-usage-metrics-api/?utm_source=chatgpt.com "AI credits consumed per user now in the Copilot usage metrics API - GitHub Changelog"
+[5]: https://github.blog/changelog/2026-08-13-license-data-quality-improvements/?utm_source=chatgpt.com "License data quality improvements - GitHub Changelog"
+[6]: https://github.blog/changelog/2026-07-14-dependabot-version-updates-introduce-default-package-cooldown/?utm_source=chatgpt.com "Dependabot version updates introduce default package cooldown - GitHub Changelog"
+[7]: https://github.blog/security/supply-chain-security/disrupting-supply-chain-attacks-on-npm-and-github-actions/?utm_source=chatgpt.com "Disrupting supply chain attacks on npm and GitHub Actions - The GitHub Blog"
+[8]: https://github.blog/changelog/2026-07-28-github-copilot-app-usage-metrics-now-expand-across-report-rollups/?utm_source=chatgpt.com "GitHub Copilot app usage metrics now expand across report rollups - GitHub Changelog"
+[9]: https://github.blog/changelog/type/improvements/?utm_source=chatgpt.com "Type: Improvements - GitHub Changelog"
+[10]: https://github.blog/changelog/label/copilot/?utm_source=chatgpt.com "Use Case: copilot - GitHub Changelog"
+[11]: https://www.agenticcommerce.dev/docs/getting-started/sellers?utm_source=chatgpt.com "Documentation | Agentic Commerce Protocol"
+[12]: https://stripe.com/blog/agentic-commerce-suite?utm_source=chatgpt.com "Introducing the Agentic Commerce Suite: A complete solution for selling on AI agents"
+[13]: https://developers.google.com/merchant/ucp/faq?authuser=19&utm_source=chatgpt.com "Frequently Asked Questions  |  Google Universal Commerce Protocol (UCP) Guide  |  Google for Developers"
+[14]: https://www.agenticcommerce.dev/?utm_source=chatgpt.com "Agentic Commerce Protocol"
+[15]: https://www.agenticcommerce.dev/docs/reference/webhooks?utm_source=chatgpt.com "Webhooks | Agentic Commerce Protocol"
+[16]: https://stripe.com/use-cases/agentic-commerce?utm_source=chatgpt.com "Stripe Agentic Commerce | Infrastructure for the Agent Economy"
+[17]: https://www.agenticcommerce.dev/docs/concepts/architecture?utm_source=chatgpt.com "Architecture | Agentic Commerce Protocol"

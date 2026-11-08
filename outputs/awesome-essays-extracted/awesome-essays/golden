@@ -1,0 +1,724 @@
+Yes. The thing to name here is not “dropshipping with AI.” It is closer to an **agentic vertical utility**:
+
+> **Intent router → service marketplace → supplier OS → asset graph → procurement network.**
+
+Once you see that abstraction, EV installation is only one entrance into a much larger business.
+
+## The goldmine question is already partially answered
+
+You asked: **what makes ChatGPT actually choose one ecommerce site/product/merchant over another?**
+
+OpenAI now publishes more of this than I expected. For shopping results, ChatGPT says it selects products based on relevance to the user's intent and conversational context; it can consider things such as **price, reviews and ease of use**. When choosing among merchants selling the same product, OpenAI says factors include **availability, price, quality, and whether the merchant is the maker or primary seller**. Product recommendations are explicitly separate from ads. Merchants can also provide OpenAI with direct product feeds for fresher information. ([OpenAI Help Center][1])
+
+That is huge because the early playbook becomes quite concrete:
+
+```text
+OLD SEO
+keywords
+backlinks
+click
+landing page
+convert human
+
+
+AGENT COMMERCE
+exact intent match
+complete attributes/specifications
+price
+availability
+reviews/trust
+primary/authoritative seller status
+delivery
+policies
+fresh structured feed
+third-party corroboration
+machine-actionable transaction
+```
+
+And Shopify has gone further still. Shopify stores now automatically expose `/agents.md`, `/llms.txt`, and `/llms-full.txt`; Catalog supplies structured title, description, options, images, price, availability and other attributes to agentic storefronts. Shopify says Catalog is the authoritative product source and lets merchants map metafields and custom product structures explicitly for agents. ([Shopify Help Center][2])
+
+So your `xyz-replacement.no` thesis is stronger than “make pages ChatGPT likes.”
+
+The target is:
+
+> **Become the cleanest machine-readable answer to a very specific commercial intent.**
+
+For something like a replacement circulation pump, the agent should be able to establish deterministically:
+
+```text
+exact OEM part
+compatible models
+superseded part numbers
+dimensions
+electrical specification
+manufacturer
+stock
+price
+Norwegian delivery ETA
+warranty
+returns
+installer availability
+reviews
+checkout
+```
+
+That is an enormously more attainable contest in Norwegian/Danish/Finnish long-tail commerce than winning “best washing machine” in English.
+
+---
+
+# Amanda Askell is useful — but she isn't actually the highest-value layer
+
+Amanda is worth scraping because she works on **Claude's character/personality/alignment**. She can reveal how Claude is intended to reason about honesty, uncertainty, user interests, manipulation, etc.
+
+But for **“why did the system recommend Screwfix rather than myshop.no?”**, I'd weight her much lower.
+
+There are four layers:
+
+| Layer                                   | Example people                               | Value to us |
+| --------------------------------------- | -------------------------------------------- | ----------: |
+| Model character/alignment               | Amanda Askell                                |         ★★★ |
+| Retrieval/tool-use                      | Patrick Lewis, agent researchers             |        ★★★★ |
+| **Commerce retrieval/ranking/protocol** | **OpenAI/Google/Shopify commerce engineers** |   **★★★★★** |
+| Empirical AEO operators                 | Aleyda, Mike King, Andrea Volpini            |   **★★★★★** |
+
+For instance **Patrick Lewis — @PSH_Lewis** leads RAG, tool use and agents at Cohere. Understanding how retrieval/tool-use systems decide what evidence to fetch is much closer to our question. ([X][3])
+
+But even more interesting are **Riley Strong at OpenAI, Andrew Smith at OpenAI, Amit Handa at Google, Ilya Grigorik and Yoav Weiss at Shopify**.
+
+Because...
+
+# There is literally a conference about our exact thesis TOMORROW
+
+The **W3C + GS1 Workshop: E-Commerce for Humans and AI Agents** is September 8–9, hosted at Google Zurich.
+
+Tomorrow's agenda includes:
+
+| Speaker                                  | Topic                                           |
+| ---------------------------------------- | ----------------------------------------------- |
+| **Amit Handa — Google**                  | UCP                                             |
+| **Riley Strong — OpenAI**                | ACP                                             |
+| **Ilya Grigorik + Yoav Weiss — Shopify** | UCP / WebMCP                                    |
+| Bob Vuppal — GS1                         | Human shopping alignment + trusted product data |
+| Ericsson researchers                     | Connecting agents to the **physical world**     |
+| FIDO                                     | Agent authorization/payment                     |
+| GS1 / others                             | Product identity and machine trust              |
+
+([W3C][4])
+
+The programme committee itself includes OpenAI, Google, Shopify, Visa, Bosch, WordLift, W3C and GS1 people. ([W3C][5])
+
+This may be the single highest-signal corpus we've discovered.
+
+Forget Stack Overflow initially.
+
+**Scrape every presentation, GitHub issue, position paper, repo, speaker account and reply graph around this workshop.**
+
+---
+
+# The GitHub issues are already full of alpha
+
+One submission from **Francesco Marinoni Moretto** is literally titled around how AI agents **read and buy from the web**.
+
+He proposes a publisher-side agent surface:
+
+```text
+business
+  ↓
+canonical machine-readable manifest
+  ↓
+knowledge
+capabilities
+protocols
+actions
+trust
+  ↓
+AI agent
+```
+
+He's an independent researcher with **45 GitHub followers**.
+
+That is *precisely* the sort of “smartestmoney.hl rather than Ansem” node we're trying to find. ([GitHub][6])
+
+I would monitor everything he publishes.
+
+Another submission, from **Paula Rivero / Digital Link**, contains an even crazier idea.
+
+She calls out the **“last meter” of agentic commerce**:
+
+> the physical product sitting in your house eventually becomes the entry point for the next transaction.
+
+They are building around GS1 Digital Link so a physical item has a canonical machine-readable identity that agents can resolve. Their examples explicitly include **refills, replacement and recurring purchasing**. ([GitHub][7])
+
+Think about what that means for us.
+
+---
+
+# Opportunity 1: the HOUSE AS A PRODUCT GRAPH
+
+This is bigger than EV installation.
+
+User initially says:
+
+> Install my EV charger.
+
+We capture:
+
+```text
+ADDRESS
+│
+├── Fuse board
+│   ├── make
+│   ├── capacity
+│   └── install date
+│
+├── EV
+│   ├── Tesla Model Y
+│   └── connector
+│
+├── EV charger
+│   ├── model
+│   ├── installer
+│   ├── warranty
+│   └── service history
+│
+├── Boiler
+├── Heat pump
+├── Solar inverter
+├── Battery
+├── Smart meter
+└── Appliances
+```
+
+Now your company doesn't merely have a customer.
+
+It has the **machine-readable installed base of their house**.
+
+Every object generates future demand:
+
+```text
+maintenance
+repair
+parts
+replacement
+upgrade
+insurance
+warranty
+energy
+recalls
+inspection
+financing
+```
+
+This turns one £80 EV-install lead fee into potentially **10 years of transactions**.
+
+That is a much better business.
+
+---
+
+# Opportunity 2: HOME ELECTRIFICATION OS
+
+I'd probably make this the canonical first campaign.
+
+### Wedge
+
+```text
+"install an EV charger in Nottingham"
+```
+
+### Then expand
+
+```text
+EV charger
+   ↓
+electrician
+   ↓
+fuseboard upgrade
+   ↓
+smart tariff
+   ↓
+solar
+   ↓
+battery
+   ↓
+heat pump
+   ↓
+annual maintenance
+```
+
+One household gradually becomes:
+
+> **an electrification account.**
+
+Consumer interface:
+
+```text
+"Can you make my house cheaper to run?"
+```
+
+Agent figures out:
+
+* property
+* current energy usage
+* car
+* tariff
+* roof suitability
+* heating
+* likely upgrades
+* installers
+* grants
+* ROI
+* financing
+* schedule
+
+Then orchestrates the work.
+
+Your eventual product isn't:
+
+> `ev-install.co.uk`
+
+It's:
+
+> **“Give the agent your house. We handle everything.”**
+
+---
+
+# Opportunity 3: TRADE PROCUREMENT AGENT
+
+Now flip to the contractor side.
+
+Jim the electrician uses our free admin app.
+
+We already know:
+
+```text
+his van
+jobs tomorrow
+customers
+equipment
+charger brands
+parts usually consumed
+suppliers
+purchase prices
+```
+
+So:
+
+> “Jim, you have 3 Zappi installations this week. You're short two RCBOs and 18m of cable. CEF has them locally at £X. Order?”
+
+**Yes.**
+
+Now we're not merely taking lead commission.
+
+We make:
+
+```text
+supplier affiliate/rebate
+procurement margin
+delivery commission
+financing
+software subscription
+payments
+```
+
+And Jim never opens Screwfix/Amazon/etc.
+
+This is **agentic B2B commerce**.
+
+Shopify has already opened Catalog API to developers and says it intends to let developers earn from promoted placements driven through Catalog-powered experiences. ([Shopify][8])
+
+A specialized **Tradie Buying Agent** suddenly sounds very plausible.
+
+---
+
+# Opportunity 4: ASSET → FAILURE → PART → TECHNICIAN
+
+This may be the cleanest convergence of your dropshipping and local-services ideas.
+
+Imagine:
+
+> “My Worcester boiler says EA.”
+
+Agent:
+
+```text
+identify boiler
+    ↓
+interpret fault
+    ↓
+retrieve installed asset record
+    ↓
+determine likely parts
+    ↓
+check warranty
+    ↓
+find qualified engineer
+    ↓
+reserve probable replacement part
+    ↓
+book engineer
+    ↓
+engineer confirms
+    ↓
+part purchased
+    ↓
+repair
+```
+
+We can monetize **both sides**:
+
+**service + product**.
+
+This is structurally better than dropshipping arbitrary consumer goods.
+
+---
+
+# Kebra has independently arrived at almost exactly this concept
+
+**Kebra (YC S26)** calls it making “the field queryable.”
+
+Their system records:
+
+> sites → assets → repairs → decisions → procedures
+
+and then gives AI employees the resulting operating memory.
+
+They explicitly automate things after a technician visit including:
+
+* job notes
+* warranty claims
+* parts orders
+* follow-up sales
+
+([Y Combinator][9])
+
+This is extraordinarily close to your proposed tradie flywheel.
+
+And **ServiceTrade** has built its AI around a proprietary dataset covering **48 million managed physical assets**, pricing rules, history, technician skills and compliance. ([ServiceTrade][10])
+
+The proprietary **asset graph**, not the chatbot, is the moat.
+
+---
+
+# Opportunity 5: COMMERCIAL COMPLIANCE AGENT
+
+Even nastier economics than residential.
+
+Think:
+
+```text
+restaurants
+hotels
+care homes
+offices
+warehouses
+```
+
+Their assets require recurring:
+
+```text
+fire inspection
+HVAC
+electrical
+lifts
+commercial kitchen
+alarms
+refrigeration
+water systems
+```
+
+The customer doesn't *want* any of these.
+
+They want:
+
+> **“Make sure I'm compliant and nothing breaks.”**
+
+So the agent owns the calendar.
+
+```text
+asset registry
+     ↓
+required inspection dates
+     ↓
+book contractor
+     ↓
+collect certificate
+     ↓
+find deficiencies
+     ↓
+approve repair
+     ↓
+order parts
+     ↓
+invoice
+```
+
+Recurring, predictable, high-retention demand.
+
+That is vastly nicer than chasing consumer leads endlessly.
+
+---
+
+# Opportunity 6: GARAGE DOORS / GATES / WINDOWS / SHUTTERS
+
+This vertical keeps appearing independently.
+
+**Bravi (YC)** deliberately started with shutters, windows and garage doors because quoting is complicated, installers lose leads, product knowledge matters and the software is terrible. The founder grew up around a shutter-installation business in France and says installers were losing roughly 30–40% of potential revenue to poor follow-up. ([Y Combinator][11])
+
+Perfect three-layer market:
+
+```text
+CONSUMER
+"replace my garage door"
+
+SERVICE ROUTER
+survey
+dimensions
+quote
+booking
+
+INSTALLER OS
+calls
+quotes
+calendar
+follow-up
+
+PRODUCT COMMERCE
+doors
+motors
+controllers
+springs
+remotes
+parts
+```
+
+And unlike generic HVAC, European/local-language fragmentation is considerable.
+
+Very attractive.
+
+---
+
+# Opportunity 7: “COMPATIBILITY COMMERCE”
+
+This is the pure ecommerce version and I think it's underappreciated.
+
+Don't seek:
+
+> trendy product.
+
+Seek:
+
+> **products where buying the wrong SKU is expensive or annoying.**
+
+Examples:
+
+| Market              | Agent query                        |
+| ------------------- | ---------------------------------- |
+| Pumps               | “replacement for Grundfos XYZ”     |
+| Filters             | “filter for this ventilation unit” |
+| Chargers            | “cable for this charger + car”     |
+| Appliance parts     | “door seal for Bosch model…”       |
+| Garage doors        | “remote compatible with opener…”   |
+| HVAC                | “replacement controller…”          |
+| Marine              | “impeller for engine model…”       |
+| Agricultural        | “belt for mower/tractor…”          |
+| Commercial kitchens | “thermostat for Rational oven…”    |
+| Coffee machines     | “pump for La Marzocco…”            |
+
+This is exactly where conversational agents beat traditional keyword search.
+
+They can reason over compatibility.
+
+That's where small authoritative merchants can plausibly beat giant generic marketplaces.
+
+---
+
+# Opportunity 8: SCAN YOUR HOUSE
+
+This sounds silly for about ten seconds and then becomes interesting.
+
+User walks around once:
+
+```text
+photo boiler
+photo fuseboard
+photo washing machine label
+photo charger
+photo aircon
+photo alarm
+photo solar inverter
+```
+
+Vision extracts:
+
+```text
+manufacturer
+model
+serial
+age
+manual
+parts
+warranty
+consumables
+known failure modes
+```
+
+Now the agent has a persistent **home asset wallet**.
+
+Later:
+
+> “Washing machine is making this noise.”
+
+It already knows the model.
+
+Or:
+
+> “Get the boiler serviced.”
+
+No information gathering.
+
+Or:
+
+> “What needs maintenance this month?”
+
+Agent knows.
+
+That application becomes the demand-side companion to the tradie OS.
+
+And Paula Rivero's “last meter” product identity concept suggests standards are moving in this exact direction. ([GitHub][7])
+
+---
+
+# The X accounts I would add immediately
+
+These are **incremental to the previous ecommerce list**, heavily biased toward small/high-information accounts.
+
+| Account              | Why                                                                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **@georgeprobook**   | Probably the most relevant new find. Probook CEO; ~400 followers; building home-services OS publicly. Claims one customer booked **2,542 jobs in month one with zero human intervention**. ([Zamantika][12]) |
+| **@FerozeMohideen**  | Robby CTO; ~200 followers. AI + home-service technician/data/revenue layer. ([TwStalker][13])                                                                                                                |
+| **@LucaHadife**      | Kebra founder; field → asset memory → automated parts/warranty/admin. ([founders.io][14])                                                                                                                    |
+| **@AdrianJohnst**    | Elyos AI founder; London; fully autonomous trade/field-service customer-service agents. ~160 followers. ([TwStalker][15])                                                                                    |
+| **@cyberandy**       | Andrea Volpini, WordLift. Reasoning Web, provenance, context graphs; on W3C workshop committee. ([X][16])                                                                                                    |
+| **@BranaRakic**      | OriginTrail CTO; verifiable product/supply-chain knowledge for agents. ([sotwe][17])                                                                                                                         |
+| **@FredaDuan**       | Very strong high-level agentic-commerce analysis rather than guru content. ([X][18])                                                                                                                         |
+| **@seki82214232**    | **Japanese** ecommerce analyst publishing genuinely thoughtful long-form breakdowns of Shopify agentic commerce. Great non-English oracle seed. ([X][19])                                                    |
+| **@pedrodias**       | Skeptical/technical interpretation of UCP rather than blindly repeating hype. ([X][20])                                                                                                                      |
+| **@seosmarty**       | Finds concrete AEO/ecommerce research and translates it into implementation details. ([X][21])                                                                                                               |
+| **@lilyraynyc**      | Empirical AI-search / SEO work; especially third-party trust/citation effects. ([X][21])                                                                                                                     |
+| **@AddiPPC**         | Tiny account, very granular Google Shopping/Merchant Center implementation details. Exactly the sort of micro-alpha we want. ([X][22])                                                                       |
+| **@PSH_Lewis**       | RAG/tool-use/agents researcher. Useful for understanding the retrieval machinery underneath this shift. ([X][3])                                                                                             |
+| **@RajeswarSai**     | Publishes hard agent evals rather than demos; recent enterprise benchmark showed best model only 37.4% on hard stateful tasks. ([X][23])                                                                     |
+| **@ndrewpignanelli** | Actually ran zero-person-company and autonomous dropshipping experiments; particularly interesting because he writes about what failed as well as what worked. ([X][24])                                     |
+
+**George Eliadis is particularly good.** His core criticism of current trade AI is that everyone built independent voice/follow-up/chat tools, leaving operators with five disconnected AI vendors. Probook instead built around dispatch and expanded outward. ([Zamantika][12])
+
+That's an important lesson for us:
+
+> **Don't sell Jim five agents. Give Jim one operating system.**
+
+---
+
+# The nerd hideouts are even better than X
+
+My current information-quality ranking would be:
+
+**W3C workshop GitHub issues > Shopify Engineering > OpenAI commerce docs > GS1/Digital Link discussions > arXiv agent-shopping benchmarks > YC launch posts > specialist Substacks > X reply graph > Hacker News > StackExchange.**
+
+The standout newsletter is **M Farah's Agentic Commerce Frontier**. They now track **220+ companies** across the entire agent-commerce stack and continuously add new infrastructure companies. Recent issues are covering things like payment identity, merchant agent systems, catalog quality, AI-originated traffic and merchant-side infrastructure. ([agentcommerce.substack.com][25])
+
+That's basically a pre-built discovery feed for us.
+
+And the academic side matters because **EComAgentBench** finds even the best tested shopping agent gets only **57.1%** on realistic long-horizon tasks where intent is distributed between the query, user context and clarification. ([arXiv][26])
+
+That suggests another enormous opportunity:
+
+> **Make our products/services extremely easy for imperfect agents to choose correctly.**
+
+Don't require brilliance.
+
+Reduce inference.
+
+---
+
+# The canonical architecture now looks very clean
+
+```text
+                    USER'S AGENT
+             ChatGPT / Gemini / Claude
+                        │
+                        ▼
+              AGENT-NATIVE VERTICAL
+      products + services + live availability
+                        │
+          ┌─────────────┴─────────────┐
+          ▼                           ▼
+    PRODUCT GRAPH                SERVICE GRAPH
+ exact SKUs / parts          verified contractors
+ compatibility              price / availability
+ stock / delivery           certification
+          │                           │
+          └─────────────┬─────────────┘
+                        ▼
+                    BOOK / BUY
+                        │
+                        ▼
+                   TRADE OS
+            calls / CRM / dispatch
+           quotes / payment / admin
+                        │
+                        ▼
+                   JOB DATA
+                        │
+                        ▼
+                   ASSET GRAPH
+           sites / models / history
+           warranty / parts / age
+                        │
+                        ▼
+             PREDICT NEXT DEMAND
+                        │
+               ┌────────┴────────┐
+               ▼                 ▼
+           service            products
+```
+
+That is the unifying architecture.
+
+**GeoDrop isn't separate. Tradie AI isn't separate. Agent SEO isn't separate. Replacement-part ecommerce isn't separate.**
+
+They're different entry points into the same data network.
+
+The strongest first manifestation still looks like:
+
+> **Nottingham EV installer → contractor OS → Home Electrification OS → asset graph → parts/procurement → whole-house agent.**
+
+And the beautiful thing is that each stage can make money before the next exists.
+
+There is also a very time-sensitive research opportunity: tomorrow's W3C/GS1 workshop is likely to produce new slides, GitHub activity and commentary from the people defining exactly these rails. I can set a watch over the workshop, X accounts, GitHub issues and relevant Substacks and only alert you when something materially changes the agent-commerce thesis.
+
+[1]: https://help.openai.com/en/articles/11128490-improved-shopping-results-from-chatgpt-search?utm_source=chatgpt.com "Shopping with ChatGPT Search | OpenAI Help Center"
+[2]: https://help.shopify.com/en/manual/online-sales-channels/agentic-storefronts/products?utm_source=chatgpt.com "Shopify Help Center | Shopify Catalog and product discovery for agentic storefronts"
+[3]: https://x.com/PSH_Lewis/with_replies?utm_source=chatgpt.com "Posts with replies by Patrick Lewis (@PSH_Lewis) / X"
+[4]: https://www.w3.org/2026/ecommerce-agents/agenda.html?utm_source=chatgpt.com "Agenda - Workshop: E-Commerce for humans and AI Agents"
+[5]: https://www.w3.org/2026/ecommerce-agents/?utm_source=chatgpt.com "Workshop overview - Workshop: E-Commerce for humans and AI Agents"
+[6]: https://github.com/w3c/ecommerce-for-humans-and-AI-Agents-workshop/issues/14?utm_source=chatgpt.com "[Position Statement] - Francesco Marinoni Moretto - Toward a Shared Convention for the Publisher-Side Agent Surface · Issue #14 · w3c/ecommerce-for-humans-and-AI-Agents-workshop · GitHub"
+[7]: https://github.com/w3c/ecommerce-for-humans-and-AI-Agents-workshop/issues/21?utm_source=chatgpt.com "[Position Statement] -Digital Link · Issue #21 · w3c/ecommerce-for-humans-and-AI-Agents-workshop · GitHub"
+[8]: https://www.shopify.com/news/spring-26-edition-dev?utm_source=chatgpt.com "Agentic commerce for every developer: The Spring '26 Edition"
+[9]: https://www.ycombinator.com/companies/kebra?utm_source=chatgpt.com "Kebra: Making the field queryable | Y Combinator"
+[10]: https://servicetrade.com/company-news/servicetrade-launches-stella-ai-agents-field-service/?utm_source=chatgpt.com "ServiceTrade Launches Stella AI Agents For Field Service Management"
+[11]: https://www.ycombinator.com/companies/bravi?utm_source=chatgpt.com "Bravi: The AI operating system powering home services businesses | Y Combinator"
+[12]: https://zamantika.com/profile/georgeprobook?utm_source=chatgpt.com "George Eliadis (@georgeprobook) - Twitter Profili | Zamantika Mersobahis Locabet"
+[13]: https://mobile.twstalker.com/FerozeMohideen?utm_source=chatgpt.com "Feroze Mohideen @FerozeMohideen - Twitter Profile | TwStalker"
+[14]: https://founders.io/founder/luca-hadife?utm_source=chatgpt.com "Luca Hadife — companies founded, co-founders & career · founders.io"
+[15]: https://mobile.twstalker.com/AdrianJohnst?utm_source=chatgpt.com "Adrian Johnston @AdrianJohnst - Twitter Profile | TwStalker"
+[16]: https://x.com/cyberandy/status/2008478243112792172?utm_source=chatgpt.com "Andrea Volpini on X: \"“The Harness is the Dataset.” In the Reasoning Web, every tool call, retry becomes training data. The context graph is not just facts, it is decision traces. If we do not model provenance, constraints, and evaluation, we will scale un reliability. This keeps me awake at night.\" / X"
+[17]: https://www.sotwe.com/critchor?lang=en&utm_source=chatgpt.com "SpartyParty @critchor - Twitter Profile | Sotwe"
+[18]: https://x.com/FredaDuan/status/2032128691292320243?utm_source=chatgpt.com "Freda Duan en X: \"Agentic Commerce Update | 1Q2026 Recap - 3 most interesting developments in agentic commerce over the past few months… 1/ @ChatGPTapp scaling back from an end-to-end shopping destination and pivoting to a shopping entry point that routes transactions to specialized commerce https://t.co/enC2E7eYAe\" / X"
+[19]: https://x.com/seki82214232/status/2037747367735349744?utm_source=chatgpt.com "関 #ECにまつわるetc en X: \"Shopifyのエージェンティックコマース - AIが「販売チャネル」になる時代の構造変化\" / X"
+[20]: https://x.com/pedrodias/status/2013534238969102485?utm_source=chatgpt.com "Pedro Dias en X: \"Last week Google announced the Universal Commerce Protocol at NRF. Most reactions focused on agentic commerce and AI shopping agents. What’s more interesting is what didn’t get questioned. Here's my train of thought on the matter. I'm open to debate on whether this is actually\" / X"
+[21]: https://x.com/seosmarty/status/2034308409214787853?utm_source=chatgpt.com "Ann Smarty on X: \"Peec AI came out with a detailed (and more importantly) actionable guide on ecommerce optimization for ChatGPT feat @lilyraynyc. Here are the major highlights: Optimize your Google shopping feeds: ✅Product titles: Descriptive, accurate, and matching how shoppers search. https://t.co/MAr1RZSLe5\" / X"
+[22]: https://x.com/AddiPPC/status/2031477046681997823?utm_source=chatgpt.com "Andrey Kisselev on X: \"Most ecommerce brands running Google Shopping have never set up a promotion. Not because they don't have sales. Because they didn't know Google could show it. ━━━━━━━━━━━━━━━━ 𝐓𝐡𝐞𝐫𝐞 𝐚𝐫𝐞 𝐭𝐰𝐨 𝐭𝐲𝐩𝐞𝐬. 𝐓𝐡𝐞𝐲'𝐫𝐞 𝐧𝐨𝐭 𝐭𝐡𝐞 𝐬𝐚𝐦𝐞. 🏷️ **Sale https://t.co/fVXXjinuY7\" / X"
+[23]: https://x.com/RajeswarSai/status/2033936461498581500?utm_source=chatgpt.com "Sai Rajeswar on X: \"🧵 Introducing 𝐄𝐧𝐭𝐞𝐫𝐩𝐫𝐢𝐬𝐞𝐎𝐩𝐬-𝐆𝐲𝐦🚀 : a rigorous new benchmark for stateful agentic planning and tool use in real enterprise environments. 1,150 expert-curated tasks · 512 tools · 164 DB tables · 8 domains. Every task verified by hand-written SQL, checking goal https://t.co/uTqPjHPDpK\" / X"
+[24]: https://x.com/ndrewpignanelli/status/2033926820605698262?utm_source=chatgpt.com "andrew pignanelli on X: \"The problem with zero person companies\" / X"
+[25]: https://agentcommerce.substack.com/p/the-agentic-commerce-ecosystem-map-350?utm_source=chatgpt.com "The Agentic Commerce Ecosystem Map - by M FARAH"
+[26]: https://arxiv.org/abs/2606.17698?utm_source=chatgpt.com "EComAgentBench: Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent"

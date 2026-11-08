@@ -1,0 +1,223 @@
+Yes. There is already a UK robot-repair/service market, and the evidence points to it expanding as adoption broadens beyond automotive factories into logistics, food, agriculture, healthcare, facilities and other service sectors. I would treat this as a very important POW vertical.
+
+The strongest current signal is not just forecasts. The UK launched a **£52m Robotics Adoption Programme running April 2026–March 2030**, explicitly covering industrial robots, autonomous plant and service robots, and skills development. The accompanying government programme says the UK has historically under-adopted robotics and is specifically trying to accelerate deployment. ([UK Research and Innovation][1]) IFR recorded about **2,500 new industrial robot installations in the UK in 2024**, after 3,800 in 2023; so there is already a substantial installed base being continuously added to even before the newer adoption push. ([IFR International Federation of Robotics][2])
+
+What I think happens is that “robot repair” does **not** initially emerge as one clean trade analogous to plumber. It splits into a stack:
+
+```text
+robot servicing
+├── preventive maintenance
+├── breakdown diagnosis
+├── mechanical repair
+│   ├── reducer
+│   ├── bearing
+│   ├── motor
+│   ├── brake
+│   └── harness
+├── electrical/electronic repair
+│   ├── servo drive
+│   ├── power supply
+│   ├── cabinet
+│   ├── controller
+│   └── sensors
+├── calibration
+├── robot programming
+├── PLC / safety PLC
+├── fieldbus / industrial networking
+├── vision/perception
+├── firmware/software
+├── battery/service consumables
+└── safety inspection / recommissioning
+```
+
+That is why **mechatronics/automation technician** is closer to the emerging occupation than “electrician.”
+
+### The market already exists
+
+The OEMs are already selling exactly the recurring services we'd expect in a mature repair market. FANUC UK has dedicated robot service and spare-parts operations from Coventry; KUKA UK sells repairs, maintenance, refurbishment, used robots, spares and service contracts; ABB Robotics sells preventative maintenance, diagnostics, on-site/workshop repair, reconditioning and lifecycle services; Yaskawa offers on-site repairs, motor/gearbox/component repair, spares and reconditioning. ([Fanuc][3])
+
+And importantly, there is already an **independent aftermarket** rather than everything being locked to OEMs. Global Robots services ABB, KUKA, FANUC, Yaskawa/Motoman, Kawasaki and Stäubli robots, including on-site UK repairs and spare parts. RoboTeam offers multi-brand breakdown repair, preventative maintenance and reconditioned robots. There are also smaller specialist firms such as Art Robotic and newer companies explicitly positioning themselves as OEM-agnostic field service for commercial and emerging robots. ([Global Robots][4])
+
+The integration ecosystem is broader still. BARA/Automate UK currently lists audited integrators including **RMGroup UK, Olympus Technologies, ABB Robotics UK and Newtech Intelligent Automation** under its Robot Integrator Standard; the standard explicitly includes installation and after-sales service as part of the integrator role. ([Automate UK][5])
+
+So I wouldn't frame the future as:
+
+> robots appear → suddenly someone invents robot repair.
+
+It is:
+
+> industrial automation service market already exists → installed base broadens enormously → service/repair becomes more geographically distributed and multi-brand → new commercial/mobile/humanoid robots create a much larger long-tail aftermarket.
+
+That latter transition is the interesting POW opportunity.
+
+### UK training is already converging on this
+
+The single most relevant apprenticeship I found is **Level 4 Automation and Controls Engineering Technician**. The occupational standard could almost have been written for this thesis. It explicitly covers installation, commissioning, servicing, maintenance and fault finding of **robots, PLCs, HMIs, servo drives, safety systems and industrial networks**. It includes robot programming, diagnostic tools, three-phase/AC/DC motor and control circuits, industrial networking and machinery safety. It is currently approved for starts. ([Skills England][6])
+
+Below that there is a **Level 3 Mechatronics Maintenance Technician** route. Skills England describes the occupation as installation, testing, fault finding, rectification, modification and planned maintenance of complex automated equipment across electrical, electronic, mechanical, fluid-power and control-system disciplines. ([Occupational Maps][7]) There are also newer Level 3 Engineering Maintenance Technician pathways in electrical and dual electrical/mechanical disciplines. ([Skills England][8])
+
+And the government is now deliberately filling the robotics-specific skills gap. In May 2026 it confirmed a **Robotics Adoption Skills Development Programme worth up to £2.5m**, specifically intended to create course content and training for people who need to **procure, integrate, operate and maintain robotics and autonomous systems**. ([UK Parliament][9])
+
+So yes: I would expect substantially more explicitly named robotics maintenance/training products over the next few years.
+
+OEM training already exists too. ABB's Milton Keynes training centre teaches mechanical and electrical maintenance; KUKA runs a UK College in Wednesbury and offers maintenance paths; Yaskawa has courses explicitly titled things like **Mechatronic Maintenance Robot**, including practical replacement of motors, gearboxes, batteries and wiring harnesses plus recalibration; FANUC has a UK Academy alongside its service operation. ([ABB Group][10])
+
+That Yaskawa curriculum is revealing. Robot repair isn't some mysterious futuristic skill. A lot of it is:
+
+```text
+diagnose alarm
+isolate machine safely
+replace motor / reducer / battery / cable
+reassemble
+calibrate axes
+restore backups
+test
+recommission
+```
+
+AI will make the **diagnostic/information component** much easier. The physical intervention remains scarce.
+
+## Do you need to be an electrician?
+
+**No blanket rule says “you must be an electrician to repair a robot.”**
+
+The relevant HSE rule is **competence for the specific work**. HSE says anyone working on electrical equipment, machinery or installations must be competent, based on appropriate training, experience and reassessment. ([HSE][11])
+
+That produces roughly this division:
+
+| Work                               | Likely competence                                     |
+| ---------------------------------- | ----------------------------------------------------- |
+| Replace mechanical gearbox/reducer | mechanical/mechatronic                                |
+| Replace robot joint/module         | OEM/mechatronic                                       |
+| Replace encoder/motor              | mechatronic + electrical competence                   |
+| Change controller battery          | OEM/mechatronic                                       |
+| Robot calibration                  | robotics/OEM                                          |
+| Programming                        | robotics/controls                                     |
+| Vision fault                       | controls/vision/software                              |
+| PLC/network fault                  | automation/control                                    |
+| Safety PLC/interlock changes       | specialist functional-safety competence               |
+| Cabinet/mains/3-phase work         | industrial electrical competence                      |
+| New fixed electrical installation  | appropriate electrical design/install/test competence |
+
+The Level 4 Automation & Controls apprenticeship itself illustrates this beautifully: it is **not an electrician apprenticeship**, yet it explicitly requires understanding single- and three-phase supplies, electrical circuits, robots, servo drives and safety systems. ([Skills England][6])
+
+Also, domestic **Part P** rules are mostly irrelevant to factory robots. Part P is concerned with electrical installations in dwellings and certain domestic-associated premises; an industrial robot cell in a normal separately metered factory is a different context. ([GOV.UK][12])
+
+But robot repair can absolutely become dangerous electrical work. HSE requires machinery to be safely isolated during maintenance, including electrical power and stored hydraulic/pneumatic energy, with lock-off where necessary. ([HSE][13])
+
+And this is likely to matter more, not less: HSE launched a new project in June 2026 specifically to create UK guidance for safe workplace use of **collaborative robots**, alongside Automate UK and the Manufacturing Technology Centre. ([HSE Media Centre][14])
+
+## What this means for POW
+
+This actually strengthens the architecture we just designed.
+
+The future opportunity isn't merely:
+
+```text
+robot broken
+→ find repairer
+```
+
+It's:
+
+```text
+ROBOT
+  ↓
+model / revision
+  ↓
+subsystem
+  ↓
+joint / actuator / controller / sensor
+  ↓
+failure mode
+  ↓
+required part
+  ↓
+part availability + price
+  ↓
+required intervention
+  ↓
+required competencies
+  ↓
+required OEM training
+  ↓
+required electrical competence
+  ↓
+required safety competence
+  ↓
+local qualified technician
+  ↓
+downtime
+  ↓
+repair outcome
+```
+
+Then we connect UK training:
+
+```text
+failure/intervention
+       ↓ requires
+competency
+       ↓ gained_by
+qualification/course
+       ↓ delivered_by
+training provider
+       ↓ produces
+local technician capacity
+```
+
+That means **`powuk` should absolutely start collecting this now**.
+
+Specifically, the UK skills garden should track one thing we haven't emphasized enough: **robotics-maintenance capability supply**.
+
+* Skills England occupational standards/apprenticeships
+* apprenticeship vacancies by employer/location
+* training providers offering those standards
+* OEM training from FANUC/KUKA/ABB/Yaskawa
+* BARA integrators and locations/capabilities
+* independent robot service firms
+* advertised field-service/automation/robotics engineer jobs
+* required certifications and vendor experience
+* skills mentioned: FANUC/KUKA/ABB/Yaskawa, PLC, Siemens, Rockwell, PROFINET, EtherCAT, servo, electrical, mechanical, safety
+* course introduction/discontinuation through time
+* eventually technician availability and callout geography
+
+Because then a very POW-like graph emerges:
+
+```text
+robot installed base ↑
+        ↓
+maintenance demand ↑
+        ↓
+robot-specific skill demand ↑
+        ↓
+qualified technician supply lags
+        ↓
+callout rates / wages / downtime ↑
+        ↓
+training + apprenticeships respond
+        ↓
+capacity expands
+```
+
+That's literally the **Seesaw** again.
+
+And the UK is unusually interesting because the government itself acknowledges that UK robotics adoption has historically lagged peers and is now spending specifically to push adoption and skills. ([Innovation Funding Service][15])
+
+So for our purposes, **robot maintenance/repair should become one of the central things `powproducts + repair + powuk` are designed to measure**. Not because we need to start a robot repair company tomorrow, but because the data garden can watch an entirely new skilled trade/service economy form in real time.
+
+[1]: https://www.ukri.org/what-we-do/browse-our-areas-of-investment-and-support/robotics-adoption-programme/?utm_source=chatgpt.com "Robotics adoption programme – UKRI"
+[2]: https://ifr.org/worldrobotics/report-2025?utm_source=chatgpt.com "International Federation of Robotics"
+[3]: https://www.fanuc.eu/uk-en/contacting-fanuc?utm_source=chatgpt.com "FANUC UK - Contacts | FANUC Global"
+[4]: https://globalrobots.com/servicing/?utm_source=chatgpt.com "Industrial Robot Servicing | Robot Repair & Maintenance"
+[5]: https://www.automate-uk.com/our-associations/bara/robot-integrator-standard/certified-robot-integrators/?utm_source=chatgpt.com "Certified Robot Integrators | Automate UK"
+[6]: https://skillsengland.education.gov.uk/apprenticeships/st0662-v1-1 "Automation and controls engineering technician / Skills England"
+[7]: https://occupational-maps.skillsengland.education.gov.uk/maps/occupation/OCC1326?utm_source=chatgpt.com "Mechatronics maintenance technician"
+[8]: https://skillsengland.education.gov.uk/occupations/OCC1426B-v1-0?utm_source=chatgpt.com "Engineering maintenance technician - single discipline - Electrical engineering maintenance technician / Skills England"
+[9]: https://questions-statements.parliament.uk/written-questions/detail/2026-05-19/2810?utm_source=chatgpt.com "Written questions and answers - Written questions, answers and statements - UK Parliament"
+[10]: https://new.abb.com/service/abb-university/uk/robotics-training?utm_source=chatgpt.com "UK Robotics Training - ABB University UK (ABB University) | United Kingdom"
+[11]: https://www.hse.gov.uk/electricity/withequip.htm?utm_source=chatgpt.com "Work on electrical equipment, machinery or installations - HSE"
+[12]: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/441872/BR_PDF_AD_P_2013.pdf?utm_source=chatgpt.com "Section 2: Application of Part P"
+[13]: https://www.hse.gov.uk/work-equipment-machinery/maintenance.htm?utm_source=chatgpt.com "Maintenance of work equipment - HSE"
+[14]: https://press.hse.gov.uk/2026/06/10/britains-health-and-safety-regulator-to-create-its-first-ever-joint-industry-guidance-for-collaborative-robotics-in-the-workplace/?utm_source=chatgpt.com "Britain’s health and safety regulator to create its first ever joint industry guidance for collaborative robotics in the workplace – HSE Media Centre"
+[15]: https://apply-for-innovation-funding.service.gov.uk/competition/2504/overview/05f2babb-c5b0-4b37-80dc-3883b41bc2c7?utm_source=chatgpt.com "Competition overview - Robotics Adoption Central Convening Body summer 2026 - Innovation Funding Service"

@@ -1,0 +1,1345 @@
+The GitHub connector exposed one important limitation first: it currently lists your `prx0r` repositories but **does not expose `patala`/`patalacheckpoints`**, and direct fetches return 404. So I cannot truthfully claim this is a fresh line-by-line checkout review of today's branch. I *can* critically reconcile my previous advice against the substantial Pāṭala state we established across the recent builds: the vertical source→translation→audit→argument stack, `ReviewEvent`/adjudication machinery, Commit C/C.1, Nyāya evaluation, proof-of-scholarship work, scholar infrastructure/acquisition docs, and the peer-review-first revision of `NEXT-STEPS`.
+
+And that reconciliation changes my advice quite a lot.
+
+# Core correction
+
+My previous answer treated Pāṭala too much like a system that still needed its **epistemic control plane** invented.
+
+It doesn't.
+
+You've already built most of that.
+
+The current Pāṭala architecture already distinguishes roughly:
+
+[
+SOURCE \rightarrow L0/L1 \rightarrow L2 \rightarrow L200 \rightarrow C1
+\rightarrow ARGUMENTS \rightarrow THEMES \rightarrow SYNTHESIS
+]
+
+with provenance, evidence roles, semantic-strength constraints, review history, adjudication, epistemic ceilings, crux propagation, Nyāya/formal evaluation, and exact source resolution.
+
+You also already have the essential epistemic promotion idea:
+
+[
+PROPOSED
+\rightarrow machine\ checks
+\rightarrow evidence\ validation
+\rightarrow review
+\rightarrow VERIFIED
+]
+
+and, critically, Commit C.1 showed that **even a proposition whose metadata is correct can semantically inflate during paraphrase**. That is much more sophisticated than Vouch's basic reviewed-claim model.
+
+So I would now summarize my prior advice like this:
+
+| Previous advice                            | Revised verdict                           |
+| ------------------------------------------ | ----------------------------------------- |
+| Build Vouch-like proposal/review substrate | **Mostly wrong — duplicate architecture** |
+| Adopt Vouch invariants                     | **Yes, selectively**                      |
+| Adopt Agetor Task≠Run                      | **Strong yes — but operations only**      |
+| Add generic multi-axis review states       | **Mostly already present conceptually**   |
+| Build `patala_next_action()`               | **Yes, but differently**                  |
+| Weighted graph score now                   | **Too early**                             |
+| Scholar review as one stage in workflow    | **Understates its importance massively**  |
+| Docling/Zotero                             | **Still sensible adapters**               |
+| Education graph + mastery model            | **Still correct, but downstream**         |
+
+The biggest correction is:
+
+> **The missing layer is no longer “how does Pāṭala decide whether an assertion is trustworthy?” The missing layer is “how does Pāṭala operationalize independent human scholarship at scale over the epistemic machinery it already possesses?”**
+
+That is a much more interesting problem.
+
+---
+
+# 1. I would NOT build my proposed Vouch substrate
+
+Previously I proposed:
+
+```text
+Proposal
+ValidationReceipt
+ReviewDecision
+CanonicalizationEvent
+```
+
+as some new universal wrapper.
+
+I would no longer do that blindly.
+
+You already have:
+
+```text
+candidate/proposed objects
+review_events
+adjudication
+evidence relationships
+derivations
+status/provenance
+correction/supersession concepts
+```
+
+Adding another generic layer gives you this nightmare:
+
+```text
+Pāṭala Proposition
+    ↓
+Pāṭala ReviewEvent
+    ↓
+Vouch-like Proposal
+    ↓
+ValidationReceipt
+    ↓
+ReviewDecision
+    ↓
+CanonicalizationEvent
+```
+
+when the relevant information is already represented.
+
+That is ontology inflation.
+
+### What should come from Vouch instead
+
+Steal **invariants**, not entities.
+
+For example:
+
+**Invariant A — no silent mutation**
+
+A reviewed claim that changes meaning becomes a new version/superseding object.
+
+**Invariant B — decisions persist**
+
+Rejected, qualified and superseded scholarly judgments don't disappear.
+
+**Invariant C — reviewer independence can be policy-enforced**
+
+For high-risk epistemic transitions:
+
+```text
+proposer != adjudicator
+```
+
+possibly with stronger rules:
+
+```text
+translator != final philological reviewer
+argument_constructor != final argument reviewer
+```
+
+when appropriate.
+
+**Invariant D — validation evidence is reproducible**
+
+Every promotion should be able to tell us:
+
+```text
+what validators ran
+against what exact object version
+with what corpus/schema/code versions
+and what they returned
+```
+
+That could simply become a richer subtype of your existing `ReviewEvent`.
+
+No new epistemic universe required.
+
+---
+
+# 2. I was right about Task ≠ Run — and I now think this is the cleanest genuinely missing piece
+
+This distinction belongs **outside the epistemic graph**.
+
+Consider:
+
+```text
+TASK
+Reconstruct the strongest argument represented in IPVV X.
+```
+
+Then:
+
+```text
+RUN 001 — model A
+RUN 002 — model A after prompt change
+RUN 003 — model B
+RUN 004 — adversarial critic
+```
+
+Those executions can generate:
+
+```text
+C1 candidates
+argument candidates
+review events
+evidence proposals
+```
+
+But the `Task` and `Run` objects themselves are operational provenance.
+
+That's useful and not duplicative.
+
+I would implement a very small orchestration kernel:
+
+```text
+Task
+  id
+  kind
+  target_ids[]
+  objective
+  dependencies[]
+  policy
+  created_at
+```
+
+```text
+Run
+  id
+  task_id
+  agent
+  model
+  input_snapshot
+  started_at
+  ended_at
+  outcome
+```
+
+```text
+RunEvent
+  run_id
+  sequence
+  event_type
+  artifact_ref
+  timestamp
+```
+
+And then just link into Pāṭala:
+
+```text
+Run
+ ↓ generated
+C1:...
+```
+
+or:
+
+```text
+Run
+ ↓ generated
+ArgumentProposal:...
+```
+
+This provides an important separation:
+
+[
+\text{execution success} \neq \text{epistemic success}
+]
+
+An agent can complete successfully while producing a terrible reconstruction.
+
+A task can have ten successful executions and zero accepted epistemic results.
+
+That's exactly what you want.
+
+---
+
+# 3. The `InputSnapshot` idea is more important than I made it sound
+
+For Pāṭala, this becomes part of **proof of derivation**.
+
+Every significant agent run should be able to resolve:
+
+```text
+git_commit
+schema_version
+corpus_version
+source hashes
+translation versions
+argument graph version
+prompt/template version
+model + provider
+tool versions
+policy/rubric version
+```
+
+Then years later:
+
+> Why did Pāṭala classify this as `RECONSTRUCTED/QUALIFIED`?
+
+can actually be answered.
+
+This intersects beautifully with the moat you've been developing.
+
+Your core asset isn't merely:
+
+> scholar X approved proposition Y.
+
+It becomes:
+
+> Scholar X reviewed proposition version Y₇, which had derivation chain D, Sanskrit source hashes H, translation decisions T, machine evaluations E, and argument context G at time τ.
+
+That is much harder to reproduce elsewhere.
+
+---
+
+# 4. My generic review-state recommendation was too crude
+
+I proposed things like:
+
+```text
+execution_state
+validation_state
+epistemic_state
+publication_state
+```
+
+The **separation principle** remains right.
+
+But Pāṭala already has domain-specific review dimensions much richer than one generic `epistemic_state`.
+
+You should preserve that richness.
+
+A proposition might simultaneously be:
+
+```text
+philology: ACCEPTED
+translation_semantics: QUALIFIED
+argument_role: ACCEPTED
+historical_attribution: CONTESTED
+formal_validity: N/A
+nyaya_status: N/A
+specialist_review: PENDING
+```
+
+An argument might instead have:
+
+```text
+premise_grounding
+inferential_validity
+warrant_reconstruction
+rival_interpretation
+scope
+modality
+defeaters
+historical_fidelity
+```
+
+Trying to collapse that to:
+
+```text
+EPISTEMICALLY_ACCEPTED
+```
+
+destroys the interesting information.
+
+### Better architecture
+
+Keep evaluations as independent objects:
+
+```text
+Evaluation
+  target
+  evaluator
+  dimension
+  verdict
+  confidence
+  rationale
+  evidence[]
+  rubric_version
+```
+
+Then policies compute views:
+
+```text
+publishable(target)
+scholar_review_required(target)
+gold_eligible(target)
+training_data_eligible(target)
+```
+
+Those are **derived policy decisions**, not ontological properties.
+
+That's an important distinction.
+
+---
+
+# 5. The scholar vision makes this much bigger than a review gate
+
+This is where I think my earlier answer most underestimated what you're actually building.
+
+Your scholar layer shouldn't merely be:
+
+```text
+AI proposes
+Scholar clicks approve
+```
+
+That's barely better than a moderation queue.
+
+The valuable object is the **scholarly attestation itself**.
+
+Something closer to:
+
+```text
+ScholarlyAttestation
+  scholar_id
+  target_id
+  target_version/hash
+
+  expertise_scope
+  review_dimension
+
+  stance:
+    ACCEPT
+    ACCEPT_WITH_QUALIFICATION
+    REJECT
+    CONTEST
+    UNDERDETERMINED
+
+  rationale
+  cited_evidence[]
+  proposed_correction[]
+
+  confidence
+
+  disclosed_conflicts[]
+  compensation_context
+
+  timestamp
+```
+
+The critical architectural rule:
+
+> **A scholar does not turn something into Truth by clicking approve.**
+
+They add a high-value, attributable epistemic event.
+
+So you can eventually have:
+
+```text
+Ratié-style specialist A:
+  ACCEPT_WITH_QUALIFICATION
+
+Śaiva textual specialist B:
+  CONTEST
+
+historian C:
+  ACCEPT historical attribution
+  but abstain on philosophical interpretation
+```
+
+Pāṭala preserves all three.
+
+Then canonical status is a transparent policy over evidence and attestations.
+
+That's vastly stronger than Academia.edu-style prestige.
+
+---
+
+# 6. Proof-of-scholarship should become one of the actual products
+
+This now looks much more important than `patala_next_action()`.
+
+You have already been converging on two directions of proof.
+
+### Downward
+
+```text
+public claim
+ ↓
+argument proposition
+ ↓
+translation decision
+ ↓
+passage
+ ↓
+exact Sanskrit span
+ ↓
+edition/manuscript/source
+```
+
+### Upward
+
+```text
+Sanskrit evidence
+ ↓
+translation
+ ↓
+proposition
+ ↓
+argument
+ ↓
+synthesis
+ ↓
+essay/video/answer
+```
+
+with no-strengthening constraints preventing:
+
+```text
+qualified evidence
+        ↓
+unqualified public claim
+```
+
+Now insert scholarship:
+
+```text
+                   SCHOLAR ATTESTATIONS
+                          ↓
+SOURCE → TRANSLATION → PROPOSITION → ARGUMENT → SYNTHESIS
+   ↑           ↑              ↑           ↑
+ scholar    scholar        scholar     scholar
+ review     review         review      review
+```
+
+The scholar isn't simply reviewing “the paper.”
+
+They can adjudicate the **smallest object they are actually qualified to adjudicate**.
+
+This is crucial.
+
+A philologist might certify:
+
+> this translation accurately captures `vimarśa` here.
+
+without certifying:
+
+> therefore consciousness is metaphysically fundamental.
+
+Pāṭala can preserve that distinction.
+
+Academia cannot really express it.
+
+PDF peer review barely expresses it.
+
+That could become a serious moat.
+
+---
+
+# 7. Therefore I would redefine “Piece 5”
+
+Not:
+
+> Build the review gate.
+
+You already broadly have it.
+
+### Piece 5 should be:
+
+# Scholar Attestation Vertical
+
+Take **one real argument that is already vertically complete**.
+
+For example one of your gold IPVV arguments.
+
+Expose to a scholar:
+
+```text
+claim
+argument context
+exact Sanskrit
+translation
+alternative reading(s)
+derivation
+machine audits
+known crux
+```
+
+Allow them to:
+
+```text
+accept
+qualify
+challenge
+suggest alternate translation
+challenge warrant
+attach evidence
+abstain outside expertise
+```
+
+Persist every action.
+
+Then intentionally modify an upstream translation.
+
+Verify:
+
+```text
+which proposition becomes stale?
+which argument becomes stale?
+which synthesis becomes stale?
+which scholar attestations require reconsideration?
+```
+
+**That is the real proof.**
+
+Not that the UI can collect a review.
+
+That Pāṭala can propagate a scholarly correction through the intellectual dependency graph.
+
+That is exceptional.
+
+---
+
+# 8. And this changes `patala_next_action()` radically
+
+My previous weighted formula was still thinking like a generic autonomous-agent scheduler:
+
+[
+P(v)
+====
+
+\alpha G+\beta U+\gamma X+\delta Q+\ldots
+]
+
+I now think that's premature.
+
+You don't have enough real historical outcome data yet to justify precise weights.
+
+Worse, **optimizing generic graph throughput would optimize the wrong thing**.
+
+Pāṭala's scarce resource isn't agent tokens.
+
+It's trustworthy epistemic advancement.
+
+And currently, probably especially:
+
+[
+\boxed{\text{specialist human attention}}
+]
+
+So the interesting question is not:
+
+> Which task gets the most descendants completed?
+
+It is:
+
+> **Where does the next unit of machine or scholar effort reduce the most consequential uncertainty in the trusted graph?**
+
+That suggests a different core quantity.
+
+## Epistemic exposure
+
+For node (v):
+
+[
+E(v)
+====
+
+U(v)
+\times
+I(v)
+\times
+P(v)
+]
+
+where:
+
+* (U) = unresolved uncertainty,
+* (I) = epistemic importance,
+* (P) = propagation/downstream dependency.
+
+Then add **review leverage**:
+
+[
+L(v)
+====
+
+\frac{\Delta\text{trusted graph from resolving }v}
+{\text{expected scarce-resource cost}}
+]
+
+So a five-minute scholar decision on one Sanskrit reading that controls:
+
+```text
+8 propositions
+3 arguments
+2 syntheses
+1 public essay
+```
+
+could outrank translating another fifty easy passages.
+
+That's very Pāṭala-specific.
+
+And much more defensible.
+
+---
+
+# 9. I wouldn't start with a weighted scheduler at all
+
+Start with **lexicographic policy**.
+
+Something like:
+
+```text
+1. correctness blockers
+2. source/provenance blockers
+3. stale descendants caused by corrections
+4. high-propagation unresolved cruxes
+5. specialist-review bottlenecks
+6. gold-set expansion
+7. breadth/coverage work
+8. speculative enrichment
+```
+
+Inside a bucket:
+
+```text
+downstream exposure / expected cost
+```
+
+This has huge advantages.
+
+You can explain:
+
+> Why did Pāṭala choose this?
+
+with:
+
+```text
+Reason:
+SCHOLAR_REVIEW_BLOCKER
+
+Target:
+C1-IPVV-1.5.11-X
+
+Blocks:
+3 arguments
+14 downstream propositions
+2 syntheses
+
+Required expertise:
+Pratyabhijñā philology
+
+Estimated review:
+15 min
+```
+
+That is far preferable to:
+
+```text
+priority = 0.7346
+```
+
+when nobody knows whether the weights mean anything.
+
+---
+
+# 10. Then collect the dataset needed for the fancy scheduler
+
+Every resolved task gives you training/evaluation data:
+
+```text
+predicted cost
+actual cost
+
+predicted uncertainty reduction
+actual disposition
+
+predicted descendants unlocked
+actual descendants unlocked
+
+predicted reviewer requirement
+actual reviewer requirement
+
+predicted importance
+later observed importance
+```
+
+After hundreds or thousands of events, **then** you can ask whether:
+
+```text
+fixed policy
+vs weighted heuristic
+vs contextual bandit
+vs learned policy
+```
+
+actually performs better.
+
+So Piece 7 v0 should primarily be an **instrumentation project**.
+
+Not an optimization project.
+
+---
+
+# 11. There is also a dangerous feedback loop to avoid
+
+Suppose `next_action()` rewards:
+
+```text
+number of downstream nodes unlocked.
+```
+
+Then agents have an incentive—implicitly—to create graphs where tasks unlock lots of descendants.
+
+Suppose it rewards:
+
+```text
+uncertainty reduced.
+```
+
+Then the system can manufacture uncertainty.
+
+Suppose it rewards:
+
+```text
+claims accepted.
+```
+
+Then it optimizes toward easy claims.
+
+This is Goodhart's law territory.
+
+Pāṭala's graph is unusual because **the scheduler can affect the graph it later measures**.
+
+So scoring features must mostly derive from quantities agents cannot cheaply manipulate.
+
+For example:
+
+```text
+source dependency structure
+existing downstream published use
+independent review disagreement
+staleness propagation
+externally observed user/scholar demand
+manually designated corpus priority
+```
+
+This is another argument for deterministic policy before learned optimization.
+
+---
+
+# 12. Commit C.1 should influence the entire architecture
+
+This is actually more important than Vouch.
+
+The finding was basically:
+
+> semantic-strength drift can occur *inside* an apparently valid proposition paraphrase despite correct surrounding metadata.
+
+That implies a general law:
+
+[
+\text{valid provenance} \not\Rightarrow \text{valid semantic transmission}
+]
+
+So every transformation boundary deserves potentially its own fidelity contract:
+
+```text
+Sanskrit
+→ translation
+
+translation
+→ proposition
+
+proposition
+→ argument role
+
+argument
+→ synthesis
+
+synthesis
+→ essay
+
+essay
+→ educational explanation
+
+explanation
+→ generated video/script
+```
+
+The Pāṭala moat isn't merely provenance.
+
+It's:
+
+[
+\boxed{\text{provenance + transformation-faithfulness}}
+]
+
+That's enormously important for an AI-era scholarly system.
+
+Lots of future systems will be able to tell you:
+
+> this answer cited source X.
+
+Far fewer will be able to show:
+
+> every semantic transformation from source X to this sentence was individually constrained not to increase strength beyond its upstream support.
+
+That is where Pāṭala gets genuinely distinctive.
+
+---
+
+# 13. This also changes how I think about external standards
+
+Your earlier integration conclusion remains exactly right:
+
+```text
+SEPIO
+xAIF
+nanopubs
+SPAR
+SCL
+```
+
+should help Pāṭala become interoperable.
+
+They should not redefine canonical objects.
+
+Same now for:
+
+```text
+Vouch
+Agetor
+Docling
+Zotero
+Hermes
+```
+
+Use them as **peripheral infrastructure**.
+
+Pāṭala owns:
+
+```text
+scholarly identity
+textual provenance
+translation decisions
+epistemic transformations
+argument structures
+cruxes
+review history
+scholar adjudication
+correction propagation
+epistemic ceilings
+```
+
+That's the intellectual operating system.
+
+---
+
+# 14. Docling and Zotero fall dramatically in priority
+
+I previously put them around Piece 5 territory.
+
+I wouldn't anymore.
+
+They're useful plumbing:
+
+```text
+PDF → structured content
+URL → bibliography
+```
+
+Great.
+
+Use them.
+
+But they're nowhere near the critical path now.
+
+You already have enough sources to prove the core system.
+
+Another ingestion adapter does not answer the existential question:
+
+> Does this architecture produce scholarship someone serious would trust?
+
+A scholar completing one deeply instrumented review of a real IPVV reconstruction provides more de-risking value than another month of ingestion engineering.
+
+---
+
+# 15. Same with the education stack
+
+pyBKT versus PSI-KT versus Dialogue-KT is interesting.
+
+But it is **not the current uncertainty**.
+
+If the canonical Pāṭala graph becomes good, an education layer can be built from it.
+
+If the graph fails to earn scholarly trust, having excellent learner-state estimation barely matters.
+
+So I would explicitly freeze most of education architecture beyond interfaces like:
+
+```text
+LearningObjective
+requires[]
+assesses[]
+derived_from[]
+```
+
+until the scholar vertical works.
+
+---
+
+# 16. Your peer-review-first revision was therefore the right strategic move
+
+This is probably the strongest correction the project made recently.
+
+The prior temptation was:
+
+```text
+IPVV
+ ↓
+argument engine
+ ↓
+essay engine
+ ↓
+education
+ ↓
+huge platform
+```
+
+But the defensible order is more like:
+
+```text
+IPVV
+ ↓
+one defensible translation vertical
+ ↓
+one defensible proposition vertical
+ ↓
+one defensible argument vertical
+ ↓
+independent specialist attacks it
+ ↓
+Pāṭala records disagreement/correction
+ ↓
+correction propagates properly
+ ↓
+SECOND scholar can inspect that entire history
+```
+
+If that works, everything else gets easier.
+
+Because you haven't merely built an AI Sanskrit translator.
+
+You've demonstrated:
+
+> **machine-assisted scholarship can expose its entire epistemic derivation to independent human adjudication without flattening disagreement or losing provenance.**
+
+That's much more consequential.
+
+---
+
+# 17. The scholar economic/network vision fits the architecture better than I initially realized
+
+The eventual thing isn't Academia.edu with AI features.
+
+It's closer to a **scholarly verification network**.
+
+The atomic contribution isn't necessarily:
+
+```text
+paper.pdf
+```
+
+It can be:
+
+```text
+Scholar A adjudicated Sanskrit span X.
+
+Scholar B supplied alternative reading Y.
+
+Scholar C rejected inferential warrant W.
+
+Scholar D confirmed historical attribution H.
+
+Scholar E resolved a disputed terminology alignment.
+```
+
+Each contribution is:
+
+```text
+small
+citable
+attributable
+version-bound
+machine-readable
+reusable
+potentially compensable
+```
+
+That opens much more interesting economics.
+
+A scholar doesn't have to spend six months writing a publication for Pāṭala.
+
+They could make fifty high-value adjudications.
+
+Those adjudications could power:
+
+```text
+translations
+AI answers
+research agents
+educational products
+videos
+datasets
+benchmarks
+APIs
+```
+
+And their scholarly contribution remains attached.
+
+That's the real network effect.
+
+---
+
+# 18. One thing I'd be extremely careful about: scholar reputation scores
+
+There's an obvious temptation later:
+
+```text
+ScholarScore = 94.2
+```
+
+Don't.
+
+At least not centrally.
+
+Scholarship is too multidimensional.
+
+Someone can be exceptional at:
+
+```text
+Kashmir Śaiva textual criticism
+```
+
+and irrelevant for:
+
+```text
+formal modal logic.
+```
+
+Instead model expertise graphically:
+
+```text
+Scholar
+ ├─ tradition: Trika
+ ├─ language: Sanskrit
+ ├─ period: 900–1100 CE
+ ├─ capability: philology
+ ├─ capability: manuscript criticism
+ └─ corpus: Abhinavagupta
+```
+
+And accumulate evidence:
+
+```text
+reviews performed
+other-reviewer agreement
+corrections later upheld
+citations
+works/publications
+institutional provenance
+```
+
+Then context determines relevance.
+
+No universal Elo for academics.
+
+---
+
+# 19. Another correction: “VERIFIED” should probably become less absolute over time
+
+As more scholars enter the graph, binary:
+
+```text
+PROPOSED
+VERIFIED
+```
+
+will eventually become too coarse.
+
+For machines, it's convenient.
+
+For scholarship, contested interpretations are normal.
+
+I'd retain the machine status but distinguish:
+
+```text
+mechanically_validated
+internally_adjudicated
+externally_reviewed
+specialist_supported
+contested
+superseded
+```
+
+and let clients choose thresholds.
+
+Example:
+
+```text
+Consumer answer:
+require internally_adjudicated
+
+Training benchmark:
+require specialist_supported
+
+Critical edition:
+show all contested variants
+
+Exploratory research agent:
+allow proposed + clearly label uncertainty
+```
+
+This converts uncertainty into infrastructure rather than trying to eliminate it.
+
+---
+
+# 20. So the actual next three pieces I would build are different
+
+## Piece 5 — External Scholar Vertical
+
+**Goal:** prove a real scholar can independently inspect and adjudicate one complete argument.
+
+Must support:
+
+```text
+exact source inspection
+translation alternatives
+proposition scope
+argument context
+machine review evidence
+accept/qualify/reject/underdetermined
+new evidence
+correction proposal
+persistent attestation
+```
+
+Success criterion:
+
+> Independent reviewer catches or confirms something consequential and the system records it precisely.
+
+---
+
+## Piece 6 — Operational Task/Run Provenance
+
+Agetor-inspired:
+
+```text
+Task
+Run
+RunEvent
+InputSnapshot
+Artifact link
+```
+
+No epistemic ontology changes.
+
+Success criterion:
+
+> Every agent-produced Pāṭala object can answer exactly which execution produced it against what world-state.
+
+---
+
+## Piece 7 — Epistemic Work Queue v0
+
+Not ML.
+
+Not magic weights.
+
+Implement:
+
+```text
+eligible tasks
+    ↓
+hard policy classes
+    ↓
+epistemic exposure
+    ↓
+scarce-resource cost
+    ↓
+ranked next actions
+```
+
+Every recommendation explains itself.
+
+Example:
+
+```text
+NEXT ACTION
+
+Review C1-IPVV-X
+
+WHY
+- unresolved translation qualification
+- supports 4 argument nodes
+- appears in 2 syntheses
+- no independent specialist review
+- upstream evidence complete
+- estimated scholar time: low
+
+EXPECTED EFFECT
+resolve or invalidate 11 downstream objects
+```
+
+Success criterion:
+
+> humans look at the queue and repeatedly say “yes, that is in fact what we should work on next.”
+
+Only then optimize it.
+
+---
+
+# Where I now think the moat really is
+
+Earlier we had:
+
+[
+M = D \times P \times V \times N \times A
+]
+
+unique data × provenance × verification × network × adoption.
+
+After looking at how the architecture has evolved, I'd make the machinery underneath (V) more explicit:
+
+[
+V =
+F \times J \times C
+]
+
+where:
+
+* (F) = **transformation faithfulness**,
+* (J) = **independent adjudication**,
+* (C) = **correction propagation**.
+
+So:
+
+[
+\boxed{
+M =
+D \times P \times F \times J \times C \times N \times A
+}
+]
+
+Because each individually is copyable.
+
+A Sanskrit corpus is copyable.
+
+LLM translations are becoming commoditized.
+
+An argument graph is copyable.
+
+A nice UI is copyable.
+
+Even scholar profiles are copyable.
+
+But:
+
+> **versioned primary texts + exact derivation chains + semantic-strength controls + argument/crux graphs + independent named scholarly adjudications + durable disagreement + automatic correction propagation + a historical record showing how every public conclusion became warranted**
+
+is a very different asset.
+
+That is the architecture I would protect.
+
+And it means my previous advice about Vouch should be sharply downgraded, Agetor Task≠Run survives almost untouched, and `patala_next_action()` remains interesting but should come **after and be designed around the scholar-adjudication bottleneck rather than around generic autonomous-agent productivity.**
+
+The immediate frontier is not making Pāṭala more agentic.
+
+It's proving that **a serious scholar can enter the system, disagree with the machine at exactly the right epistemic level, and cause the entire knowledge graph to become more correct without destroying its historical provenance.**
+
+If you can demonstrate that end-to-end, you have something much rarer than another research-agent framework.

@@ -1,0 +1,311 @@
+Exactly. **Solo campaign mode** is where this stops being dependent on friends being online.
+
+You could have proper puzzle campaigns built around the same core mechanic:
+
+* **Survival Campaign** — increasingly hostile environments; keep adapting one creature/character.
+* **Escape Artist** — prison → dungeon → spaceship → simulation → impossible abstract traps.
+* **Tiny Hero** — solve huge problems while progressively losing capabilities.
+* **Evolution Run** — one organism, one mutation per level, survive 30 environmental shifts.
+* **Prompt Golf Campaign** — complete objectives with fewer and fewer words/tokens.
+* **Worldbreaker** — each level gives you a rigid fictional world with rules; find a creative loophole without violating them.
+* **The Impossible Job** — satisfy increasingly contradictory client briefs.
+* **Freak Detective** — inspect a generated scene, ask limited questions, create/test theories, then reconstruct what happened.
+* **Director Campaign** — you're given bad scenes and a tiny intervention budget; change one thing to save the outcome.
+* **Chain Reaction** — solve level 1, but every solution becomes a permanent rule/object in later levels.
+
+The last one could be particularly strong.
+
+### Example campaign: *Shipwrecked*
+
+**Level 1**
+
+> Get off a deserted island.
+
+You invent a giant kite.
+
+**Level 2**
+
+> Storm destroys your shelter.
+> Your giant kite still exists.
+
+You convert it into a roof.
+
+**Level 3**
+
+> Wild boars arrive.
+> Existing inventory: giant kite / roof modifications.
+
+By level 15, your campaign has become this completely personal history of ridiculous inventions and consequences.
+
+So instead of levels being isolated puzzles, the engine has:
+
+```text
+WORLD STATE
++
+PLAYER INVENTORY
++
+CHARACTER STATE
++
+PREVIOUS CONSEQUENCES
++
+NEW PROBLEM
+```
+
+Your solution mutates the campaign.
+
+That makes every playthrough different.
+
+You could even have **roguelike runs**:
+
+> 3 lives
+> 20 scenarios
+> one persistent Freak
+> permanent injuries/items/relationships
+> how far can you get?
+
+And daily seeded campaigns would give everyone the **same underlying sequence**, like a roguelike daily seed:
+
+> FREAK RUN #281
+> 7,842 players
+> Global completion rate: 3.8%
+
+Then you can compare where friends died without requiring exactly identical solutions.
+
+The most interesting difficulty system isn't just “harder puzzle.” It's **removing degrees of freedom**:
+
+```text
+LEVEL 1
+Anything goes
+
+LEVEL 5
+No machines
+
+LEVEL 10
+Only 10 words
+
+LEVEL 15
+Your Freak has one arm
+
+LEVEL 20
+Everything you've previously used is forbidden
+
+LEVEL 25
+The antagonist has learned your strategy
+
+LEVEL 30
+Solve it without introducing anything new
+```
+
+That's a very natural campaign progression for creativity.
+
+And then campaign unlocks can feed the rest of Freak Town: finish **Wild West Campaign** → unlock saloon world assets for Party mode; beat a boss → the boss becomes a playable Freak; create an especially good solution → save it to your workshop; community creators can publish full campaigns.
+
+So the same primitives become:
+
+**Party game + async duels + daily puzzle + solo campaign + user-generated campaigns.**
+
+That's a very coherent game platform rather than five unrelated features.
+
+
+Yes. That should probably be a core daily loop.
+
+Each day everyone gets the **same puzzle seed**, but solutions can be completely different.
+
+Example:
+
+> **DAILY FREAK #042**
+> You’re trapped on a rooftop. Floodwater is rising.
+> You have: a mattress, six pigeons, a traffic cone.
+> Constraint: no electricity.
+
+You submit your solution. Freak Town simulates it and gives you the outcome.
+
+Then the interesting social layer starts:
+
+**Share with a friend** should not just send the answer. It should send an interactive challenge card:
+
+> Tom survived in 3 moves.
+> Can you solve it differently?
+
+Your friend taps it and gets the **same puzzle without seeing your solution**. Only after they submit do both solutions unlock side-by-side.
+
+That creates a very good anti-spoiler loop:
+
+```text
+DAILY PUZZLE
+    ↓
+YOU SOLVE
+    ↓
+CHALLENGE FRIEND
+    ↓
+THEY SOLVE BLIND
+    ↓
+REVEAL BOTH
+    ↓
+COMPARE / VOTE / REMIX
+```
+
+Then add a **“Beat my solution”** button. Your friend can try to beat you on a specific dimension:
+
+* fewer words
+* fewer actions
+* fewer objects
+* faster simulated outcome
+* more constraints
+* survive with one extra handicap
+
+So the shared card might become:
+
+> **Tom escaped using 11 words.**
+> Beat it using 10 or fewer.
+
+That gives every solution a second life as a custom challenge.
+
+Even better: after both players solve it, Freak Town could generate a **split-screen reveal clip**:
+
+**TOM’S PLAN** vs **SAM’S PLAN**
+
+and play both outcomes back-to-back or simultaneously. That is much more shareable than a scorecard.
+
+The daily streak could track several things separately:
+
+* **Daily streak** — solved today’s puzzle
+* **Friend streak** — you and the same friend both completed it
+* **Constraint streak** — consecutive successful variants
+* **Perfect streak** — solved without hints/retries
+
+And I’d make the group-chat experience first-class. One person shares:
+
+> **DAILY FREAK #042**
+> 3/5 of you have solved it.
+> Solutions hidden until you play.
+
+As people finish, avatars light up. Once everyone has submitted, the group gets a **reveal room** showing all the ridiculous approaches.
+
+That feels very Wordle + Chess.com daily games + Jackbox reveal energy, but the actual content is generated from everyone's creativity.
+
+
+es — this is very PZL, just with the deterministic puzzle substrate replaced by generative worlds and AI simulation.
+
+The old PZL model was basically:
+
+CONSTRUCTOR
+defines puzzle mechanics
+      ↓
+PZL
+bounded game / rules / difficulty
+      ↓
+INSTANCE
+unique playable configuration
+      ↓
+SOLVE
+      ↓
+SHARE / CHALLENGE / COLLECT
+
+And you already had the important ideas: daily featured PZLs, unique instances, friend challenges, contact leaderboards, solution reveals, progression, and replayable mini-games with formal init → input → verify → win style engines.
+
+Freak Town is almost the 2026 generative evolution of that thesis:
+
+WORLD / SCENARIO
+      ↓
+RULESET + CONSTRAINT GENERATOR
+      ↓
+PUZZLE INSTANCE
+      ↓
+PLAYER INVENTS A SOLUTION
+      ↓
+SIMULATION / VERIFICATION
+      ↓
+OUTCOME
+      ↓
+REPLAY / REMIX / CHALLENGE
+
+But there's one huge improvement: in PZL the instance itself was the interesting artifact. Here, both the puzzle and the solution become artifacts.
+
+Someone creates:
+
+Escape a sinking Victorian hotel using only objects available in the kitchen.
+
+That becomes a community puzzle.
+
+Then you solve it with:
+
+industrial bread mixer + tablecloth parachute + dumbwaiter
+
+Your solution becomes a replayable generated scene.
+
+Then I can tap:
+
+TRY TOM'S PUZZLE
+
+or:
+
+BEAT TOM'S SOLUTION
+Solve it without using fabric.
+
+Or:
+
+REMIX
+Same scenario, add constraint: you are a dachshund.
+
+So content recursively creates content:
+
+COMMUNITY WORLD
+     ↓
+SCENARIO
+     ↓
+PUZZLE
+     ↓
+SOLUTION
+     ↓
+REPLAY
+     ↓
+REMIXED PUZZLE
+     ↓
+NEW SOLUTIONS
+     ↓
+...
+
+That is the PZL instance tree idea again, except now it's potentially hilarious to actually watch the branches.
+
+And this suggests a really clean object model for Freak Town:
+
+WORLD
+  └── SCENARIO
+       └── CHALLENGE
+            └── INSTANCE
+                 ├── SOLUTION
+                 │    ├── REPLAY
+                 │    └── REMIX
+                 ├── SOLUTION
+                 └── SOLUTION
+
+Then basically everything we've discussed maps onto it:
+
+Daily Freak = featured Challenge + canonical Instance
+Party Mode = several players solve the same Instance together
+Async Duel = two users branch from the same Instance
+FreakStreak = recursive Instance with accumulating constraints
+Campaign = authored graph of Instances
+Community mode = publish World/Scenario/Challenge
+Marketplace = distribute high-quality Worlds/Campaigns
+Feed = interesting Solutions/Replays rather than random posts
+
+The particularly important lesson from PZL is: don't make the feed the primitive. Make the playable object the primitive.
+
+Every piece of content should ideally have:
+
+PLAY THIS
+
+not merely Like / Comment.
+
+And every great solution should have:
+
+TRY DIFFERENTLY
+BEAT THIS
+ADD CONSTRAINT
+REMIX
+
+That's a much stronger social graph because interaction creates new playable content.
+
+So yes: we have accidentally come back to PZL, but this version has a far stronger expressive medium. PZL was essentially infinite deterministic puzzle instances. Freak Town could be infinite generative situations where human creativity is the controller.

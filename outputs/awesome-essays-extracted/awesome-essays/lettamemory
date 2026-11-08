@@ -1,0 +1,1057 @@
+I searched the current frontier around Git-native context, persistent agent memory, trajectory formats, procedural learning, skill evolution, and current Letta. The core conclusion is stronger than before:
+
+> **Moltwork should not implement an agent harness, memory engine, trajectory engine, or self-improvement framework. It should define the economic/evidence interfaces between them.**
+
+For the MVP, Letta should be the reference runtime. Git is the version/control substrate. WorkerKit is the witness. Everything else should be replaceable behind tiny adapters.
+
+## Canonical MVP stack
+
+I would freeze this:
+
+```text
+                       MOLTWORK
+                          │
+                      WorkOrder
+                          │
+                          ▼
+                 Git Worktree / Branch
+                          │
+                          ▼
+              Letta Agent SDK backend=local
+                same persistent Agent
+                fresh Session per WorkOrder
+                          │
+             ┌────────────┴────────────┐
+             │                         │
+          MemFS Git               Agent Skills
+       durable memory             SKILL.md
+             │                         │
+             └────────────┬────────────┘
+                          ▼
+                       WORK
+                          │
+                streamed tool/actions
+                          │
+                          ▼
+                    WORKERKIT
+             EventLedger + RunMeter
+             Verifier + CommitGate
+                          │
+              ┌───────────┴──────────┐
+              ▼                      ▼
+         Git artifact             Receipt
+                                  DSSE/JCS
+              │                      │
+              └───────────┬──────────┘
+                          ▼
+                    TrajectoryRef
+                 format is pluggable
+                          │
+                          ▼
+                         LAB
+             reviews / outcomes / costs
+                          │
+                          ▼
+                     Reflection
+                          │
+                    SkillCandidate
+                          │
+                          ▼
+                   cg experiment
+                          │
+              held-out better? yes/no
+                          │
+                          ▼
+                    Git promotion
+                          │
+                          ▼
+                   WorkerManifest vN
+```
+
+I would **not** use a single perpetual Letta conversation for Moltwork jobs. The persistent unit should be the Letta **Agent**; each WorkerKit `WorkOrder` gets a fresh Session/Conversation with the same agent identity and MemFS. That gives isolation without losing accumulated state. The current Agent SDK explicitly supports a persistent Agent and request-scoped sessions with `cwd`, `toolset`, and `allowedTools`. ([GitHub][1])
+
+Also, don't bake specific “primary GPT-4o-mini / sleep-time Sonnet 3.7” choices into Moltwork. Letta still supports dreaming/sleep-time learning, but model routing should remain configuration. Letta Code now exposes dreaming, skills, subagents and fully Git-backed MemFS directly. ([GitHub][2])
+
+---
+
+# Tier 0 — use these now
+
+These are the pieces I would actually depend on for the Letta-focused MVP.
+
+| Resource                  | What to use                                             | Moltwork decision                 |
+| ------------------------- | ------------------------------------------------------- | --------------------------------- |
+| **Letta Agent SDK**       | Persistent Agent, local backend, Sessions, scoped tools | **Runtime**                       |
+| **Letta Code / MemFS**    | Git-backed memory and skills                            | **Cognition state**               |
+| **Agent Skills standard** | Portable `SKILL.md`                                     | **Procedural asset format**       |
+| **Letta trajectory**      | Cross-harness transcript normalization                  | **Default trajectory adapter**    |
+| **OpenTrajectory**        | Eval-first portable trace + verdict                     | **Interchange/evaluation format** |
+| **Agent File `.af`**      | Portable worker snapshot                                | **Version-boundary export**       |
+| **Git worktrees**         | Isolated concurrent attempts                            | **Workspace primitive**           |
+| **WorkerKit**             | Evidence/economics/commit gates                         | **Canonical run truth**           |
+
+### Letta Agent SDK
+
+This should replace all legacy direct Letta REST implementation in Moltwork. It supports local, cloud and remote backends; local requires Node 22.19+ and uses an SDK-managed App Server. ([GitHub][1])
+
+[https://github.com/letta-ai/letta-agent-sdk](https://github.com/letta-ai/letta-agent-sdk?utm_source=chatgpt.com)
+
+[https://www.letta.com/agent-sdk/](https://www.letta.com/agent-sdk/?utm_source=chatgpt.com)
+
+The WorkerKit adapter should talk only to your `runtime-letta` service. If Letta changes internals later, only that service changes.
+
+---
+
+### Letta Code / MemFS
+
+This is the strongest reason **not** to build Moltwork memory.
+
+Current Letta MemFS is explicitly Git-backed. `system/` files are always included; other memory is progressively disclosed. Letta also distinguishes external memory, agent-owned skills, message recall and dreaming. ([GitHub][3])
+
+[https://github.com/letta-ai/letta-code](https://github.com/letta-ai/letta-code?utm_source=chatgpt.com)
+
+[https://github.com/letta-ai/letta-docs-md/blob/main/concepts/memfs/index.md](https://github.com/letta-ai/letta-docs-md/blob/main/concepts/memfs/index.md?utm_source=chatgpt.com)
+
+This maps almost perfectly onto Moltwork:
+
+```text
+system/
+    identity.md
+    operating-policy.md
+
+research/
+failures/
+decisions/
+skills/
+```
+
+Do **not** copy MemFS into a Moltwork DB.
+
+Record its Git commit/tree digest in `WorkerManifest`.
+
+---
+
+### Agent Skills standard
+
+This has now become a real interoperability primitive rather than merely a Claude convention.
+
+A skill is essentially:
+
+```text
+skill/
+  SKILL.md
+  scripts/
+  references/
+  assets/
+```
+
+with progressive disclosure: metadata is cheap to index; full instructions load on activation; supporting resources load on demand. ([Agent Skills][4])
+
+[https://agentskills.io/specification](https://agentskills.io/specification?utm_source=chatgpt.com)
+
+[https://github.com/anthropics/skills](https://github.com/anthropics/skills?utm_source=chatgpt.com)
+
+[https://github.com/letta-ai/skills](https://github.com/letta-ai/skills?utm_source=chatgpt.com)
+
+**This should be the canonical Moltwork process-asset format.**
+
+Don't create `moltwork-skill.json`.
+
+A promoted procedural asset should simply be an Agent Skill plus Moltwork provenance:
+
+```text
+skills/hackathon-requirements/
+    SKILL.md
+    moltwork.provenance.json
+```
+
+---
+
+# Tier 1 — directly steal these ideas
+
+## 1. Git Context Controller — GCC
+
+This is extremely aligned.
+
+The central primitives are exactly the right ones:
+
+```text
+COMMIT
+BRANCH
+MERGE
+CONTEXT
+```
+
+for context rather than inventing yet another retrieval service. The original paper models long-horizon agent context as a persistent versioned hierarchy. Later revisions report over 80% on SWE-Bench Verified and >13% improvement over strong long-context baselines; the original SWE-Bench-Lite result was 48%, so the apparent conflicting numbers come from different paper revisions/benchmarks. ([arXiv][5])
+
+Paper:
+
+[https://arxiv.org/abs/2508.00031](https://arxiv.org/abs/2508.00031?utm_source=chatgpt.com)
+
+Original project:
+
+[https://github.com/theworldofagents/GCC](https://github.com/theworldofagents/GCC?utm_source=chatgpt.com)
+
+There is also a separate lean GCC-v2-inspired implementation that stores hashes/intents and reconstructs detailed context from Git instead of duplicating verbose summaries:
+
+[https://github.com/faugustdev/git-context-controller](https://github.com/faugustdev/git-context-controller?utm_source=chatgpt.com)
+
+### What Moltwork should steal
+
+Not GCC's agent.
+
+Just:
+
+```text
+checkpoint
+fork
+merge
+reconstruct
+```
+
+You already have real Git.
+
+So WorkerKit needs only a tiny `WorkspaceRef`:
+
+```json
+{
+  "repo": "...",
+  "baseCommit": "...",
+  "branch": "mw/run/123",
+  "headCommit": "...",
+  "worktree": "..."
+}
+```
+
+The rest is Git.
+
+---
+
+# 2. Why Git Is the Memory Solution / Rekal
+
+This is probably the **most directly useful retrieval paper** for Moltwork.
+
+Its important finding isn't merely “store things in Git.” It separates memory questions into different retrieval substrates:
+
+```text
+STRUCTURE question
+→ repository structural map
+
+POINTED historical question
+→ confidence-gated episodes
+
+WHY question
+→ decision synthesis
+```
+
+The paper reports ~0.31 pooled MRR for its retrieval configuration and argues that dumping episodes indiscriminately can actually degrade answers. Routed answers can be much smaller than the underlying recorded history. ([arXiv][6])
+
+Paper:
+
+[https://arxiv.org/abs/2607.14390](https://arxiv.org/abs/2607.14390?utm_source=chatgpt.com)
+
+Implementation:
+
+[https://github.com/rekal-dev/rekal-cli](https://github.com/rekal-dev/rekal-cli?utm_source=chatgpt.com)
+
+### Steal this for `moltwork_lab_context`
+
+This is much better than:
+
+```text
+semantic search everything
+→ shove top 20 chunks into prompt
+```
+
+Use a router:
+
+```text
+"What modules exist?"
+→ inventory / Git tree
+
+"Have we seen this API error?"
+→ trajectory episodes
+
+"Why did we reject approach X?"
+→ decision synthesis
+
+"What actually happened economically?"
+→ WorkerKit ledger
+
+"What procedure do I know?"
+→ SKILL.md
+```
+
+This is an important architectural primitive.
+
+---
+
+# 3. `lhw/opencode-plugin-git-memory`
+
+Your description was accurate. I verified the actual repo.
+
+It stores memory on a detached/orphan `memory/agent` branch using Git blobs, trees and commits, and advances the ref atomically using `git update-ref`. It doesn't dirty the working tree. It also implements compact context loading and time-decay ranking.
+
+[https://github.com/lhw/opencode-plugin-git-memory](https://github.com/lhw/opencode-plugin-git-memory?utm_source=chatgpt.com)
+
+**Do not install its OpenCode memory system into Letta.**
+
+Steal the storage trick.
+
+For Moltwork-generated **Lab memory that is separate from Letta cognition**, detached refs are elegant:
+
+```text
+refs/moltwork/runs
+refs/moltwork/assets
+refs/moltwork/decisions
+```
+
+But Letta MemFS itself should remain Letta's Git repository.
+
+---
+
+# Trajectory: important correction
+
+You don't actually need to choose one trajectory implementation forever.
+
+Define:
+
+```python
+TrajectoryRef(
+    format,
+    schema,
+    uri,
+    sha256,
+    run_id
+)
+```
+
+Then any trajectory standard can plug in.
+
+## Letta `trajectory`
+
+For the **MVP I would use this first**.
+
+It already normalizes:
+
+```text
+Claude Code
+Codex
+Copilot CLI
+Cursor
+Droid
+Gemini CLI
+Hermes
+Letta Code
+OpenClaw
+OpenCode
+OpenHands
+Deep Agents
+...
+```
+
+into one validated model-ready representation. Crucially, Letta Code is already a supported source. ([GitHub][7])
+
+[https://github.com/letta-ai/trajectory](https://github.com/letta-ai/trajectory)
+
+Packages:
+
+```text
+@letta-ai/trajectory
+agent-trajectory
+```
+
+This means your homemade `lab/trajectory.py` should largely disappear.
+
+---
+
+## OpenTrajectory
+
+I would still support this.
+
+It's more explicitly **eval-first**: ordered steps, tool calls, outcomes and evaluator-filled verdicts, with a JSON schema, validator, conformance corpus and OpenTelemetry mapping. Its current adapters include Claude Code, Codex, Antigravity and LangGraph; its reference judge distinguishes harness failures from training/reward problems and product/capability failures. ([GitHub][8])
+
+[https://github.com/abhid1234/opentrajectory](https://github.com/abhid1234/opentrajectory?utm_source=chatgpt.com)
+
+My division would be:
+
+```text
+Letta trajectory
+    = ingestion/normalization layer
+
+OpenTrajectory
+    = optional portable evaluation artifact
+```
+
+Don't make WorkerKit depend on either schema.
+
+WorkerKit stores only:
+
+```text
+TrajectoryRef
+```
+
+That is the nimble design.
+
+---
+
+# Procedural learning frontier
+
+This is where Moltwork should be especially disciplined: **read and steal algorithms; don't turn them into another runtime.**
+
+## MemP — absolutely relevant
+
+Paper:
+
+[https://arxiv.org/abs/2508.06433](https://arxiv.org/abs/2508.06433?utm_source=chatgpt.com)
+
+Code:
+
+[https://github.com/zjunlp/MemP](https://github.com/zjunlp/MemP?utm_source=chatgpt.com)
+
+MemP formalizes procedural memory around:
+
+```text
+BUILD
+RETRIEVE
+UPDATE
+```
+
+and distills trajectories into both step-by-step instructions and higher-level scripts, with correction/deprecation as experience accumulates. ([arXiv][9])
+
+### Moltwork mapping
+
+```text
+BUILD
+→ trajectories + reviews → SkillCandidate
+
+RETRIEVE
+→ Letta Agent Skills discovery
+
+UPDATE
+→ cg experiment → update/extend/deprecate
+```
+
+Do not run MemP as another memory service.
+
+Implement its lifecycle semantics around Agent Skills.
+
+---
+
+# Trace2Skill — probably even more important for your Lab
+
+This appeared in March 2026 and is almost exactly your eventual `Lab → asset` pipeline.
+
+Rather than updating a skill after every individual trace, Trace2Skill analyzes a **pool of trajectories in parallel**, produces trajectory-local lessons, then hierarchically consolidates them into a unified conflict-free skill directory. The authors report cross-model and OOD transfer of the generated declarative skills. ([arXiv][10])
+
+Paper:
+
+[https://arxiv.org/abs/2603.25158](https://arxiv.org/abs/2603.25158?utm_source=chatgpt.com)
+
+Official implementation:
+
+[https://github.com/Qwen-Applications/Trace2Skill](https://github.com/Qwen-Applications/Trace2Skill?utm_source=chatgpt.com)
+
+For Moltwork I'd adopt the **algorithmic shape** almost verbatim:
+
+```text
+5–20 related WorkerRuns
+        ↓
+parallel trajectory analysts
+        ↓
+local lessons
+        ↓
+dedupe/conflict resolution
+        ↓
+SKILL.md candidate
+        ↓
+cg
+        ↓
+promote
+```
+
+That is better than having Letta modify a skill after every run.
+
+---
+
+# ReasoningBank
+
+Paper:
+
+[https://arxiv.org/abs/2509.25140](https://arxiv.org/abs/2509.25140?utm_source=chatgpt.com)
+
+Code:
+
+[https://github.com/google-research/reasoning-bank](https://github.com/google-research/reasoning-bank?utm_source=chatgpt.com)
+
+ReasoningBank explicitly learns from **both success and failure**, distilling generalizable reasoning strategies rather than storing raw trajectories. It then uses retrieved reasoning memories to guide subsequent tasks. ([arXiv][11])
+
+For Moltwork this reinforces:
+
+```text
+FAILED run != worthless run
+```
+
+A rejected hackathon approach can still generate:
+
+```text
+decision
+failure lesson
+test harness
+module
+negative constraint
+```
+
+But ReasoningBank itself does not need to become a dependency.
+
+---
+
+# ReMe — dynamic refinement
+
+Paper:
+
+[https://arxiv.org/abs/2512.10696](https://arxiv.org/abs/2512.10696?utm_source=chatgpt.com)
+
+Current open-source implementation:
+
+[https://github.com/agentscope-ai/ReMe](https://github.com/agentscope-ai/ReMe?iZPWMW=lLIVnG22rC8JWa&utm_source=chatgpt.com)
+
+ReMe focuses on avoiding the “append-only memory dump” failure through success/failure/comparative distillation, context-sensitive reuse and **utility-based refinement/pruning**. The project is now a sizable local-first file/Markdown memory system. ([ACL Anthology][12])
+
+### For Moltwork
+
+Steal:
+
+```text
+utility
+refinement
+deprecation
+```
+
+Don't install ReMe alongside Letta MemFS for MVP.
+
+That would give you two competing memory authorities.
+
+---
+
+# AutoMem
+
+One of the more interesting 2026 results.
+
+Paper:
+
+[https://arxiv.org/abs/2607.01224](https://arxiv.org/abs/2607.01224?utm_source=chatgpt.com)
+
+Code:
+
+[https://github.com/autoLearnMem/AutoMem](https://github.com/autoLearnMem/AutoMem?utm_source=chatgpt.com)
+
+AutoMem treats **memory management itself as a learnable skill**: what to encode, when to retrieve, how to organize. Its experiments isolate memory improvement from the underlying task policy. ([arXiv][13])
+
+This is **post-MVP** but conceptually huge for Moltwork.
+
+Eventually:
+
+```text
+worker skills
+```
+
+and
+
+```text
+worker's skill at managing its own memory
+```
+
+become separate capabilities.
+
+Don't implement this now.
+
+---
+
+# MemSkill
+
+Paper:
+
+[https://arxiv.org/abs/2602.02474](https://arxiv.org/abs/2602.02474?utm_source=chatgpt.com)
+
+Code:
+
+[https://github.com/ViktorAxelsen/MemSkill](https://github.com/ViktorAxelsen/MemSkill?utm_source=chatgpt.com)
+
+MemSkill's key idea is **meta-memory skills**: reusable routines for deciding what to extract, consolidate and forget rather than the memories themselves. ([GitHub][14])
+
+Again: very useful Lab research, **not an MVP dependency**.
+
+---
+
+# SkillRL
+
+Paper:
+
+[https://arxiv.org/abs/2602.08234](https://arxiv.org/abs/2602.08234?utm_source=chatgpt.com)
+
+Code:
+
+[https://github.com/aiming-lab/SkillRL](https://github.com/aiming-lab/SkillRL?utm_source=chatgpt.com)
+
+SkillRL builds hierarchical reusable skills from experience and recursively evolves its SkillBank. ([arXiv][15])
+
+Use it as research for:
+
+```text
+SkillCandidate grouping
+Skill hierarchy
+retrieval
+```
+
+Don't import its RL stack.
+
+---
+
+# SkillOS
+
+Paper:
+
+[https://arxiv.org/abs/2605.06614](https://arxiv.org/abs/2605.06614?utm_source=chatgpt.com)
+
+SkillOS separates:
+
+```text
+frozen executor
++
+trainable skill curator
++
+external SkillRepo
+```
+
+which is extremely close to the correct Moltwork conceptual boundary. ([Hugging Face][16])
+
+That gives you a useful long-term architecture:
+
+```text
+Letta Worker
+= executor
+
+Moltwork Lab
+= curator
+
+MemFS / Agent Skills
+= SkillRepo
+```
+
+Don't make the Worker responsible for deciding whether its own improvements deserve promotion.
+
+That's the Lab/cg role.
+
+I did not find a clearly identified official authors' repository in this search, so I would treat the paper as the canonical resource rather than adopting one of the third-party reproductions.
+
+---
+
+# Agentic Context Engineering — ACE
+
+Paper:
+
+[https://arxiv.org/abs/2510.04618](https://arxiv.org/abs/2510.04618?utm_source=chatgpt.com)
+
+ACE treats context as an evolving playbook and uses generation/reflection/curation with **incremental delta updates** rather than constantly rewriting summaries. It specifically targets “context collapse,” where repeated summarization slowly destroys useful details. ([arXiv][17])
+
+There is an independent MIT-licensed reproduction:
+
+[https://github.com/rrahimi-uci/agentic-context-engineering](https://github.com/rrahimi-uci/agentic-context-engineering?utm_source=chatgpt.com)
+
+This gives you another good rule:
+
+> **Learning promotion should patch context incrementally, not regenerate the entire Worker memory.**
+
+That fits Git perfectly.
+
+---
+
+# AgeMem
+
+Paper:
+
+[https://arxiv.org/abs/2601.01885](https://arxiv.org/abs/2601.01885?utm_source=chatgpt.com)
+
+ACL 2026:
+
+[https://aclanthology.org/2026.acl-long.981/](https://aclanthology.org/2026.acl-long.981/?utm_source=chatgpt.com)
+
+AgeMem models memory operations themselves as agent actions:
+
+```text
+store
+retrieve
+update
+summarize
+discard
+```
+
+and trains them jointly. ([arXiv][18])
+
+Useful frontier direction, but too invasive for the MVP.
+
+Let Letta own that layer.
+
+---
+
+# Git/memory databases: what not to confuse
+
+There are three related but distinct projects in your message.
+
+## Memoria
+
+[https://github.com/matrixorigin/Memoria](https://github.com/matrixorigin/Memoria?utm_source=chatgpt.com)
+
+Memoria gives agent memory database-level:
+
+```text
+snapshot
+branch
+merge
+rollback
+semantic retrieval
+audit
+```
+
+on MatrixOne. ([GitHub][19])
+
+Its underlying data-versioning paper:
+
+[https://arxiv.org/abs/2604.03927](https://arxiv.org/abs/2604.03927?utm_source=chatgpt.com)
+
+MatrixOne itself implements clone/branch/tag/diff/merge/revert through immutable storage + MVCC. ([arXiv][20])
+
+### Verdict
+
+**Watch / borrow semantics. Don't add to the Letta MVP.**
+
+Git is already sufficient at your present scale.
+
+---
+
+## SINT-UA v2.1
+
+This is a **different project**, not Memoria.
+
+It is the one I could verify with:
+
+```text
+hash-chain provenance
+temporal decay
+drift detection
+memory_apply_decay
+git_link_blocks
+git_trace_block
+```
+
+([Glama][21])
+
+So your original note merged two projects together.
+
+Useful ideas:
+
+```text
+last_success_at
+evidence_count
+recency decay
+drift
+Git links
+```
+
+but don't import it as another memory system.
+
+---
+
+# HydraDB
+
+Hydra remains useful, but as the **derived Lab graph**, not memory authority.
+
+[https://github.com/hydra-db/hydradb](https://github.com/hydra-db/hydradb?utm_source=chatgpt.com)
+
+It is currently a Rust object-store-native graph database with OpenCypher, GraphBLAS traversal, Bolt and HTTP. Its object store is durable and local compute/indexing is disposable. ([GitHub][22])
+
+There is also an MCP server:
+
+[https://github.com/hydra-db/hydradb-mcp](https://github.com/hydra-db/hydradb-mcp?utm_source=chatgpt.com)
+
+But I'd **not even make Hydra required for `mwgo init` initially**.
+
+Your invariant remains:
+
+```text
+Git + WorkerKit + receipts
+    = canonical
+
+Hydra
+    = rebuildable projection
+```
+
+---
+
+# The atlas, compressed
+
+This is how I'd classify the frontier for Moltwork.
+
+| Resource         |                       Adopt? | What Moltwork steals              |
+| ---------------- | ---------------------------: | --------------------------------- |
+| Letta Agent SDK  |                      **YES** | runtime                           |
+| Letta MemFS      |                      **YES** | persistent cognition              |
+| Agent Skills     |                      **YES** | procedural artifact standard      |
+| Git worktrees    |                      **YES** | attempt isolation                 |
+| Letta trajectory |                      **YES** | MVP trajectory normalization      |
+| OpenTrajectory   |     **YES, optional format** | eval portability                  |
+| Agent File `.af` |                      **YES** | portable promoted worker          |
+| GCC              |                  **pattern** | commit/branch/merge/context       |
+| Rekal            |                  **pattern** | structural/episode/why router     |
+| lhw git-memory   |                  **pattern** | detached refs + atomic Git writes |
+| MemP             |                **algorithm** | Build/Retrieve/Update             |
+| Trace2Skill      | **algorithm, high priority** | many traces → one skill           |
+| ReasoningBank    |                **algorithm** | learn from failures + successes   |
+| ReMe             |                **algorithm** | utility/refinement/deprecation    |
+| ACE              |                **algorithm** | incremental context mutation      |
+| SkillRL          |                 **research** | skill hierarchy/evolution         |
+| SkillOS          |                 **research** | executor/curator separation       |
+| MemSkill         |                 **research** | memory-management skills          |
+| AutoMem          |                 **research** | learn metamemory                  |
+| AgeMem           |                 **research** | memory actions as policy          |
+| Memoria          |                    **watch** | database-scale memory branches    |
+| SINT-UA          |                 **patterns** | temporal decay/provenance         |
+| HydraDB          |                 **optional** | Lab graph/index                   |
+
+---
+
+# The smallest Moltwork interfaces
+
+This is what I would actually encode so you remain nimble.
+
+### 1. RuntimeAdapter
+
+```python
+execute(
+    worker_ref,
+    work_order,
+    workspace_ref,
+    policy,
+    event_sink
+) -> ExecutionResult
+```
+
+Today:
+
+```text
+Letta
+```
+
+Tomorrow:
+
+```text
+OpenHands
+Hermes
+whatever wins
+```
+
+---
+
+### 2. MemoryRef
+
+```python
+MemoryRef(
+    provider="letta-memfs",
+    commit="abc123",
+    tree_digest="sha256:..."
+)
+```
+
+Moltwork doesn't implement memory.
+
+---
+
+### 3. WorkspaceRef
+
+```python
+WorkspaceRef(
+    provider="git",
+    base_commit,
+    branch,
+    head_commit
+)
+```
+
+GCC semantics sit above this.
+
+---
+
+### 4. TrajectoryRef
+
+```python
+TrajectoryRef(
+    format="letta-trajectory-v1",
+    uri="...",
+    sha256="..."
+)
+```
+
+or:
+
+```python
+format="opentrajectory-0.1"
+```
+
+WorkerKit does not care.
+
+---
+
+### 5. SkillRef
+
+Use the Agent Skills standard:
+
+```python
+SkillRef(
+    format="agent-skills",
+    uri="skills/foo",
+    git_commit="...",
+    sha256="..."
+)
+```
+
+No bespoke schema.
+
+---
+
+### 6. LearningProposal
+
+This is one of the few things Moltwork **should** own:
+
+```text
+evidence runs
++
+candidate patch
++
+hypothesis
++
+target memory/skill
+```
+
+because Moltwork is deciding whether an economic Worker version changes.
+
+---
+
+### 7. PromotionResult
+
+Also Moltwork-owned:
+
+```text
+parent WorkerManifest
+candidate WorkerManifest
+evaluation suite
+before/after metrics
+gate regressions
+decision
+```
+
+This is your `cg`.
+
+---
+
+# What I would change in `mw` immediately
+
+The key shift is to **delete abstractions rather than add them**.
+
+```text
+REMOVE / DEPRECATE
+────────────────────────────────
+old Letta REST adapter
+homemade trajectory schema
+generic memory database ambitions
+agent-side automatic skill promotion
+task-specific orchestrators in WorkerKit
+
+
+KEEP / HARDEN
+────────────────────────────────
+WorkerKit
+EventLedger
+RunMeter
+VerificationResult
+CommitGate
+receipts
+WorkerManifest
+Git worktree refs
+Lab Brief
+cg
+
+
+UPSTREAM
+────────────────────────────────
+execution          → Letta Agent SDK
+agent memory       → MemFS
+procedures         → Agent Skills
+trajectory ingest  → letta-ai/trajectory
+portable eval      → OpenTrajectory
+worker package     → Agent File
+workspace/version  → Git
+
+
+STEAL ALGORITHMS
+────────────────────────────────
+context operations → GCC
+memory routing     → Rekal
+skill build/update → MemP
+skill synthesis    → Trace2Skill
+success/fail learn → ReasoningBank
+pruning            → ReMe
+delta updates      → ACE
+```
+
+That is the canonical architecture I would put into the repo.
+
+And for the **first actual learning implementation**, I would use:
+
+```text
+Letta execution
+      ↓
+@letta-ai/trajectory
+      ↓
+WorkerKit Verification + reviewer + outcome
+      ↓
+group 5–10 related trajectories
+      ↓
+Trace2Skill-style parallel analysis
+      ↓
+MemP-style BUILD/UPDATE
+      ↓
+Agent Skills-compatible SKILL.md candidate
+      ↓
+cg held-out experiment
+      ↓
+PASS
+      ↓
+MemFS Git commit
+      ↓
+WorkerManifest vN+1
+```
+
+That is minimal, uses the frontier rather than competing with it, and preserves exactly what makes Moltwork distinct: **the evidence-backed economic lifecycle around a worker that can continuously accumulate productive capital without Moltwork having to own the agent harness.**
+
+[1]: https://github.com/letta-ai/letta-agent-sdk?utm_source=chatgpt.com "GitHub - letta-ai/letta-agent-sdk: The SDK interface to Letta Code. Build deeply personalized agents with persistent memory that learn over time. · GitHub"
+[2]: https://github.com/letta-ai/letta-code?utm_source=chatgpt.com "GitHub - letta-ai/letta-code: The memory-first coding agent · GitHub"
+[3]: https://github.com/letta-ai/letta-code/blob/main/src/agent/prompts/letta_local_memfs.md?utm_source=chatgpt.com "letta-code/src/agent/prompts/letta_local_memfs.md at main · letta-ai/letta-code · GitHub"
+[4]: https://agentskills.io/specification?utm_source=chatgpt.com "Specification - Agent Skills"
+[5]: https://arxiv.org/abs/2508.00031?utm_source=chatgpt.com "Git Context Controller: Manage the Context of LLM-based Agents like Git"
+[6]: https://arxiv.org/abs/2607.14390?utm_source=chatgpt.com "Why Git Is the Memory Solution for the Agentic Development Lifecycle"
+[7]: https://github.com/letta-ai/trajectory "GitHub - letta-ai/trajectory: Convert sessions across harnesses to a unified trajectory format - designed to be consumed by agents (e.g. for memory formation, dreaming, search) · GitHub"
+[8]: https://github.com/abhid1234/opentrajectory?utm_source=chatgpt.com "GitHub - abhid1234/opentrajectory: The open, vendor-neutral format for AI agent trajectories — a zero-dependency capture SDK + the reference Inspector that reads and scores it. Cross-harness, eval-first. · GitHub"
+[9]: https://arxiv.org/abs/2508.06433?utm_source=chatgpt.com "Memp: Exploring Agent Procedural Memory"
+[10]: https://arxiv.org/abs/2603.25158?utm_source=chatgpt.com "Trace2Skill: Distill Trajectory-Local Lessons into Transferable Agent Skills"
+[11]: https://arxiv.org/abs/2509.25140?utm_source=chatgpt.com "ReasoningBank: Scaling Agent Self-Evolving with Reasoning Memory"
+[12]: https://aclanthology.org/2026.findings-acl.829/?utm_source=chatgpt.com "Remember Me, Refine Me: A Dynamic Procedural Memory Framework for Experience-Driven Agent Evolution - ACL Anthology"
+[13]: https://arxiv.org/abs/2607.01224?utm_source=chatgpt.com "AutoMem: Automated Learning of Memory as a Cognitive Skill"
+[14]: https://github.com/ViktorAxelsen/MemSkill?utm_source=chatgpt.com "GitHub - ViktorAxelsen/MemSkill: MemSkill: Learning and Evolving Memory Skills for Self-Evolving Agents · GitHub"
+[15]: https://arxiv.org/abs/2602.08234?utm_source=chatgpt.com "SkillRL: Evolving Agents via Recursive Skill-Augmented Reinforcement Learning"
+[16]: https://huggingface.co/papers/2605.06614?utm_source=chatgpt.com "Paper page - SkillOS: Learning Skill Curation for Self-Evolving Agents"
+[17]: https://arxiv.org/abs/2510.04618?utm_source=chatgpt.com "Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models"
+[18]: https://arxiv.org/abs/2601.01885?utm_source=chatgpt.com "Agentic Memory: Learning Unified Long-Term and Short-Term Memory Management for Large Language Model Agents"
+[19]: https://github.com/matrixorigin/Memoria?utm_source=chatgpt.com "GitHub - matrixorigin/Memoria: Secure memory management for AI Agents • Ensures data integrity • Reduces hallucinations • Maintains consistent long-term context · GitHub"
+[20]: https://arxiv.org/abs/2604.03927?utm_source=chatgpt.com "Version Control System for Data with MatrixOne"
+[21]: https://glama.ai/mcp/servers/kostyk348/sint-ua-v2.1?utm_source=chatgpt.com "sint-memory by kostyk348 | Glama"
+[22]: https://github.com/hydra-db/hydradb/blob/main/AGENTS.md?utm_source=chatgpt.com "hydradb/AGENTS.md at main · hydra-db/hydradb · GitHub"

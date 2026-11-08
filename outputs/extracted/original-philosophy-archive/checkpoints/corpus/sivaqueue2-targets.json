@@ -1,0 +1,2186 @@
+{
+  "schema": "patala:sivaqueue2:targets:v1",
+  "note": "Second-corpus tranche #101-200 from sivaqueue2-translation-guide.md (2026-08-12). Download URLs only where a direct witness was identified; most are catalogue/manuscript targets.",
+  "n_targets": 100,
+  "targets": {
+    "kriyakandakramavali": {
+      "work_id": "kriyakandakramavali",
+      "name": "Kriyākāṇḍakramāvalī / Somaśambhupaddhati — Somaśambhu",
+      "num": 101,
+      "section": "101-150",
+      "translation_status": "EN-GAP",
+      "download_url": "https://www.archive.org/download/karmakandakramav014939mbp/karmakandakramav014939mbp.pdf",
+      "source": "archive.org",
+      "acquired": true,
+      "acquired_files": [
+        "kriyakandakramavali/kriyakandakramavali.txt",
+        "kriyakandakramavali/kriyakandakramavali.pdf"
+      ],
+      "on_disk": true,
+      "acquisition_status": "acquired",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "somashambhupaddhativyakhya": {
+      "work_id": "somashambhupaddhativyakhya",
+      "name": "Somaśambhupaddhativyākhyā — Trilocanaśiva",
+      "num": 102,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "siddhantasamuccaya": {
+      "work_id": "siddhantasamuccaya",
+      "name": "Siddhāntasamuccaya / Siddhāntārthasamuccaya — Trilocanaśiva",
+      "num": 103,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "siddhantarahasyasara": {
+      "work_id": "siddhantarahasyasara",
+      "name": "Siddhāntarahasyasāra — Trilocanaśiva",
+      "num": 104,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "sataratnasamgraha": {
+      "work_id": "sataratnasamgraha",
+      "name": "Śataratnasaṃgraha",
+      "num": 105,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "sataratnollekhanii": {
+      "work_id": "sataratnollekhanii",
+      "name": "Śataratnollekhanī",
+      "num": 106,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "siddhantaprakasika": {
+      "work_id": "siddhantaprakasika",
+      "name": "Siddhāntaprakāśikā — Sarvātmaśambhu",
+      "num": 107,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "tattvaratnavali": {
+      "work_id": "tattvaratnavali",
+      "name": "Tattvaratnāvalī / Atyantanirmalatattvaratnāvalī — Vimalaśiva",
+      "num": 108,
+      "section": "101-150",
+      "translation_status": "U/fragmentary",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "siddhantasekhara": {
+      "work_id": "siddhantasekhara",
+      "name": "Siddhāntaśekhara — Viśvanātha",
+      "num": 109,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": "https://www.ifpindia.org/transcripts/pdf/T0969.pdf",
+      "source": "ifpindia",
+      "acquired": true,
+      "acquired_files": [
+        "siddhantasekhara/siddhantasekhara.pdf"
+      ],
+      "on_disk": true,
+      "acquisition_status": "acquired",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "mrgendrapaddhati": {
+      "work_id": "mrgendrapaddhati",
+      "name": "Mṛgendrapaddhati — Aghoraśiva",
+      "num": 110,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "mrgendrapaddhatitika": {
+      "work_id": "mrgendrapaddhatitika",
+      "name": "Mṛgendrapaddhatiṭīkā — Vaktraśambhu",
+      "num": 111,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "prasadapaddhati": {
+      "work_id": "prasadapaddhati",
+      "name": "Prāsādapaddhati — Prāsādaśiva",
+      "num": 112,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "pratisthasarapaddhati": {
+      "work_id": "pratisthasarapaddhati",
+      "name": "Pratiṣṭhāsārapaddhati",
+      "num": 113,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "sisyasamskarapaddhati": {
+      "work_id": "sisyasamskarapaddhati",
+      "name": "Śiṣyasaṃskārapaddhati",
+      "num": 114,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 950,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "kaladiksapaddhati": {
+      "work_id": "kaladiksapaddhati",
+      "name": "Kalādīkṣāpaddhati — Manodadatta",
+      "num": 115,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 950,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "agnikaryapaddhati": {
+      "work_id": "agnikaryapaddhati",
+      "name": "Agnikāryapaddhati",
+      "num": 116,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 950,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "sivanirvanapaddhati": {
+      "work_id": "sivanirvanapaddhati",
+      "name": "Śivanirvāṇapaddhati",
+      "num": 117,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": "https://archive.org/details/karmakandam-caturthapustakam",
+      "source": "archive.org",
+      "acquired": true,
+      "acquired_files": [
+        "sivanirvanapaddhati/sivanirvanapaddhati.txt",
+        "sivanirvanapaddhati/sivanirvanapaddhati.pdf"
+      ],
+      "on_disk": true,
+      "acquisition_status": "acquired",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 950,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "gurupustika": {
+      "work_id": "gurupustika",
+      "name": "Gurupustikā / Gurupustaka — Śitikaṇṭha",
+      "num": 118,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1150,
+        "approximate": true
+      }
+    },
+    "svacchandabhairavapujapaddhati": {
+      "work_id": "svacchandabhairavapujapaddhati",
+      "name": "Svacchandabhairavapūjāpaddhati",
+      "num": 119,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1150,
+        "approximate": true
+      }
+    },
+    "svacchandadevarcanavidhi": {
+      "work_id": "svacchandadevarcanavidhi",
+      "name": "Svacchandadevārcanavidhi",
+      "num": 120,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1000,
+        "end": 1150,
+        "approximate": true
+      }
+    },
+    "apratihatamahadiksasutippanaka": {
+      "work_id": "apratihatamahadiksasutippanaka",
+      "name": "Apratihatamahādīkṣāsuṭippaṇaka / Netroddyota — Viśveśvara",
+      "num": 121,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "amrtevarapujana": {
+      "work_id": "amrtevarapujana",
+      "name": "Amṛteśvarapūjana — Abhayamalla",
+      "num": 122,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "amrtevarapujagnikaryavidhana": {
+      "work_id": "amrtevarapujagnikaryavidhana",
+      "name": "Amṛteśvarapūjāgnikāryavidhāna",
+      "num": 123,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "amrtasuryapujavidhi": {
+      "work_id": "amrtasuryapujavidhi",
+      "name": "Amṛtasūryapūjāvidhi",
+      "num": 124,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "amrtabhairavarcanavidhi": {
+      "work_id": "amrtabhairavarcanavidhi",
+      "name": "Amṛtabhairavārcanavidhi",
+      "num": 125,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "amrtisabhairavabhattarakahnikavidhi": {
+      "work_id": "amrtisabhairavabhattarakahnikavidhi",
+      "name": "Amṛtīśabhairavabhaṭṭārakāhnikavidhi",
+      "num": 126,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "amrtasuryarcanavidhi": {
+      "work_id": "amrtasuryarcanavidhi",
+      "name": "Amṛtasūryārcanavidhi",
+      "num": 127,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kashmirian Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1200,
+        "end": 1300,
+        "approximate": true
+      }
+    },
+    "devitantrasadbhavasara": {
+      "work_id": "devitantrasadbhavasara",
+      "name": "Devītantrasadbhāvasāra",
+      "num": 128,
+      "section": "101-150",
+      "translation_status": "U/fragment",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kaula",
+        "Śākta"
+      ],
+      "period": {
+        "start": 700,
+        "end": 1000,
+        "approximate": true
+      }
+    },
+    "matrsadbhava": {
+      "work_id": "matrsadbhava",
+      "name": "Mātṛsadbhāva",
+      "num": 129,
+      "section": "101-150",
+      "translation_status": "U-EN/major",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Kaula",
+        "Śākta"
+      ],
+      "period": {
+        "start": 700,
+        "end": 1000,
+        "approximate": true
+      }
+    },
+    "tantrarajatantravatarastotra": {
+      "work_id": "tantrarajatantravatarastotra",
+      "name": "Tantrarājatantrāvatārastotra — Viśvāvarta",
+      "num": 130,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Krama"
+      ],
+      "period": {
+        "start": 800,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "urdhvamnayapavitrarohanadamanarohanapaddhati": {
+      "work_id": "urdhvamnayapavitrarohanadamanarohanapaddhati",
+      "name": "Ūrdhvāmnāyapavitrārohaṇadamanārohaṇapaddhati",
+      "num": 131,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Krama"
+      ],
+      "period": {
+        "start": 800,
+        "end": 1200,
+        "approximate": true
+      }
+    },
+    "paratrisikalaghuvrttivimarsini": {
+      "work_id": "paratrisikalaghuvrttivimarsini",
+      "name": "Parātrīśikālaghuvṛttivimarśinī — Kṛṣṇadāsa",
+      "num": 132,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "paratrisikatatparyadipika": {
+      "work_id": "paratrisikatatparyadipika",
+      "name": "Parātrīśikātātparyadīpikā",
+      "num": 133,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "anuttarasamvidarcanacarca": {
+      "work_id": "anuttarasamvidarcanacarca",
+      "name": "Anuttarasaṃvidarcanācarcā",
+      "num": 134,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "pararcanakrama": {
+      "work_id": "pararcanakrama",
+      "name": "Parārcanakrama",
+      "num": 135,
+      "section": "101-150",
+      "translation_status": "U/incomplete",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "parakramavasana": {
+      "work_id": "parakramavasana",
+      "name": "Parākramavāsanā",
+      "num": 136,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "paramasivadvaitakalpalatika": {
+      "work_id": "paramasivadvaitakalpalatika",
+      "name": "Paramaśivādvaitakalpalatikā — Śāmbhavānanda",
+      "num": 137,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "anandakalpavalli": {
+      "work_id": "anandakalpavalli",
+      "name": "Ānandakalpavallī — Maheśvaratejānanda",
+      "num": 138,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "parapujaprayoga": {
+      "work_id": "parapujaprayoga",
+      "name": "Parāpūjāprayoga",
+      "num": 139,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "maharthamulasamketasutra": {
+      "work_id": "maharthamulasamketasutra",
+      "name": "Mahārthamūlasaṃketasūtra — Paraśambhudeva",
+      "num": 140,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "anuttaraprakasapancasika": {
+      "work_id": "anuttaraprakasapancasika",
+      "name": "Anuttaraprakāśapañcāśikā / Parāpañcāśikā — Ādyanātha",
+      "num": 141,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "parapravesika": {
+      "work_id": "parapravesika",
+      "name": "Parāprāveśikā / Svarūpaprakāśikā — Nāgānanda",
+      "num": 142,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "svarupavimarsini": {
+      "work_id": "svarupavimarsini",
+      "name": "Svarūpavimarśinī — Cidānanda",
+      "num": 143,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "naganandasutravivarana": {
+      "work_id": "naganandasutravivarana",
+      "name": "Nāgānandasūtravivaraṇa — Heddase Hariharaśarman",
+      "num": 144,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "anuttarapaddhati": {
+      "work_id": "anuttarapaddhati",
+      "name": "Anuttarapaddhati",
+      "num": 145,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Trika",
+        "Anuttara",
+        "Pratyabhijñā"
+      ],
+      "period": {
+        "start": 1400,
+        "end": 1700,
+        "approximate": true
+      }
+    },
+    "padyavahini": {
+      "work_id": "padyavahini",
+      "name": "Padyavāhinī — Śaṅkara",
+      "num": 146,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 1300,
+        "end": 1400,
+        "approximate": true
+      }
+    },
+    "saivakalpadruma": {
+      "work_id": "saivakalpadruma",
+      "name": "Śaivakalpadruma — Lakṣmīdhara",
+      "num": 147,
+      "section": "101-150",
+      "translation_status": "U/unpublished",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1500,
+        "approximate": true
+      }
+    },
+    "sivavakyavali": {
+      "work_id": "sivavakyavali",
+      "name": "Śivavākyāvalī — Caṇḍeśvara",
+      "num": 148,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1500,
+        "approximate": true
+      }
+    },
+    "saivamanasollasa": {
+      "work_id": "saivamanasollasa",
+      "name": "Śaivamānasollāsa — Caṇḍeśvara",
+      "num": 149,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1500,
+        "approximate": true
+      }
+    },
+    "saivasarvasvasara": {
+      "work_id": "saivasarvasvasara",
+      "name": "Śaivasarvasvasāra — Vidyāpati",
+      "num": 150,
+      "section": "101-150",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1500,
+        "approximate": true
+      }
+    },
+    "kamikagama": {
+      "work_id": "kamikagama",
+      "name": "Kāmikāgama",
+      "num": 151,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": "https://ia902806.us.archive.org/26/items/AgamaAcademyBooks/Agama%20Academy/Agamam%20-Moolam/Kamika-Agama-English-Intro.pdf",
+      "source": "archive.org",
+      "acquired": true,
+      "acquired_files": [
+        "kamikagama/kamikagama.pdf"
+      ],
+      "on_disk": true,
+      "acquisition_status": "acquired",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "yogajagama": {
+      "work_id": "yogajagama",
+      "name": "Yogajāgama",
+      "num": 152,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "cintyagama": {
+      "work_id": "cintyagama",
+      "name": "Cintyāgama",
+      "num": 153,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "ajitagama": {
+      "work_id": "ajitagama",
+      "name": "Ajitāgama",
+      "num": 154,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": "https://archive.org/details/in.ernet.dli.2015.424435",
+      "source": "archive.org",
+      "acquired": true,
+      "acquired_files": [
+        "ajitagama/ajitagama_vol1.txt",
+        "ajitagama/ajitagama_vol1_text.pdf",
+        "ajitagama/ajitagama_vol2_text.pdf"
+      ],
+      "on_disk": true,
+      "acquisition_status": "acquired",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "diptagama": {
+      "work_id": "diptagama",
+      "name": "Dīptāgama",
+      "num": 155,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "suksmagama": {
+      "work_id": "suksmagama",
+      "name": "Sūkṣmāgama",
+      "num": 156,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "amsumadagama": {
+      "work_id": "amsumadagama",
+      "name": "Aṃśumad / Aṃśumadbhedāgama",
+      "num": 157,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "suprabhedagama": {
+      "work_id": "suprabhedagama",
+      "name": "Suprabhedāgama",
+      "num": 158,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "vijayagama": {
+      "work_id": "vijayagama",
+      "name": "Vijayāgama",
+      "num": 159,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "analagama": {
+      "work_id": "analagama",
+      "name": "Analāgama",
+      "num": 160,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "viraagama": {
+      "work_id": "viraagama",
+      "name": "Vīrāgama / Vīrottara recension",
+      "num": 161,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "vimalagama": {
+      "work_id": "vimalagama",
+      "name": "Vimalāgama",
+      "num": 162,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "bimbagama": {
+      "work_id": "bimbagama",
+      "name": "Bimbāgama",
+      "num": 163,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "prodigitagama": {
+      "work_id": "prodigitagama",
+      "name": "Prodgītāgama",
+      "num": 164,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "lalitagama": {
+      "work_id": "lalitagama",
+      "name": "Lalitāgama",
+      "num": 165,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "siddhagama": {
+      "work_id": "siddhagama",
+      "name": "Siddhāgama",
+      "num": 166,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "santanagama": {
+      "work_id": "santanagama",
+      "name": "Santānāgama",
+      "num": 167,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "sarvoktagama": {
+      "work_id": "sarvoktagama",
+      "name": "Sarvoktāgama",
+      "num": 168,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "karanagama": {
+      "work_id": "karanagama",
+      "name": "Kāraṇāgama — untranslated remainder only",
+      "num": 169,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "makutagama": {
+      "work_id": "makutagama",
+      "name": "Makuṭāgama — untranslated remainder only",
+      "num": 170,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "candrajnanagama": {
+      "work_id": "candrajnanagama",
+      "name": "Candrajñānāgama — untranslated remainder only",
+      "num": 171,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "sarvajnanottara2": {
+      "work_id": "sarvajnanottara2",
+      "name": "Sarvajñānottara — non-Yoga / non-translated portions",
+      "num": 172,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "mrgendratantra2": {
+      "work_id": "mrgendratantra2",
+      "name": "Mṛgendratantra — portions without scholarly English",
+      "num": 173,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "kiranatantra2": {
+      "work_id": "kiranatantra2",
+      "name": "Kiraṇatantra — root-text remainder",
+      "num": 174,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "brhatkalottara2": {
+      "work_id": "brhatkalottara2",
+      "name": "Bṛhatkālottara — non-edited/non-translated sections",
+      "num": 175,
+      "section": "151-175",
+      "translation_status": "EN-GAP",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta"
+      ],
+      "period": {
+        "start": 600,
+        "end": 1100,
+        "approximate": true
+      }
+    },
+    "jnanassiddhyagama": {
+      "work_id": "jnanassiddhyagama",
+      "name": "Jñānasiddhyāgama",
+      "num": 176,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "cidambaresvaranityapujasutra": {
+      "work_id": "cidambaresvaranityapujasutra",
+      "name": "Cidambareśvaranityapūjāsūtra",
+      "num": 177,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "citsabhesotsavasutra": {
+      "work_id": "citsabhesotsavasutra",
+      "name": "Citsabheśotsavasūtra",
+      "num": 178,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "pauskarabhasya": {
+      "work_id": "pauskarabhasya",
+      "name": "Pauṣkarabhāṣya — Umāpatiśiva",
+      "num": 179,
+      "section": "176-200",
+      "translation_status": "U-EN/high",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "kriyasara": {
+      "work_id": "kriyasara",
+      "name": "Kriyāsāra — Nīlakaṇṭhaśivācārya",
+      "num": 180,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "anubhavasutra": {
+      "work_id": "anubhavasutra",
+      "name": "Anubhavasūtra — Māyideva",
+      "num": 181,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "maritontadarya_siddhantashikhamani": {
+      "work_id": "maritontadarya_siddhantashikhamani",
+      "name": "Maritōṇṭadārya's commentary on Siddhāntaśikhāmaṇi",
+      "num": 182,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "lingadharanacandrika": {
+      "work_id": "lingadharanacandrika",
+      "name": "Liṅgadhāraṇacandrikā — Nandikeśvara",
+      "num": 183,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "pancaratna": {
+      "work_id": "pancaratna",
+      "name": "Pañcaratna — Vīraṇārādhya",
+      "num": 184,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "pancaratna_commentary": {
+      "work_id": "pancaratna_commentary",
+      "name": "Pañcaratna commentary — Sosale Revaṇārādhya",
+      "num": 185,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "pramathaganapaddhati": {
+      "work_id": "pramathaganapaddhati",
+      "name": "Pramathagaṇapaddhati — Sosale Revaṇārādhya",
+      "num": 186,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "anadivirasaivacarasamgraha": {
+      "work_id": "anadivirasaivacarasamgraha",
+      "name": "Anādivīraśaivācārasaṃgraha — Sampādanasiddha-Vīraṇaśivayogin",
+      "num": 187,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "virasaivacarasroddharabhasya": {
+      "work_id": "virasaivacarasroddharabhasya",
+      "name": "Vīraśaivācārasāroddhārabhāṣya — Somanātha",
+      "num": 188,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "viramaheswaracarasamgraha": {
+      "work_id": "viramaheswaracarasamgraha",
+      "name": "Vīramāheśvarācārasaṃgraha — Nīlakaṇṭhagaṇanātha",
+      "num": 189,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "virasaivasiddhantottarakaumudi": {
+      "work_id": "virasaivasiddhantottarakaumudi",
+      "name": "Vīraśaivasiddhāntottarakaumudī — Vīrabhadrārādhya",
+      "num": 190,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "vivekacintamani": {
+      "work_id": "vivekacintamani",
+      "name": "Vivekacintāmaṇi — Liṅgarāja",
+      "num": 191,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "sivadvaitanirnaya": {
+      "work_id": "sivadvaitanirnaya",
+      "name": "Śivādvaitanirṇaya — Appayyadīkṣita",
+      "num": 192,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "vedantasarvasvasivadarpana": {
+      "work_id": "vedantasarvasvasivadarpana",
+      "name": "Vedāntasarvasvaśivadarpaṇa — Brahmavidyādhvarīndra",
+      "num": 193,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "sivarcanacandrika": {
+      "work_id": "sivarcanacandrika",
+      "name": "Śivārcanacandrikā — Appayyadīkṣita",
+      "num": 194,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "saivagamaparibhasamanjari": {
+      "work_id": "saivagamaparibhasamanjari",
+      "name": "Śaivāgamaparibhāṣāmañjarī — Nigamajñāna II",
+      "num": 195,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "atmarthapujapaddhati": {
+      "work_id": "atmarthapujapaddhati",
+      "name": "Ātmārthapūjāpaddhati — Nigamajñāna II",
+      "num": 196,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "diksadarsa": {
+      "work_id": "diksadarsa",
+      "name": "Dīkṣādarśa — Nigamajñāna II",
+      "num": 197,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "asaucadipika": {
+      "work_id": "asaucadipika",
+      "name": "Āśaucadīpikā — Nigamajñāna II",
+      "num": 198,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "sivanityapujapaddhati": {
+      "work_id": "sivanityapujapaddhati",
+      "name": "Śivanityapūjāpaddhati",
+      "num": 199,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    },
+    "sivatandavatantratika": {
+      "work_id": "sivatandavatantratika",
+      "name": "Śivatāṇḍavatantraṭīkā",
+      "num": 200,
+      "section": "176-200",
+      "translation_status": "U-EN",
+      "download_url": null,
+      "source": null,
+      "acquired": false,
+      "acquired_files": [],
+      "on_disk": false,
+      "acquisition_status": "missing",
+      "tradition": [
+        "Śaiva Siddhānta",
+        "Vīraśaiva"
+      ],
+      "period": {
+        "start": 1100,
+        "end": 1600,
+        "approximate": true
+      }
+    }
+  },
+  "on_disk": {},
+  "n_on_disk": 5,
+  "acquisition_summary": {
+    "acquired": 5,
+    "missing": 95
+  }
+}

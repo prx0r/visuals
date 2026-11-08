@@ -1,0 +1,612 @@
+he real product category is:
+
+Things an agent could theoretically figure out, but would irrationally spend time/tokens/integration effort figuring out when a trusted machine can answer for $0.003.
+
+Your repo already states the important version of this: frontier-model reasoning is not the product; verified external capability is.
+
+And the timing is unusually good. Cloudflare now directly supports agents discovering and paying HTTP/MCP services through 402 Payment Required; MPP supports one-off charges, metered sessions, subscriptions, stablecoins and cards, while remaining compatible with x402. (Cloudflare Docs) x402's Bazaar also lets agents discover paid endpoints automatically rather than knowing them in advance. (x402)
+
+The fundamental economic insight
+
+Imagine an agent needs to know:
+
+“Is foo@example.com probably deliverable?”
+
+It has two choices.
+
+Option A: solve it.
+
+It needs to remember email syntax rules, normalize the address, query DNS, understand MX records, potentially investigate SMTP behavior, decide which signals are trustworthy, deal with timeouts, interpret weird responses, then construct an answer.
+
+Maybe that burns:
+
+4 tool calls
+
+8k tokens
+
+3 seconds
+
+multiple failure modes
+
+Option B:
+
+verify.email({
+  email: "foo@example.com"
+})
+
+Response:
+
+{
+  "status": "likely_deliverable",
+  "confidence": 0.96,
+  "mx": true,
+  "disposable": false,
+  "catch_all": false,
+  "observed_at": "...",
+  "evidence": [...]
+}
+
+Cost:
+
+$0.003
+
+The model doesn't ask:
+
+“Can I do this myself?”
+
+It asks:
+
+“Is figuring this out myself worth more than three-tenths of a cent?”
+
+That is a radically lower bar.
+
+What ChatGPT/agents actually suck at
+
+There are roughly six classes of external capabilities that remain valuable even as models become much smarter.
+
+1. Knowing reality right now
+
+LLMs are bad substitutes for sensors.
+
+Examples:
+
+domain.available
+dns.propagated
+url.live
+mcp.live
+api.price_now
+package.latest_safe_version
+email.mx_status
+tls.certificate_status
+oauth.endpoint_behavior
+cloud.provider_status
+
+ChatGPT can understand all of these.
+
+It cannot derive their present state from pure reasoning.
+
+This is probably your largest category.
+
+2. Knowing reality from somewhere expensive/annoying
+
+This is even stronger.
+
+For example:
+
+phone.carrier
+phone.line_type
+email.reputation
+company.registry
+address.normalize
+ip.risk
+domain.history
+package.risk
+business.details
+
+The agent could find a provider.
+
+But then it needs:
+
+discover provider
+→ compare providers
+→ create account
+→ manage API key
+→ understand pricing
+→ understand schema
+→ call API
+→ normalize result
+
+This is exactly what machine payments destroy.
+
+Agent:
+
+phone.inspect("+44...")
+
+→ 402 $0.004
+
+→ result
+
+Done.
+
+You're arbitraging integration friction.
+
+That may be more important than arbitraging compute.
+
+3. Performing an experiment instead of guessing
+
+This is where several of your repo ideas become excellent.
+
+Your MCPTrust, MCPDrift, AgentCheckoutTest, MCPAuthDoctor, etc. aren't really databases.
+
+They're tiny laboratories.
+
+Instead of asking:
+
+“Does this MCP server support OAuth correctly?”
+
+The tool actually tries it.
+
+Instead of:
+
+“Would this autonomous checkout probably work?”
+
+It executes:
+
+discover
+→ connect
+→ authenticate
+→ request
+→ payment challenge
+→ pay/test
+→ obtain result
+→ validate schema
+
+Then returns:
+
+{
+  "works": true,
+  "tested_at": "...",
+  "latency_ms": 481,
+  "payment": "x402",
+  "result_schema_valid": true,
+  "evidence_id": "..."
+}
+
+LLMs are very good at predicting what should happen.
+
+They're much weaker than execution at telling you what did happen.
+
+That distinction is enormously monetizable.
+
+4. Compressing 10 annoying operations into one decision
+
+This may be the biggest TinyTools opportunity.
+
+Don't sell:
+
+dns.lookup
+
+Sell:
+
+domain.safe_to_switch_dns
+
+Don't sell:
+
+robots.fetch
+
+Sell:
+
+site.agent_accessible
+
+Don't sell:
+
+provider.pricing
+
+Sell:
+
+llm.cheapest_for(requirements)
+
+Don't sell:
+
+oauth.metadata
+
+Sell:
+
+oauth.compatible(client, server)
+
+This is exactly the progression you've already written:
+
+RAW STANDARD
+    ↓
+NORMALIZED ANSWER
+    ↓
+COMPOSED DECISION
+    ↓
+HISTORICAL OBSERVATIONS
+    ↓
+CROSS-DOMAIN DISCOVERY GRAPH
+
+That is probably the correct product ladder.
+
+5. Remembering things nobody else remembered
+
+This is where you get a real moat.
+
+Current DNS?
+
+Commodity.
+
+DNS over the last 18 months?
+
+Interesting.
+
+Current MCP schema?
+
+Commodity.
+
+Every observed schema change + outage + latency distribution?
+
+Valuable.
+
+Current API price?
+
+Commodity.
+
+Actual price history + effective realized cost + reliability?
+
+Very valuable.
+
+Your event-sourcing work matters here.
+
+Each cheap call should potentially produce another observation:
+
+agent request
+    ↓
+live probe
+    ↓
+answer
+    ↓
+timestamped observation
+    ↓
+historical dataset
+    ↓
+better future answer
+
+Eventually:
+
+"MCP A advertises 99.9% uptime"
+
+vs
+
+"We've executed it 81,492 times.
+30d success = 98.73%.
+p50 = 184ms.
+p95 = 2.8s.
+OAuth failures increased 300% this week."
+
+The second one is something ChatGPT cannot recreate.
+
+Your cross-project review is already heading directly toward this with evidence-backed pricing, reliability reputation, automated discovery and cross-provider benchmarking.
+
+6. Taking responsibility for a deterministic decision
+
+There's another subtle category:
+
+Agent doesn't want an opinion. It wants a gate.
+
+For example:
+
+dns_write.safe?
+oauth_redirect.safe?
+package.safe_to_install?
+api_change.breaking?
+email.safe_to_send?
+migration.complete?
+query.safe_to_run?
+
+Response needs to be:
+
+{
+  "decision": "DENY",
+  "reason_codes": [
+    "DNS_TARGET_UNRESOLVED",
+    "TTL_WINDOW_ACTIVE"
+  ]
+}
+
+Not a 1,500-word ChatGPT answer.
+
+This explains why your DNSWriteGuard, BudgetGuard, R2SQLGuard, OAuthRedirectGuard, etc. are conceptually strong.
+
+Agents need machine gates, not prose.
+
+Re-ranking your repo specifically for the $0.003 economy
+
+Your existing top-five list is optimized for general build attractiveness.
+
+I'd rank them differently for “agent autonomously buys this call”.
+
+RankCapability$0.003 fitReason
+
+
+
+
+
+
+
+1
+
+ToolPrice + ToolBench
+
+★★★★★
+
+“Cheapest adequate tool right now?” naturally precedes paid calls
+
+2
+
+MCPTrust + MCPDrift
+
+★★★★★
+
+Agent pays tiny amount rather than risk broken/lying endpoint
+
+3
+
+VerifyMail
+
+★★★★★
+
+Classic ugly external-state problem
+
+4
+
+CapabilityCard
+
+★★★★★
+
+One normalized representation instead of investigating provider
+
+5
+
+RegistryLens
+
+★★★★★
+
+Agent discovery/selection becomes a native transaction
+
+6
+
+AgentManifest
+
+★★★★☆
+
+One-call site agent-readiness resolution
+
+7
+
+DNSMoveGuard
+
+★★★★☆
+
+Requires actual distributed observations
+
+8
+
+WebhookSchemaGuard
+
+★★★★☆
+
+External drift detection is valuable
+
+9
+
+Package dependency/risk intelligence
+
+★★★★☆
+
+Frequently needed, easy for agents to consume
+
+10
+
+OCRRoute
+
+★★★★☆
+
+Router can save significantly more than its fee
+
+Some very good products aren't $0.003 products.
+
+AgentCheckoutTest, MCPAuthDoctor, APIDriftPatch, EvalFromTrace, etc. require enough execution that I'd charge more like a variable $0.01 → $1+ depending on what they actually execute.
+
+And some of your ideas should deliberately be FREE
+
+This is important.
+
+Your README already has the right intuition:
+
+L0 registry lookup → free
+L1 reality checks → mostly free
+L2 decisions → higher value
+L3 historical intelligence → 402
+
+Keep things such as:
+
+idna.normalize
+spdx.normalize
+registrable_domain.parse
+basic redirect parsing
+basic robots parsing
+JWKS parsing
+OpenAPI operation extraction
+
+free.
+
+They're reproducible locally.
+
+They become distribution.
+
+Then:
+
+api.openapi.operations         FREE
+api.openapi.breaking_diff      $0.001
+api.compatibility.resolve      $0.003
+api.compatibility.history      $0.01
+api.compatibility.monitor      subscription/session
+
+That progression is excellent.
+
+The $0.003 test
+
+I would add this test to finalbuildideas.
+
+A capability is a strong micro-payment candidate if it satisfies at least 3 of these:
+
+Fresh — answer changes over time.
+
+External — answer cannot be generated from the prompt alone.
+
+Annoying — reproducing it requires several operations/integrations.
+
+Deterministic — it can return a clean machine decision.
+
+Expensive to be wrong — mistakes create retries, money loss, outages or bad actions.
+
+Low-frequency per agent — not worth implementing locally.
+
+Composable — result feeds directly into another automated action.
+
+Normalizable — many providers/sources can be hidden behind one schema.
+
+Evidence-producing — you can prove why the result was returned.
+
+Data-generating — every call improves a historical dataset.
+
+7+ = fantastic.
+
+4–6 = useful TinyTool.
+
+0–3 = probably a library, not a paid service.
+
+The gigantic opportunity: low-frequency capabilities
+
+This is the bit I think is easiest to underestimate.
+
+APIs historically needed subscriptions because acquiring a human customer for:
+
+$0.003
+
+was absurd.
+
+Machine wallets change that.
+
+There are potentially thousands of functions that agents need once every 3 months.
+
+No agent developer wants dependencies and accounts for:
+
+WHOIS/RDAP
+ASN
+carrier lookup
+OCR
+email verification
+geocoding
+DNS propagation
+certificate transparency
+archive lookup
+favicon extraction
+PDF metadata
+company registry
+package vulnerability
+webhook testing
+CORS simulation
+OAuth validation
+schema conversion
+address validation
+
+But across millions of agents, the aggregate demand can be enormous.
+
+This is almost:
+
+AWS Lambda for capabilities somebody else maintains.
+
+Except the invocation discovers its own price and the caller doesn't need an account.
+
+MPP explicitly now supports this accountless flow for both HTTP and MCP. (Cloudflare Docs) And x402 already has Bazaar discovery; its documentation specifically presents dynamically finding affordable services as an autonomous-agent use case. (x402)
+
+There's even already a tiny piece of market validation: one x402 service directory is charging $0.001 per agent search query. That doesn't prove strong demand by itself, but it demonstrates exactly the behavior you're describing is already being implemented. (x402.direct)
+
+Therefore I wouldn't build 60 products
+
+I'd build one capability network.
+
+Something conceptually like:
+
+GET /capabilities
+
+Free discovery.
+
+Agent asks:
+
+resolve({
+  intent: "Can I safely change example.com's nameservers?"
+})
+
+Finds:
+
+dns.move_guard
+
+Then:
+
+POST /dns/move-guard
+
+gets:
+
+402 Payment Required
+price: $0.003
+
+Agent pays.
+
+Returns:
+
+{
+  "safe": false,
+  "confidence": 0.998,
+  "reasons": [...],
+  "observed_at": "...",
+  "evidence": [...],
+  "receipt": "..."
+}
+
+Every capability uses the same envelope:
+
+INPUT
+DECISION
+EVIDENCE
+FRESHNESS
+CONFIDENCE
+COST
+PROVENANCE
+RECEIPT
+
+And your real product isn't any particular endpoint.
+
+It's:
+
+the canonical vending machine for small pieces of verified reality that aren't worth an agent figuring out itself.
+
+That is much stronger than “tiny tools.”
+
+And it directly answers your original question:
+
+What can ChatGPT not do?
+
+Increasingly, very little in terms of reasoning.
+
+But it will perpetually need other systems to observe, test, transact, verify, remember, execute and guarantee things in the outside world.
+
+Those are the things I would build.
+
+The best one-line doctrine for finalbuildideas may therefore be:
+
+Never sell reasoning an agent already owns. Sell observations, integrations, execution, decisions and proofs that are cheaper to buy than reproduce.
+
+That gives you a surprisingly ruthless filter for the 60 ideas.

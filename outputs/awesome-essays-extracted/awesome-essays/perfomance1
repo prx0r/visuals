@@ -1,0 +1,1595 @@
+Yes. After re-checking the current specs and benchmark sources, I would tighten the previous answer substantially.
+
+The **canonical resource should not prescribe one framework**. It should prescribe an architecture and measurable contracts, then let an agent choose the fastest implementation for each workload.
+
+As of **August 21, 2026**, the important current standards are MCP **2026-07-28**, A2A **1.0.0**, and OpenAPI **3.2.0**. MCP's latest release is especially important because it changed the optimal agent architecture: it is now stateless at the protocol layer, self-describing per request, cacheable, routable using HTTP headers, and designed to work behind ordinary global HTTP infrastructure. ([Model Context Protocol Blog][1])
+
+# Canonical Agent-First Performance Architecture — 2026
+
+I would make this the standard for essentially every utility/product you build.
+
+```text
+                         INTERNET
+                            │
+               ┌────────────┴────────────┐
+               │                         │
+             HUMAN                     AGENT
+               │                         │
+               ▼                ┌────────┼─────────┐
+        semantic website        │        │         │
+                                ▼        ▼         ▼
+                              MCP      REST      A2A*
+                                │        │
+                                └────┬───┘
+                                     │
+                              PRODUCT CORE
+                                     │
+                     ┌───────────────┼──────────────┐
+                     │               │              │
+               deterministic      data layer       AI
+                   engine                           │
+                     │                  ┌────────────┼────────────┐
+                     │                  │            │            │
+                  Rust/TS          browser AI    edge AI     GPU AI
+                                                   
+*A2A only if the product itself exposes an autonomous agent
+```
+
+The central rule is:
+
+> **One product core, multiple interfaces.**
+
+The website, REST API and MCP server should **not contain separate business logic**.
+
+For example:
+
+```text
+domains.search()
+      │
+      ├── website
+      ├── POST /v1/domains/search
+      └── MCP search_domains
+```
+
+All three invoke the same function/library.
+
+That is both faster and much easier for coding agents to maintain.
+
+---
+
+# 1. Optimize differently for humans and agents
+
+This is the most important refinement.
+
+For a human, performance means things like:
+
+* time to visible content
+* interaction latency
+* animation/render responsiveness
+* time to first useful result
+
+For an agent, the bigger performance costs are often:
+
+* **number of reasoning turns**
+* number of tool calls
+* schema discovery cost
+* tokens consumed by tool descriptions
+* tokens returned by tools
+* network round trips
+* ambiguous outputs requiring another model turn
+* failure/retry rate
+
+So agent performance is not:
+
+> JSON parsing is 0.4 ms faster.
+
+It is often:
+
+> The agent solved the entire problem in one tool invocation rather than six.
+
+That can save **seconds**, inference tokens and money.
+
+I would therefore track an additional family of metrics:
+
+```text
+Agent completion latency
+Tool calls / completed task
+Model turns / completed task
+Input tokens / completed task
+Tool-result tokens / completed task
+Schema tokens exposed
+Retry rate
+Invalid tool-call rate
+Useful results / returned token
+```
+
+Those should become first-class performance metrics.
+
+---
+
+# 2. MCP should be the preferred reasoning interface
+
+You were right to emphasize MCP.
+
+For an agent choosing how to use one of your products, I would expose:
+
+```text
+1. MCP
+2. REST/OpenAPI
+3. Website
+```
+
+but each serves a different purpose.
+
+### MCP
+
+Best for:
+
+* tool discovery
+* agent reasoning
+* normal agent operations
+* structured task execution
+
+### REST
+
+Best for:
+
+* bulk operations
+* scripts
+* integrations
+* very high throughput
+* data export
+* streaming large result sets
+
+### Website
+
+Best for:
+
+* humans
+* browser agents
+* discovery
+* documentation
+* fallback when MCP isn't connected
+
+The latest MCP release actually makes this significantly better than it was six months ago.
+
+MCP `2026-07-28` removed the required initialization handshake and protocol-level session. Every request can be independently routed to any server instance. It also added `Mcp-Method` and `Mcp-Name` headers explicitly so gateways can route, meter and authorize requests without parsing the JSON body. ([Model Context Protocol Blog][1])
+
+That is excellent architecture for Cloudflare/global edge deployments.
+
+---
+
+# 3. Do NOT make MCP a collection of 40 tiny tools
+
+This matters enormously.
+
+Bad MCP design for the domain product:
+
+```text
+generate_words
+generate_synonyms
+generate_domains
+normalize_domains
+score_domains
+check_domain
+check_domains
+rank_domain
+rank_domains
+lookup_price
+...
+```
+
+The model now has to orchestrate your internal architecture.
+
+That creates reasoning latency.
+
+Instead, expose **task-level tools**.
+
+For the domain product I'd probably expose only:
+
+```text
+search_domains
+check_domains
+domain_details
+```
+
+Potentially:
+
+```text
+continue_domain_search
+```
+
+That's it.
+
+The main tool:
+
+```text
+search_domains
+```
+
+does:
+
+```text
+concept expansion
+      ↓
+candidate generation
+      ↓
+deduplication
+      ↓
+ranking
+      ↓
+batch availability
+      ↓
+final reranking
+      ↓
+results
+```
+
+inside the service.
+
+An agent can therefore say:
+
+```text
+Find 30 available .com domains for an
+AI agent news website resembling
+AgentWatch and AgentSpy.
+Search at least 2000 candidates.
+```
+
+One call.
+
+That's the correct agent abstraction.
+
+---
+
+# 4. MCP schemas should be extremely strong
+
+Current MCP tools support full JSON Schema 2020-12 in the `2026-07-28` specification, including composition and conditionals; output schemas are no longer constrained to simple objects, and structured content can be arbitrary JSON. ([Model Context Protocol Blog][2])
+
+Use that.
+
+Don't define:
+
+```json
+{
+  "query": "string"
+}
+```
+
+when you can define the actual contract.
+
+For example:
+
+```json
+{
+  "description": "AI agent ecosystem news site",
+  "liked_names": [
+    "AgentWatch",
+    "AgentSpy"
+  ],
+  "tlds": ["com"],
+  "search_depth": 1000,
+  "constraints": {
+    "max_length": 14,
+    "allow_hyphens": false,
+    "allow_numbers": false
+  },
+  "result_limit": 20
+}
+```
+
+And respond with something like:
+
+```json
+{
+  "search_id": "ds_...",
+  "searched": 1000,
+  "checked": 742,
+  "available_count": 31,
+  "results": [
+    {
+      "domain": "example.com",
+      "score": 0.94,
+      "availability": "confirmed",
+      "provider": "namesilo"
+    }
+  ],
+  "next_cursor": "..."
+}
+```
+
+No prose parsing required.
+
+---
+
+# 5. Minimize MCP result tokens
+
+This is another place where an agent-first app differs radically from a human application.
+
+Imagine your search finds:
+
+```text
+138 available domains
+```
+
+Don't dump 138 richly described objects into the context window.
+
+Return:
+
+```text
+top 20
++
+summary
++
+search_id
++
+cursor
+```
+
+Then make the full data available through:
+
+```text
+resource
+API
+pagination
+export URL
+```
+
+The model probably only needs the best few.
+
+This principle is:
+
+> **Compute richly; communicate sparsely.**
+
+It reduces:
+
+* inference latency
+* context consumption
+* cost
+* distraction
+* tool-response parsing
+
+while retaining access to the underlying data.
+
+---
+
+# 6. Cache MCP discovery aggressively
+
+Another big improvement in MCP 2026-07-28 is explicit caching.
+
+`tools/list`, `resources/list`, `resources/read` and similar discovery results now support:
+
+```text
+ttlMs
+cacheScope
+```
+
+so clients no longer have to repeatedly consume/retrieve the same tool catalogs. ([Model Context Protocol Blog][1])
+
+If your tools rarely change:
+
+```text
+tools/list TTL:
+
+1 hour
+6 hours
+24 hours
+```
+
+can be perfectly reasonable.
+
+And keep the ordering deterministic.
+
+Why?
+
+Because even seemingly harmless changes to tool ordering can change an LLM's prompt prefix and reduce upstream model prompt-cache effectiveness.
+
+The current MCP work explicitly calls out stable ordering as useful for keeping prompt caches stable. ([Model Context Protocol Blog][1])
+
+That is a very agent-specific optimization.
+
+---
+
+# 7. Annotate MCP tools correctly
+
+Use the MCP risk hints:
+
+```text
+readOnlyHint
+destructiveHint
+idempotentHint
+openWorldHint
+```
+
+For domain checking:
+
+```text
+readOnlyHint: true
+destructiveHint: false
+idempotentHint: true
+openWorldHint: true
+```
+
+This helps clients determine whether confirmation is necessary and whether retries are safe. MCP's maintainers describe these annotations specifically as a lightweight risk vocabulary for clients. ([Model Context Protocol Blog][3])
+
+An unnecessary confirmation prompt is itself a major latency regression for an agent.
+
+---
+
+# 8. Long-running MCP work: use Tasks
+
+If an operation takes:
+
+```text
+100 ms
+500 ms
+2 sec
+```
+
+ordinary tool invocation is fine.
+
+But if you're doing something like:
+
+```text
+scan 1,000,000 domains
+```
+
+don't hold a fragile operation open forever.
+
+MCP 2026-07-28 has an official **Tasks extension** for long-running tool work. The client can receive a task handle and query it until completion. ([ModelContextProtocol][4])
+
+So:
+
+```text
+search 1,000 domains
+→ normal tool
+
+search 1,000,000 domains
+→ MCP Task
+```
+
+For your normal micro-tools, most operations should still be designed to finish quickly.
+
+---
+
+# 9. REST remains extremely important
+
+I would never make a product MCP-only.
+
+Expose:
+
+```text
+/v1/...
+```
+
+with a proper **OpenAPI 3.2** definition.
+
+OpenAPI 3.2 is currently the latest published specification and explicitly exists so humans and machines can discover and understand HTTP APIs without reading source code or reverse-engineering network traffic. ([OpenAPI Initiative Publications][5])
+
+Your canonical API structure could be:
+
+```text
+/openapi.json
+
+/v1/domains/search
+/v1/domains/check
+/v1/domains/{domain}
+```
+
+The API should be:
+
+```text
+JSON
+UTF-8
+stable
+versioned
+strictly typed
+cursor-paginated
+batch-aware
+cache-aware
+idempotent where appropriate
+```
+
+---
+
+# 10. Agent APIs should be high-level AND bulk-capable
+
+Traditional CRUD APIs often look like:
+
+```text
+GET /domain/foo.com
+GET /domain/bar.com
+GET /domain/baz.com
+```
+
+Terrible for agents.
+
+Instead support:
+
+```text
+POST /v1/domains/check
+```
+
+with:
+
+```json
+{
+  "domains": [
+    "foo.com",
+    "bar.com",
+    "baz.com"
+  ]
+}
+```
+
+One network request.
+
+This applies everywhere.
+
+If an agent might reasonably want 100 things, your API should probably accept 100 things.
+
+Batching wins far more performance than switching Node → Rust in many APIs.
+
+---
+
+# 11. Streaming: direct API should be excellent at it
+
+For operations producing progressively useful output:
+
+```text
+SSE
+```
+
+or
+
+```text
+NDJSON
+```
+
+are excellent external interfaces.
+
+Example:
+
+```text
+POST /v1/domains/search
+Accept: application/x-ndjson
+```
+
+Response:
+
+```json
+{"type":"started","candidates":1000}
+{"type":"progress","checked":200}
+{"type":"domain","domain":"foo.com","score":0.92}
+{"type":"domain","domain":"bar.com","score":0.89}
+{"type":"complete","checked":1000}
+```
+
+Agents can start reasoning on early results.
+
+Humans can render them immediately.
+
+Don't artificially wait to construct one enormous final object.
+
+---
+
+# 12. HTTP/3 matters, but don't build it yourself
+
+At the internet edge, HTTP/3/QUIC gives independent streams, so packet loss on one request stream doesn't block progress on others as it can at the TCP transport level. ([RFC Editor][6])
+
+But this should be:
+
+> infrastructure configuration
+
+rather than:
+
+> application code.
+
+Put Cloudflare or an equivalent CDN/network in front and let it negotiate the best transport.
+
+---
+
+# 13. Use HTTP caching properly
+
+Your API needs:
+
+```text
+Cache-Control
+ETag
+If-None-Match
+stale-while-revalidate
+stale-if-error
+```
+
+where semantics permit.
+
+Cloudflare's current Workers caching layer supports those normal HTTP concepts and can even serve stale content on backend failures. ([Cloudflare Docs][7])
+
+For domain checking:
+
+```text
+TAKEN
+TTL = hours
+
+AVAILABLE
+TTL = minutes
+
+UNKNOWN
+TTL = seconds
+```
+
+For blog posts:
+
+```text
+immutable/versioned assets
+TTL = effectively forever
+```
+
+For API documentation:
+
+```text
+long cache + ETag
+```
+
+---
+
+# 14. Website architecture: static HTML by default
+
+I would correct my earlier “Astro + Solid” statement slightly.
+
+The hierarchy should actually be:
+
+```text
+HTML/CSS
+    ↓
+vanilla JS if sufficient
+    ↓
+small reactive island if necessary
+    ↓
+full application framework only if justified
+```
+
+The current JS Framework Benchmark still shows the fastest implementations clustering around highly optimized vanilla/minimal implementations; its latest official results are Chrome 150 from July 2026. ([Krausest][8])
+
+So the canonical rule should be:
+
+> **Ship the least JavaScript capable of implementing the interaction.**
+
+Not:
+
+> always use Solid.
+
+Solid is a reasonable high-performance default when a reactive UI is genuinely useful.
+
+But a domain finder might need surprisingly little framework code.
+
+---
+
+# 15. Static assets should bypass compute
+
+For Cloudflare:
+
+```text
+/
+styles.css
+app.js
+/blog/...
+```
+
+should normally be served directly as static assets.
+
+Only:
+
+```text
+/api/*
+/mcp
+```
+
+should invoke Worker code.
+
+Cloudflare Static Assets automatically cache static files across the network. ([Cloudflare Docs][9])
+
+Critically, don't configure:
+
+```text
+run Worker first for everything
+```
+
+unless required.
+
+Cloudflare itself notes that doing so can add latency, particularly when Smart Placement puts Worker execution near a backend instead of the user. ([Cloudflare Docs][10])
+
+Ideal:
+
+```text
+assets → nearest edge
+
+API → optimally placed compute
+```
+
+---
+
+# 16. Site performance targets should be stricter than Google's minimums
+
+Google's current “good” Core Web Vital thresholds remain:
+
+```text
+LCP ≤ 2.5 s
+INP ≤ 200 ms
+CLS ≤ 0.1
+```
+
+at the 75th percentile. ([web.dev][11])
+
+Those should be considered **minimum acceptable performance**, not your goal.
+
+For your lightweight utility products I'd aim for:
+
+```text
+p75 LCP             < 1.0–1.5 s
+p75 INP             < 100 ms
+CLS                  < 0.05
+
+cached HTML TTFB     < 50 ms
+initial HTML gzip    < 30–50 KB
+initial JS gzip      < 50 KB preferred
+initial CSS gzip     < 20 KB preferred
+```
+
+Not every sophisticated app will hit those bundle numbers, but every increase should have to justify itself.
+
+---
+
+# 17. Keep work off the browser main thread
+
+Expensive:
+
+```text
+name generation
+embeddings
+phonetic ranking
+large JSON parsing
+local inference
+compression
+```
+
+can go into:
+
+```text
+Web Worker
+```
+
+or WebGPU/WASM as appropriate.
+
+Web.dev specifically recommends moving CPU-heavy work off the main thread to improve responsiveness/INP. ([web.dev][12])
+
+For your domain app:
+
+```text
+UI thread:
+inputs + DOM updates
+
+Worker:
+generate 100k candidates
+score
+cluster
+dedupe
+```
+
+The interface remains instant.
+
+---
+
+# 18. Rust still has an important role
+
+TechEmpower Round 23 remains the current published server framework round, and Rust implementations occupy many of the highest positions; Axum's PostgreSQL implementation, for example, was above one million responses/sec in the Fortunes workload. ([TechEmpower][13])
+
+That supports:
+
+> Rust is an excellent native high-performance server language.
+
+It does **not** imply:
+
+> Rust should replace JavaScript everywhere.
+
+Canonical allocation:
+
+```text
+Browser glue                 TypeScript
+Edge HTTP orchestration      TypeScript
+CPU-intensive browser code   Rust → WASM if worthwhile
+CPU-intensive server code    Rust
+very high-performance API    Rust/Axum
+simple I/O API               TS Worker or Go/Rust
+GPU inference                Python/C++ serving stack
+```
+
+---
+
+# 19. Why TypeScript still wins at the edge
+
+Cloudflare Workers' platform APIs are natively exposed through the web/JavaScript runtime.
+
+Rust Workers compile through WebAssembly, and Cloudflare currently notes:
+
+* Wasm bundles tend to be larger than equivalent JavaScript
+* larger bundles can increase startup latency
+* Workers Wasm doesn't support threading ([Cloudflare Docs][14])
+
+So this:
+
+```text
+TS edge orchestrator
+      ↓
+Rust native service
+```
+
+can outperform a doctrinaire:
+
+```text
+Rust everywhere
+```
+
+in practical end-to-end architecture.
+
+---
+
+# 20. Placement beats language surprisingly often
+
+If your Worker calls a database or external API repeatedly, put computation near the backend.
+
+Cloudflare's current placement system can:
+
+```text
+automatically choose placement
+target AWS region
+target GCP region
+target hostname
+target TCP host
+```
+
+and Cloudflare says this can produce single-digit-millisecond connections to traditional cloud backends. ([Cloudflare Docs][15])
+
+So:
+
+```text
+User Cambodia
+↓
+edge asset Cambodia
+
+API request
+↓
+Cloudflare network
+↓
+Worker near database Singapore
+↓
+database ~2 ms
+```
+
+may be substantially faster than:
+
+```text
+Worker Cambodia
+↓
+database Frankfurt
+↓
+database Frankfurt
+↓
+database Frankfurt
+```
+
+even though the first Worker is geographically farther from the user.
+
+---
+
+# 21. AI should have three execution tiers
+
+The canonical AI architecture should be:
+
+```text
+             REQUEST
+                │
+      ┌─────────┼─────────┐
+      │         │         │
+      ▼         ▼         ▼
+ deterministic browser   remote
+      core        AI       AI
+```
+
+### Tier 0 — no AI
+
+Always ask first:
+
+> Can deterministic code solve this?
+
+For domain combinations:
+
+yes.
+
+Do that immediately.
+
+### Tier 1 — local browser AI
+
+Good for:
+
+* embeddings
+* semantic matching
+* reranking
+* classification
+* tiny models
+* privacy-sensitive inference
+
+Transformers.js currently supports GPU inference through WebGPU via ONNX Runtime. ([Hugging Face][16])
+
+Benefits:
+
+```text
+0 network latency
+0 inference bill
+privacy
+offline capability
+user supplies compute
+```
+
+But only use it when the model download/startup cost makes sense.
+
+Downloading a 500 MB model to save a 200 ms request is obviously counterproductive.
+
+---
+
+# 22. Remote AI should never unnecessarily block deterministic work
+
+Bad:
+
+```text
+click
+↓
+LLM
+↓
+wait
+↓
+generate candidates
+↓
+check
+```
+
+Canonical:
+
+```text
+                click
+                  │
+          ┌───────┴───────┐
+          ▼               ▼
+deterministic search    LLM enrich
+          │               │
+          ▼               │
+availability begins       │
+          │               │
+          └──────┬────────┘
+                 ▼
+           new candidates
+```
+
+The first useful answer can appear before AI even finishes.
+
+This pattern applies broadly:
+
+```text
+cached result immediately
+deterministic result next
+external API result next
+AI enrichment last
+```
+
+Perceived performance improves drastically.
+
+---
+
+# 23. For self-hosted AI, benchmark the actual model
+
+Do **not** canonically specify:
+
+> use vLLM
+
+or:
+
+> use SGLang
+
+or:
+
+> use TensorRT-LLM.
+
+Instead specify:
+
+```text
+same model
+same precision
+same hardware
+same workload
+same concurrency
+
+benchmark:
+
+SGLang
+vLLM
+TensorRT-LLM
+```
+
+SGLang's current benchmark harness conveniently supports several backends and measures:
+
+```text
+TTFT
+ITL
+TPOT
+end-to-end latency
+requests/sec
+input tokens/sec
+output tokens/sec
+```
+
+which are the right metrics. ([GitHub][17])
+
+NVIDIA similarly recommends measuring throughput and latency with its TensorRT/Triton tooling. ([NVIDIA Docs][18])
+
+So the agent should empirically choose.
+
+That is where agent-written software becomes interesting.
+
+---
+
+# 24. AI responses should stream immediately
+
+Your UI should optimize:
+
+```text
+time to first token
+```
+
+not just:
+
+```text
+total generation time.
+```
+
+For user-facing AI:
+
+```text
+request
+↓
+first token
+↓
+stream
+↓
+complete
+```
+
+Never buffer an entire 2,000-token answer before displaying it unless the response must be validated atomically.
+
+Track:
+
+```text
+TTFT
+TPOT
+ITL
+p50
+p95
+p99
+```
+
+exactly as the modern inference benchmark tools do. ([GitHub][17])
+
+---
+
+# 25. Browser-agent optimization is its own layer
+
+An agent may reach your product without MCP.
+
+Maybe it only has a browser.
+
+Your website should therefore be unusually easy for machines to operate.
+
+Use actual:
+
+```html
+<nav>
+<main>
+<article>
+<form>
+<label>
+<input>
+<button>
+<table>
+```
+
+rather than:
+
+```html
+<div class="thing">
+<div onclick="...">
+```
+
+MDN emphasizes that semantic HTML exposes meaning in machine-readable form, not merely visually, and native controls carry useful semantics automatically. ([MDN Web Docs][19])
+
+That helps:
+
+* screen readers
+* browser automation
+* computer-use agents
+* search engines
+* DOM-based agents
+
+all at once.
+
+---
+
+# 26. Avoid JS-only critical content
+
+Core product information should exist in initial HTML whenever possible.
+
+Google's current crawler documentation is an instructive example: rendering occurs later through a JavaScript rendering system, and Google explicitly recommends keeping important HTML lean and placing essential metadata/content where it can reliably be fetched. ([Google for Developers][20])
+
+For agents this matters even more.
+
+A browser agent shouldn't have to:
+
+```text
+load SPA
+wait for JS
+open dropdown
+click tabs
+scroll
+trigger fetch
+```
+
+to discover something that could simply exist in:
+
+```html
+<article>
+```
+
+---
+
+# 27. Give every important page a clean machine-readable equivalent
+
+There is now a useful emerging convention here.
+
+`llms.txt` remains a **proposal rather than a formal web standard**, but its August 2026 v2 revision reflects substantial real-world adoption and adds discovery using link relations for markdown equivalents. ([llms-txt][21])
+
+I would implement:
+
+```text
+/llms.txt
+```
+
+plus clean Markdown versions of important documentation.
+
+And where useful:
+
+```html
+<link
+  rel="alternate"
+  type="text/markdown"
+  href="/docs/api.md">
+```
+
+The MCP documentation itself now prominently exposes its docs through `llms.txt` and markdown representations, which is a useful signal about where agent-oriented technical documentation is heading. ([Model Context Protocol][22])
+
+But don't confuse this with MCP.
+
+`llms.txt` helps agents **read** the website.
+
+MCP lets them **operate** the product.
+
+---
+
+# 28. Agent-visible site structure
+
+Every product I'd build would include something like:
+
+```text
+/
+├── robots.txt
+├── sitemap.xml
+├── llms.txt
+├── openapi.json
+│
+├── docs/
+│   ├── index.html
+│   ├── index.md
+│   ├── api.html
+│   ├── api.md
+│   └── mcp.html
+│
+├── api/
+│   └── v1/...
+│
+└── mcp
+```
+
+Possibly:
+
+```text
+/.well-known/...
+```
+
+for authentication/discovery mechanisms required by protocols.
+
+---
+
+# 29. OAuth for MCP should follow the actual MCP architecture
+
+Protected remote MCP servers shouldn't invent auth.
+
+MCP currently uses OAuth-based protected-resource discovery, including RFC 9728 metadata and resource indicators, so clients can discover authorization infrastructure instead of needing custom setup. ([Model Context Protocol][23])
+
+This matters because an agent should ideally be able to go from:
+
+```text
+MCP server URL
+```
+
+to:
+
+```text
+discover auth
+authorize
+call tool
+```
+
+without reading your documentation manually.
+
+That is agent UX.
+
+---
+
+# 30. A2A is not a replacement for MCP
+
+Latest A2A is now **1.0.0**. Its role is explicitly different: interoperability between autonomous agent systems, including capability discovery and task collaboration. It provides protocol bindings over REST, JSON-RPC and gRPC and supports discovery through an Agent Card. ([A2A Protocol][24])
+
+Use:
+
+```text
+MCP:
+agent → tool
+
+A2A:
+agent → autonomous agent
+```
+
+Your domain checker:
+
+```text
+MCP yes
+A2A no
+```
+
+A domain-research agent that independently researches brands, trademarks, social handles and markets for 15 minutes:
+
+```text
+MCP yes
+A2A maybe
+```
+
+If using A2A, the standard discovery location is:
+
+```text
+/.well-known/agent-card.json
+```
+
+according to A2A 1.0. ([A2A Protocol][24])
+
+---
+
+# 31. The actual "ultimate stack"
+
+So if I had to freeze your current default architecture today:
+
+| Layer                           | Canonical default                                                |
+| ------------------------------- | ---------------------------------------------------------------- |
+| HTML/content                    | **static semantic HTML**                                         |
+| Static generation               | Astro or equivalent where useful                                 |
+| interactive UI                  | **vanilla TS first; Solid when reactive complexity warrants it** |
+| build                           | Vite                                                             |
+| client compute                  | TypeScript                                                       |
+| heavy browser compute           | **Rust → WASM / Web Worker**                                     |
+| browser ML                      | **ONNX Runtime / Transformers.js + WebGPU**                      |
+| static delivery                 | **Cloudflare Workers Static Assets**                             |
+| edge gateway                    | **Cloudflare Worker + TypeScript**                               |
+| native high-performance service | **Rust + Tokio + Axum**                                          |
+| general I/O service             | Rust or Go                                                       |
+| relational DB                   | PostgreSQL                                                       |
+| lightweight edge SQL            | D1/SQLite where appropriate                                      |
+| blobs                           | R2/S3                                                            |
+| public API                      | **HTTP JSON + OpenAPI 3.2**                                      |
+| bulk streaming                  | **NDJSON / SSE**                                                 |
+| agent tool layer                | **MCP 2026-07-28**                                               |
+| autonomous agents               | **A2A 1.0 when actually needed**                                 |
+| long MCP work                   | Tasks extension                                                  |
+| self-hosted LLM                 | benchmark **SGLang / vLLM / TensorRT-LLM**                       |
+| observability                   | **OpenTelemetry + W3C Trace Context**                            |
+| agent docs                      | semantic HTML + Markdown + optional `llms.txt`                   |
+
+That is the stack.
+
+But the more important thing is the architecture surrounding it.
+
+---
+
+# 32. The one architecture I'd make every coding agent follow
+
+```text
+                    ┌────────────────────┐
+                    │   shared domain    │
+                    │        core        │
+                    └─────────┬──────────┘
+                              │
+             ┌────────────────┼─────────────────┐
+             │                │                 │
+             ▼                ▼                 ▼
+          WEBSITE           REST              MCP
+         humans +          machines           agents
+       browser agents
+             │                │                 │
+             └────────────────┼─────────────────┘
+                              │
+                    deterministic first
+                              │
+              ┌───────────────┼────────────────┐
+              │               │                │
+            cache          external I/O        AI
+              │               │                │
+              │          batch + parallel      │
+              │               │          local if possible
+              │               │                │
+              └──── progressively stream ──────┘
+                              │
+                          consumer
+```
+
+That should become the canonical picture.
+
+---
+
+# 33. The canonical optimization hierarchy
+
+When an agent wants to make something faster, it should optimize in this order:
+
+```text
+1. Eliminate work
+2. Eliminate network round trips
+3. Eliminate model calls
+4. Batch operations
+5. Parallelize independent operations
+6. Cache stable results
+7. Move computation nearer its data
+8. Stream partial results
+9. Reduce payload/token size
+10. Move CPU work off main thread
+11. Profile algorithms
+12. Choose faster runtime
+13. Choose faster language
+14. Micro-optimize code
+```
+
+This is a key point.
+
+**Rust is #13, not #1.**
+
+---
+
+# 34. For agents, add a parallel hierarchy
+
+```text
+1. Reduce tool calls
+2. Reduce model turns
+3. Give high-level tools
+4. Give strict schemas
+5. Return structured output
+6. Batch
+7. Cache tool discovery
+8. Return only necessary data
+9. Provide cursors/resources for bulk data
+10. Make errors deterministic
+11. Make retries safe/idempotent
+12. Expose provenance/confidence
+```
+
+For an agentic application, this hierarchy may matter even more than the traditional one.
+
+---
+
+# 35. Example: ultimate version of your domain finder
+
+Human:
+
+```text
+agent news website
+.com
+1000 names
+
+[SEARCH]
+```
+
+Browser immediately:
+
+```text
+deterministically produces first 300
+```
+
+At the same time:
+
+```text
+small AI call → semantic expansion
+```
+
+Meanwhile:
+
+```text
+batch availability requests start
+```
+
+Results:
+
+```text
+available .com #1 appears
+```
+
+potentially before the AI call is even finished.
+
+Agent interface:
+
+```text
+search_domains(
+  description="AI agent news site",
+  liked_names=["AgentSpy","AgentWatch"],
+  tlds=["com"],
+  search_depth=1000,
+  result_limit=20
+)
+```
+
+One MCP call.
+
+REST:
+
+```text
+POST /v1/domains/search
+```
+
+same operation.
+
+Bulk automation:
+
+```text
+POST /v1/domains/search
+Accept: application/x-ndjson
+```
+
+streams potentially thousands of results.
+
+The website and agent interfaces are therefore **different projections over one engine**.
+
+That's what I would consider the correct architecture.
+
+---
+
+# 36. Your canonical resource should be a benchmark contract, not a stack document
+
+The final shift I would make from what I told you earlier is this:
+
+Don't create:
+
+```text
+STACK.md
+
+Use:
+Rust
+Solid
+Cloudflare
+Postgres
+```
+
+Create:
+
+```text
+FRONTIER-PERFORMANCE.md
+```
+
+whose first requirement is:
+
+> **No technology is canonical. Performance properties are canonical.**
+
+Then require every coding agent to demonstrate:
+
+```text
+browser
+-------
+bundle size
+LCP
+INP
+CLS
+main-thread blocking
+
+API
+---
+p50 latency
+p95 latency
+p99 latency
+throughput
+error rate
+cache-hit rate
+payload bytes
+
+agents
+------
+tool calls/task
+model turns/task
+tool schema tokens
+result tokens/task
+task completion latency
+invalid invocation rate
+
+AI
+--
+TTFT
+TPOT
+ITL
+tokens/sec
+GPU utilization
+cost/request
+
+system
+------
+CPU
+memory
+cold start
+network RTT
+DB RTT
+external dependency latency
+```
+
+And use the actual workload, not synthetic framework reputation.
+
+The benchmark references underneath that canonical resource should be:
+
+* **TechEmpower Round 23** for server/framework baselines. ([TechEmpower][13])
+* **js-framework-benchmark Chrome 150** for DOM/framework comparisons. ([Krausest][8])
+* **Speedometer 3.1** for browser application responsiveness. ([BrowserBench][25])
+* **Core Web Vitals** for real-user browser performance. ([web.dev][26])
+* **SGLang/vLLM/TensorRT benchmark harnesses** for AI-serving decisions. ([GitHub][17])
+* **MCP 2026-07-28** for agent tool architecture. ([Model Context Protocol Blog][1])
+* **OpenAPI 3.2** for machine-readable HTTP APIs. ([OpenAPI Initiative Publications][5])
+* **A2A 1.0** only when the service is itself an agent. ([A2A Protocol][24])
+
+So the compact doctrine I'd put at the top of every project is:
+
+> **Static-first. Semantic-first. Local-first. Deterministic-first. Cache-first. Batch-first. Parallel-first. Stream-first. Edge for orchestration. Rust for measured compute hot paths. AI outside the critical path whenever possible. REST for universal high-throughput machine access. MCP for low-turn, strongly typed agent operation. A2A only for autonomous-agent interoperability. One product core behind every interface. Optimize agent turns and tokens as aggressively as human milliseconds. Benchmark the actual workload and let measured performance—not framework fashion—choose the implementation.**
+
+That is considerably closer to a genuinely canonical **agent-era high-performance web architecture** than my earlier “use Astro/Solid/Rust” answer.
+
+[1]: https://blog.modelcontextprotocol.io/posts/2026-07-28/?utm_source=chatgpt.com "The 2026-07-28 Specification | Model Context Protocol Blog"
+[2]: https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/?utm_source=chatgpt.com "The 2026-07-28 MCP Specification Release Candidate | Model Context Protocol Blog"
+[3]: https://blog.modelcontextprotocol.io/posts/2026-03-16-tool-annotations/?utm_source=chatgpt.com "Tool Annotations as Risk Vocabulary: What Hints Can and Can't Do | Model Context Protocol Blog"
+[4]: https://csharp.sdk.modelcontextprotocol.io/v2/concepts/tasks/tasks.html?utm_source=chatgpt.com "Tasks | MCP C# SDK"
+[5]: https://spec.openapis.org/oas/v3.2.0.html?utm_source=chatgpt.com "OpenAPI Specification v3.2.0"
+[6]: https://www.rfc-editor.org/v3test/rfc9114.pdf?utm_source=chatgpt.com "RFC 9114: HTTP/3"
+[7]: https://developers.cloudflare.com/workers/cache/configuration/?utm_source=chatgpt.com "Configuration · Cloudflare Workers docs"
+[8]: https://krausest.github.io/js-framework-benchmark/index.html?utm_source=chatgpt.com "Official results for js web frameworks benchmark"
+[9]: https://developers.cloudflare.com/workers/static-assets/?utm_source=chatgpt.com "Static Assets · Cloudflare Workers docs"
+[10]: https://developers.cloudflare.com/workers/static-assets/binding/?utm_source=chatgpt.com "Configuration and Bindings · Cloudflare Workers docs"
+[11]: https://web.dev/articles/defining-core-web-vitals-thresholds?hl=en&utm_source=chatgpt.com "How the Core Web Vitals metrics thresholds were defined  |  Articles  |  web.dev"
+[12]: https://web.dev/articles/off-main-thread?utm_source=chatgpt.com "Use web workers to run JavaScript off the browser's main thread  |  web.dev"
+[13]: https://www.techempower.com/benchmarks/?utm_source=chatgpt.com "Round 23 results - TechEmpower Framework Benchmarks"
+[14]: https://developers.cloudflare.com/workers/runtime-apis/webassembly/?utm_source=chatgpt.com "WebAssembly (Wasm) · Cloudflare Workers docs"
+[15]: https://developers.cloudflare.com/workers/configuration/placement/?utm_source=chatgpt.com "Placement · Cloudflare Workers docs"
+[16]: https://huggingface.co/docs/transformers.js/guides/webgpu?utm_source=chatgpt.com "Running models on WebGPU · Hugging Face"
+[17]: https://github.com/sgl-project/sglang/blob/main/docs/developer_guide/bench_serving.md?utm_source=chatgpt.com "sglang/docs/developer_guide/bench_serving.md at main · sgl-project/sglang · GitHub"
+[18]: https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/tensorrtllm_backend/README.html?utm_source=chatgpt.com "TensorRT-LLM Backend — NVIDIA Triton Inference Server"
+[19]: https://developer.mozilla.org/en-US/curriculum/core/semantic-html/?utm_source=chatgpt.com "2. Semantic HTML"
+[20]: https://developers.google.com/search/blog/2026/03/crawler-blog-post?hl=en&utm_source=chatgpt.com "Inside Googlebot: demystifying crawling, fetching, and the bytes we process  |  Google Search Central Blog  |  Google for Developers"
+[21]: https://llmstxt.org/?trk=public_post-text&utm_source=chatgpt.com "The /llms.txt file, v2 – llms-txt"
+[22]: https://ts.sdk.modelcontextprotocol.io/v2/migration/support-2026-07-28?utm_source=chatgpt.com "Supporting protocol revision 2026-07-28 | MCP TypeScript SDK"
+[23]: https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization?utm_source=chatgpt.com "Authorization - Model Context Protocol"
+[24]: https://a2a-protocol.org/latest/specification/?utm_source=chatgpt.com "Overview - A2A Protocol"
+[25]: https://www.browserbench.org/Speedometer3.1/about.html?utm_source=chatgpt.com "Speedometer 3.1 About"
+[26]: https://web.dev/articles/vitals?hl=en&utm_source=chatgpt.com "Web Vitals  |  Articles  |  web.dev"

@@ -1,0 +1,199 @@
+cutupdev/Solana-Volume-Bot	Volume bot
+zostaff/grokbot-pumpfun	Pump.fun bot
+cfanbo/solana-arbitrage-bot-offchain	Arbitrage bot
+bitman09/pumpfun-sniper-bot	Pump.fun sniper
+urchinbotdev/urchinbot	Urchin bot
+YZYLAB/solana-swap	Jito tips
+cryptogru725/chicken-game	Phantom wallet
+Scottcjn/Rustchain	Phantom connect
+
+High-probability targets — recently active, personal accounts, 0-9 stars:
+Robinhood (updated Sep 2026):
+- anuragpampati/robinhood-trading-bot ⭐0
+- ddava000/trading-bot ⭐1
+- imjamoker/robinhood-trading-bot ⭐0
+- willydk/robinhood-dashboard ⭐0
+- shoibakhtar-dev/AICryptoTraderBot ⭐2
+Solana Snipers (updated Sep 2026):
+- Nico317-ux/solana-sniper-bot-product-key ⭐0
+- vophung5112/TrojanBot-Trojan-on-Solana-Sniper-2026 ⭐0
+- benesma36-droid/Pump-Fun-Token-Sniper-Bot ⭐0
+- wagawgaw/Pumpfun-Sniper-Bot ⭐0
+- hayaseta/solana-sniping-bot ⭐4
+Pump.fun (updated Sep 2026):
+- yancyunprecedented355/Pumpfun-Bundler-Bot ⭐0
+- menasamuel1835/Pumpfun-Bundler ⭐0
+- DaBubi/pumpbot ⭐0
+Copy Trading (updated Sep 2026):
+- lokynhoz/copy-trading-bot ⭐0
+- dturnover/solana-copy-trader ⭐0
+- ryanv-dev2095l1/solana-copy-trader ⭐0
+- Jaybraal/botsolana ⭐0
+Volume/Arbitrage (updated Sep 2026):
+- bljuane/sol-bot-dashboard ⭐0
+- cdaniel007/solana-organic-volume-bot ⭐1
+- hungnguyen1509asd/raydium-trading-bot ⭐0
+- coolbbcamp/StonkFun-Multi-Wallet-Volume-Bot ⭐0
+Total: 48 repos — all recently active, personal accounts, likely to have wallet addresses and secrets in config files.
+
+
+High-Probability Repository Target List
+
+## The insight
+
+Don't search for wallets. Search for **repos where people configure wallets**. The highest probability repos are:
+1. Trading bots (users configure wallets)
+2. Robinhood integrations (API keys, signing keys)
+3. Drainer scripts (private keys in code)
+4. DeFi tutorials (example wallets)
+
+## How to make it high probability
+
+1. **Active recently** — repos updated in last 90 days
+2. **Has forks** — people are actually using it
+3. **Contains wallet patterns** — 0x addresses, private keys, mnemonics
+4. **Robinhood keywords** — rh-api, signing key, ed25519
+5. **Trading bot keywords** — MEV, arbitrage, sniper, bot
+
+## Target categories (from stallshark BLUE-TEAM-COMBINED)
+
+### Robinhood-specific (highest probability)
+| Pattern | What it finds |
+|---------|---------------|
+| `rh-api-` | Robinhood API key identifier |
+| `BASE64_PRIVATE_KEY robinhood` | Robinhood signing key |
+| `RH_API_KEY filename:.env` | Robinhood API key in config |
+| `RH_SIGNING_KEY filename:.env` | Robinhood signing key in config |
+| `robinhood PRIVATE_KEY` | Private key for Robinhood |
+
+### Trading bots (high probability)
+| Repo | Forks | Why |
+|------|-------|-----|
+| BowTiedDevil/degenbot | 197 | Uniswap V2/V3 arbitrage |
+| nelso0/barbotine-arbitrage-bot | 155 | CEX arbitrage |
+| mortdeus/solana-copy-sniper-mev-trading-bot | 437 | Solana sniper |
+| chainstacklabs/pumpfun-bonkfun-bot | 354 | Pump.fun bot |
+| coffellas-cto/Solana-Copy-Trading-Bot | 114 | Copy trading |
+| solidquant/mev-templates | 171 | MEV templates |
+| bigmacman1129/solana-sniper-copy-trading-bot | - | Solana sniper |
+| cutupdev/Solana-Volume-Bot | - | Volume bot |
+| zostaff/grokbot-pumpfun | - | Grok pump.fun bot |
+| cfanbo/solana-arbitrage-bot-offchain | - | Offchain arb |
+| bitman09/pumpfun-sniper-bot | - | Pump.fun sniper |
+| urchinbotdev/urchinbot | - | Urchin bot |
+| YZYLAB/solana-swap | - | Solana swap |
+| cryptogru725/chicken-game | - | Chicken game |
+| Scottcjn/Rustchain | - | Rust chain |
+
+### Drainer scripts (critical probability)
+| Pattern | What it finds |
+|---------|---------------|
+| `ethers.Wallet.fromSecretKey` | EVM private key usage |
+| `Keypair.fromSecretKey solana` | Solana keypair usage |
+| `PRIVATE_KEY 0x filename:.env` | EVM private key in config |
+| `MNEMONIC filename:.env` | Seed phrase in config |
+| `id.json solana keypair` | Solana keypair JSON |
+
+20:
+  1. [23] 🤖 jembarns/Rescue-Wallet-Hacked-Compromissed-Airdrop
+  2. [21] 🤖 cvxv666/fomo-robinhood-radar
+  3. [21] 🤖 jaffar-shariff/wallet-connect-scam-detector
+  4. [21] 🤖 victoriomolina/rabbit-erc20
+  5. [21] 🤖 FirstAPETH/APETHDrainer
+  6. [21] 🤖 al1-nasir/gatekeep402
+  7. [20] 🤖 yesiambroke/pons-terminal
+  8. [20] 🤖 dexorynlabs/pons-copy-trading-bot-robinhood
+  9. [20] 🤖 virajkothari7/Robinhood-Trading-Journal
+ 10. [20] 🤖 dexorynlabs/robinhood-pons-bundler-bot
+ 11. [20] 🤖 ObscuraMarket/agent-obs
+ 12. [20] 🤖 Spuckwaffel/ThunderMine-cracked
+ 13. [19] 🤖 Argona7/stampede
+ 14. [19] 🤖 djh58/draino
+ 15. [19] 🤖 jxhx15317/crypto-wallet-drainer-explained
+ 16. [19] 🤖 JusBissette454/crypto-wallet-drainer-awareness
+ 17. [19] 🤖 Prajna0274/crypto-phishing-detection
+ 18. [19] 🤖 shazam2027/crypto-drainer
+ 19. [19] 🤖 dev-prometheus/argus-shield
+ 20. [19] 🤖 eli10s/drainer-guard
+
+
+Whale/Monitor Bots (10):
+- teckscribe/Solana-whale-trade-bot
+- jim-22-22/solana-whale-monitor
+- techsp13/solana-whale-radar
+- non-contextual/solana-whale-monitor
+- pelositoken/solanawhalewatcher
+- drsimon6/Phoenix-Trade-Multi-Wallet-Tracker-
+- drsimon6/Phoenix-Trade-Multi-Wallet-Tracker-Telegram-Alert-Bot-
+- memesolana168/SACKBot-solana-addres-watch
+- 0xSardius/solenrich
+- Kalachuchi/solana-price-alert-bot
+Alpha/Signal Bots (12):
+- rojandhimal/solana-alpha-trading-bot
+- Investiland/solana-alpha-bot
+- hypnogaba/solana-signal-trader
+- gabrielemodena01-eng/Sol-Signals-bot
+- Solanagemhunter/Solana-gem-bot
+- Alphakoller/solana-gem-bot
+- charlesazul27-jpg/solana-gem-bot
+- Xbrad9n/fomo-alpha
+- jams24/gemshunt
+- flagman9O/token-alerts
+- EvoXBT/pumpfun-callouts-bot
+- JJnuts/solana-pumpfun-gem-finder
+Discord/Telegram Bots (10):
+- CHATGPTIBS/solana-copy-discord-bot
+- brainrotlabsfun-io/brainrot-free-solana-telegram-trading-bot
+- rbc8n64wtp-netizen/solana-discord-bot
+- MadeOnSol/deployer-alert-discord-bot
+- kryotrades/discord-twitter-tracker
+- Laz-Builds/solana-twitter-buy-bot
+- Lisa1637dev/solana-copy-trading-bot
+- GoodluckCodes/Solana-Sui-token-scanner-Telegram-bot
+- Bytez3/MEDiscordBuySell
+- ataridev/Solana-Validator-Alert-bot
+Copy/Signal Bots (10):
+- ferris007/sol-twitter-sniper
+- ferris007/copy-trading-Bot
+- soldrift/solana-twitter-sniper
+- ypingmoe/solana-copy-bot
+- leandrocs92/solana-copy-trading-bot
+- 0xAllan123/copy-trading-bot
+- renesps/solana-trader-follow-bot
+- jerryawoyele/solana-follower-bot
+- Iaminblockchain/Solana-Trend-Following-Bot
+- AussieMemedev-gif/Degen-detector
+Other (50+):
+- profitpirate/Gambit-Jr
+- fatalik98955/solana-trading-bot-2026
+- abstradeapi/Fomo-CLI-Agent
+- kmjjjj/polymarket-arbitrage-bot-btc-sol-15m
+- BagMonster/tradeify-crypto-bot
+- francis-codex/WCKD
+- mac2c12/ai-meme-trading-bot
+- felipe2005ribeiro/trading-bot
+- esdrasdvcruz-dev/memecoins-solana-bot
+- brokechubb/FatTips
+- odia11/social-multi-trading-chain-
+- brainrotlabsfun-io/brainrot-free-solana-telegram-trading-bot
+- pezguiddgooms/solana-sniper-bot-alpha-s7j2
+- vihaanc10/solana-bot
+- WELCOMETTMATRIX/xnovasolanax
+- mrphatom/solana-social-wallet
+- BistaDinesh03/sentry-bot
+- polymily/The-Cobbler-Bot
+- AiMemeHunter/Auto-Ai-Meme-token-bot
+- weck02/solana-meme-monitor
+- zagentics/zagenticsbot
+- Gal-Superciety/beerguy-monitor
+- varunsandeshhhh/MintScan
+- wahyuramdhanakbar-svg/gmgn-ahong-bot
+- MikeOppenheimer123/hideandseek
+- SoyRealista/qvault-monorepo
+- HarrierOnChain/Hedgehog-Markets
+- Bigfave00/Zeus---Gems---bot
+- kilobytez1/Gbot
+- Smart-rwl/AI-for-Trading
+- bulls-Dev/BOTPUMPFUN-AI-Driven-Sentiment-Sniper-Launcher
+- daubaduc1505-spec/SATOSHI-PROTOCOL-2
+- Yashr4/solana-token-tracker

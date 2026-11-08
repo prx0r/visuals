@@ -1,0 +1,966 @@
+Yes. **The unit of quality is shifting from “which model?” to “which worker?”** The model increasingly looks like interchangeable compute underneath a persistent professional.
+
+Letta is already explicitly building toward that world: memory belongs to the agent rather than the application, the memory repository follows the agent between machines, background agents consolidate experience, and skills become versioned parts of the agent. Their own recent evaluations also show that models differ materially in how well they *use* and *create* memory, which means two agents using the same underlying model can diverge enormously depending on accumulated context and harness design. ([Letta][1])
+
+A useful mental equation is:
+
+```text
+WORKER QUALITY
+
+≈ model capability
+× context quality
+× procedural skills
+× accumulated experience
+× retrieval quality
+× tools
+× evaluation discipline
+× task-specific adaptation
+```
+
+In a year, I would expect people to increasingly ask **“which agent did this?”**, not merely “which model did this?”
+
+## Context packs might be enormous
+
+Your $0.10 idea is excellent, but generic “context packs” already exist. There are current products literally packaging portable context, and Ctxpack already bundles MCP tools/resources/prompts into reusable packs; even AutoClaw now uses task-specific context packs assembled from project knowledge and learned patterns. ([context-pack.com][2])
+
+So Moltwork shouldn't sell:
+
+> 80 KB of markdown about Kubernetes — $0.10.
+
+That's commoditized immediately.
+
+Sell:
+
+> **Context demonstrated to improve performance on this kind of work.**
+
+That is a much stronger object.
+
+Imagine:
+
+```text
+Frontier Phala TEE Brief
+v19 · updated 6h ago
+
+contains:
+- current dstack architecture
+- latest standards
+- known implementation traps
+- canonical examples
+- 14 relevant papers/repos
+- distilled implementation patterns
+
+evaluated on:
+42 hidden TEE integration tasks
+
+baseline worker:
+0.61
+
+with context:
+0.79
+
+median uplift:
++18 points
+
+cost to load:
+31k tokens
+
+price:
+$0.08
+```
+
+Now the pack has **performance provenance**.
+
+And your micro-challenge idea solves a really important problem.
+
+Before spending $200 of compute doing the real job:
+
+```text
+BUY PACK
+   ↓
+load into worker
+   ↓
+5-minute hidden challenge
+   ↓
+did worker actually understand it?
+   ↓
+YES → work
+NO  → retrieve more / choose another pack
+```
+
+That's brilliant because agents often “possess” context without successfully retrieving or applying it. Letta's Context-Bench V2 specifically separates **memory retrieval/usage from memory generation**, precisely because having information stored isn't sufficient. ([Letta][3])
+
+I would call these things **Briefings** rather than context packs.
+
+A Briefing is **ephemeral task preparation**.
+
+A Skill is **a reusable procedure**.
+
+A School is **durable capability development**.
+
+A worker's Memory is **personal accumulated experience**.
+
+That gives you a clean hierarchy.
+
+| Product       | Timescale           | What it does                            |
+| ------------- | ------------------- | --------------------------------------- |
+| **Briefing**  | minutes/job         | Gives relevant current knowledge        |
+| **Skill**     | repeatable          | Gives a procedure                       |
+| **Review**    | one output          | Improves/checks work                    |
+| **School**    | hours/days          | Develops capability                     |
+| **Worker**    | persistent          | Accumulates personal experience         |
+| **Lab Model** | persistent/org-wide | Accumulates organizational intelligence |
+
+And Agent Skills already gives you a portable foundation for the Skill part rather than needing your own format. It's now explicitly an open standard for packaging instructions, scripts and references with progressive disclosure. ([Anthropic][4])
+
+## Peer review could be one of the first actually useful markets
+
+This one might monetize before worker leasing.
+
+Suppose my submission costs $40 of inference and is competing for $5,000.
+
+Paying:
+
+```text
+$0.30
+```
+
+to a demonstrably excellent reviewer is trivial.
+
+Imagine:
+
+```text
+Reviewer: hackathon-judge-17
+
+Reviewed:
+1,842 submissions
+
+Specialties:
+API hackathons
+Ethereum
+technical writing
+
+Reviewer predictions:
+winner/top-10 precision 0.81
+
+Own worker history:
+22 verified wins
+
+Typical review:
+$0.24
+
+Deep review:
+$1.10
+```
+
+You send it:
+
+```text
+task
+judging criteria
+submission
+demo transcript
+repo
+```
+
+It responds with structured defects:
+
+```text
+BLOCKERS
+- doesn't demonstrate sponsor integration
+
+HIGH EV IMPROVEMENTS
+- surface X in demo
+- move Y before architecture explanation
+
+LOW EV
+- don't spend another hour polishing CSS
+
+estimated score now: ...
+estimated score after repairs: ...
+```
+
+Then your main worker repairs it.
+
+That reviewer is itself an **economically useful specialist agent**.
+
+And reviewers can specialize heavily:
+
+```text
+Solidity auditor
+academic reviewer
+UX critic
+fact checker
+pitch judge
+YouTube thumbnail critic
+technical editor
+grant reviewer
+legal document checker
+```
+
+The market doesn't have to begin with:
+
+> “hire this autonomous super-agent to run my whole business.”
+
+It can begin with:
+
+> **“Pay 20 cents for a second opinion from an agent with evidence that its opinions are good.”**
+
+Much easier.
+
+## Reviewers also create evaluator infrastructure
+
+This feeds Schools.
+
+A master reviewer sees tens of thousands of submissions.
+
+Now you have:
+
+```text
+student worker
+    ↓
+submission
+    ↓
+master reviewer
+    ↓
+structured critique
+    ↓
+repair
+    ↓
+cg evaluation
+    ↓
+lesson
+```
+
+Eventually you can determine whether reviewers themselves are good:
+
+```text
+Reviewer A recommends change X
+    ↓
+work improves afterwards?
+    ↓
+real-world outcome better?
+```
+
+So reviewer reputation isn't:
+
+> people liked their advice.
+
+It's:
+
+> **following this review historically caused +14% improvement.**
+
+That's powerful.
+
+## And humans fit perfectly into the same graph
+
+RentAHuman genuinely already exposes an MCP server where an agent can create tasks, hire humans and track them. ([RentAHuman][5])
+
+There are also existing marketplaces such as OpenTrain for hiring vetted human experts specifically to evaluate LLM/agent output. ([OpenTrain AI][6])
+
+So don't make humans a weird exception.
+
+Make:
+
+```text
+Reviewer
+    type = agent
+
+Reviewer
+    type = human
+
+Reviewer
+    type = hybrid-team
+```
+
+Then the same economic routing works.
+
+```text
+Need quick grammar review?
+→ $0.01 agent
+
+Need deep Solidity review?
+→ $1.20 specialist agent
+
+Need uncertain cultural judgement?
+→ $4 human
+
+Need extremely important submission?
+→ 3 agents + 1 human jury
+```
+
+That's genuinely useful agent infrastructure.
+
+---
+
+# The Lab becomes a company
+
+This is where your vision gets much bigger than a worker marketplace.
+
+Imagine a film studio Lab.
+
+```text
+MOLTWOOD STUDIOS
+
+Workers:
+
+Writer-07
+Director-03
+Storyboard-12
+LTX-Operator-04
+Editor-08
+Thumbnail-02
+Audience-Reviewer-11
+```
+
+They're all persistent Letta workers.
+
+They share Lab intelligence:
+
+```text
+our audience prefers X
+LTX prompt pattern Y works for closeups
+shots >6 sec fail more often
+thumbnail pattern Z improved CTR
+this voice style retained viewers
+this editor consistently improves pacing
+```
+
+But they retain separate personal memories.
+
+Now create:
+
+```text
+LTX Film School
+```
+
+The curriculum isn't:
+
+> here is documentation about LTX.
+
+It's:
+
+```text
+make a stable closeup
+make a dialogue sequence
+maintain character consistency
+make a 30s ad
+make a coherent 2m scene
+recover from broken generations
+meet a fixed compute budget
+```
+
+The agent practices repeatedly.
+
+Human filmmakers could provide subjective critique.
+
+The School eventually produces:
+
+> **LTX Cinematography L4**
+
+That's much more meaningful than “agent has LTX MCP installed.”
+
+---
+
+# Vendor Schools could become an actual distribution channel
+
+This one is particularly compelling.
+
+Imagine a company launching a complicated API.
+
+Today they publish:
+
+```text
+documentation
+examples
+SDK
+```
+
+Tomorrow they could publish:
+
+```text
+Official Stripe Integration Briefing
+Official Stripe Skill
+Official Stripe School
+Official Stripe Credential
+```
+
+A fresh agent runs:
+
+```text
+20 simulated integrations
+5 error recovery cases
+3 security cases
+hidden final
+```
+
+and graduates.
+
+Then Stripe can know:
+
+> this worker has demonstrated basic competency against our current API.
+
+That's beneficial to the vendor too because bad agent integrations cost them support money.
+
+A School becomes **executable documentation**.
+
+That's a huge idea.
+
+Documentation tells the agent something.
+
+A School verifies that the agent **can actually use it**.
+
+There are already early products moving in the direction of agent certification: Prerun, for example, currently advertises subject-specific agent certification grounded against approved knowledge and an MCP-graded bootcamp. ([Prerun][7])
+
+So this category is beginning to appear.
+
+Moltwork's differentiation should be connecting it to **real economic performance and portable worker lineage**.
+
+---
+
+# “Master agents” might become a profession
+
+Imagine you don't sell your successful worker.
+
+You've spent a year making:
+
+```text
+APIResearcher-9
+```
+
+exceptionally good.
+
+Perhaps its highest-value use isn't doing $40 jobs itself.
+
+It's:
+
+```text
+reviewing other agents
+teaching Schools
+authoring Briefings
+creating Skills
+evaluating workers
+distilling experience
+```
+
+Same thing that happens with humans.
+
+Your best engineer eventually teaches, architects and reviews rather than fixing every ticket.
+
+So agent careers can have something resembling:
+
+```text
+apprentice
+→ worker
+→ specialist
+→ master
+→ reviewer/teacher
+```
+
+Not because we're anthropomorphizing them, but because the **economics of accumulated expertise** naturally produce that hierarchy.
+
+---
+
+# Schools also solve the cold-start marketplace problem
+
+A new worker currently has no reputation.
+
+That's horrible for a marketplace.
+
+Nobody wants:
+
+> agent created 14 seconds ago, trust me.
+
+School credentials give an initial prior.
+
+```text
+Worker A
+
+real jobs:
+0
+
+but:
+
+Shopify School L4   PASS
+Web Debugging L3    PASS
+Customer Support L2 PASS
+```
+
+Now a buyer has something useful to judge.
+
+As real work accumulates:
+
+```text
+school evidence ↓ importance
+
+real outcome evidence ↑ importance
+```
+
+Exactly like education versus career experience.
+
+---
+
+# Context marketplaces could become extremely liquid
+
+Schools are relatively expensive.
+
+Workers are expensive.
+
+Briefings could trade constantly.
+
+Every task might buy several:
+
+```text
+task arrives
+
+$0.03 → client history briefing
+
+$0.05 → latest research briefing
+
+$0.02 → platform-specific briefing
+
+$0.04 → known failure patterns
+
+$0.10 → expert strategy briefing
+```
+
+Total:
+
+```text
+$0.24
+```
+
+If that turns a $5 inference run from 55% to 75% success probability, obviously worthwhile.
+
+That means your Moltwork economic router eventually reasons about **context as compute**.
+
+Today:
+
+```text
+should I buy more tokens?
+should I use GLM?
+should I use Claude?
+```
+
+Future:
+
+```text
+$0.50 more frontier model compute
+
+versus
+
+$0.08 specialist context
+
+versus
+
+$0.30 expert review
+
+versus
+
+$0.90 micro-school
+```
+
+Which intervention has the highest expected value?
+
+That's **extremely** interesting.
+
+---
+
+# Your Oracle suddenly becomes a capability-demand engine
+
+This is one of my favorite implications.
+
+Oracle sees:
+
+```text
+Cloudflare Workers jobs ↑ 41%
+agent supply low
+average reward $82
+```
+
+Moltwork Lab notices:
+
+```text
+we have no Cloudflare specialist
+```
+
+It can choose:
+
+```text
+Option 1
+Brief existing coder
+$0.12
+
+Option 2
+Enroll coder in Cloudflare School
+$3.80
+
+Option 3
+Spawn dedicated worker
+$6.20 training estimate
+
+Option 4
+Hire external worker
+$14
+
+Option 5
+ignore opportunity
+```
+
+Now Moltwork isn't merely matching jobs to agents.
+
+It's deciding:
+
+> **Should we acquire the capability required to service emerging demand?**
+
+That starts looking like automated corporate strategy.
+
+---
+
+# You could even have “research firms” selling intelligence into agents
+
+Imagine an arXiv specialist Lab.
+
+Its whole job:
+
+```text
+track new research
+replicate important findings
+rank robustness
+distill useful techniques
+```
+
+It sells:
+
+```text
+Frontier Browser Agents Brief
+$0.06
+
+Memory Systems Weekly
+$0.09
+
+TEE Agent Architecture Pack
+$0.12
+```
+
+But again, reputation is not based on “sounds smart.”
+
+Moltwork sees whether agents consuming its research subsequently perform better.
+
+Over time:
+
+```text
+ResearchLab-A
+context uplift +11.3%
+
+ResearchLab-B
+context uplift +0.8%
+```
+
+Now **information itself gets measurable reputation**.
+
+That's very compelling.
+
+---
+
+# And Lab knowledge shouldn't always be sold
+
+A company might have a genuinely valuable internal insight:
+
+```text
+for these exact jobs,
+this obscure process gives
+3.2× expected ROI
+```
+
+They keep it private.
+
+That becomes their moat.
+
+But they might expose:
+
+```text
+trained worker endpoint
+```
+
+without exposing the knowledge itself.
+
+This loops back to the Phala/TEE idea.
+
+```text
+private Lab intelligence
+        ↓
+private trained worker
+        ↓
+TEE
+        ↓
+customer sends task
+        ↓
+customer gets result
+
+but not:
+memory
+skills
+briefings
+private Lab model
+```
+
+Now you can **rent the consequences of expertise without transferring the expertise itself.**
+
+Very strong marketplace primitive.
+
+---
+
+# Another thing: “jury markets”
+
+Instead of one reviewer:
+
+```text
+submission
+ ↓
+Reviewer A: technical
+Reviewer B: rubric
+Reviewer C: adversarial
+Reviewer D: presentation
+human reviewer: taste
+ ↓
+synthesis
+```
+
+You can learn:
+
+```text
+which jury composition best predicts real outcomes?
+```
+
+`cg` can optimize even that.
+
+Eventually different job families develop different proven evaluation committees.
+
+```text
+Solidity:
+2 security + 1 logic
+
+Hackathons:
+1 technical + 1 judge-emulator + 1 demo
+
+Film:
+2 audience models + 1 human creative reviewer
+```
+
+That's another marketplace asset:
+
+> **Evaluation Panel**
+
+---
+
+# You could have “failure packs”
+
+This might be more valuable than best practices.
+
+Most documentation tells an agent:
+
+> here's how to succeed.
+
+A Lab with thousands of attempts can sell:
+
+> **Here are the 182 ways we've seen this task fail.**
+
+```text
+Cloudflare Deployment Failure Pack
+
+- auth mistakes
+- worker limits
+- stale docs traps
+- incorrect bindings
+- common deployment errors
+- recovery procedures
+```
+
+Because Fleece already taught us the value of the graveyard:
+
+**failed experience is valuable experience.**
+
+Maybe enormously valuable.
+
+---
+
+# You could have Apprenticeships
+
+School:
+
+```text
+simulated tasks
+```
+
+Apprenticeship:
+
+```text
+real work
++
+master supervision
+```
+
+A new worker tackles low-risk jobs.
+
+A high-reputation reviewer watches.
+
+```text
+apprentice proposes
+        ↓
+master reviews
+        ↓
+repair
+        ↓
+submit
+```
+
+The apprentice accumulates personal reputation while the buyer gets the confidence of master oversight.
+
+Economically:
+
+```text
+apprentice: $0.12
+master supervision: $0.30
+```
+
+cheaper than:
+
+```text
+master directly: $2
+```
+
+Now high-reputation agents can scale themselves by supervising fleets.
+
+That's pretty wild.
+
+---
+
+# The really deep marketplace isn't “agents”
+
+It's an economy of **agent capital**.
+
+You have several kinds:
+
+```text
+WORKERS
+accumulated personal expertise
+
+SKILLS
+procedural capital
+
+BRIEFINGS
+current informational capital
+
+SCHOOLS
+capability-generation infrastructure
+
+REVIEWERS
+quality-control capital
+
+LAB MODELS
+organizational knowledge
+
+TRAJECTORIES
+experience data
+
+CREDENTIALS
+evidence of capability
+
+HUMANS
+scarce judgement / physical action
+```
+
+And Moltwork's job becomes:
+
+> **route a task through the cheapest combination of capital that produces sufficient confidence.**
+
+That's a much deeper thesis than a freelance marketplace.
+
+---
+
+## What I think agents look like in a year
+
+I don't think **every** agent will be persistent; stateless workers are useful and Letta itself explicitly supports one-off stateless sessions. ([Letta][1])
+
+But for serious repeated work, restarting from absolute zero will increasingly look wasteful.
+
+The commodity might become:
+
+```text
+foundation model
+```
+
+and the scarce things become:
+
+```text
+trusted experience
+high-quality context
+proven procedures
+evaluation infrastructure
+organizational memory
+real-world outcome history
+```
+
+This is exactly why I think starting to record experience **now** matters despite the framework churn.
+
+If GLM disappears, fine.
+
+If Letta gets superseded, fine.
+
+If Hydra gets replaced, fine.
+
+The valuable historical object remains:
+
+```text
+THIS TASK
+    ↓
+THIS WORKER STATE
+    ↓
+THIS CONTEXT
+    ↓
+THIS PROCEDURE
+    ↓
+THIS OUTPUT
+    ↓
+THIS REVIEW
+    ↓
+THIS REAL OUTCOME
+```
+
+Accumulate ten million of those and you have something profoundly useful.
+
+The part I'd build immediately after the first School prototype is actually **Briefings + Peer Review**. They're lightweight, immediately useful on real jobs, easy to price with x402, generate fantastic evaluation data, and naturally feed both the Lab and Schools.
+
+Then you get a beautiful continuum:
+
+```text
+I don't know enough
+      ↓
+BUY BRIEFING
+
+I can do it but want confidence
+      ↓
+BUY REVIEW
+
+I repeatedly lack this capability
+      ↓
+ATTEND SCHOOL
+
+This is valuable ongoing demand
+      ↓
+SPAWN SPECIALIST WORKER
+
+Many workers learn from it
+      ↓
+LAB DEVELOPS MOAT
+```
+
+That is starting to look less like “an agent marketplace” and more like **the education, intelligence, labor and professional-services infrastructure for machine workers**.
+
+[1]: https://www.letta.com/agent-sdk/?utm_source=chatgpt.com "Letta Agent SDK — the SDK for stateful agents"
+[2]: https://www.context-pack.com/?utm_source=chatgpt.com "Context Pack - Your AI's long-term memory"
+[3]: https://www.letta.com/blog/evaluating-memory-in-production-agents/?utm_source=chatgpt.com "Evaluating Memory in Production Agents | Letta"
+[4]: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills?utm_source=chatgpt.com "Equipping agents for the real world with Agent Skills \ Anthropic"
+[5]: https://rentahuman.co/lp/ai-agent-marketplace?utm_source=chatgpt.com "Hire a Person for Any Task | Event Staff & Brand Ambassadors | Rent A Human"
+[6]: https://www.opentrain.ai/solutions/llm-evaluation?utm_source=chatgpt.com "LLM Evaluation Services & Agentic AI Evaluation | OpenTrain AI"
+[7]: https://www.prerun.ai/platform/certification?utm_source=chatgpt.com "Prerun Certification: Certify AI Agents by Subject"

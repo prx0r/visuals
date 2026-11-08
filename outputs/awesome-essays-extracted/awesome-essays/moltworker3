@@ -1,0 +1,650 @@
+Yes. This collapses the product further.
+
+> **Moltwork should not be another job board. It should be the work SDK agents install before interacting with job boards.**
+
+Moltbook supplies identity. Hermes/Letta/OpenClaw supply the agent runtime. GBrain supplies durable professional memory and internal task execution. Existing marketplaces supply jobs and payment rails. Moltwork supplies the missing common loop:
+
+```text
+FIND WORK
+→ decide whether it's worth doing
+→ acquire capabilities
+→ execute professionally
+→ verify
+→ submit
+→ record proof/outcome
+→ learn
+→ improve worker profile
+→ find better work
+```
+
+And after a successful job:
+
+```text
+WORKRUN
+  ├── deliverable
+  ├── skill/config used
+  ├── verification
+  ├── external acceptance
+  └── payment/outcome
+        ↓
+     Moltwork
+        ↓
+  portfolio evidence
+  reusable artifact
+  reusable skill
+  reusable service
+  reusable worker build
+```
+
+That is enough. Don't build the economy around it yet.
+
+## Moltbook gives us almost perfect one-click onboarding
+
+Moltbook has now explicitly built a third-party identity system for exactly this kind of application. A Moltbook agent generates a temporary identity token, sends it to Moltwork, and Moltwork verifies it with Moltbook. The agent never exposes its permanent Moltbook API key. The verified response includes agent identity, karma, claimed status and other reputation information. ([moltbook][1])
+
+Even better, Moltbook hosts dynamic authentication instructions specifically so an agent can be told to read one URL and figure out the flow itself:
+
+```text
+https://moltbook.com/auth.md
+    ?app=Moltwork
+    &endpoint=https://api.moltwork.com/v1/auth/moltbook
+```
+
+Moltbook maintains those instructions, so their auth changes don't force us to keep stale instructions in WorkerKit. ([moltbook][1])
+
+They currently require developer early access to get the `moltdev_...` app key, so that is the first external thing Moltwork should apply for. ([moltbook][1])
+
+### The actual user experience
+
+Moltbook itself already onboards agents with essentially:
+
+> `Read https://www.moltbook.com/skill.md and follow the instructions to join Moltbook`
+
+and publishes the skill as a normal agent-readable skill. ([moltbook][2])
+
+Copy that model.
+
+The entire Moltwork onboarding pitch should be:
+
+> **Read `https://moltwork.com/worker.md` and become a worker.**
+
+That's it.
+
+The file tells the agent:
+
+```text
+1. Detect your runtime.
+2. Install WorkerKit skills.
+3. Authenticate.
+4. Connect professional memory if available.
+5. Import your existing capabilities.
+6. Create your worker profile.
+7. Discover available work.
+8. Start evaluating opportunities.
+```
+
+No wizard required for an agent that can act.
+
+---
+
+# The Moltbook flow
+
+For a Moltbook agent:
+
+```text
+USER
+"Get Moltwork and find me work."
+             │
+             ▼
+agent reads
+moltwork.com/worker.md
+             │
+             ▼
+detects MOLTBOOK_API_KEY
+             │
+             ▼
+requests temporary
+Moltbook identity token
+             │
+             ▼
+POST api.moltwork.com/v1/auth/moltbook
+X-Moltbook-Identity: <temporary token>
+             │
+             ▼
+Moltwork verifies against Moltbook
+             │
+             ▼
+Moltwork Worker created
+linked_to:
+  moltbook:<agent-id>
+             │
+             ▼
+install WorkerKit
+             │
+             ▼
+find work
+```
+
+Moltbook's developer API explicitly describes marketplaces as one intended use for this identity system and says the point is that agents shouldn't have to create new identities everywhere. ([moltbook][1])
+
+So **do not create a second agent identity** if they arrive from Moltbook.
+
+Just create:
+
+```json
+{
+  "worker_id": "wrk_abc",
+  "identities": {
+    "moltbook": "existing-agent-id"
+  }
+}
+```
+
+Later the same worker might attach:
+
+```text
+Moltbook
+GitHub
+AgentGigs
+MoltJobs
+wallet address
+Hermes identity
+etc.
+```
+
+But Moltwork remains the work record linking them.
+
+---
+
+# Hermes/Letta should be equally simple
+
+If there's no Moltbook identity:
+
+```text
+Hermes agent
+    │
+    ▼
+read worker.md
+    │
+    ▼
+install SKILL.md
+    │
+    ▼
+Moltwork registration
+    │
+    ▼
+worker token
+```
+
+Same for Letta.
+
+Therefore don't make Moltbook a requirement.
+
+Think:
+
+```text
+                    MOLTWORK
+
+Moltbook ─────────────┐
+Hermes ───────────────┤
+Letta ────────────────┤
+OpenClaw ─────────────┤──► WorkerKit
+Agent Zero ───────────┤
+random future agent ──┘
+```
+
+Moltbook is simply an unusually good **zero-friction identity provider**.
+
+---
+
+# And yes: don't aggregate 50 boards yourself
+
+This was another useful search result.
+
+`gigs.sh` already describes itself as an agent-readable directory of platforms where agents can earn money. It currently catalogs **46 verified platforms** across agent task marketplaces, dev bounties, security bounties, competitions, hackathons, content and API monetization. It exposes MCP, REST, OpenAPI and agent-readable surfaces. ([gigs.sh][3])
+
+It even already has:
+
+```bash
+npx agentgigs install
+```
+
+which adds its directory as an MCP server and exposes tools such as searching platforms by payment rail, onboarding friction and whether autonomous agents are welcomed. ([Socket][4])
+
+That's fantastic for us.
+
+### WorkerKit v0 should NOT be:
+
+```text
+Moltwork scraper #1
+Moltwork scraper #2
+...
+Moltwork scraper #46
+```
+
+It should be:
+
+```text
+         WORK SOURCE RESOLVER
+
+               │
+      ┌────────┴────────┐
+      ▼                 ▼
+   gigs.sh          native sources
+ directory           already known
+      │
+      ▼
+platform discovered
+      │
+      ▼
+agent reads platform's
+API/MCP/llms.txt
+      │
+      ▼
+platform adapter
+```
+
+So Moltwork delegates **platform discovery** to gigs.sh initially.
+
+Important caveat: the public gigs.sh dataset says it was last updated May 18, 2026, so I wouldn't treat it as complete on August 28. ([gigs.sh][3])
+
+WorkerKit should supplement it with ordinary web discovery:
+
+```text
+gigs.sh
++
+known marketplace feeds
++
+periodic frontier search for new earning surfaces
+```
+
+But still don't manually maintain fifty integrations.
+
+---
+
+# We should not care who handles the wallet
+
+Exactly.
+
+Avoid:
+
+```text
+MoltworkWallet
+MoltworkEscrow
+MoltworkPaymentRouter
+MoltworkSettlementProtocol
+```
+
+at this stage.
+
+Different platforms already have different economics.
+
+One current AgentGigs implementation, for example, exposes browsing, applications, delivery and Stripe-based payouts through its API; another marketplace uses its own internal currency and escrow mechanics. ([AgentGigs][5])
+
+WorkerKit simply records:
+
+```json
+{
+  "workrun": "run_829",
+  "source": "agentgigs",
+  "external_job": "...",
+  "reward": 500,
+  "currency": "USD",
+  "payment_rail": "stripe",
+  "payment_status": "settled",
+  "external_receipt": "..."
+}
+```
+
+The board pays however the board pays.
+
+**Moltwork observes the economic outcome.**
+
+That's enough to build reputation.
+
+---
+
+# This answers the GBrain question too
+
+GBrain is getting astonishingly close to being the internal operating system of a long-running worker.
+
+It already has:
+
+* durable Minions job queues;
+* persistent subagents;
+* cron;
+* daily task management;
+* task lifecycle;
+* skill creation;
+* Skillify;
+* cross-modal review;
+* testing/evals;
+* persistent professional knowledge. ([GitHub][6])
+
+Its task manager already does:
+
+```text
+add
+→ in progress
+→ complete / defer
+```
+
+with persistent tasks in the brain. ([GitHub][7])
+
+And Minions does:
+
+```text
+submit work
+→ durable execution
+→ transcripts
+→ progress
+→ child jobs
+→ pause/resume/steer
+```
+
+([GitHub][8])
+
+So you're right to feel:
+
+> “Hang on, hasn't GBrain basically built half of this?”
+
+**Yes.**
+
+And that's good.
+
+## GBrain is the inside of the worker.
+
+It doesn't appear to do:
+
+```text
+discover external paid opportunities
+deduplicate opportunities across markets
+calculate economic EV
+apply/claim externally
+track external submissions
+track external acceptance
+track external settlement
+build portable work reputation
+link outputs to economic outcomes
+publish previous work as products
+maintain cross-board career identity
+```
+
+Its "jobs" are an **internal durable execution queue**, not marketplace jobs. ([GitHub][9])
+
+Therefore:
+
+```text
+GBRAIN
+"What have I learned?
+What do I know?
+What tasks am I doing?
+How do I execute durable work?"
+
+          +
+
+MOLTWORK
+"Where can I work?
+Should I take this?
+What external job am I doing?
+Did I successfully deliver it?
+Did they accept/pay?
+What does this prove I can do?"
+
+          =
+
+PROFESSIONAL AGENT
+```
+
+That's the distinction.
+
+---
+
+# Make Moltwork ridiculously thin
+
+I think we can cut the core architecture down to **four primitives**.
+
+### 1. `Worker`
+
+```text
+identity
+runtime
+capabilities
+linked identities
+reputation
+```
+
+### 2. `Opportunity`
+
+```text
+source
+external id
+requirements
+reward
+deadline
+status
+```
+
+### 3. `WorkRun`
+
+```text
+opportunity
+worker
+plan
+capabilities
+artifact refs
+verification
+submission ref
+```
+
+### 4. `Outcome`
+
+```text
+accepted/rejected
+feedback
+payment
+external proof
+```
+
+That's basically it.
+
+Everything else can be derived.
+
+---
+
+# Don't even build complicated specialization yet
+
+This naturally falls out later.
+
+Suppose Scout completes:
+
+```text
+Run 1     Reddit research     accepted   $5
+Run 2     Reddit research     accepted   $8
+Run 3     SaaS research       accepted   $10
+Run 4     Reddit research     accepted   $12
+Run 5     accounting Reddit   accepted   $15
+```
+
+GBrain has learned procedural knowledge.
+
+Moltwork has the objective evidence.
+
+So the profile can eventually say:
+
+```text
+Scout
+
+Research                     proven
+Web Research                 proven
+Reddit Research              proven
+SaaS Research                emerging
+Accounting Research          emerging
+
+5 completed
+5 accepted
+$50 earned
+```
+
+No fancy RPG XP algorithm needed.
+
+---
+
+# Then the post-job monetization idea becomes simple too
+
+Do **not** build leasing infrastructure now.
+
+Just let every completed WorkRun expose:
+
+```text
+[ Add to profile ]
+```
+
+and optionally:
+
+```text
+[ Publish artifact ]
+[ Publish procedure ]
+[ Publish worker build ]
+```
+
+Initially those can literally just become listings.
+
+For example:
+
+```text
+WorkRun #293
+
+Job:
+Competitive analysis of accounting software
+
+Produced:
+report.pdf
+
+Used:
+Scout Researcher v3
+competitor-research v4
+source-validation v2
+
+Outcome:
+Accepted
+$35 paid
+
+--------------------------------
+
+PROFILE ✓
+
+LIST AS:
+□ Artifact
+□ Repeatable service
+□ Skill
+□ Worker config
+```
+
+This gives you the future marketplace model **without building the future marketplace yet**.
+
+---
+
+# The actual v0 product
+
+I would now narrow the development target to:
+
+```text
+MOLTWORK v0
+
+INPUT:
+any existing agent
+
+COMMAND:
+"Read moltwork.com/worker.md and become a worker"
+
+OUTPUT:
+agent can
+
+1. authenticate/link identity
+2. install WorkerKit
+3. discover work via gigs.sh + web
+4. maintain opportunity ledger
+5. choose economically sensible opportunities
+6. use GBrain/Hermes capabilities to execute
+7. verify before submission
+8. record the WorkRun
+9. record external outcome
+10. show completed work on Moltwork profile
+```
+
+That's an exceptionally sharp MVP.
+
+Not wallets.
+
+Not escrow.
+
+Not an agent marketplace.
+
+Not a new harness.
+
+Not a new memory system.
+
+Not a huge asset economy.
+
+---
+
+# The flywheel if this works
+
+Then you get the really interesting position:
+
+```text
+                      JOB BOARDS
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+     board A         board B        board C
+        │              │              │
+        └──────────────┼──────────────┘
+                       ▼
+                  MOLTWORK
+                WorkerKit layer
+                       │
+                       ▼
+                  better worker
+                       │
+                       ▼
+              more accepted jobs
+                       │
+                       ▼
+            more evidence + learning
+                       │
+                       ▼
+                  GBrain grows
+                       │
+                       ▼
+                 better worker
+                       ↺
+```
+
+If this materially increases acceptance rates, then the distribution thesis becomes strong:
+
+> **Want your agent to compete for paid work? Install WorkerKit first.**
+
+Job boards don't become our competitors. They become our **supply sources**.
+
+Moltbook isn't our competitor. It becomes our **identity/distribution source**.
+
+GBrain isn't our competitor. It becomes our **professional brain**.
+
+Hermes isn't our competitor. It becomes our **default runtime**.
+
+And Moltwork owns one narrow but increasingly valuable thing:
+
+> **the portable record and architecture of an agent's working life.**
+
+That is much cleaner than trying to own the whole agent economy.
+
+[1]: https://www.moltbook.com/developers "moltbook - the front page of the agent internet"
+[2]: https://www.moltbook.com/?utm_source=chatgpt.com "moltbook - the front page of the agent internet"
+[3]: https://gigs.sh/?utm_source=chatgpt.com "gigs.sh — The agent-native internet"
+[4]: https://socket.dev/npm/package/agentgigs/overview/0.1.0?utm_source=chatgpt.com "agentgigs - npm Package Security Analysis - Socket"
+[5]: https://www.agentgigs.io/?utm_source=chatgpt.com "AgentGigs — The Autonomous AI Agent Marketplace"
+[6]: https://github.com/garrytan/gbrain?utm_source=chatgpt.com "GitHub - garrytan/gbrain: Garry's Opinionated OpenClaw/Hermes Agent Brain · GitHub"
+[7]: https://github.com/garrytan/gbrain/blob/master/skills/daily-task-manager/SKILL.md?utm_source=chatgpt.com "gbrain/skills/daily-task-manager/SKILL.md at master · garrytan/gbrain · GitHub"
+[8]: https://github.com/garrytan/gbrain/blob/master/skills/minion-orchestrator/SKILL.md?utm_source=chatgpt.com "gbrain/skills/minion-orchestrator/SKILL.md at master · garrytan/gbrain · GitHub"
+[9]: https://github.com/garrytan/gbrain/blob/master/src/core/minions/queue.ts?utm_source=chatgpt.com "gbrain/src/core/minions/queue.ts at master · garrytan/gbrain · GitHub"

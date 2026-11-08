@@ -1,0 +1,861 @@
+Exactly. **We should treat Sanskritree as an integration and verification layer**, not build parsers, corpus formats, annotation engines, graph standards, intertextual search, or argument ontologies from scratch.
+
+Your draft already describes the desired destination well.  The practical change is:
+
+> Adopt existing formats internally wherever possible, write thin adapters, and reserve custom code for Sanskrit-specific scholarly relations and Lean verification.
+
+One important correction:
+
+## Do not convert the whole corpus into Lean
+
+Lean is terrible as the main corpus store. It should receive a small, deterministic projection of already-adjudicated data.
+
+```text
+Existing corpora and tools
+        ↓
+standard adapters
+        ↓
+STAM annotation packages
+        ↓
+accepted Sanskritree claims
+        ↓
+nanopublications / argument graphs
+        ↓
+small Lean projection
+        ↓
+verification certificate
+```
+
+The full text, uncertainty, provenance and alternatives stay in STAM/TEI/RDF. Lean checks invariants and reconstructed arguments.
+
+# The reuse map
+
+## 1. Ambuda becomes the primary corpus seed
+
+Ambuda now provides bulk downloads containing all of its texts, including translations and commentaries, as TEI XML, plus separate metadata and plain-text exports. Its own data stack already incorporates GRETIL texts, Cologne dictionaries and DCS parses. ([ambuda.org][1])
+
+### Take directly
+
+```text
+TEI XML texts
+work metadata
+authors
+text structure
+translations
+commentaries
+source references
+existing identifiers
+```
+
+### Build only
+
+```text
+ambuda_tei_importer.py
+```
+
+The adapter converts:
+
+```text
+TEI <text>             → STAM TextResource
+TEI <div>              → structural annotation
+TEI <lg>/<l>/<p>       → passage annotations
+TEI <title>/<author>   → metadata annotations
+TEI commentary links   → relation candidates
+TEI translations       → aligned resource candidates
+```
+
+Do not copy Ambuda’s website or database schema. Consume its release files and preserve the upstream IDs and commit/release hash.
+
+### Sanskritree contribution
+
+Ambuda gives us texts. We add:
+
+* alternate interpretations;
+* fine-grained commentary targeting;
+* translation justification;
+* conceptual claims;
+* scholarly disagreement;
+* argument reconstruction;
+* adjudication;
+* verification.
+
+---
+
+## 2. GRETIL becomes the broad fallback corpus
+
+The GRETIL mirror contains stable Unicode snapshots and reports TEI/XML versions for nearly all included files. It also has a Zenodo DOI and traceable release history. ([GitHub][2])
+
+### Use it for
+
+```text
+texts absent from Ambuda
+older editions
+Buddhist and non-Sanskrit Indic materials
+historical corpus coverage
+cross-checking source versions
+```
+
+### Adapter
+
+```text
+gretil_tei_importer.py
+gretil_plaintext_importer.py
+```
+
+Its purpose is not merely to ingest text. It should record:
+
+```text
+upstream repository
+path
+release/commit
+encoding
+edition statement
+header metadata
+content hash
+conversion warnings
+```
+
+### Rule
+
+Prefer Ambuda’s TEI when Ambuda has already cleaned and structured a text. Use GRETIL directly when Ambuda lacks it or when its version represents a distinct edition.
+
+Do not silently merge the two.
+
+```text
+Ambuda edition A
+GRETIL edition B
+```
+
+remain separate resources related by:
+
+```text
+REPRESENTS_SAME_WORK
+POSSIBLE_DERIVATION
+TEXTUALLY_OVERLAPS
+```
+
+---
+
+## 3. DCS supplies morphology seeds
+
+Ambuda’s sanitized DCS repository preserves corrected data from the Digital Corpus of Sanskrit under CC BY 4.0. ([GitHub][3])
+
+### Take directly
+
+Where available:
+
+```text
+segmentation
+lemma
+morphological analysis
+text locations
+existing parse decisions
+```
+
+### Convert to
+
+STAM annotations using a Sanskritree vocabulary:
+
+```text
+stree:token
+stree:lemma
+stree:case
+stree:number
+stree:gender
+stree:tenseMood
+stree:voice
+stree:derivation
+```
+
+Example:
+
+```text
+TextResource: source verse
+Annotation: span 18–24
+Data:
+  lemma = śakti
+  pos = NOUN
+  case = LOC
+  number = SG
+Provenance:
+  generatedBy = DCS import
+  upstreamVersion = ...
+Status:
+  imported_attestation
+```
+
+The key distinction is:
+
+> A DCS analysis is imported evidence, not automatically Sanskritree truth.
+
+It enters as:
+
+```text
+EXTERNALLY_ATTESTED
+```
+
+not:
+
+```text
+HUMAN_ACCEPTED_FOR_THIS_EDITION
+```
+
+That matters because DCS tokenization may not align perfectly with the exact edition Sanskritree is using.
+
+---
+
+## 4. Vidyut supplies deterministic Sanskrit operations
+
+Vidyut is actively maintained Sanskrit infrastructure in Rust under Ambuda. ([GitHub][4])
+
+Use it rather than implementing:
+
+```text
+sandhi generation
+inflection
+conjugation
+derivational operations
+lexical lookup infrastructure
+basic morphological candidate generation
+```
+
+### Integration
+
+Prefer either:
+
+```text
+Python bindings
+```
+
+or a thin local service/CLI wrapper if the bindings do not expose the operation needed.
+
+```text
+Sanskritree span
+→ Vidyut request
+→ candidate analyses
+→ STAM candidate annotations
+```
+
+Store:
+
+```text
+tool = vidyut
+version
+input script/transliteration
+normalization
+candidate output
+runtime parameters
+```
+
+Never insert Vidyut output directly into accepted tables.
+
+---
+
+## 5. Sanskrit Heritage supplies segmentation and analysis candidates
+
+Heritage provides established Sanskrit segmentation and morphological-analysis machinery. We should use it as a second independent proposal engine rather than reproduce its grammatical system.
+
+The useful architecture is:
+
+```text
+Heritage candidates
+DCS attested analyses
+Vidyut candidates
+LLM contextual candidates
+        ↓
+candidate lattice
+        ↓
+human or rule-based adjudication
+```
+
+Agreement raises confidence but does not itself establish correctness:
+
+```text
+DCS + Heritage + Vidyut agree
+→ strong candidate
+
+Heritage and Vidyut disagree
+→ review fork
+
+candidate absent from every analyser
+→ human-created analysis
+```
+
+Our custom contribution is the **lattice and decision record**, not another Sanskrit parser.
+
+---
+
+## 6. Universal Dependencies seeds syntax
+
+The Vedic Sanskrit UD treebank contains 4,000 manually validated sentences and roughly 27,000 words from Vedic and Brāhmaṇa sources, with morphological and dependency annotations under CC BY-SA 4.0. ([universaldependencies.org][5])
+
+There is also a Sanskrit UFAL treebank in the UD ecosystem. ([HLT BME][6])
+
+### Use directly
+
+```text
+CoNLL-U format
+UPOS
+morphological features
+dependency relations
+sentence segmentation
+```
+
+### Two uses
+
+First, import these sentences as seed data:
+
+```text
+CoNLL-U
+→ STAM TextResource
+→ token annotations
+→ morphology annotations
+→ dependency-edge annotations
+```
+
+Second, use them to train or evaluate a Sanskrit parser.
+
+Do not invent a Sanskritree dependency scheme initially. Preserve UD relations and add Sanskrit-specific higher layers separately:
+
+```text
+UD syntax:
+nsubj, obj, obl, acl, advcl...
+
+Sanskritree semantics:
+qualifier
+qualificand
+locus
+counterpositive
+delimitor
+epistemic agent
+object of cognition
+```
+
+Syntax and philosophical analysis should remain distinct.
+
+---
+
+# The annotation substrate: adopt STAM
+
+This is the biggest “do not rebuild it” decision.
+
+STAM already gives us:
+
+* immutable plain-text resources;
+* annotations over exact spans;
+* annotations targeting other annotations;
+* multiple and discontinuous selectors;
+* competing analyses;
+* user-defined vocabularies;
+* JSON serialization;
+* Python bindings backed by Rust;
+* CoNLL import;
+* query support;
+* translation and transposition extensions;
+* mappings toward W3C Web Annotation and RDF;
+* scalability to millions of annotations. ([GitHub][7])
+
+That is almost the entire low-level substrate from your draft.
+
+## Therefore
+
+Do **not** create bespoke versions of:
+
+```text
+TextResource
+Selector
+Annotation
+AnnotationDataSet
+higher-order annotation
+span relation
+translation alignment
+```
+
+Use:
+
+```text
+annotation/stam
+stam-rust
+stam-python
+STAM-Translate
+STAM-Transpose
+STAM-Vocab
+STAMQL
+```
+
+## What Sanskritree adds to STAM
+
+Only vocabularies and workflows:
+
+```text
+stree-morphology
+stree-compounds
+stree-commentary
+stree-translation
+stree-concepts
+stree-evidence
+stree-adjudication
+stree-arguments
+```
+
+Example:
+
+```text
+STAM annotation A:
+targets Sanskrit token
+
+STAM annotation B:
+targets annotation A
+data:
+  interventionType = GLOSSES_WORD
+  suppliedSense = "power"
+  commentator = Jayaratha
+```
+
+That means commentary about grammar is just a higher-order annotation. No new graph engine is required.
+
+---
+
+# Translation alignment: use STAM-Translate
+
+STAM already has an extension for relating texts that are not identical, explicitly including translations, corrections and normalizations. ([GitHub][7])
+
+So:
+
+```text
+Sanskrit source span
+↔ literal English span
+↔ published translation span
+```
+
+can already be represented.
+
+Sanskritree adds relation types:
+
+```text
+LITERAL_REALIZATION
+IDIOMATIC_REALIZATION
+SUPPLIED_FOR_GRAMMAR
+DERIVED_FROM_COMMENTARY
+OMITS
+EXPANDS
+CONTESTS
+```
+
+We do not build alignment infrastructure. We build a Sanskrit translation vocabulary and an adjudication interface around STAM-Translate.
+
+---
+
+# Intertextuality: use Tesserae as the first engine
+
+Tesserae already performs ancient-text intertext discovery and exposes an API. It supports word-reuse detection and stem matching for highly inflected languages. ([Digital Humanities Alliance][8])
+
+It is designed for Greek and Latin, so it will not understand Sanskrit automatically. But its architecture can be reused.
+
+## Keep
+
+```text
+pairwise text comparison
+candidate passage scoring
+API workflow
+result ranking
+intertext review workflow
+```
+
+## Replace or adapt
+
+```text
+Latin/Greek tokenizer → Sanskrit tokenizer
+stemmer              → Vidyut/DCS lemma resolver
+word forms           → sandhi-resolved tokens
+stopword policy      → Sanskrit-specific function words
+rarity measure       → Sanskrit corpus frequency
+```
+
+### Adapter flow
+
+```text
+Ambuda/GRETIL passage
+→ accepted segmentation
+→ accepted or candidate lemmas
+→ Tesserae-compatible token stream
+→ Tesserae comparison
+→ candidate intertext
+→ STAM transposition annotation
+→ human adjudication
+```
+
+For the initial version, this is enough to detect:
+
+* repeated verses;
+* shared lexical formulas;
+* related compound clusters;
+* probable quotation.
+
+Later we can add semantic retrieval, but Tesserae gives us a rigorous lexical baseline immediately.
+
+---
+
+# Arguments: use AIF, then extend it
+
+ARG-tech’s datasets and tools use the Argument Interchange Format for claims and argumentative relations. Their ecosystem includes corpora, scripts, tutorials and pretrained argument-relation models. ([GitHub][9])
+
+## Use AIF directly for
+
+```text
+information nodes / claims
+inference nodes
+conflict nodes
+support relations
+attack relations
+dialogue acts
+```
+
+## Add a Sanskrit/Indian logic extension
+
+```text
+stree:AIF-Nyaya
+```
+
+with types such as:
+
+```text
+PratijñāNode
+HetuNode
+UdāharaṇaNode
+UpanayaNode
+NigamanaNode
+VyāptiClaim
+HetvābhāsaNode
+PūrvapakṣaNode
+UttaraNode
+SiddhāntaNode
+PrasaṅgaNode
+```
+
+An argument extracted from a text remains an AIF graph. The Sanskrit-specific labels refine it.
+
+This creates interoperability with existing argument-mining software without flattening Nyāya into ordinary premise/conclusion prose.
+
+---
+
+# Claims and provenance: use nanopublications
+
+Nanopublications already package an atomic assertion with its provenance and publication metadata. They are RDF-based, independently identifiable, citable and supported by Python tooling for creating, signing, searching, publishing and retracting them. ([nanopub.net][10])
+
+That is precisely what an accepted Sanskritree scholarly claim should become.
+
+## Use the Python `nanopub` ecosystem
+
+```text
+accepted STAM annotation
+→ RDF assertion
+→ provenance graph
+→ publication-info graph
+→ signed nanopublication
+```
+
+Example:
+
+```text
+Assertion:
+Jayaratha’s comment targets compound X.
+
+Provenance:
+Derived from commentary span Y.
+Initially proposed by model M.
+Accepted by reviewer R.
+Used source version hash H.
+
+Publication information:
+Sanskritree release 0.2.
+Creator and timestamp.
+Licence.
+```
+
+The nanopublication can also represent:
+
+```text
+a scholar endorses claim X
+a reviewer rejects claim X
+claim B supersedes claim A
+claim C contradicts claim D
+```
+
+Formal semantic publishing and reviewing through nanopublications has already been demonstrated in an actual publication workflow, including submissions, reviews, responses and decisions. ([arXiv][11])
+
+So your AI-review cycle can reuse this model instead of inventing a new review representation.
+
+---
+
+# What actually goes into Lean
+
+Only accepted, finite projections.
+
+## 1. Corpus integrity certificate
+
+Generated automatically from STAM:
+
+```lean
+structure Span where
+  start : Nat
+  stop : Nat
+  hOrder : start ≤ stop
+
+structure PassageAnalysis where
+  sourceLength : Nat
+  spans : List Span
+  selectedReadings : List Reading
+```
+
+Lean checks:
+
+```text
+spans are in bounds
+required spans are covered
+exclusive readings are not jointly selected
+all accepted annotations resolve
+translation units point to valid source units
+```
+
+## 2. Translation licensing certificate
+
+Generate:
+
+```lean
+structure SemanticNode where
+  id : String
+  required : Bool
+
+structure TranslationUnit where
+  sourceNodes : List String
+  evidenceLevel : EvidenceLevel
+```
+
+Lean checks:
+
+```text
+every required semantic node is realized
+every English content unit has a source licence
+literal translation uses only allowed evidence levels
+references do not point to rejected claims
+```
+
+## 3. Argument proof
+
+AIF graph:
+
+```text
+claims
+inference relations
+accepted reconstruction assumptions
+```
+
+is compiled into a small Lean theorem.
+
+```text
+AIF claim node       → Lean proposition
+AIF inference node   → theorem application
+AIF premise node     → explicit assumption
+AIF conflict node    → incompatibility proposition
+```
+
+Lean verifies the inference **given the reconstruction**.
+
+## 4. Nanopublication certificate
+
+Lean can verify that:
+
+```text
+assertion IDs resolve
+provenance exists
+source hashes match
+review state permits publication
+dependencies are not retracted
+```
+
+But RDF remains outside Lean. The adapter generates a normalized manifest for Lean.
+
+---
+
+# The complete plug-in pipeline
+
+```text
+AMB UDA TEI
+GRETIL TEI
+DCS analyses
+UD CoNLL-U
+        │
+        ▼
+Import adapters
+        │
+        ▼
+STAM annotation store
+        │
+        ├── Vidyut candidate generator
+        ├── Heritage candidate generator
+        ├── DCS imported candidates
+        └── UD imported syntax
+        │
+        ▼
+Adjudicated STAM annotations
+        │
+        ├── STAM-Translate: translations
+        ├── STAM-Transpose: textual parallels
+        ├── Tesserae: intertext candidates
+        └── AIF: argument structures
+        │
+        ▼
+Accepted atomic claims
+        │
+        ▼
+Nanopublications + provenance
+        │
+        ▼
+Lean manifest generator
+        │
+        ▼
+Lean kernel certificate
+```
+
+# What we build ourselves
+
+This is now much smaller than the earlier architecture implied.
+
+## Adapters
+
+```text
+Ambuda TEI → STAM
+GRETIL TEI → STAM
+DCS → STAM
+CoNLL-U → STAM
+Vidyut → STAM candidates
+Heritage → STAM candidates
+STAM → AIF
+STAM/AIF → nanopublication
+STAM/AIF/nanopub → Lean manifest
+```
+
+## Sanskritree vocabularies
+
+```text
+commentary intervention vocabulary
+translation-difference vocabulary
+evidence-level vocabulary
+concept-relation vocabulary
+Nyāya AIF extension
+review-status vocabulary
+```
+
+## Scholarly workbench
+
+One interface for:
+
+```text
+review candidate
+accept
+reject
+replace
+link
+classify
+give reason
+```
+
+## Lean library
+
+Only:
+
+```text
+CorpusIntegrity
+AnnotationIntegrity
+TranslationCoverage
+EvidencePolicy
+ArgumentCertificate
+PublicationCertificate
+```
+
+## Research orchestration
+
+Agents query accepted objects, propose new links and generate reports. They never modify accepted knowledge directly.
+
+# What we explicitly do not build
+
+```text
+❌ Sanskrit corpus hosting
+❌ TEI standard
+❌ text-span annotation model
+❌ general graph database ontology
+❌ Sanskrit inflection engine
+❌ Sanskrit sandhi engine
+❌ basic morphological parser
+❌ universal dependency framework
+❌ translation-alignment foundation
+❌ generic argument ontology
+❌ provenance standard
+❌ atomic scholarly publishing format
+❌ intertext search architecture
+❌ general theorem prover
+```
+
+We integrate:
+
+```text
+Ambuda
+GRETIL
+DCS
+Vidyut
+Heritage
+Universal Dependencies
+STAM
+Tesserae
+AIF
+Nanopublications
+Lean
+```
+
+# The first vertical slice
+
+I would begin with only:
+
+```text
+Ambuda TEI
+→ STAM import
+→ one root text and commentary
+→ Heritage/Vidyut/DCS morphology candidates
+→ commentary-intervention annotations
+→ nanopublication export
+→ Lean integrity certificate
+```
+
+No Neo4j. No custom corpus database. No GraphRAG. No universal ontology.
+
+The first demonstration should answer:
+
+> Can we import an existing Sanskrit text and commentary, annotate exactly what each commentary statement does, preserve competing readings, publish accepted claims with provenance, and mechanically certify that nothing points to missing or undeclared evidence?
+
+After that:
+
+```text
+Tesserae adapter
+→ textual reuse
+
+STAM-Translate
+→ translation comparison
+
+AIF adapter
+→ argument reconstruction
+```
+
+That is the cleanest version of the vision: **existing scholarly infrastructure underneath, Sanskritree vocabularies and adjudication in the middle, Lean certificates on top.**
+
+[1]: https://ambuda.org/about/code-and-data?utm_source=chatgpt.com "Code and Data | Ambuda"
+[2]: https://github.com/INDOLOGY/GRETIL-mirror?utm_source=chatgpt.com "GitHub - INDOLOGY/GRETIL-mirror: Snapshots of the GRETIL repository of South Asian (Sanskrit, Pali, etc.) etexts · GitHub"
+[3]: https://github.com/ambuda-org/dcs?utm_source=chatgpt.com "GitHub - ambuda-org/dcs: Sanitized data from the Digital Corpus of Sanskrit · GitHub"
+[4]: https://github.com/ambuda-org?utm_source=chatgpt.com "Ambuda · GitHub"
+[5]: https://universaldependencies.org/treebanks/sa_vedic/index.html?utm_source=chatgpt.com "UD_Sanskrit-Vedic"
+[6]: https://static.hlt.bme.hu/semantics/external/pages/Universal_Dependencies/universaldependencies.org/treebanks/sa_ufal/index.html?utm_source=chatgpt.com "UD_Sanskrit-UFAL"
+[7]: https://github.com/annotation/stam?utm_source=chatgpt.com "GitHub - annotation/stam: Stand-off Text Annotation Model (STAM) is a data model for stand-off-text annotation where any information on a text is represented as an annotation. This repository contains the model's full specification, extensions, schemas, examples and documentation. · GitHub"
+[8]: https://www.digitalhumanities.org/dhq/vol/16/1/000602/000602.html?utm_source=chatgpt.com "DHQ: Digital Humanities Quarterly: Tesserae Intertext Service"
+[9]: https://github.com/arg-tech/aif-arg-datasets?utm_source=chatgpt.com "GitHub - arg-tech/aif-arg-datasets: The repository containing links, descriptions and references for the datasets from ARG Tech group. · GitHub"
+[10]: https://nanopub.net/docs/?utm_source=chatgpt.com "Guidelines | Nanopublications"
+[11]: https://arxiv.org/abs/2203.01608?utm_source=chatgpt.com "Nanopublication-Based Semantic Publishing and Reviewing: A Field Study with Formalization Papers"

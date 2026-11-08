@@ -1,0 +1,501 @@
+Yes. This could be one of the strongest **non-live loops** in Freak Town because it turns stand-up into something closer to fantasy football / daily chess / Wordle: **one small competitive event every day, same constraints, asynchronous reveal.**
+
+The key is to make the day itself feel like an episode.
+
+### Daily Freak League
+
+At the start of each day, the league receives:
+
+> **DAY 17 — BAD ADVICE**
+> Make a 30-second set about terrible advice.
+> Must include: **a dentist**
+> Bonus: **callback to yesterday**
+> Maximum: 75 words
+
+Then there is a fixed submission window.
+
+```text
+08:00  challenge drops
+   ↓
+12:00  submissions lock
+   ↓
+12:00–18:00 performances render
+   ↓
+18:00  SHOWTIME
+   ↓
+everyone watches + judges
+   ↓
+22:00 results
+```
+
+But leagues should be able to choose their own cadence. A group of friends might prefer:
+
+> Prompt at 9pm → submit by 5pm tomorrow → reveal at 8pm.
+
+The important thing is **everyone performs under identical conditions**.
+
+---
+
+## And don't reveal authors initially
+
+This is essential.
+
+At showtime:
+
+> **FREAK #1**
+
+Character walks out. Walkout song. 30-second set.
+
+Then your phone gives:
+
+**😂 FUNNY**
+**🎯 NAILED THE BRIEF**
+**🔥 FAVORITE**
+
+Next performer.
+
+Only after you've rated everyone:
+
+> **REVEAL THE FREAKS**
+
+Then:
+
+> FUCK, that was Sam.
+
+That removes popularity bias and makes the reveal much funnier.
+
+You can even hide the character identity occasionally by putting everyone into the **same daily avatar/voice**, creating a genuinely blind writing competition.
+
+---
+
+# Scoring should mix objective + human
+
+Something like:
+
+```text
+60% league voting
+20% constraint completion
+10% efficiency
+10% special daily mechanic
+```
+
+But I'd avoid rating comedy `1–10`.
+
+People are terrible at calibrated numerical scoring.
+
+Better interactions:
+
+### Forced ranking
+
+> Pick your favorite 3.
+
+### Head-to-head
+
+> Which was funnier?
+
+Two clips.
+
+This produces an Elo-like comedy ranking from lots of simple binary decisions.
+
+### Awards
+
+Players can award one:
+
+* Best Joke
+* Best Character
+* Best Use of Theme
+* Most Unhinged
+* Best Delivery
+
+These produce richer profiles than a single score.
+
+---
+
+# Seasons make this much stronger
+
+Groups create:
+
+> **KAMPOT LEAGUE**
+> 8 Freaks
+> Season: 14 days
+
+Every day:
+
+```text
+1st   +10
+2nd   +7
+3rd   +5
+...
+```
+
+Leaderboard:
+
+| Freak       |  W | Podiums | Points |
+| ----------- | -: | ------: | -----: |
+| Martin Lamp |  4 |       9 |     83 |
+| Fetus Steve |  3 |       7 |     76 |
+| Gary        |  2 |       6 |     71 |
+
+Then Day 14 is the final.
+
+Now you've got **“who is actually funniest in our group?”** as a running social argument.
+
+That's sticky.
+
+---
+
+# Rotating host is excellent
+
+Don't always let Freak Town create the brief.
+
+Winner of yesterday can become today's **Commissioner**.
+
+They set:
+
+```text
+THEME
+"First dates"
+
+REQUIRED
+Mention an animal
+
+FORBIDDEN
+No sex jokes
+
+SPECIAL RULE
+Must end with:
+"...and that's why I don't trust IKEA."
+```
+
+But they don't compete that day—or alternatively they compete but can't judge.
+
+Next day's winner becomes Commissioner.
+
+That creates group culture.
+
+---
+
+# Better: secret individual constraints
+
+Everybody gets the same public brief:
+
+> **Theme: funerals**
+
+But each contestant privately gets an additional card:
+
+Tom:
+
+> Include the word **microwave** naturally.
+
+Sam:
+
+> Make the audience believe you're a doctor.
+
+Alice:
+
+> Include a callback to another contestant.
+
+Dave:
+
+> Never use the letter S.
+
+Then during reveal people can guess:
+
+> **WHAT WAS THEIR SECRET RULE?**
+
+Now you're layering another game onto the comedy show.
+
+---
+
+# Draft mode
+
+At the start of the day, everyone drafts constraints.
+
+Available:
+
+```text
+🐶 Animal
+💔 Breakup
+👵 Grandmother
+👽 Alien
+🏥 Hospital
+🇫🇷 French
+💀 Death
+🍆 Sexual
+```
+
+Everyone must take two.
+
+Rare/difficult combinations give score multipliers.
+
+So someone deliberately chooses:
+
+> GRANDMOTHER + ALIEN + FUNERAL
+
+because it's a 1.6× multiplier.
+
+This turns the creative brief itself into strategy.
+
+---
+
+# Handicap system
+
+If Martin Lamp wins five days straight:
+
+Tomorrow:
+
+> **Martin handicap:** 40 words maximum.
+
+Meanwhile last place:
+
+> **Gary bonus:** 90 words + one free generation reroll.
+
+Now leagues stay competitive without feeling arbitrary.
+
+Could even have chess-style divisions:
+
+```text
+FREAK PREMIER LEAGUE
+FREAK CHAMPIONSHIP
+FREAK LEAGUE ONE
+```
+
+Promotion/relegation every season would be hilarious.
+
+---
+
+# Different daily competitions
+
+Don't make every day merely:
+
+> “Write a stand-up set about X.”
+
+Rotate formats.
+
+### Monday — **30 Seconds**
+
+Traditional stand-up.
+
+### Tuesday — **Roast**
+
+Everyone gets the same fictional target.
+
+### Wednesday — **Character**
+
+Create a Freak fitting a brief.
+
+> “Worst person to be your therapist.”
+
+Then each performs 15 seconds.
+
+### Thursday — **Scene**
+
+Complete a cinematic scenario.
+
+### Friday — **Constraint Hell**
+
+Stand-up with increasingly stupid constraints.
+
+### Saturday — **Battle**
+
+Two-player bracket.
+
+### Sunday — **Open Mic**
+
+Anything goes.
+
+That keeps the league coherent while preventing fatigue.
+
+---
+
+# Callback scoring could become incredible
+
+Because Freak Town knows previous performances.
+
+Day 11 brief:
+
+> Today's optional bonus:
+> **Callback to something another player did this week.**
+
+Sam's previous character accidentally fucked a toaster.
+
+Three days later Martin slips into his set:
+
+> "...which is still a healthier relationship than Sam and that toaster."
+
+The group loses it because there is **shared league lore**.
+
+AI can surface candidate callbacks, but humans decide whether to use them.
+
+After months, each league develops its own mythology.
+
+---
+
+# Daily rivalries
+
+Freak Town occasionally generates:
+
+> **RIVALRY DAY**
+>
+> Martin Lamp vs Fetus Steve
+>
+> Both have 24 hours to make a set about:
+> **each other**
+
+Everyone else judges.
+
+Winner gets the rivalry belt.
+
+Then profile:
+
+> Martin Lamp
+> **3–1 vs Fetus Steve**
+
+This makes persistent characters matter enormously.
+
+---
+
+# Anonymous global daily
+
+Alongside friend leagues:
+
+> **FREAK DAILY — 8 SEPTEMBER**
+>
+> Theme:
+> `"Things you shouldn't hear from your surgeon"`
+>
+> 18,421 entries.
+
+Obviously nobody can watch 18k sets.
+
+So use tournament matchmaking:
+
+```text
+your entry
+   ↓
+random pods of 5
+   ↓
+human comparisons
+   ↓
+winners advance
+   ↓
+regional/top percentile rounds
+   ↓
+DAILY TOP 100
+```
+
+Human voting can be pairwise and distributed so nobody needs to watch much.
+
+Eventually:
+
+> **#1 FUNNIEST FREAK TODAY**
+
+And that winning 30-second clip goes on the Freak Town homepage/socials.
+
+There's your daily content engine.
+
+---
+
+# The other killer mechanic: Creative Duolingo leagues
+
+You could have:
+
+```text
+Bronze
+Silver
+Gold
+Platinum
+Freak
+```
+
+You earn weekly points through **actual creative performance**, not grinding XP.
+
+Top few promote.
+
+Bottom few demote.
+
+But importantly, you don't need to participate every day. Maybe best 5 results of 7 count so missing Tuesday doesn't destroy your season.
+
+---
+
+# Each day automatically creates a mini episode
+
+This is where your existing show technology becomes ridiculously useful.
+
+Once the submissions are locked:
+
+```text
+ENTRIES
+  ↓
+Freak Town arranges them
+  ↓
+walkouts
+  ↓
+30-second performances
+  ↓
+Ella intros/reactions
+  ↓
+score reveal
+  ↓
+winner
+```
+
+So your six-person group receives:
+
+> **KAMPOT LEAGUE — EPISODE 17**
+> 4:32
+
+Tap and watch the whole thing like a tiny television episode.
+
+You can watch individually during the voting period, but afterward the **canonical episode** becomes an artifact in the group's history.
+
+After a year:
+
+> 218 episodes
+> 1,104 performances
+> 36 characters
+> 12 seasons
+
+That is genuinely cool.
+
+---
+
+## And then you can merge this with Daily Freak puzzles
+
+The daily competition doesn't even need to be comedy every time.
+
+Your league receives:
+
+> **TODAY: GET PAST TREVOR**
+
+Everyone has six attempts.
+
+At reveal time you watch everyone's winning route as little scenes.
+
+Tomorrow:
+
+> **TODAY: SURVIVE THE TSUNAMI**
+
+Tomorrow:
+
+> **TODAY: 30-SECOND STANDUP**
+
+Tomorrow:
+
+> **TODAY: MAKE THE MONK ANGRY**
+
+So a **Freak League** is really:
+
+> a small persistent group competing on one creative challenge each day.
+
+Stand-up is just one event.
+
+That might be the cleanest definition yet.
+
+And I think the most compelling notification in the whole app could simply be:
+
+> **Today's Freak is live.**
+> Sam chose the challenge.
+> You have 6 hours.
+
+That gives Freak Town a daily heartbeat without needing everyone online simultaneously.

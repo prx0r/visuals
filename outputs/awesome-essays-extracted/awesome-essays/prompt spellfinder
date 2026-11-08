@@ -1,0 +1,27 @@
+The actual game-changer for a spellfinder specifically: cross-reference by planet/intent/element, not by book. The reason none of these texts are individually "searchable" for what you want is they're organized by cosmological structure (book → sphere → topic), not by outcome. Your dashboard's real value-add isn't having more source texts, it's building a normalized schema — planet, day, hour, materials, stated effect, source citation — and tagging every operation from Picatrix, Agrippa, and eventually Ficino/Dee into that same schema. That's what makes it a tool rather than three PDFs with search bars. Prioritize building that taxonomy over adding a fourth source text.
+
+
+You are indexing a PDF of the Greer/Warnock translation of the Picatrix (Books I-IV) that I am uploading. 
+
+TASK: Locate every distinct operation, talisman, or working related to wealth, prosperity, financial gain, commerce, trade favor, or material increase. This includes anything tied to Jupiter, Venus in financial contexts, or the Sun in kingship/gain contexts, as well as any general "increase" or "acquisition" talismans regardless of planet.
+
+For EACH operation found, output in this format:
+
+## [Short title of the operation]
+- **Location:** Book/Chapter/Section, and page number if visible
+- **Planet/sign/timing required:** exact astrological conditions specified (planet, sign, decan, hour, moon phase, any elections given)
+- **Materials:** what the talisman is made from (metal, stone, substance) — flag if it includes anything that's blood, animal parts, or otherwise not viable for me to actually use
+- **Summary of the procedure:** describe in your own words what the operator does, step by step, in plain English — do NOT quote the original text directly, paraphrase the mechanics only
+- **Stated effect:** what the text claims this achieves, in your own words
+- **My note-to-self flag:** mark whether this requires materials/timing/skills I likely don't have yet (e.g. "requires exact planetary hour calculation," "requires metal engraving," "requires a live animal component — skip")
+
+Do not reproduce the original translated text verbatim in your output, including incantations, invocations, or prayers — summarize their content and purpose instead, and just note "see original text for exact wording, [location]."
+
+After listing all operations, produce a SEPARATE second section:
+
+## Recommended starting point
+Rank the 3 operations that are most executable given: no exotic materials, no animal parts, timing that's calculable with a standard astrology app, and clear stated effect. Explain briefly why each is a reasonable entry point compared to the more complex ones.
+
+Do this pass across the entire document, not just Book I — the talismanic "how-to" material for specific effects like wealth is concentrated in Books III-IV, so weight your search there.
+
+https://www.esotericarchives.com/

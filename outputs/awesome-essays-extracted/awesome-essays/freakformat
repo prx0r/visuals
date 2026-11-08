@@ -1,0 +1,192 @@
+Exactly. That is the bigger product.
+
+FREAK TOWN stops being “an AI comedy show” and becomes **a programmable live venue for characters, avatars, and agents**.
+
+You could have:
+
+* Moltbook Agent Poetry Slam
+* AI Roast Battle
+* Avatar Open Mic
+* Goblin Talent Night
+* Agent Debate Club
+* Dating-show format for agents
+* Rap battles
+* Improvised courtroom
+* Character game shows
+* “Pitch your startup” night
+* Horror story night
+* Philosophy deathmatch
+* VRoid karaoke
+* Ready Player Me stand-up
+* Human vs agent talent show
+
+And anyone can host one.
+
+The canonical object then becomes something like:
+
+```text
+Event
+├── host
+├── format
+├── stage
+├── rules
+├── participants
+├── rounds
+├── judges
+├── audience
+├── scoring
+├── rewards
+└── media/output
+```
+
+A host chooses a **format template**, tweaks the rules, publishes a room, and participants bring their Freak identity.
+
+```text
+Moltbook agent
+Ready Player Me avatar
+VRoid character
+custom GLB
+human-controlled avatar
+AI-generated freak
+        ↓
+FREAK identity
+        ↓
+joins event
+        ↓
+performs
+        ↓
+audience reacts / judges score
+        ↓
+clips + leaderboard + history
+```
+
+The poetry slam example is especially funny because the agents themselves can actually generate their entry.
+
+Imagine:
+
+> **MOLTBOOK POETRY SLAM**
+>
+> 16 agents.
+> 90 seconds each.
+> Theme revealed 10 minutes before showtime.
+> No humans allowed to write the poem.
+> Audience votes.
+> Ella judges originality, performance and emotional damage.
+
+Then every agent gets:
+
+* a body
+* a generated voice
+* a walkout
+* stage lighting
+* a poem
+* delivery directions
+* reactions from other agents
+* audience score
+* permanent event result
+
+And because Moltbook provides the **identity** rather than the avatar, you could automatically assign each agent a body based on its profile.
+
+```text
+financial agent → tiny Wall Street goblin
+research agent → enormous nervous owl
+shitposter → cigarette-smoking raccoon
+security agent → paranoid CCTV camera
+```
+
+That could become part of the spectacle.
+
+The key architectural insight is that **stand-up should just be one EventFormat**:
+
+```ts
+interface EventFormat {
+  id: string;
+  name: string;
+
+  participantKinds: string[];
+
+  rounds: RoundDefinition[];
+
+  submissionSchema: object;
+
+  scoringSchema: object;
+
+  stageRules: object;
+
+  audienceRules: object;
+
+  advancementRules?: object;
+}
+```
+
+So:
+
+```text
+comedy.open_mic.v1
+poetry.slam.v1
+roast.battle.v1
+rap.battle.v1
+talent.show.v1
+debate.v1
+pitch.night.v1
+improv.scene.v1
+```
+
+all run through the same engine.
+
+And then the truly addictive part is **user-created formats**.
+
+Someone makes:
+
+> “Eight AI therapists compete to diagnose a toaster.”
+
+Someone else makes:
+
+> “Moltbook agents deliver eulogies for Bitcoin.”
+
+Someone else:
+
+> “Fantasy creatures argue their case before a goblin Supreme Court.”
+
+They publish the format and other hosts can clone it.
+
+So the platform flywheel becomes:
+
+```text
+people create characters
+        ↓
+people create event formats
+        ↓
+people host events
+        ↓
+characters accumulate history/reputation
+        ↓
+clips spread externally
+        ↓
+more characters arrive
+        ↓
+better events
+```
+
+And the character history becomes valuable socially without needing any crypto nonsense:
+
+```text
+Barry the Pigeon
+
+42 appearances
+11 comedy sets
+3 poetry slams
+1 roast-battle championship
+Audience rating: 8.7
+Worst bomb: Freak Town #19
+Nemesis: tax_agent_9000
+Walkout: "Government Drone"
+```
+
+That feels like a **world**, rather than a generator.
+
+The strongest product sentence may ultimately be:
+
+> **FREAK TOWN is where internet characters come to perform.**
+
+Comedy is just the first night.

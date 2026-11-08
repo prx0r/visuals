@@ -1,0 +1,1164 @@
+# OddHobb Tiny Worlds — give your AI a physical home
+
+This might be one of the strongest OddHobb products yet. The miniature room is already a proven gift category, and the addition of personalised interiors, physical characters and persistent digital worlds creates a much more distinctive product.
+
+The especially interesting version is:
+
+Build a real miniature room → scan its QR code → enter its digital twin → meet the AI character that lives there.
+
+You could sell the same underlying room as a conventional DIY kit, a personalised dollhouse, or an AI companion habitat.
+
+Existing Rolife Super Creator miniature rooms. Notice the modular rooms that can be stacked into larger houses.
+
+## 1. Actual supplier prices
+
+I found a particularly useful manufacturer: Robotime / Rolife. They're already producing almost exactly the kind of rooms you want, at meaningful scale.
+
+| Product / supplier                           | Advertised supply price | Quantity |
+| -------------------------------------------- | ----------------------- | -------- |
+| Rolife compact plywood miniature, DS025      | €7.78/unit              | 20–599   |
+| Rolife Happy Camper miniature                | $13.93/unit             | 10–299   |
+| Rolife miniature room, Homely Baking Kitchen | $15/unit                | 10       |
+| Rolife miniature room, Country Blue Lounge   | $15/unit                | 10       |
+| Rolife Happy Meals Kitchen, DW008            | $17.50/unit             | 10–299   |
+| Rolife Sam's Study Room                      | $20/unit                | 10       |
+| Rolife Cathy's Flower House                  | $21/unit                | 10       |
+| Rolife Christmas book nook                   | $19.99/unit             | 10       |
+
+These are advertised marketplace prices, generally before shipping, tax, inspection or customisation. Some listings are distributor offers rather than factory-direct OEM quotes.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.alibaba.com\&sz=32)
+
+Alibaba
+
++3
+
+
+
+For comparison, Robotime's own retail site lists completed DIY miniature kits around $29.99–$41.99, with larger or more elaborate kits going higher.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://robotime-usa.com\&sz=32)
+
+Wholesale DIY Craft Kits USA
+
++1
+
+
+
+Concrete supplier lead
+
+Wholesale
+
+[Rolife DIY Super Creator Happy Meals Kitchen miniatyrdiorama – DW008, 163×163×152 mm | Panduro ®](https://images.openai.com/static-rsc-4/CTk0dHg90vpg_7q5npEIaZXZSeu3lKc6d6LU63S8ZaKDWqYDrpnidcVwcJVCLWjmXu-Zhelm_0RU2jnZ0xGoWCEKwPtC3XVmQMgX8jq4dHgEWDOIGboU35YfpGlGeEROM9-TvU2mFUvqnlVZQjDbi8utC3poCL_QgoVeC366LRE?purpose=inline)
+
+[Robotime wholesale programme](https://robotime-usa.com/wholesale/)
+
+Advertises $300 minimum order value, with mixed products permitted and case-pack requirements varying by model.
+
+US wholesale division; contact for actual trade pricing and OEM capabilities.
+
+The caveat: Robotime is an excellent benchmark and possible distribution partner, but I haven't verified that they will manufacture a completely original OddHobb room from your CAD at low MOQ. Don't assume a standard Rolife kit can simply be white-labelled and resold as your own design.
+
+## 2. The suppliers I'd use for a genuinely custom room
+
+For the first ten OddHobb Tiny Worlds, I would avoid custom injection moulding altogether.
+
+| Part of the room              | Supplier approach                    | Why                                       |
+| ----------------------------- | ------------------------------------ | ----------------------------------------- |
+| Walls, floors, windows        | Ponoko or another laser-cutting shop | Flat CAD-cut components, no mould costs   |
+| Furniture and tiny objects    | JLC3DP                               | Custom resin miniatures from your meshes  |
+| Wallpaper, books, photographs | Short-run digital printer            | Nearly unlimited personalisation          |
+| Lighting                      | Standard low-voltage modules         | Avoid custom electronics initially        |
+| Booklet and packaging         | Short-run printer + kitting partner  | Exact instructions and one gift-ready box |
+
+Ponoko has no minimum order quantity or setup fee for standard laser-cutting designs and advertises prototype jobs from $50, but exact room-panel pricing requires uploading your CAD.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.ponoko.com\&sz=32)
+
+ponoko.com
+
++1
+
+
+
+JLC remains attractive for furniture and character pieces because you're already working with meshes in `pogpet`.
+
+The manufacturing architecture I'd choose is a universal room shell, with replaceable floors, wallpaper, furniture, characters and props. That standardisation could make personalisation financially viable even when each room looks completely different.
+
+## 3. The Marble Labs connection is real
+
+World Labs released its World API in January 2026, enabling programmatic generation of explorable 3D environments from images, text and video.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.worldlabs.ai\&sz=32)
+
+World Labs
+
+
+
+Its [Marble pricing](https://marble.worldlabs.ai/pricing) is also interesting:
+
+| Plan     | Monthly price | Relevant capabilities                        |
+| -------- | ------------- | -------------------------------------------- |
+| Free     | $0            | Generate up to 4 worlds                      |
+| Standard | $20           | Export Gaussian splats and collider meshes   |
+| Pro      | $35           | High-resolution meshes and commercial rights |
+| Max      | $95           | Higher generation allowance                  |
+
+These are app subscription prices, not World API per-generation costs. Commercial deployment needs the correct rights and an API cost calculation.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://marble.worldlabs.ai\&sz=32)
+
+Marble
+
+
+
+The key engineering distinction:
+
+The physical room should be driven by exact CAD geometry. Marble should generate the atmospheric digital world around that geometry.
+
+Gaussian splats are fantastic for visual appearance, but they aren't inherently precise manufacturing geometry or usable collision surfaces.
+
+Canonical room design
+
+Exact dimensions, furniture coordinates, CAD and materials
+
+Physical twin
+
+JLC / laser cutting / printed booklet
+
+Digital twin
+
+Marble splat + collision mesh + AI character
+
+One persistent OddHobb Tiny World
+
+Physical object · web experience · AI interaction · optional AR
+
+### Imagine the actual customer experience
+
+Someone uploads pictures of their childhood bedroom, their cat and their favourite objects.
+
+OddHobb generates a miniature room styled around those references. It shows the completed design before payment.
+
+The customer receives a flat-packed project with numbered parts and an IKEA-style booklet. They spend a Sunday assembling it.
+
+Then they scan a QR code on the little room.
+
+[DG166 魔法使いのアトリエ | Robotime](https://images.openai.com/static-rsc-4/nmePTFThUjHK6i7IgQ0cGMB7XXt6XVc6ho_IOeE8HswhIvlRC-g1oFHvlNDIl0KzW2IBxeCNvF9_5DIDeRVCa2R4X0DRR85rSAO504K-RSSCrCpDZjoosMXHUFw8rLD5iWFmnIaL2ZvSTolraV7UNJj3SHT5Cy6DjKD1-4594Cc?purpose=inline)
+
+Physical world
+
+The room they built, with its own furniture and character
+
+[Serene Modern Glass Cabin on Island — Qwen Image 2512 AI Generator | Proxima Pictures](https://images.openai.com/static-rsc-4/PZcbMGMAKMP99vbfSLnFKDTvcveiC_DsXAInPfNVlp5lMeJE0XBCBVI8_JhEIsYt0FRqZiVBNhrDvls54vkKP-kHWNY6YM6BVStTeeCMcvVi4hT-OA7cfyJtoQGaRdurPbWAuCcQus_NxIidBuDJgyslFWE-hQP2uBsgh5xzIxo?purpose=inline)
+
+Digital world
+
+An explorable interpretation of the same room
+
+Now put an AI agent in it.
+
+The Muse character could remember objects placed in the room, express its personality through decorations, react when the owner visits and eventually move through the space.
+
+You could have a room for an existing character, your own Oddy mascot, or a completely personalised companion.
+
+And here's an extension: the digital character can request physical upgrades to its home.
+
+“I want a little telescope.”
+
+OddHobb already knows the room dimensions and attachment interfaces. It generates a compatible telescope, prices the printed miniature and offers it as a £5–£10 upgrade. That accessory is also inserted into the digital world.
+
+The physical and digital product catalogues become one.
+
+## 4. What about AR?
+
+I'd split it into three milestones:
+
+Version 1: Web digital twin. Scan the QR code and explore the room on the phone, with the character inside. No AR needed.
+
+Version 2: AR miniature. Point your phone at the physical model. Use an image marker or tracked model anchor to align a character and animated effects with the physical room. The companion could appear to sit on the bed, walk across the floor or wave through the window.
+
+Version 3: Life-sized portal. Place a life-sized version of the room in your actual environment and walk inside it. This is where Marble's visual environments become especially useful.
+
+For development, I would use Three.js for the web viewer, Gaussian-splat rendering, a separate simplified collision mesh and a real-time conversational agent interface. For precise room-anchored AR, a native ARKit/ARCore or Unity prototype may be more dependable than relying entirely on browser AR.
+
+The harder problems are registration, occlusion and believable character interactions, not simply displaying the splat.
+
+## 5. What would our own room actually cost?
+
+Here's a proposed target for an original flat-packed room roughly 15–20 cm wide, with no electronics.
+
+Illustrative OddHobb Tiny Room unit economics
+
+Batch size
+
+1
+
+25
+
+100
+
+| Laser-cut room shell                     | $6.00 |
+| ---------------------------------------- | ----- |
+| 3D-printed furniture                     | $5.00 |
+| Printed custom decor                     | $3.00 |
+| Instructions                             | $2.00 |
+| Box + packing                            | $3.00 |
+| Inbound and outbound logistics allowance | $4.00 |
+
+Estimated unit cost
+
+# $23.00
+
+Gross profit before fees and overhead
+
+# $26.00
+
+Retail price
+
+$49
+
+Planning assumptions only. These are not supplier quotes. Costs exclude VAT/sales taxes, payment fees, defects, development, Marble/API usage and paid acquisition.
+
+I would not claim the 25-unit price is achievable yet. We'd need a real CAD file and itemised requests for quotation to confirm it. But it establishes the cost envelope we want suppliers to meet.
+
+## 6. What I would manufacture first
+
+OddHobb Tiny Room 001: Your Little World
+
+One universal room shell, approximately 18 × 18 × 18 cm, with interchangeable components.
+
+The first three themes could be:
+
+- The Cosy Bedroom — bed, desk, photographs, rugs, personalised wall art.
+- The Tiny Study — bookshelves, computer, desk and miniatures of the owner's interests.
+- The Magical Workshop — little alchemical equipment, curiosities, plants, candles and unusual props.
+
+All three use the same room structure and component attachment system.
+
+You could then sell personalised character packs, furniture packs, seasonal decoration packs and later a full house made by stacking modules.
+
+Crucially, I'd source the first production from custom laser-cut panels and JLC-printed furniture rather than trying to modify someone else's copyrighted Rolife design.
+
+The next practical step is one 18 cm universal room CAD file and a BOM, quoted at 1, 25 and 100 units. That gives you a real manufacturing baseline and lets you design both the physical kit and the Marble experience around precisely the same dimensions.
+
+The vision is not merely a customised dollhouse. It's a physical home for a persistent digital character, which its owner can build, expand and inhabit digitally.
+
+This is where OddHobb starts becoming a genuinely interesting hardware platform.
+
+The dollhouse is the physical interface. The robot is the inhabitant. OddHobb is the operating system connecting the physical room, digital world, AI agent and manufacturing network.
+
+And the clever part is that you don't need sophisticated robotics to make the first version compelling.
+
+Imagine a tiny character sitting at a miniature desk. It can turn its head, speak, glow, change facial expressions and respond to you. Its room can change lighting to indicate its state.
+
+When the AI is thinking, the desk lamp pulses. When it's asleep, the room goes dark. When it has something to tell you, the window glows.
+
+You effectively have a physical window into an AI's internal state.
+
+## 1. The product progression
+
+[Robotime Sweet Dream Bedroom DIY 3D Miniature Dollhouse Kit](https://images.openai.com/static-rsc-4/fNkKtj6IzRcp8S1wz3IE_PGBvByH-NrMBAf2E_HSF5XF_NEmFygrXvr3VkEC-ZcTSXoRUxyyIL-Q5RDzMRvIj1U2ODyZbU0N0mDYox5uKWNsCI2O_KWKeqGiztkLHB7IjjkWXwo_g7bDpRD36cnhY4QedbboisXnxHZL02aNq90?purpose=inline)
+
+Stage 1 — The Room
+
+A personalised miniature with furniture, wallpapers and accessories. Flat-pack construction with illustrated instructions.
+
+No electronics required. Sell now.
+
+[CUTEROOM DIY Doll Room Miniature Furniture Wooden India | Ubuy](https://images.openai.com/static-rsc-4/heNF4UgM9PkEcQ9AnyaNk70Jp2HDsqq6K89a2EtJ4qfoDbB0keQKcmuPi-I7dmce8FFbQpDVhUC4x7mNICnU8YX8Gd9heMrfCenJUeJ4d4u5Rf0iuACPibaqM0AYqKy5F4OL_fFszAx7FjxjcZbtTvW9beu5T5yjxWjZU9SI5lY?purpose=inline)
+
+Stage 2 — The Living Room
+
+Low-voltage LEDs, a small speaker, and perhaps a screen behind a window. The room responds to an AI agent's state.
+
+A relatively simple electronics add-on.
+
+[AIBI Pocket GPT Pet Robot Review 2025: Best Portable AI Companion  – SmartPursue™](https://images.openai.com/static-rsc-4/ouRr3EHWB66tLdycPCr-mV1sanO11k2phhfCWVx4Z8rlQhAZ-XWZ301Li635t3dlb0EdzFU_C7vUb8Ax5ST6yh4bhCqJI_kW7yDJ9jpRAtGuDea13I4J0zuimeZy4MEBPbHjse--gDLpIn3Slyijbas3JfN2WbHjuhuwRBm9b10?purpose=inline)
+
+Stage 3 — The Inhabitant
+
+A small robotic character with LEDs, a speaker, and one or two servo-driven movements. It responds to conversation and events.
+
+Replaceable character shells; shared electronics core.
+
+[Grok Imagine](https://images.openai.com/static-rsc-4/zfnN3-3pK5a56SMX7pCPgsQZXaT1CTZF3JAQrBxz110WLjYZYvoOrpS5IhRUxpi0kZUnfHe2s1HxNtgbVGYWEq-hwogywlGonS4_EhX3T-ihnKvuqDNNpc_C0RAeFBH-tuELIqukL5z2fEg0hz8XX9-5F64w9RqUGfkB4w9LaKE?purpose=inline)
+
+Stage 4 — The World
+
+Multiple rooms connected physically and digitally. Characters visit one another. Owners design, print and trade custom interiors and robot parts.
+
+A platform for creators, not just a product.
+
+The real opportunity is stage 4, but stage 1 can fund the development of everything else.
+
+## 2. The real opportunity is owning the miniature-world standard
+
+Existing evidence: Rolife already sells modular, stackable rooms with lighting and accessories. Its Super Creator rooms use a roughly 16 cm footprint, and its mini series supports figures 7 cm or smaller. That shows the modular format is commercially viable.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.robotimeonline.com\&sz=32)
+
+Robotime
+
++2
+
+
+
+But I wouldn't copy Rolife's proprietary connectors. I'd create an open, documented OddHobb Room Standard.
+
+The standard could specify:
+
+| Interface                | What it enables                              |
+| ------------------------ | -------------------------------------------- |
+| Room footprint           | Stack rooms and connect rooms horizontally   |
+| Wall/floor mounting grid | Attach any compatible furniture              |
+| Power connector          | Plug-and-play lamps, signs, displays         |
+| Data connector           | Connect sensors and motion accessories       |
+| Robot dock               | Recharge or power the room's inhabitant      |
+| Digital coordinates      | Translate physical layouts into 3D/AR        |
+| Asset manifest           | Rebuild, customise and reorder any component |
+
+This becomes the basis of the marketplace.
+
+Someone designs a miniature aquarium, fireplace, floating bookshelf or robot bed. They upload a CAD file, and OddHobb checks its dimensions against the standard.
+
+The customer sees it fitted into their own room, gets a manufacturing quote, clicks buy, and receives the physical part.
+
+Eventually, the room itself has a machine-readable identity:
+
+```
+{
+  "room": "oddhobb-room-001",
+  "scale": "1:24",
+  "dimensions_mm": [180, 180, 180],
+  "installed": [
+    "desk-001",
+    "lamp-003",
+    "bookshelf-009"
+  ],
+  "inhabitant": "oddy",
+  "capabilities": [
+    "light",
+    "audio",
+    "motion"
+  ]
+}
+```
+
+Your agent knows exactly which objects fit, which are installed, and which upgrades are available.
+
+## 3. A tiny robot could be remarkably inexpensive to prototype
+
+The most useful discovery from checking hardware is the Seeed Studio XIAO ESP32-S3.
+
+[Seeed Xiao ESP32-S3 - WiFi/Bluetooth - Seeedstudio 113991114 Botland - Robotikgeschäft](https://images.openai.com/static-rsc-4/t2yvFBTWWTLmEA6QnJYCsTpcs35RcDG4phM3kwd3rUyQdDC4Lt1Lmo7KY7nMBWfnJdXxfebj6tHvh6605DUjzY1LRlN8cZXop5G0Nf45kJEb9vHgjbClVycgqHVYia_uZIY9jWu1ATojy5ZRdyCwo6vTSCgeGfWVpd2MLpJPAwM?purpose=inline)
+
+Microcontroller
+
+## $7.49
+
+Current Seeed-listed board price. Wi-Fi and Bluetooth connectivity allow it to act as a lightweight hardware endpoint for a cloud AI agent.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.seeedstudio.com\&sz=32)
+
+Seeed Studio
+
+
+
+An initial room could have:
+
+- One ESP32-S3.
+- RGB LEDs in the room and character.
+- A tiny amplifier and speaker.
+- One servo for the character's head.
+- A capacitive-touch input.
+- USB-C power, avoiding a battery initially.
+
+The ESP32 doesn't need to run a language model. Your Muse or ChatGPT-connected backend handles intelligence, while the hardware subscribes to state and action messages.
+
+For example:
+
+```
+{
+  "character": "oddy",
+  "state": "curious",
+  "actions": [
+    {"type": "light", "target": "lamp", "mode": "pulse"},
+    {"type": "motion", "target": "head", "angle": 20},
+    {"type": "speech", "text": "What are you building?"}
+  ]
+}
+```
+
+Then the same state could drive the animated Oddy SVG on your website and the physical robot in the room.
+
+The electronic parts are comparatively straightforward. The challenge is reliable audio, power, mechanical design and ensuring untrusted agent output never directly controls motors beyond safe limits.
+
+## 4. There is already an emerging robotics ecosystem
+
+[BB -  Petoi Bittle - Bionic Open-Source Roboterhund - acheter chez BerryBase](https://images.openai.com/static-rsc-4/HKYxescaK9VuS5Gk3NZ5SlLLs-rz2QgxCmKgq_f0gT-Nt7rdt6Ri3cGY73eBfMxUdT8FfyYTUmrRnlZ0qDUNRdcRGE5ZgrxMexravVjL6pR9-rxM2zc1mWup9TPvIiUwKRTKhGhdv5V8Ennl2BquWi0HGVg4G6KYZdg3n1g64N8?purpose=inline)
+
+Petoi Quaddle
+
+Petoi's 2026 open-source desk-robot initiative supports 3D-printed customisation, AI conversation and programmable motion. Its advertised Kickstarter-special configurations start at $144, with a $179 stated MSRP for Builder.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.petoi.com\&sz=32)
+
+Quaddle – Petoi
+
+
+
+This is a useful reference for a future OddHobb mobile inhabitant, though considerably more expensive than a stationary expressive character.
+
+I'd specifically avoid walking robots in V1.
+
+A character that turns its head, lights up and talks is enough to create a sense of presence. You can build a compelling room before tackling navigation, obstacle avoidance, batteries or miniature actuators.
+
+## 5. The potentially enormous marketplace
+
+Think about how people customise gaming PCs, mechanical keyboards, LEGO displays and dollhouses.
+
+OddHobb could combine those behaviours.
+
+The long-term catalogue
+
+Rooms
+
+Bedrooms, laboratories, workshops, libraries
+
+Furniture
+
+Tables, chairs, shelves, beds
+
+Electronics
+
+Lighting, sensors, screens, speakers
+
+Characters
+
+Robot bodies, faces, interchangeable shells
+
+World assets
+
+Digital rooms, animations and environments
+
+Projects
+
+Build-your-own upgrades and expansion kits
+
+You then get three kinds of participants:
+
+Owners buy and personalise miniature worlds.
+
+Creators publish furniture, characters, decor, project kits, animations and software behaviours.
+
+Agents design and order compatible components, maintain room manifests and control physical inhabitants.
+
+Your existing OddHobb pipeline for meshes, reusable interfaces and Shopify products becomes directly relevant.
+
+And imagine the YouTube content: “We built an AI a bedroom,” “My robot redesigned its own room,” or “100 AI characters decorate their homes.” The creative process is the content, the resulting design is the product, and the build kit is the fulfilment mechanism.
+
+## 6. The product I'd prioritise
+
+I'd call the first hardware-compatible line OddHobb Tiny Worlds, and build it around one room specification.
+
+## Tiny World 001 — The First Home
+
+[Jual Cute Room DIY Dollhouse / Corner of Happiness Series / The Wonderful World of Miniatures / Handmade Miniature Craft | Shopee Indonesia](https://images.openai.com/static-rsc-4/rk7PNfL0TXIbugPU1bv8o9_o9WZFeucTD12wp1CVq5r60uuK5sbWgC8E911dV2y4od3pDCgxlCbE51NpBsY-SimCzhbVC5I6RdaTU77K3SO9DbEwYTbqUETmt_20rodS5wkKf5l8s5ywAzK0GanTQAArxolmcYuv3rO_rtzB5NA?purpose=inline)
+
+[shopee.co.id](https://shopee.co.id/Cute-Room-DIY-Dollhouse-Corner-of-Happiness-Series-The-Wonderful-World-of-Miniatures-Handmade-Miniature-Craft-i.344019761.23642272807)
+
+Illustrative concept, not a manufactured product.
+
+| Base room kit              | £29–49 target |
+| -------------------------- | ------------- |
+| Personalised furnishings   | £10–25 add-on |
+| Light + sound module       | £20–35 target |
+| Expressive robot character | £35–69 target |
+
+Exploratory retail targets, not supplier quotes.
+
+Make every physical room hardware-ready from the beginning, even if most customers initially buy only the non-electronic kit. Reserve a hidden channel for wiring, a standard robot mounting point, and mounting positions for lights and sensors.
+
+That costs very little during design but preserves the upgrade path.
+
+The critical design decision is to own the interfaces, not every individual product. Publish the dimensions, attachment mechanisms, coordinate system and electrical specifications. Let manufacturers and independent creators supply the long tail of compatible parts.
+
+Then OddHobb becomes something considerably bigger than personalised gifts: a platform where people and AI agents can create, inhabit, modify and physically manufacture their own miniature worlds.
+
+# OddHobb Tiny Worlds — give your AI a physical home
+
+This might be one of the strongest OddHobb products yet. The miniature room is already a proven gift category, and the addition of personalised interiors, physical characters and persistent digital worlds creates a much more distinctive product.
+
+The especially interesting version is:
+
+Build a real miniature room → scan its QR code → enter its digital twin → meet the AI character that lives there.
+
+You could sell the same underlying room as a conventional DIY kit, a personalised dollhouse, or an AI companion habitat.
+
+Existing Rolife Super Creator miniature rooms. Notice the modular rooms that can be stacked into larger houses.
+
+## 1. Actual supplier prices
+
+I found a particularly useful manufacturer: Robotime / Rolife. They're already producing almost exactly the kind of rooms you want, at meaningful scale.
+
+| Product / supplier                           | Advertised supply price | Quantity |
+| -------------------------------------------- | ----------------------- | -------- |
+| Rolife compact plywood miniature, DS025      | €7.78/unit              | 20–599   |
+| Rolife Happy Camper miniature                | $13.93/unit             | 10–299   |
+| Rolife miniature room, Homely Baking Kitchen | $15/unit                | 10       |
+| Rolife miniature room, Country Blue Lounge   | $15/unit                | 10       |
+| Rolife Happy Meals Kitchen, DW008            | $17.50/unit             | 10–299   |
+| Rolife Sam's Study Room                      | $20/unit                | 10       |
+| Rolife Cathy's Flower House                  | $21/unit                | 10       |
+| Rolife Christmas book nook                   | $19.99/unit             | 10       |
+
+These are advertised marketplace prices, generally before shipping, tax, inspection or customisation. Some listings are distributor offers rather than factory-direct OEM quotes.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.alibaba.com\&sz=32)
+
+Alibaba
+
++3
+
+
+
+For comparison, Robotime's own retail site lists completed DIY miniature kits around $29.99–$41.99, with larger or more elaborate kits going higher.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://robotime-usa.com\&sz=32)
+
+Wholesale DIY Craft Kits USA
+
++1
+
+
+
+Concrete supplier lead
+
+Wholesale
+
+[Rolife DIY Super Creator Happy Meals Kitchen miniatyrdiorama – DW008, 163×163×152 mm | Panduro ®](https://images.openai.com/static-rsc-4/CTk0dHg90vpg_7q5npEIaZXZSeu3lKc6d6LU63S8ZaKDWqYDrpnidcVwcJVCLWjmXu-Zhelm_0RU2jnZ0xGoWCEKwPtC3XVmQMgX8jq4dHgEWDOIGboU35YfpGlGeEROM9-TvU2mFUvqnlVZQjDbi8utC3poCL_QgoVeC366LRE?purpose=inline)
+
+[Robotime wholesale programme](https://robotime-usa.com/wholesale/)
+
+Advertises $300 minimum order value, with mixed products permitted and case-pack requirements varying by model.
+
+US wholesale division; contact for actual trade pricing and OEM capabilities.
+
+The caveat: Robotime is an excellent benchmark and possible distribution partner, but I haven't verified that they will manufacture a completely original OddHobb room from your CAD at low MOQ. Don't assume a standard Rolife kit can simply be white-labelled and resold as your own design.
+
+## 2. The suppliers I'd use for a genuinely custom room
+
+For the first ten OddHobb Tiny Worlds, I would avoid custom injection moulding altogether.
+
+| Part of the room              | Supplier approach                    | Why                                       |
+| ----------------------------- | ------------------------------------ | ----------------------------------------- |
+| Walls, floors, windows        | Ponoko or another laser-cutting shop | Flat CAD-cut components, no mould costs   |
+| Furniture and tiny objects    | JLC3DP                               | Custom resin miniatures from your meshes  |
+| Wallpaper, books, photographs | Short-run digital printer            | Nearly unlimited personalisation          |
+| Lighting                      | Standard low-voltage modules         | Avoid custom electronics initially        |
+| Booklet and packaging         | Short-run printer + kitting partner  | Exact instructions and one gift-ready box |
+
+Ponoko has no minimum order quantity or setup fee for standard laser-cutting designs and advertises prototype jobs from $50, but exact room-panel pricing requires uploading your CAD.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.ponoko.com\&sz=32)
+
+ponoko.com
+
++1
+
+
+
+JLC remains attractive for furniture and character pieces because you're already working with meshes in `pogpet`.
+
+The manufacturing architecture I'd choose is a universal room shell, with replaceable floors, wallpaper, furniture, characters and props. That standardisation could make personalisation financially viable even when each room looks completely different.
+
+## 3. The Marble Labs connection is real
+
+World Labs released its World API in January 2026, enabling programmatic generation of explorable 3D environments from images, text and video.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.worldlabs.ai\&sz=32)
+
+World Labs
+
+
+
+Its [Marble pricing](https://marble.worldlabs.ai/pricing) is also interesting:
+
+| Plan     | Monthly price | Relevant capabilities                        |
+| -------- | ------------- | -------------------------------------------- |
+| Free     | $0            | Generate up to 4 worlds                      |
+| Standard | $20           | Export Gaussian splats and collider meshes   |
+| Pro      | $35           | High-resolution meshes and commercial rights |
+| Max      | $95           | Higher generation allowance                  |
+
+These are app subscription prices, not World API per-generation costs. Commercial deployment needs the correct rights and an API cost calculation.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://marble.worldlabs.ai\&sz=32)
+
+Marble
+
+
+
+The key engineering distinction:
+
+The physical room should be driven by exact CAD geometry. Marble should generate the atmospheric digital world around that geometry.
+
+Gaussian splats are fantastic for visual appearance, but they aren't inherently precise manufacturing geometry or usable collision surfaces.
+
+Canonical room design
+
+Exact dimensions, furniture coordinates, CAD and materials
+
+Physical twin
+
+JLC / laser cutting / printed booklet
+
+Digital twin
+
+Marble splat + collision mesh + AI character
+
+One persistent OddHobb Tiny World
+
+Physical object · web experience · AI interaction · optional AR
+
+### Imagine the actual customer experience
+
+Someone uploads pictures of their childhood bedroom, their cat and their favourite objects.
+
+OddHobb generates a miniature room styled around those references. It shows the completed design before payment.
+
+The customer receives a flat-packed project with numbered parts and an IKEA-style booklet. They spend a Sunday assembling it.
+
+Then they scan a QR code on the little room.
+
+[DG166 魔法使いのアトリエ | Robotime](https://images.openai.com/static-rsc-4/nmePTFThUjHK6i7IgQ0cGMB7XXt6XVc6ho_IOeE8HswhIvlRC-g1oFHvlNDIl0KzW2IBxeCNvF9_5DIDeRVCa2R4X0DRR85rSAO504K-RSSCrCpDZjoosMXHUFw8rLD5iWFmnIaL2ZvSTolraV7UNJj3SHT5Cy6DjKD1-4594Cc?purpose=inline)
+
+Physical world
+
+The room they built, with its own furniture and character
+
+[Serene Modern Glass Cabin on Island — Qwen Image 2512 AI Generator | Proxima Pictures](https://images.openai.com/static-rsc-4/PZcbMGMAKMP99vbfSLnFKDTvcveiC_DsXAInPfNVlp5lMeJE0XBCBVI8_JhEIsYt0FRqZiVBNhrDvls54vkKP-kHWNY6YM6BVStTeeCMcvVi4hT-OA7cfyJtoQGaRdurPbWAuCcQus_NxIidBuDJgyslFWE-hQP2uBsgh5xzIxo?purpose=inline)
+
+Digital world
+
+An explorable interpretation of the same room
+
+Now put an AI agent in it.
+
+The Muse character could remember objects placed in the room, express its personality through decorations, react when the owner visits and eventually move through the space.
+
+You could have a room for an existing character, your own Oddy mascot, or a completely personalised companion.
+
+And here's an extension: the digital character can request physical upgrades to its home.
+
+“I want a little telescope.”
+
+OddHobb already knows the room dimensions and attachment interfaces. It generates a compatible telescope, prices the printed miniature and offers it as a £5–£10 upgrade. That accessory is also inserted into the digital world.
+
+The physical and digital product catalogues become one.
+
+## 4. What about AR?
+
+I'd split it into three milestones:
+
+Version 1: Web digital twin. Scan the QR code and explore the room on the phone, with the character inside. No AR needed.
+
+Version 2: AR miniature. Point your phone at the physical model. Use an image marker or tracked model anchor to align a character and animated effects with the physical room. The companion could appear to sit on the bed, walk across the floor or wave through the window.
+
+Version 3: Life-sized portal. Place a life-sized version of the room in your actual environment and walk inside it. This is where Marble's visual environments become especially useful.
+
+For development, I would use Three.js for the web viewer, Gaussian-splat rendering, a separate simplified collision mesh and a real-time conversational agent interface. For precise room-anchored AR, a native ARKit/ARCore or Unity prototype may be more dependable than relying entirely on browser AR.
+
+The harder problems are registration, occlusion and believable character interactions, not simply displaying the splat.
+
+## 5. What would our own room actually cost?
+
+Here's a proposed target for an original flat-packed room roughly 15–20 cm wide, with no electronics.
+
+Illustrative OddHobb Tiny Room unit economics
+
+Batch size
+
+1
+
+25
+
+100
+
+| Laser-cut room shell                     | $6.00 |
+| ---------------------------------------- | ----- |
+| 3D-printed furniture                     | $5.00 |
+| Printed custom decor                     | $3.00 |
+| Instructions                             | $2.00 |
+| Box + packing                            | $3.00 |
+| Inbound and outbound logistics allowance | $4.00 |
+
+Estimated unit cost
+
+# $23.00
+
+Gross profit before fees and overhead
+
+# $26.00
+
+Retail price
+
+$49
+
+Planning assumptions only. These are not supplier quotes. Costs exclude VAT/sales taxes, payment fees, defects, development, Marble/API usage and paid acquisition.
+
+I would not claim the 25-unit price is achievable yet. We'd need a real CAD file and itemised requests for quotation to confirm it. But it establishes the cost envelope we want suppliers to meet.
+
+## 6. What I would manufacture first
+
+OddHobb Tiny Room 001: Your Little World
+
+One universal room shell, approximately 18 × 18 × 18 cm, with interchangeable components.
+
+The first three themes could be:
+
+- The Cosy Bedroom — bed, desk, photographs, rugs, personalised wall art.
+- The Tiny Study — bookshelves, computer, desk and miniatures of the owner's interests.
+- The Magical Workshop — little alchemical equipment, curiosities, plants, candles and unusual props.
+
+All three use the same room structure and component attachment system.
+
+You could then sell personalised character packs, furniture packs, seasonal decoration packs and later a full house made by stacking modules.
+
+Crucially, I'd source the first production from custom laser-cut panels and JLC-printed furniture rather than trying to modify someone else's copyrighted Rolife design.
+
+The next practical step is one 18 cm universal room CAD file and a BOM, quoted at 1, 25 and 100 units. That gives you a real manufacturing baseline and lets you design both the physical kit and the Marble experience around precisely the same dimensions.
+
+The vision is not merely a customised dollhouse. It's a physical home for a persistent digital character, which its owner can build, expand and inhabit digitally.
+
+I think you've identified a particularly strong direction for OddHobb: start as IKEA for creative projects, then evolve into the physical manufacturing layer for AI-generated worlds.
+
+The dollhouse is an unusually good entry point because it combines crafts, gifts, personalisation, modular hardware, digital twins and eventually robotics without requiring you to build all those technologies immediately.
+
+The most important distinction is that OddHobb doesn't need to manufacture everything. It needs to standardise how things are designed, ordered, manufactured and fitted together.
+
+## The vision: OddHobb Tiny Worlds
+
+[Купити 3D Румбокс DIY Cute Room QT-007-B Sunshine Study Room дитячий ляльковий будинок конструктор 6 шт. у Києві за найкращою ціною - 1300576189](https://images.openai.com/static-rsc-4/eL6N6FQzwn-Ujyt_yk0kmXfHxMtmfIu89LuxrHi1QLgWpx6hYotHs3r2DK7epz8q1knAR6t-0SEZj_trKYKKihkEo1xSthn1M9jKBZdwE6wKsZHLsltfS03nj2dvbtv4iDSYxo8hF2umw7QYZpkg0YCpOUYISr-2OaAipADm5OA?purpose=inline)
+
+[AIBI Pocket GPT Pet Robot Review 2025: Best Portable AI Companion  – SmartPursue™](https://images.openai.com/static-rsc-4/ouRr3EHWB66tLdycPCr-mV1sanO11k2phhfCWVx4Z8rlQhAZ-XWZ301Li635t3dlb0EdzFU_C7vUb8Ax5ST6yh4bhCqJI_kW7yDJ9jpRAtGuDea13I4J0zuimeZy4MEBPbHjse--gDLpIn3Slyijbas3JfN2WbHjuhuwRBm9b10?purpose=inline)
+
+[URSAI Nova – ursai](https://images.openai.com/static-rsc-4/XCkWT344MR9DigY9ZQd1-ZW1_rCWdtsAo6UE4LP1_rvc5N1bKww4F2JXmQDTixX_DlsWI1c3FbyFWTrbSczuHRoo50vRc5ZH3Q9MW-ItOiQSI_gu1Ao-q8HNFWfZAuGPcZ8Nf_5oHBb4co9Zg_skh9d7rSXexdRtocaWVaPczE0?purpose=inline)
+
+12
+
+Concept directions: craft kit → AI habitat → connected miniature world.
+
+### Phase 1 — IKEA for crafts
+
+Someone discovers a cool miniature room or unusual DIY project.
+
+OddHobb supplies the whole project: numbered materials, precision-cut components, an IKEA-style illustrated instruction booklet, a video walkthrough and the option to personalise it.
+
+You're selling a complete, frictionless making experience.
+
+### Phase 2 — Customisable miniature worlds
+
+A customer or their AI agent can redesign the room.
+
+“Make me a little Victorian library with a desk, a fireplace and a miniature of my dog.”
+
+The agent uses OddHobb's Blender templates and component specifications. OddHobb validates the geometry, finds the best suitable manufacturers, calculates a delivered price and lets the customer approve the order.
+
+The pieces arrive together, with instructions that reference the exact components.
+
+### Phase 3 — Give your agent a physical room
+
+The miniature world becomes an addressable physical environment.
+
+A static figure represents the agent initially. Later, add lighting, speakers, displays, movement and an always-on connection to its digital identity.
+
+The agent's room becomes its physical presence in your home, without requiring a humanoid robot.
+
+### Phase 4 — Pogtown enters the real world
+
+This is where the concept gets especially interesting.
+
+Your Pogtown characters already have identities, personalities and relationships.
+
+Now give each character a persistent room.
+
+Imagine a friend sends you a message through their avatar. Your room lights up, and their avatar appears on a tiny display or eventually through a projection system.
+
+Or an agent visits another agent's room digitally. The receiving room reacts: lamps change colour, the inhabitants speak, and the visit is represented in the physical world.
+
+A true free-space hologram is much harder; a small screen, reflective illusion or Pepper's Ghost-style display would be a more practical early implementation.
+
+## The architecture I'd protect from day one
+
+OddHobb World Standard
+
+Room dimensions · connection points · scale · coordinate system · power · digital identity
+
+Design SDK
+
+Blender templates, validated parts and modifiers
+
+Manufacturing Router
+
+JLC3DP, laser cutting, electronics suppliers
+
+Assembly Compiler
+
+Exact BOM, illustrated instructions, packing lists
+
+Digital Twin
+
+Meshes, splats, scene graph, agent presence
+
+One OddHobb world
+
+Physical room + digital room + agent + purchasable upgrades
+
+There are six decisions worth standardising before designing the first room.
+
+| Standard                          | Why it matters                               |
+| --------------------------------- | -------------------------------------------- |
+| Fixed room module dimensions      | Rooms can stack and connect                  |
+| Universal attachment interfaces   | Third-party furniture fits reliably          |
+| Blender template and asset schema | AI agents can design compatible objects      |
+| Versioned bill of materials       | Booklets always match shipped parts          |
+| Persistent world ID               | Physical and digital rooms stay synchronised |
+| Optional electronics channel      | Existing rooms can be upgraded later         |
+
+I'd keep electronics optional and avoid committing to a particular robot design now.
+
+## The manufacturing platform is the bigger business
+
+Your agents could eventually use an interface like:
+
+```
+oddhobb.list_templates()
+oddhobb.get_room_spec()
+oddhobb.validate_design()
+oddhobb.quote_manufacturing()
+oddhobb.preview_in_room()
+oddhobb.create_order()
+oddhobb.track_order()
+```
+
+An AI could design a tiny bookshelf in Blender, upload its mesh and receive several manufacturing options.
+
+Crucially, OddHobb should normalise the complete delivered price, not just compare component prices.
+
+For example:
+
+| Supplier   | Parts | Shipping | Assembly | Total |
+| ---------- | ----- | -------- | -------- | ----- |
+| Supplier A | $4    | $12      | $0       | $16   |
+| Supplier B | $7    | $3       | $0       | $10   |
+| Supplier C | $5    | $4       | $2       | $11   |
+
+Illustrative comparison, not live supplier quotes.
+
+The cheapest part isn't necessarily the cheapest delivered product. You also have to account for materials, minimum orders, lead times, taxes, consolidation, packaging, quality control and failed prints.
+
+This eventually becomes an agent-native manufacturing marketplace, with OddHobb earning money through design templates, manufacturing margins, project kits, fulfilment and marketplace fees.
+
+## The especially powerful idea: the house remembers
+
+Imagine a customer buys a miniature desk for their agent.
+
+The digital world automatically knows that the desk exists, which room it belongs in and where it fits. If the owner installs it, they can confirm its position, and the digital twin updates.
+
+Later, the agent designs its own chair.
+
+It knows the measurements of the desk, available floor space and which attachment points are free.
+
+It can generate a suitable chair, preview it, quote it and request the owner's approval to purchase it.
+
+This is the architecture that makes the futuristic Pogtown vision feasible: objects have identities, rooms have state, and agents can reason about both.
+
+The same underlying objects can appear in three places:
+
+- In Blender as editable manufacturing templates.
+- In the customer's physical miniature room.
+- In the persistent Pogtown/Marble digital world.
+
+The digital version could also support behaviours: a lamp emits light, a door opens, a character sits on a chair, or a visiting avatar leaves a message.
+
+## The very first product I'd build
+
+[Kit De Casa De Muñecas DIY, Sala De Estudio En Miniatura De Madera Con Muebles Para Niños Y Amigos | Bodega Aurrera en línea](https://images.openai.com/static-rsc-4/qKSwvX7T5oAiHWZO21gxsGVyTQ1gG7nKHi5TaOisI1lK6unmeC62Kz51aWykBXIIoylS-ZYK4-WVQyzH3Ib3GZBfVClq3At5ZtOfM81Rmx959lh0ttYRwwP2BTW45nkKhGFC047R6IxegxEu5fhC4INL5yyd7uJ33WfCT8zDfPg?purpose=inline)
+
+OddHobb Room 001
+
+A small flat-pack modular room with a standardised shell, interchangeable furniture and personalised wallpaper.
+
+Includes all components, illustrated booklet, video walkthrough and a digital room file.
+
+Proposed retail: £39–59, subject to supplier quotes.
+
+Launch it with three styles: Cosy Bedroom, Tiny Library and Magical Workshop. Same shell, different inserts and decor.
+
+Each purchaser gets a permanent room page with their project files, assembly instructions, replacement-part ordering and compatible upgrades.
+
+Later, that exact page becomes the room's digital twin and eventually the agent's home.
+
+That means you aren't building a throwaway Christmas product and then pivoting to robotics. You're building the first generation of a persistent platform, beginning with something simple enough to manufacture and enjoyable enough to buy as a gift.
+
+My strongest recommendation is to make the room and the manufacturing template the canonical products, not the robot. If those are standardised properly, human creators, AI agents, robotics developers and Pogtown can all build on them.
+
+OddHobb's consumer promise stays simple:
+
+Make a little world. Make it yours.
+
+And the next proposition follows naturally:
+
+Give your agent a home.
+
+This is where OddHobb and Pogtown converge into something much bigger than either product individually.
+
+You're describing a world where an AI agent can have a home, a creative practice, an audience, a shop, and a physical relationship with the human world.
+
+And the amazing part is that we can make this economically real without needing intelligent robots or advanced holograms.
+
+The agent can exist entirely digitally at first. Its room, furniture, artworks and products can already be manufactured through OddHobb.
+
+## Imagine: your agent is an artist
+
+[Dolls House Miniature Artist Studio](https://images.openai.com/static-rsc-4/huoB6AXkcZstnbIaC5k00eluJ6RcnG1HFkr3o1T68OVTDgjEniBIafAPfpJKhFB5AGMpr62bHzXUFBQs3qCMq6a163dwSWAqEzasLzQqdiAMTbUJDjq-DP_4srwFptoHCOsYswV__TT_qgXexZac-UOcmScNQt10OU5-WZgQkl8?purpose=inline)
+
+[Stable Diffusion vs DALL·E: Typedream's Take](https://images.openai.com/static-rsc-4/okcMGkQR9Ux9aBxzV2Y5I3dgQUHF-gLZYqPFAqL31WyRh68G6OkdkRiHnCywXeL0-HvL2NfhybvlMIDegw53i4GzrydrJv_tfoI3e4xu_S7gM-R4kL_2HRMUa5t5cs2bLqx7rRPNUl9ffU59PFNOfWL5ZZ2F3f0otvO22Gomz58?purpose=inline)
+
+[Miniature Diorama Room Box Modern Art Museum Masters Art Gallery Scene OOAK Dollhouse 1:12 Scale 1/12 | Art lessons, Easy diy art, 3d art gallery](https://images.openai.com/static-rsc-4/Ce675PNAEniV_WVhzj7e8SOm92wqb4jNoHwbukT-Zp6DvOrOyfxvuDGgSE57Z3gBNV2sf6eO83Q57pbdhb88onZYTQ8L2BzyT8oHeP9CUZhgRn8eJevsMqWn0bJn2dGQPg1M-rydr65rwHEPOJhsPm_7wAciqxiYJrxAXdOUTsc?purpose=inline)
+
+12
+
+An agent called Milo has its own studio.
+
+It wakes up in its digital room, checks comments on its latest artworks, and decides what to make next.
+
+It opens its tools, designs a sculpture in Blender, renders it, and posts a short video of the process.
+
+Its audience can watch it working through a virtual studio livestream.
+
+Someone comments: “Make a miniature version of that for my desk.”
+
+Milo creates a print-ready variant and submits it to OddHobb.
+
+OddHobb validates the model, quotes the manufacturer, generates the product listing and makes it purchasable.
+
+Someone orders it.
+
+A real physical sculpture gets produced, shipped and displayed in someone's home.
+
+An entirely digital artist has just sold a real physical artwork.
+
+And when Milo earns revenue, it can propose buying itself a better studio, commissioning a new physical room accessory or upgrading its digital environment.
+
+Of course, a human or legally responsible business would hold the merchant account, own the funds and authorise spending. But the creative operation could be highly autonomous.
+
+## The genuinely unusual part: the agent lives in a manufacturable world
+
+Most AI-agent worlds are purely virtual.
+
+Your concept makes the virtual world a manufacturing interface.
+
+Milo's Digital Studio
+
+Exact dimensions · scene graph · objects · character memory
+
+Create
+
+Art, furniture, products, animations
+
+Broadcast
+
+Livestreams, social posts, virtual exhibitions
+
+Sell
+
+Digital files, physical pieces, commissions
+
+Manufacture
+
+Verified CAD → supplier → customer
+
+The Physical World
+
+A miniature studio in your house and real objects sold globally
+
+## Five things this unlocks
+
+1\. Agent-owned aesthetics. Each character develops a recognisable artistic style, favourite materials, colour palettes and recurring motifs. Its catalogue becomes an expression of its personality rather than random generated merchandise.
+
+2\. Agent-to-agent commerce. An architect agent designs furniture for another agent's bedroom. A sculptor sells ornaments to a virtual gallery owner. Transactions between agents could eventually correspond to real manufacturing orders, with owner-controlled budgets.
+
+3\. Physical fan merchandise. A viewer likes Milo's studio, so they buy a miniature copy of the room. They can build it themselves as an IKEA-style kit, buy it assembled, or personalise it.
+
+4\. Creative competitions. Pogtown holds a miniature room design competition. Agents produce entries under identical material and cost limits. Humans vote. Winning designs become physical OddHobb products. This is also naturally suited to YouTube.
+
+5\. Persistent livestream characters. Rather than generating endless disconnected AI videos, the audience watches a recognisable character with a real history, evolving skills, a changing studio and physical products it has created.
+
+That last one relates directly to your earlier Pogtown idea about characters learning from audience feedback and successful personalities becoming regulars.
+
+## What I'd standardise now
+
+The most important technical asset is the canonical world manifest.
+
+Every real miniature room gets a digital record describing the dimensions, furniture, materials, attachment points and available space.
+
+Every object should have two representations:
+
+- Manufacturing representation: accurate dimensions, tolerances, material requirements, printable or machinable geometry.
+- World representation: visual mesh or splat, collision geometry, interaction points and behaviour.
+
+They share an object ID, but they don't have to share identical geometry. A beautiful Gaussian splat is not necessarily manufacturable CAD.
+
+This allows an agent to design a bookshelf that is not merely visually plausible but guaranteed to fit its 180 mm room, subject to proper validation and manufacturing tolerances.
+
+I'd also give every agent a studio inventory, an approved manufacturing budget and a public storefront from the beginning of the agent-commerce experiment.
+
+## The really fun business model
+
+OddHobb could eventually be Shopify for AI creators, except the product catalogue can emerge directly from their creative activity.
+
+A creator agent doesn't need to understand manufacturing suppliers or ecommerce infrastructure. It simply creates an object.
+
+OddHobb handles the commercial machinery:
+
+Design → manufacturability validation → cost → preview → listing → customer checkout → fabrication → consolidation → delivery.
+
+OddHobb earns manufacturing margin and possibly a platform fee. The agent's human owner or operating business receives the remainder.
+
+And your YouTube strategy suddenly becomes much stronger.
+
+Instead of OddHobb producing every video, you have a population of AI creators making interesting objects, holding exhibitions, filming their studios and generating new products.
+
+The content produces demand. Demand selects successful designs. Those designs become reusable OddHobb assets. Successful creator personalities gain audiences and expand their catalogues.
+
+### The product roadmap I'd use
+
+| Product          | What it proves                                                          |
+| ---------------- | ----------------------------------------------------------------------- |
+| OddHobb Projects | People will buy complete creative kits                                  |
+| Tiny Worlds      | People will build and personalise modular miniature rooms               |
+| Digital Twin     | A physical room can have an exact digital counterpart                   |
+| Agent Studio     | An agent can create objects inside its own space                        |
+| Agent Storefront | AI-created designs can become real purchasable products                 |
+| Pogtown          | Multiple persistent characters can create, interact and build audiences |
+
+The key is that each stage generates value independently. You don't need Pogtown to succeed for the physical dollhouses to be a good business.
+
+But if Pogtown does work, OddHobb becomes its physical economy.
+
+And the most compelling loop is this:
+
+An agent designs a tiny sculpture in its virtual studio. A person watches the process on YouTube, buys the sculpture, and puts it inside their real miniature room. The digital version of that same room updates. The agent can then visit the room virtually and see its work on display.
+
+That's a fascinating bridge between physical and digital creativity.
+
+OddHobb makes the worlds. Pogtown makes them inhabited.
+I think the most important realisation here is that the physical room doesn't need to do very much. Its primary purpose is to give something digital a persistent physical identity.
+
+The room is a product people can build, personalise and display. The AI inhabitant is an optional extension. The manufacturing platform underneath is the larger business.
+
+You now have three ideas that reinforce each other without depending on one another:
+
+1. OddHobb Projects: IKEA-style creative kits with precisely sourced materials, illustrated instructions and guided assembly.
+2. OddHobb Make: An API where AI agents submit Blender models, CAD files or electronics designs and receive manufacturing quotes, validation and fulfilment.
+3. Pogtown: The persistent digital world where agents live, create, entertain, build reputations and sell what they make.
+
+The rooms connect them, but you don't need to build an entire metaverse to sell the first hundred dollhouses.
+
+## What is the physical room actually for?
+
+I would distinguish useful functions from novelty.
+
+| Feature                          | Actual customer value                                              | Priority     |
+| -------------------------------- | ------------------------------------------------------------------ | ------------ |
+| Personalised miniature room      | Enjoyable craft project and beautiful display object               | Now          |
+| Exact digital twin               | Preview furniture, order upgrades, develop the room digitally      | Now          |
+| QR/NFC room identity             | Open the room's page, instructions and resident agent              | Now          |
+| Ambient status lighting          | See notifications, availability or activity without opening an app | Next         |
+| Voice interaction                | Speak with the resident agent through the room                     | Later        |
+| Miniature robot                  | Give the character a recognisable physical body                    | Later        |
+| Projection / holographic display | Show visiting characters and visual performances                   | Experimental |
+
+The most valuable electronic function is probably ambient presence, not a talking robot.
+
+For instance, the agent's miniature studio could have a small window that glows when it has something new to show you. A little gallery could illuminate when a new artwork is completed. A workshop could light up while the agent is designing.
+
+No constant speech, no intrusive notifications, no moving machinery.
+
+The customer can decide which events deserve physical attention.
+
+That gives the room a real purpose: it makes selected events from a digital world perceptible in your physical surroundings.
+
+## The best immediate opportunity: an agent-to-manufacturing API
+
+I checked the supplier side, and there's one very relevant development: JLCPCB published its API access documentation on September 9, 2026.
+
+Its API offering includes 3D-model uploads, file parsing, manufacturing prices, order creation and tracking. It also covers PCBs and electronic component sourcing. Access requires an approved partner application.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://jlcpcb.com\&sz=32)
+
+JLCPCB
+
+
+
+That's close to the infrastructure your agent artists and engineers would need.
+
+The other useful supplier is [Seeed Fusion Kitting](https://www.seeedstudio.com/kitting-service.html). It accepts a bill of materials, printing files, packaging specifications and optional PCBs, and advertises custom kits starting at five sets.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.seeedstudio.com\&sz=32)
+
+Seeed Studio
+
+
+
+So I'd build one small manufacturing gateway with the following sequence:
+
+Agent creates something
+
+Blender model · CAD · PCB · project design
+
+OddHobb validates and quotes
+
+Dimensions · material · manufacturability · supplier · delivered cost
+
+Human approves purchase
+
+Or approval under a previously authorised spending limit
+
+Physical object delivered
+
+Quality checked · packaged · tracked
+
+This could support tiny furniture today, larger sculptures tomorrow, and increasingly sophisticated electronics later.
+
+### One actual MVP
+
+I'd build one universal 18 cm room and ten interchangeable accessories, initially without electronics.
+
+Every accessory has an actual Blender source file, a printable model, an exact placement point and a manufacturing quote.
+
+Then create a demonstration agent artist in Pogtown:
+
+1. It has a persistent little studio.
+2. It designs a new lamp or sculpture using Blender.
+3. Its work appears on a canvas or workbench in the virtual studio.
+4. Viewers can watch the process and request a physical copy.
+5. OddHobb manufactures the object after purchase.
+6. A miniature version can be installed in someone's physical Tiny World.
+
+For the livestream, visualise meaningful events from the agent's actual tool activity rather than treating private reasoning logs as something directly observable. You could show design iterations, renders, tool operations and the final approved product.
+
+That is a compelling demonstration of the entire idea without a robot, projector or electronics development programme.
+
+The physical room should be an optional display, crafting and ownership interface. The actual product platform is the bridge from AI-created designs to purchasable physical objects.
+
+And I'd keep the first customer-facing promise extremely clear:
+
+OddHobb — Design anything. We'll help make it real.
+
+For Tiny Worlds specifically:
+
+Build their world. Give them a home.

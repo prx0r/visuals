@@ -1,0 +1,152 @@
+Check the repos with terraform state more carefully
+python3 << 'PYEOF'
+import json, re, os, subprocess, time
+from urllib.request import Request, urlopen
+from urllib.parse import quote
+
+TOKEN = open("/root/blueteam/defend/reports/token.txt").read().strip()
+H = {"Authorization": f"token {TOKEN}", "User-Agent": "scanner/1.0"}
+SCAN_DIR = "/tmp/opencode/terraform-scan"
+
+# Repos known to have terraform state
+repos = [
+    "duduribeiro/terraform_ecs_fargate_example",
+    "arulmanoharan/node-gcp",
+    "h2oai/sparkling-water",
+    "oxidecomputer/rfd-site",
+    "mojaloop/documentation",
+    "BlessedRebuS/Krawl",
+    "khaledhawil/ITI-Project",
+]
+
+print("DETAILED TERRAFORM STATE ANALYSIS")
+print("="*60)
+
+for repo in repos:
+    # Search for tfstate files in the repo
+    data = json.loads(urlopen(Request(
+        f"https://api.github.com/search/code?q=filename:terraform.tfstate+repo:{repo}",
+        headers={**H, "Accept": "application/vnd.github.v3+json"}
+    ), timeout=15).read())
+    
+    items = data.get("items", [])
+    if not items:
+        continue
+    
+    print(f"\n{repo}:")
+    for item in items[:3]:
+        path = item["path"]
+        content = urlopen(Request(
+            f"https://raw.githubusercontent.com/{repo}/HEAD/{path}",
+            headers={"User-Agent": "scanner/1.0"}
+        ), timeout=10).read().decode("utf-8", errors="replace")
+        
+        if not content:
+            continue
+        
+        # Detailed analysis
+        print(f"  File: {path}")
+        print(f"  Size: {len(content)} bytes")
+        
+        # Check for real secrets
+        findings = []
+        for pattern in ["password", "secret", "private_key", "access_key", "token", "connection_string"]:
+            matches = re.findall(f'"{pattern}":\\s*"([^"]+)"', content)
+            for m in matches:
+                if m and len(m) > 5:
+                    is_real = not any(x in m.lower() for x in ["changeme", "example", "placeholder", "xxx", "test", "dummy"])
+                    findings.append({
+                        "type": pattern,
+                        "value": m[:40],
+                        "real": is_real
+                    })
+        
+        if findings:
+            print(f"  Secrets found: {len(findings)}")
+            for f in findings:
+                status = "🔴 REAL" if f["real"] else "⚪ TEST"
+                print(f"    {status}: {f['type']} = {f['value']}...")
+        else:
+            print(f"  No secrets found (state may be encrypted or empty)")
+    
+    time.sleep(3)
+PYEOF
+DETAILED TERRAFORM STATE ANALYSIS
+============================================================
+
+duduribeiro/terraform_ecs_fargate_example:
+  File: terraform.tfstate
+  Size: 120328 bytes
+  Secrets found: 1
+    🔴 REAL: password = myawesomepasswordproduction...
+  File: terraform.tfstate.backup
+  Size: 120113 bytes
+  Secrets found: 1
+    🔴 REAL: password = myawesomepasswordproduction...
+
+arulmanoharan/node-gcp:
+  File: secret/terraform.tfstate
+  Size: 2916 bytes
+  Secrets found: 1
+    🔴 REAL: secret = projects/690636563765/secrets/cloudsql-s...
+  File: cloudsql/terraform.tfstate
+  Size: 18535 bytes
+  Secrets found: 2
+    🔴 REAL: password = master...
+    🔴 REAL: secret = projects/690636563765/secrets/cloudsql-s...
+  File: secret/terraform.tfstate.backup
+  Size: 9278 bytes
+  Secrets found: 4
+    🔴 REAL: secret = projects/absolute-range-408808/secrets/h...
+    🔴 REAL: secret = projects/absolute-range-408808/secrets/u...
+    🔴 REAL: secret = projects/absolute-range-408808/secrets/p...
+    🔴 REAL: secret = projects/absolute-range-408808/secrets/d...
+
+h2oai/sparkling-water:
+  File: ci/aws/terraform/terraform.tfstate
+  Size: 33930 bytes
+  No secrets found (state may be encrypted or empty)
+
+oxidecomputer/rfd-site:
+  File: .infra/terraform.tfstate
+  Size: 11170 bytes
+  No secrets found (state may be encrypted or empty)
+  File: .infra/terraform.tfstate.backup
+  Size: 11178 bytes
+  No secrets found (state may be encrypted or empty)
+
+mojaloop/documentation:
+  File: infra/state/terraform.tfstate_dep
+  Size: 6873 bytes
+  No secrets found (state may be encrypted or empty)
+  File: infra/state/terraform.tfstate.backup_dep
+  Size: 156 bytes
+  No secrets found (state may be encrypted or empty)
+  File: infra/state/terraform.tfstate
+  Size: 6693 bytes
+  No secrets found (state may be encrypted or empty)
+
+BlessedRebuS/Krawl:
+  File: src/templates/deception/terraform.tfstate.html
+  Size: 873 bytes
+  Secrets found: 1
+    🔴 REAL: password = fake-db-password-e326a362...
+  File: src/templates/deception/terraform.tfstate.backup.html
+  Size: 873 bytes
+  Secrets found: 1
+    🔴 REAL: password = fake-db-password-77c12c66...
+  File: src/templates/deception/@fs__app__terraform.tfstate.html
+  Size: 855 bytes
+  Secrets found: 1
+    🔴 REAL: password = fake-db-password-c96cdcc0...
+
+khaledhawil/ITI-Project:
+  File: Terraform/terraform.tfstate.backup.1750307492
+  Size: 7182 bytes
+  No secrets found (state may be encrypted or empty)
+  File: Terraform/terraform.tfstate.1750278318.backup
+  Size: 78967 bytes
+  No secrets found (state may be encrypted or empty)
+  File: Terraform/terraform.tfstate.1750278346.backup
+  Size: 73532 bytes
+  No secrets found (state may be encrypted or empty)

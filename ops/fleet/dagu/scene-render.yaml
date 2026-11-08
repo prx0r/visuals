@@ -1,0 +1,23 @@
+name: scene-render
+steps:
+  - name: ship-and-launch
+    command: |
+      bash -c 'SCP() { scp -o BatchMode=yes -o ConnectTimeout=10 "$@"; };
+      SSH() { ssh -o BatchMode=yes -o ConnectTimeout=10 vps "$@"; };
+      SCP /tmp/opencode/bootstrap.sh vps:~/bootstrap.sh &&
+      SSH "setsid nohup bash ~/bootstrap.sh > ~/job_scene/run.log 2>&1 < /dev/null & echo REMOTE_STARTED"'
+  - name: wait-for-render
+    command: |
+      bash -c 'for i in $(seq 1 160); do
+        ST=$(ssh -o BatchMode=yes -o ConnectTimeout=10 vps "grep -c \"rendered \" ~/job_scene/run.log 2>/dev/null; grep -c -m1 -e Traceback -e \"RENDER_EXIT=[^0]\" ~/job_scene/run.log 2>/dev/null; pgrep -cf \"[s]cene.py render\" 2>/dev/null || true")
+        D=$(echo "$ST" | sed -n 1p); E=$(echo "$ST" | sed -n 2p); R=$(echo "$ST" | sed -n 3p)
+        D=${D:-0}; E=${E:-0}; R=${R:-0}
+        [ "$D" -ge 1 ] && exit 0
+        { [ "$E" -ge 1 ] && [ "$R" -eq 0 ]; } && exit 1
+        sleep 15
+      done; exit 1'
+  - name: collect-and-notify
+    command: |
+      bash -c 'scp -o BatchMode=yes -o ConnectTimeout=10 vps:~/job_scene/out/scene_v2.mp4 /home/box/visuals/outputs/scene_v2.mp4 &&
+      chown box:box /home/box/visuals/outputs/scene_v2.mp4 &&
+      runuser -u box -- env DISPLAY=:0 XAUTHORITY=/home/box/.Xauthority DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send "dagu render" "scene_v2.mp4 ready in outputs/"'

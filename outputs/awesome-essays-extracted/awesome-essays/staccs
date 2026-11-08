@@ -1,0 +1,950 @@
+MiMo V2.5: genuinely omnimodal input — text + images + video + audio. Xiaomi says it has dedicated vision and audio encoders. It is primarily an understanding/reasoning/agent model, though; it doesn't mean MiMo V2.5 itself is an image/audio generator. Qwen3.8 Flash: image + video understanding is native, alongside text/coding, with a 1M-token context. Again, it's not the image generator. Qwen has separate generative models for that.
+Qwen is becoming a ridiculous full media stack
+
+The current Qwen/Alibaba family I would actually care about is:
+
+Task	Model	Interesting bit
+cheap LLM + vision	Qwen3.8 Flash	code + images + long video + 1M context
+true omni assistant	Qwen3.5 Omni Flash/Plus	text/image/audio/video → text and speech
+realtime omni	Qwen3.5 Omni Realtime	camera + microphone → spoken response
+cheap TTS	Qwen Audio 3.0 TTS Flash	cloning + emotions + instructions + streaming
+premium TTS	Qwen Audio 3.0 TTS Plus	better quality / expression
+open TTS	Qwen3-TTS 0.6B / 1.7B	self-hostable, voice clone/design
+ASR	Qwen Audio 3.0 ASR Flash	speech recognition
+live translation	Qwen3.5 LiveTranslate	~3 sec, 60 languages
+images	Qwen Image 3.0 Pro / Image 2.0	generation + editing
+video	Wan 2.7	T2V + reference-to-video
+The especially cool one is Qwen3.5-Omni. It accepts text, image, audio and video and can respond in both text and speech; realtime variants can take microphone/camera streams. Qwen even supports voice cloning in the Omni models.
+
+That's closer to a cheap open-ish Gemini Live / GPT realtime stack than a traditional LLM.
+
+And Qwen's media API prices are aggressive: Qwen Image 2.0 is around $0.035/image, while Wan 2.7 video is $0.10/sec at 720p or $0.15/sec at 1080p.
+
+TTS: the thing I'd test immediately
+
+Qwen just released Qwen Audio 3.0 TTS on August 24.
+
+Qwen Audio 3.0 TTS Flash
+
+$0.15 / 10,000 characters.
+
+It supports:
+
+streaming
+voice cloning
+natural-language voice instructions
+emotions
+tone
+speaking rate
+volume
+laughter/sigh-style tags
+lots of system voices
+500+ base voices
+
+Assuming roughly 800–1,000 spoken characters/minute, that's only approximately:
+
+$0.012–$0.015/minute of speech.
+
+That is extremely cheap.
+
+Qwen Audio 3.0 TTS Plus
+
+$0.20 / 10,000 characters, so roughly $0.016–$0.020/min.
+
+It prioritizes detail, fidelity and expressiveness over latency.
+
+Compare:
+
+Qwen TTS Flash: ~$0.015/min
+Qwen TTS Plus: ~$0.02/min
+ElevenLabs Flash: ~$0.05/min
+Eleven v3: ~$0.10/min
+
+ElevenLabs remains excellent — v3 is extremely expressive and Flash v2.5 gets ~75ms model latency — but Qwen's economics are substantially better.
+
+So my first API bake-off would be:
+
+Qwen Audio 3 Flash vs Eleven v3 vs Eleven Flash.
+
+For something like Freaktown characters, I'd very seriously consider Qwen as the default voice engine and ElevenLabs only as a premium/fallback.
+
+Open-source TTS frontier
+
+This is even more interesting.
+
+My current shortlist is:
+
+Qwen3-TTS — probably the first thing I'd self-host. Apache 2.0, 0.6B/1.7B, voice cloning, voice design, emotion/instruction control, 10 languages and streaming. The architecture can get down to roughly 97 ms first-audio latency in optimized setups.
+
+CosyVoice 3 0.5B — extremely compelling production model. Small, Apache-ish ecosystem, excellent cloning and strong low-latency work; Qwen's own repo recommends the 0.5B v3 model. Fish Speech S2 Pro — very high quality and cloning/multilingual ability. vLLM's recent serving work gets roughly 23.7 generated audio-seconds/sec on an H20 under high concurrency. Licensing deserves more scrutiny depending on commercial use.
+
+Kokoro 82M — still fantastic when you want absurdly cheap. It isn't as controllable/expressive as these giant speech models, but 82M parameters is tiny.
+
+So I'd probably build a voice router like:
+
+super-cheap narration
+        ↓
+Kokoro
+
+normal character speech
+        ↓
+Qwen3-TTS 0.6B
+
+voice cloning / expressive character
+        ↓
+Qwen3-TTS 1.7B / CosyVoice 3
+
+highest quality fallback
+        ↓
+Qwen Audio 3 Plus / Eleven v3
+
+That gives you near-zero marginal cost for most audio.
+
+And Stable Audio has gotten MUCH better for your use case
+
+This is the bit I think you'll particularly like.
+
+The old Stable Audio Open Small you were looking at is only 341M parameters, runs entirely on an ARM CPU, generates up to 11 seconds, and Stability reported an 11-second sample taking under 8 seconds on a phone.
+
+So yes: your character jingles absolutely do not require an expensive GPU server.
+
+But there's now something better:
+
+Stable Audio 3 Small
+
+Stability has released:
+
+Stable Audio 3 Small-Music — 433M
+Stable Audio 3 Small-SFX — 433M
+
+Both are explicitly CPU models.
+
+And they now generate up to 120 seconds rather than 11 seconds.
+
+Their published numbers are bonkers:
+
+generated audio	Mac CPU
+5 sec	0.70 sec
+30 sec	1.72 sec
+120 sec	5.92 sec
+And CoreML gets 120 seconds in about 3.09 sec. It produces 44.1 kHz stereo, and there's a dedicated music checkpoint and dedicated SFX checkpoint.
+This basically solves the jingle problem.
+
+Instead of:
+
+send every Freaktown character to Suno → pay API → wait
+
+you can have:
+
+Character prompt
+      ↓
+LLM writes music prompt
+
+"12-second chaotic wrestling entrance theme,
+distorted synth brass, cheap arena drums,
+absurdly triumphant, abrupt ending"
+      ↓
+Stable Audio 3 Small-Music
+      ↓
+WAV
+      ↓
+object storage/cache
+      ↓
+permanent character walkout music
+
+Generate it once, store it forever.
+
+How cheap to host?
+
+This is where it gets silly.
+
+Because Stable Audio Small doesn't need a GPU, a cheap ARM VPS may be sufficient.
+
+Current Hetzner pricing after its June 2026 adjustment:
+
+CAX11 — 2 ARM vCPU / 4GB: $6.99/month
+CAX21 — 4 ARM vCPU / 8GB: $12.49/month
+CAX31 — 8 ARM vCPU: $24.99/month
+
+I'd start with CAX21 at ~$12.49/month, not CAX11. 8 GB gives you enough breathing room for model + Python/runtime + API process.
+
+So you potentially have:
+
+unlimited-ish 10–20 second AI jingles for ~$12/month fixed compute
+
+rather than paying a per-generation API forever.
+
+And because they're background assets, you don't care enormously if generation takes 2 seconds or 15 seconds.
+
+Even better architecture:
+
+Cloudflare API
+      ↓
+queue
+      ↓
+cheap ARM Stable Audio worker
+      ↓
+R2
+      ↓
+CDN
+
+The worker can even shut down/be replaced with job compute if demand is low.
+
+If you decide GPU instead
+
+You don't need anything remotely like H100.
+
+Stable Audio 3 Small peaks around only ~2.4 GB VRAM. Even Medium, the 1.4B model, peaks around 6.5 GB.
+
+Current marketplace GPUs are cheap:
+
+RunPod RTX A5000: ~$0.16/hr community
+RTX 3090: ~$0.22/hr
+RTX 4090: ~$0.34/hr
+Vast RTX 3090 current median: ~$0.147/hr, with some offers far below that.
+
+So if you batch 1,000 jingles, I wouldn't keep a GPU alive. Spin up a cheap 3090, generate the entire catalogue, upload them, kill the instance. Compute cost could be essentially pocket change.
+
+What I'd build around this now
+
+For your media stack I'd use:
+
+                    MEDIA ROUTER
+                         │
+ ┌───────────────────────┼────────────────────────┐
+ │                       │                        │
+ ▼                       ▼                        ▼
+VOICE                   MUSIC                   SFX
+Qwen3-TTS               Stable Audio 3          Stable Audio 3
+0.6B / 1.7B             Small-Music             Small-SFX
+ │
+ ├── Qwen Audio 3 API fallback
+ └── Eleven v3 premium fallback
+
+
+IMAGE                   VIDEO
+Qwen Image 3            Wan 2.7
+ / image_gen             / other frontier APIs
+
+The economically important realization is that audio is becoming almost free. For character-heavy products, I'd stop thinking of voice/music/SFX as expensive API features and start treating them as generated static assets.
+
+And Stable Audio 3 Small-Music in particular looks almost tailor-made for your 10-second signature walkout-song/jingle idea.
+
+I can monitor releases/pricing for Qwen, Stable Audio, ElevenLabs and the open TTS models and flag anything that materially beats this stack.
+
+Yes. Runway Characters is almost comically well matched to Freak/Pog Town. I would test this before building much more custom avatar tech.
+
+1. Turn every character into a genuinely live performer
+
+Runway's new Characters / GWM-1 takes one image—including cartoons, creatures and non-human characters—and turns it into a realtime expressive video character. It runs at 24fps HD, Runway reports ~1.75s server-side turn latency, and it plugs directly into LiveKit Agents.
+
+Most importantly:
+
+$0.20/minute.
+
+That's only about:
+
+30-second standup set → $0.10
+2-minute appearance → $0.40
+5-minute match/game → $1
+100 × 30-sec generated character performances → $10
+
+And you provide your own STT → LLM → TTS pipeline; Runway can just be the visual performer.
+
+That means the show could literally be:
+
+PLAYER PHONE
+    ↓
+LiveKit room
+    ↓
+Qwen / agent brain
+    ↓
+Qwen TTS character voice
+    ↓
+RUNWAY CHARACTER
+    ↓
+LIVE VIDEO CHARACTER ON STAGE
+
+The character isn't a prerecorded video anymore. It can hear what another contestant says and react.
+
+This is probably the biggest technical unlock I've seen for the project.
+
+2. Freak Town becomes an AI improv game engine
+
+Imagine four player characters standing on the show stage.
+
+You hit:
+
+ROAST BATTLE
+
+Character A:
+
+instructed: roast Character B for 20 seconds based on its profile and what it just said.
+
+Character B can actually listen to the roast, interrupt, laugh, react visually, then respond.
+
+Or:
+
+PRESS CONFERENCE
+
+Everyone gets the same absurd situation:
+
+You have just been elected mayor after accidentally killing the previous mayor with a trebuchet. Explain yourself.
+
+Players control their characters from phones.
+
+Or:
+
+FIRST DATE
+
+Two characters dynamically converse.
+
+Audience phones give:
+
+❤️
+💀
+🍅
+😂
+BUZZ
+
+Those become realtime events in the agent context.
+
+This makes Freak Town closer to Jackbox × AI improv × VTubing × reality TV rather than "AI-generated videos."
+
+3. Let players physically possess their characters
+
+This one is also extremely feasible now.
+
+Browser projects already demonstrate:
+
+webcam → MediaPipe → face + body + hands → VRM avatar
+
+in realtime. XR Animator reports browser support with up to 60fps rendering / ~30fps pose detection on ordinary hardware.
+
+So add:
+
+POSSESS
+
+Player points their phone camera at themselves.
+
+       YOU
+        ↓
+phone camera
+        ↓
+face/body/hands landmarks
+        ↓
+character rig
+        ↓
+   YOUR FREAK
+
+Then suddenly you can have:
+
+Dance Off
+
+30 seconds.
+
+Your character has its Stable Audio-generated walkout song.
+
+You physically dance in front of your phone.
+
+Everyone watches your ridiculous character reproduce it.
+
+That is a real multiplayer game mechanic and doesn't require generative video inference.
+
+4. Even better: hybrid characters
+
+I would not choose between 3D avatars and generative video.
+
+Make each character renderer-independent:
+
+FREAK
+│
+├─ portrait.png
+├─ character.glb / character.vrm
+├─ voice.json
+├─ personality.md
+├─ lore.json
+├─ walkout.wav
+├─ emotes/
+│
+└─ renderers
+   ├─ threejs
+   ├─ runway
+   ├─ hedra
+   └─ future_model
+
+Then use the right renderer for the moment.
+
+Normal gameplay
+
+Three.js/VRM
+→ effectively free.
+
+Player physically controls Freak
+
+MediaPipe → VRM
+→ effectively free.
+
+Close-up / dialogue / roast
+
+Runway Characters
+→ $0.20/min.
+
+Pre-generated cinematic
+
+Hedra/Kling/Wan/etc.
+
+This is much stronger than designing Freak Town around any individual avatar provider.
+
+5. NVIDIA just handed us a serious 3D animation layer too
+
+Audio2Face-3D is now open source.
+
+NVIDIA provides the SDK source under MIT and models that turn streaming speech into facial blendshapes, including Audio2Face 3.0 and emotion inference.
+
+So your GLB/VRM Freak could eventually get:
+
+Qwen TTS
+    ↓
+raw audio
+    ↓
+Audio2Face
+    ↓
+mouth
+eyes
+brows
+cheeks
+emotion
+    ↓
+3D FREAK
+
+This removes the robotic mouth open = volume problem.
+
+The 3D character can actually perform speech.
+
+6. Stable Audio should become much more than walkout music
+
+Stable Audio 3 gives you Small-Music AND Small-SFX, both 433M CPU-capable models.
+
+This is ridiculously useful for the show.
+
+Generate a persistent pack when a Freak is born:
+
+CHARACTER AUDIO PACK
+
+🎵 walkout theme
+💥 entrance sting
+😂 laugh sting
+😢 sad violin
+😈 villain sting
+🏆 victory theme
+💀 death sound
+🔔 buzzer
+👏 personal applause
+📺 show bumper
+
+You could make every character feel like a tiny WWE wrestler.
+
+And generate contextual sounds during games:
+
+"wet slap followed by a tiny disappointed trumpet"
+
+"crowd gasps then one man awkwardly claps"
+
+"medieval gong played by somebody who clearly dropped it"
+
+Stable Audio 3 Small-SFX is specifically built for this and needs no GPU.
+
+7. Give every Freak a persistent voice
+
+This is another identity primitive I would store permanently.
+
+character
+├─ FACE
+├─ BODY
+├─ VOICE
+├─ SONG
+├─ PERSONALITY
+└─ MEMORY
+
+Qwen voice enrollment is currently quoted at only $0.01 to create a voice clone in Alibaba's international pricing, while Qwen's realtime TTS family is extremely cheap.
+
+So when someone creates:
+
+GREGOR THE UNEMPLOYED WIZARD
+
+he shouldn't randomly have Voice #41 today and Voice #88 tomorrow.
+
+Gregor gets:
+
+voice:
+  id: gregor_v1
+  style: >
+    exhausted northern English wizard,
+    unexpectedly deep,
+    gets breathless when angry
+
+Now you hear him in another episode three months later and immediately recognize him.
+
+That's how these things become characters, rather than generations.
+
+8. The character can become an actual agent outside the game
+
+Runway Characters supports knowledge/personality/actions/tool use, not merely visual lip-sync.
+
+This gives you a very strange expansion:
+
+A Freak can have:
+
+pog.town/f/gregor
+
+WATCH
+TALK
+CHALLENGE
+REMIX
+INVITE TO GAME
+
+Tap Talk and Gregor comes alive.
+
+Later:
+
+Add Gregor to tonight's game.
+
+Now the same persistent character joins.
+
+Eventually users could allow their character to autonomously enter games.
+
+Then you get:
+
+HUMAN vs HUMAN
+HUMAN vs AGENT
+AGENT vs AGENT
+HUMAN-PUPPETED CHARACTER vs AGENT CHARACTER
+
+Which fits the original Freak Town idea extremely well.
+
+9. One image → character → performance is now enough
+
+This dramatically simplifies onboarding.
+
+Instead of the painful:
+
+model character
+↓
+rig character
+↓
+animate character
+↓
+voice character
+↓
+build scenes
+
+you could initially literally do:
+
+TAKE PHOTO
+       ↓
+"make me a freak"
+       ↓
+character portrait
+       ↓
+voice
+       ↓
+walkout music
+       ↓
+Runway Character
+       ↓
+
+         READY
+           ↓
+      ENTER FREAK.TOWN
+
+~30 seconds from idea to a character that can speak to you.
+
+Runway explicitly supports creating the conversational visual layer from one reference image with no fine-tuning.
+
+The feature I'd build first
+
+Not more character creation UI.
+
+Build one Freak Town stage:
+
+╔══════════════════════════════╗
+
+      🔥 FREAK.TOWN LIVE 🔥
+
+  [ GREGOR ]        [ BLOB ]
+
+       🎤 ROAST BATTLE
+
+        ROUND 1 / 3
+
+ Audience:
+ 😂 138   💀 81   🍅 12
+
+══════════════════════════════
+
+       POT: $42.69
+
+╚══════════════════════════════╝
+
+Two Runway Characters.
+
+Two agent sessions.
+
+LiveKit.
+
+Qwen cheap models.
+
+Qwen TTS.
+
+Stable Audio stingers.
+
+Audience websocket reactions.
+
+And phones as Jackbox controllers.
+
+That would already demonstrate almost the entire Freak Town thesis.
+
+The particularly striking thing is that Runway's $0.20/min realtime character rendering is cheaper than I expected. You don't need to solve realtime generative characters yourself anymore.
+
+Then keep the VRM/GLB path as the free renderer, Runway as the premium generative renderer, and your canonical Character object above both. That architecture gives Pog/Freak Town room to absorb whatever insane character model appears next month rather than rebuilding around it.
+
+yeah its basically onboarding for charactrs which people can then give their own instagram accounts etc runway stack is beautiful! ok im thiknig we definiely use https://www.qwen3tts.net/qwen-audio-tts for the voice, then definiteyl the small audio for all the music.. then we just leave the character avatar beautifully open right, becomes like wreckitralph only problem is how do we plug it to live kit? also look into runway in more detail like how does it work do they get a persistat charcater and pay for every render? it would suckk to do that for each of our things like i dont want to pay 0.2 each time i want to send my frined  astandup minute right? surely theres equally amazing things and then people can also choose to pay as welll
+
+Yes — make the avatar renderer a plug-in, not part of the character identity. That solves exactly the Runway-cost problem.
+
+One correction first: qwen3tts.net is not Alibaba/Qwen; it explicitly says it is an independent third-party service. For Pog/Freak Town production I'd use the official Qwen3-TTS open weights or Alibaba's qwen-audio-3.0-tts-flash API, and only use qwen3tts.net for experimenting. Qwen3-TTS itself is Apache-2.0 and supports cloning/design/streaming; Alibaba's current Flash API is $0.15/10k chars.
+
+Runway: persistent character, paid rendering
+
+Your understanding is right. Runway separates Avatar from Session. An Avatar is persistent: one reference image becomes an avatar with a permanent avatar_id, appearance/personality/voice defaults, etc. You can reuse that ID indefinitely. There is no fine-tuning step required.
+
+But whenever the thing actually comes alive through GWM-1, you're starting an inference session. Current billing is:
+
+2 credits upfront + 2 credits / 6 seconds, with credits at $0.01 = essentially $0.20/minute, plus the tiny upfront charge.
+
+So:
+
+1-minute standup renderer	Approx render cost
+Runway GWM-1	~$0.20
+HeyGen LiveAvatar Lite	~$0.08–$0.10
+Anam	~$0.11–$0.16
+bitHuman Expression cloud	~$0.024
+bitHuman Expression self-host	~$0.012
+bitHuman Essence cloud	~$0.012
+bitHuman Essence self-host	~$0.006
+LAM/WebGL	effectively compute/CDN only
+ordinary GLB/VRM	effectively free client-side
+
+The absolutely massive discovery here is bitHuman.
+
+bitHuman looks almost perfect for our default
+
+LiveKit already has an official bitHuman avatar plugin.
+
+And, unlike Runway, you can literally give it:
+
+avatar = bithuman.AvatarSession(
+    avatar_image=Image.open("my_freak.png"),
+    model="expression",
+)
+
+That's it.
+
+It accepts an image directly, an existing avatar ID, or its persistent .imx model format. Its expression renderer provides dynamic real-time expressions/emotional reactions; essence uses cheaper predefined actions.
+
+Even better, bitHuman says its newer Expression 2 handles cartoons and animals, while Essence can run on ordinary CPUs. They have Python, Swift/mobile and browser deployment routes.
+
+Their currently published economics are bonkers:
+
+Essence
+self-host ~$0.006/min
+cloud ~$0.012/min
+
+Expression
+self-host ~$0.012/min
+cloud ~$0.024/min
+
+And their free tier gives 99 credits/month.
+
+So a one-minute Freak Town standup video could cost 1–2 cents rather than 20 cents.
+
+That's a 10–30× difference.
+
+LiveKit is actually the abstraction we wanted
+
+This part has become beautifully standardized.
+
+LiveKit now officially supports avatar plugins for Runway, bitHuman, Simli, Anam, HeyGen LiveAvatar, Tavus, D-ID, Beyond Presence and a bunch more.
+
+Internally the architecture is simply:
+
+                           LIVEKIT ROOM
+                               │
+ USER ── audio/video ──────────┤
+                               │
+                         AGENT SESSION
+                               │
+                   ┌───────────┼────────────┐
+                   │           │            │
+                  STT         LLM          TTS
+                   │           │            │
+              Qwen/etc    Qwen3.8     Qwen3-TTS
+                                           │
+                                           │ AUDIO
+                                           ▼
+                                    AVATAR WORKER
+                                           │
+                         ┌─────────────────┼─────────────┐
+                         │                 │             │
+                      bitHuman           Runway         LAM
+                         │                 │             │
+                         └──────── video + audio ────────┘
+                                           │
+                                           ▼
+                                     LIVEKIT ROOM
+
+The avatar worker is just another LiveKit participant. The agent sends generated audio to it; the avatar worker publishes synchronized video/audio back into the room. Your iOS/web frontend sees a completely ordinary LiveKit video track.
+
+This means we should never let our game know what Runway is.
+
+It should ask:
+
+await character.perform({
+  audio,
+  renderer: "auto",
+  quality: "standard"
+})
+
+and the renderer router does the rest.
+
+Character should therefore look something like this
+{
+  "id": "freak_gregor",
+  "name": "Gregor",
+
+  "identity": {
+    "portrait": "ipfs/r2/...",
+    "canonical_prompt": "...",
+    "lore": "...",
+    "personality": "..."
+  },
+
+  "voice": {
+    "provider": "qwen",
+    "voice_id": "gregor-v1"
+  },
+
+  "music": {
+    "walkout": "r2://gregor/walkout.wav",
+    "victory": "r2://gregor/victory.wav"
+  },
+
+  "avatars": {
+    "portrait": "...",
+    "glb": "...",
+    "vrm": "...",
+    "bithuman": {
+      "avatar_id": "..."
+    },
+    "runway": {
+      "avatar_id": "..."
+    },
+    "lam": {
+      "asset": "..."
+    }
+  },
+
+  "socials": {
+    "instagram": "...",
+    "x": "...",
+    "youtube": "...",
+    "tiktok": "..."
+  }
+}
+
+The Freak is the identity.
+
+Runway is just one way the Freak manifests.
+
+That is the Wreck-It Ralph model you described perfectly: every character can have come from somewhere totally different.
+
+Someone could bring:
+
+a PNG
+their Roblox character
+a Blender GLB
+a VRM
+a hand-drawn character
+a Runway Avatar ID
+a bitHuman avatar
+a LAM Gaussian avatar
+eventually a Fortnite/Meta/etc character
+
+and Pog Town normalizes all of them into the same Character.
+
+And there is an even cheaper open-source route: LAM
+
+This one is worth serious attention.
+
+Alibaba/Tongyi's LAM takes a single image and reconstructs an animatable 3D Gaussian head. They have released:
+
+LAM → image → 3D avatar
+LAM_Audio2Expression → audio → ARKit expressions
+LAM_WebRender → browser WebGL renderer
+OpenAvatarChat → complete example chat stack
+
+LAM/WebRender is open, Audio2Expression outputs realtime facial expression data, and the browser renderer can display the generated avatar directly.
+
+So:
+
+         ONE-TIME ONBOARDING
+
+portrait.png
+     │
+     ▼
+    LAM
+     │
+     ▼
+gregor-avatar.zip
+     │
+     └────────── stored permanently
+
+
+             EVERY PERFORMANCE
+
+Qwen3-TTS audio
+      │
+      ▼
+LAM Audio2Expression
+      │
+      ▼
+ARKit coefficients
+      │
+      ▼
+LAM WebRender
+      │
+      ▼
+user's GPU / phone
+
+The important economic difference is enormous:
+
+Runway recomputes video pixels remotely every time.
+
+LAM computes the avatar asset once, then the client's GPU draws it forever.
+
+That is structurally much better for a social network with millions of repeat performances.
+
+There is already an OpenAvatarChat stack wiring LAM, realtime audio and conversational models together, so we aren't inventing the pipeline.
+
+LiveKit even explicitly supports us building this
+
+LiveKit now exposes custom avatar workers with AvatarRunner.
+
+So we can make:
+
+PogAvatarSession
+
+rather than exposing providers everywhere.
+
+LiveKit routes generated audio using DataStreamAudioOutput; our worker turns it into frames and publishes avatar_video back into the room. It even has lk.playback_started signalling to measure actual avatar latency.
+
+Then our implementation becomes conceptually:
+
+renderer = choose_renderer(character, performance)
+
+if renderer == "bithuman":
+    return BitHumanAvatar(character)
+
+if renderer == "runway":
+    return RunwayAvatar(character)
+
+if renderer == "lam":
+    return PogLAMAvatar(character)
+
+if renderer == "vrm":
+    return PogVRMAvatar(character)
+
+LiveKit doesn't care.
+
+The frontend doesn't care.
+
+The game doesn't care.
+
+Perfect abstraction boundary.
+
+I think the renderer tiers should be this
+                 FREAK RENDERER ROUTER
+
+FREE
+─────────────────────────────────────────
+GLB / VRM
+LAM WebGL
+user-supplied 3D
+client-side puppeteering
+
+STANDARD
+─────────────────────────────────────────
+bitHuman Essence
+≈ $0.006–0.012/min
+
+EXPRESSIVE
+─────────────────────────────────────────
+bitHuman Expression
+≈ $0.012–0.024/min
+
+PREMIUM
+─────────────────────────────────────────
+HeyGen / Simli / Anam
+≈ $0.08–0.16/min
+
+CINEMATIC LIVE
+─────────────────────────────────────────
+Runway GWM-1
+≈ $0.20/min
+
+And the user pays for renderer upgrades, not for being allowed to have a character.
+
+That creates a genuinely good business model:
+
+“Gregor normally renders free.”
+
+Then somebody wants the ridiculous photorealistic Runway version:
+
+RENDER IN GWM-1 — $0.29
+
+The underlying Freak does not change.
+
+For the one-minute standup specifically
+
+I would not use Runway by default.
+
+I'd do:
+
+LLM writes set
+       ↓
+Qwen3-TTS
+       ↓
+bitHuman Expression
+       ↓
+H.264 MP4
+       ↓
+R2
+       ↓
+SEND TO FRIEND
+
+At ~$0.024 for the avatar plus fractions of a cent for Qwen voice, you can make a shareable 60-second character set for only a few cents.
+
+And once generated, obviously cache the MP4 permanently. Sending it to 100 friends doesn't trigger 100 renders.
+
+Runway is then reserved for live encounters and premium moments where the extra world-model quality is visible.
+
+That is a much healthier architecture.
+
+The funniest part is that LiveKit itself already has official integrations for both Runway and bitHuman, so switching between those two is almost exactly the abstraction we're designing anyway.
+
+I would now make Character → Voice → AudioPack → RendererCapabilities the canonical Pog Town onboarding protocol, with Qwen3-TTS + Stable Audio 3 + bitHuman as the zero/cheap default and Runway as an optional premium renderer. That gives you the magical Runway UX without Runway becoming your unit economics.
+
+I can monitor the avatar-model space and flag new open/self-hosted renderers that beat bitHuman/LAM or approach Runway quality.
+
+oof runway characters seems a bit too insane and easy not to do tho ahahh Audio2Face 3.0 and emotion inference seems perfect... also could we use personaplex for ella m? damnnn this is so sick bithuman looks cool are we able to take an avatar and put it on our stage and have it walk around and be expressive with speech? then we need to define a 'freak' pack or 'pog' pack which basically allows the to port it to instagram etc and they exist as alive enity . what kind atech do i need to host and run all this? also how do we set all the cameras up so its all super high quality and feels like a cinematic show? this is a huge part of it remember the things we talked about like mafia, poker etc we want to be able to see our avatars sitting down at a table with chat.. eventually live audio but its too easy right now

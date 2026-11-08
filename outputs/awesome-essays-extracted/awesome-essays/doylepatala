@@ -1,0 +1,1343 @@
+Yes. After reviewing the performance doctrine, `SPEC-00`, and the staleness/performance spec, I think there is now a sufficiently coherent architecture to call **the final target stack**.
+
+The central design choice is more important than any framework:
+
+> **Pāṭala is a compiler, not a request-time knowledge application.**
+
+Expensive scholarship happens on the write side. The system incrementally compiles that state into immutable artifacts optimized separately for humans, agents, search, analytics, and interoperability. The normal read path should therefore be approximately `request → edge cache → bytes`, exactly as the performance doctrine states.
+
+Cloudflare's current infrastructure strongly supports this: matching static assets can be served without invoking Worker code at all, while Worker-first execution can be restricted to dynamic routes such as `/api/*`. ([Cloudflare Docs][1])
+
+# 1. The final architecture
+
+```text
+                              PĀṬALA
+
+ ┌──────────────────────────────────────────────────────────────────┐
+ │                         WRITE PLANE                              │
+ │                                                                  │
+ │ Sources → ingest → parse → normalize → enrich → review → derive │
+ │              Python / Hermes / scholars / deterministic tools   │
+ └──────────────────────────────┬───────────────────────────────────┘
+                                │ events
+                                ▼
+ ┌──────────────────────────────────────────────────────────────────┐
+ │                     PĀṬALA KERNEL                               │
+ │                                                                  │
+ │ IDs · Revisions · Objects · Evidence · Derivations              │
+ │ Authority · Events · Reducers · Findings · Gates · Cruxes       │
+ └──────────────────────────────┬───────────────────────────────────┘
+                                │
+                                ▼
+ ┌──────────────────────────────────────────────────────────────────┐
+ │                CANONICAL TRANSACTIONAL STATE                     │
+ │                                                                  │
+ │                         PostgreSQL                               │
+ │ objects · events · dependencies · reviews · aliases · tasks     │
+ └──────────────────────────────┬───────────────────────────────────┘
+                                │
+                     dependency / projection DAG
+                                │
+                                ▼
+ ┌──────────────────────────────────────────────────────────────────┐
+ │                    REACTIVE COMPILER                             │
+ │                                                                  │
+ │ hashes → staleness → affected subtree → incremental rebuild     │
+ │                                                                  │
+ │ Python + SQL + DuckDB + Polars                                  │
+ │ Rust only for measured hot kernels                              │
+ └──────────────────────────────┬───────────────────────────────────┘
+                                │
+          ┌─────────────────────┼──────────────────────┐
+          ▼                     ▼                      ▼
+        HTML               compact JSON          Parquet/Zstd
+      Markdown             agent bundles         graph exports
+      JSON-LD              evidence packs        TEI/nanopubs
+          │                     │                      │
+          └─────────────────────┼──────────────────────┘
+                                ▼
+ ┌──────────────────────────────────────────────────────────────────┐
+ │                     IMMUTABLE ARTIFACT STORE                     │
+ │                                                                  │
+ │                  Cloudflare R2 + SHA-256                         │
+ │                  manifests + versioned objects                   │
+ └──────────────────────────────┬───────────────────────────────────┘
+                                │
+                                ▼
+ ┌──────────────────────────────────────────────────────────────────┐
+ │                        EDGE READ PLANE                            │
+ │                                                                  │
+ │               Cloudflare CDN / Static Assets                     │
+ │                                                                  │
+ │     human HTML      JSON/API       MCP       datasets            │
+ └───────────────┬────────────┬─────────────┬───────────────────────┘
+                 │            │             │
+                 ▼            ▼             ▼
+              HUMAN         AGENT         HERMES
+```
+
+This takes the strongest proposition in `SPEC-00` literally: **write side rich and expensive; read side stupid and immutable.**
+
+---
+
+# 2. The formal technology stack
+
+I'd freeze the target stack roughly as follows.
+
+| Concern                     | Final default                                                      |
+| --------------------------- | ------------------------------------------------------------------ |
+| Canonical database          | **PostgreSQL**                                                     |
+| Production Postgres hosting | **Neon initially**                                                 |
+| Canonical blobs             | **Cloudflare R2**                                                  |
+| Content identity            | **SHA-256**                                                        |
+| Event/state kernel          | **Python initially**, tiny portable contracts                      |
+| Factory/orchestration       | **Python**                                                         |
+| Agent execution             | **Hermes adapter**                                                 |
+| Analytical compilation      | **DuckDB + Polars + SQL**                                          |
+| Web                         | **Astro**                                                          |
+| Interactive UI              | **Preact islands**                                                 |
+| Edge/API                    | **Cloudflare Workers + TypeScript**                                |
+| Dynamic DB bridge           | **Hyperdrive**                                                     |
+| API validation              | Generated JSON Schema + TypeBox/Zod-style edge bindings            |
+| MCP                         | **thin Streamable-HTTP adapter over same query layer**             |
+| Search v1                   | **Postgres FTS + pg_trgm**                                         |
+| Semantic retrieval          | secondary embedding index                                          |
+| Search v2                   | **Tantivy only if profiling demands it**                           |
+| Bulk publication            | **Parquet + Zstd**                                                 |
+| Streaming export            | **NDJSON**                                                         |
+| Interop                     | CTS / TEI / AIF / nanopub / PROV adapters                          |
+| Trust                       | content hashes + Merkle manifests + signatures                     |
+| CI                          | tests + schema validation + epistemic checks + performance budgets |
+| Rust                        | **only stabilized, measured deterministic kernels**                |
+
+That is almost exactly where the performance files converge.
+
+---
+
+# 3. PostgreSQL is the canonical truth store
+
+But this requires a subtle distinction.
+
+**Postgres is canonical transactional state. It is not the normal public read layer.**
+
+Store things such as:
+
+```text
+objects
+object_revisions
+works
+passages
+entities
+relations
+
+evidence_uses
+derivations
+dependencies
+
+events
+review_findings
+attestations
+authority_state
+
+tasks
+runs
+artifacts
+aliases
+```
+
+The performance spec correctly argues that giant `corpus.jsonl` and giant `graph.json` files should become **exports**, not canonical databases.
+
+The graph itself therefore lives relationally:
+
+```text
+subject
+predicate
+object
+```
+
+plus evidence and provenance.
+
+From that you compile:
+
+```text
+graph.json
+GraphML
+Parquet
+Cytoscape
+adjacency packs
+visualization tiles
+agent bundles
+```
+
+This is much cleaner than letting one serialization become your ontology.
+
+---
+
+# 4. R2 becomes the compiled knowledge filesystem
+
+This is one of the highest-leverage pieces.
+
+Everything immutable goes into R2:
+
+```text
+/source/sha256/...
+/artifacts/sha256/...
+
+/works/IPVV/v17/...
+/passages/IPVV-1.5.11/v8/...
+/arguments/ARG-019/v4/...
+/proofs/TRP-123/v9/...
+/bundles/ARG-019/v4/8000.json
+```
+
+The content files themselves can be addressed by SHA-256:
+
+```text
+sha256:e6844f...
+```
+
+while friendly IDs resolve to them.
+
+That gives you simultaneously:
+
+* deduplication;
+* immutable caches;
+* deterministic ETags;
+* reproducibility;
+* provenance;
+* cheap invalidation;
+* history;
+* signed manifests.
+
+Those benefits are explicitly identified in `SPEC-00`.
+
+The database might therefore contain:
+
+```text
+artifact
+──────────────────────────────
+logical_id
+revision
+content_hash
+media_type
+r2_key
+byte_size
+token_count
+created_from
+```
+
+That `token_count` field becomes surprisingly useful for agents.
+
+---
+
+# 5. The real secret weapon: the projection DAG
+
+This is probably the single most important infrastructure abstraction.
+
+Don't have miscellaneous scripts such as:
+
+```text
+build_graph.py
+build_essay.py
+build_questions.py
+```
+
+that independently decide what to rebuild.
+
+Represent the transformations.
+
+```text
+SOURCE
+  │
+  └──extract──► PASSAGE
+                  │
+                  ├──translate──► TRANSLATION
+                  │                  │
+                  │                  └──audit──► TRANSLATION_PROOF
+                  │
+                  └──reconstruct──► PROPOSITION
+                                       │
+                                       └──infer──► ARGUMENT
+                                                     │
+                         ┌───────────────────────────┼─────────┐
+                         ▼                           ▼         ▼
+                     SYNTHESIS                    CRUX      REVIEW
+                         │
+                         ▼
+                       ESSAY
+                         │
+                         ├──► HTML
+                         ├──► agent bundle
+                         └──► EDUCATION
+```
+
+Every projection records:
+
+```text
+input hashes
+transformation version
+configuration version
+output hash
+```
+
+`SPEC-00` already identifies exactly this projection-DAG pattern.
+
+Then:
+
+```text
+hash(inputs + transformation + config)
+```
+
+is essentially your cache key.
+
+If it hasn't changed:
+
+```text
+DO NOTHING
+```
+
+---
+
+# 6. Performance and staleness become the same system
+
+This is one of the best conclusions in the `fuck-off` research.
+
+The staleness spec says the dependency graph is simultaneously:
+
+1. the correctness graph;
+2. the staleness propagator;
+3. the incremental rebuild scheduler;
+4. part of the retrieval structure.
+
+Example:
+
+```text
+IPVV passage P
+   ↓
+translation T
+   ↓
+proposition C
+   ↓
+argument A
+   ↓
+essay E
+   ↓
+question Q
+```
+
+Scholar corrects `P`.
+
+Pāṭala does:
+
+```text
+hash(P) changed
+
+descendants(P)
+→ T
+→ C
+→ A
+→ E
+→ Q
+```
+
+But importantly it doesn't necessarily rebuild everything immediately.
+
+It computes:
+
+```text
+STALE:
+T C A E Q
+```
+
+Then rebuild priority can be:
+
+```text
+T → C → A → E/Q
+```
+
+Anything unrelated remains untouched.
+
+That's how 100 documents and 10 million passages can use essentially the same architecture.
+
+---
+
+# 7. This is why I would NOT use Kafka/Airflow/Dagster initially
+
+Pāṭala's DAG is unusually deterministic and domain-specific.
+
+You already possess the information:
+
+```text
+what changed
+what depends on it
+how to rebuild it
+what hash is expected
+```
+
+A small custom incremental compiler is therefore likely more valuable than importing a gigantic generic workflow scheduler.
+
+Use Cloudflare Queues or a simple durable work queue for distribution where necessary.
+
+But the **dependency semantics live in Pāṭala**, not in Airflow.
+
+This matches `SPEC-00`, which explicitly says you may not need Dagster/Airflow for the projection DAG.
+
+---
+
+# 8. Humans become extremely fast because most of the site isn't an application
+
+This is where Astro makes sense.
+
+A page such as:
+
+```text
+/texts/ipvv
+/passages/ipvv-1.5.11
+/people/abhinavagupta
+/concepts/pratyabhijna
+/arguments/ARG019
+```
+
+should usually already exist as:
+
+```text
+HTML bytes
+```
+
+Not:
+
+```text
+browser
+→ JS
+→ API
+→ Worker
+→ DB
+→ graph query
+→ JSON
+→ React
+→ render
+```
+
+Instead:
+
+```text
+browser
+    ↓
+nearest Cloudflare edge
+    ↓
+already generated HTML
+```
+
+Cloudflare currently supports asset-first routing: if the file exists as a static asset, it is served without invoking Worker code. ([Cloudflare Docs][1])
+
+So a normal reading route becomes close to CDN performance.
+
+### JavaScript only where interaction genuinely exists
+
+```text
+GraphExplorer
+ArgumentMap
+Search
+Compare
+Timeline
+TranslationWorkbench
+ReviewUI
+```
+
+Those can be Preact islands.
+
+Everything else:
+
+```text
+semantic HTML
+CSS
+```
+
+The repo's performance budget rightly proposes ordinary content routes approaching **0 KB JS**.
+
+---
+
+# 9. Agents need a different projection from humans
+
+This is critical.
+
+Humans want:
+
+```text
+beautiful page
+narrative ordering
+links
+visual hierarchy
+```
+
+Agents want:
+
+```text
+minimal tokens
+canonical IDs
+evidence
+relations
+authority
+dependencies
+```
+
+So you compile both from the same object.
+
+Example:
+
+```text
+/argument/ARG019
+```
+
+Human HTML.
+
+And:
+
+```text
+/api/v1/argument/ARG019?view=compact
+```
+
+Maybe:
+
+```json
+{
+  "id": "ARG019",
+  "status": "reviewed",
+  "conclusion": "PROP442",
+  "premises": ["PROP81", "PROP102"],
+  "defeaters": ["DEF8"],
+  "cruxes": ["CRUX3"],
+  "evidence": ["P:IPVV:1.5.11"],
+  "authority": {...},
+  "revision": 7
+}
+```
+
+No decorative prose.
+
+---
+
+# 10. But we can do better: compiled agent bundles
+
+This is perhaps **the best performance idea in SPEC-00**.
+
+Normally an agent might do:
+
+```text
+get(argument)
+get(premises)
+get(evidence)
+get(authority)
+get(defeaters)
+get(crux)
+get(neighbors)
+```
+
+That's seven network round trips and seven tool decisions.
+
+Instead:
+
+```text
+context(
+    id="ARG019",
+    budget=8000
+)
+```
+
+One call.
+
+The compiler has already generated:
+
+```text
+ARG019/
+    compact-2k.json
+    context-8k.json
+    context-32k.json
+```
+
+This agent-bundle design is explicitly proposed in `SPEC-00`.
+
+I'd formalize three budget tiers:
+
+```text
+micro      ~1–2k tokens
+standard   ~8k
+deep       ~32k
+```
+
+Each bundle has deterministic priority ordering.
+
+For arguments:
+
+```text
+1 conclusion
+2 premises
+3 cruxes
+4 strongest evidence
+5 strongest defeater
+6 authority
+7 provenance
+8 nearby context until budget exhausted
+```
+
+Now agent retrieval becomes almost like CPU cache design.
+
+---
+
+# 11. The ultimate agent performance goal
+
+Not:
+
+```text
+fast API
+```
+
+but:
+
+> **minimum reasoning steps between intent and sufficient evidence.**
+
+A 10 ms API that requires 17 tool calls can be worse than a 100 ms API requiring one.
+
+So I would establish these budgets:
+
+```text
+ordinary object resolution      1 tool call
+context retrieval               1 tool call
+evidence trace                  1 tool call
+comparison                      1 tool call
+dependency explanation          1 tool call
+```
+
+`SPEC-00` already defines essentially this requirement: one agent question ≈ one request, default depth ≤2 and bounded response sizes.
+
+---
+
+# 12. MCP should therefore be tiny
+
+Do **not** expose 100 Pāṭala MCP tools.
+
+Your earlier Pāṭala already drifted toward dozens of routes/tools. The compiled architecture means you can collapse the public agent interface dramatically.
+
+Something like:
+
+```text
+resolve()
+search()
+get()
+context()
+trace()
+compare()
+query()
+submit()
+```
+
+Potentially eight tools.
+
+`context` might do:
+
+```text
+context(
+    ids=["ARG019"],
+    include=[
+        "premises",
+        "evidence",
+        "cruxes",
+        "defeaters"
+    ],
+    depth=1,
+    token_budget=8000
+)
+```
+
+And `query()` exposes the deterministic KG2Code-style language.
+
+MCP becomes an **adapter**, not another knowledge subsystem, which is exactly what `SPEC-00` recommends.
+
+---
+
+# 13. Hermes sits above this extremely thin interface
+
+This connects to the previous architecture.
+
+Hermes should not crawl the Pāṭala repository trying to reconstruct project state.
+
+Instead:
+
+```text
+Pāṭala task
+    ↓
+Hermes
+    ↓
+context(ARG019, budget=8000)
+    ↓
+one ready-made evidence packet
+```
+
+For a translation task:
+
+```text
+task bundle =
+    source passage
+    morphology
+    nearby passages
+    terminology history
+    parallels
+    known issues
+    target schema
+    acceptance policy
+```
+
+One initial context operation.
+
+Hermes then uses its skills/tools/subagents for cognition.
+
+This will make agents dramatically better **even without better models**, because you remove retrieval uncertainty and context assembly overhead.
+
+---
+
+# 14. Dynamic requests: Workers + Hyperdrive, but only when necessary
+
+There still are genuinely dynamic operations:
+
+```text
+/search
+/review
+/auth
+/user workspace
+/admin
+/task claiming
+/submit event
+/adjudicate
+/rare graph query
+```
+
+These hit a Cloudflare Worker.
+
+Then potentially:
+
+```text
+Worker
+→ Hyperdrive
+→ PostgreSQL
+```
+
+Hyperdrive currently provides connection pooling for databases behind Workers and caches eligible read queries. ([Cloudflare Docs][2])
+
+Cloudflare notes that placing compute near the database can materially reduce per-query latency when a Worker performs multiple DB calls. ([Cloudflare Docs][3])
+
+But this should be the **cold/dynamic path**.
+
+Not:
+
+```text
+GET /texts/ipvv
+→ database
+```
+
+That's the architecture mistake we're avoiding.
+
+---
+
+# 15. Be careful with Hyperdrive caching
+
+One update I'd make to the `fuck-off` performance doctrine:
+
+Hyperdrive's query cache is useful, but it currently does **not automatically invalidate cached SELECT results when writes occur**. ([Cloudflare Docs][2])
+
+Therefore split dynamic reads conceptually:
+
+```text
+CACHEABLE
+search results
+public metadata
+dashboards
+non-critical discovery
+
+FRESH
+review decisions
+permissions
+task claims
+newly submitted events
+adjudication
+read-after-write state
+```
+
+Cloudflare explicitly recommends a separate cache-disabled Hyperdrive configuration for freshness-sensitive reads. ([Cloudflare Docs][2])
+
+So I would run:
+
+```text
+HYPERDRIVE_CACHED
+HYPERDRIVE_FRESH
+```
+
+This is much cleaner.
+
+---
+
+# 16. Search should remain boring
+
+Do not install Elasticsearch because "search system."
+
+Start:
+
+```text
+Postgres FTS
++
+pg_trgm
+```
+
+Then a secondary semantic retrieval system:
+
+```text
+embedding(passages)
+```
+
+But maintain:
+
+[
+\text{vector similarity} \neq \text{knowledge relation}
+]
+
+Embeddings help discover.
+
+They do not alter canonical graph truth.
+
+If search eventually becomes measurably hot:
+
+```text
+Rust + Tantivy
+```
+
+becomes attractive.
+
+Exactly as the performance docs recommend.
+
+---
+
+# 17. DuckDB + Parquet are massively useful here
+
+Your canonical mutable state remains Postgres.
+
+But compiling/analyzing huge scholarly datasets is a different workload.
+
+For:
+
+```text
+10 million passages
+all evidence edges
+benchmark analysis
+bulk graph transformations
+translation statistics
+```
+
+write Parquet.
+
+Then DuckDB can query it efficiently offline.
+
+Conceptually:
+
+```text
+POSTGRES
+live truth
+
+R2
+immutable objects
+
+PARQUET
+bulk analytical truth snapshot
+```
+
+Don't make Postgres serve every analytical job.
+
+And don't make JSONL your analytics format.
+
+`SPEC-00` explicitly recommends Parquet + Zstd for serious bulk publication.
+
+---
+
+# 18. Repo organization I would actually converge onto
+
+Now that you're merging the lab back into Pāṭala, I'd aim for this:
+
+```text
+patala/
+│
+├── kernel/
+│   ├── identity/
+│   ├── objects/
+│   ├── derivation/
+│   ├── authority/
+│   ├── events/
+│   ├── reducers/
+│   ├── gates/
+│   └── staleness/
+│
+├── schemas/
+│   ├── source/
+│   ├── translation/
+│   ├── proposition/
+│   ├── argument/
+│   ├── review/
+│   ├── education/
+│   └── generated/
+│
+├── factory/
+│   ├── dag/
+│   ├── compiler/
+│   ├── projections/
+│   ├── invalidation/
+│   ├── queue/
+│   └── publish/
+│
+├── pipelines/
+│   ├── ingest/
+│   ├── extract/
+│   ├── sanskrit/
+│   ├── translation/
+│   ├── arguments/
+│   ├── research/
+│   ├── synthesis/
+│   └── education/
+│
+├── agents/
+│   ├── runtime/
+│   ├── hermes/
+│   ├── profiles/
+│   └── skills/
+│
+├── retrieval/
+│   ├── search/
+│   ├── graph/
+│   ├── bundles/
+│   └── query/
+│
+├── apps/
+│   ├── web/             Astro
+│   ├── api/             Worker
+│   ├── mcp/             thin adapter
+│   └── review/
+│
+├── storage/
+│   ├── postgres/
+│   ├── r2/
+│   └── migrations/
+│
+├── analytics/
+│   ├── duckdb/
+│   ├── parquet/
+│   └── benchmarks/
+│
+├── interoperability/
+│   ├── tei/
+│   ├── cts/
+│   ├── aif/
+│   ├── nanopub/
+│   └── prov/
+│
+├── experiments/
+│   └── frontier/
+│       ├── PROBE/
+│       ├── PROVEN/
+│       └── archived/
+│
+├── docs/
+│   ├── architecture/
+│   ├── contracts/
+│   ├── domains/
+│   ├── operations/
+│   └── decisions/
+│
+└── tests/
+    ├── schema/
+    ├── epistemic/
+    ├── provenance/
+    ├── compiler/
+    ├── integration/
+    └── performance/
+```
+
+**Production code never imports from `experiments/`.**
+
+An experiment gets promoted by rewriting it against stable kernel contracts.
+
+---
+
+# 19. Docs should also be compiled
+
+This is another place you can dramatically reduce the clunkiness of old Pāṭala.
+
+Don't maintain 19 documents that each independently say:
+
+```text
+Layer 3 is PARTIAL
+```
+
+Canonical machine state:
+
+```text
+architecture/manifest.yaml
+schemas
+task graph
+test results
+benchmark results
+```
+
+Then generate:
+
+```text
+CURRENT_STATE.md
+NAVIGATION.md
+FEATURES.md
+SCHEMA_STATUS.md
+AGENT_HANDOVER.md
+```
+
+from it.
+
+That applies the exact same architecture to documentation:
+
+> **docs become projections of state.**
+
+Human-readable docs remain excellent, but contradictory status documents become much harder to produce.
+
+---
+
+# 20. The performance CI should be brutal
+
+I would establish explicit budgets.
+
+### Human reading
+
+```text
+ordinary page JS              0 KB target
+interactive page JS           bounded island only
+compressed HTML               <100 KB typical
+CLS                           ~0
+cached page origin work       0
+```
+
+The existing performance spec proposes essentially these bounds.
+
+### Agent
+
+```text
+resolve                  1 request
+context                  1 request
+compare                  1 request
+trace                    1 request
+
+default context          <= 4k tokens
+standard deep context    <= 8k
+graph depth              <= 2 default
+```
+
+### Factory
+
+```text
+changing one passage MUST NOT rebuild one work
+changing one work MUST NOT rebuild entire corpus
+```
+
+And CI should verify this.
+
+For a fixture graph:
+
+```text
+mutate node P23
+expected invalidated = {T23,C23,A4,E2,Q6,Q7}
+actual invalidated   = ...
+```
+
+Mismatch = test failure.
+
+---
+
+# 21. Benchmark correctness and speed together
+
+This is crucial.
+
+A fast wrong graph is useless.
+
+For every hot path:
+
+```text
+latency
+bytes
+tokens
+cache hit rate
+DB calls
+objects traversed
+```
+
+plus:
+
+```text
+evidence fidelity
+staleness correctness
+authority preservation
+trace completeness
+```
+
+Your performance and epistemics should never become separate departments.
+
+`SPEC-13` gets this exactly right: the same dependency graph supplies both correctness and incremental performance.
+
+---
+
+# 22. Deployment topology
+
+I would keep production surprisingly simple.
+
+```text
+                     CLOUDFLARE
+
+       ┌────────────────────────────────┐
+       │ Workers Static Assets / CDN    │
+       │                                │
+       │ HTML                           │
+       │ compiled JSON                  │
+       │ CSS/assets                     │
+       └───────────────┬────────────────┘
+                       │ misses/dynamic
+                       ▼
+              Cloudflare Worker
+                /api /mcp /search
+                       │
+            ┌──────────┴──────────┐
+            │                     │
+            ▼                     ▼
+           R2              Hyperdrive
+                                  │
+                                  ▼
+                              Neon PG
+```
+
+And separately:
+
+```text
+FACTORY COMPUTE
+
+local / VPS / CI / task workers
+       │
+       ├─ Python
+       ├─ Hermes
+       ├─ DuckDB
+       └─ future Rust kernels
+               │
+               ▼
+             PG/R2
+```
+
+The factory does **not need to live at the edge**.
+
+It's asynchronous work.
+
+---
+
+# 23. Why this becomes extremely cheap
+
+The architecture shifts cost from:
+
+[
+C \propto \text{number of reads}
+]
+
+toward:
+
+[
+C \propto \text{number of meaningful changes}
+]
+
+Suppose one scholarly synthesis costs enormous compute to create.
+
+You pay once:
+
+```text
+research
+LLMs
+review
+compilation
+```
+
+Then one million people/agents can read:
+
+```text
+the same immutable bytes
+```
+
+mostly through CDN caches.
+
+This is basically perfect for scholarship because scholarly content changes comparatively slowly but can be read indefinitely.
+
+The performance doctrine phrases it extremely well:
+
+> scholarly work happens asynchronously once; reading it should be nearly free forever.
+
+---
+
+# 24. Why it becomes lightning fast for humans
+
+Because:
+
+```text
+no DB
+no SSR
+no API waterfall
+no giant React hydration
+no graph reconstruction
+```
+
+for normal reading.
+
+The hot path is:
+
+```text
+URL
+↓
+nearest edge
+↓
+HTML bytes
+```
+
+Cloudflare confirms static assets are globally cached and served without Worker invocation by default when an asset matches. ([Cloudflare Docs][4])
+
+That's difficult to beat architecturally.
+
+---
+
+# 25. Why it becomes lightning fast for agents
+
+Even more interestingly, agent speed isn't primarily compute latency.
+
+You're reducing:
+
+```text
+round trips
+tool decisions
+retrieval uncertainty
+context duplication
+token count
+LLM reasoning needed to assemble state
+```
+
+Instead of:
+
+```text
+agent
+→ search
+→ inspect 10 results
+→ fetch graph
+→ fetch evidence
+→ fetch reviews
+→ reconstruct dependencies
+```
+
+you give:
+
+```text
+context(ARG019, 8000)
+```
+
+and return a **compiled epistemic cache line**.
+
+That's what I would actually call these internally:
+
+> **agent cache lines**
+
+Precompiled bundles optimized for model consumption.
+
+That could become one of Pāṭala's best pieces of infrastructure.
+
+---
+
+# 26. And this gives us a clean future Rust boundary
+
+Once the architecture stabilizes, profile.
+
+Maybe you discover:
+
+```text
+Unicode normalization        21%
+token-budget compiler        17%
+graph invalidation           2%
+JSON serialization           28%
+search indexing              32%
+```
+
+Then extract exactly the expensive deterministic bits.
+
+Potential future:
+
+```text
+patala-core        Rust
+patala-ids         Rust
+patala-compiler    Rust
+patala-search      Tantivy/Rust
+
+Python bindings
+TS/WASM bindings
+```
+
+But most scholarly transformations can remain Python indefinitely.
+
+The current performance spec is correct that rewriting filesystem/LLM/database orchestration in Rust won't magically make the overall system fast.
+
+The **architecture** gives you the speed first.
+
+Rust becomes optimization, not salvation.
+
+---
+
+# 27. The final formal Pāṭala model
+
+I would now make these three planes explicit in every architecture document:
+
+```text
+┌──────────────────────────────────────────────┐
+│                TRUTH PLANE                   │
+│                                              │
+│ objects / evidence / events / authority      │
+│ PostgreSQL + Pāṭala Kernel                   │
+└──────────────────────────────────────────────┘
+                      │
+                      ▼
+┌──────────────────────────────────────────────┐
+│               COMPILE PLANE                  │
+│                                              │
+│ dependencies / hashes / staleness / tasks    │
+│ Python + Hermes + DuckDB + optional Rust     │
+└──────────────────────────────────────────────┘
+                      │
+                      ▼
+┌──────────────────────────────────────────────┐
+│                 READ PLANE                   │
+│                                              │
+│ immutable HTML / JSON / bundles / Parquet    │
+│ R2 + Cloudflare CDN + thin Workers/MCP       │
+└──────────────────────────────────────────────┘
+```
+
+And one governing law for each:
+
+```text
+TRUTH PLANE
+Nothing becomes true because an agent says so.
+
+COMPILE PLANE
+Nothing recomputes unless its dependencies changed.
+
+READ PLANE
+Nothing computes at request time if bytes could already exist.
+```
+
+That is the architecture.
+
+Everything we've found in `fuck-off`—staleness propagation, deterministic reducers, compiled bundles, content addressing, incremental projection DAGs, KG2Code, agent context budgets—slots naturally into those three planes instead of becoming another collection of disconnected technology experiments.
+
+And I think that is sufficiently coherent now that **I would stop researching basic infrastructure alternatives and start building toward this exact target inside Pāṭala**. The remaining research should be narrow benchmarking of individual replaceable kernels, not further redesign of the system.
+
+[1]: https://developers.cloudflare.com/workers/static-assets/routing/worker-script/?utm_source=chatgpt.com "Worker script · Cloudflare Workers docs"
+[2]: https://developers.cloudflare.com/hyperdrive/concepts/query-caching/?utm_source=chatgpt.com "Query caching · Cloudflare Hyperdrive docs"
+[3]: https://developers.cloudflare.com/hyperdrive/reference/faq/?utm_source=chatgpt.com "FAQ · Cloudflare Hyperdrive docs"
+[4]: https://developers.cloudflare.com/workers/static-assets/?utm_source=chatgpt.com "Static Assets · Cloudflare Workers docs"

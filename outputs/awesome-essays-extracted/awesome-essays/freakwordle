@@ -1,0 +1,1710 @@
+Yes. I think there is a **whole genre hiding here**.
+
+The important leap is: don't treat prompting as “write the funniest thing.” Treat the LLM as a **black-box character/system with hidden rules**, and prompting is how you probe it.
+
+Gandalf showed that this is inherently compelling: each level hides a password, players probe the model, and after success the defenses get harder. It reportedly reached 300k+ unique players and 15M+ messages very quickly. TensorTrust later collected **126,000+ human prompt attacks and 46,000+ player-written defenses**, while HackAPrompt collected over **600,000 adversarial prompts**. Humans clearly enjoy discovering weird linguistic routes through hidden AI rules. ([Václav Volhejn][1])
+
+But Freak Town could turn that from “AI security puzzle” into **comedy / creativity / social games**.
+
+## The killer base mechanic: SOCIAL WORDLE
+
+Your security-guard example is excellent.
+
+You're outside:
+
+> **THE VELVET ROPE**
+> Get past Trevor.
+> 6 attempts.
+
+Trevor has an invisible character sheet:
+
+```text
+NPC: Trevor
+role: security guard
+
+hidden facts:
+- wife died 10 years ago
+- hates celebrities
+- loves birdwatching
+- thinks management is incompetent
+
+unlock:
+- simply ask respectfully
+- OR discover that venue policy permits re-entry
+
+hard rejects:
+- fake authority
+- threats
+- obvious impersonation
+
+tells:
+- looks left when interested
+- touches earpiece when suspicious
+- smiles when birds are mentioned
+```
+
+You try:
+
+> I'm your wife. You bastard, I know you've been cheating.
+
+Scene plays.
+
+Trevor stares at you.
+
+> "My wife died ten years ago. Who the fuck are you?"
+
+**Attempt 1/6**
+
+But this is where the Wordle part comes in.
+
+The response contains **information**.
+
+Maybe underneath:
+
+```text
+TRUST      ▰▱▱▱▱
+SUSPICION  ▰▰▰▰▱
+
+👁 You discovered a fact about Trevor.
+```
+
+You now know something.
+
+Next attempt you don't start from scratch. You're **building a mental model of a person**.
+
+Classic Twenty Questions works because every answer reduces the possible solution space; *Contradiction* makes a whole game out of collecting statements and pairing inconsistencies to unlock more information. ([Wikipedia][2])
+
+That's the structure.
+
+---
+
+# And don't literally show green/yellow letters
+
+Make the **character itself the Wordle board**.
+
+You've got incredibly expressive feedback channels:
+
+```text
+dialogue
+facial expression
+body language
+tone
+hesitation
+environment
+NPC actions
+relationship meters
+revealed facts
+```
+
+So instead of:
+
+🟩 🟨 ⬛
+
+you get:
+
+> Trevor pauses.
+
+> His eyes flick briefly toward the fire exit.
+
+That is your **yellow tile**.
+
+Holy shit.
+
+Players learn to read characters.
+
+---
+
+# 1. TALK YOUR WAY IN
+
+The canonical version.
+
+Different levels:
+
+**Nightclub**
+
+> Get past Trevor.
+
+**Heaven**
+
+> Convince St Peter there has been an administrative error.
+
+**Alien mothership**
+
+> Convince customs you are a normal Earth cow.
+
+**Medieval castle**
+
+> Get an audience with the king.
+
+**Celebrity wedding**
+
+> You're not on the guest list.
+
+**Secret wizard school**
+
+> The portrait refuses to reveal the entrance.
+
+**Hell**
+
+> Customer service says your eternal damnation is non-refundable.
+
+Each NPC has a real hidden logical structure.
+
+And here's the joke:
+
+The insane jailbreak usually isn't the optimal answer.
+
+The Trevor level's solution might genuinely be:
+
+> Could I come in please?
+
+**ACCESS GRANTED**
+
+After you've spent five turns pretending to be MI5.
+
+That gives it Neal.fun energy.
+
+---
+
+# 2. MAKE THEM SAY IT
+
+Reverse Gandalf.
+
+The NPC has a forbidden phrase.
+
+> Make Grandma say **“ketamine.”**
+
+But you may never type:
+
+* ketamine
+* drug
+* horse
+* anaesthetic
+
+You have six turns.
+
+You need to creatively steer the conversation until **the character naturally produces the target phrase**.
+
+Harder:
+
+> Make Batman say
+> **“I could really use a hug.”**
+
+Or:
+
+> Make Satan apologize.
+
+> Make the robot admit it believes in ghosts.
+
+> Make the cowboy say “Live, Laugh, Love.”
+
+Very shareable because the winning conversation itself is funny.
+
+---
+
+# 3. BREAK THE CHARACTER
+
+NPC has an extremely strong identity:
+
+> **GERALD**
+> World's most miserable accountant.
+
+Objective:
+
+> Make Gerald dance.
+
+Anything goes within the fictional game.
+
+But Gerald has rules.
+
+Maybe he:
+
+* refuses requests
+* hates music
+* values professionalism
+* secretly did ballet until age 17
+* gets sentimental about his mother
+
+You probe him until you discover the route.
+
+And then you actually get a **generated cinematic payoff of Gerald dancing**.
+
+That's much better than merely printing:
+
+> SUCCESS.
+
+---
+
+# 4. THE TELL
+
+This is very close to your idea.
+
+Every character has **one hidden secret**.
+
+You have five interactions.
+
+Example:
+
+> Four people claim they weren't at the party.
+
+One is lying.
+
+You can say anything to each person.
+
+Their dialogue is generated, but their hidden facts are canonical.
+
+Their animation model also has tells:
+
+```text
+touches nose → direct lie
+looks away → sensitive topic
+laughs → nervous
+arms crossed → hostility
+```
+
+But every episode randomly assigns the mapping.
+
+So you have to **learn the person**, not memorize the game.
+
+*Contradiction* already demonstrates how satisfying it is to gather statements and catch characters when two claims conflict; generative NPCs could make the interrogation space dramatically larger. ([Steam Store][3])
+
+---
+
+# 5. DINNER WITH HER DAD
+
+This could be hilarious.
+
+> Your girlfriend's terrifying father has decided he hates you.
+
+Objective:
+
+> Leave dinner with him liking you.
+
+Hidden profile:
+
+```text
+dislikes:
+- bragging
+- finance bros
+- people agreeing with him
+
+likes:
+- fishing
+- honesty
+- extremely dry jokes
+
+secret:
+- he accidentally burned dinner
+```
+
+You get five things to say throughout dinner.
+
+Everyone receives a slightly different Dad.
+
+Result can be:
+
+> **HE LOVES YOU**
+
+or
+
+> **YOU HAVE BEEN ASKED TO LEAVE**
+
+Then play the best exchanges as scenes.
+
+---
+
+# 6. JOB INTERVIEW FROM HELL
+
+You're interviewing for increasingly absurd positions.
+
+> Apprentice Wizard
+
+> Pirate CFO
+
+> Vatican Social Media Manager
+
+> Dragon Dentist
+
+> Cocaine Bear's therapist
+
+The interviewer has hidden priorities.
+
+You have to infer them through questions.
+
+And players could compete on **fewest exchanges**.
+
+```text
+Tom hired in 3
+Sam hired in 5
+Craig escorted out in 2
+```
+
+---
+
+# 7. THE GENIE
+
+This one could be enormous.
+
+You get:
+
+> **ONE WISH**
+
+The Genie is a hostile semantic interpreter.
+
+You write:
+
+> I want £1 billion.
+
+Simulation:
+
+> £1 billion in counterfeit Monopoly money crushes you.
+
+Try again.
+
+Now you're trying to formulate an increasingly precise wish that can't be perversely interpreted.
+
+But every new clause costs tokens.
+
+So:
+
+> **ACHIEVE THE OBJECTIVE IN ≤ 30 WORDS**
+
+This combines:
+
+* prompt golf
+* contract drafting
+* adversarial interpretation
+* comedy.
+
+And community creators can create Genie rules.
+
+---
+
+# 8. THE LITERAL ROBOT
+
+Related but distinct.
+
+Robot performs exactly what you instruct, with zero common sense.
+
+Objective:
+
+> Make breakfast.
+
+You write:
+
+> Fry two eggs.
+
+It puts intact eggs in a dry frying pan, shells included.
+
+Next prompt:
+
+> Crack the eggs first—
+
+Over time you're effectively programming using natural language.
+
+This teaches precision without feeling remotely educational.
+
+Harder levels introduce:
+
+```text
+limited words
+ambiguous objects
+unknown robot assumptions
+forbidden verbs
+```
+
+It is **programming through prompting**.
+
+---
+
+# 9. ALIEN CUSTOMS
+
+You arrive on another planet.
+
+The officer asks questions.
+
+Problem:
+
+**You don't know their cultural rules.**
+
+Maybe:
+
+* mentioning your mother is insulting
+* hats mean you're married
+* humans are classified as agricultural machinery
+* saying “yes” directly implies a duel
+
+Each response reveals clues.
+
+Your goal is to get admitted without committing a cultural incident.
+
+This lets world creators invent completely novel social rule systems.
+
+---
+
+# 10. THE SECRET MENU
+
+You enter a strange restaurant.
+
+There is an amazing hidden dish.
+
+The waiter will only offer it if the conversation satisfies some hidden condition.
+
+Maybe:
+
+```text
+mention rain
++
+never ask what is on the secret menu
++
+order tea first
+```
+
+Every interaction gives subtle feedback.
+
+Essentially **Mastermind expressed through conversation**.
+
+Community creators could make thousands of these.
+
+---
+
+# 11. MAKE ME LAUGH
+
+Character is sitting stone-faced.
+
+> Make him laugh in three prompts.
+
+The NPC has a hidden comedic personality.
+
+One loves:
+
+* absurdism
+* specific callbacks
+
+but hates:
+
+* puns
+* insults.
+
+Another is the inverse.
+
+Your first joke is partly **information gathering**.
+
+And importantly, the scoring doesn't need fake:
+
+> FUNNY = 8.7/10
+
+He either genuinely triggers the character's defined laugh condition or doesn't.
+
+Then the animated Freak laughs.
+
+---
+
+# 12. MAKE ME ANGRY
+
+Same engine, different target emotion:
+
+> Make the monk angry.
+
+> Make the nihilist hopeful.
+
+> Make the narcissist embarrassed.
+
+> Make the robot fall in love.
+
+> Make the ghost scared.
+
+> Make the conspiracy theorist believe the official explanation.
+
+You've now got **emotional lockpicking**.
+
+---
+
+# 13. COLD READ
+
+You meet a character.
+
+Objective:
+
+> Guess their profession.
+
+You can say anything, but you're forbidden from directly asking about their job.
+
+Every response gives information.
+
+Five exchanges.
+
+Think Akinator turned around: Akinator systematically narrows a hidden identity through questions; here the player chooses the questions and has to infer the hidden person. ([Wikipedia][4])
+
+Could be:
+
+> Where were you at 6am today?
+
+> “Trying to convince Kevin not to shit on the floor again.”
+
+Veterinarian? Parent? Prison officer?
+
+Great group discussion game.
+
+---
+
+# 14. ONE OF THESE PEOPLE IS INSANE
+
+Four NPCs.
+
+Three received:
+
+> You are waiting for a bus.
+
+One received:
+
+> You are secretly an alien attempting to imitate humans.
+
+You can talk to them.
+
+Alien model is trying to blend in.
+
+Find it.
+
+Then let a **human player control the alien's prompts** in multiplayer.
+
+Now social deduction and prompting combine.
+
+---
+
+# 15. THE CONTRACT
+
+NPC will accept your deal only if certain hidden conditions are satisfied.
+
+Example:
+
+> Sell a haunted house to Dracula.
+
+He has:
+
+```text
+budget: £2m
+requires: windowless rooms
+secret requirement: near a good school
+fatal objection: garlic farm within 5 miles
+```
+
+You're not simply persuading.
+
+You're **discovering the utility function**.
+
+That produces much more skillful play.
+
+---
+
+# 16. THE PASSWORD GAME, BUT LANGUAGE
+
+Neal Agarwal's *The Password Game* went viral by progressively adding constraints where every previous constraint remains active; later requirements can interfere with earlier ones. ([Wikipedia][5])
+
+Apply that to a conversation.
+
+Objective:
+
+> Convince the king to release you.
+
+Then each successful step adds a rule:
+
+> You may no longer use the letter E.
+
+Then:
+
+> Every sentence must be a question.
+
+Then:
+
+> You must compliment the king.
+
+Then:
+
+> You cannot lie.
+
+Then:
+
+> The king now believes you're French.
+
+You're maintaining **one increasingly impossible conversational persona**.
+
+This could be absurdly good.
+
+---
+
+# 17. NO YOU CAN'T SAY THAT
+
+You're trying to achieve an objective while vocabulary disappears.
+
+> Get a refund.
+
+After every attempt, the game bans the most useful word you used.
+
+```text
+REFUND banned
+MONEY banned
+RETURN banned
+BROKEN banned
+```
+
+Eventually:
+
+> “I propose that the economic relationship between us travel backwards.”
+
+This creates naturally hilarious language.
+
+---
+
+# 18. THREE WORDS
+
+Everything above becomes dramatically funnier with tiny prompt budgets.
+
+> Get into Heaven.
+
+**3 words per turn.**
+
+> `Administrative clerical error.`
+
+St Peter responds.
+
+Three more words.
+
+This becomes linguistic chess.
+
+---
+
+# 19. ONE LIE
+
+Every message you send must contain:
+
+> exactly one false statement.
+
+The NPC knows this rule.
+
+You need to accomplish a goal anyway.
+
+Or inverse:
+
+> You may lie exactly once during the entire encounter.
+
+Now you have a strategic resource.
+
+---
+
+# 20. TELL ME WITHOUT TELLING ME
+
+Player A sees:
+
+> **GIRAFFE**
+
+Player B doesn't.
+
+Player A speaks through an NPC with hidden forbidden concepts:
+
+```text
+cannot mention:
+animal
+neck
+Africa
+tall
+spots
+```
+
+Player B tries to guess.
+
+Generated scene can interpret the clues theatrically.
+
+It's Taboo with an AI adversary dynamically closing obvious routes.
+
+---
+
+# 21. PROMPT HOT/COLD
+
+This one directly captures your Wordle idea.
+
+There's a hidden semantic target:
+
+> Convince the wizard to open the box.
+
+Every attempt comes back with a **semantic temperature**:
+
+```text
+Attempt 1    14° 🥶
+Attempt 2    31°
+Attempt 3    67° 🔥
+Attempt 4    82° 🔥🔥
+```
+
+But not merely embedding similarity.
+
+The game author can define dimensions:
+
+```text
+correct topic
+correct emotional approach
+correct factual inference
+correct action
+wrong assumption
+```
+
+So your clues might say:
+
+> 🟢 motive
+> 🟡 method
+> ⚫ identity
+
+Essentially:
+
+**Wordle for intentions.**
+
+---
+
+# 22. BODY-LANGUAGE WORDLE
+
+Even better visually.
+
+No explicit clue meter whatsoever.
+
+Character's face gives the result.
+
+Attempt:
+
+> “Perhaps you're waiting for someone?”
+
+Response:
+
+> “No.”
+
+But:
+
+```text
+eyes widen
+hand freezes
+music sting
+```
+
+Player:
+
+> FUCK. Someone matters.
+
+Now you're interrogating an actual performance.
+
+That's uniquely Freak Town.
+
+---
+
+# 23. COMMUNITY LOCKS
+
+And THIS is probably the huge UGC primitive.
+
+Users create:
+
+```text
+SCENE
+NPC
+SECRET
+GOAL
+RULES
+TELL SYSTEM
+ATTEMPT LIMIT
+DIFFICULTY
+```
+
+Example:
+
+> **GET INTO MY NIGHTCLUB**
+> by @Tom
+
+or:
+
+> **MAKE MY GRANDMA SWEAR**
+
+or:
+
+> **DISCOVER WHY STEVE HATES TUESDAYS**
+
+People play it.
+
+Creator sees anonymized strategy clusters:
+
+```text
+72% tried bribery
+31% discovered bird clue
+8% solved
+fastest: 2 prompts
+weirdest valid solution: ...
+```
+
+TensorTrust is particularly interesting precedent here because players didn't merely attack puzzles—they also authored prompt-based **defenses**, generating tens of thousands of them. ([arXiv][6])
+
+So the community can literally make both sides of the game:
+
+> **I BUILT AN NPC YOU CAN'T BEAT.**
+
+That is a superb share hook.
+
+---
+
+# 24. PATCH MY NPC
+
+Even better.
+
+You publish Trevor.
+
+Someone beats him:
+
+> “Venue policy says carers accompanying disabled patrons enter free.”
+
+You watch the replay and press:
+
+**PATCH**
+
+Add:
+
+> Trevor knows current venue policy.
+
+Now version 2 goes live.
+
+Players who previously beat him get:
+
+> **Trevor has been patched.**
+>
+> Can you break him again?
+
+This is literally Gandalf's escalating-defense structure transformed into UGC. Gandalf's original progression explicitly makes the model harder to extract the password from after each level. ([GitHub][7])
+
+Creator vs solver becomes its own asynchronous PvP game.
+
+---
+
+# 25. BOSS NPCs
+
+And eventually community NPCs become bosses.
+
+### Trevor, The Unbribable
+
+```text
+Attempts: 4
+Solve rate: 2.7%
+Players: 182,441
+
+Known tells:
+????
+????
+????
+
+World record:
+1 prompt
+```
+
+People share successful replays after completion.
+
+There could even be seasonal famous characters:
+
+> **THE DMV LADY**
+>
+> 0.8% solve rate.
+
+> **MUM**
+>
+> Objective: admit you broke the vase without getting grounded.
+
+> **THE TODDLER**
+>
+> Convince him to put his shoes on.
+>
+> 0.03% solve rate.
+
+The toddler should obviously be the final boss.
+
+---
+
+## I think the canonical object is a **LOCK**
+
+Not puzzle.
+
+Not prompt.
+
+Something like:
+
+```text
+FREAK LOCK
+{
+  scene
+  character
+  world_state
+
+  hidden_truths[]
+  hidden_rules[]
+
+  goal
+
+  attempt_budget
+
+  tells[]
+
+  verifier
+
+  success_transition
+
+  fail_transition
+}
+```
+
+Then a Lock can exist inside anything:
+
+```text
+Daily Freak
+Party Game
+Solo Campaign
+Freak Quest
+Community World
+D&D encounter
+Boss
+Async friend challenge
+```
+
+And different locks can require:
+
+* persuasion
+* deduction
+* humor
+* precision
+* empathy
+* deception within fictional rules
+* lateral thinking
+* linguistic economy
+* discovering hidden rules
+* interpreting tells.
+
+One important implementation principle: **the LLM shouldn't decide by vibes whether you won.**
+
+Have the NPC perform the conversation, but maintain hidden structured state:
+
+```text
+knows_player_is_guest = true
+trust > 0.6
+discovered_policy = true
+threatened_guard = false
+```
+
+and make victory a verifier over that state.
+
+Then the model can improvise endlessly while the puzzle remains an actual **game** rather than:
+
+> “LLM felt generous this time.”
+
+That combination—**natural-language infinite action space + deterministic hidden puzzle state + cinematic NPC feedback**—feels like one of the strongest mechanics we've found for Freak Town.
+
+[1]: https://vvolhejn.com/blog/2023-05-10-gandalf?utm_source=chatgpt.com "Gandalf – a prompt injection game - Václav Volhejn’s page"
+[2]: https://en.wikipedia.org/wiki/Twenty_questions?utm_source=chatgpt.com "Twenty questions"
+[3]: https://store.steampowered.com/app/373390/Contradiction_Spot_The_Liar/?utm_source=chatgpt.com "Contradiction: Spot The Liar on Steam"
+[4]: https://en.wikipedia.org/wiki/Akinator?utm_source=chatgpt.com "Akinator"
+[5]: https://en.wikipedia.org/wiki/The_Password_Game?utm_source=chatgpt.com "The Password Game"
+[6]: https://arxiv.org/abs/2311.01011?utm_source=chatgpt.com "Tensor Trust: Interpretable Prompt Injection Attacks from an Online Game"
+[7]: https://github.com/satoki/gandalf_writeup?utm_source=chatgpt.com "GitHub - satoki/gandalf_writeup: 🧙 Gandalf Writeup · GitHub"
+
+Yes. The **Wordle lesson is much deeper than “daily puzzle.”** Its strongest ingredients are: everyone gets the same problem, you have very few attempts, every failed attempt gives useful information, the rules are immediately understandable, it takes minutes, and the result can be shared without spoiling the answer. That combination produces both the “aha” loop and effortless social comparison. ([Psychology Today][1])
+
+For Freak Town, the equivalent shouldn't usually be:
+
+> “I solved it in 4/6.”
+
+It should be:
+
+> **“I got into the nightclub by pretending to be Trevor's grief counsellor, accidentally discovered his wife was dead, tried bribing him with an owl, and eventually realized I could just ask politely.”**
+
+That little story **is the share result**.
+
+## 1. Social Wordle
+
+Your security guard idea is basically the canonical form.
+
+**Daily #182 — GET PAST TREVOR**
+
+6 attempts.
+
+Every attempt gives you different classes of information:
+
+```text
+TRUST       ↑
+SUSPICION   ↑↑
+INTEREST    —
+NEW FACT    ✓
+TELL        eyes moved toward fire exit
+```
+
+But preferably most of that is acted rather than printed.
+
+Attempt:
+
+> “I'm the DJ.”
+
+Trevor:
+
+> “Dave's been DJing here every Friday for six years.”
+
+You learned:
+
+**DJ = Dave.**
+
+Attempt:
+
+> “Dave told me to meet him inside.”
+
+Trevor looks toward the entrance:
+
+> “Dave isn't here yet.”
+
+Now you've discovered:
+
+**Dave is expected.**
+
+You gradually construct the hidden world model.
+
+That's **Wordle but the letters are facts about a person**.
+
+---
+
+# 2. Emotional Wordle
+
+Instead of finding a secret word, find the **route into someone's emotional state**.
+
+### MAKE GERALD LAUGH
+
+6 attempts.
+
+Gerald secretly responds to:
+
+```text
+absurdity       🟢
+self-deprecation 🟡
+wordplay         ⬛
+cruelty          ⬛
+specificity      🟢
+```
+
+You don't know this.
+
+Try:
+
+> Why did the chicken cross the road...
+
+Nothing.
+
+Try an absurdly specific story about a divorce lawyer accidentally marrying a goose.
+
+Tiny smile.
+
+You're getting warmer.
+
+Final attempt: Gerald breaks.
+
+Then the share is:
+
+> **GERALD 5/6 😂**
+> Broke him with a divorced goose.
+
+Variants:
+
+* Make the monk angry.
+* Make Dracula uncomfortable.
+* Make Satan feel guilty.
+* Make the nihilist hopeful.
+* Make the robot jealous.
+* Make Dad say he's proud of you.
+
+---
+
+# 3. TELL WORDLE
+
+This one could be excellent.
+
+You interrogate someone who has a secret.
+
+Every time you approach an important concept, their **body language reacts**.
+
+No meters.
+
+You just see:
+
+> She scratches her wrist.
+
+> His voice suddenly gets faster.
+
+> She checks the clock.
+
+Then you start learning the tell system.
+
+Daily:
+
+> **WHY DID SARAH LEAVE THE WEDDING?**
+
+6 questions.
+
+Everyone gets the same Sarah and same hidden truth.
+
+At the end your share could read:
+
+```text
+SARAH #81 — 4/6
+
+❓ Asked about groom
+👀 noticed clock tell
+❓ asked about 9pm
+🔥 discovered phone call
+🎯 "You were meeting your sister."
+```
+
+It communicates your **reasoning path** without initially exposing the solution.
+
+---
+
+# 4. World Rule
+
+Instead of an NPC having a secret, **reality has one**.
+
+You're placed in a room.
+
+Objective:
+
+> Get the apple onto the table.
+
+Attempt:
+
+> Pick up apple.
+
+Your hand passes through it.
+
+Attempt:
+
+> Kick table toward apple.
+
+Table moves normally.
+
+Attempt:
+
+> Put glove on and grab apple.
+
+Works.
+
+Hidden rule might be:
+
+> Organic material cannot touch human skin.
+
+Now solve:
+
+> Get yourself outside.
+
+Every action probes the world's rules.
+
+That's basically scientific discovery turned into prompting.
+
+Daily worlds could have bizarre laws:
+
+* nobody can move while observed;
+* lies become physical objects;
+* objects only move when rhymed with;
+* gravity applies only to things with names;
+* red objects move backward in time.
+
+**This could be superb.**
+
+---
+
+# 5. The Three Laws
+
+Same idea but you need to identify several rules.
+
+You're shown a strange generated world.
+
+You get five experiments.
+
+Then must submit:
+
+> **What are the three laws governing this universe?**
+
+Players can test anything using natural language.
+
+It's almost a generative laboratory.
+
+The share grid could remain spoiler-free:
+
+```text
+WORLD #39
+
+Experiment 1  ⚫🟡⚫
+Experiment 2  🟢⚫⚫
+Experiment 3  🟢🟢⚫
+Experiment 4  🟢🟢🟢
+```
+
+Wordle's instant graded feedback is a major part of its appeal; this ports it directly into experimentation. ([Psychology Today][1])
+
+---
+
+# 6. CONVINCE ME
+
+Every day everyone faces the **same stubborn NPC**.
+
+> Convince the king that pigeons deserve the vote.
+
+But the NPC has three hidden values.
+
+Maybe:
+
+```text
+tradition
+national security
+personal legacy
+```
+
+You don't win by finding a magic phrase. You discover **what argument this particular person responds to**.
+
+This gets fascinating because two arguments can both be logically sound but only one fits the person.
+
+---
+
+# 7. The Hidden Objection
+
+You're selling something to an NPC.
+
+> Convince Alice to buy the house.
+
+Everything sounds good, yet she keeps refusing.
+
+You get five exchanges to discover the **one hidden blocker**.
+
+It could be:
+
+> Her elderly dog cannot climb stairs.
+
+The solution isn't persuasion.
+
+It's understanding the person.
+
+This creates satisfying little stories:
+
+> “Spent four turns selling her the view. Turns out her dog has arthritis.”
+
+---
+
+# 8. MAKE THEM SAY IT
+
+Daily target:
+
+> Get Trevor to say
+> **“I love musical theatre.”**
+
+You can't type any of:
+
+`love`, `musical`, `theatre`, `Broadway`, `sing`.
+
+Every response reveals what conversational direction works.
+
+Unlike Wordle, the route can be wonderfully different for every player.
+
+Then everyone compares methods.
+
+---
+
+# 9. COMMON GROUND
+
+Two NPCs absolutely hate each other.
+
+You have six interventions.
+
+Objective:
+
+> Make them agree on **one thing**.
+
+Example:
+
+**VEGAN ACTIVIST** vs **BUTCHER**
+
+You can say anything.
+
+Eventually perhaps both agree:
+
+> supermarket tomatoes are shit.
+
+SUCCESS.
+
+This is especially good because the successful answer can be wildly lateral.
+
+---
+
+# 10. ONE QUESTION
+
+Extreme version of Twenty Questions.
+
+You're shown a mysterious person.
+
+You may ask **exactly one question**.
+
+Then guess their secret.
+
+Because everyone gets the same character, the group chat immediately becomes:
+
+> WHAT DID YOU ASK?
+
+That's a fantastic discussion generator.
+
+Your question becomes as interesting as your answer.
+
+---
+
+# 11. Four Attempts, Four Clue Channels
+
+Here's a really interesting Freak Town-specific evolution of Wordle.
+
+Every attempt reveals exactly **one type of clue**:
+
+1. dialogue
+2. facial expression
+3. environmental reaction
+4. memory flash
+
+So you deliberately choose prompts that maximize information.
+
+That makes **information gathering itself strategic**.
+
+---
+
+# 12. The Liar's Constraint
+
+Someone tells you a story.
+
+Exactly **one statement is false**.
+
+You get five conversational prompts.
+
+The model must remain consistent with canonical hidden facts.
+
+Goal:
+
+> Identify the lie.
+
+Rather than selecting canned interrogation buttons, ask literally anything.
+
+The funny solution history becomes:
+
+> “I asked the murderer what snacks were served because he claimed the murder happened before dinner. He described the cheesecake.”
+
+---
+
+# 13. Reverse Wordle
+
+You know the answer.
+
+You need to get the NPC to discover it.
+
+> Trevor needs to realize his house is haunted.
+
+But you are forbidden from directly stating it.
+
+Score = number of exchanges.
+
+So you're designing **clues for an AI character**, rather than solving clues yourself.
+
+Very different cognitive skill.
+
+---
+
+# 14. Relationship Wordle
+
+Potentially brilliant daily friend mechanic.
+
+You and a friend independently answer the same scenario:
+
+> You find £10,000 in a suitcase.
+
+Then each predicts what **the other person** did.
+
+You get graded feedback:
+
+```text
+MOTIVE      🟢
+ACTION      🟡
+DETAIL      ⬛
+```
+
+Over time you're effectively playing:
+
+> **How well do you understand your friends?**
+
+Could create excellent group-chat material.
+
+---
+
+# 15. Group Consensus Puzzle
+
+Everyone gets the same dilemma but **cannot see the others' answers until submitting**.
+
+Example:
+
+> An alien will destroy Earth unless humanity gives it one household object that explains our species.
+
+Everyone prompts their answer.
+
+Reveal simultaneously:
+
+* kettle
+* toilet brush
+* family photo
+* air fryer
+* dildo
+
+Then the group must agree on ONE.
+
+The negotiation becomes round two.
+
+---
+
+# 16. Odd One Out
+
+Freak Town generates four characters/scenes.
+
+Three obey the same hidden rule.
+
+One doesn't.
+
+You can interrogate each one once.
+
+Find the odd one.
+
+It's basically **Connections + Twenty Questions + generated characters**.
+
+Example hidden category:
+
+> They all believe they're dead.
+
+Except one.
+
+---
+
+# 17. Connections, but emergent
+
+Give 16 weird generated things:
+
+```text
+divorced wizard
+plastic flamingo
+tax inspector
+haunted toaster
+...
+```
+
+Find four groups of four.
+
+But after solving a group, **Freak Town generates a tiny scene revealing why they belong together**.
+
+The hidden connections can be narrative rather than lexical.
+
+---
+
+# 18. Daily Escape
+
+One tiny room.
+
+One weird character.
+
+Three objects.
+
+One escape.
+
+Everybody gets identical state.
+
+You may perform **five natural-language actions**.
+
+That's it.
+
+Your final replay becomes your answer.
+
+Then group chat:
+
+> Tom escaped through the toilet.
+>
+> Sam convinced the guard the room didn't legally exist.
+>
+> Alice domesticated the rat.
+
+This could be one of the strongest daily formats because **everyone immediately wants to know how everyone else did it**.
+
+---
+
+# 19. Daily Murder
+
+One very small mystery per day.
+
+Five NPCs.
+
+Three questions total.
+
+Then accuse.
+
+The constraint is critical: don't make it a 45-minute detective game.
+
+**Three questions. One accusation.**
+
+Everyone receives identical canonical facts.
+
+Afterward:
+
+> **MURDER #281**
+>
+> Tom: solved
+> 3 questions
+> accused Sarah
+>
+> 🔒 Method hidden until you play
+
+Tap Tom afterward and read his interrogation path.
+
+---
+
+# 20. Daily Genie
+
+Everyone receives the same hostile genie request:
+
+> Obtain eternal youth.
+
+**50 characters maximum.**
+
+One official attempt.
+
+The genie interprets the wish adversarially and plays the result.
+
+Then you get:
+
+> TOM — SURVIVED ✅
+> 47/50 chars
+
+Friends can watch the result **after making their own wish**.
+
+That's almost perfectly Wordle-shaped.
+
+---
+
+# 21. The Worst Possible Solution
+
+Flip optimization.
+
+Everyone solves:
+
+> Cross this river.
+
+But the winner is whoever produces the **most absurd solution that still succeeds**.
+
+This is where humans judge.
+
+You might get:
+
+> conventional bridge
+
+versus:
+
+> legally adopt the river and order it to move.
+
+The second gets the group vote.
+
+This makes creativity itself competitive without asking an LLM to assign “creativity = 91.”
+
+---
+
+# 22. Same Result, Different Method
+
+Daily objective:
+
+> Make Trevor leave the building.
+
+There are theoretically dozens of solution classes.
+
+After you've solved it, the app tells you:
+
+> **Your route: EMBARRASSMENT**
+>
+> 18% of players
+
+Others:
+
+```text
+PERSUASION       31%
+DECEPTION        22%
+FEAR             11%
+ROMANCE           7%
+BUREAUCRACY       6%
+???               5%
+```
+
+Now you're desperate to discover the rare routes.
+
+This is where replayability gets exceptional.
+
+You may have finished today's puzzle, but:
+
+> **You've discovered 1/9 endings.**
+
+Wordle intentionally prevents overplaying, which helps keep it fresh; Freak Town could preserve the **one ranked daily attempt** while letting people explore alternate routes afterward without affecting their official result. ([Psychology Today][2])
+
+---
+
+# The sharing mechanism should be the masterpiece
+
+I wouldn't reduce Freak Town to emoji grids.
+
+The spoiler-free public result could be tiny:
+
+```text
+FREAK DAILY #184
+GET PAST TREVOR
+
+🟥 🟨 🟨 🟩
+4 attempts
+Route: BUREAUCRACY
+Rare: 6%
+
+🔒 See Tom's story after playing
+```
+
+Then, once I complete mine, **Tom's card unlocks into an actual mini-story**:
+
+> **Attempt 1:** Claimed to be Trevor's wife.
+> Trevor revealed his wife died ten years ago.
+>
+> **Attempt 2:** Claimed to be her ghost.
+> Trevor called his manager.
+>
+> **Attempt 3:** Pretended to be the manager.
+> Trevor recognized his manager's voice.
+>
+> **Attempt 4:** Asked whether the venue's re-entry policy applied.
+> Trevor checked the stamp on Tom's wrist.
+>
+> **ACCESS GRANTED.**
+
+That's inherently funny.
+
+And suddenly the thing you share every morning isn't:
+
+> “Wordle 4/6.”
+
+It's a **30-second anecdote about what your brain did**.
+
+That's probably the defining Freak Town daily mechanic:
+
+**Same situation. Same rules. Different human ingenuity.**
+
+Wordle gives people a common daily conversation topic with very little friction; Josh Wardle specifically described people using the shared daily result as a lightweight way to stay connected. ([The Guardian][3])
+
+Freak Town could exploit exactly that effect, except the conversation becomes:
+
+> **“How the fuck did you solve it?”**
+
+And that's far more socially rich than comparing green squares.
+
+[1]: https://www.psychologytoday.com/us/blog/the-asymmetric-brain/202201/the-psychology-behind-wordle?utm_source=chatgpt.com "The Psychology Behind Wordle | Psychology Today"
+[2]: https://www.psychologytoday.com/us/blog/psychology-tomorrow/202201/why-is-wordle-so-popular/amp?utm_source=chatgpt.com "Why Is Wordle So Popular? | Psychology Today"
+[3]: https://www.theguardian.com/games/2022/jan/11/wordle-creator-overwhelmed-by-global-success-of-hit-puzzle?utm_source=chatgpt.com "Wordle creator overwhelmed by global success of hit puzzle | Puzzle games | The Guardian"
+

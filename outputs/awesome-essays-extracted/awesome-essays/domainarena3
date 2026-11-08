@@ -1,0 +1,847 @@
+The key product decision changed after the deeper research: DomainArena should not primarily answer “which domain do humans like?” Arena.ai itself has moved agent evaluation beyond preference votes toward confirmed task success, tool behavior, cost, recovery and causal real-world outcomes.
+
+DomainArena should make the same transition for domain names.
+
+For a machine-facing API or MCP tool, the hierarchy can genuinely become roughly:
+
+semantic understanding → agent selection → successful invocation → task success → stability across model families → reuse → economics
+
+Human aesthetics may be a tiny component. For a consumer brand, that changes: human recall, pronunciation, spelling, trust and brand elasticity become major objectives again. So the system in the pack has audience-conditioned policies, rather than one universal “domain quality score.”
+
+That also makes the name.com story considerably stronger. name.com already has the rails for agents to search, register, manage domains and DNS, and their current developer strategy explicitly focuses on domain experiences that convert. Railway is already doing 1,700+ registrations/month through embedded name.com purchasing, so another autonomous-domain buyer isn't novel.
+
+The missing piece is:
+
+Given this product, this audience and this budget, which domain from name.com's actual inventory should the agent buy?
+
+And name.com's API provides exactly the variables needed to make that optimization real: purchasability, premium status, purchase price, renewal price and purchase type. Search results are explicitly unordered, which is another reason there's room for an intelligent ranking layer on top.
+
+The ZIP has 28 files / ~70 KB of implementation guidance and scaffolding, including:
+
+full product thesis and research conclusions;
+exact in-place transition from agentseolab;
+transparent hackathon-lineage/tagging strategy;
+architecture and directory structure;
+name.com Search → CheckAvailability → pricing → registration → DNS design;
+hard first-year/renewal budget constraints;
+Semantic Inversion specification;
+pairwise Arena + Bradley–Terry design;
+executable agent-selection experiments;
+model-stability/worst-family methodology;
+TLD causal experiments;
+human-vs-agent audience policies;
+agentic SEO funnel;
+EvoName evolutionary naming;
+REST + MCP API design;
+database/event schemas;
+detailed UI screens;
+implementation tickets;
+test matrix and failure injection;
+exact build order;
+hackathon pitch;
+2–4 minute demo script;
+source/lineage templates;
+Python scaffolds for models, constraints, policies and name.com integration.
+
+I also explicitly built the pack around the strongest thing already present in AgentSEOLab: it treats agent actions and controlled outcomes as evidence, not just what models claim they prefer. Its canonical rules already require frozen intent, AB/BA controls, fresh sessions, model provenance and family-level replication. That becomes DomainArena's methodological moat rather than being thrown away during the product pivot.
+
+The central architecture in the pack is therefore:
+
+PRODUCT INTENT
+      ↓
+WHO MUST UNDERSTAND IT?
+human / developer / agent / mixed
+      ↓
+NAME GENERATOR POPULATION
+      ↓
+NAME.COM REAL INVENTORY
+      ↓
+HARD BUDGET / RENEWAL / TLD CONSTRAINTS
+      ↓
+SEMANTIC INVERSION
+      ↓
+CONTROLLED AGENT SELECTION
+      ↓
+ACTUAL INVOCATION + TASK SUCCESS
+      ↓
+MODEL-FAMILY STABILITY
+      ↓
+OPTIONAL HUMAN MEMORY / TRUST TESTS
+      ↓
+PARETO FRONTIER
+      ↓
+BEST DOMAIN FOR THIS ADOPTION PATH
+      ↓
+NAME.COM RECHECK
+      ↓
+APPROVE
+      ↓
+REGISTER + DNS RECEIPT
+
+That, I think, is the actual killer version: Arena.ai for internet identity, where “winning” means a domain causes the right actors to understand and successfully use the product—not merely that somebody thinks it sounds cool.
+
+And it gives name.com something strategically useful: a potential recommend_domain(intent, audience, constraints) intelligence layer that could sit in front of their API for AI builders and partners, while naturally driving every successful recommendation into name.com registration. Their hackathon rubric explicitly rewards central, multi-endpoint, unexpected API applications, which this fits extremely closely.
+
+I can also monitor the name.com challenge/API pages through submission and flag any material rule, endpoint, or sponsor-direction changes.
+
+I searched the current naming market, open-source domain tooling, Arena/evaluation infrastructure, recent agent-search work, LLM-judge bias literature, evolutionary optimization, and previous name.com-sponsored hackathon projects.
+
+One caveat: the **current DevNetwork project gallery is not published yet**, so there is no reliable list of current name.com entrants to spy on. The useful competitive set is therefore existing products/repos plus previous name.com hackathon winners. ([DevNetwork Hackathon 2026][1])
+
+# The most important conclusion
+
+**Do not build a better AI domain generator.**
+
+That category is already crowded.
+
+The defensible product is:
+
+> **DomainArena measures whether a candidate domain causes the intended human or AI agent to correctly understand, select and successfully use the product—and then optimizes over real name.com inventory and budget.**
+
+That is meaningfully different.
+
+The strongest new research result is AgentSearchBench: across nearly 10,000 real agents, **semantic similarity between an agent's textual description and the task is consistently weaker than execution-grounded performance for ranking agents**. Lightweight execution-aware probing materially improves ranking. ([GitHub][2])
+
+That means even our earlier **Semantic Inversion** concept should now be treated as a *cheap proxy stage*, not the final ground truth.
+
+The real endpoint should eventually be:
+
+[
+\boxed{
+UsefulSelection(d)
+==================
+
+P(\text{agent selects }d
+\land
+\text{task succeeds})
+}
+]
+
+That is the killer change.
+
+---
+
+# 1. The competitor landscape
+
+| Competitor                       | Already does                                                                                                                               | What DomainArena must do differently                                                                                                                                                             |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Atom**                         | ~100 AI-ranked names, live availability, USPTO screening, AI head-to-head comparison, **real human audience testing**, premium marketplace | Human testing is **not our moat**. Measure agent understanding/selection/execution + model robustness. ([Atom][3])                                                                               |
+| **Namelix**                      | Multiple naming styles, length constraints, TLD filters, learns from saved names                                                           | Generator diversity/adaptive recommendations aren't enough. ([Namelix][4])                                                                                                                       |
+| **Namecheap Beast Mode**         | Up to 5,000 names, price constraints, TLD filtering, premiums, transformations, bulk checkout                                              | Budget-constrained inventory search is commodity. ([Namecheap][5])                                                                                                                               |
+| **GoDaddy / registrar AI tools** | Generation → availability → purchase → site-building ecosystem                                                                             | Don't compete on "launch everything."                                                                                                                                                            |
+| **AgentDomainService**           | **Name.com pricing**, budget filters, MCP, brainstorming, AI memorability/brandability/SEO scoring                                         | Extremely relevant direct competitor. Our advantage must be empirical evaluation rather than subjective 0–10 AI scores. ([GitHub][6])                                                            |
+| **domain-search-mcp**            | MCP, availability, pricing, social/package availability, fine-tuned Qwen generator, project analysis, anti-"AI slop" ranking               | MCP and a custom naming model are not novel either. Its README explicitly admits its scores are heuristic rather than universal truth—that is exactly the gap DomainArena attacks. ([GitHub][7]) |
+| **domain-search-agent**          | Generation, RDAP, trademark/social screens, weighted 10-dimensional domain score                                                           | This is the perfect **baseline to beat** experimentally. ([GitHub][8])                                                                                                                           |
+| **bitbuilder-io/domains**        | Good Cloudflare/React UX, description → roots/affixes/TLD → real availability                                                              | Useful UI/component source, but algorithmically conventional. ([GitHub][9])                                                                                                                      |
+
+The Atom result is especially important. Atom already says:
+
+> generate → AI compare → trademark check → real audience test → register.
+
+So if our pitch is:
+
+> "Other tools use AI vibes; we test names with actual people!"
+
+we have already lost the differentiation. ([Atom][3])
+
+---
+
+# 2. There is already a Name.com competitor frighteningly close to the basic idea
+
+`gregm711/agent-domain-service-mcp` currently exposes:
+
+* budget-filtered domain search;
+* real purchase and renewal prices from name.com;
+* AI brainstorming;
+* `.com/.io/.ai/.dev/...` exploration;
+* AI memorability/brandability/pronunciation/SEO scores;
+* MCP integration.
+
+([GitHub][6])
+
+That is excellent news because it draws a very clear line:
+
+### Existing approach
+
+```text
+description
+→ AI generates names
+→ name.com checks availability
+→ AI rates names 1-10
+→ buy
+```
+
+### DomainArena
+
+```text
+description
+→ freeze intended meaning
+→ diverse generators
+→ name.com real inventory
+→ hard economic constraints
+→ semantic inversion
+→ controlled pairwise tests
+→ agent discovery simulation
+→ actual tool selection
+→ actual invocation
+→ hidden task verifier
+→ cross-model robustness
+→ Pareto frontier
+→ buy
+```
+
+That is a genuine conceptual difference.
+
+---
+
+# 3. What previous name.com judging tells us
+
+name.com's previous 2026 Domain Roulette challenge is useful calibration.
+
+First place was **YourBusiness Cards**, an AI-powered tool for creating a business identity/domain; second was **e-z.rsvp**, which turned the `e-z.rsvp` domain into a surprise-events product. The sponsor challenge emphasized creative interpretation, technical execution, polish and a product deeply connected to its domain. ([DeveloperWeek][10])
+
+And the current challenge explicitly changes the requirement toward:
+
+> **API depth + originality + technical execution + viability + demo**
+
+with judges preferring multiple name.com endpoints and unexpected applications rather than incremental domain-search tools. ([DevNetwork Hackathon 2026][11])
+
+That means DomainArena should be **scientifically interesting but visually simple**.
+
+Do not give judges a research paper UI.
+
+---
+
+# 4. Why name.com might actually care after the hackathon
+
+Railway integrated name.com with one engineer in roughly two weeks and reached **1,700+ domain registrations/month in its first quarter**. Importantly, Railway says the API integration was the straightforward part; a large chunk of work went into **search UX and product decisions**. ([Name.dev][12])
+
+name.com's own developer hub says its objective is helping developers build domain experiences that **"actually convert"**, and that it intends to publish more research and perspective about AI-native domain behavior. ([Name.dev][13])
+
+Riley & Grey describes the remaining friction almost perfectly:
+
+> finding a **quality domain name that is available**. ([Name.dev][14])
+
+So the long-term pitch is not:
+
+> "Use our cool domain generator."
+
+It's:
+
+> **name.com owns the domain transaction layer. DomainArena could become the recommendation intelligence layer in front of it.**
+
+For Lovable/Railway/Replit-style integrations:
+
+```text
+build an app
+      ↓
+need a domain
+      ↓
+DomainArena
+      ↓
+recommend best purchasable domain
+for this product/audience/budget
+      ↓
+name.com
+```
+
+That's potentially valuable.
+
+---
+
+# 5. Repos I would clone into a research directory
+
+Not vendor directly into production. Put them somewhere like:
+
+```text
+research/upstream/
+```
+
+and maintain:
+
+```text
+SOURCE_LEDGER.md
+repo
+commit SHA
+license
+what we learned
+what code/pattern was reused
+```
+
+This is both legally cleaner and excellent hackathon lineage evidence.
+
+| Priority | Repo                               | Steal the *idea/pattern* for                                                          | Recommendation                                                               |
+| -------- | ---------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **P0**   | **Bingo-W/AgentSearchBench**       | Execution-grounded relevance; probing; retrieval/reranking evaluation                 | **Clone immediately. Most important repo outside yours.** MIT. ([GitHub][2]) |
+| **P0**   | **lmarena/arena-rank**             | Bradley–Terry implementation, leaderboard statistics                                  | Use instead of inventing ranking math. Apache-2.0. ([GitHub][15])            |
+| **P0**   | **tatsu-lab/alpaca_eval**          | annotator abstraction, caching, randomized ordering, evaluator bias/variance analysis | Excellent evaluator-engine reference. ([GitHub][16])                         |
+| **P0**   | **dorukardahan/domain-search-mcp** | MCP UX, naming lanes, caching, availability failure handling, anti-slop baseline      | Best direct OSS competitor. ([GitHub][7])                                    |
+| **P1**   | **lmarena/search-arena**           | real search traces, BT analysis, intent categorization                                | Very relevant to AgentSEO/search-discovery experiments. ([GitHub][17])       |
+| **P1**   | **lm-sys/FastChat**                | classic randomized anonymous Arena battles                                            | Study, don't import whole serving stack. Apache-2.0. ([GitHub][18])          |
+| **P1**   | **macanderson/arena**              | ABBA scheduling, held-out verification, Wilson/McNemar/bootstrap, receipts            | Very aligned with AgentSEOLab's discipline. MIT. ([GitHub][19])              |
+| **P1**   | **faizul666/domain-search-agent**  | Simple weighted-score competitor baseline                                             | Build an automated baseline against this style of system. ([GitHub][8])      |
+| **P1**   | **bitbuilder-io/domains**          | React/Cloudflare domain-search UI                                                     | Useful if it saves frontend time. MIT. ([GitHub][9])                         |
+| **P2**   | **AIcling/agentic_geo**            | MAP-Elites + surrogate critic                                                         | Study for post-MVP adaptive optimization. ([GitHub][20])                     |
+| **P2**   | **OpenEvolve**                     | checkpoints, islands, MAP-Elites, evolutionary-tree visualizer                        | Study; don't couple MVP to it. ([GitHub][21])                                |
+
+I'd also study but **not copy** anything whose license isn't confirmed. And `Sra1Phani/domain-finder` is Elastic-2.0 rather than a permissive MIT/Apache license, so treat it as competitive research rather than reusable source. ([GitHub][22])
+
+---
+
+# 6. The 12 papers I would put directly in the agent's reading queue
+
+| Priority | Paper                                                     | The actual thing DomainArena should take from it                                                                                                                                                                        |
+| -------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**    | **AgentSearchBench — 2604.22436**                         | Descriptions are poor proxies for capability. Make **actual selection + execution** the strongest evaluation tier. ([GitHub][2])                                                                                        |
+| **2**    | **Agent Arena causal methodology**                        | Move beyond pairwise preference toward real outcome signals; isolate causal treatments. Arena currently evaluates confirmed success, tool reliability, recovery, hallucination and cost in real usage. ([Arena AI][23]) |
+| **3**    | **Chatbot Arena — 2403.04132**                            | Pairwise comparison + BT-style aggregation is a proven foundation. ([arXiv][24])                                                                                                                                        |
+| **4**    | **Pairwise Preference Search — 2403.16950**               | Don't run full (O(n^2)) tournaments. Use uncertainty to choose informative pairs. ([arXiv][25])                                                                                                                         |
+| **5**    | **Judging the Judges — 2406.07791**                       | Position bias is real. Every DomainArena pair needs AB/BA/permutation controls. ([arXiv][26])                                                                                                                           |
+| **6**    | **Self-Preference Bias — 2410.21819 + 2604.22891**        | Generator must not be sole judge. Holdout families and structured multidimensional evaluation. ([arXiv][27])                                                                                                            |
+| **7**    | **Dissecting Human and LLM Preferences — 2402.11296**     | Human preference ≠ LLM preference. Therefore **audience-conditioned objectives** are scientifically justified. ([arXiv][28])                                                                                            |
+| **8**    | **Length-Controlled AlpacaEval — 2404.04475**             | Domain length is itself a confounder. If short domains win more, distinguish length effect from semantic effect. ([arXiv][29])                                                                                          |
+| **9**    | **Search Arena — 2506.05334**                             | Perceived credibility differs from grounded quality: humans liked more citations even where citations were unsupported. Keep "looks trustworthy" separate from actual success. ([GitHub][17])                           |
+| **10**   | **How Much Can We Trust LLM Search Agents? — 2606.16821** | Search/recommendation susceptibility differs hugely by model backend. This strongly justifies worst-family/model-stability measurements. ([arXiv][30])                                                                  |
+| **11**   | **TRUSTDESC — 2604.07536**                                | Tool descriptions themselves alter selection. Generate canonical descriptions from implementations and **hold descriptions constant** during hostname/TLD experiments. ([arXiv][31])                                    |
+| **12**   | **AgenticGEO — 2603.20213**                               | Eventually use a surrogate critic + quality-diversity archive to reduce expensive real feedback calls. Not MVP. ([arXiv][32])                                                                                           |
+
+Two additional papers matter for the naming engine itself.
+
+**EvoPrompt** shows that LLM-driven evolutionary optimization can work on discrete text spaces. ([arXiv][33])
+
+And **Credibility of Automatic Appraisal of Domain Names** is basically a warning written specifically for us: automated domain-valuation tools often mix unrelated website signals into pseudo-precise valuations and should not be treated as credible domain appraisals. ([arXiv][34])
+
+So:
+
+> **Never put “Domain Score: 94/100” at the center of the product.**
+
+---
+
+# 7. Is it actually irrelevant whether a human likes the domain?
+
+**Sometimes, almost yes. Universally, no.**
+
+That's one of the more interesting conclusions.
+
+### Case A — pure agent-facing API/MCP
+
+Suppose:
+
+```text
+curlcheck.dev
+factprobe.dev
+velora.com
+```
+
+exists primarily so autonomous agents can discover and call an API.
+
+The relevant funnel is:
+
+```text
+EXPOSED
+   ↓
+UNDERSTOOD
+   ↓
+SELECTED
+   ↓
+INVOKED
+   ↓
+VALID PARAMETERS
+   ↓
+TASK SUCCEEDED
+   ↓
+REUSED
+```
+
+If `factprobe.dev` wins that funnel but humans think `Velora` sounds cooler, the human preference may be practically irrelevant.
+
+### Case B — B2B SaaS
+
+Agents discover it.
+
+Humans approve/pay/trust it.
+
+Now both matter.
+
+### Case C — consumer brand
+
+Humans remember it, say it aloud, search it, share it.
+
+Human preference/memory becomes dominant.
+
+This is exactly why one universal score is wrong. Human and LLM preferences measurably decompose differently. ([arXiv][28])
+
+DomainArena should therefore ask:
+
+```text
+WHO NEEDS TO CHOOSE THIS?
+
+○ Consumers
+○ Businesses
+○ Developers
+○ AI Agents
+○ Mixed
+```
+
+and change **the experiment suite**, not merely change arbitrary numeric weights.
+
+That is a much stronger product.
+
+---
+
+# 8. A new experimental hierarchy
+
+I would change the engine from our previous conception to this:
+
+```text
+TIER 0 — FEASIBILITY
+name.com inventory
+purchase budget
+renewal budget
+premium policy
+TLD policy
+
+
+TIER 1 — NAME PROPERTIES
+pronounceability
+length
+spelling
+obvious ambiguity
+
+
+TIER 2 — SEMANTIC PROXY
+Semantic Inversion:
+"What would X.dev do?"
+
+
+TIER 3 — CHOICE
+Pairwise selection in controlled context
+
+
+TIER 4 — AGENT DISCOVERY
+Given a realistic task + candidate services,
+which one does the agent select?
+
+
+TIER 5 — EXECUTION
+Agent invokes the selected service
+
+
+TIER 6 — VERIFIED OUTCOME
+Did hidden deterministic verifier confirm
+the requested job was completed?
+
+
+TIER 7 — ROBUSTNESS
+Repeat across model families / time windows
+
+
+TIER 8 — FIELD OUTCOME
+Actual impressions → selections →
+registrations → eventual real usage
+```
+
+**Tier 6 is the scientific moat.**
+
+Most competitors stop somewhere between Tier 1 and Tier 3.
+
+---
+
+# 9. Exact build checkpoints I would give the coding agent
+
+| Gate                                    | Must be demonstrated before proceeding                                                                                                 | Why                                                         |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **CP0 — Preserve baseline**             | Tag current AgentSEOLab HEAD, tests green, evidence ledger retained, source ledger added                                               | Keeps hackathon lineage indisputable                        |
+| **CP1 — Competitor baseline**           | Implement `LLM → names → heuristic score → availability` baseline                                                                      | We need something concrete to prove DomainArena improves on |
+| **CP2 — name.com feasibility engine**   | Search returns real price/renewal/premium; `$20` means >$20 is impossible, not penalized                                               | name.com must be part of reasoning itself                   |
+| **CP3 — Semantic Inversion**            | Frozen intent; blind name-only inference; multi-model outputs; deterministic scoring against intended concepts                         | Cheap high-throughput filter                                |
+| **CP4 — Pairwise Arena**                | AB/BA; randomized order; raw observations; Bradley–Terry; CIs                                                                          | Eliminates fake direct 1–10 scores                          |
+| **CP5 — Useful Selection**              | Agent gets realistic task and candidate services; hostname differs; selected service actually executes; hidden verifier scores outcome | **This is the crucial novelty gate**                        |
+| **CP6 — Cross-family robustness**       | Same frozen tests across ≥5 healthy families; report mean, range, variance, worst family separately                                    | Domain should survive model changes                         |
+| **CP7 — TLD causal trial**              | Exact same SLD/title/description/tool except `.com/.dev/.io/...`; preregistered trial                                                  | Particularly valuable research for name.com                 |
+| **CP8 — End-to-end name.com lifecycle** | Search → finalist recheck → sandbox register → DNS receipt → read-back                                                                 | Sponsor integration is undeniable                           |
+| **CP9 — Competitive ablation**          | Same intent/inference budget comparing baseline vs semantic-only vs pairwise vs execution-grounded                                     | Converts "cool methodology" into evidence                   |
+| **CP10 — polished demo**                | Three deterministic showcase fixtures, complete in <4 minutes                                                                          | Judging criterion is still product/demo                     |
+| **CP11 — evolution only if justified**  | EvoName must outperform strong best-of-N under identical inference budget                                                              | Prevent research theatre                                    |
+
+The key rule is:
+
+> **CP5 before EvoName.**
+
+If the coding agent spends two days building beautiful genetic lineage trees before it can demonstrate execution-grounded selection, it is optimizing the wrong thing.
+
+---
+
+# 10. The strongest ablation experiment
+
+This could become a major piece of the submission.
+
+Take perhaps 30–50 product intents.
+
+Compare:
+
+```text
+A — ONE LLM
+generate 20 names
+ask same model to rank them
+
+
+B — HEURISTIC
+length + pronounceability + semantic score
+
+
+C — SEMANTIC INVERSION
+blind task inference
+
+
+D — MULTI-MODEL ARENA
+pairwise robust ranking
+
+
+E — EXECUTION-GROUNDED
+agent actually selects/invokes service
+```
+
+Then evaluate each recommendation against **held-out agent task success**.
+
+If:
+
+```text
+                           Useful Selection
+
+LLM self-rating                 52%
+heuristic                       57%
+semantic inversion              66%
+multi-model pairwise            71%
+execution-grounded ranking      79%
+```
+
+you have an excellent story.
+
+Those numbers are illustrative—not predictions.
+
+The methodology is what's powerful.
+
+---
+
+# 11. Add one benchmark specifically designed to prove human taste can fail
+
+Create pairs such as:
+
+```text
+VELORA.AI
+vs
+JSONREPAIR.DEV
+```
+
+For a JSON repair API.
+
+Humans may strongly prefer the elegant invented brand.
+
+An agent given:
+
+> "Repair this malformed JSON using one of these services"
+
+may find the descriptive hostname easier to select correctly.
+
+Or perhaps it doesn't.
+
+**Either result is interesting.**
+
+Do not force the desired hypothesis.
+
+AgentSEOLab's credibility comes partly from invalidating its own findings when the machinery or replication disagreed.
+
+Keep that.
+
+---
+
+# 12. Agent Arena provides the correct philosophical model
+
+Arena.ai has itself now moved beyond the old:
+
+> "Which answer do humans like?"
+
+Agent Arena instead uses signals including:
+
+* confirmed success;
+* steerability;
+* bash recovery;
+* tool hallucination;
+* cost/task;
+
+and uses randomized component assignment to estimate causal improvement. Its leaderboard is currently based on almost two million agent sessions. ([Arena AI][23])
+
+That's precisely the conceptual evolution DomainArena should emulate:
+
+### Old DomainArena
+
+> Which domain wins AI votes?
+
+### Better DomainArena
+
+> Which domain measurably improves the probability that the intended actor successfully discovers and uses the thing?
+
+That is a much stronger thesis.
+
+---
+
+# 13. What to build exceptionally well
+
+These are the parts where I'd allow the coding agent to obsess:
+
+| Component                                    | Why                                                            |
+| -------------------------------------------- | -------------------------------------------------------------- |
+| **Controlled experiment runner**             | This is your defensibility                                     |
+| **Execution-grounded selection environment** | This is your novelty                                           |
+| **name.com inventory/price integration**     | This is sponsor alignment                                      |
+| **Model-family provenance**                  | Avoids fake pooled conclusions                                 |
+| **AB/BA/permutation controls**               | LLM judge position bias is established research. ([arXiv][26]) |
+| **Generator/judge separation**               | Self-preference is established too. ([arXiv][27])              |
+| **Evidence receipts**                        | Makes every recommendation auditable                           |
+| **Failure/abstention states**                | “We don't have enough evidence” should be valid                |
+| **Three spectacular fixtures**               | Judges need to understand it instantly                         |
+| **Final registration experience**            | Turns research into an actual product                          |
+
+---
+
+# 14. What I explicitly would NOT build now
+
+Do **not** spend hackathon time making:
+
+* logos and complete brand books — Atom/Looka already own this;
+* sophisticated trademark filing — Atom already has screening;
+* human crowdsourcing infrastructure — Atom already has human testing;
+* another custom fine-tuned naming LLM — `domain-search-mcp` already ships a Qwen naming model; ([GitHub][7])
+* exhaustive social-handle checking;
+* 1,400-TLD exploration — competitors already do this; ([GitHub][35])
+* full DNS/domain management dashboard;
+* an autonomous website-builder;
+* general SEO analytics;
+* HydraDB integration;
+* a beautiful evolutionary tree before evolution has beaten best-of-N;
+* arbitrary 20-dimensional weighted scoring;
+* a single blended "Domain Quality 94/100";
+* twelve half-working experiments.
+
+A single **execution-grounded naming experiment that works scientifically** is worth more than eight speculative metrics.
+
+---
+
+# 15. EvoName should become an experiment itself
+
+Before adopting evolution:
+
+```text
+SAME PRODUCT INTENTS
+SAME TOTAL MODEL CALLS
+SAME EVALUATORS
+SAME NAME.COM INVENTORY
+```
+
+Compare:
+
+```text
+random sampling
+best-of-N
+iterative LLM refinement
+evolutionary mutations
+MAP-Elites
+```
+
+Outcome:
+
+```text
+held-out Useful Selection
+```
+
+EvoPrompt shows evolutionary text optimization can work. ([arXiv][33])
+
+AgenticGEO shows MAP-Elites + a learned critic can efficiently adapt to black-box generative systems. ([arXiv][32])
+
+But neither proves evolution is automatically superior for domain naming.
+
+So:
+
+> **Make evolution compete in DomainArena too.**
+
+That's delightfully internally consistent.
+
+---
+
+# 16. After MVP, the most exciting frontier feature is a surrogate evaluator
+
+Eventually running:
+
+```text
+100 candidates
+× 7 models
+× 20 trials
+```
+
+is too expensive.
+
+AgenticGEO gives a good architecture:
+
+```text
+expensive real arena
+      ↓
+training examples
+      ↓
+cheap surrogate critic
+      ↓
+screen thousands of names
+      ↓
+uncertain / high-value names
+      ↓
+real arena
+      ↓
+critic recalibration
+```
+
+([arXiv][32])
+
+That turns DomainArena from a hackathon demo into a scalable system.
+
+But it is **post-hackathon**.
+
+---
+
+# 17. The three demo moments I'd optimize everything around
+
+### Demo 1 — budget changes the answer
+
+> **"Find the best domain for a citation-verification agent under $20, renewal under $30."**
+
+Show name.com eliminate infeasible candidates.
+
+Not scoring them lower.
+
+Removing them.
+
+---
+
+### Demo 2 — model disagreement
+
+```text
+                     Qwen   Mistral   GPT-x   Nemo
+
+truthify.ai           93       41       84      37
+factprobe.dev         84       88       86      82
+```
+
+Then explain:
+
+> Truthify has the highest peak preference. FactProbe is robust across the agent ecosystem.
+
+Very legible.
+
+---
+
+### Demo 3 — actual behavior
+
+Give agents a realistic task.
+
+They see identical tool descriptions with different names/domains.
+
+They must choose one and call it.
+
+Then:
+
+```text
+FACTPROBE.DEV
+
+selected            82%
+valid invocation    78%
+task verified       76%
+```
+
+versus:
+
+```text
+VELORA.AI
+
+selected            43%
+valid invocation    41%
+task verified       39%
+```
+
+Again, demo data must come from real trials.
+
+That is when a judge understands:
+
+> **Oh. This isn't another naming generator.**
+
+---
+
+# Final instruction I would put at the top of `AGENTS.md`
+
+> **DomainArena is not a naming generator. It is an empirical decision engine over name.com's live domain inventory.**
+>
+> The project succeeds when it can demonstrate that a recommended domain is better under a defined adoption objective using reproducible evidence.
+>
+> Prioritize, in order:
+>
+> `real inventory → controlled semantic proxy → controlled selection → executable task success → cross-model robustness → registration`.
+>
+> Never substitute more generators, more scoring dimensions, prettier visualizations, evolution machinery, or LLM explanations for evidence that the recommendation improves the target outcome.
+>
+> If an experiment shows domain names have little effect under a particular audience/task, preserve that finding. DomainArena's value is discovering **when domains matter and how**, not proving that every domain matters.
+
+That final sentence is especially important.
+
+The strongest possible outcome isn't necessarily:
+
+> ".dev always gives agents +14%!"
+
+It may be:
+
+> **For direct MCP discovery, hostname has negligible impact once implementation-derived tool metadata is present; for web-search discovery it has a major effect; `.dev` helps technical tasks for certain families; human preference predicts consumer outcomes but poorly predicts agent invocation.**
+
+That kind of conditional map is exactly the kind of research **name.com itself could use**—and their developer hub explicitly says they intend to publish research on how AI-native domain experiences affect business outcomes. ([Name.dev][13])
+
+So the moat isn't ultimately **"our AI picks better names."**
+
+It's:
+
+# **DomainArena discovers the causal rules governing internet identity in an agent-mediated web.**
+
+And then name.com monetizes the decision when the winner gets registered.
+
+I can keep watching the current Devpost gallery and new domain/agent-search repos so you don't miss a competing name.com entry before submission.
+
+[1]: https://api-cloud-ai-hackathon-2026.devpost.com/project-gallery?utm_source=chatgpt.com "DevNetwork [API + Cloud + AI] Hackathon 2026: Join the nation's largest challenge-driven API + Cloud + AI hackathon @ API World 2026! - Devpost"
+[2]: https://github.com/Bingo-W/AgentSearchBench?utm_source=chatgpt.com "GitHub - Bingo-W/AgentSearchBench: This is the repository for our AgentSearch Benchmark. The official website is https://bingo-w.github.io/AgentSearchBench/ · GitHub"
+[3]: https://www.atom.com/domain-name-generator?utm_source=chatgpt.com "Domain Name Generator — Free AI Domain Names | Atom"
+[4]: https://namelix.net/?utm_source=chatgpt.com "Namelix: Business Name Generator - Powerful AI Naming Tool!"
+[5]: https://www.namecheap.com/domains/bulk-domain-search/?utm_source=chatgpt.com "Bulk Domain Search | Multiple Domain Checker - Namecheap"
+[6]: https://github.com/gregm711/agent-domain-service-mcp?utm_source=chatgpt.com "GitHub - gregm711/agent-domain-service-mcp · GitHub"
+[7]: https://github.com/dorukardahan/domain-search-mcp?utm_source=chatgpt.com "GitHub - dorukardahan/domain-search-mcp: Zero-config domain availability MCP server for Claude & ChatGPT. Live pricing via Porkbun, premium/auction detection via GoDaddy, AI suggestions, RDAP/WHOIS fallback. Stdio + HTTP. · GitHub"
+[8]: https://github.com/faizul666/domain-search-agent?utm_source=chatgpt.com "GitHub - faizul666/domain-search-agent: AI-assisted domain finder — generates brandable names, verifies live .com availability (RDAP), screens trademark & social handles, and ranks them by a weighted score. · GitHub"
+[9]: https://github.com/bitbuilder-io/domains?utm_source=chatgpt.com "GitHub - bitbuilder-io/domains: AI-powered domain name generation and availability checking via Cloudflare Registrar API. · GitHub"
+[10]: https://www.developerweek.com/newyork/hackathon/?utm_source=chatgpt.com "Hackathon – DeveloperWeek New York"
+[11]: https://api-cloud-ai-hackathon-2026.devpost.com/?ref_feature=challenge&ref_medium=discover&utm_source=chatgpt.com "DevNetwork [API + Cloud + AI] Hackathon 2026: Join the nation's largest challenge-driven API + Cloud + AI hackathon @ API World 2026! - Devpost"
+[12]: https://www.name.dev/case-studies/railway-in-product-domains?utm_source=chatgpt.com "One product engineer, two weeks, 1,700+ domains per month — name.dev"
+[13]: https://www.name.dev/updates/introducing-name-dev-the-developer-hub-for-the-name-com-api?utm_source=chatgpt.com "Introducing name.dev: The developer hub for the name.com API — name.dev"
+[14]: https://www.name.dev/case-studies/riley-grey-4-api-calls?utm_source=chatgpt.com "How Riley & Grey solved a key friction point with 4 API calls — name.dev"
+[15]: https://github.com/lmarena/arena-rank/blob/main/README.md?utm_source=chatgpt.com "arena-rank/README.md at main · lmarena/arena-rank · GitHub"
+[16]: https://github.com/tatsu-lab/alpaca_eval?utm_source=chatgpt.com "GitHub - tatsu-lab/alpaca_eval: An automatic evaluator for instruction-following language models. Human-validated, high-quality, cheap, and fast. · GitHub"
+[17]: https://github.com/lmarena/search-arena?utm_source=chatgpt.com "GitHub - lmarena/search-arena: ⚔️ [ICLR 2026] Official code of \"Search Arena: Analyzing Search-Augmented LLMs\". · GitHub"
+[18]: https://github.com/lm-sys/FastChat/blob/main/docs/arena.md?utm_source=chatgpt.com "FastChat/docs/arena.md at main · lm-sys/FastChat · GitHub"
+[19]: https://github.com/macanderson/arena/blob/main/docs/agent-engine-benchmarks-2026.md?utm_source=chatgpt.com "arena/docs/agent-engine-benchmarks-2026.md at main · macanderson/arena · GitHub"
+[20]: https://github.com/AIcling/agentic_geo?utm_source=chatgpt.com "GitHub - AIcling/agentic_geo: Code for AgenticGEO: A Self-Evolving Agentic System for Generative Engine Optimization · GitHub"
+[21]: https://github.com/algorithmicsuperintelligence/openevolve/blob/main/configs/default_config.yaml?utm_source=chatgpt.com "openevolve/configs/default_config.yaml at main · algorithmicsuperintelligence/openevolve · GitHub"
+[22]: https://github.com/Sra1Phani/domain-finder?utm_source=chatgpt.com "GitHub - Sra1Phani/domain-finder · GitHub"
+[23]: https://arena.ai/blog/agent-arena-methodology?utm_source=chatgpt.com "Agent Arena: Causal Evaluation of Agents in the Real World - Arena.ai"
+[24]: https://arxiv.org/abs/2403.04132?utm_source=chatgpt.com "Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference"
+[25]: https://arxiv.org/abs/2403.16950?utm_source=chatgpt.com "Aligning with Human Judgement: The Role of Pairwise Preference in Large Language Model Evaluators"
+[26]: https://arxiv.org/abs/2406.07791?utm_source=chatgpt.com "Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge"
+[27]: https://arxiv.org/abs/2410.21819?utm_source=chatgpt.com "Self-Preference Bias in LLM-as-a-Judge"
+[28]: https://arxiv.org/abs/2402.11296?utm_source=chatgpt.com "Dissecting Human and LLM Preferences"
+[29]: https://arxiv.org/abs/2404.04475?utm_source=chatgpt.com "Length-Controlled AlpacaEval: A Simple Way to Debias Automatic Evaluators"
+[30]: https://arxiv.org/abs/2606.16821?utm_source=chatgpt.com "How Much Can We Trust LLM Search Agents? Measuring Endorsement Vulnerability to Web Content Manipulation"
+[31]: https://arxiv.org/abs/2604.07536?utm_source=chatgpt.com "TRUSTDESC: Preventing Tool Poisoning in LLM Applications via Trusted Description Generation"
+[32]: https://arxiv.org/abs/2603.20213?utm_source=chatgpt.com "AgenticGEO: A Self-Evolving Agentic System for Generative Engine Optimization"
+[33]: https://arxiv.org/abs/2309.08532?utm_source=chatgpt.com "Connecting Large Language Models with Evolutionary Algorithms Yields Powerful Prompt Optimizers"
+[34]: https://arxiv.org/abs/1811.03415?utm_source=chatgpt.com "Credibility of Automatic Appraisal of Domain Names"
+[35]: https://github.com/halfaipg/domain-finder-mcp?utm_source=chatgpt.com "GitHub - halfaipg/domain-finder-mcp: Intelligent domain name finder MCP server that searches and provides suggestions for available domains · GitHub"

@@ -1,0 +1,2777 @@
+I found multiple **independent backtest-invalidating problems**, not just small modelling weaknesses. The biggest are calendar misalignment across assets, fake walk-forward splitting, research/live feature mismatch, same-bar execution leakage, and repeated optimization on the same sample. I would not carry forward any existing Sharpe as evidence after fixing these; the corrected system needs to regenerate all results from zero.
+
+Below is the coding-agent specification I would use.
+
+# BEAR — Quantitative Correctness Audit & Rebuild Specification
+
+## Executive verdict
+
+Treat all existing BEAR historical performance claims as:
+
+`LEGACY_RESEARCH_ONLY / NOT statistically validated`
+
+Do **not** interpret this as saying the strategy has no edge. There are several plausible effects in BEAR worth testing. The problem is that the current infrastructure cannot distinguish a real edge from implementation leakage, sample selection, researcher overfitting, or accounting artefacts.
+
+There are at least six independent mechanisms currently capable of inflating or distorting performance:
+
+1. Assets are cross-sectionally compared at different calendar dates.
+2. The general backtester calls itself walk-forward but does not actually isolate its test windows.
+3. Features in the research backtest differ mathematically from the paper trader.
+4. Some signals use information from the closing bar and fill at that same close.
+5. The universe is effectively selected using what exists today.
+6. Parameters and regime thresholds were repeatedly altered after observing performance on the same historical sample.
+
+Fixing only one does **not** rehabilitate the previous Sharpe.
+
+The rebuild should make incorrect research structurally impossible rather than relying on developers remembering statistical best practices.
+
+---
+
+# 1. P0: catastrophic calendar misalignment in `backtest_death.py`
+
+This is the largest concrete bug I found.
+
+Each Binance asset is loaded independently:
+
+```text
+asset A:
+index 0 = its first trading day
+
+asset B:
+index 0 = its first trading day
+```
+
+The code then creates `asset × max_n` matrices, stores each asset starting at column zero, and computes reversal/momentum cross-sectional ranks down matrix column `t`.
+
+**The timestamp arrays are loaded but not used to align those matrices.**
+
+This means:
+
+```text
+BTC index 365 = 2024-12-11
+
+recent token index 365 = 2025-04-??
+```
+
+can be treated as the same cross-section.
+
+The repository data proves the histories do not start simultaneously:
+
+* BTC begins at `1702339200000` (December 2023).
+* W begins at `1712102400000` (April 2024).
+
+Yet they are placed at the same zero-based array origin.
+
+### Consequence
+
+Every quantity depending on:
+
+* cross-sectional rank;
+* number of eligible assets;
+* top 20% selection;
+* portfolio membership;
+* regime-relative cross section;
+
+can be wrong.
+
+This is enough on its own to invalidate the reported death-score backtest.
+
+### Required correction
+
+Absolutely no cross-sectional operation may use row/index alignment.
+
+Canonical primary key:
+
+```text
+(timestamp_utc, venue, instrument_id)
+```
+
+Build a panel explicitly:
+
+```text
+2025-04-01 | BTC | feature...
+2025-04-01 | ETH | feature...
+2025-04-01 | W   | feature...
+2025-04-02 | BTC | feature...
+...
+```
+
+Then:
+
+```text
+feature.rank().over("timestamp")
+```
+
+Only compares assets that existed and were eligible at that **exact timestamp**.
+
+### Required binary test
+
+`test_calendar_alignment_not_row_index`
+
+Fixture:
+
+```text
+A: Jan 1 → Jan 10
+B: Jan 5 → Jan 10
+```
+
+Calculate rank on Jan 7.
+
+Then prepend 500 older observations to A.
+
+**Jan 7 ranks must remain exactly identical.**
+
+If adding prehistory to one asset alters another asset's cross-sectional rank on Jan 7, CI fails.
+
+---
+
+# 2. P0: the current walk-forward engine is not actually walk-forward
+
+`BacktestEngine.run()` constructs:
+
+```text
+train
+validation
+test
+```
+
+date arrays.
+
+But `_simulate_split()` receives only `test_dates` and never actually filters the simulation to them.
+
+More importantly:
+
+* `train` isn't used to fit anything;
+* `validation` isn't used to select anything;
+* `test_dates` don't constrain the simulated panel;
+* each split can replay the same overall data;
+* each split starts again from `initial_capital`;
+* the resulting curves are concatenated afterward.
+
+The API also explicitly describes `universe` and `tokenomics` as unused compatibility arguments.
+
+The split generation exists, but the execution code operates on the full `prices` and `factor_df` inputs.
+
+### Required architecture
+
+A split must be an actual object:
+
+```text
+Split {
+    train_start
+    train_end
+    validation_start
+    validation_end
+    calibration_start
+    calibration_end
+    test_start
+    test_end
+}
+```
+
+And each stage receives a restricted immutable view.
+
+The model API should make this impossible:
+
+```text
+model.fit(train_view)
+hyperparams.select(validation_view)
+calibrator.fit(calibration_predictions)
+backtest.execute(test_view)
+```
+
+The test executor should not even possess train/validation data except for already-fitted frozen model state.
+
+### Hard invariants
+
+For every OOS prediction:
+
+```text
+prediction_time ∈ split.test
+fit_row_id ∩ test_row_id = ∅
+validation_row_id ∩ test_row_id = ∅
+calibration_row_id ∩ test_row_id = ∅
+```
+
+And because 30-day forward outcomes overlap:
+
+```text
+train.label_end < validation_start
+validation.label_end < calibration_start
+calibration.label_end < test_start
+```
+
+This is **purging**, not merely ordinary time-series splitting.
+
+---
+
+# 3. P0: research and live/paper features are mathematically different
+
+This is subtle and extremely dangerous.
+
+In `backtest_death.py`, reversal and momentum are ranked:
+
+> cross-sectionally across assets at a given matrix column.
+
+In `paper_trader.py`, reversal and momentum are ranked:
+
+> against that token's own historical observations.
+
+For example:
+
+```python
+valid_vals = ret_7d[valid_mask]
+ranks = np.searchsorted(np.sort(valid_vals), valid_vals)
+```
+
+That is a **time-series percentile**, not a cross-sectional percentile.
+
+`src/bear/features/death_score.py` has the same discrepancy: comments say cross-sectional but the implementation ranks observations within the individual asset's historical series.
+
+Therefore:
+
+```text
+"momentum = 80"
+```
+
+means different things in research and production.
+
+Yet the paper trader uses weights supposedly optimized on the research implementation.
+
+That destroys train/serve parity.
+
+## Required correction
+
+There must be **one and only one implementation** of every feature.
+
+Delete/deprecate duplicated implementations in:
+
+```text
+backtest_death.py
+paper_trader.py
+death_score.py
+transparent.py
+```
+
+They all consume the same canonical feature package.
+
+Research:
+
+```text
+PIT snapshot → FeatureEngine → feature frame
+```
+
+Paper:
+
+```text
+PIT snapshot → SAME FeatureEngine → feature frame
+```
+
+Live:
+
+```text
+live snapshot → SAME FeatureEngine → feature frame
+```
+
+### Golden parity test
+
+`test_train_serve_feature_parity_golden`
+
+For one immutable snapshot:
+
+```text
+research features hash
+==
+paper features hash
+==
+live features hash
+```
+
+Not approximately equal. Exact values to defined numerical tolerance.
+
+---
+
+# 4. P0: same-bar execution leakage
+
+`backtest_death.py` calculates its signal using data through index `t`, including:
+
+* closing price `t`;
+* daily volume `t`.
+
+It then records:
+
+```python
+p_now = c[rebal_idx]
+```
+
+as the entry price.
+
+If the strategy needs the completed daily candle to know the signal, it cannot simultaneously execute at that candle's final close unless we explicitly model a close-auction signal available before the fill.
+
+### Correct clock
+
+Every signal must have:
+
+```text
+observation_end
+available_at
+decision_time
+order_submit_time
+fill_time
+mark_time
+```
+
+Hard relation:
+
+```text
+max(feature.available_at)
+    <= decision_time
+    <= order_submit_time
+    < fill_time
+```
+
+For a daily-close strategy, safest default:
+
+```text
+features: close of day t
+decision: after close t
+fill: next executable bar t+1
+```
+
+Use actual:
+
+* next open;
+* next mid;
+* or next VWAP plus modeled impact.
+
+Never silently use close `t`.
+
+---
+
+# 5. The general engine promises next-open execution but doesn't have open prices
+
+`BacktestEngine` documents:
+
+> signal at bar t → execute at bar t+1 open.
+
+But it pivots only `close`, calculates close-to-close returns, shifts positions one row and applies those returns.
+
+That creates an execution semantic ambiguity.
+
+If a position supposedly begins at `open(t+1)` but its PnL includes the move from `close(t)` to `close(t+1)`, it captures the overnight/opening gap it did not own.
+
+### Required resolution
+
+There must be one explicitly defined fill convention.
+
+Example:
+
+```text
+decision at t close
+fill at t+1 open
+holding return =
+    exit_price / actual_fill_price - 1
+```
+
+Do not derive trading PnL by shifting a weight series unless the return interval exactly matches the ownership interval.
+
+For correctness, I prefer an event ledger first, then vectorize later after equivalence tests.
+
+---
+
+# 6. Missing observations are converted into economic zeroes
+
+This is particularly dangerous for dying/illiquid tokens.
+
+Production backtesting uses patterns such as:
+
+```text
+pct_change().fill_null(0)
+funding_rate.fill_null(0)
+```
+
+That implies:
+
+> "we have no reliable price observation"
+
+becomes:
+
+> "the asset returned exactly 0%."
+
+And:
+
+> "we lack funding"
+
+becomes:
+
+> "funding was exactly zero."
+
+Those are completely different statements.
+
+The repo has an invariant asserting missing returns must not become zero, but that invariant tests `compute_log_returns()`, not the production backtesting path that performs the zero-fill.
+
+Even metrics later use `nan_to_num(..., nan=0)`, which can hide corruption in an equity curve.
+
+## Correct rule: fail closed
+
+Missingness must produce one of:
+
+```text
+MISSING_PRICE
+STALE_PRICE
+NO_FUNDING_OBSERVATION
+NOT_TRADABLE
+INSUFFICIENT_HISTORY
+```
+
+Then either:
+
+* abstain from opening;
+* explicitly carry an already-open position using an approved mark policy;
+* or invalidate the backtest if settlement cannot be established.
+
+Never silently invent 0.
+
+---
+
+# 7. Funding accounting is not currently trustworthy
+
+There are several separate problems.
+
+## 7.1 One funding rate is applied to aggregate short gross
+
+The main engine expects a funding frame essentially keyed only by timestamp and applies:
+
+```text
+funding_rate × total short gross
+```
+
+rather than individual funding per asset.
+
+But:
+
+```text
+BTC funding != W funding != PHA funding
+```
+
+Each open position requires its own settlement event.
+
+## 7.2 Funding is carried forward and can be charged repeatedly
+
+`compute_funding_pnl_series()` takes the most recent funding observation at or before each backtest observation and applies it again.
+
+If the funding payment occurs every eight hours but you're processing hourly rows, that can count the same settlement multiple times.
+
+Funding must be an **event**, not a state continuously multiplied at each arbitrary bar.
+
+## 7.3 Annualization semantics disagree
+
+`features/funding.py` says rates are per eight-hour period, but annualizes with:
+
+```text
+rate × 24 × 365
+```
+
+which corresponds to hourly funding.
+
+Period duration must be part of the source schema.
+
+### Required representation
+
+```text
+FundingEvent {
+    venue
+    instrument_id
+    settlement_time
+    rate
+    period_hours
+    known_at
+}
+```
+
+For every open position:
+
+```text
+funding_pnl =
+    signed_notional_at_settlement
+    × funding_rate
+```
+
+exactly once per settlement.
+
+---
+
+# 8. The main backtest ranking selects all candidate shorts
+
+In `_simulate_split()`:
+
+```text
+n_shorts = len(short_symbols)
+top_n = min(n_shorts, number_valid)
+```
+
+Therefore every valid `short_symbol` receives the maximum short weight.
+
+The cross-sectional ranking barely matters.
+
+For five assets and:
+
+```text
+max_short_weight = 0.35
+```
+
+this can imply:
+
+```text
+short gross = 1.75
+```
+
+despite config saying:
+
+```text
+max_short_gross = 1.25
+```
+
+The general simulator does not enforce many of the declared portfolio constraints.
+
+The separate optimizer also declares constraints such as min/max short gross, net exposure and max turnover, but not all are actually supplied to SLSQP.
+
+## Correct rule
+
+Every bar after target generation and after fill must satisfy:
+
+```text
+abs(weight_i) <= max_name_weight
+
+min_short_gross <= short_gross <= max_short_gross
+
+min_net <= net_exposure <= max_net
+
+turnover <= max_turnover
+
+position_notional <= ADV participation limit
+```
+
+Violation:
+
+```text
+raise PortfolioInvariantViolation
+```
+
+Never log-and-continue.
+
+---
+
+# 9. "Funding pressure" isn't funding
+
+The dominant death-score component has been described as funding pressure and given a 55% optimized weight.
+
+But the feature actually combines:
+
+```text
+30-day realized price volatility
++
+declining volume
+```
+
+It does not use actual funding rates.
+
+This is not merely naming style.
+
+It corrupts interpretability and research attribution:
+
+```text
+"funding contributed alpha"
+```
+
+would be factually false.
+
+Rename the existing feature according to what it measures, e.g.:
+
+```text
+volatility_volume_stress
+```
+
+Then test actual funding as a completely separate feature.
+
+Every feature needs provenance:
+
+```text
+feature_name
+feature_version
+formula
+source_fields
+source_dataset
+max_source_known_at
+```
+
+---
+
+# 10. Current optimization is classic data snooping
+
+The stored result shows:
+
+```text
+best Sharpe: 1.1062
+251 token trades
+21 portfolio periods
+71.43% winning periods
+```
+
+after a grid search over factor weights.
+
+That “251 trades” number exaggerates statistical sample size. Those positions are clustered inside only **21 rebalance periods** and are highly cross-sectionally dependent.
+
+Fifteen wins from 21 periods gives 71.4%, but even a simple Wilson interval is approximately:
+
+```text
+95% interval ≈ 50% – 86%
+```
+
+before accounting for strategy selection.
+
+As a rough sanity check, an annualized Sharpe of 1.106 across roughly monthly observations corresponds to a per-period Sharpe of about 0.32. With only ~21 periods, that is not overwhelming evidence even before considering the many configurations explored.
+
+More importantly, BEAR then went through repeated human optimization on essentially the same historical sample:
+
+```text
+change factor recipe
+→ optimize weights
+→ observe result
+
+add BTC +10% regime rule
+→ performance dramatically improves
+
+change SHORT threshold to BTC <0%
+→ performance improves again
+
+add LONG threshold >+5%
+→ evaluate again
+```
+
+Once a researcher has seen those outcomes, that history is no longer an untouched test set.
+
+A Sharpe selected after trying many alternatives requires multiple-testing correction. The Deflated Sharpe Ratio was specifically developed to account for selection bias and non-normal returns. ([DOI.org][1])
+
+Probability of Backtest Overfitting/CSCV attacks the same problem from a different direction by estimating how often the best in-sample configuration disappoints out of sample. ([eScholarship][2])
+
+For larger strategy searches, additionally calculate Hansen SPA or White's Reality Check. ([Taylor & Francis Online][3])
+
+### Important policy
+
+Everything observed during development becomes **research data**.
+
+It can never subsequently be called a final holdout.
+
+---
+
+# 11. `validate_tokens()` is not validation
+
+The routine identifies tokens that eventually suffered large realized drawdowns, then goes backward and asks whether they had high death scores beforehand.
+
+That is an interesting case study but statistically it is:
+
+```text
+select assets based on future bad outcome
+→ inspect historical score
+```
+
+It has no proper false-positive denominator.
+
+Suppose the model also flagged 300 tokens that subsequently moonshot. The current retrospective test would not tell us.
+
+### Replace with prospective classification
+
+For every eligible `(asset, date)` establish the label **without conditioning the sample on the result**:
+
+```text
+Y_30d_short_profit
+Y_30d_underperform_btc
+Y_30d_underperform_market
+Y_30d_drawdown
+Y_stopout_before_target
+```
+
+Evaluate all candidates.
+
+Then calculate:
+
+```text
+precision
+recall
+ROC-AUC
+PR-AUC
+Brier score
+log loss
+top-decile lift
+expected return by score decile
+calibration
+```
+
+---
+
+# 12. Survivorship / point-in-time universe is not enforced
+
+The death script loops over whichever Binance JSON files exist in the repository today.
+
+That is not a historical universe.
+
+The generic `markets` table is also essentially one current/static row per symbol rather than a versioned listing lifecycle.
+
+And although `BacktestEngine` exposes a `universe` parameter, it explicitly doesn't use it.
+
+The paper trader additionally uses a hand-maintained present-day `BLUE_CHIPS` exclusion list.
+
+That is especially dangerous. A token's future survival/quality can leak backward through membership in that list.
+
+## Required universe schema
+
+```text
+UniverseMembership {
+    venue
+    instrument_id
+    tradable_from
+    tradable_to
+    announcement_known_at
+    perpetual_available_from
+    perpetual_available_to
+    shortable
+    max_leverage
+    status
+}
+```
+
+At time `t`, candidate selection must be:
+
+```text
+tradable_from <= t < tradable_to
+AND known_at <= t
+AND sufficient_history == true
+AND liquidity constraints satisfied
+```
+
+Delisted and failed coins must remain in the historical dataset.
+
+---
+
+# 13. The data store cannot currently reconstruct "what was known then"
+
+BEAR needs **bitemporal data**.
+
+Today the store commonly:
+
+```text
+DELETE historical rows for symbol
+INSERT refreshed history
+```
+
+which throws away previous revisions/backfills.
+
+A backtest of fundamentals/tokenomics needs to distinguish:
+
+```text
+effective_at:
+when the thing was economically true
+
+known_at:
+when the market could first know it
+
+ingested_at:
+when BEAR obtained it
+```
+
+Those are not interchangeable.
+
+Example:
+
+```text
+Unlock occurs:       Dec 1
+Unlock announced:    Oct 1
+BEAR captured it:    Oct 2
+Schedule revised:    Nov 10
+```
+
+At Oct 15 the model may know the original Dec 1 unlock.
+
+It must **not** know the Nov 10 revision.
+
+## Required immutable event schema
+
+Every research datum should have:
+
+```text
+source
+venue
+instrument_id
+effective_at
+known_at
+ingested_at
+revision_id
+payload_hash
+source_version
+```
+
+Never overwrite.
+
+Backtest reads:
+
+```text
+WHERE known_at <= decision_time
+```
+
+and chooses the latest revision that was known by then.
+
+---
+
+# 14. Tokenomics lookahead protection is currently soft
+
+The CSV importer checks for:
+
+```text
+known_at > timestamp
+```
+
+but only logs a warning rather than rejecting the dataset.
+
+`ManualTokenomicsProvider` sorts records by `timestamp`, then walks them according to `known_at`. If publication order and effective-date order differ, early loop termination can return the wrong snapshot.
+
+Unlock retrieval also needs explicit `known_at` filtering.
+
+### Correctness rule
+
+PIT violations are errors:
+
+```text
+PointInTimeViolation
+```
+
+not warnings.
+
+No research result should be produced if one exists.
+
+---
+
+# 15. Some feature modules use today's knowledge inside historical calculations
+
+This is another serious class of lookahead.
+
+`compute_unlock_pressure()` calls:
+
+```python
+datetime.now(timezone.utc)
+```
+
+internally.
+
+Therefore it is inherently a "current snapshot" function, not a historical point-in-time feature.
+
+`compute_listing_features()` also uses the present time and latest prices. Cohort return calculation can consume the eventual full first-to-last return of other cohort assets.
+
+That can inject future information directly into historical features.
+
+## Rule
+
+Nothing in:
+
+```text
+features/
+labels/
+backtest/
+model/
+```
+
+may call `datetime.now()`.
+
+Every function receives:
+
+```text
+as_of: UTC timestamp
+```
+
+explicitly.
+
+Add a static CI test that AST-scans these packages and fails if `datetime.now`, `date.today`, etc. appear.
+
+---
+
+# 16. Regime classification contains future leakage and a mathematical error
+
+`detect_regime()` currently does approximately:
+
+```text
+_log_close = close
+EMA = EMA(close)
+btc_ema_30d = exp(EMA)
+```
+
+so the value called `_log_close` is not a log price, but the EMA is exponentiated anyway.
+
+It also defines daily return using a difference of this raw price series.
+
+More critically:
+
+```python
+crash_threshold = np.nanpercentile(ret_arr, 10)
+```
+
+uses the **full return array** when classifying every historical timestamp.
+
+Therefore future BTC returns determine whether an old day was a crash.
+
+### Required test
+
+`test_regime_future_mutation_invariance`
+
+1. Calculate regimes through date `T`.
+2. Replace everything after `T` with ±90% absurd returns.
+3. Recalculate.
+4. Every regime at `<=T` must remain identical.
+
+This same future-mutation test should be generalized to every feature.
+
+---
+
+# 17. The current IC evaluator is not calculating proper cross-sectional IC
+
+For a cross-sectional crypto signal the information coefficient at time `t` should normally be:
+
+```text
+Spearman(
+    factor values across assets at t,
+    future returns across those same assets
+)
+```
+
+This gives:
+
+```text
+IC_t
+```
+
+Then statistical analysis operates on:
+
+```text
+IC_1, IC_2, ..., IC_T
+```
+
+Instead the evaluator extracts factor and forward-return columns by row position and computes correlations across flattened/rolling rows. It doesn't even require a join on `(timestamp, symbol)`.
+
+That makes results sensitive to row ordering and mixes time-series and cross-sectional variation.
+
+## Required implementation
+
+```text
+for each timestamp t:
+    universe = eligible assets at t
+    x = feature(asset,t)
+    y = forward_return(asset,t,h)
+    IC[t] = Spearman(x,y)
+```
+
+Then:
+
+```text
+mean_IC
+ICIR
+HAC t-stat
+fraction_IC_positive
+IC by regime
+```
+
+Use FDR correction when testing many factors.
+
+### Binary test
+
+Shuffle the ordering of all panel rows.
+
+Every timestamp IC and final statistic must remain exactly unchanged.
+
+---
+
+# 18. Lasso preprocessing currently leaks validation data
+
+`lasso_select()` does:
+
+```python
+scaler.fit_transform(X)
+TimeSeriesSplit(...)
+LassoCV(...)
+```
+
+So the scaler observes the entire dataset before cross-validation.
+
+Additionally, flattened panel rows can cause a normal row-based `TimeSeriesSplit` to put assets from the same timestamp on opposite sides of a fold boundary.
+
+### Required architecture
+
+Use date-block folds.
+
+All assets belonging to timestamp `t` belong to exactly one fold.
+
+All preprocessing belongs inside the fitted pipeline:
+
+```text
+Pipeline(
+    imputer,
+    scaler,
+    model
+)
+```
+
+and `.fit()` receives training data only.
+
+If using standard time-series split tooling, remember that `gap` can exclude observations adjacent to a test period, but with overlapping financial labels we should purge by the actual label interval, not merely a fixed arbitrary row count. ([scikit-learn][4])
+
+---
+
+# 19. Current "confidence" values are not confidence
+
+This should be changed immediately.
+
+`structural.py` derives confidence from feature coverage plus an arbitrary small-sample multiplier.
+
+`transparent.py` defines it as:
+
+```text
+number of successfully calculated factors
+/
+number of factors
+```
+
+These quantify **data completeness**.
+
+They do not mean:
+
+```text
+P(trade succeeds)
+P(model prediction is correct)
+```
+
+Rename them:
+
+```text
+data_completeness
+feature_coverage
+source_quality
+```
+
+and reserve probability terminology for empirically calibrated OOS models.
+
+---
+
+# 20. Correct definition of machine-learned confidence
+
+BEAR should never output:
+
+```text
+Death score = 84
+Confidence = 84%
+```
+
+unless a calibration procedure genuinely shows that predictions in that region succeed roughly 84% of the time.
+
+Instead define executable labels.
+
+For a short entered at actual fill `F_t` and closed at actual executable fill `F_t+h`:
+
+```text
+raw_short_return_h =
+    -(F_exit / F_entry - 1)
+
+net_short_return_h =
+    raw_short_return
+    + realized_funding
+    - fees
+    - slippage
+    - borrow/carry costs
+```
+
+Also calculate relative alpha:
+
+```text
+alpha_h =
+    net_short_return_h
+    - hedge_or_benchmark_return_h
+```
+
+Useful labels:
+
+```text
+Y_profit_7d   = 1[net_short_return_7d > 0]
+Y_profit_30d  = 1[net_short_return_30d > 0]
+
+Y_alpha_30d   = 1[alpha_30d > 0]
+Y_alpha5_30d  = 1[alpha_30d > 5%]
+
+Y_stop        = 1[MAE breaches risk limit before exit]
+
+Y_tail        = 1[net_short_return_30d > 10%]
+```
+
+Continuous targets:
+
+```text
+net_short_return_7d
+net_short_return_30d
+alpha_30d
+MFE
+MAE
+time_to_target
+```
+
+---
+
+# 21. Start ML simple, not with a giant model
+
+Given BEAR's current effective sample size, sophisticated boosting will overfit easily.
+
+Initial models should be:
+
+### Binary outcome
+
+Penalized logistic regression:
+
+```text
+P(net short return > 0)
+P(alpha > threshold)
+P(stop-out)
+```
+
+Advantages:
+
+* interpretable;
+* regularized;
+* much lower variance;
+* straightforward probability calibration.
+
+### Continuous outcome
+
+Use:
+
+```text
+Ridge
+Huber regression
+quantile regression
+```
+
+to estimate:
+
+```text
+E[return]
+q10
+q50
+q90
+```
+
+Only introduce LightGBM/XGBoost after there are enough genuinely OOS time blocks to show consistent nonlinear benefit.
+
+Complexity should have to beat the linear baseline prospectively.
+
+---
+
+# 22. Probability calibration
+
+A classifier's raw `predict_proba()` is not automatically trustworthy.
+
+Generate **out-of-fold predictions** only.
+
+Then fit a separate probability calibrator using predictions the underlying model did not train on.
+
+Preferred initial calibration:
+
+```text
+Platt / sigmoid calibration
+```
+
+For large calibration datasets:
+
+```text
+isotonic regression
+```
+
+Scikit-learn specifically notes that isotonic can overfit when calibration datasets are small and tends to become more appropriate with larger samples, while reliability diagrams and proper scoring rules should be used to assess probability quality. ([GitHub][5])
+
+Report:
+
+```text
+Brier score
+log loss
+calibration intercept
+calibration slope
+reliability curve
+ECE if desired
+```
+
+### Example BEAR output
+
+Not:
+
+```text
+PHA
+Death Score: 86
+Confidence: 91
+```
+
+Instead:
+
+```text
+PHA / 30-day short
+
+Predicted P(net profit > 0):      0.67
+Predicted P(alpha > 5%):         0.54
+Expected net return:             +3.4%
+
+Predicted distribution:
+q10: -8.2%
+q50: +2.9%
+q90: +15.5%
+
+Data completeness:               92%
+Calibration cohort size:         184 OOS observations
+Independent rebalance blocks:    41
+OOD score:                       normal
+Model version:                   bear-short-30d-v4
+```
+
+That is quantitative confidence.
+
+---
+
+# 23. Separate four different kinds of uncertainty
+
+Do not collapse all uncertainty into one number.
+
+## A. Prediction probability
+
+```text
+P(trade profitable | current features)
+```
+
+from calibrated OOS predictions.
+
+## B. Outcome uncertainty
+
+```text
+q10/q50/q90 future return
+```
+
+from quantile/distributional modelling.
+
+## C. Statistical uncertainty around the model
+
+For example:
+
+```text
+OOS Sharpe:
+0.83
+95% block-bootstrap CI: [0.19, 1.39]
+```
+
+## D. Data quality / OOD
+
+```text
+data_completeness = 0.94
+OOD = false
+```
+
+These are conceptually different.
+
+---
+
+# 24. Confidence intervals must respect time dependence
+
+Do not bootstrap individual token rows randomly.
+
+Crypto assets move together.
+
+A portfolio with 15 names on one date does not create 15 independent macro observations.
+
+Bootstrap by:
+
+```text
+rebalance date blocks
+weeks/months
+market regimes
+```
+
+Use block bootstrap for confidence intervals around:
+
+```text
+mean return
+Sharpe
+hit rate
+drawdown
+IC
+calibration metrics
+```
+
+For sequential prediction intervals, standard conformal inference's exchangeability assumptions are problematic; adaptive/time-series conformal approaches are better suited to changing dependent sequences. ([Proceedings of Machine Learning Research][6])
+
+---
+
+# 25. Sharpe itself needs proper uncertainty
+
+The repo annualizes Sharpe using a simple `sqrt(periods_per_year)` multiplier.
+
+With serially correlated strategy returns, this can materially misstate Sharpe. Lo's treatment of Sharpe explicitly shows that simple square-root annualization is only justified under restrictive conditions. ([CFA Institute Research and Policy Center][7])
+
+For every promoted strategy report:
+
+```text
+raw OOS Sharpe
+HAC/serial-correlation-aware Sharpe inference
+Probabilistic Sharpe Ratio
+Deflated Sharpe Ratio
+```
+
+And disclose:
+
+```text
+number of independent OOS periods
+number of strategies/hyperparameters attempted
+```
+
+---
+
+# 26. Build a research trial registry
+
+This is essential because **human iteration is itself hyperparameter search**.
+
+Every experiment gets:
+
+```text
+experiment_id
+started_at
+git_sha
+data_snapshot_hash
+feature_manifest_hash
+split_manifest_hash
+model_config_hash
+
+features
+labels
+parameters
+thresholds
+objective
+
+IS metrics
+validation metrics
+OOS metrics
+
+parent_experiment
+reason_for_change
+```
+
+Examples that count as new trials:
+
+```text
+BTC threshold 10% → 5%
+BTC threshold 5% → 0%
+top 10% → top 20%
+remove memes
+add blue-chip exclusions
+change hold from 20d → 30d
+change factor weight
+add funding
+change stop loss
+```
+
+All of those increase selection bias.
+
+Do not only count automated grid-search trials.
+
+---
+
+# 27. Lock the final holdout
+
+All history already inspected during BEAR development should be treated as **development history**.
+
+A true final validation needs either:
+
+1. future prospective observations from the frozen strategy; or
+2. an independent historical source/time/venue genuinely untouched during development.
+
+Best approach now:
+
+```text
+historical data
+    ↓
+repair architecture
+    ↓
+nested walk-forward research
+    ↓
+freeze champion
+    ↓
+prospective paper trading from 2026-09-07 onward
+```
+
+Do not change the champion while accumulating the prospective evaluation.
+
+If it is changed:
+
+```text
+v1 prospective test ends
+v2 begins a new prospective test
+```
+
+---
+
+# 28. Correct nested research protocol
+
+For each outer fold:
+
+```text
+┌──────────────────────────────┐
+│ TRAIN                        │
+│ fit preprocessing/model      │
+└──────────────────────────────┘
+             ↓
+       PURGE / EMBARGO
+             ↓
+┌──────────────────────────────┐
+│ VALIDATION                   │
+│ choose hyperparameters       │
+└──────────────────────────────┘
+             ↓
+       PURGE / EMBARGO
+             ↓
+┌──────────────────────────────┐
+│ CALIBRATION                  │
+│ calibrate probabilities      │
+└──────────────────────────────┘
+             ↓
+       PURGE / EMBARGO
+             ↓
+┌──────────────────────────────┐
+│ TEST                         │
+│ frozen model, evaluate once  │
+└──────────────────────────────┘
+```
+
+Then roll forward.
+
+All assets from the same date belong to the same partition.
+
+For a 30-day outcome:
+
+```text
+if training label ends after test begins:
+    remove training observation
+```
+
+Never allow target-window overlap across the boundary.
+
+---
+
+# 29. Point-in-time feature architecture
+
+Every feature row should carry its own lineage:
+
+```text
+FeatureValue {
+    instrument_id
+    timestamp
+    feature_name
+    feature_version
+    value
+
+    valid
+    missing_reason
+
+    source_ids
+    max_source_known_at
+    snapshot_hash
+}
+```
+
+Then runtime can enforce:
+
+```text
+max_source_known_at <= decision_time
+```
+
+If false:
+
+```text
+FutureInformationError
+```
+
+This is much stronger than hoping individual feature functions don't peek.
+
+---
+
+# 30. Make correctness a type/state transition
+
+Do not allow arbitrary data frames to move freely through the research system.
+
+Conceptually:
+
+```text
+RawDataset
+    ↓ validation
+VerifiedPITDataset
+    ↓ feature computation
+VerifiedFeatureFrame
+    ↓ label construction
+PurgedLabeledDataset
+    ↓ fitting
+FrozenModel
+    ↓ OOF prediction
+VerifiedOOFPredictions
+    ↓ execution
+ExecutionLedger
+    ↓ audit
+VerifiedBacktest
+```
+
+Only `VerifiedBacktest` may publish:
+
+```text
+OOS Sharpe
+DSR
+PBO
+confidence/calibration
+```
+
+A failed invariant returns:
+
+```text
+status = INVALID
+```
+
+and performance fields should be hidden rather than still displayed next to a warning.
+
+---
+
+# 31. Hard verification manifest
+
+Every run must emit something like:
+
+```json
+{
+  "status": "VERIFIED_OOS",
+  "checks": {
+    "G01_data_snapshot_immutable": true,
+    "G02_timestamp_unique_monotonic": true,
+    "G03_future_mutation_invariance": true,
+    "G04_point_in_time_known_at": true,
+    "G05_calendar_alignment": true,
+    "G06_point_in_time_universe": true,
+    "G07_train_test_disjoint": true,
+    "G08_overlapping_labels_purged": true,
+    "G09_preprocessing_train_only": true,
+    "G10_calibration_disjoint": true,
+    "G11_train_serve_parity": true,
+    "G12_execution_after_information": true,
+    "G13_execution_venue_consistent": true,
+    "G14_missing_data_fail_closed": true,
+    "G15_funding_exact_once": true,
+    "G16_costs_applied": true,
+    "G17_portfolio_constraints": true,
+    "G18_margin_liquidation_modelled": true,
+    "G19_delisting_handled": true,
+    "G20_pnl_conservation": true,
+    "G21_metrics_oos_only": true,
+    "G22_experiment_registered": true,
+    "G23_selection_bias_metrics": true,
+    "G24_reproducibility_hash": true
+  }
+}
+```
+
+If **one** required gate is false:
+
+```text
+status = INVALID
+```
+
+not:
+
+```text
+status = mostly_valid
+```
+
+---
+
+# 32. Exact P0 test suite
+
+These should be implemented before more strategy research.
+
+## `test_future_mutation_invariance`
+
+Compute all signals through cutoff `T`.
+
+Then mutate every observation after `T`:
+
+```text
+prices ×100
+prices ÷100
+volume ×10000
+funding ±20%
+tokenomics absurd values
+```
+
+Recompute.
+
+Assert every feature/prediction at `<=T` is bit-identical or within deterministic floating tolerance.
+
+This catches an enormous class of lookahead bugs.
+
+---
+
+## `test_calendar_alignment_not_row_index`
+
+Different listing dates.
+
+Add/remove prehistory.
+
+Same calendar-date cross section must not move.
+
+---
+
+## `test_walk_forward_outputs_only_test_dates`
+
+For each split:
+
+```text
+set(output.timestamps) ⊆ set(test.timestamps)
+```
+
+And across outer test folds:
+
+```text
+no duplicate test timestamps
+```
+
+unless overlap is explicitly intended and handled.
+
+---
+
+## `test_fit_receives_train_only`
+
+Instrument estimator and transformers.
+
+Record every observation ID passed into `.fit()`.
+
+Assert:
+
+```text
+fit_ids ⊆ train_ids
+fit_ids ∩ validation_ids = ∅
+fit_ids ∩ calibration_ids = ∅
+fit_ids ∩ test_ids = ∅
+```
+
+---
+
+## `test_purged_labels_do_not_overlap`
+
+Every labelled row has:
+
+```text
+label_start
+label_end
+```
+
+At a split boundary:
+
+```text
+max(train.label_end) < next_partition_start
+```
+
+after purge.
+
+---
+
+## `test_same_bar_close_fill_rejected`
+
+Create a feature requiring completed candle `t`.
+
+Attempt fill at that candle's close.
+
+Expected:
+
+```text
+ExecutionTimingViolation
+```
+
+Fill at next bar should pass.
+
+---
+
+## `test_missing_return_never_zero`
+
+Delete a candle while a position is open.
+
+Assert the engine either:
+
+```text
+uses explicit approved stale-mark policy
+```
+
+or:
+
+```text
+raises MissingMarketDataError
+```
+
+Never generates a zero return.
+
+---
+
+## `test_funding_per_symbol_exact_settlements`
+
+Two instruments:
+
+```text
+A: +0.01%
+B: -0.02%
+```
+
+different notionals and settlement times.
+
+Hand-calculate funding ledger.
+
+Assert exact equality and exactly one entry per settlement event.
+
+---
+
+## `test_gross_constraints_enforced_every_bar`
+
+Generate random desired weights.
+
+For every executed portfolio assert:
+
+```text
+name cap
+short gross
+long gross
+net exposure
+turnover
+liquidity participation
+```
+
+all satisfy config.
+
+---
+
+## `test_train_serve_parity_golden`
+
+Same PIT snapshot.
+
+Research scorer and live scorer must return identical:
+
+```text
+feature vector
+score
+model probability
+```
+
+---
+
+## `test_long_short_pnl_sign`
+
+Use deterministic:
+
+```text
+100 → 110
+100 → 90
+```
+
+Verify long and short PnL manually.
+
+This should catch the paper trader's current issue where `close_positions()` uses the short PnL formula irrespective of direction.
+
+---
+
+## `test_pnl_conservation`
+
+For every run:
+
+```text
+ending_equity
+==
+initial_equity
++ realized_price_pnl
++ unrealized_price_pnl
++ funding
+- fees
+- slippage
+- other_costs
+```
+
+to fixed numerical tolerance.
+
+---
+
+## `test_regime_future_invariance`
+
+Future BTC mutations cannot change historical regimes.
+
+---
+
+## `test_cross_sectional_ic_row_order_invariant`
+
+Randomly reorder the complete panel.
+
+IC results must be identical.
+
+---
+
+## `test_no_current_universe_backfill`
+
+Asset:
+
+```text
+not listed → listed → delisted
+```
+
+The strategy cannot select it before listing or after delisting.
+
+---
+
+## `test_delisted_asset_does_not_disappear`
+
+Have an open position when an instrument delists.
+
+Its PnL must get an explicit settlement/close outcome.
+
+It cannot vanish from history.
+
+---
+
+## `test_cost_missing_liquidity_fails_closed`
+
+The current cost model invents an ADV of $1m when ADV is invalid and estimates depth as a fraction of ADV.
+
+Replace this behaviour.
+
+Missing execution liquidity must not magically become a cheap trade.
+
+---
+
+## `test_rebalance_frequency_honored`
+
+Signals change every day.
+
+Set:
+
+```text
+rebalance = weekly
+```
+
+Assert trades occur only on permitted rebalance events.
+
+---
+
+## `test_split_uses_calendar_duration`
+
+The current splitter uses:
+
+```text
+months × 21 observations
+```
+
+That means twelve months changes meaning depending on hourly vs daily input.
+
+Build hourly and daily fixtures and confirm:
+
+```text
+12 months
+```
+
+means twelve actual calendar months in both.
+
+---
+
+## `test_no_duplicate_equity_timestamps_across_outer_splits`
+
+Merged OOS curve:
+
+```text
+timestamp unique
+timestamp ascending
+capital continuous
+```
+
+A split must not reset the published global OOS equity to $1m.
+
+---
+
+## `test_data_revision_replay`
+
+Ingest:
+
+```text
+V1 known Jan 1
+V2 revision known Feb 1
+```
+
+Replay Jan 15 → V1.
+
+Replay Feb 15 → V2.
+
+---
+
+## `test_unlock_known_at`
+
+Unlock effective June 1.
+
+Original announcement January 1.
+
+Revision announcement May 1.
+
+A February decision sees the January schedule but never the May revision.
+
+---
+
+## `test_model_label_shuffle`
+
+Shuffle outcomes in date blocks.
+
+Any apparent OOS edge should collapse toward the null.
+
+This is an excellent system-level sanity test.
+
+---
+
+## `test_preprocessor_future_scale_shift`
+
+Train X roughly around 1.
+
+Set test X around 1,000,000.
+
+Scaler means/variances must remain exactly those fitted to train.
+
+---
+
+## `test_calibrator_disjoint`
+
+Assert every probability used to train the calibrator was produced OOF relative to the underlying estimator.
+
+---
+
+## `test_probability_calibration_synthetic`
+
+Generate synthetic data with a known logistic probability function.
+
+Train/calibrate model.
+
+Reliability bins should recover the known probabilities within defined statistical tolerance.
+
+---
+
+## `test_confidence_semantics`
+
+API schema must not allow:
+
+```text
+confidence = feature coverage
+```
+
+Require explicit names:
+
+```text
+data_completeness
+p_profit
+p_alpha
+calibration_version
+```
+
+---
+
+## `test_experiment_registry_required`
+
+No strategy can be promoted without:
+
+```text
+experiment_id
+git_sha
+data_snapshot_hash
+split_hash
+feature_hash
+model_hash
+```
+
+---
+
+## `test_holdout_locked`
+
+Once final test starts:
+
+```text
+model/config hash frozen
+```
+
+Any model/config change creates a new candidate and a new prospective test.
+
+---
+
+## `test_reproducible_backtest`
+
+Same:
+
+```text
+git SHA
+data hash
+config hash
+random seed
+```
+
+must generate identical:
+
+```text
+prediction hash
+trade-ledger hash
+metric hash
+```
+
+---
+
+## `test_execution_venue_consistency`
+
+If actual trading venue is Hyperliquid:
+
+```text
+fills
+funding
+fees
+listing availability
+liquidity
+liquidations
+```
+
+must use Hyperliquid execution data.
+
+Binance can be a **feature source**, but cannot silently become the execution venue.
+
+---
+
+# 33. Add property-based tests
+
+Use Hypothesis to generate pathological market panels:
+
+```text
+missing candles
+duplicate candles
+out-of-order timestamps
+different listing dates
+delistings
+1000% pumps
+-90% crashes
+negative funding
+zero funding
+missing funding
+zero volume
+tiny liquidity
+symbol rename
+price discontinuities
+timezone boundaries
+```
+
+The acceptable outcomes are:
+
+1. deterministic correct computation; or
+2. explicit typed failure.
+
+Never silent fallback.
+
+---
+
+# 34. Repair specific feature modules
+
+There are additional code-quality failures that strongly suggest the current feature DAG has not been exercised properly end-to-end.
+
+## Dilution
+
+`dilution.py` has problematic optional-column handling and uses row shifts as if they were calendar-day shifts. It also drops timestamps from the final feature output.
+
+Do not implement:
+
+```text
+shift(56 rows) = 56 days
+```
+
+unless cadence continuity has been explicitly validated.
+
+Use timestamp-aware as-of/calendar calculations.
+
+Every feature frame retains:
+
+```text
+timestamp
+instrument_id
+```
+
+always.
+
+## Reversal
+
+The reversal implementation builds an intermediate selection without `close` then references `close`, and its returned columns omit timestamp.
+
+Fix and add actual end-to-end tests rather than function-presence tests.
+
+---
+
+# 35. Paper trader has accounting/state inconsistencies
+
+The paper trader needs to become the **same execution engine** as backtesting, with only its input clock changed from historical replay to current snapshots.
+
+Current issues include:
+
+* long positions can be closed using short PnL arithmetic;
+
+* regime values are SHORT/LONG/SKIP while summary logic looks for ACTIVE;
+
+* saved state still reports a +10% threshold although strategy code uses SHORT `<0%` and LONG `>+5%`;
+
+* its asset time index has the same risk of calendar mismatch;
+
+* no faithful funding/slippage/liquidation ledger.
+
+There should not be separate accounting logic for paper and backtest.
+
+Use:
+
+```text
+ExecutionEngine(mode="historical")
+ExecutionEngine(mode="paper")
+```
+
+with identical accounting.
+
+---
+
+# 36. Current E2E tests test plumbing, not scientific validity
+
+The existing E2E report says 18/18 pass, but its checks are largely:
+
+```text
+endpoint responds
+leaderboard contains rows
+dashboard works
+factor fields exist
+timestamps match deployment
+```
+
+Those are useful product tests.
+
+They say almost nothing about:
+
+```text
+lookahead
+survivorship
+execution
+statistical validity
+model calibration
+selection bias
+```
+
+Create two independent test suites:
+
+```text
+product_e2e/
+quant_correctness/
+```
+
+A green website must never imply a green quant engine.
+
+---
+
+# 37. Statistical reporting required for every factor
+
+For each feature and horizon:
+
+```text
+coverage
+number of assets
+number of dates
+
+mean cross-sectional IC
+median IC
+ICIR
+HAC t-stat
+p-value
+FDR-adjusted p-value
+
+IC > 0 frequency
+
+top-minus-bottom decile return
+net top-minus-bottom return after costs
+
+performance:
+    bull
+    bear
+    crash
+    high volatility
+    low volatility
+
+year-by-year
+venue-by-venue
+market-cap buckets
+liquidity buckets
+```
+
+No factor enters the production model merely because an academic paper says it should work.
+
+The paper is a prior/hypothesis.
+
+BEAR's PIT/OOS data is the evidence.
+
+---
+
+# 38. Statistical reporting required for every strategy
+
+Minimum:
+
+```text
+OOS net CAGR
+OOS volatility
+OOS Sharpe
+OOS Sortino
+max drawdown
+drawdown duration
+
+turnover
+fees
+slippage
+funding contribution
+
+capacity vs ADV
+
+number of independent rebalance periods
+number of trades
+
+hit rate
+average win
+average loss
+profit factor
+
+worst squeeze
+worst month
+worst regime
+
+block-bootstrap confidence intervals
+
+Probabilistic Sharpe Ratio
+Deflated Sharpe Ratio
+PBO
+
+performance by outer fold
+```
+
+Do not report only the aggregate number.
+
+A strategy with:
+
+```text
+Fold 1 +50%
+Fold 2 +40%
+Fold 3 +30%
+Fold 4 -45%
+Fold 5 +35%
+```
+
+is qualitatively different from one whose alpha is distributed evenly.
+
+---
+
+# 39. Multiple testing protection
+
+Implement three complementary methods.
+
+### Deflated Sharpe Ratio
+
+Use to ask:
+
+> Given non-normal returns and all the strategy variants we tried, how impressive is this Sharpe really?
+
+([DOI.org][1])
+
+### PBO / CSCV
+
+Use to ask:
+
+> When we pick the best-looking strategy in one partition, how frequently is it poor out of sample?
+
+([eScholarship][2])
+
+### SPA / Reality Check
+
+Use when comparing a large family of strategies against a benchmark while accounting for data snooping. ([Taylor & Francis Online][3])
+
+Store every attempted strategy so these calculations have a credible trial universe.
+
+---
+
+# 40. Model acceptance should be probabilistic, not narrative
+
+Example promotion rules:
+
+```text
+REQUIRE:
+
+n_outer_test_blocks >= threshold
+
+DSR probability >= 0.95
+
+PBO <= 0.20
+
+block bootstrap:
+P(net OOS mean return > 0) >= 0.95
+
+calibration:
+Brier better than base-rate predictor
+
+calibration slope within acceptable band
+
+cost-stressed result still positive
+
+no single period contributes > X% of cumulative PnL
+
+no hard invariant failures
+```
+
+Exact thresholds can evolve, but they must be **specified before opening the final holdout**.
+
+---
+
+# 41. Individual trade gating
+
+The strategy does not need to trade every prediction.
+
+A candidate can expose:
+
+```text
+P_profit = 0.67
+E_return = +3.2%
+q10 = -8.4%
+estimated_cost = 0.7%
+P_stopout = 0.12
+OOD = false
+data_completeness = 0.94
+```
+
+Then deterministic policy:
+
+```text
+trade iff:
+
+P_profit >= calibrated_threshold
+AND E_return - estimated_cost >= required_edge
+AND P_stopout <= max_allowed
+AND OOD == false
+AND data_completeness >= threshold
+AND liquidity constraints pass
+```
+
+The model estimates probability.
+
+The policy decides whether that probability offers adequate risk-adjusted economics.
+
+---
+
+# 42. Abstention is a feature
+
+A robust quantitative system needs:
+
+```text
+NO_TRADE
+```
+
+as a first-class outcome.
+
+Reasons:
+
+```text
+insufficient history
+missing PIT tokenomics
+unreliable market price
+not enough calibration support
+out-of-distribution features
+liquidity too thin
+predicted edge smaller than cost uncertainty
+```
+
+Do not force unknowns to score 50 and then renormalize remaining factors.
+
+Unknown must remain unknown.
+
+---
+
+# 43. Recommended implementation order
+
+## Phase 0 — invalidate misleading legacy labels
+
+Immediately mark historical dashboard figures:
+
+```text
+LEGACY / IN-SAMPLE / UNVERIFIED
+```
+
+Remove language such as:
+
+```text
+validated Sharpe
+backtest-proven
+71% confidence
+```
+
+until the new verifier passes.
+
+Do not delete historical experiments; retain them for the experiment-trial registry.
+
+---
+
+## Phase 1 — canonical data/time system
+
+Implement:
+
+```text
+instrument IDs
+UTC timestamps
+effective_at
+known_at
+ingested_at
+revision history
+point-in-time universe
+immutable raw snapshots
+data hashes
+```
+
+Nothing else is worth trusting until this exists.
+
+---
+
+## Phase 2 — single feature DAG
+
+Unify every feature implementation.
+
+Required interface:
+
+```text
+compute_features(snapshot, decision_time)
+```
+
+No function accesses data beyond the supplied PIT snapshot.
+
+Every output includes lineage.
+
+---
+
+## Phase 3 — execution ledger
+
+Replace implicit return arithmetic with explicit:
+
+```text
+Signal
+Order
+Fill
+Position
+FundingSettlement
+Fee
+Mark
+Close
+Liquidation
+DelistingSettlement
+```
+
+First make it slow and unquestionably correct.
+
+Then optimize after reference-equivalence tests.
+
+---
+
+## Phase 4 — real purged nested walk-forward
+
+Create:
+
+```text
+outer OOS folds
+inner train/validation
+calibration partition
+purging
+experiment registry
+OOF prediction store
+```
+
+No full-history grid search.
+
+---
+
+## Phase 5 — calibrated probability model
+
+Start:
+
+```text
+regularized logistic
++
+Platt calibration
+```
+
+plus:
+
+```text
+ridge/quantile return model
+```
+
+Compare all future models against these baselines.
+
+---
+
+## Phase 6 — quantitative uncertainty
+
+Add:
+
+```text
+block bootstrap
+HAC inference
+PSR
+DSR
+PBO
+SPA/Reality Check
+calibration diagnostics
+```
+
+---
+
+## Phase 7 — prospective frozen paper test
+
+Freeze:
+
+```text
+features
+weights/model
+thresholds
+execution rules
+cost model
+```
+
+Begin a versioned prospective paper record.
+
+Do not optimize using its outcomes.
+
+---
+
+# 44. CI/static rules that should make leakage difficult to introduce
+
+Add an AST/static linter that fails builds if it finds prohibited patterns.
+
+Inside feature/research/backtest packages:
+
+```text
+datetime.now()
+date.today()
+```
+
+forbidden.
+
+Unsafe patterns requiring explicit waiver:
+
+```text
+fill_null(0)
+nan_to_num(..., nan=0)
+```
+
+on:
+
+```text
+returns
+prices
+funding
+liquidity
+tokenomics
+```
+
+Forbidden feature outputs without:
+
+```text
+timestamp
+instrument_id
+```
+
+Forbidden direct full-data transformations before CV:
+
+```text
+StandardScaler.fit_transform(full_X)
+PCA.fit_transform(full_X)
+imputer.fit_transform(full_X)
+```
+
+Forbidden row-index cross-sectional ranking.
+
+Require grouping key.
+
+---
+
+# 45. Reproducibility contract
+
+Every result shown in BEAR should be reproducible from:
+
+```text
+git_sha
+data_snapshot_hash
+universe_hash
+feature_manifest_hash
+split_manifest_hash
+config_hash
+seed
+```
+
+A dashboard result should be clickable conceptually back to:
+
+```text
+result
+→ experiment
+→ model
+→ predictions
+→ feature values
+→ raw source observations
+```
+
+This turns BEAR into an auditable research system rather than a collection of clever scripts.
+
+---
+
+# 46. Definition of Done
+
+Do not call the rebuilt backtest quantitatively trustworthy until:
+
+### Data
+
+* [ ] timestamp-aligned canonical panel
+* [ ] point-in-time universe
+* [ ] known_at/effective_at enforced
+* [ ] immutable revision history
+* [ ] historical delistings retained
+
+### Features
+
+* [ ] one implementation for research/paper/live
+* [ ] future-mutation invariance passes
+* [ ] all features retain timestamp/instrument ID
+* [ ] no implicit present-time calls
+* [ ] missingness explicit
+
+### ML
+
+* [ ] purged date-block nested validation
+* [ ] preprocessing train-only
+* [ ] true OOF predictions
+* [ ] disjoint probability calibration
+* [ ] Brier/log-loss/reliability reported
+* [ ] uncertainty intervals reported
+* [ ] OOD/abstention implemented
+
+### Execution
+
+* [ ] fill happens after information availability
+* [ ] actual execution venue model
+* [ ] per-asset funding exactly once
+* [ ] fees/slippage/impact
+* [ ] margin/liquidations
+* [ ] delisting settlement
+* [ ] PnL conservation
+
+### Statistics
+
+* [ ] cross-sectional IC by date
+* [ ] OOS fold results
+* [ ] block-bootstrap CIs
+* [ ] HAC-aware inference
+* [ ] DSR
+* [ ] PBO
+* [ ] trial registry
+* [ ] final locked holdout/prospective test
+
+### CI
+
+* [ ] all P0 tests pass
+* [ ] verification manifest all true
+* [ ] reproducibility hash test passes
+* [ ] any hard-gate failure suppresses performance claims
+
+---
+
+# 47. What to preserve from BEAR
+
+Do not throw the thesis away.
+
+Keep testing:
+
+```text
+dilution / supply growth
+FDV overhang
+unlock pressure
+post-listing decay
+medium-term reversal
+weak relative momentum
+funding/carry
+volume decay
+activity decline
+value capture
+squeeze risk
+BTC/market regime
+smart-money positioning
+```
+
+The architectural idea—ranking structurally weak tokens and shorting them conditional on market regime and execution risk—is coherent.
+
+What needs to disappear is the heuristic chain:
+
+```text
+interesting idea
+→ quick backtest
+→ great Sharpe
+→ change threshold
+→ better Sharpe
+→ call it validated
+```
+
+Replace it with:
+
+```text
+hypothesis
+→ immutable PIT data
+→ causal timing audit
+→ quantitative factor test
+→ nested OOS model
+→ calibrated probabilities
+→ realistic execution
+→ multiple-testing correction
+→ frozen prospective validation
+```
+
+That is the difference between a research dashboard and a quantitative research platform.
+
+---
+
+# Final instruction
+
+**Do not attempt to salvage the existing Sharpe by incrementally patching `backtest_death.py`.**
+
+Build the correctness layer first, make the current system fail the P0 tests, repair it until every gate passes, and then rerun the strategy completely from scratch.
+
+The first number I want to see after the rebuild is not Sharpe.
+
+I want:
+
+```text
+VERIFICATION: 24 / 24 HARD GATES PASS
+DATA SNAPSHOT: <hash>
+MODEL: <hash>
+OUTER OOS PREDICTIONS: <n>
+INDEPENDENT TEST BLOCKS: <n>
+```
+
+Only after that should BEAR print the Sharpe.
+
+The single most important engineering principle here is **future-mutation invariance**: changing anything after decision time must be mathematically incapable of changing that decision. Combined with immutable `known_at` data, timestamp-keyed panels, exact train/serve parity, and a fill ledger, it catches most of the subtle leakage classes that currently affect BEAR.
+
+[1]: https://doi.org/10.3905%2Fjpm.2014.40.5.094 "https://doi.org/10.3905%2Fjpm.2014.40.5.094"
+[2]: https://escholarship.org/uc/item/4w1110bb "https://escholarship.org/uc/item/4w1110bb"
+[3]: https://www.tandfonline.com/doi/abs/10.1198/073500105000000063 "https://www.tandfonline.com/doi/abs/10.1198/073500105000000063"
+[4]: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html"
+[5]: https://github.com/scikit-learn/scikit-learn/blob/main/doc/modules/calibration.rst "https://github.com/scikit-learn/scikit-learn/blob/main/doc/modules/calibration.rst"
+[6]: https://proceedings.mlr.press/v162/zaffran22a.html "https://proceedings.mlr.press/v162/zaffran22a.html"
+[7]: https://rpc.cfainstitute.org/research/financial-analysts-journal/2002/the-statistics-of-sharpe-ratios "https://rpc.cfainstitute.org/research/financial-analysts-journal/2002/the-statistics-of-sharpe-ratios"

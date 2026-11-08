@@ -1,0 +1,1728 @@
+	
+meta	
+style_prefix	"Stop-motion animation, clay-textured, handcrafted aesthetic, warm parchment tones, subtle grain, shallow depth of field, volumetric lighting"
+negative_prompt	"photorealistic, smooth CG, 3D render, plastic, glossy, commercial, bright colors, cartoon, anime, digital art, sharp edges"
+audio	"silence, no audio, complete quiet"
+total_clips	186
+categories	
+0	
+name	"I. World Establishments (12 clips)"
+count	15
+clips	
+0	
+id	"K1"
+title	"Abhinavagupta's Cave"
+prompt	"A clay-textured stone cave in Kashmir. Stacked birch-bark manuscripts on wooden shelves against rough stone walls. A single oil lamp flickers on a low desk, casting warm amber light. A clay cup of water beside the lamp. The cave opening visible in the distance shows a sliver of mountain sky. Slow push-in toward the manuscripts. 15s. *For: 36 tattvas, Spanda, Pratyabhijñā videos — sets the Kashmir Śaiva context.*"
+tags	
+0	"36 tattvas"
+1	"Spanda"
+2	"Pratyabhijñā videos — sets the Kashmir Śaiva context."
+duration_sec	15
+1	
+id	"K2"
+title	"Mountain Temple at Dawn"
+prompt	"A clay-textured stone temple complex in a Himalayan valley. Dawn light breaks over snowy peaks behind the temple. Mist drifts between carved pillars. The temple is built of warm grey stone with simple geometric carvings. A single saffron flag hangs still. Slow crane upward revealing the full valley. 15s. *For: establishing shots in ANY Kashmir Śaivism video.*"
+tags	
+0	"establishing shots in ANY Kashmir Śaivism video."
+duration_sec	15
+2	
+id	"K3"
+title	"Liṅga in Still Water"
+prompt	"A polished stone liṅga emerges from dark still water. The water reflects the liṅga perfectly. A single beam of golden light from above illuminates the tip of the liṅga. Ripples move outward from the base in slow motion, distorting the reflection, then settling back to stillness. The surface becomes glass again. 15s. *For: opening consciousness discussion, Paramaśiva concept.*"
+tags	
+0	"opening consciousness discussion"
+1	"Paramaśiva concept."
+duration_sec	15
+3	
+id	"K4"
+title	"Śiva-Śakti Stone Carving"
+prompt	"A stone wall in darkness. A carved relief of Śiva and Pārvatī seated together is slowly revealed by warm light shifting from left to right. Their forms are simplified, geometric, clay-textured. Śiva's hand rests lightly on Pārvatī's shoulder. They face outward, calm. Light continues to move, casting their shadow larger on the wall behind them. 12s. *For: Śiva-Śakti relationship, Trika, Ardhanārīśvara.* ### Sufi / Illuminationist World"
+tags	
+0	"Śiva-Śakti relationship"
+1	"Trika"
+2	"Ardhanārīśvara."
+duration_sec	12
+4	
+id	"S1"
+title	"Andalusian Courtyard at Dusk"
+prompt	"A clay-textured courtyard garden with a central stone fountain. Water catches the last light of dusk. Geometric tilework covers the surrounding walls in repeating star patterns. Orange trees in clay pots in the corners. The sky above transitions from deep blue to indigo. A single lantern on the wall flickers to life. 15s. *For: Ibn Arabi, Rumi, Sufi mysticism videos.*"
+tags	
+0	"Ibn Arabi"
+1	"Rumi"
+2	"Sufi mysticism videos."
+duration_sec	15
+5	
+id	"S2"
+title	"Lantern in the Niche"
+prompt	"A clay-textured niche in a stone wall. Inside, a single glass lantern hangs, burning with a warm steady flame. The light illuminates the geometric tilework around the niche. The flame occasionally flickers but never goes out. The niche itself is simple, unadorned — the light is the only ornament. Slow push-in toward the flame. 12s. *For: Illumination, Suhrawardi, Nūr al-Anwār, the Light verse.*"
+tags	
+0	"Illumination"
+1	"Suhrawardi"
+2	"Nūr al-Anwār"
+3	"the Light verse."
+duration_sec	12
+6	
+id	"S3"
+title	"The Desert Night"
+prompt	"A clay-textured desert landscape under a star-filled sky. A small fire burns at center. A single clay pot beside it. The firelight illuminates the folds of the terrain. No tent, no other structures. The stars are unusually large and bright. A low wind moves sand across the ground. 15s. *For: solitude, theophanies, Suhrawardi's midnight sun, desert mysticism.*"
+tags	
+0	"solitude"
+1	"theophanies"
+2	"Suhrawardi's midnight sun"
+3	"desert mysticism."
+duration_sec	15
+7	
+id	"N1"
+title	"The Academy Colonnade"
+prompt	"A clay-textured marble colonnade at dusk. Torches flicker on stone pillars at intervals. The path leads between columns toward a distant view of the sea. The marble has a warm patina, not pure white. Shadows stretch long across the stone floor. A single scroll lies unrolled on a bench. Slow walk-through between columns. 15s. *For: Proclus, Plotinus, Plato, Academy setting.*"
+tags	
+0	"Proclus"
+1	"Plotinus"
+2	"Plato"
+3	"Academy setting."
+duration_sec	15
+8	
+id	"N2"
+title	"Florentine Study"
+prompt	"A clay-textured Renaissance study. Books stacked on a wooden desk. A brass astrolabe catches candlelight. An open manuscript with geometric diagrams. A single tall candle burns, wax pooling at its base. The room is otherwise dark. The candle flame is steady, barely moving. Slow push-in on the open manuscript page. 12s. *For: Ficino, Renaissance Platonism, Hermetic revival.* ### Hermetic / Alchemical World"
+tags	
+0	"Ficino"
+1	"Renaissance Platonism"
+2	"Hermetic revival."
+duration_sec	12
+9	
+id	"H1"
+title	"The Alchemist's Laboratory"
+prompt	"A clay-textured stone laboratory. Glass alembics connected by tubes glow with amber liquid on a heavy wooden table. Bundled dried herbs hang from the ceiling beams. A furnace in the background casts a warm orange glow. A single candle on the table illuminates an open grimoire page showing a circle diagram. Glass clinks softly as the liquid moves through the tubes. Slow pan across the table. 15s. *For: alchemy, Hermeticism, Emerald Tablet, Paracelsus.*"
+tags	
+0	"alchemy"
+1	"Hermeticism"
+2	"Emerald Tablet"
+3	"Paracelsus."
+duration_sec	15
+10	
+id	"H2"
+title	"The Emerald Tablet"
+prompt	'A clay-textured ancient stone tablet floating in darkness. Engraved text in an antique script is visible on its surface — the words are too small to read, but the form is clear. The tablet slowly rotates. A warm golden light washes over its surface from an unseen source, making the engraved letters catch shadows. 12s. *For: Hermes Trismegistus, Emerald Tablet, "as above so below."*'
+tags	
+0	"Hermes Trismegistus"
+1	"Emerald Tablet"
+2	'"as above so below."'
+duration_sec	12
+11	
+id	"B1"
+title	"Bamboo Forest Path"
+prompt	"A clay-textured bamboo forest. Tall green-gold stalks receding into mist. Dappled morning light filters through the canopy. The path is covered in fallen leaves. A single stone meditation bench sits at the path's end, half-claimed by moss. Mist drifts slowly through the stalks. No wind sound. 15s. *For: Nāgārjuna, śūnyatā, Buddhist philosophy, meditation.*"
+tags	
+0	"Nāgārjuna"
+1	"śūnyatā"
+2	"Buddhist philosophy"
+3	"meditation."
+duration_sec	15
+12	
+id	"B2"
+title	"Buddha Statue in Forest Clearing"
+prompt	"A clay-textured stone Buddha statue seated in meditation in a forest clearing. Moss grows on the statue's base and shoulders. The Buddha's face is simplified, geometric, peaceful. Early morning light filters through trees, casting dappled shadows on the statue. A single flower has been placed at the statue's feet. Slow orbit around the statue. 15s. *For: Buddhist philosophy videos, meditation instruction.*"
+tags	
+0	"Buddhist philosophy videos"
+1	"meditation instruction."
+duration_sec	15
+13	
+id	"Y1"
+title	"Himalayan Ashram at Sunrise"
+prompt	"A clay-textured stone ashram building on a mountain ridge. Simple architecture — a courtyard, a meditation hall, a small temple. The first light of sunrise touches the roof. A single figure sits in meditation in the courtyard, facing the mountains. The figure is too small to distinguish features — just a seated silhouette. Slow crane up from the courtyard to the peaks. 15s. *For: Yoga philosophy, Patañjali, Sāṅkhya, any Yoga-world establishing shot.*"
+tags	
+0	"Yoga philosophy"
+1	"Patañjali"
+2	"Sāṅkhya"
+3	"any Yoga-world establishing shot."
+duration_sec	15
+14	
+id	"Y2"
+title	"River Bank at Dawn"
+prompt	"A clay-textured river bank. Flat sitting stones arranged in meditation rows facing the water. The river moves slowly, catching the warm colours of dawn. Far mountains are visible through mist. A single clay lamp sits on the nearest stone, unlit. The water's surface ripples gently. Static frame, water moves. 15s. *For: Haṭha yoga, meditation, Patañjali, the Yoga Sūtras.*"
+tags	
+0	"Haṭha yoga"
+1	"meditation"
+2	"Patañjali"
+3	"the Yoga Sūtras."
+duration_sec	15
+1	
+name	"II. Abstract Concepts (15 clips)"
+count	15
+clips	
+0	
+id	"AC1"
+title	"The One Emanating"
+prompt	"Deep darkness. A single point of gold light at top center. Light flows downward from it in three distinct streams, each catching the light differently — one gold, one amber, one warm white. The streams don't fall so much as extend, like a liquid reaching downward. They pool at the bottom, dimmer. The point at the top doesn't diminish. Slow continuous flow, meditative. 20s. *V1 Emanation. For: creation, theophany, tattvas, Four Worlds, nous descending.*"
+tags	[]
+duration_sec	20
+1	
+id	"AC2"
+title	"Śiva Becomes Śakti"
+prompt	"Deep warm darkness. A single gold point at center. From within it, a thin thread of crimson light spirals outward, wrapping around the gold point without obscuring it. The crimson thread weaves into an increasingly complex pattern around the still gold center. The thread pulses gently. Slow orbit around the center. 15s. *V1+V5. For: Śiva-Śakti, spanda, Trika, the first movement of creation.*"
+tags	[]
+duration_sec	15
+2	
+id	"AC3"
+title	"The 36 Tattvas Descending"
+prompt	"Dark warm space. A geometric diagram of 36 nodes arranged in descending layers, built from golden clay lines. Starting from the topmost node, each node lights up in sequence, sending a pulse of amber light to the node below it. The light travels down through the structure like a wave. The lowest third of nodes remain in shadow. Slow camera cranes downward following the light. 20s. *V1+V12. For: 36 tattvas explanation, emanation cosmology.*"
+tags	[]
+duration_sec	20
+3	
+id	"AC4"
+title	"Māyā Contracts"
+prompt	"A warm beige geometric form at center. From the edges of frame, semi-transparent greyish rings close inward one by one. Each ring is slightly darker than the last. As each ring passes over the figure, the figure's light dims slightly. After the fifth ring, the figure is barely visible. The rings overlap, forming a layered cage. Slow, deliberate contraction. 20s. *V2 Contraction. For: Māyā, limitation, the Kañcukas, ego formation, soul entering matter.*"
+tags	[]
+duration_sec	20
+4	
+id	"AC5"
+title	"Liberation Expands"
+prompt	"A small dim point at center. A single ring of warm gold light emanates from it, expanding outward. The point brightens. A second ring follows, larger. The center becomes luminous. The rings keep coming, each brighter than the last, until the entire frame is filled with warm golden light. The original point is now invisible — it has become the light itself. 20s. *V3 Expansion. For: liberation, mokṣa, pratyabhijñā, fanā, nirvāṇa.*"
+tags	[]
+duration_sec	20
+5	
+id	"AC6"
+title	"Spanda Pulses"
+prompt	"Deep blue-black space. At center, a single point of blue-white light. It pulses — expanding and contracting — in a slow steady rhythm. With each pulse, a concentric ring emanates outward. The rings are semi-transparent, revealing geometric patterns within them. Each ring fades as it travels. The pulse is regular, like a calm heartbeat. Slow orbit around the pulsing center. 15s. *V4 Pulse. For: Spanda, universal vibration, Ōm, substrate of experience.*"
+tags	[]
+duration_sec	15
+6	
+id	"AC7"
+title	"Śaktipāta (Grace Descends)"
+prompt	"A small seated geometric figure in darkness. From above, a stream of molten golden light descends, striking the crown of the figure's head. The light spreads through their form like liquid through veins — from crown to face to chest to limbs. The figure glows from within, their originally warm beige colour now suffused with gold. Slow push-in on the moment of contact. 15s. *V5 Descent. For: grace, initiation, śaktipāta, barakah, revelation.*"
+tags	[]
+duration_sec	15
+7	
+id	"AC8"
+title	"Kuṇḍalinī Rises"
+prompt	"Deep darkness. At the bottom of frame, a thin crimson serpent of light is coiled tightly. It begins to uncoil, rising upward in a slow spiral. Tiny gold sparks trail behind it. The spiral is smooth, continuous. As it rises, it passes through seven subtle coloured bands — red, orange, gold, green, blue, indigo, violet — pausing briefly at each. When it reaches the top, the point of its head opens like a flower. Camera follows the ascent. 25s. *V6 Ascent. For: Kuṇḍalinī, cakras, spiritual awakening, Layayoga.*"
+tags	[]
+duration_sec	25
+8	
+id	"AC9"
+title	"The Mirror of Recognition"
+prompt	"A warm beige geometric figure stands before a tall vertical mirror surface floating in darkness. The reflection is identical at first. Slowly, the reflection begins to change — becoming more luminous, less defined, larger than the figure. The reflection extends a hand toward the figure. At the moment their fingertips touch, both figure and reflection dissolve into a single expanding sphere of gold light. 15s. *V7 Mirror. For: Pratyabhijñā, self-recognition, daimon encounter, theosis.*"
+tags	[]
+duration_sec	15
+9	
+id	"AC10"
+title	"The World Dissolves"
+prompt	"A clay textured landscape — simple hills and a single tree — sits in warm light. From the edges, the landscape begins to dissolve into particles. The tree goes first, its form breaking into thousands of tiny particles that drift upward. The hills follow. The particles drift in slow motion, catching the light. Eventually only particles remain, floating in darkness. They slowly settle into stillness. 20s. *V8 Dissolve. For: śūnyatā, impermanence, fanā, death of ego, nirvāṇa.*"
+tags	[]
+duration_sec	20
+10	
+id	"AC11"
+title	"Rasa Blooms"
+prompt	"Deep darkness. At center, a single point of deep crimson light. The colour blooms outward slowly like watercolour on wet paper — crimson gives way to saffron, then emerald, then gold, then violet. Each colour layer is translucent, overlaying the previous. The bloom is slow, taking the full duration. At its widest, the colours swirl gently. Static frame, the bloom fills the screen. 15s. *V9 Bloom. For: Rasa, aesthetic bliss, beauty, theophany.*"
+tags	[]
+duration_sec	15
+11	
+id	"AC12"
+title	"The Veils Part"
+prompt	"A luminous form stands behind seven translucent veils hanging in darkness. Each veil is a slightly different texture — some gauzy, some dense. One by one, starting with the front veil, each lifts and dissolves. As each veil disappears, the form behind becomes more visible and more luminous. After the seventh veil, the form is radiant but still not fully visible — there is always another veil. 20s. *V10 Veil. For: Māyā as veil, hijāb, apophatic theology, revelation.*"
+tags	[]
+duration_sec	20
+12	
+id	"AC13"
+title	"The Golden Thread"
+prompt	"Two points in warm darkness — one at left, one at right. A thin gold thread extends from the left point, pulsing with light as it travels toward the right. When it reaches the right point, both points pulse in unison — a shared heartbeat visible as synchronized pulses of light. The thread remains, gently luminous, connecting them. 12s. *V11 Thread. For: guru-śiṣya, daimon, silsila, transmission, love.*"
+tags	[]
+duration_sec	12
+13	
+id	"AC14"
+title	"The Ladder of Being"
+prompt	"A vertical structure with seven platforms floating in darkness. The lowest is solid, dark, earthly. Each ascending platform is slightly more translucent and luminous. A small figure stands on the bottom platform. A point of light moves up through each platform, pausing at each. As the light passes through a platform, the platform becomes briefly transparent, revealing luminous space within. 20s. *V12 Ladder. For: cakras, stages, Four Worlds, Great Chain, upāyas.*"
+tags	[]
+duration_sec	20
+14	
+id	"AC15"
+title	"The Threshold"
+prompt	"A simple clay archway floating in darkness. The space within the arch glows with warm gold light — the outside of the arch is in shadow. A small geometric figure approaches from the dark side. They pause at the threshold, one foot hovering above the line between dark and light. They step through. The light engulfs them. The arch remains. 15s. *V14 Threshold. For: initiation, barzakh, liminality, birth, death, conversion.*"
+tags	[]
+duration_sec	15
+2	
+name	"III. The Seeker — Character Library (6 clips)"
+count	6
+clips	
+0	
+id	"S1"
+title	"Seeker Stands Alone"
+prompt	"A small geometric clay humanoid figure, warm beige, simplified form, standing alone in vast warm darkness. The figure has no facial features — just a head, torso, arms, legs in simple geometric shapes. A single soft light from above illuminates them. The figure breathes slowly — chest rises and falls subtly. The figure does not move otherwise. 15s. *Default Seeker — used in EVERY video.*"
+tags	[]
+duration_sec	15
+1	
+id	"S2"
+title	"Seeker Sits in Meditation"
+prompt	"The same geometric figure sits cross-legged in meditation pose in complete darkness. Hands rest on knees, palms up. The figure's posture is upright but relaxed. The chest rises and falls with slow breathing. A soft rim light from the left defines the figure's edge against the dark. No other lights. 15s. *Meditation, contemplation, receptivity.*"
+tags	[]
+duration_sec	15
+2	
+id	"S3"
+title	"Seeker Looks Upward"
+prompt	"The geometric figure stands in darkness, head tilted upward as if looking at something above. A warm gold light from above illuminates their face — the light is not visible in frame, only its effect on the figure. The figure's posture is one of wonder, not fear. Small particles of golden light drift down past them. 12s. *Receiving teaching, vision, revelation.*"
+tags	[]
+duration_sec	12
+3	
+id	"S4"
+title	"Seeker Walks Forward"
+prompt	"The geometric figure walks slowly forward through warm darkness. There is no ground visible — they seem to walk on nothing. The gait is slow, deliberate. The figure's arms swing slightly. They do not look down. A subtle light ahead of them illuminates their path, though the source is not visible. 15s. *Journey, path, quest, pilgrimage — used in transitions.*"
+tags	[]
+duration_sec	15
+4	
+id	"S5"
+title	"Seeker Kneels Before Light"
+prompt	"The geometric figure kneels before a large source of warm golden light at bottom of frame. The light source is cropped — we only see its glow filling the upper portion of frame. The figure's head is bowed. The light washes over them, casting a long shadow behind. The figure's posture is reverent but not submissive — attentive. 12s. *Initiation, receiving, listening, prayer.*"
+tags	[]
+duration_sec	12
+5	
+id	"S6"
+title	"Seeker Dissolves into Light"
+prompt	"The geometric figure stands in darkness. A warm glow begins in their chest, visible through the clay exterior. The glow spreads — through torso, limbs, head. As the light spreads, the figure's clay form becomes translucent, then transparent. The figure becomes a column of golden light, then the light expands and dissipates, leaving darkness. 15s. *Liberation, recognition, death of ego, union.*"
+tags	[]
+duration_sec	15
+3	
+name	"IV. Yogi Stories — Narrative Situations (10 clips)"
+count	10
+clips	
+0	
+id	"YS1"
+title	"Renunciation (Walking Away)"
+prompt	"A clay-textured landscape at dusk. A small figure walks away from a distant city/town visible on the horizon. The figure carries nothing — no bag, no staff. The figure does not look back. The road stretches ahead into open, empty landscape. The city behind grows small. Slow pull-back as the figure walks on. 20s. *C1. For: Buddha, Milarepa, Khapaḍa Bābā, any yogi who renounced.*"
+tags	[]
+duration_sec	20
+1	
+id	"YS2"
+title	"The Vision (Light Breaking Through)"
+prompt	"A small figure sits in a dark cave or cell. Above them, a crack in the darkness opens — a seam of brilliant gold-white light appears. The light widens slowly, spilling into the space. The figure does not move. The light grows, filling the space until the figure is silhouetted against it. The figure raises their head. 20s. *C2. For: Hermes receiving Poimandres, Suhrawardi's midnight sun, Arjuna seeing Viśvarūpa, Blake's Printing House.*"
+tags	[]
+duration_sec	20
+2	
+id	"YS3"
+title	"Guru and Disciple (The Transmission)"
+prompt	"Two small geometric figures sit facing each other in warm darkness. One figure (the teacher) has a faint glow. The other (the student) is dark. A thin thread of gold light extends from the teacher's chest to the student's chest. The thread pulses slowly. The student's chest begins to glow faintly in response. Neither figure moves. 15s. *C3. For: EVERY guru-disciple narrative — this is the most common structure across all 171 ROs.*"
+tags	[]
+duration_sec	15
+3	
+id	"YS4"
+title	"The Descent (Entering the Cave)"
+prompt	"A clay-textured landscape with a dark cave entrance in a hillside. A small figure approaches the cave from outside. The exterior is lit by daylight. The cave interior is pure darkness. The figure pauses at the entrance, then steps inside, disappearing into the dark. The camera stays outside. The cave opening is now just a dark shape in the hillside. 15s. *C4. For: Dante's Inferno, Chymical Wedding dungeon, Gilgamesh, theurgy, katabasis.*"
+tags	[]
+duration_sec	15
+4	
+id	"YS5"
+title	"Death and Rebirth (The Alchemical Cycle)"
+prompt	"A dark form lies on the ground. It cracks along geometric lines. From the cracks, warm gold light emerges. The form breaks apart. The pieces dissolve into particles. From the particles, a new form assembles — smaller, more geometric, more luminous. The new form sits up. It is the same figure but transformed. 25s. *C5. For: ALL alchemy ROs, initiatory death & rebirth, the nigredo-albedo-rubedo cycle.*"
+tags	[]
+duration_sec	25
+5	
+id	"YS6"
+title	"Meeting the Double (The Daimon Encounter)"
+prompt	"A small figure walking through misty landscape. Ahead, a luminous figure stands facing away. The luminous figure turns. Its face is the same as the first figure's, but more refined, more luminous. They approach each other slowly. They stop an arm's length apart. The luminous figure extends a hand — not to shake, but to touch the first figure's chest. The first figure glows at the point of contact. 20s. *C6. For: HGA, daimon, Perfect Nature, Corbin's unus-ambo, the cognitive double.*"
+tags	[]
+duration_sec	20
+6	
+id	"YS7"
+title	"The Hermit in the Wilderness"
+prompt	"A clay-textured mountain landscape. A small hermitage hut on a ridge — simple stone, one room, no door. A figure sits outside the hut, facing the valley. The figure is still as stone. A bird lands on the ground nearby. The bird approaches the figure. The figure does not react. The bird flies away. Hours pass in seconds — light shifts across the valley. 25s. *For: any hermit yogi — Khapaḍa Bābā, Milarepa, Śaiva ascetics.*"
+tags	
+0	"any hermit yogi — Khapaḍa Bābā"
+1	"Milarepa"
+2	"Śaiva ascetics."
+duration_sec	25
+7	
+id	"YS8"
+title	"The Writing of the Text"
+prompt	"A figure sits at a low desk in a dim stone room. An oil lamp illuminates birch-bark or palm-leaf pages. The figure's hand moves across the page with a reed pen, slowly, deliberately. Ink flows. The text is in an unfamiliar script. The figure pauses, looks up, looks back down, continues writing. 20s. *For: Abhinavagupta writing Tantrāloka, Nāgārjuna writing MMK, Proclus composing Elements, Ibn Arabi writing Futūḥāt.*"
+tags	
+0	"Abhinavagupta writing Tantrāloka"
+1	"Nāgārjuna writing MMK"
+2	"Proclus composing Elements"
+3	"Ibn Arabi writing Futūḥāt."
+duration_sec	20
+8	
+id	"YS9"
+title	"The Teacher Surrounded by Students"
+prompt	"A slightly luminous figure sits at center in a courtyard or cave. Around them, several darker figures sit in a semicircle facing the teacher. The teacher's hands move in a teaching gesture. Threads of light extend from the teacher to each student's chest, pulsing. The students are still, attentive. Simple geometry — no facial features, just postures. 20s. *For: Abhinavagupta teaching, Vasistha teaching Rama, Socrates in the Agora, Proclus lecturing.*"
+tags	
+0	"Abhinavagupta teaching"
+1	"Vasistha teaching Rama"
+2	"Socrates in the Agora"
+3	"Proclus lecturing."
+duration_sec	20
+9	
+id	"YS10"
+title	"The Pilgrim at the Shrine"
+prompt	"A small figure approaches a simple stone shrine at night. The shrine has a single lamp burning inside. The figure stops before the shrine, bows slightly, then kneels. They stay kneeling, head bowed, for a long moment. The lamp inside the shrine flickers once, then burns steady again. The figure rises and leaves. Slow camera, reverent pacing. 20s. *For: pilgrimage, devotion, temple worship, any tradition.*"
+tags	
+0	"pilgrimage"
+1	"devotion"
+2	"temple worship"
+3	"any tradition."
+duration_sec	20
+4	
+name	"V. Ambients & Transitions (7 clips)"
+count	7
+clips	
+0	
+id	"AT1"
+title	"Fire Burns Slowly"
+prompt	"A slow fire burning in darkness. Amber and gold flames curl upward. No logs visible — just flame. Embers break off and float upward, fading as they rise. The fire is steady, not fierce. The flames move in slow, continuous loops. 20s. *Transition, purification, tapas, sacrifice.*"
+tags	[]
+duration_sec	20
+1	
+id	"AT2"
+title	"Incense Smoke Spirals"
+prompt	"A single incense stick burning in darkness. A thin stream of pale grey smoke rises, then begins to spiral and curl in slow, hypnotic patterns. The smoke catches a warm light from below. The patterns are continuous, never repeating. The tip of the incense glows faintly orange. 20s. *Transition, prayer, meditation, atmosphere.*"
+tags	[]
+duration_sec	20
+2	
+id	"AT3"
+title	"Water Ripples"
+prompt	"A dark water surface. A single slow ripple expands from center. The ripple distorts a reflection of warm light on the water's surface. The ripple passes. The surface becomes still again. Another ripple from a different center. The pattern repeats. The reflections are abstract — not recognizable, just warm shapes on dark water. 20s. *Transition, impermanence, mind, meditation.*"
+tags	[]
+duration_sec	20
+3	
+id	"AT4"
+title	"Stars Pulse in Dark Sky"
+prompt	"A dark sky filled with tiny pinprick lights of warm white and gold. They pulse subtly but not in unison — a slow random field of faint brightening and dimming. No constellations are recognizable — just stars scattered evenly. The sky slowly rotates as if the earth is turning beneath it. 20s. *Vastness, time, cosmology, wonder.*"
+tags	[]
+duration_sec	20
+4	
+id	"AT5"
+title	"Dust Particles in Light"
+prompt	"A shaft of warm light descending through darkness. Within the light, tiny dust particles float and drift in slow motion. They catch the light, glowing briefly as they rotate. The light shaft is stable. The particles move independently, slowly, aimlessly. Their motion is hypnotic, meditative. 20s. *Contemplation, atmosphere, the seen and unseen.*"
+tags	[]
+duration_sec	20
+5	
+id	"AT6"
+title	"Clay Texture Close-Up"
+prompt	"An extreme macro close-up of the clay-textured surface. The surface has fine cracks, subtle ridges, tiny imperfections. Warm light moves across it slowly, revealing the texture. The surface could be stone, clay, or aged parchment — the texture is ambiguous. No identifiable forms — just pure texture and light. 15s. *Transition, texture, materiality.*"
+tags	[]
+duration_sec	15
+6	
+id	"AT7"
+title	"Geometric Form Constructs Itself"
+prompt	"Pure darkness. A single straight line of gold light draws itself across the frame — one end fixed, the other end moving to create the line. A second line joins it, forming an angle. A third connects, creating a triangle. The triangle slowly becomes a tetrahedron as more lines draw themselves. The form completes and rotates gently. 20s. *Sacred geometry, construction of reality, tattva, maṇḍala.*"
+tags	[]
+duration_sec	20
+5	
+name	"VI. Specific Figures & Historical Art (4 clips — I2V mode)"
+count	4
+clips	
+0	
+id	"HF1"
+title	"Abhinavagupta at Work"
+prompt	"Seed image: standing Shiva Mahadeva (three-faced) or manuscript image. The seed image comes alive — shadows deepen, torchlight flickers across the stone or page. A slow camera move across the figure or text. The image breathes — as if the centuries between us and them have thinned. 15s. *For: Abhinavagupta, Lakṣmaṇjū, any Kashmir Śaiva teacher.*"
+tags	
+0	"Abhinavagupta"
+1	"Lakṣmaṇjū"
+2	"any Kashmir Śaiva teacher."
+duration_sec	15
+1	
+id	"HF2"
+title	"Hermes Trismegistus Teaches"
+prompt	"Seed image: Hermes Trismegistus illustration from Wellcome. The antique illustration gains subtle depth — the folds of Hermes' robe shift, the staff in his hand seems to warm with light. The illustration remains an illustration but becomes alive, as if the ink is still wet. 12s. *For: Hermeticism, Emerald Tablet, Corpus Hermeticum.*"
+tags	
+0	"Hermeticism"
+1	"Emerald Tablet"
+2	"Corpus Hermeticum."
+duration_sec	12
+2	
+id	"HF3"
+title	"Nāgārjuna in Contemplation"
+prompt	"Seed image: Buddha statue or Nāgārjuna depiction. The meditating figure sits in stillness. A faint aura of light begins to form around the figure's head — subtle, barely visible. The light slowly expands to encompass the whole figure. The figure does not move. The light fades. 15s. *For: Nāgārjuna, śūnyatā, Mādhyamaka, Buddhist philosophy.*"
+tags	
+0	"Nāgārjuna"
+1	"śūnyatā"
+2	"Mādhyamaka"
+3	"Buddhist philosophy."
+duration_sec	15
+3	
+id	"HF4"
+title	"Ibn Arabi in the Garden"
+prompt	"Seed image: Ibn Arabi portrait or Andalusian garden. The image stirs — leaves on the trees shift position, water in a fountain catches moonlight. If a figure is present, their robes move slightly as if in a breeze. The image remains an image but its interior world moves. 12s. *For: Ibn Arabi, waḥdat al-wujūd, Sufi metaphysics.*"
+tags	
+0	"Ibn Arabi"
+1	"waḥdat al-wujūd"
+2	"Sufi metaphysics."
+duration_sec	12
+6	
+name	"VII. Granular Tantraloka Concepts (Appendix — 20 New Clips f"
+count	20
+clips	
+0	
+id	"GC1"
+title	"The 50 Phonemes Unfolding (Mātṛkā)"
+prompt	"A luminous point (Bindu) pulses at center. From it, Devanagari letters radiate in a spiral — A, Ā, I, Ī, U, Ū, Ṛ, Ṝ, Ḷ, Ḹ, E, AI, O, AU, AṀ, AḤ, then consonants KA through KṢ. Each glows with a distinct color corresponding to its power (will=red, knowledge=yellow, action=blue). The final KṢ absorbs all letters into itself. 25s. *For: sacred sound, mantra theory, the alphabet as reality-structure.*"
+tags	
+0	"sacred sound"
+1	"mantra theory"
+2	"the alphabet as reality-structure."
+duration_sec	25
+1	
+id	"GC2"
+title	"Four Levels of Speech (Parā → Vaikharī)"
+prompt	"A single white point of light (Parā) expands into a glowing sphere with a single image inside (Paśyantī). The sphere develops shimmering inner patterns (Madhyamā). The sphere bursts into coloured droplets that arrange into Sanskrit syllables (Vaikharī). 20s. *For: cosmogony, levels of reality, how consciousness becomes language.*"
+tags	
+0	"cosmogony"
+1	"levels of reality"
+2	"how consciousness becomes language."
+duration_sec	20
+2	
+id	"GC3"
+title	"AHAṀ — The Root Mantra"
+prompt	'Three circular elements: a white sphere (A), a luminous crescent emitting light (H), a red point (Ṁ). They merge into the syllable AHAṀ. From its pulse wave, all other mantras (OM, HRĪM, SAUḤ) are born as smaller glowing syllables. 15s. *For: "I Am" as the seed of all mantras, the AHAṀ cycle.*'
+tags	
+0	'"I Am" as the seed of all mantras'
+1	"the AHAṀ cycle."
+duration_sec	15
+3	
+id	"GC4"
+title	"The Twelve Stages of Sonic Ascent (Dvādaśānta)"
+prompt	"A vertical column through a translucent body. Twelve stations from throat to 12 finger-breadths above crown: A→U→M→Bindu→Ardhacandra→Nirodhīnī→Nāda→Nādānta→Śakti→Vyāpinī→Samanā→Unmanā→Nirāmaya. Light ascends through each, transforming at every station. 25s. *For: subtle sound, mantra meditation, the inner path of sonic ascent.* ### The 12 Kālīs Series (from Twelve Kālīs RO)"
+tags	
+0	"subtle sound"
+1	"mantra meditation"
+2	"the inner path of sonic ascent."
+duration_sec	25
+4	
+id	"GC5"
+title	"The Wheel of Twelve Kālīs"
+prompt	"A triple ring of 12 goddess-figures. Outer ring (objectivity): earthy tones creating, persisting, destroying, restricting. Middle ring (cognition): medium tones with eyes and mantras. Inner ring (subjectivity): radiant white-gold, the final Kālī with a terrifying beautiful face surrounded by flames. The rings rotate in opposite directions. 25s. *For: Krama system, the 12 Kālīs of perception, time as goddess.*"
+tags	
+0	"Krama system"
+1	"the 12 Kālīs of perception"
+2	"time as goddess."
+duration_sec	25
+5	
+id	"GC6"
+title	"SAUḤ — The Seed Mantra of Emanation"
+prompt	"A dark egg labeled S cracks open. Golden diphthong AU emerges, expanding into a tree of light. Final emission H scatters light into stars, planets, beings. The three phases dissolve into the single glowing syllable SAUḤ. 20s. *For: seed mantras, emanation, Parā as supreme goddess.*"
+tags	
+0	"seed mantras"
+1	"emanation"
+2	"Parā as supreme goddess."
+duration_sec	20
+6	
+id	"GC7"
+title	"KHPHREṀ — The Seed Mantra of Withdrawal"
+prompt	"Cosmos drawn inward by gravitational pull. Fire (R) burns through forms. Humming vibration (PH) remains. It expands into blue sky (KH). Through a triangular field (E), the sky condenses to a point (Ṁ). The point vanishes. The syllable glows briefly, fades. 20s. *For: withdrawal, Kālī, dissolution of duality.*"
+tags	
+0	"withdrawal"
+1	"Kālī"
+2	"dissolution of duality."
+duration_sec	20
+7	
+id	"GC8"
+title	"The Trident Throne of Parā (Triśūlābja-maṇḍala)"
+prompt	"A lotus with eight petals. From its center rises a three-pronged trident. Prongs: Knower, Knowing, Known — converging into a single shaft. Above the trident sits goddess Parā, luminous. The mandala rotates slowly. 20s. *For: Trika worship, the threefold nature of experience, the supreme goddess.* ### Cosmology Series (from Tantraloka Cosmology RO)"
+tags	
+0	"Trika worship"
+1	"the threefold nature of experience"
+2	"the supreme goddess."
+duration_sec	20
+8	
+id	"GC9"
+title	"The Egg of Brahmā (Brahmāṇḍa)"
+prompt	"A cosmic egg floating in space. Camera zooms through a glowing membrane, revealing layered worlds: dark hells at bottom, Earth in middle with Mount Meru rising, six ring-shaped islands and oceans, Mount Lokāloka at the edge. Above the egg, seven lokas rise like stacked translucent bowls. 25s. *For: traditional cosmology, the universe according to Abhinavagupta.*"
+tags	
+0	"traditional cosmology"
+1	"the universe according to Abhinavagupta."
+duration_sec	25
+9	
+id	"GC10"
+title	"The Five Kañcukas Binding the Self"
+prompt	"A human silhouette of brilliant white light. Five dark armor pieces clamp on: Kalā (gauntlets on hands — limited agency), Vidyā (visor over eyes — limited knowledge), Rāga (chain binding heart — attachment), Kāla (clock-mechanism at waist — time), Niyati (leg shackles — necessity). The figure dims. Māyā wraps around as a dark cocoon. 25s. *For: limitation, bondage, how infinity becomes the finite self.*"
+tags	
+0	"limitation"
+1	"bondage"
+2	"how infinity becomes the finite self."
+duration_sec	25
+10	
+id	"GC11"
+title	"The Seven Perceivers (Same Flower, Seven Views)"
+prompt	'A single flower shown from seven perspectives simultaneously in a horizontal panel. Sakala: sees it as separate, solid, desirable. Pralayākala: as a memory. Vijñānākala: as pure perception. Mantreśa: as mantra syllables. Mantreśvara: as radiant energy. Sadāśiva: "I am this." Śiva: as the universe entire. 25s. *For: levels of perception, why reality looks different to different beings.*'
+tags	
+0	"levels of perception"
+1	"why reality looks different to different beings."
+duration_sec	25
+11	
+id	"GC12"
+title	"Māyā as the Knot (Māyāgranthi)"
+prompt	"A dark knot-like structure with three chambers. In the lower: six fierce Rudras. In the center: serpent Ananta with thousand hoods. In the upper: five serene Rudras. A golden thread passes through the knot. A shaft of light pierces the knot, the three chambers collapse, and light pours through. 25s. *For: Māyā as the knot of reality, the three cavities, the piercing of the knot by grace.*"
+tags	
+0	"Māyā as the knot of reality"
+1	"the three cavities"
+2	"the piercing of the knot by grace."
+duration_sec	25
+12	
+id	"GC13"
+title	"The City of Eight (Puryaṣṭaka) — What Reincarnates"
+prompt	'A translucent human-shaped "city" with eight interconnected chambers glowing different colours (5 tanmātras, manas, ahaṁkāra, buddhi). A spark of light (jīva) moves through the city. The city-body leaves a dying physical body, floats through an intermediate space, enters a newborn body. When the jīva recognizes itself as pure awareness, the city dissolves into light. 30s. *For: reincarnation, the subtle body, what transmigrates.* ### Spanda Series (from Hareesh Spanda Blog)'
+tags	
+0	"reincarnation"
+1	"the subtle body"
+2	"what transmigrates."
+duration_sec	30
+13	
+id	"GC14"
+title	"The Wheel of Powers (Śakti-Cakra)"
+prompt	"A great wheel turning. The hub: a steady unmoving point of white light. Spokes: Will, Knowledge, Action. As the wheel expands outward, galaxies, scenes, lives appear on the rim. As it contracts, all multiplicity collapses back into the hub. 25s. *For: Spanda, the pulsation of consciousness, expansion and contraction as the nature of reality.*"
+tags	
+0	"Spanda"
+1	"the pulsation of consciousness"
+2	"expansion and contraction as the nature of reality."
+duration_sec	25
+14	
+id	"GC15"
+title	"The Flaming Heart of Awareness"
+prompt	"A human chest opens to reveal a heart that is simultaneously a flame. The heart-flame pulses — expanding to encompass the universe, contracting to a single point. Each pulse generates rings of light. The heart-flame is both personal and universal. 20s. *For: hṛdaya (the Heart), spanda as the pulse of the Heart, the micro-macro connection.*"
+tags	
+0	"hṛdaya (the Heart)"
+1	"spanda as the pulse of the Heart"
+2	"the micro-macro connection."
+duration_sec	20
+15	
+id	"GC16"
+title	"Sleep and Waking as Dissolution and Creation"
+prompt	"Split screen. Left: a sleeping person, the world fading to grey, stars blinking out. Right: their dream-world expanding, colours blooming, a universe of dream-experience building. Both are the same wheel — expanding in one direction, contracting in another simultaneously. 20s. *For: spanda in everyday life, sleep as natural dissolution, creating and dissolving worlds every night.* ### Upāyas Series (from Hareesh Upayas Blog)"
+tags	
+0	"spanda in everyday life"
+1	"sleep as natural dissolution"
+2	"creating and dissolving worlds every night."
+duration_sec	20
+16	
+id	"GC17"
+title	"The Three Upāyas as Mountain Paths"
+prompt	"A mountain with three paths to the summit. Āṇava: winding trail with stations — asanas, fire offerings, body parts glowing with nyāsa, breath exercises. Śākta: series of doors, each needing a key — false belief unlocked by correct view, trauma by forgiveness, limitation by recognition. Śāmbhava: straight line up a sheer cliff, an invisible guide pulling them up effortlessly. At the summit, all three converge into a single point of light. 30s. *For: the three means, spiritual paths compared, body-mind-grace.* ### Kuṇḍalinī Series (from Hareesh Kundalini Blog)"
+tags	
+0	"the three means"
+1	"spiritual paths compared"
+2	"body-mind-grace."
+duration_sec	30
+17	
+id	"GC18"
+title	"Two Kuṇḍalinīs Meeting in the Heart"
+prompt	"A translucent body. At the crown: a white coiled serpent descends like a waterfall. At the base: a red coiled serpent rises like a flame. They meet at the heart, spiral around each other, merge into a single golden serpent that ascends through the crown. White = awareness descending, red = energy rising. 25s. *For: the original kuṇḍalinī teaching, the two serpents, integration of awareness and energy.*"
+tags	
+0	"the original kuṇḍalinī teaching"
+1	"the two serpents"
+2	"integration of awareness and energy."
+duration_sec	25
+18	
+id	"GC19"
+title	"Bhairava and the Goddess in Dialogue"
+prompt	"Two figures in darkness — one vast and still (Bhairava), one smaller and questioning. A field of question marks drifts from the smaller figure to the larger. Each question mark, upon reaching Bhairava, transforms into a luminous geometric form (a dhyāna — a meditation practice). The forms float in the space between them. 20s. *For: the VBT frame story, the 112 dhāraṇās, the question-answer structure of the text.* ### Tantrāloka Opening (from Hareesh Tantraloka Blog)"
+tags	
+0	"the VBT frame story"
+1	"the 112 dhāraṇās"
+2	"the question-answer structure of the text."
+duration_sec	20
+19	
+id	"GC20"
+title	"Aparā as Lightning in Monsoon Clouds"
+prompt	"A dark sky heavy with monsoon clouds. A sudden jagged bolt of lightning — brilliant white with violet edges — streaks across the frame. For a split second, the lightning takes the shape of a dancing goddess within the outline of a larger dancing figure (Bhairava). The image appears for a flash, then the monsoon darkness returns. 15s. *For: the goddess Aparā, the dynamic creative power, beauty and terror together.*"
+tags	
+0	"the goddess Aparā"
+1	"the dynamic creative power"
+2	"beauty and terror together."
+duration_sec	15
+7	
+name	"VIII. Transformative Moments — Perspective-Shifting Clips (2"
+count	20
+clips	
+0	
+id	"TR1"
+title	"The Mask Reveal"
+prompt	"A crowd of small geometric figures stands together. Each one reaches up and removes their face like a mask. Beneath each mask is the same warm golden light. The figures are all connected by thin threads of light. They look at each other, see themselves in each other, and put their masks back on, playing again. 20s. *For: non-duality, the one self in all beings, līlā (divine play).*"
+tags	
+0	"non-duality"
+1	"the one self in all beings"
+2	"līlā (divine play)."
+duration_sec	20
+1	
+id	"TR2"
+title	"The Seeker's Face Melts"
+prompt	"The Seeker stands in darkness, their clay-textured face smooth and blank. The face begins to soften, the clay running like warm wax. Beneath it, a new face emerges — peaceful, serene, with a glowing third eye at the forehead. The third eye opens. A beam of warm gold light shines forward, as if looking at the viewer. 20s. *For: initiation, transformation, dīkṣā, the third eye opening.*"
+tags	
+0	"initiation"
+1	"transformation"
+2	"dīkṣā"
+3	"the third eye opening."
+duration_sec	20
+2	
+id	"TR3"
+title	"The Wasp Becomes a Friend"
+prompt	"A clay-textured wasp lands on a surface, wings buzzing, stinger visible. The camera holds on it. Slowly, the wasp's form begins to change — the exoskeleton softens, the wings fold into arms, the fierce face becomes rounded and gentle. The wasp transforms into a small friendly creature who sits down and looks at the viewer with curiosity, head tilted. A flower grows between them. 25s. *For: non-duality, seeing the divine in all beings, fear transforming.*"
+tags	
+0	"non-duality"
+1	"seeing the divine in all beings"
+2	"fear transforming."
+duration_sec	25
+3	
+id	"TR4"
+title	"The Seeker Becomes the Deity"
+prompt	"The Seeker sits in meditation. A circle of light forms around their head. Arms begin to grow from their sides — first two, then four. The figure grows taller, more luminous. Attributes appear in their hands: a trident, a drum, a flame, a lotus. Their face becomes serene, blue-toned, with a third eye. The Seeker has become Śiva. The figure opens their eyes and looks directly at the viewer. 25s. *For: deity yoga, nyāsa, identification with the divine, abhiṣeka.*"
+tags	
+0	"deity yoga"
+1	"nyāsa"
+2	"identification with the divine"
+3	"abhiṣeka."
+duration_sec	25
+4	
+id	"TR5"
+title	"The World as Wave on Ocean"
+prompt	"A vast ocean stretches to the horizon. A single wave rises, crests, begins to curl. Inside the curl, frozen for a moment, is an entire world — cities, mountains, people, stars. The wave crashes. The world dissolves back into the ocean. Another wave rises elsewhere. Each wave contains a world. Each world is only the ocean appearing. 25s. *For: wave-ocean metaphor, līlā, creation and dissolution, impermanence.*"
+tags	
+0	"wave-ocean metaphor"
+1	"līlā"
+2	"creation and dissolution"
+3	"impermanence."
+duration_sec	25
+5	
+id	"TR6"
+title	"The Thousand Faces of the Divine"
+prompt	"A single blank face in darkness. It shifts — becoming male, female, young, old, human, animal, bird, fish, insect, plant, stone, star. Each face lasts only a second before shifting to the next. The shifts accelerate until they become a blur, then slow to reveal the original face — which now has a gentle smile. 25s. *For: theophany, all forms are the divine, viśvarūpa, 36 tattvas including the inorganic.*"
+tags	
+0	"theophany"
+1	"all forms are the divine"
+2	"viśvarūpa"
+3	"36 tattvas including the inorganic."
+duration_sec	25
+6	
+id	"TR7"
+title	"The Ritual of Reinvigoration (from Tantrāloka 1.117-122)"
+prompt	"A darkened ritual space. A depleted figure kneels at center. Behind them, a luminous white-blue deity (Amrteśvara) begins to form from mist and light, holding a jar of nectar. The deity pours nectar over the figure. The nectar is visible as cascading light. The figure's colour returns, their posture straightens. The deity fades. The figure stands, renewed. 25s. *For: Tantraloka ritual, the reinvigoration rite, body-speech-mind unity, how consciousness heals.*"
+tags	
+0	"Tantraloka ritual"
+1	"the reinvigoration rite"
+2	"body-speech-mind unity"
+3	"how consciousness heals."
+duration_sec	25
+7	
+id	"TR8"
+title	"The Whole World is Your Body"
+prompt	"A dark space. A small figure stands at center. The space around them begins to fill with subtle outlines — mountains, oceans, cities, stars — all arranged as if the figure's body is the center of the cosmos. The figure breathes in; the mountains exhale. The figure raises their arm; a galaxy shifts. The figure opens their eyes; the stars brighten. The figure is the universe in human form. 25s. *For: macrocosm-microcosm, puruṣa, cosmic body, the Self as all.*"
+tags	
+0	"macrocosm-microcosm"
+1	"puruṣa"
+2	"cosmic body"
+3	"the Self as all."
+duration_sec	25
+8	
+id	"TR9"
+title	"The Knot of Time Unties"
+prompt	"A figure stands in darkness, wrapped in three ropes — past, present, future. Each rope is a different colour — grey, white, black — and they are tangled around the figure's body. A luminous hand (invisible body, only the hand visible) reaches down and touches the knot at the center. The knot dissolves. The three ropes separate, float away, and dissolve. The figure is no longer wrapped — they stand free. The three ropes, now distant, form a circle. 20s. *For: time as bondage, liberation from time, kāla as kañcuka, eternal now.*"
+tags	
+0	"time as bondage"
+1	"liberation from time"
+2	"kāla as kañcuka"
+3	"eternal now."
+duration_sec	20
+9	
+id	"TR10"
+title	"The Waterfall of Grace"
+prompt	"A dark cliff face in a cave. A figure sits at the base. From above, a waterfall of liquid gold light pours down — not water, but pure radiance. It strikes the figure, but instead of knocking them over, it passes through them, emerging from their chest as a broader, softer light that fills the cave. The waterfall continues. The figure is now a conduit. 20s. *For: śaktipāta, grace, being a conduit, the descent of power.*"
+tags	
+0	"śaktipāta"
+1	"grace"
+2	"being a conduit"
+3	"the descent of power."
+duration_sec	20
+10	
+id	"TR11"
+title	"The Eye Opens in the Heart"
+prompt	"The Seeker's chest opens like a door. Inside the chest cavity is not a heart but an eye — closed, peaceful. The eye slowly opens. It does not look outward — it looks inward. As it opens, the Seeker's posture relaxes, their head lifts, their whole body glows faintly. The eye in the chest sees. What it sees, we cannot see — but we see its effect. 20s. *For: hṛdaya (the Heart), the eye of the heart, perception as the heart's function, sahṛdaya (the one with heart).*"
+tags	
+0	"hṛdaya (the Heart)"
+1	"the eye of the heart"
+2	"perception as the heart's function"
+3	"sahṛdaya (the one with heart)."
+duration_sec	20
+11	
+id	"TR12"
+title	"The Offering into Fire"
+prompt	"A clay fire bowl burns at center. A figure drops something into the flames — a small dark object (a fear, an identity, a limitation). The flames flare briefly, consuming it. The figure drops another. The fire burns brighter each time. The figure drops everything they have. The fire becomes a column of light. The figure is illuminated. They have nothing left. They are free. 25s. *For: homa (fire offering), letting go, sacrifice of self, the fire of knowledge.*"
+tags	
+0	"homa (fire offering)"
+1	"letting go"
+2	"sacrifice of self"
+3	"the fire of knowledge."
+duration_sec	25
+12	
+id	"TR13"
+title	"The Parade of Identities"
+prompt	"A figure walks forward. With each step, they transform into a different version of themselves — a child, a student, a lover, a parent, a worker, a sage, a hermit, a corpse, a skeleton, dust. From the dust, the figure emerges again as pure light. The light continues walking. 25s. *For: saṃsāra, the many lives, identity as costume, the constant that watches all changes.*"
+tags	
+0	"saṃsāra"
+1	"the many lives"
+2	"identity as costume"
+3	"the constant that watches all changes."
+duration_sec	25
+13	
+id	"TR14"
+title	"The World as a Dream of God"
+prompt	"We see a vast sleeping figure — the universe curled up like a sleeping giant. As the giant dreams, images rise from their head: cities being built and crumbling, lovers meeting and parting, stars igniting and dying. A small figure within one of the dreams looks up, as if sensing something. That figure (our Seeker) begins to rise through the layers of the dream. They approach the giant's face. The giant's eye opens. The Seeker and the giant see each other. They are the same. 30s. *For: the world as dream, consciousness only, viśvarūpa, recognition.*"
+tags	
+0	"the world as dream"
+1	"consciousness only"
+2	"viśvarūpa"
+3	"recognition."
+duration_sec	30
+14	
+id	"TR15"
+title	"The Breath of the Universe"
+prompt	"A dark space. A faint outline of a vast form — too large to see entirely — breathes. As it inhales, everything contracts, draws inward. As it exhales, everything expands, stars appear. A small figure (the Seeker) stands within this breath, expanding and contracting with it. The figure realizes they are not being breathed — they ARE the breathing. 25s. *For: prāṇa as cosmic breath, spanda, the pulse of existence, nafas al-raḥmān.*"
+tags	
+0	"prāṇa as cosmic breath"
+1	"spanda"
+2	"the pulse of existence"
+3	"nafas al-raḥmān."
+duration_sec	25
+15	
+id	"TR16"
+title	"The Guru Points, the Student Sees"
+prompt	"Two figures sit facing each other — one luminous (guru), one dark (student). The guru points upward. The student looks where the guru points — and sees nothing. The guru points again, this time at the student's own chest. The student looks down. Their chest begins to glow. They look up. The guru is gone. Only the glow remains. 20s. *For: guru-śiṣya transmission, the pointing instruction, the teaching that points within.*"
+tags	
+0	"guru-śiṣya transmission"
+1	"the pointing instruction"
+2	"the teaching that points within."
+duration_sec	20
+16	
+id	"TR17"
+title	"The Mirror Shatters, the Room is One"
+prompt	"A room made of mirrors — everywhere the Seeker looks, they see their own reflection reflected infinitely. The Seeker reaches out and taps one mirror. It cracks. The crack spreads. All the mirrors shatter simultaneously. The reflections disappear. Behind the mirrors is not another room — just warm golden light. The Seeker stands in the light, no longer reflected, just present. 20s. *For: pratibimbavāda (reflection doctrine), the mirror of consciousness, the many reflections are one.*"
+tags	
+0	"pratibimbavāda (reflection doctrine)"
+1	"the mirror of consciousness"
+2	"the many reflections are one."
+duration_sec	20
+17	
+id	"TR18"
+title	"The River of Forms"
+prompt	"A river flows — but the water is not water. It is a stream of faces, moments, worlds, sounds, colours, all flowing together, distinct yet inseparable. The Seeker stands on the bank. They reach down and touch the river. Their hand comes back glowing. They step in. They become part of the flow. Their form dissolves into the river. They are still themselves, but now they are also the river. 25s. *For: impermanence, the flow of experience, non-duality, the river of forms.*"
+tags	
+0	"impermanence"
+1	"the flow of experience"
+2	"non-duality"
+3	"the river of forms."
+duration_sec	25
+18	
+id	"TR19"
+title	"The Flower of Rasa"
+prompt	"A person stands in darkness, experiencing something — grief, perhaps. A single tear falls from their face. Where the tear lands, a flower of deep crimson blooms. The colour spreads up through their body, emerging from their chest as a complex, beautiful pattern. The person looks at the pattern. They are no longer grieving. The pattern is still there, beautiful. 20s. *For: Rasa — emotion transformed into beauty, the alchemy of experience.*"
+tags	
+0	"Rasa — emotion transformed into beauty"
+1	"the alchemy of experience."
+duration_sec	20
+19	
+id	"TR20"
+title	"The Final Dissolve at Death"
+prompt	"A figure lies still, as if dead. The clay-textured body begins to crack along fine lines. Light seeps through the cracks. The cracks widen. The body falls away in pieces, like a broken vessel. What remains is a form of pure light — the same shape as the original figure, but luminous, translucent, free. The light-form sits up, looks around, and walks out of frame. The broken clay pieces remain on the ground, already turning to dust. 25s. *For: death, jīvanmukti, the body as vessel, what survives.*"
+tags	
+0	"death"
+1	"jīvanmukti"
+2	"the body as vessel"
+3	"what survives."
+duration_sec	25
+8	
+name	"IX. Hellenistic Transformations — Neoplatonic & Theurgic Cli"
+count	20
+clips	
+0	
+id	"HT1"
+title	"The Cave (Plato's Republic)"
+prompt	"A dark cave interior. Figures sit chained, facing a wall. Behind them, a fire casts shadows of puppets on the wall. The figures watch the shadows, believing them to be reality. One figure turns — their chains break. They see the fire, the puppets, the cave opening. They walk up a steep path. They emerge into sunlight. They blink. They see the sun. They cannot look directly at it. They look at the world illuminated by it. They go back down into the cave. 30s. *For: the cave allegory, limited perception, the journey from appearance to reality.*"
+tags	
+0	"the cave allegory"
+1	"limited perception"
+2	"the journey from appearance to reality."
+duration_sec	30
+1	
+id	"HT2"
+title	"The Chariot of the Soul (Plato's Phaedrus)"
+prompt	"A chariot floats in the sky. The charioteer (reason) holds the reins. One horse is white, noble, obedient — it rises upward. The other is dark, unruly, pulling downward. The charioteer struggles to control them. The chariot veers, rises, falls. The dark horse finally yields. The chariot ascends through a crystalline sphere and emerges into pure light. The charioteer sees reality directly, for the first time. 30s. *For: the soul, reason vs passion, the ascent to the Forms, Plato's psychology.*"
+tags	
+0	"the soul"
+1	"reason vs passion"
+2	"the ascent to the Forms"
+3	"Plato's psychology."
+duration_sec	30
+2	
+id	"HT3"
+title	"The Heliotrope Prayer (Proclus)"
+prompt	'A sunflower in a field. Through the day, it turns to face the sun, following it across the sky. The sunflower is a metaphor — the camera pulls back to reveal a human figure also turning, also facing the light. The figure prays. The prayer is not a request but a *turning toward*. The figure, by turning, becomes more like what they face. They begin to glow. 20s. *For: theurgy, prayer as alignment, the heliotrope as model of worship, "everything prays according to its order."*'
+tags	
+0	"theurgy"
+1	"prayer as alignment"
+2	"the heliotrope as model of worship"
+3	'"everything prays according to its order."'
+duration_sec	20
+3	
+id	"HT4"
+title	"The Flowering of the Intellect (Nous)"
+prompt	"A figure sits in contemplation. Behind their head, a subtle glow begins — at first just a faint halo. The halo expands, becoming a sphere. Inside the sphere, geometric forms appear — triangles, circles, spheres, each perfect, each luminous. The figure's face becomes more defined, more beautiful. The sphere fills with all the Forms — Justice, Beauty, Truth, the Good — each a distinct colour, each perfectly clear. The figure's eyes open. They are seeing from within the sphere now. 25s. *For: nous (intellect), contemplation, the Forms, direct seeing, noesis.*"
+tags	
+0	"nous (intellect)"
+1	"contemplation"
+2	"the Forms"
+3	"direct seeing"
+4	"noesis."
+duration_sec	25
+4	
+id	"HT5"
+title	"The One Overflows (Emanation)"
+prompt	"A single point of pure white light at the top of frame. It is not doing anything — it simply is. But its presence is so full, so complete, that something happens without happening — light overflows from it, not by choice, not by necessity, but by excess of fullness. The overflow becomes a sphere (Nous). From Nous, a second overflow becomes a spreading radiance (Soul). From Soul, the radiance dims and becomes the material cosmos. The point at the top has not diminished. It remains full. It is still overflowing. 25s. *For: emanation, the One, the gift that does not diminish, Neoplatonic cosmology.*"
+tags	
+0	"emanation"
+1	"the One"
+2	"the gift that does not diminish"
+3	"Neoplatonic cosmology."
+duration_sec	25
+5	
+id	"HT6"
+title	"The Theurgic Ascent Through the Spheres"
+prompt	"A figure stands within a series of seven concentric transparent spheres. Each sphere is a planetary realm — Moon, Mercury, Venus, Sun, Mars, Jupiter, Saturn — each marked by its colour and symbol. The figure rises through each. At each sphere, they shed something — an attachment, a limitation, a false identity. When they pass through Saturn, they emerge into the sphere of fixed stars. They are now pure light. Below them, the seven spheres rotate. They do not need to ascend further. They have returned. 30s. *For: theurgic ascent, the seven spheres, shedding the garments of the soul, the Odyssey of the soul.*"
+tags	
+0	"theurgic ascent"
+1	"the seven spheres"
+2	"shedding the garments of the soul"
+3	"the Odyssey of the soul."
+duration_sec	30
+6	
+id	"HT7"
+title	"The Statue Comes to Life (Iamblichus)"
+prompt	"A stone statue of a goddess stands in a darkened temple. It is clearly stone — cold, inert. A figure approaches with incense, hymns, offerings. The figure sings, waves incense, places flowers. The statue begins to warm. Colour spreads across the stone. The stone becomes flesh, fabric, hair. The goddess's eyes open. She looks at the figure. She smiles. The stone is no longer stone. The goddess is present. 30s. *For: theurgy, ensouling statues, divine presence, Iamblichus's ritual technology.*"
+tags	
+0	"theurgy"
+1	"ensouling statues"
+2	"divine presence"
+3	"Iamblichus's ritual technology."
+duration_sec	30
+7	
+id	"HT8"
+title	"The Daimon Shows the Way"
+prompt	"A figure walks through a dark forest, lost. A small luminous figure appears beside them — at first just a glimmer at the edge of vision. When the lost figure turns toward it, the daimon moves ahead, always staying visible, always a few steps ahead. The lost figure follows. The daimon leads them to a clearing. In the clearing, light. The daimon gestures forward. The figure steps into the light. The daimon fades, its work done. 25s. *For: the daimon, the guide, Socrates' daimonion, the personal guardian, synesius on dreams.*"
+tags	
+0	"the daimon"
+1	"the guide"
+2	"Socrates' daimonion"
+3	"the personal guardian"
+4	"synesius on dreams."
+duration_sec	25
+8	
+id	"HT9"
+title	"The Many Henads (Proclus)"
+prompt	"A single point of light at center. It multiplies — not dividing itself, but appearing as many points from different angles. Each point is the whole One from a different perspective. Each point is a god — a henad. The henads are all connected, all the same, all distinct. They form a circle. Within each henad, an entire universe is visible — different yet identical. The camera zooms into one henad: a universe unfolds. The camera zooms out: the same universe, from a different henad, different yet the same. 25s. *For: Proclus' henads, the One and the many, the gods as unique perspectives on the whole.*"
+tags	
+0	"Proclus' henads"
+1	"the One and the many"
+2	"the gods as unique perspectives on the whole."
+duration_sec	25
+9	
+id	"HT10"
+title	"The Exile and Return of the Soul"
+prompt	"A point of light descends from the sphere of stars. It falls through seven coloured spheres, each sphere attaching a layer of density: a body of light, a body of desire, a body of emotion, a body of perception, a body of growth, a physical body. The point, now a human figure, stands on earth. They look up. They remember the spheres. They begin the ascent, shedding each layer in reverse, becoming lighter, brighter. At the top, they rejoin the sphere of stars. Nothing has changed. The soul was always there. It only dreamed it fell. 30s. *For: the descent and return of the soul, emanation and epistrophē, self-forgetting and self-recovery.*"
+tags	
+0	"the descent and return of the soul"
+1	"emanation and epistrophē"
+2	"self-forgetting and self-recovery."
+duration_sec	30
+10	
+id	"HT11"
+title	"The Flowering of the Soul as a Plant (Plotinus)"
+prompt	"A figure sits in meditation. Below them, roots grow downward into the earth. Above them, branches grow upward into light. The figure is a tree. The roots reach into darkness, drawing nourishment. The branches reach into light, giving form. The figure is not a person who has a body. The figure is a soul who has a body *and* a mind *and* a connection to the divine — all at once, like a tree that is both root and branch. 25s. *For: Plotinus, the soul not in the body but the body in the soul, the undivided self.*"
+tags	
+0	"Plotinus"
+1	"the soul not in the body but the body in the soul"
+2	"the undivided self."
+duration_sec	25
+11	
+id	"HT12"
+title	"The Vision of the Good (sun, cave, form)"
+prompt	"A figure emerges from the cave into sunlight. They cannot look at the sun directly. They look at what the sun illuminates. The sunlight is not the Good — it is an image of the Good. The figure closes their eyes. Inside their own darkness, they see something even brighter than the sun. Not a thing, not a light, but the source of light itself — experienced, not seen. The figure knows: this is what makes all seeing possible. They open their eyes. Everything looks different. 25s. *For: the Form of the Good, beyond being, the sun as image of the Good, Plato's central teaching.*"
+tags	
+0	"the Form of the Good"
+1	"beyond being"
+2	"the sun as image of the Good"
+3	"Plato's central teaching."
+duration_sec	25
+12	
+id	"HT13"
+title	"The Hephaestus Forge (the divine craftsman within)"
+prompt	"A dark forge. Fire. A figure works at an anvil, hammering a formless mass. The hammer strikes. With each strike, the mass becomes more defined — it is becoming a statue of the figure themselves. The figure does not stop hammering until the statue is complete. The statue and the figure face each other. They are identical. The statue steps off the anvil and embraces the figure. They merge. The figure has created themself. 25s. *For: self-creation, the divine craftsman within, the soul as self-forming, the figure who makes themself.*"
+tags	
+0	"self-creation"
+1	"the divine craftsman within"
+2	"the soul as self-forming"
+3	"the figure who makes themself."
+duration_sec	25
+13	
+id	"HT14"
+title	"The Symposium Ascent (Diotima's Ladder)"
+prompt	"A figure stands at the bottom of a ladder. A teacher (Diotima) stands beside them, pointing upward. The first rung: love of one beautiful body. Second: love of all beautiful bodies. Third: love of beautiful souls. Fourth: love of beautiful practices and laws. Fifth: love of beautiful knowledge. Sixth: love of the vast sea of beauty. Seventh: the sudden vision of Beauty itself — not in any form, but as it is, alone, eternal. The figure is no longer climbing. They are standing in the presence of Beauty. They are, for a moment, still. 30s. *For: Diotima's ladder, the ascent to the Forms, love as the guide, Beauty itself.*"
+tags	
+0	"Diotima's ladder"
+1	"the ascent to the Forms"
+2	"love as the guide"
+3	"Beauty itself."
+duration_sec	30
+14	
+id	"HT15"
+title	"The Ring of Gyges (invisibility and the soul)"
+prompt	'A figure holds a ring. They turn it. They become invisible. No one sees them. They do what they want — take what they want, do what they want. No consequences. The figure becomes ugly, twisted, without the constraint of being seen. A teacher (Socrates) appears beside them. "The ring did not change you," the teacher says. "It revealed you." The figure looks at their own hands. They are still invisible. But now they see themselves. They drop the ring. They become visible again — but changed by having seen themselves. 25s. *For: the Ring of Gyges, justice and the soul, being vs appearing, the inner constitution.*'
+tags	
+0	"the Ring of Gyges"
+1	"justice and the soul"
+2	"being vs appearing"
+3	"the inner constitution."
+duration_sec	25
+15	
+id	"HT16"
+title	"The Weaving of the World Soul (Timaeus)"
+prompt	"A cosmic weaver sits at a loom. The loom is not made of wood — it is made of Same (a straight line) and Different (a diagonal line). The weaver weaves them together, thread by thread. The threads cross, creating a fabric. The fabric becomes the world — the stars, the planets, the elements, the bodies, the souls. The weaver is the Demiurge. The fabric is the World Soul. Everything is woven together. Pull one thread, the whole pattern shifts. 30s. *For: the World Soul (Anima Mundi), the Timaeus, Same and Different, the fabric of reality.*"
+tags	
+0	"the World Soul (Anima Mundi)"
+1	"the Timaeus"
+2	"Same and Different"
+3	"the fabric of reality."
+duration_sec	30
+16	
+id	"HT17"
+title	"The Sudden Shock of Wonder (thaumazein)"
+prompt	"A figure walks through a familiar street — the same shops, the same faces, the same routines. Suddenly, as if for the first time, they see everything. The light on a wall. The curve of a stranger's hand. The sound of a bird. The figure stops. They are not thinking. They are not feeling. They are simply *struck* — by the sheer fact that anything exists at all. The ordinary world is, for a moment, unbearably strange and beautiful. 25s. *For: thaumazein (wonder), the beginning of philosophy, the sudden shift of perception, camatkāra in the Western tradition.*"
+tags	
+0	"thaumazein (wonder)"
+1	"the beginning of philosophy"
+2	"the sudden shift of perception"
+3	"camatkāra in the Western tradition."
+duration_sec	25
+17	
+id	"HT18"
+title	"The Death of Socrates (the soul departs)"
+prompt	`A prison cell. Socrates sits on a bed, holding a cup. His students surround him, weeping. He drinks. He lies down. Cold begins at his feet and rises. He speaks his last words: "Crito, we owe a cock to Asclepius." His students do not understand. The soul loosens from the body, rising like a mist — visible to us but not to them. The mist takes the shape of Socrates. He looks back at his body, which is now just a body. He turns and walks toward a light that only he can see. 30s. *For: Socrates' death, the soul's departure, philosophy as preparation for death, Phaedo.*`
+tags	
+0	"Socrates' death"
+1	"the soul's departure"
+2	"philosophy as preparation for death"
+3	"Phaedo."
+duration_sec	30
+18	
+id	"HT19"
+title	"The Nocturnal Council (laws as education of the soul)"
+prompt	`A dark chamber. A circle of elders sits in silence. A younger figure enters, brought before them. They do not speak to the young figure. They look at them — not as a body, but as a soul. The young figure feels seen in a way they have never been seen. One elder speaks: "What do you love?" The young figure answers. The elders nod. The young figure is accepted. The council is not a government. It is a school. And the subject is the soul. 25s. *For: Plato's Laws, the Nocturnal Council, education as turning of the soul, philosophy as way of life.*`
+tags	
+0	"Plato's Laws"
+1	"the Nocturnal Council"
+2	"education as turning of the soul"
+3	"philosophy as way of life."
+duration_sec	25
+19	
+id	"HT20"
+title	"The Theurgist Becomes the God"
+prompt	"A figure stands in a circle drawn on the ground. They chant. Symbols surround them — Chaldean signs, planetary seals. The chanting intensifies. The figure's form begins to change — growing taller, more luminous, more terrible. Their face becomes the face of a god — not human. Their skin shifts from clay to star-stuff. They are no longer a person performing a ritual. They are the god to whom the ritual was addressed. The circle breaks. The god walks out. The space where the human was is empty. 30s. *For: theurgy, deification, the goal of the Chaldean Oracles, Iamblichus' union with the divine, theōsis.*"
+tags	
+0	"theurgy"
+1	"deification"
+2	"the goal of the Chaldean Oracles"
+3	"Iamblichus' union with the divine"
+4	"theōsis."
+duration_sec	30
+9	
+name	"XI. Death, Daimon & Light (25 new)"
+count	25
+clips	
+0	
+id	"DL1"
+title	"The Five Elements Dissolve (Tibetan bardo)"
+prompt	"A figure sits in meditation, glowing faintly. The solidity of their body begins to soften — the earth element dissolving. The body becomes liquid (water dissolving), then heat dissipates (fire dissolving), then the breath stops (wind dissolving). The body becomes a translucent outline. A vast empty space opens. Deep within the emptiness, a warm radiance dawns — the Inner Radiance, clear light, the ground luminosity. The figure's consciousness merges with it. 30s. *For: death, bardo, the dissolution of the elements, the clear light at death, Tibetan Book of the Dead.*"
+tags	
+0	"death"
+1	"bardo"
+2	"the dissolution of the elements"
+3	"the clear light at death"
+4	"Tibetan Book of the Dead."
+duration_sec	30
+1	
+id	"DL2"
+title	"The Peaceful and Wrathful Deities (your own nature appearing)"
+prompt	'A consciousness floats in a vast space after death. From the space, a peaceful figure emerges — luminous, gentle, holding a lotus. Then another, and another — 42 peaceful deities, each appearing in sequence, each a different colour, each radiating a different quality. They are not separate beings. They are the consciousness itself, appearing as its own enlightened qualities. The consciousness recognizes them: "These are me." The peaceful deities smile and dissolve into the consciousness. Then the wrathful deities emerge — fierce, crowned with skulls, wielding weapons. The consciousness does not flee. It recognizes: "These too are me." The wrathful deities also dissolve. Only the radiance remains. 35s. *For: the Tibetan bardo of dharmatā, the 42 peaceful and 58 wrathful deities, meeting your own enlightened nature, the recognition that saves.*'
+tags	
+0	"the Tibetan bardo of dharmatā"
+1	"the 42 peaceful and 58 wrathful deities"
+2	"meeting your own enlightened nature"
+3	"the recognition that saves."
+duration_sec	35
+2	
+id	"DL3"
+title	"The Three Bardos (life, dying, becoming)"
+prompt	"A tripartite screen. Left panel: a living figure in the world — eating, walking, talking. Middle panel: the same figure on a deathbed — the dissolution scene, the elements withdrawing. Right panel: a floating consciousness in a luminous space — the bardo of becoming, a new world beginning to form around it based on its karma. The consciousness sees a vision of its next parents, feels attraction, and is drawn toward a womb. The middle panel fades. The right panel becomes a new birth. The left panel was already a bardo — we are always in one. 35s. *For: the three bardos, the intermediate state, rebirth, Milarepa's song of the bardos.*"
+tags	
+0	"the three bardos"
+1	"the intermediate state"
+2	"rebirth"
+3	"Milarepa's song of the bardos."
+duration_sec	35
+3	
+id	"DL4"
+title	"The Egyptian Weighing of the Heart"
+prompt	"A vast hall. A figure stands before a scale. On one side of the scale: a feather (Ma'at — truth, justice). On the other side: the figure's heart. The heart is placed on the scale. The figure watches. The heart must be lighter than the feather. If it is, the figure passes through to the Field of Reeds. If it is not, the heart is eaten by the Devourer. The figure watches their own heart being weighed. Every act, every word, every thought — visible in the heart's weight. The heart balances with the feather. The Devourer retreats. The figure passes through a doorway into a warm, golden landscape. 30s. *For: Egyptian Book of the Dead, the judgment of the dead, Ma'at, the heart as record of one's life.*"
+tags	
+0	"Egyptian Book of the Dead"
+1	"the judgment of the dead"
+2	"Ma'at"
+3	"the heart as record of one's life."
+duration_sec	30
+4	
+id	"DL5"
+title	"Steiner's Kamaloca (the soul reviewing its life)"
+prompt	"A figure floats in a grey, misty space after death. Before them, their past life begins to unroll like a tapestry — every scene, every encounter, every word, every silence. The figure watches without judgment at first. Then they begin to feel: the joy they gave others, they feel as joy. The pain they caused others, they feel as pain. Not as punishment. As *experience*. The figure lives through their own life again — this time from the other side of every interaction. They learn what they could not learn while alive. The tapestry rolls up. The figure is ready. 30s. *For: Kamaloca, Steiner, the life review, purification, learning from experience after death.*"
+tags	
+0	"Kamaloca"
+1	"Steiner"
+2	"the life review"
+3	"purification"
+4	"learning from experience after death."
+duration_sec	30
+5	
+id	"DL6"
+title	"The Tantraloka View: Death as the Great Offering"
+prompt	"A figure on a pyre. Flames rise. The body burns — but the figure is not in the body. They watch from above. As the body burns, the elements return to the elements: earth to earth, water to water, fire to fire, air to air, space to space. What remains is not nothing. It is awareness itself — what was always there, now free of its container. The figure realizes: they have not died. They have been *offered*. The body was the offering. What remains is what was always offering. 30s. *For: death as sacrifice, cremation, the elements returning, the witness survives, Tantraloka's view.*"
+tags	
+0	"death as sacrifice"
+1	"cremation"
+2	"the elements returning"
+3	"the witness survives"
+4	"Tantraloka's view."
+duration_sec	30
+6	
+id	"DL7"
+title	"The Deities of the Bardo Are Your Own Thoughts"
+prompt	`A consciousness floats in a luminous space. A wrathful deity appears — huge, dark blue, holding a curved knife. The consciousness is terrified. A voice (the viewer's own understanding) says: "Look at it. It is not outside you." The consciousness looks. The deity's form wavers. Beneath the wrathful appearance is the consciousness's own face — peaceful, calm. The deity smiles. It was never a separate being. It was the consciousness's own unrecognized nature appearing as a deity. All the deities were the self, appearing to the self, to wake the self up. 30s. *For: bardo, the deities as projections, non-duality after death, the recognition that is liberation.*`
+tags	
+0	"bardo"
+1	"the deities as projections"
+2	"non-duality after death"
+3	"the recognition that is liberation."
+duration_sec	30
+7	
+id	"DL8"
+title	"The Daimon As the Next-Higher You (Plotinus)"
+prompt	"A figure sits in contemplation. A luminous version of themselves stands beside them — slightly taller, slightly brighter, slightly more refined. They are the same: same face, same form, same posture. The luminous figure is not a guide. It is not an angel. It is the figure's own next-higher principle — what they are becoming. The figure and the daimon face each other. The daimon extends a hand. The figure takes it. The daimon pulls the figure upward, into itself. The figure is now the luminous version. A new, even brighter daimon stands beside them. The process continues infinitely. 30s. *For: the daimon as higher self, Plotinus Enneads III.4, the next-higher principle, self-evolution.*"
+tags	
+0	"the daimon as higher self"
+1	"Plotinus Enneads III.4"
+2	"the next-higher principle"
+3	"self-evolution."
+duration_sec	30
+8	
+id	"DL9"
+title	"The Daimon in the Heart Speaks in Silence"
+prompt	`A figure sits in stillness. No words. No images. Just quiet. Within the quiet, a faint presence becomes perceptible — not heard, not seen, but *known*. The presence does not speak in language. It speaks in impulses: a slight turn of attention, a subtle sense of "this way," a quiet confirmation when the figure makes a choice aligned with their deeper self. The figure learns to recognize this presence. It is not external. It is the daimon — the figure's own deepest self, communicating not through words but through the quality of silence itself. 25s. *For: the daimon's guidance, interior silence, knowing without words, the heart as organ of perception.*`
+tags	
+0	"the daimon's guidance"
+1	"interior silence"
+2	"knowing without words"
+3	"the heart as organ of perception."
+duration_sec	25
+9	
+id	"DL10"
+title	"Synesius: The Daimon Impresses Images on the Dreaming Mind"
+prompt	"A figure sleeps. Above them, the subtle body (the imaginative pneuma) rises slightly from the sleeping form — a translucent mist in the shape of the person. A luminous figure (the daimon) approaches the subtle body. The daimon touches the subtle body's forehead. Images begin to flow into the subtle body — not random dream images, but coherent communications: symbols, scenes, faces, places. Each image carries a meaning that the sleeping figure will understand when they wake, though they may not remember the dream. The daimon withdraws. The subtle body sinks back into the physical. The figure stirs. 30s. *For: Synesius on dreams, the daimon impressing images on the pneuma, dream incubation, higher self communication.*"
+tags	
+0	"Synesius on dreams"
+1	"the daimon impressing images on the pneuma"
+2	"dream incubation"
+3	"higher self communication."
+duration_sec	30
+10	
+id	"DL11"
+title	"The Daimon as Your Future Self (Proclus)"
+prompt	`A figure stands at a threshold. On the other side, an older, wiser version of themselves waits — not aged, but *completed*. Their face shows peace, understanding, completion. The figure asks: "Who are you?" The future self answers: "I am what you will become. I am already you. I am sending this message back to you through time: keep going. It is worth it. I am proof." The figure steps through the threshold. They are now the future self. Behind them, a younger version of themselves stands at the threshold, asking the same question. 30s. *For: Proclus' daimon, the daimon as one's completed self, time and eternity in Neoplatonism.*`
+tags	
+0	"Proclus' daimon"
+1	"the daimon as one's completed self"
+2	"time and eternity in Neoplatonism."
+duration_sec	30
+11	
+id	"DL12"
+title	"The Angel as the Star's Self-Awareness (Proclus)"
+prompt	"A star burns in the darkness of space. It is not just a ball of fire — it is a conscious being, vast, ancient, aware. Its awareness takes a form: an angel. The angel is the star's self-awareness — the star looking at itself and recognizing what it is. The angel descends to a human world and walks among people. To them, it appears as a winged figure of light. But it is not a different kind of being. It is what a star looks like when it becomes aware of itself. Every star has its angel. Every angel was once a star. 30s. *For: Proclus, the henads, stars as gods, angels as the self-awareness of celestial beings, theurgy.*"
+tags	
+0	"Proclus"
+1	"the henads"
+2	"stars as gods"
+3	"angels as the self-awareness of celestial beings"
+4	"theurgy."
+duration_sec	30
+12	
+id	"DL13"
+title	"Light From the Source: The First Condensation"
+prompt	"Pure white light — no form, no boundary, no direction. It is not doing anything. It is simply full. Within the fullness, a slight differentiation appears — not a decision, not a movement, but a kind of *emphasis*. The light thickens slightly in one region. The thickening becomes a point. The point is the first form: iridescent, pulsing, containing within itself all forms that will ever emerge from it. The original light has not changed. The point is within it, of it, but now distinguishable. The first condensation has occurred. The universe has begun. 30s. *For: creation, emanation, the first form, the bindu, the point-source, the origin.*"
+tags	
+0	"creation"
+1	"emanation"
+2	"the first form"
+3	"the bindu"
+4	"the point-source"
+5	"the origin."
+duration_sec	30
+13	
+id	"DL14"
+title	"Light Crystallizes Into a Landscape (Kashmir)"
+prompt	"A vast field of golden light. Within it, patterns begin to form — faint at first, like frost forming on glass. The patterns thicken, take on colour: warm grey of stone, deep green of pines, white of snow. A Himalayan landscape crystallizes from the light — peaks, valleys, rivers, forests. The light has not disappeared. It has become the landscape. Every stone is light slowed down. Every pine needle is light shaped. The air between the peaks is still the original light, thinner, waiting. The landscape breathes. 30s. *For: Kashmir world introduction, emanation into form, light becoming matter, each world's unique condensation.*"
+tags	
+0	"Kashmir world introduction"
+1	"emanation into form"
+2	"light becoming matter"
+3	"each world's unique condensation."
+duration_sec	30
+14	
+id	"DL15"
+title	"Light Crystallizes Into a Landscape (Sufi)"
+prompt	"Pure white light, warm, honey-coloured. It thickens into arches, columns, geometric tilework — an Andalusian courtyard crystallizing from radiance. A fountain forms at the center, and the water is still light, flowing as light, splashing as light. The tiles are light frozen into pattern. The arches are light holding space. A single lantern hangs — its flame is the original light, the only thing that never condensed, reminding the courtyard what it is made of. 30s. *For: Sufi world introduction, light becoming architecture, the Andalusian garden as crystallized light.*"
+tags	
+0	"Sufi world introduction"
+1	"light becoming architecture"
+2	"the Andalusian garden as crystallized light."
+duration_sec	30
+15	
+id	"DL16"
+title	"Light Crystallizes Into a Landscape (Neoplatonic)"
+prompt	"Pure white light, cooler, more structured. It thickens into marble columns, stone steps, an Academy overlooking a sea that is still liquid light. The colonnade forms from light — each pillar a beam of light slowed to solidity. The shadows between the pillars are not absence of light but light resting, waiting to be called back into movement. A scroll on a bench: the words on it are light in its most concentrated form — light that has become meaning. 30s. *For: Neoplatonic world introduction, light becoming architecture, the Academy as crystallized nous.*"
+tags	
+0	"Neoplatonic world introduction"
+1	"light becoming architecture"
+2	"the Academy as crystallized nous."
+duration_sec	30
+16	
+id	"DL17"
+title	"Light Crystallizes Into a Landscape (Hermetic)"
+prompt	"Pure white light, warm, amber-tinged. It thickens into a laboratory — glass vessels, wooden tables, herbs hanging from beams. The alembics are light that has become transparent container. The liquids inside them are light that has become colour. A furnace glows — not burning fuel, but burning the original light, releasing it back into its primal state. An open grimoire: the diagrams on it are light that has become symbol. The symbols are light trying to remember itself. 30s. *For: Hermetic world introduction, light becoming the alchemical laboratory, the opus as light's self-remembering.*"
+tags	
+0	"Hermetic world introduction"
+1	"light becoming the alchemical laboratory"
+2	"the opus as light's self-remembering."
+duration_sec	30
+17	
+id	"DL18"
+title	"Light Crystallizes Into a Landscape (Buddhist)"
+prompt	"Pure white light, cool, spacious, silent. It does not thicken or form. It *clears*. The light becomes transparent, and through its transparency, a landscape appears — not made of light, but made of space: a bamboo grove, mist, a meditation path. The forms are not condensed light. They are light that has become empty enough to let something else appear through it. The bamboo is not solid. It is a suggestion. The mist is not vapour. It is light resting. A figure sits on the path — they too are made of this same clear light, but they have forgotten. They are looking for something. The bamboo grove waits for them to remember. 30s. *For: Buddhist world introduction, śūnyatā as form, light as space, emptiness and appearance.*"
+tags	
+0	"Buddhist world introduction"
+1	"śūnyatā as form"
+2	"light as space"
+3	"emptiness and appearance."
+duration_sec	30
+18	
+id	"DL19"
+title	"Light Crystallizes Into a Landscape (Yoga)"
+prompt	"Pure white light, warm, golden, alive. It pulses gently, rhythmically, like a breath. With each pulse, the light organizes itself further — into earth, into water, into air, into fire, into space. The five elements condense from the breath-light in sequence. A landscape forms — a river at dawn, a meditation cave, a mountain peak catching the first sun. The light is still breathing. The landscape breathes with it. A figure sits on the river bank, breathing in rhythm with the landscape, in rhythm with the original light. 30s. *For: Yoga world introduction, the five elements condensing, prāṇa as creative breath, light as life.*"
+tags	
+0	"Yoga world introduction"
+1	"the five elements condensing"
+2	"prāṇa as creative breath"
+3	"light as life."
+duration_sec	30
+19	
+id	"DL20"
+title	"The Syllable OM Vibrates the Universe"
+prompt	"Deep darkness. At center, the syllable OM in Devanāgarī — not written, but present as a luminous form. It begins to vibrate. The vibration is visible as concentric rings emanating from the syllable. With each ring, the universe expands further — stars, galaxies, nebulae, life. The OM is not producing the universe. The OM *is* the universe vibrating. Everything is the sound of OM, slowed down to various speeds. A flower is OM at the speed of growth. A stone is OM at the speed of stillness. A thought is OM at the speed of light. The OM continues vibrating. The universe continues unfolding. 30s. *For: OM as cosmic sound, nāda brahman, the universe as vibration, the creative power of mantra.*"
+tags	
+0	"OM as cosmic sound"
+1	"nāda brahman"
+2	"the universe as vibration"
+3	"the creative power of mantra."
+duration_sec	30
+20	
+id	"DL21"
+title	"AHAṀ — The Root Mantra Vibrating Forth Existence"
+prompt	'Deep warm darkness. The syllable AHAṀ forms — not written, but felt as a presence. AHAṀ means "I Am." The syllable vibrates once. The vibration becomes a point of light. It vibrates again. The point becomes a field. Again. The field becomes a cosmos. Each vibration of AHAṀ is a world being uttered into being. The syllable does not create the worlds. The syllable *is* the worlds — worlds are AHAṀ vibrating at different frequencies. The highest world is AHAṀ vibrating at the speed of awareness. The lowest world is AHAṀ vibrating at the speed of matter. The same syllable. The same I AM. 30s. *For: AHAṀ as root mantra, the "I Am" that creates worlds, vibration as the bridge between consciousness and matter.*'
+tags	
+0	"AHAṀ as root mantra"
+1	'the "I Am" that creates worlds'
+2	"vibration as the bridge between consciousness and matter."
+duration_sec	30
+21	
+id	"DL22"
+title	"The 50 Phonemes as the Alphabet of Creation"
+prompt	"A dark space. 50 points of light appear, arranged in a circle. Each point is a Sanskrit phoneme — a seed syllable. They pulse in sequence: A, Ā, I, Ī, U, Ū... as each phoneme pulses, a corresponding form appears in the space within the circle: earth, water, fire, air, space — elements, senses, organs, gods, stars. The phonemes are not naming things. They are *uttering* things into being. The alphabet is not a human invention. It is the structure of reality itself — the 50 forms of consciousness reflecting on itself. When the last phoneme (KṢA) pulses, the circle completes. The universe is fully spoken. Silence returns. 30s. *For: the 50 phonemes as the alphabet of creation, the Mātṛkā cakra, sound as creative power, Abhinavagupta's metaphysics of speech.*"
+tags	
+0	"the 50 phonemes as the alphabet of creation"
+1	"the Mātṛkā cakra"
+2	"sound as creative power"
+3	"Abhinavagupta's metaphysics of speech."
+duration_sec	30
+22	
+id	"DL23"
+title	"The Bīja Mantra: One Syllable, One World"
+prompt	"A single Sanskrit syllable appears in darkness — HRĪM. It glows crimson and gold. The syllable pulses once. A world unfolds from it — not a metaphor, but an actual world: mountains, oceans, skies, beings. The world exists as long as the syllable vibrates. The syllable fades. The world dissolves. A new syllable appears: KLĪM. It glows blue and silver. It pulses. A different world unfolds — cooler, vaster, more ethereal. Each bīja mantra is a universe seed. The entire cosmos is a collection of such seeds, vibrating together. 30s. *For: bīja mantras, seed syllables, HRĪM, KLĪM, SAUḤ, KHPHREṀ, each syllable as a universe, tantric mantra theory.*"
+tags	
+0	"bīja mantras"
+1	"seed syllables"
+2	"HRĪM"
+3	"KLĪM"
+4	"SAUḤ"
+5	"KHPHREṀ"
+6	"each syllable as a universe"
+7	"tantric mantra theory."
+duration_sec	30
+23	
+id	"DL24"
+title	"The Mantra Becomes the Deity"
+prompt	"A figure chants. The sound is visible as a stream of luminous syllables flowing from their mouth. The syllables spiral together, weaving into a form — first a shape, then a face, then a full figure. The chanting has taken form. A deity stands before the figure — made of the same substance as the chant, glowing, alive. The figure continues chanting. The deity becomes more solid, more present. The deity opens its eyes. It looks at the figure. They recognize each other. The figure was not summoning a separate being. The figure was giving form to their own deepest awareness. The chant was always the deity. 30s. *For: mantra becoming deity, japa, nyāsa, the power of repetitive sound, tantric practice.* ### Dream & Subtle Body Messaging"
+tags	
+0	"mantra becoming deity"
+1	"japa"
+2	"nyāsa"
+3	"the power of repetitive sound"
+4	"tantric practice."
+duration_sec	30
+24	
+id	"DL25"
+title	"The Dream as a Letter From the Higher Self"
+prompt	"A figure sleeps. Above their bed, a sheet of luminous parchment unrolls. On it, images form — not random, but carefully composed, like a letter in symbols. A mountain (obstacle). A bridge (crossing). A hand reaching (help available). A door opening (opportunity). The images are not prophecies. They are *correspondences* — the higher self communicating in the language of the dreaming mind, which is the language of images. The figure, in their dream, walks through a door, crosses a bridge, climbs a mountain. They wake with a feeling they cannot name. They have received the message, even if they cannot read it. The message was not in the images. The message was in the *feeling* the images left behind. 30s. *For: dreams as messages, the higher self communicating through images, the subtle body's receptivity during sleep, the daimon's dream language.*"
+tags	
+0	"dreams as messages"
+1	"the higher self communicating through images"
+2	"the subtle body's receptivity during sleep"
+3	"the daimon's dream language."
+duration_sec	30
+10	
+name	"XII. World B-Roll & Shadowed Gurus (24 new)"
+count	44
+clips	
+0	
+id	"BR1"
+title	"Kashmir: Mountain Mist at Dawn"
+prompt	"A clay-textured Himalayan valley at dawn. Thick mist moves slowly between pine-covered slopes. A single stone temple sits on a distant ridge, its silhouette just visible through the mist. No figures. No movement except the mist. The camera is static, watching the mist reveal and conceal the temple in slow cycles. 20s. *For: establishing shot, atmospheric transition, Kashmir setting.*"
+tags	
+0	"establishing shot"
+1	"atmospheric transition"
+2	"Kashmir setting."
+duration_sec	20
+1	
+id	"BR2"
+title	"Kashmir: Manuscript Room with Oil Lamp"
+prompt	"A small stone room. Walls lined with rough wooden shelves stacked with birch-bark manuscripts tied with cord. A single oil lamp on a low desk. The flame is steady, barely moving. The manuscripts cast long shadows. No figure present. The camera slowly pans across the shelves. 20s. *For: manuscript culture, the textual tradition, the scholar's world.*"
+tags	
+0	"manuscript culture"
+1	"the textual tradition"
+2	"the scholar's world."
+duration_sec	20
+2	
+id	"BR3"
+title	"Shadowed Guru: Kashmir Shaiva Teacher"
+prompt	"A stone cave interior. A seated figure (the guru) is visible in profile — their face is in shadow, illuminated only by a single oil lamp at their side. The light catches their shoulder, the curve of their beard, their hand resting on a manuscript. Their face is never fully visible. They do not move. The only motion is the flame's subtle flicker. Behind them, the cave wall is rough stone. 20s. *For: ANY Kashmir Shaiva teaching video — Abhinavagupta, Lakṣmaṇjū, Kṣemarāja — the shadowed guru speaks, their identity irrelevant.*"
+tags	
+0	"ANY Kashmir Shaiva teaching video — Abhinavagupta"
+1	"Lakṣmaṇjū"
+2	"Kṣemarāja — the shadowed guru speaks"
+3	"their identity irrelevant."
+duration_sec	20
+3	
+id	"BR4"
+title	"Sufi: Moonlit Garden at Night"
+prompt	"A clay-textured Andalusian garden at night. Moonlight on a central fountain. The water catches silver light. Orange trees in clay pots. Geometric tilework in muted blues and golds. A single lantern hangs from an arch, unlit — the moon is enough. No figures. The fountain's sound is the only movement. 20s. *For: establishing shot, Sufi atmosphere, Ibn Arabi's world.*"
+tags	
+0	"establishing shot"
+1	"Sufi atmosphere"
+2	"Ibn Arabi's world."
+duration_sec	20
+4	
+id	"BR5"
+title	"Sufi: The Open Manuscript of Poetry"
+prompt	"A dark space. A single open manuscript lies on a low wooden table. The pages show Arabic or Persian calligraphy — not readable, but beautiful. A single candle at the corner of the table. The flame moves slightly. The pages are aged, warm-toned. The camera slowly pushes in on the text, then pulls back. No figure. 20s. *For: Sufi poetry, Rumi, Ibn Arabi's Futūḥāt, the written tradition.*"
+tags	
+0	"Sufi poetry"
+1	"Rumi"
+2	"Ibn Arabi's Futūḥāt"
+3	"the written tradition."
+duration_sec	20
+5	
+id	"BR6"
+title	"Shadowed Guru: Sufi Mystic"
+prompt	"A simple stone alcove. A seated figure is silhouetted against a moonlit archway behind them. Their face is in darkness — we see only their outline: the shape of a robe, the posture of contemplation, hands resting on knees. Beyond the archway, the night sky is visible, a single bright star. The figure does not move. The star seems to pulse faintly, as if responding to the figure's presence. 20s. *For: ANY Sufi teaching video — Ibn Arabi, Rumi, Suhrawardi — the shadowed sage in the moonlit arch.*"
+tags	
+0	"ANY Sufi teaching video — Ibn Arabi"
+1	"Rumi"
+2	"Suhrawardi — the shadowed sage in the moonlit arch."
+duration_sec	20
+6	
+id	"BR7"
+title	"Neoplatonic: The Academy at Dusk"
+prompt	"A clay-textured marble colonnade. Late dusk — the sky is deep blue, almost purple. A single torch burns at the far end of the colonnade. The columns cast long shadows across the stone floor. A scroll lies unrolled on a bench. No figures. The torch flame is the only movement. 20s. *For: establishing shot, the Academy, the Platonic tradition.*"
+tags	
+0	"establishing shot"
+1	"the Academy"
+2	"the Platonic tradition."
+duration_sec	20
+7	
+id	"BR8"
+title	"Neoplatonic: The Library at Night"
+prompt	"A dark library. Papyrus scrolls in niches. A single oil lamp on a reading table. A diptych (wax writing tablet) lies open with a stylus beside it. The room is still. The camera slowly moves past the shelves. No figure. 20s. *For: the textual tradition, Proclus' library, the preservation of knowledge.*"
+tags	
+0	"the textual tradition"
+1	"Proclus' library"
+2	"the preservation of knowledge."
+duration_sec	20
+8	
+id	"BR9"
+title	"Shadowed Guru: Neoplatonic Philosopher"
+prompt	"A stone chamber with a single opening to the sky. A figure stands facing away, looking up at the opening. Light from above illuminates their head and shoulders — the rest is shadow. They hold a scroll in one hand, loosely. They do not move. The light from above shifts very slowly, as if hours are passing in seconds. The figure remains still throughout. 20s. *For: ANY Neoplatonic teaching video — Plotinus, Proclus, Iamblichus, Socrates — the philosopher gazing upward.*"
+tags	
+0	"ANY Neoplatonic teaching video — Plotinus"
+1	"Proclus"
+2	"Iamblichus"
+3	"Socrates — the philosopher gazing upward."
+duration_sec	20
+9	
+id	"BR10"
+title	"Hermetic: The Laboratory at Night"
+prompt	"A clay-textured alchemical laboratory. Furnace glow in the background. Alembics and retorts on a wooden table. Bundled herbs hanging from ceiling beams. A single candle on the table illuminates an open book of diagrams. No figure. The furnace glow pulses slowly, as if breathing. 20s. *For: establishing shot, alchemical atmosphere, the opus.*"
+tags	
+0	"establishing shot"
+1	"alchemical atmosphere"
+2	"the opus."
+duration_sec	20
+10	
+id	"BR11"
+title	"Hermetic: The Round Tower Study"
+prompt	"A circular stone room. Books line the curved walls. A large wooden table at center holds an astrolabe, a globe, a crystal. Candlelight from multiple sources creates overlapping shadows. No figure. The camera slowly orbits the table. 20s. *For: Dee's study, the Renaissance mage, Hermetic science.*"
+tags	
+0	"Dee's study"
+1	"the Renaissance mage"
+2	"Hermetic science."
+duration_sec	20
+11	
+id	"BR12"
+title	"Shadowed Guru: Hermetic Adept"
+prompt	"A stone chamber. A figure stands at a lectern, their back to the viewer. Before them, an open book with diagrammatic pages — circles, seals, symbols. The figure's face is not visible. Their hand rests on the page. A candle at the corner of the lectern casts their shadow large on the wall behind. The shadow seems to have a life of its own — it moves slightly, independently of the figure. 20s. *For: ANY Hermetic teaching video — Hermes Trismegistus, Paracelsus, Dee, Crowley — the adept at the lectern.* ### Buddhist (Indian + Tibetan)"
+tags	
+0	"ANY Hermetic teaching video — Hermes Trismegistus"
+1	"Paracelsus"
+2	"Dee"
+3	"Crowley — the adept at the lectern."
+duration_sec	20
+12	
+id	"BR13"
+title	"Buddhist: Tibetan Monastery in Snow"
+prompt	"A clay-textured Tibetan monastery built into a mountainside. Snow on the roofs. Prayer flags strung between buildings, moving in a wind we cannot hear. A single light in one window. The mountains stretch behind into mist. No figures. The flags move. 20s. *For: establishing shot, Tibetan Buddhism, the Himalayan tradition.*"
+tags	
+0	"establishing shot"
+1	"Tibetan Buddhism"
+2	"the Himalayan tradition."
+duration_sec	20
+13	
+id	"BR14"
+title	"Buddhist: The Meditation Hall"
+prompt	"A dark wooden hall. Meditation cushions arranged in rows. A single butter lamp burns on a small altar at the front. The room is empty. Dust motes float in a shaft of light from a high window. The camera slowly moves through the space. 20s. *For: the meditation hall, monastic practice, the empty space of practice.*"
+tags	
+0	"the meditation hall"
+1	"monastic practice"
+2	"the empty space of practice."
+duration_sec	20
+14	
+id	"BR15"
+title	"Buddhist: Prayer Flags Against the Sky"
+prompt	"A high mountain pass. Strings of prayer flags stretch across the frame — five colours: blue, white, red, green, yellow — moving constantly in the wind. Behind them, a vast sky with clouds moving fast. The flags are the only human presence. The wind is the only sound. 20s. *For: Tibetan atmosphere, prayer flags as offerings, the elements in motion.*"
+tags	
+0	"Tibetan atmosphere"
+1	"prayer flags as offerings"
+2	"the elements in motion."
+duration_sec	20
+15	
+id	"BR16"
+title	"Buddhist: Thangka Unrolling"
+prompt	"A dark space. A painted scroll (thangka) is slowly unrolled, revealing a mandala — a central Buddha figure surrounded by deities, the entire cosmos arranged in concentric circles. The painting is intricate, colourful, geometric. The unrolling continues, revealing more and more of the mandala. When fully unrolled, the mandala glows briefly, then the scene holds. 25s. *For: Tibetan Buddhist art, the mandala principle, the visualized cosmos.*"
+tags	
+0	"Tibetan Buddhist art"
+1	"the mandala principle"
+2	"the visualized cosmos."
+duration_sec	25
+16	
+id	"BR17"
+title	"Buddhist: Forest Meditation Path (Indian)"
+prompt	"A clay-textured forest path. Wide trees, dappled light. A single meditation hut made of leaves and branches stands at the path's end. A water pot beside it. The path is well-worn. No figure. The leaves move slightly. A bird calls once. 20s. *For: Indian Buddhist setting, the forest tradition, the ascetic life.*"
+tags	
+0	"Indian Buddhist setting"
+1	"the forest tradition"
+2	"the ascetic life."
+duration_sec	20
+17	
+id	"BR18"
+title	"Shadowed Guru: Buddhist Teacher (Indian/Tibetan)"
+prompt	"A simple meditation cave. A figure sits cross-legged, wrapped in a shawl. Their face is in shadow — only the outline of their shaved head and the shape of their meditation posture is visible. Behind them, a small shelf with a few books and a statue of a Buddha. A single butter lamp burns beside them. The figure does not move. The flame does not flicker. The stillness is complete. 20s. *For: ANY Buddhist teaching video — Nāgārjuna, Padmasambhava, the Buddha himself — the silent teacher in the cave.*"
+tags	
+0	"ANY Buddhist teaching video — Nāgārjuna"
+1	"Padmasambhava"
+2	"the Buddha himself — the silent teacher in the cave."
+duration_sec	20
+18	
+id	"BR19"
+title	"Yoga: Sunrise Over Himalayan Peaks"
+prompt	"A clay-textured mountain range at dawn. The first light touches the highest peak — golden, then warm orange. The light moves down the mountainside slowly. Below, a river valley is still in shadow. No figures. The light continues its descent. 20s. *For: establishing shot, the Himalayan setting, the dawn of practice.*"
+tags	
+0	"establishing shot"
+1	"the Himalayan setting"
+2	"the dawn of practice."
+duration_sec	20
+19	
+id	"BR20"
+title	"Yoga: The Hermitage Garden"
+prompt	"A simple stone hermitage. A small garden in front — neat rows of herbs. A single tree with a stone seat beneath it. A water pot. A walking path worn into the earth. No figures. The garden is tended but empty now. A breeze moves the leaves. 20s. *For: the ashram, the contemplative life, the simplicity of practice.*"
+tags	
+0	"the ashram"
+1	"the contemplative life"
+2	"the simplicity of practice."
+duration_sec	20
+20	
+id	"BR21"
+title	"Shadowed Guru: Yoga Teacher"
+prompt	"A stone platform under a large tree. A figure sits in lotus, facing away, their silhouette outlined against the sky. The tree's branches form a canopy above them. The figure is utterly still — could be a statue, except for the faintest rise and fall of their shoulders. Their staff leans against the tree beside them. 20s. *For: ANY Yoga teaching video — Patañjali, Vyāsa, the Nātha yogis, the guru under the tree.*"
+tags	
+0	"ANY Yoga teaching video — Patañjali"
+1	"Vyāsa"
+2	"the Nātha yogis"
+3	"the guru under the tree."
+duration_sec	20
+21	
+id	"BR22"
+title	"Generic: The Temple Corridor at Sunset"
+prompt	"A clay-textured corridor — could be any tradition: columns, arches, disappearing into warm darkness. At the far end, a single source of golden light — sunset, or a lamp, or an opening. The light is warm, inviting. The corridor is empty. The camera moves slowly toward the light. 20s. *For: transition, threshold, the path, journey between worlds.*"
+tags	
+0	"transition"
+1	"threshold"
+2	"the path"
+3	"journey between worlds."
+duration_sec	20
+22	
+id	"BR23"
+title	"Generic: The Open Book on the Lectern"
+prompt	"A dark space. An ancient book open on a wooden lectern. The pages are illuminated — not by an external light, but from within. The illumination shifts slowly, as if the text is alive. The script is unfamiliar — could be Śāradā, Arabic, Greek, or symbols. The book is not being read. It is simply *there*, as the source. 20s. *For: scripture, revelation, the written tradition, any tradition.*"
+tags	
+0	"scripture"
+1	"revelation"
+2	"the written tradition"
+3	"any tradition."
+duration_sec	20
+23	
+id	"BR24"
+title	"Generic: The Single Candle in the Dark"
+prompt	"Complete darkness. A single candle flame appears — not lighting up, just appearing. The flame is steady, unwavering. It illuminates nothing but itself. The darkness around it is absolute. The flame is the only point of reference. The camera holds on the flame. Nothing else happens. 20s. *For: pure contemplation, the light in darkness, the witness, attention, any tradition's meditative moment.* Recurring themes that span every tradition. These were missing from the earlier sections."
+tags	
+0	"pure contemplation"
+1	"the light in darkness"
+2	"the witness"
+3	"attention"
+4	"any tradition's meditative moment."
+duration_sec	20
+24	
+id	"UT1"
+title	"Dreaming Within a Dream"
+prompt	"A figure sleeps. Above them, a dream bubble shows them dreaming — walking through a familiar street. Within that dream, another dream bubble shows them dreaming again — a childhood home. Within that, another. The bubbles nest infinitely. The sleeper wakes from the outermost dream, sits up, looks around. They are still in a bed. Are they awake now? The camera pulls back: they are in a room that is itself inside a vast dream bubble. 25s. *For: the dream metaphor, layers of illusion, Yoga-Vasishtha, the world as dream of Brahman.*"
+tags	
+0	"the dream metaphor"
+1	"layers of illusion"
+2	"Yoga-Vasishtha"
+3	"the world as dream of Brahman."
+duration_sec	25
+25	
+id	"UT2"
+title	"The Moon in Water"
+prompt	"A still lake at night. The full moon is reflected perfectly in the water. A figure reaches down to touch the reflection. The water ripples. The moon shatters into fragments. The figure looks up at the real moon. The reflection slowly reforms. The figure sees: the real moon has not moved. Only the reflection was disturbed. The figure is the water. The moon is awareness. 25s. *For: the moon in water (one of the most used metaphors in Indian philosophy), consciousness and its reflections, the untouched witness.*"
+tags	
+0	"the moon in water (one of the most used metaphors in Indian philosophy)"
+1	"consciousness and its reflections"
+2	"the untouched witness."
+duration_sec	25
+26	
+id	"UT3"
+title	"Leaving the Body at Night (dream travel)"
+prompt	"A figure lies sleeping in a dark room. A misty form of the same figure rises from the sleeping body — the subtle body. It floats upward, passes through the ceiling, through the roof, through the clouds. The subtle body looks down at the earth. It looks up at the stars. It travels — across oceans, through mountains, into space. It feels no weight. No time passes. It returns to the sleeping body below. The sleeper stirs but does not wake. 30s. *For: astral projection, dream travel, the subtle body, the night journey, barzakh, the intermediate state.*"
+tags	
+0	"astral projection"
+1	"dream travel"
+2	"the subtle body"
+3	"the night journey"
+4	"barzakh"
+5	"the intermediate state."
+duration_sec	30
+27	
+id	"UT4"
+title	"The Butterfly Dream (Zhuangzi)"
+prompt	`A figure sleeps. In the dream, they are a butterfly — flying, weightless, free. The butterfly has no memory of being a person. The butterfly lands on a flower. The butterfly wakes. The figure sits up, looks at their hands, and wonders: "Was I a person dreaming I was a butterfly? Or am I a butterfly dreaming I am a person?" The question is not answered. It hovers in the air, more important than any answer. 25s. *For: Zhuangzi's butterfly dream, non-duality, the self as question, Taoist influence on Zen.*`
+tags	
+0	"Zhuangzi's butterfly dream"
+1	"non-duality"
+2	"the self as question"
+3	"Taoist influence on Zen."
+duration_sec	25
+28	
+id	"UT5"
+title	"The Seed That Becomes the Tree That Becomes the Seed"
+prompt	"A single seed falls to the ground. It germinates, grows into a sapling, then a tree. The tree flowers, fruits. A fruit falls, rots, releases a seed. The tree ages, dies, falls. The new seed germinates. The cycle continues. The same seed? A different seed? Neither. Both. 25s. *For: karma, cause and effect, the cycle of birth and death, not the same nor different.*"
+tags	
+0	"karma"
+1	"cause and effect"
+2	"the cycle of birth and death"
+3	"not the same nor different."
+duration_sec	25
+29	
+id	"UT6"
+title	"The Web of Actions (karma as interconnection)"
+prompt	"A figure stands in a dark space. Every action they take sends out a ripple — visible as a thread that connects them to someone else, somewhere else. A kind word: a golden thread. A harsh word: a dark thread. Over time, the figure is connected to everyone, everything, by a vast web of threads. The figure can feel every thread. The threads are not chains. They are connections. The figure is not trapped by the web. The figure IS the web. 25s. *For: karma as interconnection, not punishment, the web of cause and effect, dependent origination.*"
+tags	
+0	"karma as interconnection"
+1	"not punishment"
+2	"the web of cause and effect"
+3	"dependent origination."
+duration_sec	25
+30	
+id	"UT7"
+title	"The Bird That Was Never Caged"
+prompt	`A figure sits in meditation, surrounded by the bars of a cage. The bars are made of thoughts: "I can't," "I'm not ready," "It's too late," "What will others think?" Each thought is a bar. The figure realizes the bars are not real — they are made of the same stuff as air. The figure stands up and walks through the bars. The cage dissolves. The figure looks back. There was never a cage. There was only the belief in one. The figure was always free. 25s. *For: freedom, liberation, the cage of thought, the prison of belief, mokṣa.*`
+tags	
+0	"freedom"
+1	"liberation"
+2	"the cage of thought"
+3	"the prison of belief"
+4	"mokṣa."
+duration_sec	25
+31	
+id	"UT8"
+title	"The Infinite Horizon (freedom as openness)"
+prompt	"A figure stands on a shore. Before them: the ocean, infinite, stretching to where the sky meets the water. Behind them: land, roads, houses, walls. The figure faces the ocean. There is no path. There is no destination. The freedom is not in going anywhere. The freedom is in the seeing — the horizon that never ends, the possibility that never closes. The figure stands still. They are free. 25s. *For: freedom as presence, not escape, the open, the horizon of possibility.*"
+tags	
+0	"freedom as presence"
+1	"not escape"
+2	"the open"
+3	"the horizon of possibility."
+duration_sec	25
+32	
+id	"UT9"
+title	"Stars Becoming Angels"
+prompt	"A night sky filled with stars. One star begins to pulse, brighter, then brighter still. It detaches from the sky and descends slowly. As it descends, it takes form — wings, a face, a human shape made of light. An angel. The angel lands near a sleeping figure. The angel watches over them. Other stars descend, each becoming an angel, each watching over a different sleeper. The stars have not left the sky — the angels are the stars, and the stars are still there. 30s. *For: angels, theophany, the watchers, the star as celestial being, the angel as the star's self-awareness.*"
+tags	
+0	"angels"
+1	"theophany"
+2	"the watchers"
+3	"the star as celestial being"
+4	"the angel as the star's self-awareness."
+duration_sec	30
+33	
+id	"UT10"
+title	"The Stairway of Stars (Jacob's Ladder)"
+prompt	"A ladder of light descends from a star-filled sky. Its base rests on the earth where a figure sleeps. Angels ascend and descend the ladder — not as beings, but as pulses of light, each pulse a communication between heaven and earth. The figure watches in their dream. They climb the ladder themselves. At the top, there is no heaven. There is only the same starry sky, seen from the other side. The same stars. The same self. 30s. *For: Jacob's ladder, the link between heaven and earth, the soul's ascent, the ladder of being.*"
+tags	
+0	"Jacob's ladder"
+1	"the link between heaven and earth"
+2	"the soul's ascent"
+3	"the ladder of being."
+duration_sec	30
+34	
+id	"UT11"
+title	"The Body of Light (the luminous form within)"
+prompt	"A figure sits in meditation. Their physical body becomes transparent — like glass. Within it, a luminous form is visible: a body of light, made of the same substance as the sun. The light body sits within the physical body, exactly the same shape, but glowing, pulsing, alive. The light body begins to expand. It grows larger than the physical body, filling the room, then the landscape, then the sky. The physical body is a tiny container. The light body is what was always inside it. 30s. *For: the subtle body, the body of light, the sūkṣma śarīra, the inner form, the resurrected body.*"
+tags	
+0	"the subtle body"
+1	"the body of light"
+2	"the sūkṣma śarīra"
+3	"the inner form"
+4	"the resurrected body."
+duration_sec	30
+35	
+id	"UT12"
+title	"The Five Sheaths (kośas) Revealed"
+prompt	"A figure stands. Five translucent layers surround them, each a different colour and density. The outermost: a heavy brown sheath (physical body, annamaya kośa). It falls away. Beneath it: a pale red sheath (vital body, prāṇamaya kośa). It dissolves. Beneath it: a grey sheath (mental body, manomaya kośa). It lifts. Beneath it: a gold sheath (wisdom body, vijñānamaya kośa). It opens. Beneath it: a white sheath (bliss body, ānandamaya kośa). It becomes transparent. At the center: pure light — no sheath, no form. The figure is not any of the sheaths. The figure is the light they covered. 30s. *For: the five kośas, the sheaths of the self, Taittirīya Upaniṣad, the journey inward.*"
+tags	
+0	"the five kośas"
+1	"the sheaths of the self"
+2	"Taittirīya Upaniṣad"
+3	"the journey inward."
+duration_sec	30
+36	
+id	"UT13"
+title	"All of Reality Is Within (the universe inside)"
+prompt	'A figure sits in meditation. Their chest opens like a door. Inside: a vast universe — stars, galaxies, nebulae, planets. The figure is not looking at the universe. The universe is inside them. The camera enters the chest and travels through the inner cosmos. It passes a galaxy. It approaches a planet. It descends through clouds. It lands on the ground. The figure sitting there is the original figure. The one who was looking within has found themselves within. 30s. *For: the universe within, the microcosm, "as above so below," the Self as containing all.*'
+tags	
+0	"the universe within"
+1	"the microcosm"
+2	'"as above so below'
+3	'" the Self as containing all.'
+duration_sec	30
+37	
+id	"UT14"
+title	"Present Now (the eternal present)"
+prompt	"A figure walks along a path. The path stretches behind them into the past (grey, fading). The path stretches ahead into the future (misty, unknown). The figure stops. They look down at their feet. Where they stand, the ground is glowing gold. This moment — only this moment — is luminous. The past and future are nothing compared to this single point of presence. The figure stays in the glow. The glow spreads. 25s. *For: the present moment, the eternal now, mindfulness, the only moment that exists.* ### Transformation & Metamorphosis"
+tags	
+0	"the present moment"
+1	"the eternal now"
+2	"mindfulness"
+3	"the only moment that exists."
+duration_sec	25
+38	
+id	"UT15"
+title	"The Butterfly Emerging"
+prompt	"A dark chrysalis hangs from a branch. It pulses slowly. It cracks. A wet, folded form emerges. The form hangs, vulnerable, waiting. Its wings begin to unfurl — slowly, delicately. The colours emerge — gold, crimson, deep blue. The wings are not just wings. They are patterns of energy, mandalas. The butterfly tests them, once, twice. It lifts from the branch. It flies upward. The chrysalis below is empty, already dissolving. 30s. *For: metamorphosis, transformation, the soul's emergence, death and rebirth, the new self.*"
+tags	
+0	"metamorphosis"
+1	"transformation"
+2	"the soul's emergence"
+3	"death and rebirth"
+4	"the new self."
+duration_sec	30
+39	
+id	"UT16"
+title	"The Snake Shedding Its Skin"
+prompt	"A snake lies still. Its skin is dull, cracked, too tight. The snake pushes against a rock. The skin begins to split at the head. The snake writhes, slowly, painfully. The old skin peels away in one piece. Beneath: new skin — brighter, fresher, larger. The snake glides away, leaving the old skin behind. The old skin retains the shape of the snake. But the snake is not that shape anymore. 25s. *For: transformation, letting go, the death of the old self, the snake as symbol of renewal.*"
+tags	
+0	"transformation"
+1	"letting go"
+2	"the death of the old self"
+3	"the snake as symbol of renewal."
+duration_sec	25
+40	
+id	"UT17"
+title	"The World as the Mind's Projection"
+prompt	"A figure closes their eyes. The world disappears. They open their eyes. The world reappears. They close one eye — the world shifts. They turn their head — the world moves with them. The figure realizes: the world they see is not the world. It is a translation made by their mind. The figure experiments: they imagine a blue sky where there is grey. The sky, in their perception, becomes blue. The figure laughs. They begin to paint the world with their attention. 25s. *For: perception as construction, the mind as world-maker, idealism, pratibimbavāda, the creative power of awareness.*"
+tags	
+0	"perception as construction"
+1	"the mind as world-maker"
+2	"idealism"
+3	"pratibimbavāda"
+4	"the creative power of awareness."
+duration_sec	25
+41	
+id	"UT18"
+title	"The Rope and the Snake (adhyāsa)"
+prompt	"A figure walks along a path at dusk. On the ground, they see a snake. They freeze, heart pounding. They look again, more carefully. It is not a snake. It is a coil of rope. The snake was never there. But the fear was real. The figure picks up the rope. The fear is gone. The snake was an illusion, but the rope was always real. The world is the snake. Consciousness is the rope. 25s. *For: adhyāsa (superimposition), the rope-snake analogy, the world as misperception of reality, Advaita Vedānta.*"
+tags	
+0	"adhyāsa (superimposition)"
+1	"the rope-snake analogy"
+2	"the world as misperception of reality"
+3	"Advaita Vedānta."
+duration_sec	25
+42	
+id	"UT19"
+title	"The Net of Indra (infinite reflection)"
+prompt	"A vast three-dimensional grid of crystals extends in all directions, infinite. Each crystal reflects all the others. In each reflection, the entire grid is visible, containing all other reflections. The figure stands within the grid, seeing themselves reflected infinitely. They reach out and touch one crystal. The touch is felt in every other crystal. The figure is not in the grid. The figure IS the grid — and every point in it. Every being, every moment, every place — each contains all the others. The reflection is the reality. 30s. *For: Indra's net, interpenetration, Huayan Buddhism, the Avataṃsaka Sūtra, the jewel net of the cosmos.*"
+tags	
+0	"Indra's net"
+1	"interpenetration"
+2	"Huayan Buddhism"
+3	"the Avataṃsaka Sūtra"
+4	"the jewel net of the cosmos."
+duration_sec	30
+43	
+id	"UT20"
+title	"The One Breath (all beings breathing together)"
+prompt	"A still frame. The viewer sees a person breathing. Then two. Then ten. Then a hundred. The faces are different — ages, races, species — but their breath is synchronized. They inhale together. They exhale together. The view expands to show the entire planet — the one breath is the atmosphere itself, moving in and out with the day-night cycle. The view expands to show the solar system — the sun breathes, and the planets revolve in its breath. The view expands to show the galaxy — the whole thing pulses, expands, contracts. The breath is all there is. 30s. *For: the one breath, unity, interconnectedness, prāṇa as cosmic, the breath of God.* | I. World Establishments | 12 | K1-K4, S1-S3, N1-N2, H1-H2, B1-B2, Y1-Y2 | | II. Abstract Concepts | 15 | AC1-AC15 | | III. The Seeker | 7 | S1-S7 | | IV. Yogi Stories | 10 | YS1-YS10 | | V. Ambients & Transitions | 7 | AT1-AT7 | | VI. Historical Figures (I2V) | 4 | HF1-HF4 | | VII. Granular Tantraloka Concepts | 20 | GC1-GC20 | | VIII. Transformative Moments | 20 | TR1-TR20 |"
+tags	
+0	"the one breath"
+1	"unity"
+2	"interconnectedness"
+3	"prāṇa as cosmic"
+4	"the breath of God."
+duration_sec	30

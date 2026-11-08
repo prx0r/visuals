@@ -1,0 +1,143 @@
+blog-video-assets
+/uploads/
+1/1 files uploaded
+All files were successfully uploaded.
+File nameStatus
+gitgoblin-0.1.0.zip
+
+Built and packaged **GitGoblin v0.1.0** as a standalone, extensible product rather than a pile of design notes.
+
+[Download GitGoblin v0.1.0](sandbox:/mnt/data/gitgoblin-0.1.0.zip)
+[SHA-256 checksum](sandbox:/mnt/data/gitgoblin-0.1.0.zip.sha256)
+[Machine-readable test certificate](sandbox:/mnt/data/gitgoblin/build/CERTIFICATE.json)
+[Actual pytest log](sandbox:/mnt/data/gitgoblin/build/test.log)
+[Full test report](sandbox:/mnt/data/gitgoblin/docs/TEST-REPORT.md)
+
+The final archive contains 75 files and the ZIP SHA-256 is `126a56c476b2b47da7e9d4cc7d67fccb9e466def32c5218cfa96ab4fb1b36079`.
+
+### What is actually implemented
+
+* **Real collectors:** GitHub REST, OpenAlex, arXiv, ecosyste.ms, Hacker News and arbitrary RSS/Atom feeds.
+* **Evidence plane:** append-only observations, separate `occurred_at`/`observed_at`, SHA-256 evidence hashes, idempotent SQLite WAL storage, explicit test-fixture isolation.
+* **Builder intelligence:** capped popularity, activity, originality, repo quality, sector fit, experience and configurable seed priors.
+* **Technical Alpha engine:** action commitment weighting, temporal decay, novelty, momentum, independent-cluster scoring and cross-source corroboration.
+* **Primitive extraction:** detects things such as durable-agent-state, agent web access, execution placement, verification/receipts, orchestration, model routing, local-first sync and technical-intelligence graphs. Sector YAML can add new primitives without forking the engine.
+* **Opportunity engine:** converts frontier convergence into scored, falsifiable product hypotheses with `BUILD / RESEARCH / WATCH / REJECT` decisions.
+* **License guardrails:** permissive/copyleft/unknown classification and explicit reuse recommendations. This is designed to learn from architectures without blindly incorporating incompatible code.
+* **Cuntgoblin adapter:** GitGoblin remains independently deployable but exports directly into VentureLab's current `MarketObservation` and `Opportunity` shapes. Those VentureLab contracts require provenance-bearing observations and its existing four-way opportunity decision contract.
+* **Product plane:** FastAPI API, web dashboard, CLI, bounded scanner, scheduler, Docker/Compose, CI workflow and built Python wheel.
+* **Agent-native repo:** extensive `AGENTS.md` defining evidence rules, how agents add sensors/sectors, scoring-change requirements, licensing discipline, test procedure and definition of done.
+* **Documentation:** architecture, extension guide, cuntgoblin integration, operations, privacy/security, testing, researched prior art and a full monetization plan.
+* **Private-core strategy:** documentation explicitly distinguishes what should eventually be public—SDK/schema/API surface—from the high-value private graph, scoring calibration and historical outcome data.
+
+The architecture deliberately matches cuntgoblin's own direction. VentureLab currently defines its market pipeline as **oracle registry → observations → signals → topic radar → opportunities → solution/factory resolution**, so GitGoblin is implemented as a specialized oracle/product that can feed that system rather than becoming a second monolith.
+
+### The web/repository research changed the design materially
+
+The closest small open-source prior art I found is **Most Influential GitHub Repo Stars**: it ranks influential people among a repo's stargazers/forkers, has SQLite caching, bounded concurrency and rate-limit handling. But its direction starts from a repository and enumerates stargazers. ([GitHub][1]) GitHub announced on **June 30, 2026** that arbitrary repository stargazer-list access is being restricted to admins/collaborators because of misuse, so that architecture is becoming substantially less dependable. ([The GitHub Blog][2])
+
+That is why GitGoblin goes predominantly in the **opposite direction**:
+
+```text
+curated high-signal builder
+        ↓
+their observable public activity
+        ↓
+repos / papers / dependencies / discourse
+        ↓
+independent expert convergence
+        ↓
+primitive
+        ↓
+product opportunity
+```
+
+This is much more aligned with the original GitGoblin thesis.
+
+For scale, **OSSInsight** validates the enormous GitHub-event analytics substrate—its current project describes analysis of more than 10 billion GitHub events and already offers developer, repository and ecosystem analytics. GitGoblin therefore should not waste effort rebuilding generic GitHub analytics; its value is the predictive/interpretive layer above them. ([GitHub][3])
+
+**GH Archive** provides another strong future historical source: it archives public GitHub activity for analysis, while its repository code/docs are MIT licensed. ([GitHub][4]) **ecosyste.ms** is even more interesting architecturally: its organization exposes modular repository/timeline/package services, including a timeline service covering billions of repository events. Much of that server code is AGPL, which is why GitGoblin's documented strategy is API consumption and license-aware attribution rather than copying its backend into a proprietary product. ([GitHub][5])
+
+I also found the current CHAOSS ecosystem useful. GrimoireLab provides multi-source software-development analytics, while the newer Aveloxis direction demonstrates several production patterns worth stealing conceptually: staged raw ingestion, separated collection/processing, collection completeness checks, retry/recovery, monitoring and high-throughput repo gathering. GitGoblin's extension docs explicitly identify those as its likely scale-up path rather than prematurely putting all of that complexity into v0.1. ([GitHub][6])
+
+Google's **deps.dev** is documented as a package/project/dependency/security graph with both HTTP and gRPC interfaces, and permits caching of API responses. I have therefore left a clean sensor boundary for dependency-adoption signals; that is one of the strongest next additions because “expert actually added primitive X as a dependency” should eventually carry much more weight than “expert starred X.” ([GitHub][7])
+
+The research also supports GitGoblin's refusal to optimize around raw stars. A large-scale study found millions of suspected fake-star events, while separate work measuring Hacker News launches found large short-term star changes following public promotion. In other words, **who acted, what they did, when they did it, and whether independent experts converged before publicity** is a substantially better object to model than star count alone. ([arXiv][8])
+
+GitHub's current API limits also informed the client: unauthenticated REST access is generally 60 requests/hour versus 5,000/hour for ordinary authenticated user access, with separate secondary limits. The HTTP layer therefore has caching, bounded pagination, `Retry-After` handling, reset handling and bounded retries instead of trying to brute-force collection. ([GitHub Docs][9])
+
+### Testing
+
+This is not certified by a markdown sentence.
+
+Final deterministic suite:
+
+```text
+......................                                                   [100%]
+22 passed
+```
+
+The suite exercises hashing/idempotency, observation storage, licensing, expertise scoring, convergence scoring, primitive extraction, opportunity derivation, FastAPI, GitHub parsing, OpenAlex, arXiv, ecosyste.ms, RSS, Hacker News, HTTP caching/retries and a complete:
+
+```text
+source
+→ entities/observations
+→ expertise
+→ Technical Alpha
+→ FrontierSignal
+→ primitive
+→ Opportunity
+→ cuntgoblin MarketObservation/Opportunity export
+```
+
+The cuntgoblin exports are additionally validated against checked-in JSON Schemas reproducing the current contracts.
+
+Coverage is **77% overall**, but the main deterministic machinery is much higher: DB 92%, GitHub collector 94%, HN 96%, OpenAlex 92%, arXiv 97%, expertise 94%, Technical Alpha signal engine 93%, primitive engine 97%, opportunities 87% and cuntgoblin conversion 100%. The main uncovered regions are CLI/certification/scheduler entrypoint branches and optional LLM enrichment.
+
+`compileall` passes. Editable packaging passes. A wheel was successfully built. The final built wheel was force-installed into the dependency-complete environment and `gitgoblin --help` was executed **from outside the source tree**, verifying the installed package and version `0.1.0`.
+
+There was one failed test attempt that I retained in the documentation rather than concealing: a temporary nested venv did not inherit this environment's installed `uvicorn`, so the first isolated wheel CLI smoke could not start. The same wheel then passed when installed into the current dependency-complete Python environment. The exact distinction is recorded in `docs/TEST-REPORT.md`.
+
+Normal Python execution in this artifact environment does not have unrestricted outbound Internet, so I have **not** falsely certified live GitHub/OpenAlex/arXiv calls from the packaged program. Network collectors were tested deterministically against their expected HTTP shapes and failure semantics; the live endpoint/access assumptions were independently checked through the web research above.
+
+### Monetization architecture
+
+The build treats the valuable product as **derived decision advantage**, not reselling public GitHub rows.
+
+The intended ladder is a public delayed frontier feed for distribution, an individual product with custom watchlists and architecture alerts, team/R&D workspaces with private sector graphs and APIs, and eventually enterprise/API access to historical replay, custom sectors and private-source fusion.
+
+More importantly, it already defines the long-term moat:
+
+```text
+SIGNAL at T0
+   ↓
+GitGoblin says "this looks early"
+   ↓
+Cuntgoblin researches/builds it
+   ↓
+actual technical/commercial outcome
+   ↓
+later ecosystem trajectory
+   ↓
+credit/blame builders + signal types
+   ↓
+recalibrate priors
+```
+
+Eventually the valuable proprietary question becomes:
+
+> **Which particular people are early and correct about which particular technical domains?**
+
+Someone can copy the GitGoblin source code later. They cannot reconstruct years of those timestamped observations, false positives, successful predictions, identity corrections and downstream venture outcomes.
+
+That is the part I would keep private from the start.
+
+[1]: https://github.com/Dicklesworthstone/most-influential-github-repo-stars "GitHub - Dicklesworthstone/most-influential-github-repo-stars: See the most influential users who have starred or forked a given repo (sorted by earned stars and follower count) · GitHub"
+[2]: https://github.blog/changelog/2026-06-30-upcoming-access-restrictions-to-public-api-endpoints-and-ui-views/?utm_source=chatgpt.com "Upcoming access restrictions to public API endpoints and UI views - GitHub Changelog"
+[3]: https://github.com/pingcap/ossinsight?utm_source=chatgpt.com "GitHub - pingcap/ossinsight: Analysis, Comparison, Trends, Rankings of Open Source Software, you can also get insight from more than 10 billion with natural language (powered by LLM). Follow us on Twitter: https://twitter.com/ossinsight · GitHub"
+[4]: https://github.com/igrigorik/gharchive.org?utm_source=chatgpt.com "GitHub - igrigorik/gharchive.org: GH Archive is a project to record the public GitHub timeline, archive it, and make it easily accessible for further analysis. · GitHub"
+[5]: https://github.com/ecosyste-ms?utm_source=chatgpt.com "Ecosystems · GitHub"
+[6]: https://github.com/chaoss/grimoirelab?utm_source=chatgpt.com "GitHub - chaoss/grimoirelab: GrimoireLab: platform for software development analytics and insights · GitHub"
+[7]: https://github.com/google/deps.dev/?utm_source=chatgpt.com "GitHub - google/deps.dev: Resources for the deps.dev API · GitHub"
+[8]: https://arxiv.org/abs/2412.13459?utm_source=chatgpt.com "4.5 Million (Suspected) Fake Stars in GitHub: A Growing Spiral of Popularity Contests, Scams, and Malware"
+[9]: https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiversion=20222-11-28&utm_source=chatgpt.com "Rate limits for the REST API - GitHub Docs"

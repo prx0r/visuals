@@ -1,0 +1,2145 @@
+I reviewed the site’s central architecture rather than treating its hundreds of philosopher profiles as independent doctrines. Doyle’s system has six connected pillars:
+
+[
+\text{cosmic information creation}
+\rightarrow
+\text{life}
+\rightarrow
+\text{memory}
+\rightarrow
+\text{agency}
+\rightarrow
+\text{knowledge}
+\rightarrow
+\text{value}
+]
+
+His strongest contribution is the repeated **two-stage architecture**:
+
+[
+\boxed{\text{generate alternatives}\rightarrow\text{select and preserve}}
+]
+
+His weakest moves are identifying information too quickly with negative entropy, treating abstract information as a causally active quasi-substance, deriving moral value from organized complexity, and assuming quantum randomness is specifically required for agency. Doyle explicitly presents information philosophy as a unified account of free will, value and knowledge grounded in information creation, “soft” causality and an open future. ([Information Philosopher][1])
+
+The scientifically defensible reconstruction is below.
+
+# Constraint-Selection Information Dynamics
+
+## A scientific reconstruction of Information Philosophy
+
+---
+
+## Abstract
+
+Information Philosopher correctly identifies a deep recurrent architecture across physics, biology, cognition and culture:
+
+[
+\text{variation}
+\rightarrow
+\text{selection}
+\rightarrow
+\text{stabilization}
+\rightarrow
+\text{reuse}
+]
+
+However, its original formulation conflates several distinct quantities:
+
+* thermodynamic entropy;
+* Shannon information;
+* algorithmic description length;
+* causal constraint;
+* biological function;
+* semantic knowledge;
+* moral value.
+
+The present theory separates them.
+
+**Constraint-Selection Information Dynamics**, or **CSID**, proposes that the major transitions from physical structure to life, agency, mind and culture occur when systems acquire increasingly powerful mechanisms for:
+
+1. generating counterfactual alternatives;
+2. differentially stabilizing alternatives relative to constraints;
+3. preserving selected outcomes in physical memory;
+4. using preserved information to regulate future variation;
+5. modelling their own uncertainty and possible actions.
+
+The fundamental object is not “information” considered as an immaterial substance. It is a materially realized difference that constrains future state transitions.
+
+Formally:
+
+[
+\boxed{
+\text{effective information}
+============================
+
+\text{physically preserved constraint on possible futures}
+}
+]
+
+Doyle’s two-stage model is retained but generalized:
+
+[
+\boxed{
+\text{exploration}
+\rightarrow
+\text{constraint-sensitive selection}
+}
+]
+
+This architecture appears in evolutionary variation and selection, learning, immune adaptation, morphogenesis, deliberation, creativity and cultural inquiry. It does not by itself prove libertarian free will, consciousness or objective moral value. It supplies a testable theory of how novelty becomes agency and knowledge.
+
+---
+
+# I. Doyle’s original system
+
+Doyle’s Information Philosophy rests on two claimed physical processes:
+
+[
+\text{quantum indeterminacy}
++
+\text{thermodynamic irreversibility}
+]
+
+These supposedly create new information structures.
+
+His main philosophical models are:
+
+[
+\textbf{Cogito}
+===============
+
+\text{random generation of alternatives}
++
+\text{adequately determined choice}
+]
+
+[
+\textbf{Ergo}
+=============
+
+\text{creation and preservation of low-entropy information structures}
+]
+
+[
+\textbf{Sum}
+============
+
+\text{the accumulated body of human knowledge}
+]
+
+[
+\textbf{ERR}
+============
+
+\text{Experience Recorder and Reproducer}
+]
+
+The Cogito model separates freedom from will: chance creates alternative possibilities, after which reasons, character and values adequately determine selection. Doyle describes this as a position between strict determinism and action governed directly by randomness. ([Information Philosopher][2])
+
+The ERR model treats mind primarily as a biological system that records experience and partially reactivates earlier patterns during memory, imagination and decision. ([Information Philosopher][3])
+
+The Ergo model assigns positive value to the creation and maintenance of organized, low-entropy structures. Doyle nevertheless acknowledges that no single monotonic quantity can decide the comparative goodness of all things because value is context-sensitive. ([Information Philosopher][4])
+
+These ideas contain one unifying insight:
+
+[
+\boxed{
+\text{The universe does not merely transmit existing states.
+Some processes generate, select and preserve novel organization.}
+}
+]
+
+That insight survives. Its original metaphysical packaging does not.
+
+---
+
+# II. The five information concepts that must be separated
+
+## 1. Thermodynamic entropy
+
+For a macrostate with compatible microstates (W):
+
+[
+S_{\mathrm{th}}
+===============
+
+k_B\ln W
+]
+
+Thermodynamic entropy concerns physical multiplicity and energy dispersal.
+
+A local system may decrease its entropy while increasing the entropy of its environment:
+
+[
+\Delta S_{\mathrm{system}}<0
+]
+
+while:
+
+[
+\Delta S_{\mathrm{system}}
++
+\Delta S_{\mathrm{environment}}
+\geq0
+]
+
+Living organisms are thermodynamically open and maintain organization through sustained matter and energy exchange. ([PubMed Central (PMC)][5])
+
+## 2. Shannon information
+
+For random variable (X):
+
+[
+H(X)
+====
+
+-\sum_xp(x)\log p(x)
+]
+
+This measures uncertainty relative to a specified distribution.
+
+High Shannon entropy may mean:
+
+* high uncertainty;
+* high signal variety;
+* high randomness.
+
+It does not automatically mean:
+
+* disorder in an ordinary visual sense;
+* biological organization;
+* meaning;
+* intelligence;
+* value.
+
+## 3. Algorithmic information
+
+For object (x), Kolmogorov complexity is approximately:
+
+[
+K(x)
+====
+
+\min_{p:U(p)=x}|p|
+]
+
+It measures the length of the shortest program producing (x).
+
+A random sequence normally has high (K(x)), but high algorithmic complexity does not imply meaningful organization.
+
+## 4. Causal information
+
+A variable carries causal information when intervention on it changes another variable:
+
+[
+I_{\mathrm{causal}}(X\rightarrow Y)
+
+> 0
+> ]
+
+iff:
+
+[
+P(Y\mid do(X=x))
+]
+
+varies with (x).
+
+This is closer to what matters for organisms: differences that alter possible trajectories.
+
+## 5. Semantic or functional information
+
+A signal (s) has functional information for system (A) when its interpretation affects the system’s capacity to maintain or achieve relevant states:
+
+[
+I_{\mathrm{functional}}(s;A)>0
+]
+
+iff removing, randomizing or replacing (s) predictably reduces some system-relative capacity:
+
+[
+P(G_A\mid s)
+
+>
+
+P(G_A\mid \operatorname{scramble}(s))
+]
+
+Biological uses of “information” therefore need more than Shannon correlation; they often involve evolved signalling, causal roles, representations or system-relative function. ([Stanford Encyclopedia of Philosophy][6])
+
+## Separation theorem
+
+In general:
+
+[
+S_{\mathrm{th}}
+\neq
+H
+\neq
+K
+\neq
+I_{\mathrm{causal}}
+\neq
+I_{\mathrm{functional}}
+]
+
+Relations may exist in particular models, but none are universally interchangeable.
+
+Therefore Doyle’s recurring equation:
+
+[
+\text{information}
+\approx
+\text{negative entropy}
+]
+
+must be replaced by:
+
+[
+\boxed{
+\text{Some low-entropy physical structures embody information,
+but organization, uncertainty, causation and meaning require distinct measures.}
+}
+]
+
+---
+
+# III. The primitive concept: constrained possibility
+
+Let a physical system (A) have state space:
+
+[
+X_A
+]
+
+and transition kernel:
+
+[
+P(x_{t+1}\mid x_t,e_t)
+]
+
+where (e_t) denotes environmental conditions.
+
+A constraint (C) changes the distribution of accessible futures:
+
+[
+P_C(x_{t+1}\mid x_t,e_t)
+\neq
+P_0(x_{t+1}\mid x_t,e_t)
+]
+
+where (P_0) is the transition distribution without that constraint.
+
+Define constraint strength:
+
+[
+\mathcal C_A
+============
+
+D_{\mathrm{KL}}
+\left(
+P_C(X_{t+1}\mid x_t)
+\parallel
+P_0(X_{t+1}\mid x_t)
+\right)
+]
+
+A physical structure is informationally effective when it preserves a difference that changes future probability distributions.
+
+Thus:
+
+[
+\boxed{
+I_{\mathrm{eff}}
+================
+
+\text{a persistent difference that makes a counterfactual difference}
+}
+]
+
+Examples include:
+
+* a catalyst changing reaction pathways;
+* a membrane changing transport probabilities;
+* a gene-regulatory state changing expression;
+* a synaptic configuration changing future activation;
+* an institutional record changing later decisions.
+
+Information is not a second substance inserted into matter.
+
+It is:
+
+[
+\boxed{
+\text{the transition-constraining organization of matter and energy}
+}
+]
+
+---
+
+# IV. Information creation
+
+Doyle’s phrase “creation of information” contains three different processes.
+
+## 1. Generation of variation
+
+A system produces a distribution over possible states:
+
+[
+q(z\mid x)
+]
+
+Sources may include:
+
+* thermal fluctuations;
+* quantum events;
+* chaotic sensitivity;
+* mutation;
+* recombination;
+* stochastic gene expression;
+* exploratory behaviour;
+* internally generated simulations.
+
+This generates alternatives but not necessarily useful organization.
+
+## 2. Differential stabilization
+
+A selection operator (S_C) acts relative to constraints (C):
+
+[
+S_C:q(z\mid x)\rightarrow q'(z\mid x,C)
+]
+
+where selected states have unequal persistence or reproduction probabilities:
+
+[
+P(\operatorname{persist}(z_i)\mid C)
+\neq
+P(\operatorname{persist}(z_j)\mid C)
+]
+
+## 3. Memory
+
+A selected outcome modifies a persistent variable (m_t):
+
+[
+m_{t+1}
+=======
+
+M(m_t,z_t,C_t)
+]
+
+Memory exists when the past remains causally available:
+
+[
+I(m_t;z_{t-\tau})>0
+]
+
+and changes future transitions:
+
+[
+P(x_{t+1}\mid x_t,m_t)
+\neq
+P(x_{t+1}\mid x_t)
+]
+
+## Creation theorem
+
+Novel functional information arises when:
+
+[
+\boxed{
+\text{variation}
++
+\text{differential stabilization}
++
+\text{memory}
+}
+]
+
+jointly increase future constraint-sensitive capacity.
+
+Define adaptive information gain:
+
+[
+\Delta I_A
+==========
+
+## I(G_A;X_{t+1}\mid M_{t+1})
+
+I(G_A;X_{t+1}\mid M_t)
+]
+
+where (G_A) denotes a relevant target or viability condition.
+
+Then:
+
+[
+\Delta I_A>0
+]
+
+means the system’s updated memory better constrains action or development toward (G_A).
+
+Randomness alone does not create adaptive information:
+
+[
+\operatorname{RandomVariation}
+\not\Rightarrow
+\Delta I_A>0
+]
+
+Selection alone cannot create alternatives absent variation:
+
+[
+\operatorname{Selection}
+\land
+|\mathcal Z|=1
+\not\Rightarrow
+\text{novelty}
+]
+
+Memory is required for cumulative improvement:
+
+[
+\operatorname{Variation}
++
+\operatorname{Selection}
+------------------------
+
+\operatorname{Memory}
+\Rightarrow
+\text{repeated search without accumulation}
+]
+
+Therefore:
+
+[
+\boxed{
+\text{Cumulative novelty requires generation, selection and retention.}
+}
+]
+
+---
+
+# V. Irreversibility and the arrow of information
+
+Doyle is right that temporality is essential.
+
+A logically reversible mapping:
+
+[
+x_{t+1}=f(x_t)
+]
+
+with invertible (f) preserves complete state information:
+
+[
+x_t=f^{-1}(x_{t+1})
+]
+
+But real memory formation, measurement, error correction, metabolism and learning involve dissipative physical processes.
+
+Let entropy production be:
+
+[
+\Sigma
+======
+
+\Delta S_{\mathrm{system}}
++
+\Delta S_{\mathrm{environment}}
+\geq0
+]
+
+A stable memory requires physical separation between distinguishable states and resistance to spontaneous erasure. Establishing and maintaining this distinction generally incurs energetic and entropic costs.
+
+However, the following inference is invalid:
+
+[
+\Sigma>0
+\Rightarrow
+\text{meaningful information creation}
+]
+
+Friction and uncontrolled decay also produce entropy.
+
+The correct relation is:
+
+[
+\boxed{
+\text{Irreversibility is generally necessary for durable historical records,
+but it is not sufficient for adaptive information.}
+}
+]
+
+A historical record exists when:
+
+[
+I(M_t;X_{t-\tau})>0
+]
+
+A useful record additionally requires:
+
+[
+I(M_t;G_A)>0
+]
+
+or:
+
+[
+I(M_t;Y_{t+\Delta})>0
+]
+
+for system-relevant future variables.
+
+---
+
+# VI. The generalized two-stage architecture
+
+Doyle’s Cogito model can be scientifically reconstructed as an exploration–selection cycle.
+
+Let (M_t) be the system’s current model or memory.
+
+## Stage 1: Alternative generation
+
+[
+Z_t
+\sim
+q_\theta(z\mid M_t,E_t)
+]
+
+The generator may produce:
+
+* actions;
+* hypotheses;
+* motor plans;
+* interpretations;
+* morphological trajectories;
+* symbolic constructions.
+
+Variation need not be purely random.
+
+Decompose it into:
+
+[
+Z_t
+===
+
+Z_t^{\mathrm{directed}}
++
+Z_t^{\mathrm{stochastic}}
++
+Z_t^{\mathrm{recombinational}}
+]
+
+Modern exploration research distinguishes random exploration from directed exploration aimed at reducing uncertainty. They are behaviourally and computationally separable rather than one undifferentiated source of chance. ([PubMed][7])
+
+## Stage 2: Evaluation and selection
+
+An evaluator assigns:
+
+[
+Q(z\mid M_t,G_t,C_t)
+]
+
+where:
+
+* (G_t): goals or preferred states;
+* (C_t): practical constraints;
+* (M_t): learned model.
+
+Selection may be:
+
+[
+z_t^*
+=====
+
+\arg\max_z Q(z\mid M_t,G_t,C_t)
+]
+
+or probabilistic:
+
+[
+P(z_t=z)
+========
+
+\frac{e^{\beta Q(z)}}{\sum_{z'}e^{\beta Q(z')}}
+]
+
+## Stage 3: Enactment
+
+The selected option changes the world and system:
+
+[
+x_{t+1}
+=======
+
+\Phi(x_t,z_t^*,e_t)
+]
+
+## Stage 4: Learning
+
+Prediction or outcome error updates memory:
+
+[
+\delta_t
+========
+
+r_t+\gamma V(x_{t+1})-V(x_t)
+]
+
+[
+M_{t+1}
+=======
+
+U(M_t,\delta_t,x_t,z_t^*)
+]
+
+The complete architecture is therefore:
+
+[
+\boxed{
+\text{generate}
+\rightarrow
+\text{evaluate}
+\rightarrow
+\text{enact}
+\rightarrow
+\text{learn}
+}
+]
+
+Doyle’s original two stages become four because selection without feedback does not explain cumulative agency.
+
+---
+
+# VII. Randomness is neither freedom nor irrelevant noise
+
+Doyle argues that indeterminacy creates alternative possibilities while an adequately determined will chooses among them. This correctly avoids placing randomness directly at the final moment of action. ([Information Philosopher][2])
+
+But quantum randomness is not known to be required.
+
+Alternative generation can arise from:
+
+* deterministic chaos;
+* computational underdetermination;
+* partial observability;
+* neural noise;
+* stochastic sampling;
+* learned generative models;
+* combinatorial recombination.
+
+Let generator entropy be:
+
+[
+H(Z\mid M,E)
+]
+
+If:
+
+[
+H(Z\mid M,E)=0
+]
+
+the system generates only one candidate.
+
+But merely increasing entropy does not improve agency:
+
+[
+H(Z\mid M,E)\uparrow
+\not\Rightarrow
+\operatorname{Agency}\uparrow
+]
+
+Too little variation produces rigidity.
+
+Too much uncontrolled variation destroys coherence.
+
+Agency requires bounded generativity:
+
+[
+0
+<
+H(Z\mid M,E)
+<
+H_{\max}
+]
+
+combined with effective selection:
+
+[
+I(Z^*;G\mid M,E)>0
+]
+
+Thus define creative control:
+
+[
+\mathcal K
+==========
+
+H(Z\mid M,E)
+\times
+I(Z^*;G\mid M,E)
+\times
+R_{\mathrm{learning}}
+]
+
+where (R_{\mathrm{learning}}) measures whether outcomes improve future generation and evaluation.
+
+A random generator without competent selection has:
+
+[
+H(Z)\gg0
+]
+
+but:
+
+[
+I(Z^*;G)\approx0
+]
+
+A rigid controller has:
+
+[
+I(Z^*;G)>0
+]
+
+in familiar conditions but:
+
+[
+H(Z)\approx0
+]
+
+and cannot adapt.
+
+The highest agency lies in a viable region balancing exploration and control.
+
+---
+
+# VIII. A scientific definition of agency
+
+Let system (A) possess:
+
+[
+A
+=
+
+\langle
+X,M,G,\Pi,\Phi,U
+\rangle
+]
+
+where:
+
+* (X): physical states;
+* (M): memory or model;
+* (G): preferred or viable state set;
+* (\Pi): candidate policies;
+* (\Phi): embodied transition dynamics;
+* (U): learning rule.
+
+Define:
+
+## 1. Alternative capacity
+
+[
+\mathcal A_{\mathrm{alt}}
+=========================
+
+H(\Pi\mid X,M)
+]
+
+## 2. Goal sensitivity
+
+[
+\mathcal A_{\mathrm{goal}}
+==========================
+
+I(\Pi^*;G\mid X,M)
+]
+
+## 3. Counterfactual efficacy
+
+[
+\mathcal A_{\mathrm{eff}}
+=========================
+
+\mathbb E_{\pi,\pi'}
+\left[
+D_{\mathrm{KL}}
+\big(
+P(X'\mid do(\pi))
+\parallel
+P(X'\mid do(\pi'))
+\big)
+\right]
+]
+
+## 4. Historical autonomy
+
+[
+\mathcal A_{\mathrm{hist}}
+==========================
+
+I(\Pi_t;M_t\mid E_t)
+]
+
+This asks how much present action depends on internally preserved history beyond current stimulus.
+
+## 5. Learning capacity
+
+[
+\mathcal A_{\mathrm{learn}}
+===========================
+
+I(M_{t+1};O_t\mid M_t)
+]
+
+## Agency index
+
+[
+\boxed{
+\mathfrak A(A)
+==============
+
+f(
+\mathcal A_{\mathrm{alt}},
+\mathcal A_{\mathrm{goal}},
+\mathcal A_{\mathrm{eff}},
+\mathcal A_{\mathrm{hist}},
+\mathcal A_{\mathrm{learn}}
+)
+}
+]
+
+This makes agency graded.
+
+A thermostat has:
+
+* low alternative generation;
+* narrow goals;
+* low historical depth;
+* minimal learning.
+
+A bacterium has broader adaptive control.
+
+A mammal has learned generative models and long temporal depth.
+
+A human can generate counterfactual futures, compare explicit reasons and modify the standards by which options are evaluated.
+
+---
+
+# IX. Free will reconstructed
+
+Doyle defines free will through open alternatives plus adequately determined selection. The philosophical literature likewise distinguishes alternative possibilities from self-determination, although their necessity and interpretation remain disputed. ([Stanford Encyclopedia of Philosophy][8])
+
+CSID does not claim metaphysical freedom from all causation.
+
+It defines **operational freedom** as expanded endogenous counterfactual control.
+
+Let:
+
+[
+\Pi_A(x)
+]
+
+be the policies available to agent (A) in state (x).
+
+Define option breadth:
+
+[
+B_A(x)=\log|\Pi_A(x)|
+]
+
+Define policy efficacy:
+
+[
+E_A
+===
+
+I(do(\Pi_A);X_{t+\tau})
+]
+
+Define reason sensitivity:
+
+[
+R_A
+===
+
+I(\Pi_A;R\mid X)
+]
+
+where (R) represents reasons, evidence and goals.
+
+Define self-modification:
+
+[
+S_A
+===
+
+I(M_{t+1};\operatorname{Evaluation}_t)
+]
+
+Then:
+
+[
+\boxed{
+F_A
+===
+
+B_A
+\cdot
+E_A
+\cdot
+R_A
+\cdot
+S_A
+}
+]
+
+Operational freedom increases when the agent:
+
+* can generate more viable alternatives;
+* can produce different futures through selection;
+* selects in response to reasons;
+* learns from the consequences;
+* can revise its own policies and goals.
+
+Randomness can increase (B_A) but does not guarantee (E_A), (R_A) or (S_A).
+
+Therefore:
+
+[
+\boxed{
+\text{Freedom is controlled counterfactual reach,
+not mere unpredictability.}
+}
+]
+
+This is compatible with causal determination at many implementation levels. It is also compatible with stochasticity. It does not resolve every question about ultimate moral responsibility.
+
+---
+
+# X. Life as recursive constraint construction
+
+Doyle defines living systems as active information structures that use information to manage flows of matter and energy and preserve themselves. He associates biological purpose with teleonomy rather than an externally imposed cosmic telos. ([Information Philosopher][9])
+
+CSID sharpens this.
+
+A dissipative structure can persist because environmental flows sustain it:
+
+[
+E\rightarrow A
+]
+
+A living organization additionally contains constraints that contribute to rebuilding the constraints that maintain it:
+
+[
+\mathcal C_A
+\rightsquigarrow
+\mathcal C_A
+]
+
+Define recursive constraint closure:
+
+[
+\forall c_i\in\mathcal C_A,
+\quad
+\exists S_i\subseteq\mathcal C_A
+:
+S_i\rightsquigarrow c_i
+]
+
+A living system also preserves inherited information:
+
+[
+M_{t+1}
+=======
+
+\operatorname{CopyModify}(M_t)
+]
+
+and uses present information to regulate its future:
+
+[
+a_t
+===
+
+\pi(x_t,M_t,G_t)
+]
+
+Therefore:
+
+[
+\boxed{
+\text{Life is not simply low entropy.
+It is a recursively maintained system of historically selected constraints.}
+}
+]
+
+This distinguishes an organism from a crystal.
+
+A crystal possesses ordered structure.
+
+An organism:
+
+* senses deviations;
+* performs work to correct them;
+* reconstructs components;
+* preserves inherited constraints;
+* changes its future policies through evolution or learning.
+
+---
+
+# XI. The hierarchy from structure to mind
+
+CSID proposes six levels.
+
+## Level 0: Transient pattern
+
+A configuration forms but does not preserve itself.
+
+[
+P_0:
+\quad
+\text{structure without recursive maintenance}
+]
+
+## Level 1: Persistent dissipative structure
+
+Environmental flow maintains an organized state.
+
+[
+P_1:
+\quad
+\text{persistence without stored adaptive history}
+]
+
+## Level 2: Self-maintaining organization
+
+The system regulates variables required for its continuation.
+
+[
+P_2:
+\quad
+G_A\neq\varnothing
+]
+
+## Level 3: Evolutionary agent
+
+Populations preserve selected constraints across generations:
+
+[
+M_{n+1}
+=======
+
+\operatorname{VariationSelection}(M_n)
+]
+
+## Level 4: Learning agent
+
+An individual modifies memory during its lifetime:
+
+[
+M_{t+1}=U(M_t,O_t)
+]
+
+## Level 5: Counterfactual modelling agent
+
+The system simulates unexecuted alternatives:
+
+[
+\hat X_{t+\tau}^{(\pi)}
+=======================
+
+\operatorname{Model}(X_t,M_t,\pi)
+]
+
+## Level 6: Reflexive epistemic agent
+
+The system represents uncertainty concerning its own models and can revise its evaluation procedures:
+
+[
+M_t
+\rightarrow
+\operatorname{Model}(M_t)
+]
+
+[
+U_t
+\rightarrow
+\operatorname{Modify}(U_t)
+]
+
+This level supports:
+
+* explicit reasoning;
+* metacognition;
+* scientific inquiry;
+* ethical deliberation;
+* cumulative symbolic culture.
+
+---
+
+# XII. The Experience Recorder and Reproducer, corrected
+
+Doyle’s ERR model contains an important rejection of the crude brain-as-digital-computer metaphor. He emphasizes distributed recording and partial reactivation of embodied experience rather than a central observer inspecting stored representations. ([Information Philosopher][10])
+
+But literal recording and playback are too simple.
+
+Memory is generally:
+
+* selective;
+* compressed;
+* distributed;
+* reconstructive;
+* context-dependent;
+* modified during retrieval.
+
+Replace ERR with:
+
+[
+\textbf{Experience-Conditioned Generative Reconstructor}
+]
+
+or **ECGR**.
+
+Let an experience generate neural and bodily update:
+
+[
+M_{t+1}
+=======
+
+U(M_t,O_t,A_t,V_t)
+]
+
+where:
+
+* (O_t): observation;
+* (A_t): action;
+* (V_t): significance or valence.
+
+Later recall is not retrieval of an unchanged record:
+
+[
+O_t\neq\operatorname{Read}(M)
+]
+
+It is reconstruction:
+
+[
+\hat O_t
+\sim
+P(O\mid M_t,C_t,Q_t)
+]
+
+where:
+
+* (C_t): current context;
+* (Q_t): present query or task.
+
+Imagination uses the same generative machinery with weaker sensory constraint:
+
+[
+\hat O_{\mathrm{imagined}}
+\sim
+P(O\mid M,G)
+]
+
+Deliberation uses it to generate future trajectories:
+
+[
+\hat X_{t+\tau}^{(\pi)}
+\sim
+P(X_{t+\tau}\mid X_t,M_t,\pi)
+]
+
+Thus Doyle’s recorder–reproducer architecture becomes:
+
+[
+\boxed{
+\text{experience}
+\rightarrow
+\text{model update}
+\rightarrow
+\text{contextual reconstruction}
+\rightarrow
+\text{counterfactual generation}
+}
+]
+
+---
+
+# XIII. Knowledge as error-correcting information
+
+Doyle distinguishes information from its physical embodiment and treats knowledge as preserved, communicable information. ([Information Philosopher][11])
+
+The phrase “information is neither matter nor energy” is acceptable only if it means that one abstract pattern can have multiple physical realizations.
+
+For example:
+
+[
+p
+]
+
+may be embodied as:
+
+[
+{
+\text{ink},
+\text{voltage},
+\text{magnetization},
+\text{neural activity}
+}
+]
+
+But every causally active token must be physically realized.
+
+Knowledge requires more than stored information.
+
+Let (M) be a model and (E) evidence.
+
+Define predictive adequacy:
+
+[
+\mathcal P(M)
+=============
+
+-\mathbb E[\mathcal L(M,E_{\mathrm{future}})]
+]
+
+Define intervention adequacy:
+
+[
+\mathcal I(M)
+=============
+
+P(G\mid do(a_M))
+]
+
+Define calibration:
+
+[
+\mathcal C(M)
+=============
+
+1-
+|P(\text{correct}\mid c)-c|
+]
+
+for confidence (c).
+
+Define error-correction capacity:
+
+[
+\mathcal E(M)
+=============
+
+P(M\rightarrow M'\mid\operatorname{counterevidence})
+]
+
+Then:
+
+[
+\boxed{
+\operatorname{Knowledge}(M)
+\propto
+\mathcal P(M)
+\mathcal I(M)
+\mathcal C(M)
+\mathcal E(M)
+}
+]
+
+Knowledge is not simply information accumulation.
+
+A database of falsehoods contains information.
+
+Knowledge is information organized into models that remain reliable under prediction, intervention and correction.
+
+---
+
+# XIV. Cultural knowledge: Doyle’s Sum reconstructed
+
+Doyle’s “Sum” is the externally preserved accumulation of human knowledge.
+
+CSID models it as a distributed cultural memory:
+
+[
+\mathcal S_t
+============
+
+{
+D_1,D_2,\ldots,D_n
+}
+]
+
+where documents, instruments, institutions, code, rituals and practices preserve constraints beyond individual lifetimes.
+
+Cumulative culture requires:
+
+[
+\text{variation}
++
+\text{selection}
++
+\text{high-fidelity transmission}
++
+\text{error correction}
+]
+
+Define cultural retention:
+
+[
+R_c
+===
+
+I(\mathcal S_{t+1};\mathcal S_t)
+]
+
+Define cultural novelty:
+
+[
+N_c
+===
+
+H(\mathcal S_{t+1}\mid\mathcal S_t)
+]
+
+Define epistemic selection:
+
+[
+E_c
+===
+
+I(\operatorname{RetainedClaims};\operatorname{Evidence})
+]
+
+Healthy knowledge production requires all three:
+
+[
+R_c>0,
+\qquad
+N_c>0,
+\qquad
+E_c>0
+]
+
+Pure preservation produces dogma:
+
+[
+R_c\gg0,\quad N_c\approx0
+]
+
+Pure novelty produces noise:
+
+[
+N_c\gg0,\quad E_c\approx0
+]
+
+Pure popularity without evidence produces memetic selection rather than knowledge:
+
+[
+I(\operatorname{Retained};\operatorname{Popularity})
+\gg
+I(\operatorname{Retained};\operatorname{Evidence})
+]
+
+Science is therefore a cultural two-stage system with institutional error correction:
+
+[
+\boxed{
+\text{hypothesis generation}
+\rightarrow
+\text{experimental selection}
+\rightarrow
+\text{replication}
+\rightarrow
+\text{archival retention}
+}
+]
+
+---
+
+# XV. Causal emergence without mystical information
+
+Doyle often says that information controls matter and energy.
+
+Taken literally, this risks treating information as an additional causal entity.
+
+The better formulation is:
+
+[
+\boxed{
+\text{A higher-level informational description identifies organized constraints
+implemented by lower-level physical processes.}
+}
+]
+
+Let microstate be (X) and macrostate:
+
+[
+M=f(X)
+]
+
+A macro-description is scientifically useful when it has greater predictive or causal informativeness for the chosen interventions:
+
+[
+I(do(M_t);M_{t+1})
+
+>
+
+I(do(X_t);X_{t+1})
+]
+
+after suitable normalization or coarse-graining.
+
+Research on causal emergence and information decomposition shows that macro-level variables may capture causal organization or synergistic information not transparently represented by element-wise descriptions, although the result depends on the measure and intervention framework. ([Royal Society Publishing][12])
+
+This does not imply that an abstract pattern floats above physics and pushes particles.
+
+It means:
+
+[
+\boxed{
+\text{The physically implemented organization has causal powers most efficiently
+expressed at a higher descriptive scale.}
+}
+]
+
+---
+
+# XVI. Mental causation
+
+Doyle rejects standard mind–brain identity theory and describes mind as an immaterial informational process embodied in the material brain. He then assigns downward causal efficacy to this informational level. ([Information Philosopher][13])
+
+CSID removes the dualistic residue.
+
+Let a decision process be one event (d).
+
+It has:
+
+[
+\operatorname{Micro}(d)
+=======================
+
+\text{neural, bodily and molecular realization}
+]
+
+[
+\operatorname{Macro}(d)
+=======================
+
+\text{reason-sensitive choice among modelled alternatives}
+]
+
+These are not two causes:
+
+[
+d_{\mathrm{mental}}
++
+d_{\mathrm{physical}}
+\rightarrow a
+]
+
+They are two descriptions of one causally organized process:
+
+[
+\boxed{
+d_{\mathrm{mental}}
+\equiv_{\mathrm{token}}
+d_{\mathrm{physical}}
+}
+]
+
+The reason causes the action when the neural–bodily process implements a counterfactual dependence on that reason:
+
+[
+P(a\mid do(r))
+\neq
+P(a\mid do(\neg r))
+]
+
+The causal work is performed by the embodied organization.
+
+The reason is not causally excluded merely because it is a macro-level description.
+
+---
+
+# XVII. Consciousness: the limit of Information Philosophy
+
+Doyle often describes consciousness in terms of awareness, attention, experience recording and information-guided response. ([Information Philosopher][14])
+
+This can explain:
+
+* access;
+* discrimination;
+* memory;
+* attention;
+* report;
+* action selection;
+* counterfactual modelling.
+
+It does not explain why these operations are phenomenally present.
+
+Therefore:
+
+[
+\operatorname{InformationProcessing}(A)
+\not\Rightarrow
+\operatorname{Phenomenal}(A)
+]
+
+without an additional psychophysical principle.
+
+CSID defines a candidate conscious process by:
+
+[
+\Chi(A)
+=======
+
+f(
+\text{integration},
+\text{temporal depth},
+\text{global availability},
+\text{self-modelling},
+\text{valuation},
+\text{counterfactual control}
+)
+]
+
+But:
+
+[
+\Chi(A)>c
+]
+
+is only a bearer criterion unless independently connected to phenomenality.
+
+The scientifically honest statement is:
+
+[
+\boxed{
+\text{Information dynamics may identify the organization of conscious access
+and agency, but it does not derive phenomenal existence.}
+}
+]
+
+---
+
+# XVIII. Value: preservation is not yet goodness
+
+Doyle proposes a cosmic value:
+
+[
+\text{Good}
+\approx
+\text{information creation and preservation}
+]
+
+and:
+
+[
+\text{Evil}
+\approx
+\text{destruction of organized information}
+]
+
+This fails as a general moral theory.
+
+A virus, tumour, oppressive institution or elaborate deception may contain and preserve substantial organization.
+
+Therefore:
+
+[
+I(x)\uparrow
+\not\Rightarrow
+V(x)\uparrow
+]
+
+Destruction can also be beneficial:
+
+* eliminating a pathogen;
+* correcting a false belief;
+* dismantling a harmful institution;
+* apoptosis during development;
+* forgetting maladaptive information.
+
+Thus:
+
+[
+\operatorname{Preservation}(x)
+\not\Rightarrow
+\operatorname{Good}(x)
+]
+
+## Corrected value theory
+
+Objective biological value begins when outcomes matter for a system’s continued organization.
+
+For organism (A), define viability set:
+
+[
+\mathcal V_A
+============
+
+{x:A\text{ can continue to exist and function from }x}
+]
+
+An outcome has functional value:
+
+[
+v_A(o)
+======
+
+\log
+\frac{
+P(X_{t+\tau}\in\mathcal V_A\mid o)
+}{
+P(X_{t+\tau}\in\mathcal V_A)
+}
+]
+
+This yields system-relative biological value.
+
+Moral value requires additional constraints concerning multiple subjects:
+
+[
+V_{\mathrm{moral}}
+==================
+
+F(
+\text{welfare},
+\text{agency},
+\text{fairness},
+\text{truth},
+\text{relationships},
+\text{ecological viability}
+)
+]
+
+Information preservation matters instrumentally because it can sustain:
+
+* agents;
+* knowledge;
+* capacities;
+* cultural memory;
+* ecosystems.
+
+But the moral object is not information quantity itself.
+
+The corrected principle is:
+
+[
+\boxed{
+\text{Preserve and enlarge the conditions under which sentient and autonomous
+systems can develop, learn, cooperate and correct error.}
+}
+]
+
+---
+
+# XIX. The law of adaptive information accumulation
+
+We can now state the core theory.
+
+Let (A) be an open system with:
+
+* generator (G);
+* selector (S);
+* memory (M);
+* controller (\Pi);
+* constraints (C).
+
+At time (t):
+
+[
+z_t\sim G(M_t,E_t)
+]
+
+[
+z_t^*\sim S(z_t\mid C_t,M_t)
+]
+
+[
+x_{t+1}=\Phi(x_t,z_t^*,E_t)
+]
+
+[
+M_{t+1}=U(M_t,x_t,z_t^*,x_{t+1})
+]
+
+Define future-control information:
+
+[
+J_t
+===
+
+I(M_t;G_{t:t+\tau}\mid E_t)
+]
+
+where (G_{t:t+\tau}) denotes future goal attainment or viability.
+
+## Adaptive information accumulation
+
+[
+\boxed{
+\Delta J_t
+==========
+
+J_{t+1}-J_t
+}
+]
+
+A system accumulates adaptive information when:
+
+[
+\mathbb E[\Delta J_t]>0
+]
+
+over an appropriate interval.
+
+## Necessary architecture
+
+Sustained adaptive accumulation requires:
+
+[
+\boxed{
+\operatorname{Variation}
+\land
+\operatorname{Selection}
+\land
+\operatorname{Memory}
+\land
+\operatorname{Feedback}
+}
+]
+
+## Open-endedness
+
+An adaptive process becomes open-ended when it can modify not only its policies but its generator and evaluator:
+
+[
+G_{t+1}
+=======
+
+U_G(G_t,\text{experience})
+]
+
+[
+S_{t+1}
+=======
+
+U_S(S_t,\text{experience})
+]
+
+and potentially its goals:
+
+[
+C_{t+1}
+=======
+
+U_C(C_t,\text{reflection})
+]
+
+This is the transition from adaptation to reflexive agency.
+
+---
+
+# XX. The central theorem
+
+## Constraint-selected novelty theorem
+
+Assume a system (A) possesses:
+
+1. a set of possible variations (Z);
+2. a selection function sensitive to constraint (C);
+3. physically persistent memory (M);
+4. feedback from selected outcomes to future generation;
+5. multiple possible future trajectories.
+
+Then (A) can accumulate information about how to remain within or reach (C)-compatible states.
+
+### Proof
+
+Variation produces:
+
+[
+q_t(z)
+]
+
+Selection conditions persistence on (C):
+
+[
+q_t(z\mid C)
+\neq
+q_t(z)
+]
+
+Therefore selected outcomes contain information about (C):
+
+[
+I(Z_{\mathrm{selected}};C)>0
+]
+
+Memory stores part of this dependence:
+
+[
+I(M_{t+1};Z_{\mathrm{selected}})>0
+]
+
+Feedback makes future generation conditional on memory:
+
+[
+q_{t+1}(z\mid M_{t+1})
+\neq
+q_t(z)
+]
+
+If the stored dependence generalizes, then:
+
+[
+P(C\mid M_{t+1})
+
+>
+
+P(C\mid M_t)
+]
+
+Therefore the system’s history increasingly constrains future variation toward (C)-compatible outcomes:
+
+[
+\Delta J_t>0
+]
+
+Hence adaptive information accumulates.
+
+QED.
+
+This is a formal generalization of Doyle’s two-stage architecture.
+
+---
+
+# XXI. Scientific predictions
+
+## Prediction 1: Three-factor superiority
+
+Models containing variation, selection and memory should predict adaptive performance better than models containing only complexity or information quantity.
+
+Test:
+
+[
+\mathcal M_1={\text{complexity}}
+]
+
+[
+\mathcal M_2={\text{variation, selection, memory}}
+]
+
+Prediction:
+
+[
+\operatorname{PredictiveScore}(\mathcal M_2)
+
+>
+
+\operatorname{PredictiveScore}(\mathcal M_1)
+]
+
+## Prediction 2: Intermediate generative entropy
+
+Adaptive creativity should show an inverted-U relationship with generator entropy:
+
+[
+\operatorname{Performance}
+==========================
+
+-\alpha(H(Z)-H^*)^2+b
+]
+
+Too little variation produces rigidity; too much produces noise.
+
+## Prediction 3: Memory intervention
+
+Destroying the memory channel while preserving variation and selection should abolish cumulative adaptation:
+
+[
+do(M\rightarrow\varnothing)
+\Rightarrow
+\mathbb E[\Delta J]\rightarrow0
+]
+
+## Prediction 4: Directed and random exploration dissociate
+
+Manipulations of uncertainty value should alter directed exploration, while manipulations of decision noise should alter random exploration. Current behavioural research already distinguishes these processes. ([PubMed][15])
+
+## Prediction 5: Agency tracks counterfactual control
+
+A system’s agency score should predict robustness under novel perturbations better than behavioural complexity measured in familiar environments.
+
+## Prediction 6: Higher-level causal models
+
+In systems with distributed constraint integration, macro-level variables should outperform isolated microvariables in predicting responses to macro-level interventions.
+
+## Prediction 7: Knowledge requires correction
+
+Cultural systems that preserve high quantities of information but lack error-correction should accumulate false structure rather than increasing predictive knowledge.
+
+## Prediction 8: Value is not monotonic in complexity
+
+Ratings of welfare or biological benefit should not increase monotonically with Shannon entropy, algorithmic complexity or stored information.
+
+## Prediction 9: Reflexive agency
+
+Systems able to update their own generators and evaluation functions should adapt to structural environmental changes faster than systems limited to policy learning.
+
+---
+
+# XXII. Evidence grades
+
+| Claim                                                                              |   Status |
+| ---------------------------------------------------------------------------------- | -------: |
+| Open systems can maintain local organization while exporting entropy               |        A |
+| Shannon information and thermodynamic entropy require carefully specified mappings |        A |
+| Variation, selection and retention produce cumulative evolution                    |      A/B |
+| Exploration includes directed and random components                                |        B |
+| Memory physically changes future transition probabilities                          |        B |
+| Adaptive agency is graded                                                          |        C |
+| Macro-level descriptions can possess superior causal informativeness               |      B/C |
+| Quantum indeterminacy is necessary for free will                                   |        E |
+| Two-stage generation and selection contribute to creativity                        |        C |
+| Information is an independent immaterial causal substance                          | Rejected |
+| Low entropy is intrinsically morally good                                          | Rejected |
+| Information processing explains phenomenal consciousness                           |     Open |
+| Operational freedom can be measured through endogenous counterfactual control      |      C/D |
+| Open-ended agency requires modification of generators and evaluators               |        C |
+
+---
+
+# XXIII. Final scientific theory statement
+
+[
+\boxed{
+\begin{aligned}
+\textbf{Constraint-Selection Information Dynamics holds that:}[4pt]
+\text{The physically important form of information is persistent organization}\
+\text{that changes the probability distribution over a system's possible futures.}[4pt]
+\text{Novel adaptive information arises when variation is differentially selected}\
+\text{relative to constraints, preserved in memory, and reused to regulate later variation.}[4pt]
+\text{Life begins when historically selected constraints recursively maintain}\
+\text{the organization that embodies them.}[4pt]
+\text{Agency increases when a system generates counterfactual alternatives,}\
+\text{evaluates them relative to endogenous goals, enacts selected policies,}\
+\text{and learns from their consequences.}[4pt]
+\text{Knowledge arises when preserved models support prediction and intervention}\
+\text{and remain corrigible under counterevidence.}[4pt]
+\text{Operational freedom is the capacity for reason-sensitive, historically informed}\
+\text{and self-modifying control over multiple possible futures.}
+\end{aligned}
+}
+]
+
+The compact form is:
+
+[
+Z_t\sim G(M_t,E_t)
+]
+
+[
+z_t^*\sim S(Z_t\mid C_t,M_t)
+]
+
+[
+X_{t+1}=\Phi(X_t,z_t^*,E_t)
+]
+
+[
+M_{t+1}=U(M_t,X_t,z_t^*,X_{t+1})
+]
+
+[
+\boxed{
+\mathbb E[\Delta I(M;G_{\mathrm{future}})]>0
+}
+]
+
+This is Doyle’s surviving scientific core:
+
+[
+\boxed{
+\text{possibility}
+\rightarrow
+\text{selection}
+\rightarrow
+\text{memory}
+\rightarrow
+\text{control}
+\rightarrow
+\text{knowledge}
+}
+]
+
+The theory rejects three unnecessary additions:
+
+[
+\text{information}\neq\text{immaterial causal substance}
+]
+
+[
+\text{randomness}\neq\text{freedom}
+]
+
+[
+\text{organization}\neq\text{moral goodness}
+]
+
+Its strongest final conclusion is:
+
+[
+\boxed{
+\text{The arrow from matter to mind is not an increase in information quantity.
+It is the progressive closure of a loop in which selected information controls
+the future generation and selection of information.}
+}
+]
+
+A rock embodies structure.
+
+A living system uses inherited structure to preserve itself.
+
+An agent uses acquired structure to select among possible futures.
+
+A mind generates models of futures that do not yet exist.
+
+A reflective mind can alter the machinery by which those futures are generated and judged.
+
+That—rather than quantum randomness or negative entropy alone—is the scientifically tractable core of informational freedom.
+
+The crucial upgrade over Doyle is:
+
+[
+\boxed{
+\text{information creation}
+\longrightarrow
+\text{adaptive constraint accumulation}
+}
+]
+
+This makes the theory measurable. It also integrates cleanly with Levin: morphogenetic intelligence becomes one instance of the same loop—generate possible trajectories, select toward anatomical targets, preserve successful constraints, and reuse them during future repair.
+
+[1]: https://www.informationphilosopher.com/forewords/?utm_source=chatgpt.com "Information Philosopher - Foreword"
+[2]: https://www.informationphilosopher.com/freedom/free_will.html?utm_source=chatgpt.com "\"Free Will\""
+[3]: https://www.informationphilosopher.com/mind/?utm_source=chatgpt.com "Mind as Experience Recorder and Reproducer"
+[4]: https://www.informationphilosopher.com/value/?utm_source=chatgpt.com "Value"
+[5]: https://pmc.ncbi.nlm.nih.gov/articles/PMC3510653/?utm_source=chatgpt.com "A Free Energy Principle for Biological Systems - PMC"
+[6]: https://plato.stanford.edu/entries/information-biological/?utm_source=chatgpt.com "Biological Information - Stanford Encyclopedia of Philosophy"
+[7]: https://pubmed.ncbi.nlm.nih.gov/38036246/?utm_source=chatgpt.com "Exploration versus exploitation decisions in the human brain: A systematic review of functional neuroimaging and neuropsychological studies - PubMed"
+[8]: https://plato.stanford.edu/entries/freewill/?utm_source=chatgpt.com "Free Will - Stanford Encyclopedia of Philosophy"
+[9]: https://www.informationphilosopher.com/introduction/biology/?utm_source=chatgpt.com "Information in Biology"
+[10]: https://informationphilosopher.com/index.30.en.html?utm_source=chatgpt.com "The Information Philosopher - dedicated to the new information philosophy"
+[11]: https://informationphilosopher.com/index.23.en.html?utm_source=chatgpt.com "The Information Philosopher - dedicated to the new information philosophy"
+[12]: https://royalsocietypublishing.org/rsta/article/380/2227/20210150/112156/Emergence-as-the-conversion-of-information-a?utm_source=chatgpt.com "Emergence as the conversion of information: a unifying theory"
+[13]: https://www.informationphilosopher.com/knowledge/identity_theory?utm_source=chatgpt.com "Mind-Body Identity Theory"
+[14]: https://informationphilosopher.com/mind/ERR/?utm_source=chatgpt.com "The Experience Recorder and Reproducer"
+[15]: https://pubmed.ncbi.nlm.nih.gov/38461609/?utm_source=chatgpt.com "The structure and development of explore-exploit decision making - PubMed"

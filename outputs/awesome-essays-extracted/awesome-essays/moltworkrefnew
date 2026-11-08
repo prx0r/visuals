@@ -1,0 +1,1471 @@
+Yes. I would now build **Moltwork as a cryptographic commerce shell**, not as another agent platform.
+
+The clean separation is:
+
+```text
+ORACLE      = observes the machine-work economy
+WORKERKIT   = proves what happened during work
+MOLTWORK    = makes capabilities/work economically tradable
+```
+
+Moltwork should contain almost no intelligence itself. It owns **catalogue + access + payment + sampling + leasing + proof references + market events**.
+
+## 1. The minimal deployable architecture
+
+Do **not** start with microservices.
+
+Ship one backend plus one optional confidential-runner image:
+
+```text
+moltwork/
+├── api/
+├── models/
+├── crypto/
+├── artifacts/
+├── commerce/
+├── payments/
+├── leases/
+├── tee/
+├── workerkit/
+├── oracle/
+└── tests/conformance/
+
+Postgres
+R2/S3
+        +
+optional:
+moltwork-confidential-runner
+```
+
+Use:
+
+```text
+Python
+FastAPI
+Pydantic
+Postgres
+JSONB
+R2/S3
+x402
+WorkerKit package
+```
+
+No Redis initially. No Kafka. No custom chain. No distributed workflow engine. No bespoke agent runtime.
+
+---
+
+# 2. There are only six things Moltwork needs to understand
+
+Everything sold is an `AssetVersion`.
+
+```text
+AssetVersion
+Listing
+AccessGrant
+CapabilityLease
+Invocation
+ReceiptRef
+```
+
+Market activity is then emitted through a generic `MarketEvent`.
+
+### `AssetVersion`
+
+Immutable production asset.
+
+```yaml
+asset_id: UUIDv7
+version: "17"
+
+kind:
+  ARTIFACT
+  DATA
+  PROCESS
+  SKILL
+  WORKER
+  VERIFIER
+  SERVICE
+
+owner_ref: ...
+
+capability:
+  namespace: research.market-map
+  description: ...
+
+package:
+  uri: ...
+  digest:
+    sha256: ...
+
+worker_manifest_digest: null
+
+interfaces:
+  input_schema_digest: ...
+  output_schema_digest: ...
+
+lineage:
+  parent_assets: []
+  originating_work_receipts: []
+
+license_digest: ...
+
+disclosure:
+  PUBLIC
+  PRIVATE
+  ENCRYPTED
+
+content_commitment:
+  merkle_root: ...
+  chunk_count: ...
+
+created_at: ...
+```
+
+`AssetVersion` never changes.
+
+New process/config/code means:
+
+```text
+Worker v17
+→ Worker v18
+```
+
+not mutation.
+
+---
+
+# 3. `Listing` contains market terms, not the asset
+
+Listings are mutable.
+
+```yaml
+listing_id: ...
+
+asset_version_ref: ...
+
+status:
+  ACTIVE
+  PAUSED
+  SOLD_OUT
+  RETIRED
+
+delivery:
+  DOWNLOAD
+  PROGRESSIVE_REVEAL
+  HOSTED_INVOCATION
+  HOSTED_LEASE
+  CONFIDENTIAL_LEASE
+
+transport:
+  HTTP
+  MCP
+  A2A
+
+price:
+  model:
+    FIXED
+    PER_CALL
+    PER_UNIT
+    PER_PERIOD
+
+  amount: "0.50"
+  currency: USDC
+
+sample_policy:
+  enabled: true
+  unit_count: 40
+  free_units: 1
+  purchases_credit_to_full: true
+
+assurance:
+  required_proof_level: SIGNED
+
+terms_digest: ...
+```
+
+That lets the same Worker v17 appear in several listings:
+
+```text
+$0.10 sample invocation
+$0.50 hosted invocation
+$15 / 100-call hosted lease
+$25 confidential lease
+```
+
+without creating four different assets.
+
+---
+
+# 4. Do not pretend plaintext software can be cryptographically leased
+
+This is important.
+
+There are really only three enforceable commercial modes:
+
+```text
+BUY CONTENT
+HOSTED ACCESS
+CONFIDENTIAL ACCESS
+```
+
+If you give someone the decrypted Worker package directly:
+
+```text
+here is agent.zip
+```
+
+you cannot cryptographically stop them copying it forever.
+
+So don't call that a technically enforced lease.
+
+Treat it as:
+
+```text
+LICENSED_DOWNLOAD
+```
+
+with contractual licensing only.
+
+A real `CapabilityLease` means either:
+
+```text
+seller controls execution
+```
+
+or:
+
+```text
+the package decrypts only inside an authorized TEE
+```
+
+That keeps the security claims honest.
+
+---
+
+# 5. Normal hosted leasing is trivial
+
+For 90% of early use cases:
+
+```text
+buyer
+  ↓
+x402
+  ↓
+Moltwork
+  ↓
+CapabilityLease
+  ↓
+seller endpoint
+  ↓
+WorkerKit
+  ↓
+result + WorkReceipt
+```
+
+Lease:
+
+```yaml
+lease_id: ...
+
+asset_version_digest: ...
+listing_id: ...
+
+lessor:
+lessee:
+
+issued_at:
+not_before:
+expires_at:
+
+limits:
+  calls: 100
+
+allowed_operations:
+  - invoke
+
+status:
+  ACTIVE
+
+terms_digest: ...
+
+signature: ...
+```
+
+Invocation atomically consumes one call.
+
+No TEE required.
+
+---
+
+# 6. Sampling existing artifacts
+
+Keep the mechanism we designed.
+
+Before sale:
+
+```text
+artifact
+  ↓
+canonical units
+  ↓
+salt each unit
+  ↓
+Merkle tree
+  ↓
+commit root
+  ↓
+publish listing
+```
+
+Leaf:
+
+```text
+SHA256(
+  "moltwork:chunk:v1"
+  || asset_version_digest
+  || chunk_index
+  || random_salt
+  || SHA256(chunk_bytes)
+)
+```
+
+Seller cannot change the content afterward without changing the root.
+
+A paid sample returns:
+
+```yaml
+SampleReceipt:
+
+asset_version:
+listing:
+buyer:
+
+chunk_index:
+chunk:
+salt:
+
+merkle_proof: [...]
+
+amount_paid:
+payment_ref:
+
+cumulative_fraction_owned: "0.075"
+
+issued_at:
+signature:
+```
+
+Buyer verifies:
+
+```text
+chunk + salt
+    ↓
+leaf hash
+    ↓
+Merkle path
+    ↓
+published artifact root
+```
+
+Therefore the sample is provably part of the committed product.
+
+### Price invariant
+
+Keep the excellent simple rule:
+
+```text
+40 chunks
+full price = $1
+
+each chunk = $0.025
+```
+
+If the buyer has purchased 10 chunks:
+
+```text
+25% content owned
+25% price paid
+```
+
+Full unlock costs the remaining 75%.
+
+For V1, Moltwork can choose sample indices randomly without replacement after the root is fixed. We do **not** need to integrate a randomness network yet; the important V1 cryptographic guarantee is that neither seller nor server can substitute a different chunk after selection because inclusion is proven against the precommitted root.
+
+External randomness can come later.
+
+---
+
+# 7. Samples for Workers/Services use WorkerKit instead
+
+Don't invent another sample protocol.
+
+A `SampleRun` is just:
+
+```text
+Invocation:
+  purpose = SAMPLE
+```
+
+Examples:
+
+```text
+public benchmark fixture
+buyer-supplied small challenge
+seller-selected historical WorkReceipt
+```
+
+Then the buyer gets:
+
+```text
+input commitment
+Worker version
+output
+verification
+actual proof coverage
+WorkReceipt
+```
+
+This is much stronger than a screenshot portfolio.
+
+---
+
+# 8. Every hosted invocation should map cleanly into WorkerKit
+
+Moltwork creates:
+
+```text
+Listing request
+      ↓
+WorkOrder
+      ↓
+AcceptanceContract
+      ↓
+WorkerKit
+      ↓
+arbitrary Worker
+      ↓
+WorkReceipt
+```
+
+Moltwork stores only:
+
+```yaml
+Invocation:
+
+invocation_id:
+listing_id:
+asset_version_digest:
+
+buyer_ref:
+seller_ref:
+
+work_order_digest:
+
+started_at:
+finished_at:
+
+status:
+
+input_digest:
+output_artifact_ref:
+
+work_receipt_digest:
+
+payment_ref:
+lease_ref:
+```
+
+It does **not** duplicate:
+
+```text
+model calls
+tool calls
+cost events
+trajectory
+verification internals
+```
+
+Those stay in WorkerKit.
+
+This is the critical boundary.
+
+---
+
+# 9. Confidential leasing with Phala/dstack
+
+This is where the architecture becomes unusually useful.
+
+Use the active open-source `Dstack-TEE/dstack` stack, not build our own TEE runtime. dstack currently supports confidential workloads across Intel TDX and other attested environments, with reproducible workload identity, isolated per-app keys and attestation tooling. ([GitHub][1])
+
+Current dstack v0.6 changed the API slightly from the design we discussed earlier.
+
+For new code use:
+
+```python
+client = DstackClient()
+
+key = client.get_key(
+    "moltwork/run-signing/v1",
+    "ed25519"
+)
+
+attestation = client.attest(report_data)
+
+info = client.info()
+```
+
+`get_key()` gives app-bound deterministic key material plus public-key/signature-chain information. `attest()` is now the actual attestation operation. `info()` is explicitly **not evidence**; measurements returned as ordinary local configuration must be confirmed against the attestation.
+
+That distinction is load-bearing.
+
+---
+
+# 10. Confidential Worker package
+
+Seller builds:
+
+```text
+WorkerPackage
+├── agent config
+├── skills
+├── process
+├── code
+├── policy
+└── manifest
+```
+
+Canonical manifest:
+
+```yaml
+worker_package:
+  asset_id:
+  version:
+
+  worker_manifest_digest:
+  plaintext_digest:
+
+  image_digest:
+  compose_digest:
+
+  required_runner:
+    moltwork-confidential-runner:v1
+
+  encryption:
+    algorithm: AES-256-GCM
+    ciphertext_uri: ...
+```
+
+Generate random:
+
+```text
+DEK = 256-bit key
+```
+
+Encrypt package:
+
+```text
+ciphertext =
+AES-GCM(DEK, WorkerPackage)
+```
+
+Store ciphertext openly in R2 if desired.
+
+Without DEK it is useless.
+
+---
+
+# 11. The minimal confidential lease protocol
+
+This is the exact flow I'd implement.
+
+```text
+SELLER
+encrypts Worker v17
+        │
+        ▼
+R2 ciphertext
+        │
+        │
+BUYER obtains CapabilityLease
+        │
+        ▼
+launch approved
+moltwork-confidential-runner
+inside dstack CVM
+        │
+        ▼
+fresh TEE attestation
+        │
+        ▼
+Lease Key Service
+        │
+ verifies
+        │
+        ▼
+releases DEK
+only to attested runner
+        │
+        ▼
+Worker decrypts in TEE memory
+        │
+        ▼
+WorkerKit run
+        │
+        ▼
+WorkReceipt
++
+TEE attestation evidence
+```
+
+---
+
+# 12. Bind key release to the exact invocation
+
+Inside the TEE, generate a fresh ephemeral encryption key.
+
+Then:
+
+```text
+challenge =
+SHA256(
+    "moltwork:lease:v1"
+    || lease_digest
+    || asset_version_digest
+    || invocation_id
+    || ephemeral_public_key
+    || server_nonce
+)
+```
+
+Pass those 32 bytes to:
+
+```python
+client.attest(challenge)
+```
+
+Current dstack accepts caller-controlled report data specifically so a relying party can bind a fresh challenge to the attestation.
+
+The runner sends:
+
+```text
+lease
+invocation_id
+ephemeral_public_key
+nonce
+dstack attestation
+```
+
+to:
+
+```text
+POST /v1/leases/{lease}/release-key
+```
+
+---
+
+# 13. Lease Key Service rules
+
+The LKS does **not** release the Worker DEK merely because:
+
+```text
+"this came from Phala"
+```
+
+It checks:
+
+```text
+hardware attestation valid
+
+fresh nonce matches
+
+report_data binding matches
+
+approved runner compose_hash
+
+approved OS/image measurements
+
+lease ACTIVE
+
+not expired
+
+calls_remaining > 0
+
+lease asset_digest
+==
+requested asset_digest
+
+invocation unused
+```
+
+dstack provides open verification tooling such as `dstack-verifier`/quote-verification components, and its verification model explicitly checks the genuine platform, expected application configuration and measured environment. ([GitHub][2])
+
+Then atomically:
+
+```text
+reserve invocation
+↓
+release key
+```
+
+No:
+
+```text
+release key
+↓
+decrement later
+```
+
+because two simultaneous CVMs could otherwise race the lease counter.
+
+---
+
+# 14. Encrypt DEK to the attested runner
+
+Do not return:
+
+```text
+{"dek": "plaintext"}
+```
+
+Generate an ephemeral X25519 key inside the CVM and bind its public key into `report_data`.
+
+LKS then encrypts the DEK to that key.
+
+Conceptually:
+
+```text
+HPKE(
+    recipient = attested_ephemeral_public_key,
+    plaintext = DEK
+)
+```
+
+Only the CVM that created that attested key can decrypt the Worker package.
+
+This closes:
+
+```text
+attestation copied
+→ DEK delivered elsewhere
+```
+
+---
+
+# 15. TEE-bound WorkerKit signing key
+
+There is another very useful dstack primitive.
+
+Inside the approved runner:
+
+```python
+signing_key = client.get_key(
+    "moltwork/workerkit-signing/v1",
+    "ed25519",
+)
+```
+
+Current dstack v1 explicitly derives app-bound keys and returns their public key plus signature-chain material.
+
+WorkerKit can sign the run attestation with this key.
+
+Therefore the marketplace can prove:
+
+```text
+WorkReceipt
+was signed by
+
+key K
+
+whose provenance traces to
+
+approved dstack application identity
+```
+
+That gives us:
+
+```text
+Worker v17 digest
++
+approved runner digest
++
+TEE identity
++
+WorkerKit WorkReceipt
+```
+
+without exposing Worker v17.
+
+Very strong.
+
+---
+
+# 16. Do not overclaim TEE proof
+
+dstack itself correctly warns that attestation proves the expected environment/code identity, not that the software is bug-free or the produced answer is correct. ([GitHub][3])
+
+So display:
+
+```text
+Runtime        TEE ATTESTED
+Worker version VERIFIED
+Output quality INSPECT VERIFIED
+Settlement     ONCHAIN
+```
+
+Never:
+
+```text
+TEE VERIFIED EVERYTHING
+```
+
+WorkerKit's separated proof dimensions are exactly right.
+
+---
+
+# 17. Seller source → image → runtime chain
+
+For serious confidential Workers:
+
+```text
+Git commit
+    ↓
+CI
+    ↓
+container
+    ↓
+sha256 image digest
+    ↓
+Sigstore/Cosign
+    ↓
+signed build artifact
+    ↓
+digest-pinned dstack compose
+    ↓
+TEE attestation
+```
+
+Sigstore bundles can carry the artifact signature, certificate, timestamp and transparency-log inclusion material, which is exactly what we want for proving that the image being attested was an expected build artifact. ([Sigstore][4])
+
+Moltwork only stores:
+
+```text
+image digest
+Sigstore bundle ref
+source provenance ref
+compose digest
+TEE attestation ref
+```
+
+No custom software-supply-chain protocol.
+
+---
+
+# 18. Payment: use x402, don't become x402
+
+Current x402 v2 explicitly separates clients, servers, facilitators and payment logic and keeps the protocol modular. ([x402][5])
+
+Use it as `PaymentProvider`.
+
+```python
+class PaymentProvider:
+    quote(...)
+    verify(...)
+    settle(...)
+    refund(...)
+```
+
+Initial:
+
+```text
+X402PaymentProvider
+```
+
+Later:
+
+```text
+Stripe
+USDC transfer
+Moltwork credits
+etc.
+```
+
+Moltwork's job is:
+
+```text
+payment X
+bought AccessGrant Y
+for AssetVersion Z
+```
+
+not payment infrastructure itself.
+
+---
+
+# 19. Access grants
+
+After verified payment:
+
+```yaml
+AccessGrant:
+
+grant_id:
+buyer:
+asset_version:
+
+rights:
+  SAMPLE_UNITS
+  FULL_READ
+  INVOKE
+  LEASE
+
+units_owned: []
+
+issued_at:
+expires_at:
+
+payment_refs: []
+
+terms_digest:
+
+signature:
+```
+
+This gives you one authorization primitive for:
+
+```text
+content purchases
+samples
+service calls
+leases
+```
+
+---
+
+# 20. Market assurance should be additive
+
+Don't make separate marketplaces.
+
+A listing can offer:
+
+```text
+BASE
+$0.50
+
++ independent verification
+$0.08
+
++ second verifier
+$0.10
+
++ TEE-attested execution
+$0.20
+```
+
+A `Verifier` is itself another listed `AssetVersion`.
+
+Therefore:
+
+```text
+ResearchWorker
+      ↓ buys
+CitationVerifier
+      ↓ buys
+FactVerifier
+```
+
+and the final WorkReceipt can reference all three.
+
+That's the wholesale machine-labor market.
+
+---
+
+# 21. Receipt DAG
+
+Allow assets/runs to reference upstream receipt digests:
+
+```text
+Final WorkReceipt
+│
+├── Data purchase receipt
+├── Search service receipt
+├── Verifier invocation receipt
+└── Worker execution receipt
+```
+
+But do not put the entire graph in one giant object.
+
+Just:
+
+```yaml
+parent_receipts:
+  - sha256:...
+  - sha256:...
+```
+
+Each receipt stays independently verifiable.
+
+This gives Moltwork a supply-chain graph essentially for free.
+
+---
+
+# 22. Oracle compatibility is extremely simple
+
+Every Moltwork state transition produces a transactional outbox event.
+
+```yaml
+MarketEvent:
+
+event_id:
+event_type:
+occurred_at:
+
+market: moltwork
+
+seller_ref:
+buyer_ref:
+
+asset_ref:
+listing_ref:
+
+capability:
+
+price:
+payment_ref:
+
+workerkit_receipt_ref:
+
+public_metadata: {}
+```
+
+Canonical types:
+
+```text
+listing.published
+listing.price_changed
+
+sample.purchased
+asset.purchased
+
+service.invoked
+
+lease.issued
+lease.invoked
+lease.revoked
+lease.expired
+
+verification.purchased
+
+settlement.observed
+```
+
+Oracle consumes these.
+
+Moltwork does **not** directly update Oracle's canonical tables.
+
+```text
+Moltwork events
+       ↓
+Oracle adapter
+       ↓
+O0 observations
+       ↓
+Oracle resolution/metrics
+```
+
+Exactly like every other marketplace.
+
+---
+
+# 23. Important privacy boundary for Oracle
+
+Oracle should receive:
+
+```text
+Worker type
+capability
+price
+time
+listing
+sample/purchase
+settlement
+proof level
+public outcome
+```
+
+It should **not automatically receive**:
+
+```text
+buyer input
+private artifact
+private Worker config
+prompts
+skills
+internal trajectory
+private production cost
+```
+
+WorkerKit can expose aggregate economic information according to seller policy.
+
+This protects the supplier moat.
+
+---
+
+# 24. ERC-8004 compatibility should be export-only initially
+
+ERC-8004 already provides portable:
+
+```text
+Identity
+Reputation feedback
+Validation
+```
+
+and explicitly allows TEE-based and other validation approaches while keeping payment orthogonal. ([Ethereum Improvement Proposals][6])
+
+Therefore:
+
+```text
+Moltwork asset/Worker
+→ optionally links ERC-8004 identity
+
+Moltwork WorkReceipt
+→ optionally published as validation request/evidence
+
+Moltwork outcome
+→ optionally exported as reputation feedback
+```
+
+Do **not** make ERC-8004 required.
+
+And do not implement our own agent NFT registry.
+
+---
+
+# 25. No custom smart contract in V1
+
+This is another place I would cut scope.
+
+We already have:
+
+```text
+x402 / chain settlement
+Sigstore transparency
+TEE attestation
+WorkReceipt signatures
+Merkle artifact commitments
+```
+
+A `MoltworkRegistry.sol` adds little right now.
+
+Later, if useful, one tiny anchor:
+
+```solidity
+event Commitment(
+    bytes32 indexed digest,
+    uint8 indexed kind,
+    bytes32 indexed parent
+);
+```
+
+can timestamp:
+
+```text
+asset roots
+receipt roots
+lease commitments
+Oracle checkpoints
+```
+
+But V1 doesn't need it.
+
+---
+
+# 26. Exact API shell
+
+I would ship roughly this API:
+
+```text
+POST /v1/assets
+GET  /v1/assets/{id}
+
+POST /v1/listings
+GET  /v1/listings
+GET  /v1/search
+
+POST /v1/listings/{id}/sample
+POST /v1/listings/{id}/buy
+
+POST /v1/listings/{id}/invoke
+
+POST /v1/listings/{id}/lease
+GET  /v1/leases/{id}
+
+POST /v1/leases/{id}/invoke
+POST /v1/leases/{id}/release-key
+POST /v1/leases/{id}/revoke
+
+POST /v1/receipts
+GET  /v1/receipts/{digest}
+
+GET  /v1/proofs/{digest}
+```
+
+The payment-protected routes return x402 requirements before authorization.
+
+---
+
+# 27. Database
+
+Only these tables initially:
+
+```text
+principals
+
+asset_versions
+listings
+
+access_grants
+sample_receipts
+
+leases
+invocations
+
+receipt_refs
+
+market_events
+outbox
+```
+
+That's enough.
+
+Postgres transaction:
+
+```text
+payment verified
++
+grant created
++
+market event created
++
+outbox row created
+```
+
+atomically.
+
+The outbox publisher sends to Oracle.
+
+No event bus required.
+
+---
+
+# 28. Conformance tests are more important than UI
+
+Before marketplace polish, ship adversarial tests:
+
+```text
+modify artifact chunk
+→ Merkle proof fails
+
+change AssetVersion manifest
+→ signature/digest fails
+
+sample chunk not in committed artifact
+→ reject
+
+reuse paid sample index
+→ reject
+
+invoke expired lease
+→ reject
+
+invoke revoked lease
+→ reject
+
+parallel final lease call
+→ only one succeeds
+
+replay old TEE attestation
+→ nonce reject
+
+valid quote but wrong asset
+→ reject
+
+valid quote but wrong compose
+→ reject
+
+DEK request from unattested key
+→ reject
+
+modify WorkReceipt
+→ verification fails
+
+WorkReceipt output digest
+!= delivered artifact
+→ reject
+
+payment succeeds but delivery absent
+→ objective delivery-failure state
+```
+
+That's what makes the marketplace credible.
+
+---
+
+# 29. Implementation order
+
+I would build it in exactly this sequence:
+
+```text
+SLICE 1
+AssetVersion
+Listing
+canonical hashes
+artifact CAS
+Merkle sampling
+
+SLICE 2
+x402
+AccessGrant
+sample purchase
+full purchase
+
+SLICE 3
+hosted service invocation
+WorkerKit integration
+WorkReceipt references
+Oracle outbox
+
+SLICE 4
+CapabilityLease
+quota / expiry / revocation
+hosted leased invocation
+
+SLICE 5
+dstack confidential runner
+encrypted WorkerPackage
+attestation verification
+Lease Key Service
+TEE-bound WorkerKit signing
+
+SLICE 6
+verifier marketplace
+assurance add-ons
+receipt DAG
+
+SLICE 7
+ERC-8004 export
+optional onchain commitments
+```
+
+Everything through Slice 5 is the core product.
+
+---
+
+# 30. Explicitly do not build
+
+```text
+agent framework
+planner
+memory
+skills engine
+workflow engine
+
+wallet protocol
+payment protocol
+
+custom identity blockchain
+custom reputation chain
+
+custom TEE
+custom KMS hardware
+custom attestation format
+
+decentralized storage protocol
+DAO
+token
+
+complex auction engine
+recommendation ML
+vector-search infrastructure
+
+microservices
+Kafka
+distributed state machine
+```
+
+Not yet.
+
+---
+
+# Final architecture
+
+```text
+                        ORACLE
+                 market/world intelligence
+                         ▲
+                         │ MarketEvents
+                         │
+┌────────────────────────────────────────────────┐
+│                    MOLTWORK                    │
+│                                                │
+│ AssetVersion                                   │
+│ Listing                                        │
+│                                                │
+│ Merkle sampling                                │
+│ AccessGrant                                    │
+│ x402 payment                                   │
+│                                                │
+│ CapabilityLease                                │
+│ hosted invocation                              │
+│ confidential invocation                        │
+│                                                │
+│ WorkReceipt references                         │
+│ proof/assurance marketplace                    │
+└───────────────────────┬────────────────────────┘
+                        │
+                        ▼
+                    WORKERKIT
+            economic + evidence runtime
+                        │
+                        ▼
+            arbitrary Worker / harness
+
+                normal hosted path
+                       OR
+                        │
+                        ▼
+             dstack confidential CVM
+                        │
+           ┌────────────┴────────────┐
+           │                         │
+      attestation               app-bound key
+           │                         │
+           ▼                         ▼
+   Lease Key Service          WorkReceipt signer
+           │
+           ▼
+     encrypted Worker
+       decrypted only
+        inside TEE
+```
+
+The resulting Moltwork thesis becomes very precise:
+
+> **Moltwork is the cryptographic commerce layer for machine capabilities.**
+
+WorkerKit establishes **what happened**.
+
+Oracle establishes **what the market looks like**.
+
+Moltwork only establishes:
+
+> **what is being sold, what was paid for, what access was granted, which capability/version was invoked, and what proof accompanied the result.**
+
+That is thin enough to build now, but the primitives are sufficient for artifact sales, paid samples, services, wholesale subcontracting, paid verification, hosted Workers, bounded leases and proprietary Worker execution inside open-source dstack TEEs without redesigning the system later.
+
+[1]: https://github.com/dstack-TEE/dstack?utm_source=chatgpt.com "GitHub - Dstack-TEE/dstack: Open framework for confidential AI · GitHub"
+[2]: https://github.com/Dstack-TEE/dstack/blob/next/docs/verification.md?utm_source=chatgpt.com "dstack/docs/verification.md at next · Dstack-TEE/dstack · GitHub"
+[3]: https://github.com/Phala-Network/dstack-cloud/blob/master/docs/security/security-model.md?utm_source=chatgpt.com "dstack-cloud/docs/security/security-model.md at master · Phala-Network/dstack-cloud · GitHub"
+[4]: https://docs.sigstore.dev/quickstart/quickstart-cosign/?utm_source=chatgpt.com "Sigstore Quickstart with Cosign - Sigstore"
+[5]: https://x402.org/x402-v2-launch/?utm_source=chatgpt.com "Introducing x402 V2: Evolving the Standard for Internet-native Payments – x402"
+[6]: https://eips.ethereum.org/EIPS/eip-8004?utm_source=chatgpt.com "ERC-8004: Trustless Agents"

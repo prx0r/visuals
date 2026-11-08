@@ -1,0 +1,1106 @@
+Yes. I found the Atlas trail in GitHub after searching the **commit history** rather than only the current code index. That changes my assessment: **Atlas already exists as the beginnings of exactly this entity/navigation layer; the new OpenAlex-for-Sanskrit vision should extend it rather than create another ontology.**
+
+## 1. What Atlas actually is right now
+
+The key initial commit is:
+
+[http://github.com/prx0r/patala/commit/c0e40b97077ffd9176bca90684428cacda1bbcfe](http://github.com/prx0r/patala/commit/c0e40b97077ffd9176bca90684428cacda1bbcfe)
+
+It introduced the **Śaiva Tantra Atlas** with:
+
+```text
+AtlasEntity
+AtlasRelation
+
+Traditions
+Texts
+People
+Concepts
+
+typed edges
+confidence-weighted edges
+```
+
+At that point it had:
+
+```text
+7 traditions
+6 texts
+7 people
+6 concepts
+44 relations
+```
+
+Then:
+
+[http://github.com/prx0r/patala/commit/1dc7f6872075c4632350e6072c37e87eb26b8935](http://github.com/prx0r/patala/commit/1dc7f6872075c4632350e6072c37e87eb26b8935)
+
+expanded it to:
+
+```text
+7 traditions
+12 texts
+7 people
+21 concepts
+92 relations
+```
+
+including Jñānakārikā, Ajaḍapramātṛsiddhi, Kaularahasya, Kulapradīpa, Kubjikātantra, Śivasūtra and many concept→text/tradition/person relations.
+
+Then this:
+
+[http://github.com/prx0r/patala/commit/e44eeaf9f22d7b8179a2310c4e3445954e90f65b](http://github.com/prx0r/patala/commit/e44eeaf9f22d7b8179a2310c4e3445954e90f65b)
+
+was more important than it looked. It exposed:
+
+```text
+GET /api/resources
+```
+
+over `data/atlas/resources.ts`, with filters for type, tradition, access, essential status, etc.
+
+And this:
+
+[http://github.com/prx0r/patala/commit/87fff7e7ee8b4a881641cd0fc320046f715b2091](http://github.com/prx0r/patala/commit/87fff7e7ee8b4a881641cd0fc320046f715b2091)
+
+made the **20 Atlas concepts** into actual browsable dossiers.
+
+Then:
+
+[http://github.com/prx0r/patala/commit/44bd51a42928951b7cce92385f2388e5f468d331](http://github.com/prx0r/patala/commit/44bd51a42928951b7cce92385f2388e5f468d331)
+
+connected the educational content directly to **Atlas IDs**.
+
+So we already have this:
+
+```text
+                 ATLAS
+
+       ┌────────────┼─────────────┐
+       ↓            ↓             ↓
+    entities     relations     resources
+       │            │             │
+       └────────────┼─────────────┘
+                    ↓
+                 concepts
+                    ↓
+                 lessons
+```
+
+The huge thing that's happened *since then* is that the backend scholarship has become much more rigorous than Atlas itself.
+
+The August 12 work now gives us things like:
+
+```text
+ResearchQuestion
+       ↓
+Argument
+       ↓
+Inference
+       ↓
+Proposition
+       ↓
+C1 / L2
+       ↓
+L0 Sanskrit
+       ↓
+SourceSpan
+       ↓
+PhilologicalProof
+```
+
+with typed `GroundingLink`s, exact resolution and immutable proof history.
+
+See:
+
+[http://github.com/prx0r/patala/commit/09a286a2a9c00267e07c4dbf73e77ad8174a9e18](http://github.com/prx0r/patala/commit/09a286a2a9c00267e07c4dbf73e77ad8174a9e18)
+
+and the hardened version:
+
+[http://github.com/prx0r/patala/commit/e19fd90ba57bd1d09364a394ce8853275ccb825b](http://github.com/prx0r/patala/commit/e19fd90ba57bd1d09364a394ce8853275ccb825b)
+
+and the resolved end-to-end proof:
+
+[http://github.com/prx0r/patala/commit/e9e938eed5ad093ebef512b3111e100a5ccf6672](http://github.com/prx0r/patala/commit/e9e938eed5ad093ebef512b3111e100a5ccf6672)
+
+### Therefore I would make one architectural decision now:
+
+**Atlas stops meaning “the visual Śaiva map.”**
+
+Atlas becomes:
+
+> **Pāṭala's canonical scholarly entity graph and discovery projection.**
+
+The visualization is just one view onto it.
+
+---
+
+# 2. What Atlas should grow into
+
+Right now we roughly have:
+
+```text
+Tradition
+Text
+Person
+Concept
+Resource
+Relation
+```
+
+Don't destroy these.
+
+Expand around them:
+
+```text
+                         ATLAS
+
+Person ─────── authored ───────── Work
+  │                               │
+  │                           realized_as
+  │                               ↓
+Institution                  TextEdition
+  │                               │
+  │ holds                         │ based_on
+  ↓                               ↓
+Manuscript ←────────────── ManuscriptWitness
+  │
+  ├── DigitalSurrogate
+  │       └── IIIF Manifest
+  │
+  └── Folio
+          ↓
+       Passage
+          ↓
+       Sanskrit L0
+          ↓
+      Translation
+          ↓
+      Proposition
+          ↓
+       Inference
+          ↓
+       Argument
+```
+
+And **every object can carry external IDs**.
+
+```json
+{
+  "id": "patala:work:malinivijayottara",
+  "external_ids": [
+    {"scheme": "pandit", "id": "..."},
+    {"scheme": "wikidata", "id": "Q..."},
+    {"scheme": "gretil", "id": "..."}
+  ]
+}
+```
+
+The internal Pāṭala ID remains authoritative.
+
+---
+
+# 3. PANDiT — highest-priority strategic partner
+
+[http://panditproject.org/](http://panditproject.org/)
+
+[http://panditproject.org/about](http://panditproject.org/about)
+
+PANDiT explicitly models **works, people, places, institutions, manuscripts and secondary literature** across premodern South Asia. ([Pandit Project][1])
+
+### How we use it
+
+**Do not ingest it as truth.**
+
+Use it as an authority/crosswalk source:
+
+```text
+PATA-W-00194
+    sameAs?       PANDiT work X
+
+PATA-P-0012
+    sameAs?       PANDiT person Y
+
+PATA-MS-8291
+    cataloguedAs  PANDiT manuscript Z
+```
+
+Atlas page:
+
+```text
+Abhinavagupta
+
+Pāṭala ID       PATA-P-0012
+PANDiT          [...]
+Wikidata        Q...
+VIAF            ...
+```
+
+### Important
+
+I did **not** find a clearly documented public PANDiT API in the current search.
+
+So don't quietly build production scraping around it.
+
+Phase 1:
+
+```text
+link + reconcile
+```
+
+Phase 2:
+
+```text
+contact PANDiT
+ask for export/API/cooperation
+```
+
+This is exactly the sort of project where a real partnership is better than treating them as a website to scrape.
+
+---
+
+# 4. GRETIL — easiest large corpus import
+
+Official archival/mirror repo:
+
+[http://github.com/INDOLOGY/GRETIL-mirror](http://github.com/INDOLOGY/GRETIL-mirror)
+
+GRETIL is now available in a stable Git-based snapshot, including Unicode files and substantial TEI material. ([GitHub][2])
+
+### Use it for
+
+```text
+Work
+   ↓
+TextInstance
+   ↓
+GRETIL electronic text
+```
+
+NOT:
+
+```text
+GRETIL file = canonical work
+```
+
+For every file extract:
+
+```text
+title
+author attribution
+source edition
+inputter
+encoding
+GRETIL path
+hash
+license/notes
+```
+
+Then run entity resolution against Atlas.
+
+This could expand Atlas's `Text` layer enormously almost immediately.
+
+---
+
+# 5. SARIT — model this properly from day one
+
+[http://sarit.github.io/](http://sarit.github.io/)
+
+[http://github.com/sarit/SARIT-corpus](http://github.com/sarit/SARIT-corpus)
+
+Encoding spec:
+
+[http://sarit.github.io/docs/sarit-guidelines.html](http://sarit.github.io/docs/sarit-guidelines.html)
+
+Full critical-edition guidance:
+
+[http://sarit.github.io/docs/sarit-guidelines-full.html](http://sarit.github.io/docs/sarit-guidelines-full.html)
+
+SARIT's corpus is actual TEI P5, and its richer guidelines explicitly support variants, cross-references, people, works and controlled vocabularies. ([Sarit][3])
+
+### Use it for
+
+This should influence our **edition interchange model**.
+
+```text
+Atlas Work
+    ↓
+Edition
+    ↓
+SARIT TEI
+    ↓
+Passage
+    ↓
+apparatus / variants
+```
+
+We should absolutely **accept TEI as an import/export format**.
+
+But again, don't make canonical Pāṭala storage depend on TEI XML.
+
+Pāṭala objects → TEI adapter.
+
+Not Pāṭala ontology = TEI.
+
+---
+
+# 6. Muktabodha — probably our #1 Tantra institutional partner
+
+[http://muktabodha.org/digital-library/](http://muktabodha.org/digital-library/)
+
+Current library:
+
+[http://muktabodha-digital-library.org/](http://muktabodha-digital-library.org/)
+
+Legacy IFP/Vedic collection:
+
+[http://muktalib7.com/DL_CATALOG_ROOT/digital_library](http://muktalib7.com/DL_CATALOG_ROOT/digital_library)
+
+This is unusually aligned with us. Muktabodha reports 3,000+ digitally preserved texts and 570+ searchable e-texts, including major Śaiva, Śākta, Śrīvidyā, Kaula, Nātha and related material. It also digitized more than 2,000 mostly Śaiva Siddhānta texts from IFP's collection. ([Muktabodha][4])
+
+### Atlas use
+
+```text
+Atlas Work
+   ↓
+DigitalInstance
+   ↓
+Muktabodha
+
+and where known:
+
+Work
+ ↓
+Manuscript
+ ↓
+IFP manuscript
+ ↓
+Muktabodha surrogate/transcription
+```
+
+### Partnership pitch
+
+Not:
+
+> Give us your files.
+
+Instead:
+
+> We are building the open identity/evidence graph through which Muktabodha's objects can be cited, discovered, connected to manuscripts, editions, translations and scholarship.
+
+That preserves their attribution.
+
+---
+
+# 7. NGMCP / NGMPP — massive manuscript layer
+
+Project:
+
+[http://www.aai.uni-hamburg.de/en/forschung/ngmcp.html](http://www.aai.uni-hamburg.de/en/forschung/ngmcp.html)
+
+Live catalogue:
+
+[http://ngmcp.fdm.uni-hamburg.de/](http://ngmcp.fdm.uni-hamburg.de/)
+
+Archived descriptive catalogue:
+
+[http://www-archiv.fdm.uni-hamburg.de/ngmcp/ngmcp.html](http://www-archiv.fdm.uni-hamburg.de/ngmcp/ngmcp.html)
+
+NGMCP describes the catalogue target as **180,000+ manuscripts** photographed through the Nepal-German preservation project. ([AAI Hamburg][5])
+
+This becomes:
+
+```text
+Work
+ │
+ └── witness
+       │
+       └── NGMCP manuscript
+              ├── shelfmark
+              ├── reel/film identifier
+              ├── script
+              ├── title attribution
+              ├── author attribution
+              └── provenance
+```
+
+Again, I wouldn't assume an open modern REST API.
+
+Build `NGMCPIdentifier` support immediately.
+
+Negotiate bulk access later.
+
+---
+
+# 8. IIIF — MUST be native Atlas architecture
+
+Specs:
+
+[http://iiif.io/api/](http://iiif.io/api/)
+
+Presentation 3:
+
+[http://iiif.io/api/presentation/3.0/](http://iiif.io/api/presentation/3.0/)
+
+IIIF Presentation 3 currently defines interoperable `Collection`, `Manifest`, `Canvas`, ranges and annotations over remotely hosted digital objects. ([IIIF][6])
+
+This is enormous for Pāṭala.
+
+A manuscript becomes:
+
+```json
+{
+  "id": "PATA-MS-01882",
+  "repository": "...",
+  "shelfmark": "...",
+  "surrogates": [{
+    "type": "IIIF",
+    "manifest": "https://institution/.../manifest"
+  }]
+}
+```
+
+Then our Atlas manuscript viewer can render:
+
+```text
+folio 24r
+folio 24v
+folio 25r
+```
+
+without owning those images.
+
+And later:
+
+```text
+Pāṭala Sanskrit passage
+          ↓ exact correspondence
+IIIF Canvas / region
+```
+
+That is a very serious scholarly capability.
+
+---
+
+# 9. C-SALT / Cologne dictionaries — integrate now
+
+Docs:
+
+[http://cceh.github.io/kosh/docs/implementations/c-salt_sanskrit.html](http://cceh.github.io/kosh/docs/implementations/c-salt_sanskrit.html)
+
+General:
+
+[http://c-salt.uni-koeln.de/](http://c-salt.uni-koeln.de/)
+
+Modern Cologne dictionary project:
+
+[http://sanskrit-lexicon.github.io/csl-guides/](http://sanskrit-lexicon.github.io/csl-guides/)
+
+This is one of the cleanest actual APIs available to us.
+
+Monier-Williams REST:
+
+[http://api.c-salt.uni-koeln.de/dicts/mw/restful](http://api.c-salt.uni-koeln.de/dicts/mw/restful)
+
+MW GraphQL:
+
+[http://api.c-salt.uni-koeln.de/dicts/mw/graphql](http://api.c-salt.uni-koeln.de/dicts/mw/graphql)
+
+Apte:
+
+[http://api.c-salt.uni-koeln.de/dicts/ap90/restful](http://api.c-salt.uni-koeln.de/dicts/ap90/restful)
+
+Buddhist Hybrid Sanskrit:
+
+[http://api.c-salt.uni-koeln.de/dicts/bhs/restful](http://api.c-salt.uni-koeln.de/dicts/bhs/restful)
+
+Vedic Index:
+
+[http://api.c-salt.uni-koeln.de/dicts/vei/restful](http://api.c-salt.uni-koeln.de/dicts/vei/restful)
+
+PWG:
+
+[http://api.c-salt.uni-koeln.de/dicts/pwg/restful](http://api.c-salt.uni-koeln.de/dicts/pwg/restful)
+
+Grassmann's Ṛgvedic dictionary:
+
+[http://api.c-salt.uni-koeln.de/dicts/gra/restful](http://api.c-salt.uni-koeln.de/dicts/gra/restful)
+
+The APIs expose dictionary data through REST and GraphQL, while source dictionary data are also downloadable. ([cceh.github.io][7])
+
+### Atlas design
+
+Create:
+
+```text
+Lexeme
+  ↓
+LexicalAttestation
+  ↓
+DictionaryEntry
+```
+
+For:
+
+```text
+vimarśa
+
+Pāṭala contextual senses
+-------------------------
+IPVV sense 1
+Tantrāloka sense 2
+...
+
+External lexicography
+----------------------
+MW
+Apte
+PWG
+...
+```
+
+**Do not merge dictionary definitions into our contextual senses.**
+
+Keep source and interpretation separate.
+
+---
+
+# 10. OpenAlex — modern scholarship backbone
+
+Docs:
+
+[http://developers.openalex.org/](http://developers.openalex.org/)
+
+API:
+
+[http://api.openalex.org/](http://api.openalex.org/)
+
+OpenAlex currently provides works, authors, sources, institutions, topics and related scholarly graph entities. The API now requires a free API key and gives a free daily allowance; a quarterly database snapshot remains freely downloadable. ([OpenAlex][8])
+
+### Use
+
+Every Atlas Work/Concept/Person can have:
+
+```text
+related scholarship
+
+Ratié paper
+Sanderson paper
+Torella article
+...
+```
+
+From OpenAlex:
+
+```text
+publication
+authors
+institution
+citations
+references
+OA URL
+DOI
+topics
+```
+
+But do not trust OpenAlex's Sanskrit entity resolution.
+
+We do:
+
+```text
+OpenAlex publication
+       ↓ discusses
+Pāṭala Work/Concept
+```
+
+The `discusses` edge is ours and provenance-bearing.
+
+---
+
+# 11. Crossref — DOI authority
+
+Docs:
+
+[http://www.crossref.org/documentation/retrieve-metadata/rest-api/](http://www.crossref.org/documentation/retrieve-metadata/rest-api/)
+
+API:
+
+[http://api.crossref.org/](http://api.crossref.org/)
+
+No signup is required for public REST access; Crossref exposes publisher-deposited DOI metadata, licenses, funders and available ORCID/ROR identifiers. ([www.crossref.org][9])
+
+### Rule
+
+Use:
+
+```text
+OpenAlex = discovery/graph
+
+Crossref = DOI metadata authority
+```
+
+So Atlas publication:
+
+```text
+PATA-PUB-282
+
+doi
+title
+authors
+date
+journal
+```
+
+gets DOI-level canonical metadata from Crossref.
+
+---
+
+# 12. DataCite — editions, datasets, digital scholarly objects
+
+Docs:
+
+[http://support.datacite.org/docs/api](http://support.datacite.org/docs/api)
+
+API:
+
+[http://api.datacite.org/](http://api.datacite.org/)
+
+Public metadata retrieval requires no authentication. ([DataCite Support][10])
+
+This matters increasingly when Sanskrit scholars publish:
+
+```text
+TEI edition
+dataset
+manuscript transcription
+software
+research corpus
+Zenodo release
+```
+
+that has a DataCite DOI rather than Crossref DOI.
+
+Atlas should simply support:
+
+```text
+doi_registration_agency:
+    CROSSREF | DATACITE
+```
+
+---
+
+# 13. OpenCitations — don't depend solely on OpenAlex citations
+
+API:
+
+[http://api.opencitations.net/index/v2](http://api.opencitations.net/index/v2)
+
+Metadata:
+
+[http://api.opencitations.net/meta/v1](http://api.opencitations.net/meta/v1)
+
+It exposes open citation relationships and currently rate-limits the REST APIs to 180 requests/minute, with dumps for bulk work. ([OpenCitations API][11])
+
+### Atlas use
+
+```text
+Publication A
+      │
+      └── CITES
+             ↓
+Publication B
+```
+
+Maintain citation provenance:
+
+```text
+source:
+  OPENALEX
+  OPENCITATIONS
+  CROSSREF
+```
+
+rather than blindly collapsing sources.
+
+---
+
+# 14. ROR — institutions
+
+Docs:
+
+[http://ror.readme.io/](http://ror.readme.io/)
+
+API:
+
+[http://api.ror.org/v2/organizations](http://api.ror.org/v2/organizations)
+
+ROR is an open persistent-identifier registry for research organizations with over 120,000 records and downloadable data. Current API/schema is **v2 / schema 2.1**; v1 was retired in December 2025. ([ROR][12])
+
+### Use everywhere
+
+```text
+French Institute of Pondicherry
+University of Hamburg
+Oxford
+Cambridge
+BHU
+EFEO
+...
+```
+
+should have:
+
+```text
+PATA-INST-...
+ROR ID if available
+Wikidata
+official URL
+collections[]
+```
+
+Do not invent organization normalization ourselves when ROR already does it.
+
+---
+
+# 15. ORCID — living scholars
+
+Public API:
+
+[http://info.orcid.org/what-is-orcid/services/public-api/](http://info.orcid.org/what-is-orcid/services/public-api/)
+
+ORCID's public API supports public-record retrieval/search and authenticated collection of validated ORCID IDs. ([ORCID][13])
+
+This connects directly to the scholar layer we've been designing:
+
+```text
+Pāṭala Scholar
+     │
+     ├── ORCID
+     ├── OpenAlex Author
+     ├── VIAF maybe
+     └── Pāṭala contributions
+             │
+             ├── review
+             ├── correction
+             ├── adjudication
+             └── edition
+```
+
+That is how scholar contribution eventually becomes academically attributable.
+
+---
+
+# 16. Rethink the Atlas `Relation` object
+
+This is probably the most important repo-level recommendation.
+
+The old Atlas has typed/confidence-weighted relationships.
+
+Good.
+
+But the argument-layer work has now taught us:
+
+> **confidence alone isn't enough.**
+
+Atlas currently conceptually does:
+
+```json
+{
+  "from": "trika",
+  "to": "recognition",
+  "relation": "central_concept",
+  "confidence": 0.9
+}
+```
+
+Future Atlas should support:
+
+```json
+{
+  "id": "PATA-REL-8292",
+  "subject": "PATA-TRAD-TRIKA",
+  "predicate": "CENTRAL_CONCEPT",
+  "object": "PATA-CONCEPT-PRATYABHIJNA",
+
+  "assertions": [
+    {
+      "source": "...",
+      "evidence": ["..."],
+      "agent": "...",
+      "method": "SCHOLARLY_RECONSTRUCTION",
+      "status": "SUPPORTED",
+      "review_state": "..."
+    }
+  ]
+}
+```
+
+Because:
+
+```text
+"Abhinavagupta influenced X"
+```
+
+is scholarship.
+
+```text
+"Text A predates Text B"
+```
+
+is scholarship.
+
+```text
+"MS 182 is a witness of work X"
+```
+
+can be scholarship.
+
+```text
+"Trika absorbed Krama doctrine"
+```
+
+is definitely scholarship.
+
+Therefore the argument/evidence architecture we're building is not a weird subsystem.
+
+**It becomes Atlas's epistemic substrate.**
+
+---
+
+# 17. Three kinds of external integration
+
+I would actually encode this distinction into Atlas itself.
+
+### A. AUTHORITY
+
+External service specializes in canonical identity.
+
+```text
+Crossref → DOI
+DataCite → DOI/data
+ORCID → living researcher
+ROR → institution
+```
+
+Pāṭala generally accepts identifier resolution but keeps provenance.
+
+### B. SOURCE
+
+External project supplies scholarly/textual information.
+
+```text
+GRETIL
+SARIT
+Muktabodha
+PANDiT
+NGMCP
+C-SALT
+```
+
+Never automatically equate their assertions with truth.
+
+### C. SURROGATE
+
+External service physically hosts the artifact.
+
+```text
+IIIF manifest
+Internet Archive scan
+institution repository
+```
+
+Pāṭala stores the identity/link/provenance rather than duplicating unnecessarily.
+
+That should literally be in the adapter schema:
+
+```typescript
+type ExternalIntegrationRole =
+  | "AUTHORITY"
+  | "SOURCE"
+  | "SURROGATE"
+  | "DISCOVERY";
+```
+
+OpenAlex = mostly `DISCOVERY`.
+
+---
+
+# 18. The immediate build I would give the Atlas agent
+
+Don't ask them to add 200 pretty nodes.
+
+Do this first:
+
+```text
+ATLAS V2 — FEDERATED SCHOLARLY GRAPH
+
+1. Preserve current Atlas IDs.
+
+2. Add canonical entity classes:
+   Work
+   Person
+   Tradition
+   Concept
+   Institution
+   Manuscript
+   Edition
+   TextInstance
+   Publication
+   Resource
+
+3. Add ExternalIdentifier:
+   scheme
+   value
+   uri
+   source
+   resolution_status
+   checked_at
+
+4. Separate:
+   Work ≠ Edition ≠ Manuscript ≠ TextInstance
+
+5. Generalize AtlasRelation into provenance-bearing relation/assertion.
+
+6. Native IIIF manifest support.
+
+7. Build adapters:
+   C-SALT
+   Crossref
+   OpenAlex
+   ROR
+   GRETIL
+   SARIT
+
+8. Create reconciliation queue:
+   EXACT
+   PROBABLE
+   POSSIBLE
+   CONFLICT
+   UNRESOLVED
+
+9. Expose:
+   /api/works
+   /api/people
+   /api/manuscripts
+   /api/editions
+   /api/institutions
+   /api/concepts
+   /api/relations
+   /api/resolve
+
+10. Make every UI page a projection of those canonical objects.
+```
+
+Then tackle PANDiT/Muktabodha/NGMCP institutionally rather than depending on unsupported scraping.
+
+---
+
+## The architectural picture
+
+```text
+                    EXTERNAL WORLD
+
+   PANDiT       GRETIL       SARIT       Muktabodha
+      │            │           │             │
+      └────────────┴───────────┴─────────────┘
+                           │
+                        adapters
+                           │
+                           ▼
+              ┌────────────────────────┐
+              │      PĀṬALA ATLAS      │
+              │                        │
+              │ canonical identities   │
+              │ assertions             │
+              │ provenance             │
+              │ relations              │
+              │ supersession           │
+              │ adjudication           │
+              └────────────┬───────────┘
+                           │
+             ┌─────────────┼─────────────┐
+             ↓             ↓             ↓
+
+          scholarly      passage       argument
+           graph          graph          graph
+
+             ↓             ↓             ↓
+           search       reader         debate
+          timeline     translation     education
+           atlas         compare        benchmark
+             │             │             │
+             └─────────────┼─────────────┘
+                           ↓
+                          API
+                           ↓
+                  scholars / AI / apps
+
+
+AUTHORITY SIDE                     ARTIFACT SIDE
+
+OpenAlex ─┐                         ┌─ IIIF
+Crossref ─┤                         ├─ library scans
+DataCite ─┼── external IDs ─ Atlas ─┤
+ROR ──────┤                         ├─ manuscripts
+ORCID ────┘                         └─ editions
+```
+
+And this actually reconciles two seemingly different visions we've been developing.
+
+**Old Atlas:** “beautiful map showing how Śaiva texts, people, traditions and concepts connect.”
+
+**New Pāṭala:** “provable Sanskrit scholarship from source span through interpretation and argument.”
+
+They are the **same system at different zoom levels**.
+
+The Atlas is the global graph.
+
+Click:
+
+```text
+Abhinavagupta
+```
+
+and zoom inward:
+
+```text
+works
+  → manuscripts
+     → editions
+        → passages
+           → Sanskrit
+              → translations
+                 → propositions
+                    → arguments
+                       → scholarly disputes
+```
+
+Zoom outward:
+
+```text
+Abhinavagupta
+   → teachers
+   → Śaiva traditions
+   → Kashmir
+   → works
+   → later authors
+   → manuscripts
+   → modern scholarship
+   → institutions
+```
+
+**That's the thing I'd build.** The recent vertical-object work means we now possess something OpenAlex/PANDiT/GRETIL fundamentally don't: the ability to keep zooming *inside the document* until a graph edge resolves against actual Sanskrit evidence rather than stopping at bibliographic metadata. That should become the defining rule of Atlas V2.
+
+[1]: https://panditproject.org/about?utm_source=chatgpt.com "About us | Pandit"
+[2]: https://github.com/INDOLOGY/GRETIL-mirror?utm_source=chatgpt.com "GitHub - INDOLOGY/GRETIL-mirror: Snapshots of the GRETIL repository of South Asian (Sanskrit, Pali, etc.) etexts · GitHub"
+[3]: https://sarit.github.io/?utm_source=chatgpt.com "SARIT: GitHub Page"
+[4]: https://muktabodha.org/digital-library/?utm_source=chatgpt.com "Digital Library | Muktabodha"
+[5]: https://www.aai.uni-hamburg.de/en/forschung/ngmcp.html?utm_source=chatgpt.com "The Nepalese-German Manuscript Cataloguing Project : Asia Africa Institute : University of Hamburg"
+[6]: https://iiif.io/api/presentation/3.0/?utm_source=chatgpt.com "Presentation API 3.0 — IIIF | International Image Interoperability Framework"
+[7]: https://cceh.github.io/kosh/docs/implementations/c-salt_sanskrit.html?utm_source=chatgpt.com "C-SALT APIs for Sanskrit Dictionaries - kosh"
+[8]: https://developers.openalex.org/api-reference/introduction?utm_source=chatgpt.com "API Overview - OpenAlex Developers"
+[9]: https://www.crossref.org/documentation/retrieve-metadata/rest-api/?utm_source=chatgpt.com "REST API - Crossref"
+[10]: https://support.datacite.org/docs/api?utm_source=chatgpt.com "Introduction to the DataCite REST API"
+[11]: https://api.opencitations.net/meta/v1?utm_source=chatgpt.com "The REST API for OpenCitations Meta"
+[12]: https://ror.readme.io/docs/basics?utm_source=chatgpt.com "ROR basics"
+[13]: https://info.orcid.org/what-is-orcid/services/public-api/?utm_source=chatgpt.com "Public API - ORCID"

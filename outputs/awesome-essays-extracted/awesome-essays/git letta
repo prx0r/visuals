@@ -1,0 +1,1925 @@
+Yes. I would now freeze this as the **default Moltwork worker architecture**.
+
+After reviewing the current `ethonline-2026` branch, the Letta MVP plan, the real TypeScript Letta runtime, the Lab/Hydra code, worker lineage, `.af` snapshots, `cg`, and the older `mwgo` branch, most of the primitives already exist. The problem is that they are split across two generations of implementation. The ETHOnline branch now has the real stack: Letta Agent SDK runtime, Lab pipeline, reflection, trajectory, worker lineage, `.af` packaging, DSSE/Merkle evidence, encryption/keybroker, and 138 tests.
+
+The next job is **consolidation into one runnable product**.
+
+## The architecture I would freeze
+
+Your core idea is right, with two terminology/implementation corrections:
+
+```text
+                           MOLTWORK LAB
+                               │
+                 ┌─────────────┴──────────────┐
+                 │                            │
+              ORACLE                     INVENTORY
+        opportunities anywhere        accumulated capital
+                 │                            ▲
+                 ▼                            │
+             WorkOrder                       │
+                 │                            │
+                 ▼                            │
+          Portfolio decision                  │
+                 │                            │
+                 ▼                            │
+         Git worktree / branch                │
+                 │                            │
+                 ▼                            │
+       persistent Letta Worker                │
+       same Agent, new Conversation           │
+                 │                            │
+        ┌────────┼────────┐                   │
+        ▼        ▼        ▼                   │
+      tools    skills   Lab Brief             │
+        │        │        │                   │
+        └────────┼────────┘                   │
+                 ▼                            │
+            WorkerKit                         │
+     events / costs / evidence                │
+                 │                            │
+                 ▼                            │
+           Verification                       │
+                 │                            │
+                 ▼                            │
+            CommitGate                        │
+                 │                            │
+       ┌─────────┴─────────┐                  │
+       ▼                   ▼                  │
+   submission          run closed             │
+       │                   │                  │
+       ▼                   ├── trajectory ────┤
+ outcome/payment           ├── review ────────┤
+       │                   ├── modules ───────┤
+       └───────────────────┴── learning ──────┘
+                                    │
+                                    ▼
+                              Letta reflection
+                                    │
+                              LearningProposal
+                                    │
+                                    ▼
+                                    cg
+                            held-out A/B evaluation
+                                    │
+                              PASS / REJECT
+                                    │
+                                    ▼
+                            new MemFS Git commit
+                                    │
+                                    ▼
+                           WorkerManifest vN+1
+```
+
+The two corrections are important.
+
+**First, `.af` is not the economic receipt format.** `.af` is the portable snapshot/package of the Letta worker. Your economic/evidence receipts should remain JCS/DSSE/Merkle content-addressed statements. The current ETHOnline branch already has separate DSSE/Merkle and `.af` machinery, which is the right separation.
+
+So:
+
+```text
+RECEIPTS/*.dsse.json
+    = what happened economically / evidentially
+
+SNAPSHOTS/*.af
+    = what this worker version is
+
+WorkerManifest
+    = exact bill of materials tying them together
+```
+
+**Second, don't literally treat Letta MemFS as an ordinary folder inside the parent Git repository.** MemFS is itself Git-backed and Letta owns its history. Letta documents MemFS as long-term Git-backed memory, while the current Agent SDK gives you persistent Agents with new Conversations/Sessions for individual jobs. ([GitHub][1])
+
+The parent Lab Git repository should record the **MemFS commit SHA**, not attempt to absorb its `.git` directory.
+
+That gives you four clearly separated truth domains:
+
+| Domain                      | Source of truth                 |
+| --------------------------- | ------------------------------- |
+| Work produced               | Git commit/tree                 |
+| Worker learning             | Letta MemFS Git commit          |
+| Execution facts             | WorkerKit EventLedger           |
+| Economic/evidence statement | DSSE/Merkle WorkerKit receipt   |
+| Search/analytics            | HydraDB, rebuildable            |
+| Portable worker             | `.af` snapshot + WorkerManifest |
+
+That is the architecture.
+
+---
+
+# 1. `mwgo` should become the actual distribution
+
+The current `mwgo` branch is behind the ETHOnline implementation.
+
+It already changed its default runtime to Letta and computes an `.af` hash, but it still drops into the older `get_me_money` earning loop and does not create the Git/Letta/Lab structure you now want.  The branch itself explicitly moved Letta to the default runtime, so the direction was already correct.
+
+I would make:
+
+```bash
+npx mwgo init my-lab
+```
+
+the canonical entrypoint.
+
+Not:
+
+```bash
+pip install workerkit
+configure Letta
+start a server
+configure Hydra
+make directories
+create an agent
+...
+```
+
+The user should see:
+
+```text
+$ npx mwgo init my-lab
+
+✓ Git repository created
+✓ WorkerKit initialized
+✓ Letta local runtime ready
+✓ Persistent worker created: worker_01J...
+✓ MemFS initialized
+✓ WorkerManifest v1 created
+✓ Lab index configured
+✓ HydraDB available
+✓ Initial repository commit
+
+my-lab is ready.
+
+cd my-lab
+npx mwgo work
+```
+
+Internally, however, Moltwork is still composing upstream systems rather than forking them.
+
+### Does Moltwork “ship Letta”?
+
+**Yes from the user's perspective.**
+
+Technically:
+
+```text
+@moltwork/mwgo
+    depends on
+@letta-ai/letta-agent-sdk
+```
+
+The current SDK explicitly supports:
+
+```ts
+new LettaAgentClient({ backend: "local" })
+```
+
+and manages the local Letta App Server/Letta Code environment itself. Node 22.19+ is currently required. ([GitHub][1])
+
+So don't vendor Letta.
+
+Don't tell users to install a Letta server.
+
+Don't expose Letta server configuration in the basic onboarding.
+
+Pin the upstream SDK version and use it internally.
+
+### Does Moltwork “ship HydraDB”?
+
+From the UX perspective, yes, but architecturally it should be a **standard sidecar**, not a hard source-of-truth dependency.
+
+This is particularly important because the thing currently called `hydra/store.py` is **not HydraDB at all**. Its own docstring correctly says it is a SQLite `LabProjection`, deliberately disposable, and says a real `HydraLabProjection` should eventually sit alongside it.
+
+Real HydraDB is a distributed Rust graph database whose durable store is S3-compatible object storage; compute/indexing is disposable around that graph state. ([GitHub][2])
+
+Therefore:
+
+```text
+Git + WorkerKit
+        │
+        │ canonical
+        ▼
+  Projection interface
+       /       \
+      /         \
+SQLiteLab       HydraLab
+dev/fallback    serious Lab
+```
+
+And:
+
+```bash
+mwgo lab rebuild
+```
+
+must be able to delete the entire Hydra graph and reconstruct it from canonical Moltwork history.
+
+That is the test for whether Hydra has accidentally become authoritative.
+
+---
+
+# 2. Exact `mwgo init` implementation
+
+I would make init perform this sequence.
+
+```text
+mwgo init my-lab
+│
+├─ 1. preflight
+│    git
+│    Node >= 22.19
+│    Python
+│
+├─ 2. mkdir my-lab
+│
+├─ 3. git init
+│
+├─ 4. write Moltwork config
+│
+├─ 5. initialize WorkerKit
+│    EventLedger
+│    receipt directories
+│    signing/evidence policy
+│
+├─ 6. initialize runtime-letta
+│    backend=local
+│
+├─ 7. create persistent Letta Agent
+│
+├─ 8. initialize its MemFS
+│    system/identity.md
+│    system/operating-principles.md
+│    skills/
+│
+├─ 9. record
+│    moltwork_worker_id → letta_agent_id
+│
+├─ 10. snapshot MemFS HEAD
+│
+├─ 11. construct WorkerManifest v1
+│
+├─ 12. initialize Lab projection
+│     SQLite immediately
+│     Hydra if installed/available
+│
+├─ 13. create initial .af snapshot
+│     private / sanitized rules
+│
+├─ 14. mwgo doctor
+│
+└─ 15. initial git commit
+```
+
+There should be **zero arbitrary "find the first Letta agent" logic**.
+
+Your MVP plan explicitly says that, and the new TS service follows it correctly by owning `worker_id → letta_agent_id`.
+
+---
+
+# 3. What a fresh Lab repo should look like
+
+I would generate this:
+
+```text
+my-lab/
+│
+├── .git/
+│
+├── moltwork.toml
+├── AGENTS.md
+├── README.md
+│
+├── WORKSPACE/
+│   └── README.md
+│
+├── ASSETS/
+│   └── registry/
+│
+└── .moltwork/
+    │
+    ├── lab.json
+    ├── upstreams.lock.json
+    │
+    ├── workers/
+    │   └── worker_01J.../
+    │       ├── current.json
+    │       ├── lineage.json
+    │       └── manifests/
+    │           ├── v1.json
+    │           └── ...
+    │
+    ├── refs/
+    │   ├── memfs.json
+    │   └── runtime.json
+    │
+    ├── runs/
+    │   └── <run_id>/
+    │       ├── work-order.json
+    │       ├── opportunity.json
+    │       ├── acceptance-contract.json
+    │       ├── policy.json
+    │       ├── lab-brief.json
+    │       ├── result.json
+    │       ├── review.json
+    │       ├── trajectory.jsonl
+    │       └── git.json
+    │
+    ├── receipts/
+    │   └── <run_id>.dsse.json
+    │
+    ├── learning/
+    │   ├── proposals/
+    │   └── experiments/
+    │
+    ├── snapshots/
+    │   └── manifests/
+    │
+    ├── ledger/
+    │   └── workerkit.sqlite
+    │
+    ├── worktrees/
+    │
+    ├── runtime/
+    │
+    └── hydra/
+```
+
+Not all of this gets committed.
+
+I would commit:
+
+```text
+moltwork.toml
+AGENTS.md
+WORKSPACE/
+ASSETS/
+workers/manifests
+workers/lineage
+runs/* structured records
+receipts/*
+learning/*
+snapshot manifests
+upstreams.lock.json
+```
+
+and ignore:
+
+```text
+ledger/*.sqlite*
+runtime/*
+worktrees/*
+hydra/*
+secrets/*
+raw private .af files
+```
+
+At run closure, export the canonical event chain from SQLite into the receipt/event bundle so a repository clone can independently validate historical runs.
+
+That gives you the benefits of SQLite during live execution without turning Git into a sequence of meaningless binary SQLite diffs.
+
+---
+
+# 4. MemFS should still feel like part of the Lab
+
+The directory can expose:
+
+```text
+MEMFS -> <actual Letta MemFS>
+```
+
+as a local symlink for human inspection.
+
+But the parent repo stores:
+
+```json
+{
+  "worker_id": "worker_abc",
+  "letta_agent_id": "agent_xyz",
+  "head": "5e320ee...",
+  "tree_digest": "sha256:...",
+  "skills_tree_digest": "sha256:..."
+}
+```
+
+not the nested repository itself.
+
+That is important for portability and versioning.
+
+Your own `LettaSnapshot` implementation is already headed exactly this way: it stores `memfs_root_digest`, individual file digests, skill-tree digest and `memfs_commit`.
+
+So don't create another mechanism.
+
+Finish that one.
+
+---
+
+# 5. WorkerManifest needs one upgrade
+
+The existing `WorkerManifest v0` is a good BOM concept, but it treats the `.af` file too much like the primary live agent state.
+
+For this architecture, v1 should look more like:
+
+```json
+{
+  "schemaVersion": "moltwork.worker-manifest.v1",
+
+  "workerId": "worker_01J...",
+  "versionId": "sha256:...",
+
+  "parentVersion": "sha256:...",
+
+  "runtime": {
+    "adapter": "letta-agent-sdk",
+    "backend": "local",
+    "sdkVersion": "PINNED",
+    "runtimeDigest": "sha256:..."
+  },
+
+  "agent": {
+    "provider": "letta",
+    "agentId": "agent_...",
+    "afSnapshotDigest": "sha256:..."
+  },
+
+  "memory": {
+    "memfsCommit": "5e320ee...",
+    "memfsTreeDigest": "sha256:..."
+  },
+
+  "skills": {
+    "treeDigest": "sha256:...",
+    "entries": []
+  },
+
+  "model": {
+    "id": "...",
+    "provider": "...",
+    "settingsDigest": "sha256:..."
+  },
+
+  "tools": {
+    "policyDigest": "sha256:...",
+    "schemaDigest": "sha256:..."
+  },
+
+  "workerkit": {
+    "version": "...",
+    "evidenceSchema": "..."
+  },
+
+  "promotion": {
+    "learningProposal": null,
+    "experimentReceipt": null
+  }
+}
+```
+
+And:
+
+```text
+WorkerManifest version changes
+ONLY when durable worker state changes.
+```
+
+Not every WorkOrder.
+
+Ten jobs with no promoted learning can all point at:
+
+```text
+WorkerManifest v3
+```
+
+Then one validated new skill creates:
+
+```text
+v3
+ │
+ └── proposal_72
+       │
+       └── cg experiment PASS
+             │
+             ▼
+            v4
+```
+
+Your current lineage code already models parent versions plus memory and skill digests.
+
+Just unify the lineage object's version ID with the WorkerManifest content digest.
+
+---
+
+# 6. Delete the old Letta execution path
+
+This is probably the highest priority cleanup.
+
+You now have two implementations.
+
+### Old
+
+`adapters/letta.py`
+
+It talks to old `/v1/agents` REST APIs, has a fallback that selects the first available agent, and supports an explicit successful stub mode.
+
+### New
+
+`services/runtime-letta/src/index.ts`
+
+It uses:
+
+```ts
+@letta-ai/letta-agent-sdk
+backend: "local"
+```
+
+creates a persistent Agent and creates a fresh Session for each job.
+
+The second one is your implementation.
+
+The current official Letta guidance also recommends the Agent SDK for new applications, with local execution managed by the SDK. ([GitHub][1])
+
+Therefore:
+
+```text
+adapters/letta.py
+        ↓
+DEPRECATED
+
+services/runtime-letta/
+        ↓
+CANONICAL
+
+services/runtime-letta/client.py
+        ↓
+WorkerKit WorkerAdapter
+```
+
+The Python adapter should know **nothing** about Letta internals.
+
+It calls:
+
+```text
+runtime-letta
+```
+
+which owns Letta.
+
+---
+
+# 7. Fix the runtime service before building anything else
+
+The current TS service is the right skeleton, but it needs four important changes.
+
+### A. Stream execution instead of returning everything at the end
+
+Right now it collects output/tool calls and returns the result after the Session ends.
+
+You want:
+
+```text
+Letta SDK stream
+      │
+      ▼
+runtime-letta
+      │
+      ├─ assistant.delta
+      ├─ tool.call
+      ├─ tool.result
+      ├─ model.usage
+      ├─ artifact
+      └─ error
+      │
+      ▼
+WorkerKit EventLedger
+```
+
+Prefer NDJSON or WebSocket.
+
+Then a run isn't:
+
+```text
+Agent says what it did
+→ WorkerKit records summary
+```
+
+It is:
+
+```text
+Agent does something
+→ WorkerKit witnesses event
+```
+
+Much stronger.
+
+### B. Do not use `permissionMode: "approve-all"`
+
+The current runtime does.
+
+Instead translate the WorkOrder policy into Letta's session-scoped `toolset` and `allowedTools`. Letta explicitly documents `allowedTools` as the final visibility boundary, and the SDK also exposes interactive `canUseTool` authorization. ([GitHub][1])
+
+The hierarchy should be:
+
+```text
+WorkOrder Policy
+       │
+       ▼
+allowedTools
+       │
+       ▼
+tool call
+       │
+       ▼
+canUseTool
+       │
+  risky action?
+    /       \
+   no       yes
+   │         │
+ allow      WorkerKit authorization
+             │
+           Warrant
+             │
+         CommitGate
+```
+
+So Moltwork doesn't merely *ask* the agent not to submit or spend.
+
+It technically can't.
+
+### C. Never allow ordinary work runs to rewrite durable memory
+
+Disable dreaming/automatic promotion in ordinary paid runs initially.
+
+The production worker receives its current MemFS state read-only in spirit.
+
+Learning happens later through:
+
+```text
+Reflection → proposal → experiment → promotion
+```
+
+Your current MVP plan already says exactly this.
+
+### D. Remove prompt-based learning application
+
+The current `/learning` endpoint tells the worker:
+
+> update this memory
+
+or:
+
+> create this SKILL.md
+
+via an agent message.
+
+Don't use that as the production promotion mechanism.
+
+A validated learning patch should be applied **deterministically to Git**.
+
+More on that below.
+
+---
+
+# 8. Extend `RunContext`, not WorkerKit itself
+
+WorkerKit still shouldn't know what Letta is.
+
+Its `WorkerAdapter` abstraction is precisely the correct boundary.
+
+I would extend the execution context approximately to:
+
+```python
+@dataclass
+class RunContext:
+    run_id: str
+    worker_id: str
+
+    workspace: str
+    budget_remaining: float
+    timeout_seconds: int
+
+    worker_manifest_digest: str
+    lab_brief_path: str
+
+    allowed_tools: list[str]
+
+    event_sink: Callable
+    authorize_callback: Callable
+```
+
+Then:
+
+```python
+ExecutionResult(
+    ok=True,
+    output_content=...,
+    artifacts=[...],
+
+    metadata={
+        "letta_agent_id": "...",
+        "conversation_id": "...",
+        "workspace_commit": "...",
+        "memfs_before": "...",
+        "memfs_after": "...",
+        "trajectory_ref": "..."
+    }
+)
+```
+
+WorkerKit doesn't care whether that came from:
+
+```text
+Letta
+OpenHands
+Hermes
+Phala
+a human
+another agent runtime
+```
+
+That is exactly what your current `WorkerAdapter` architecture was designed to preserve.
+
+---
+
+# 9. The actual Git execution model
+
+For every WorkOrder:
+
+```text
+Opportunity
+    │
+    ▼
+WorkOrder
+    │
+    ▼
+run_id = wk_123
+    │
+    ▼
+git branch
+mw/run/wk_123
+    │
+    ▼
+git worktree
+.moltwork/worktrees/wk_123
+```
+
+Then Letta receives:
+
+```ts
+client.createSession(lettaAgentId, {
+  cwd: "/lab/.moltwork/worktrees/wk_123",
+
+  toolset: {
+    base: "none",
+    include: ["Read", "LS", "Glob", "Grep", ...]
+  },
+
+  allowedTools: [...]
+});
+```
+
+This matches current Letta's intended local-session model: one persistent Agent, new Session/Conversation, explicit working directory and tool boundary. ([GitHub][1])
+
+For a code task:
+
+```text
+worktree contains repo
+```
+
+For a hackathon research task:
+
+```text
+worktree contains:
+  notes/
+  rubric.json
+  research/
+  prototypes/
+  submission/
+```
+
+For a content task:
+
+```text
+worktree contains:
+  sources/
+  draft/
+  assets/
+  final/
+```
+
+For some bizarre new task you've never seen before:
+
+```text
+empty workspace + WorkOrder + tools
+```
+
+Letta figures it out.
+
+That's precisely why WorkerKit must not become a task library.
+
+---
+
+# 10. Concurrent exploration becomes natural
+
+Suppose one hackathon has three plausible implementations:
+
+```text
+campaign ETHOnline
+│
+├─ worktree A
+│   └─ Phala approach
+│
+├─ worktree B
+│   └─ x402 approach
+│
+└─ worktree C
+    └─ ERC-8004 approach
+```
+
+They can all be Sessions on persistent workers.
+
+Or one persistent director can allocate work to subordinate sessions.
+
+The resulting Git tree tells you exactly what was tried and what survived.
+
+Then:
+
+```text
+A cost $0.41 → rubric 72
+B cost $0.28 → rubric 61
+C cost $0.57 → rubric 88
+
+merge C
+harvest useful module from A
+discard B
+```
+
+None of it is wasted.
+
+---
+
+# 11. Lab Brief becomes an actual runtime input
+
+You already have `StructuredBrief` containing prior run count, win rate, average score/cost/reward, successful patterns, failures, similar runs and model economics.
+
+Perfect.
+
+Before execution:
+
+```text
+task classifier
+      │
+      ▼
+TaskFamily = hackathon/tee-integration
+      │
+      ▼
+Lab query
+      │
+      ▼
+StructuredBrief
+      │
+      ▼
+hash brief
+      │
+      ▼
+WorkerKit input evidence
+      │
+      ▼
+Letta session
+```
+
+Crucially, the brief itself gets registered as an input artifact.
+
+Then later you can measure:
+
+```text
+same worker
+same task distribution
+
+without Lab Brief → 71%
+with Lab Brief    → 79%
+```
+
+Your MVP plan correctly separates **organizational retrieval uplift** from **durable worker-learning uplift**.
+
+That is an excellent experiment design.
+
+---
+
+# 12. Trajectory needs upgrading
+
+Current `lab/trajectory.py` mostly converts a small subset of WorkerKit events into your own trajectory representation.
+
+But your newer design says OpenTrajectory / Letta Trajectory.
+
+Do that.
+
+There should be two related records:
+
+```text
+WorkerKit EventLedger
+        │
+        │ canonical
+        ▼
+ economic/evidence trace
+
+Letta/OpenTrajectory
+        │
+        │ learning substrate
+        ▼
+ reasoning/tool trajectory
+```
+
+Do **not** make model trajectory canonical truth.
+
+It can contain model assertions.
+
+WorkerKit contains witnessed actions and evidence.
+
+At run closure:
+
+```text
+Letta conversation
+       ↓
+@letta-ai/trajectory normalization
+       ↓
+trajectory.jsonl
+       ↓
+sha256
+       ↓
+TrajectoryRef
+       ↓
+Lab
+```
+
+The full trajectory can remain private while its hash/ref appears in receipts.
+
+---
+
+# 13. Learning should use Git worktrees too
+
+This is one of the strongest pieces of the whole design.
+
+After enough relevant evidence:
+
+```text
+runs 1...8
+   │
+   ├─ trajectories
+   ├─ verification
+   ├─ reviewer comments
+   ├─ actual outcomes
+   └─ costs
+           │
+           ▼
+      reflection session
+           │
+           ▼
+     LearningProposal
+```
+
+Make the proposal typed:
+
+```json
+{
+  "proposalId": "learn_abc",
+
+  "workerVersion": "sha256:v7",
+
+  "target": "skill",
+
+  "path": "skills/hackathon-requirements/SKILL.md",
+
+  "hypothesis":
+    "Building an explicit requirement matrix before implementation reduces missed rubric requirements",
+
+  "patch": "...",
+
+  "sourceRuns": [
+    "wk_a",
+    "wk_b",
+    "wk_c"
+  ],
+
+  "expectedEffects": [
+    "requirements_score_up",
+    "rework_down"
+  ]
+}
+```
+
+Then create:
+
+```text
+production MemFS
+       │
+       ├───────────────┐
+       │               │
+       ▼               ▼
+   parent              candidate worktree
+                      +
+                  proposed patch
+```
+
+Run:
+
+```text
+parent worker
+vs
+candidate worker
+
+same hidden tasks
+same model
+same budgets
+same evaluator
+```
+
+Your existing `ReflectionPipeline` already enforces the most important rule: no promotion without an `ExperimentResult`, actual held-out improvement and no gate regressions.
+
+And `cg/evolve.py` has already been upgraded from hash-scoring nonsense into a real `Evaluator`/`LiveEvaluator` design.
+
+So the missing piece is mostly plumbing.
+
+---
+
+# 14. Promotion becomes a Git transaction
+
+When cg says PASS:
+
+```text
+candidate MemFS commit
+        │
+        ▼
+promotion
+        │
+        ▼
+production MemFS
+commit <new>
+        │
+        ├─ memory digest
+        ├─ skills digest
+        └─ parent commit
+              │
+              ▼
+        WorkerManifest v8
+              │
+              ▼
+          lineage
+```
+
+The commit message itself can be structured:
+
+```text
+moltwork-learning: learn_abc
+
+Source runs:
+- wk_12
+- wk_14
+- wk_18
+
+Experiment:
+exp_91
+
+Parent worker:
+sha256:...
+
+Result:
+hidden score 0.74 -> 0.86
+```
+
+No LLM gets authority to declare itself improved.
+
+That's the distinction between:
+
+```text
+agent memory
+```
+
+and:
+
+```text
+evidence-backed organizational learning
+```
+
+---
+
+# 15. Your current Worker lineage primitives fit this exactly
+
+Current `LineageTracker` already stores:
+
+```text
+version
+parent
+memory_digest
+skills_digest
+run_count
+success_count
+metadata
+```
+
+and supports ancestor/path/diff operations.
+
+I would simply make:
+
+```text
+version_id = WorkerManifest.manifestHash
+```
+
+rather than maintaining another invented version ID.
+
+Then:
+
+```text
+Manifest digest
+    =
+worker identity
++ runtime
++ memory HEAD
++ skill tree
++ model configuration
++ tool policy
+```
+
+That's the actual worker.
+
+---
+
+# 16. Hydra is the Lab brain, but not its memory
+
+This distinction is subtle but essential.
+
+Real HydraDB is very useful here because Moltwork naturally produces a graph:
+
+```text
+Worker
+  │
+  ├── HAS_VERSION ── WorkerVersion
+  │                      │
+  │                      ├── USED_SKILL ── SkillVersion
+  │                      ├── MEMORY ─────── MemoryRevision
+  │                      └── PARENT ─────── WorkerVersion
+  │
+  └── EXECUTED ── Run
+                    │
+                    ├── TARGETED ── Opportunity
+                    ├── USED ────── ProcessVersion
+                    ├── USED ────── Model
+                    ├── RECEIVED ── LabBrief
+                    ├── PRODUCED ── Artifact
+                    ├── VERIFIED ── Verification
+                    ├── RECEIPT ─── Receipt
+                    └── OUTCOME ─── Outcome
+```
+
+Learning adds:
+
+```text
+Run ── SUPPORTS ── LearningProposal
+                       │
+                       ▼
+                   Experiment
+                       │
+                    VALIDATES
+                       │
+                       ▼
+                  WorkerVersion
+```
+
+Assets add:
+
+```text
+Artifact
+    │
+ DERIVED_INTO
+    ▼
+AssetVersion
+    │
+ REUSED_IN
+    ▼
+Run
+```
+
+Eventually you can ask:
+
+```text
+Which skill versions correlate with accepted
+hackathon submissions involving TEE work?
+
+Which artifacts produced by Worker v4 were
+later reused by Worker v9?
+
+What is the cheapest successful process for
+this opportunity family?
+
+Which Worker version first introduced the
+module behind these six later revenues?
+```
+
+That is exactly the type of graph where Hydra becomes worthwhile.
+
+---
+
+# 17. Actual HydraDB implementation
+
+Rename current:
+
+```text
+hydra/store.py
+```
+
+to something truthful:
+
+```text
+lab/projections/sqlite.py
+```
+
+Then introduce:
+
+```text
+lab/projections/base.py
+lab/projections/sqlite.py
+lab/projections/hydra.py
+```
+
+with:
+
+```python
+class LabProjection(Protocol):
+    record_worker(...)
+    record_version(...)
+    record_run(...)
+    record_artifact(...)
+    record_verification(...)
+    record_outcome(...)
+    record_learning(...)
+    retrieve_brief(...)
+    rebuild(...)
+```
+
+Hydra implementation uses OpenCypher.
+
+Example projection:
+
+```cypher
+MERGE (w:Worker {id: $worker_id})
+
+MERGE (v:WorkerVersion {digest: $manifest})
+MERGE (w)-[:HAS_VERSION]->(v)
+
+CREATE (r:Run {
+  id: $run_id,
+  cost_usd: $cost,
+  duration_s: $duration
+})
+
+MERGE (v)-[:EXECUTED]->(r)
+```
+
+And reuse:
+
+```cypher
+MATCH (r:Run)-[:PRODUCED]->(a:Artifact)
+MATCH (a)-[:REUSED_IN]->(future:Run)
+RETURN a, count(future)
+ORDER BY count(future) DESC
+```
+
+HydraDB currently provides OpenCypher and graph-native traversal on its object-store-backed architecture, so it fits this derived graph cleanly. ([GitHub][2])
+
+But this invariant is mandatory:
+
+```bash
+rm -rf HYDRA_STATE
+mwgo lab rebuild
+```
+
+must recover everything important.
+
+---
+
+# 18. `mwgo` should package the stack like this
+
+I would converge the repository toward:
+
+```text
+mw/
+│
+├── core/                       # WorkerKit evidence kernel
+├── economics/
+├── verify/
+├── evidence/
+│
+├── adapters/
+│   └── execution.py
+│
+├── services/
+│   └── runtime-letta/          # canonical Letta runtime
+│
+├── lab/
+│   ├── brief.py
+│   ├── context.py
+│   ├── reflection.py
+│   ├── trajectory.py
+│   └── projections/
+│       ├── base.py
+│       ├── sqlite.py
+│       └── hydra.py
+│
+├── runtimes/
+│   └── letta/
+│       ├── snapshot.py
+│       ├── restore.py
+│       └── lineage.py
+│
+├── learning/
+│   ├── proposal.py
+│   ├── candidate.py
+│   └── promote.py
+│
+├── workspace/
+│   ├── git.py
+│   └── worktree.py
+│
+├── inventory/
+│   ├── candidate.py
+│   ├── harvest.py
+│   └── graph.py
+│
+├── packs/
+│   └── hackathon/
+│
+├── packages/
+│   └── mwgo/
+│       ├── src/init.ts
+│       ├── src/up.ts
+│       ├── src/doctor.ts
+│       ├── src/run.ts
+│       ├── src/lab.ts
+│       └── package.json
+│
+└── tests/
+```
+
+And stop treating `mwgo` as a divergent branch.
+
+It becomes the product-facing CLI in the main repository.
+
+---
+
+# 19. `mwgo` commands
+
+The useful surface is small:
+
+```text
+mwgo init
+mwgo up
+mwgo doctor
+
+mwgo work
+mwgo run <opportunity>
+mwgo status
+
+mwgo worker show
+mwgo worker history
+mwgo worker export
+
+mwgo lab
+mwgo lab rebuild
+
+mwgo learn
+mwgo experiments
+
+mwgo assets
+mwgo assets inspect
+
+mwgo verify <receipt>
+```
+
+No:
+
+```text
+choose planner
+choose memory engine
+choose agent framework
+choose orchestration mode
+```
+
+for a new user.
+
+Those become advanced config.
+
+---
+
+# 20. Example `moltwork.toml`
+
+Something like:
+
+```toml
+schema = "moltwork.lab.v1"
+
+[lab]
+id = "lab_01J..."
+name = "my-lab"
+
+[worker]
+id = "worker_01J..."
+manifest = ".moltwork/workers/worker_01J/current.json"
+
+[runtime]
+provider = "letta"
+backend = "local"
+
+[workerkit]
+ledger = ".moltwork/ledger/workerkit.sqlite"
+receipts = ".moltwork/receipts"
+
+[workspace]
+provider = "git"
+worktrees = ".moltwork/worktrees"
+
+[index]
+provider = "hydra"
+fallback = "sqlite"
+authoritative = false
+
+[learning]
+enabled = true
+minimum_runs = 5
+auto_propose = true
+auto_promote = false
+
+[learning.validation]
+require_hidden_improvement = true
+allow_gate_regression = false
+
+[budget]
+default_run_usd = 2.00
+```
+
+This is vastly more understandable than a pile of environment variables.
+
+---
+
+# 21. Economic learning then becomes real
+
+For every TaskFamily, project:
+
+```text
+n
+success rate
+cost p50
+cost p80
+duration p50
+duration p80
+tokens p50/p80
+revision count
+human interventions
+```
+
+And break it down by:
+
+```text
+WorkerVersion
+ProcessVersion
+SkillVersion
+Model route
+```
+
+So the allocator can eventually see:
+
+```text
+hackathon / sponsor integration
+
+Worker v2:
+n=11
+success=.45
+cost_p80=$2.41
+duration_p80=31h
+
+Worker v7:
+n=19
+success=.68
+cost_p80=$1.74
+duration_p80=19h
+```
+
+Now:
+
+> this worker has become better at hackathons
+
+is a measurable statement.
+
+For tiny samples such as 5 runs, show the data but don't pretend the empirical p80 is highly reliable; keep `n` and confidence attached.
+
+---
+
+# 22. `COST.md` should be generated
+
+You mentioned this specifically.
+
+Excellent idea.
+
+Every Worker/TaskFamily can expose:
+
+```markdown
+# Cost profile
+
+Task family: hackathon.integration
+Worker: researcher-v7
+
+Runs: 19
+
+Expected:
+- cost p50: $0.92
+- cost p80: $1.74
+- duration p50: 11.2h
+- duration p80: 19.0h
+
+Success:
+- accepted: 68%
+- verified completion: 89%
+
+Historical:
+- v2 p80 duration: 31h
+- v7 p80 duration: 19h
+```
+
+But it is a projection.
+
+Never hand-maintain it.
+
+Canonical underlying records stay in runs/receipts.
+
+---
+
+# 23. Asset harvesting belongs immediately after run closure
+
+This brings the earlier marketplace thesis back into the implementation.
+
+After every run:
+
+```text
+git diff base..final
+       │
+       ▼
+Harvester
+       │
+       ├─ reusable code?
+       ├─ reusable integration?
+       ├─ reusable evaluation?
+       ├─ reusable research?
+       ├─ reusable process?
+       └─ reusable skill candidate?
+             │
+             ▼
+        AssetCandidate
+```
+
+Typed candidates:
+
+```text
+CODE
+CONNECTOR
+TEMPLATE
+DATASET
+EVALUATION
+PROCESS
+REFERENCE
+SKILL
+CONTENT
+```
+
+Letta itself can call:
+
+```text
+moltwork_record_candidate(...)
+```
+
+but that only proposes.
+
+Independent checks decide whether it is actually reusable.
+
+Then:
+
+```text
+ASSETS/
+  asset_phala_attestation/
+    manifest.json
+```
+
+can say:
+
+```json
+{
+  "assetId": "asset_...",
+  "type": "connector",
+
+  "origin": {
+    "run": "wk_...",
+    "workspaceCommit": "...",
+    "paths": ["src/phala/..."]
+  },
+
+  "verification": ["vr_..."],
+
+  "reusedIn": [],
+
+  "status": "LAB_PRIVATE"
+}
+```
+
+Later:
+
+```text
+LAB_PRIVATE
+→ REUSED
+→ VERIFIED_REUSABLE
+→ LISTABLE
+→ marketplace
+```
+
+That is how *work* becomes *inventory*.
+
+---
+
+# 24. HackathonHelp should be the first `pack`
+
+Don't transplant HackathonHelp's whole agent architecture.
+
+Take its domain knowledge.
+
+It already knows how to:
+
+```text
+discover event
+verify eligibility
+extract deadlines
+extract tracks
+extract judging criteria
+construct rubric
+create tasks
+track submission
+record outcome
+```
+
+Its existing Agent Protocol already revolves around rubric-first autonomous work.
+
+Make:
+
+```text
+packs/hackathon/
+```
+
+responsible for:
+
+```text
+Hackathon opportunity
+       ↓
+normalized Opportunity
+       ↓
+WorkOrder
++
+AcceptanceContract
++
+task family
++
+venue policy
++
+submission adapter
+```
+
+And nothing more.
+
+Then the exact same Worker does:
+
+```text
+hackathon
+bug bounty
+freelance project
+Roblox module
+Zapier template
+Shopify integration
+x402 work
+research
+content
+```
+
+because weirdness is handled by Letta + Git, not by hardcoded WorkerKit task implementations.
+
+---
+
+# 25. The `mwgo init` / existing agent distinction
+
+There should actually be two flows.
+
+### New Lab
+
+```bash
+npx mwgo init my-lab
+```
+
+Moltwork creates:
+
+```text
+Git Lab
+Worker identity
+persistent Letta Agent
+MemFS
+WorkerManifest
+WorkerKit ledger
+Lab projection
+```
+
+### Existing agent
+
+```bash
+npx mwgo attach
+```
+
+or:
+
+```bash
+npx mwgo init --from agent.af
+```
+
+Then:
+
+```text
+existing .af
+   ↓
+import to Letta
+   ↓
+persistent agent ID
+   ↓
+MemFS
+   ↓
+baseline WorkerManifest
+   ↓
+Moltwork Lab
+```
+
+That keeps the earlier “connect your existing agent” promise in `mwgo` while also allowing Moltwork to create a good default worker. The existing `mwgo` README already positioned it as the consumer path from agent → worker.
+
+---
+
+# 26. `.af` should happen at version boundaries
+
+Do **not** export `.af` after every run.
+
+Use:
+
+```text
+Worker v4
+  performs run
+  performs run
+  performs run
+  performs run
+
+no state promotion
+→ still v4
+```
+
+Then:
+
+```text
+LearningProposal
+      ↓
+cg PASS
+      ↓
+MemFS commit
+      ↓
+Worker v5
+      ↓
+export v5.af
+```
+
+That gives `.af` semantic meaning:
+
+> a portable snapshot of a specific promoted worker version.
+
+The ETHOnline branch already has snapshot, restore, lineage, `.af` handling and encryption/key brokerage, so this also slots neatly into the later marketplace/leasing work.
+
+---
+
+# 27. The current code changes I would make now
+
+This is the implementation order I would actually execute:
+
+| PR                           | Change                                                                        | Main files                                                                          |
+| ---------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **1. Canonicalize Letta**    | Remove old REST runtime from production, make Agent SDK service authoritative | `adapters/letta.py`, `services/runtime-letta/*`, `services/runtime-letta/client.py` |
+| **2. `mwgo init`**           | Fresh Git Lab + WorkerKit + Letta agent + manifest bootstrap                  | `packages/mwgo/src/init.ts`, config schema                                          |
+| **3. Git workspace manager** | Per-run branches/worktrees + commit refs                                      | `workspace/git.py`, `workspace/worktree.py`                                         |
+| **4. Live event bridge**     | Stream Letta tool/model events directly into WorkerKit                        | runtime service + Python adapter                                                    |
+| **5. Manifest v1**           | Bind Letta ID, MemFS commit, skill tree, runtime/model/policy                 | `worker_manifest.py`                                                                |
+| **6. Proper trajectories**   | Integrate Letta trajectory rather than homemade partial conversion            | `lab/trajectory.py`                                                                 |
+| **7. Learning transaction**  | Typed proposal → MemFS worktree → cg → promotion                              | `learning/*`, `lab/reflection.py`, `cg/evolve.py`                                   |
+| **8. Lab projections**       | Rename fake Hydra SQLite store; add real Hydra adapter                        | `lab/projections/*`                                                                 |
+| **9. Asset harvesting**      | Git diff → verified reusable inventory                                        | `inventory/*`                                                                       |
+| **10. Hackathon pack**       | Import the useful HackathonHelp domain layer                                  | `packs/hackathon/*`                                                                 |
+
+I would not work on another marketplace page before those ten are complete.
+
+---
+
+# 28. The acceptance test that proves the whole thing
+
+The end-to-end test should deliberately use something the system has **never been specifically programmed for**.
+
+For example:
+
+```text
+fresh lab
+   ↓
+fresh persistent worker v1
+   ↓
+Oracle presents weird opportunity
+   ↓
+WorkOrder
+   ↓
+new git worktree
+   ↓
+new Letta Conversation
+same persistent Agent
+   ↓
+Lab Brief
+   ↓
+agent figures task out
+   ↓
+WorkerKit records events/cost
+   ↓
+git artifact
+   ↓
+world-facing VerificationResult
+   ↓
+CommitGate
+   ↓
+receipt
+   ↓
+trajectory + review
+   ↓
+Lab
+```
+
+Repeat across 5–10 varied jobs.
+
+Then:
+
+```text
+Reflection
+   ↓
+"These failures share X"
+   ↓
+SKILL.md candidate
+   ↓
+candidate MemFS worktree
+   ↓
+cg held-out replay
+```
+
+And finally:
+
+```text
+Worker v1
+vs
+Worker v2
+
+same unseen tasks
+
+quality ↑
+cost ↓ / bounded
+time ↓
+no gate regression
+```
+
+The Letta MVP document already defines essentially this experiment.
+
+If that passes, Moltwork has demonstrated something substantially stronger than “we connected an agent to gigs.”
+
+It has demonstrated:
+
+> **A persistent economic worker can encounter unfamiliar forms of work, accumulate verified experience in Git, turn repeated experience into validated procedural capital, and use that capital to become economically better at future work.**
+
+And the `mwgo` proposition becomes extremely clean:
+
+```bash
+npx mwgo init my-lab
+```
+
+means, in one command:
+
+```text
+give me
+a durable worker
++ a Git workshop
++ persistent Letta cognition
++ WorkerKit economic truth
++ a learning Lab
++ a rebuildable Hydra graph
++ verified lineage
++ an inventory that compounds
+```
+
+That is the version I would build. The architecture is now mature enough that I would stop designing alternative stacks and make `mwgo init → first real unseen WorkOrder → learned Worker v2` the primary engineering path.
+
+[1]: https://github.com/letta-ai/letta-agent-sdk/blob/main/README.md?utm_source=chatgpt.com "letta-agent-sdk/README.md at main · letta-ai/letta-agent-sdk · GitHub"
+[2]: https://github.com/hydra-db/hydradb?utm_source=chatgpt.com "GitHub - hydra-db/hydradb: HydraDB - fast graph database on object storage · GitHub"

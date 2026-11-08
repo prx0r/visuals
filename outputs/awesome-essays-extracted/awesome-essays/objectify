@@ -1,0 +1,409 @@
+Yes — **as a product, this is much stronger than generic fact-checking. As a Telegraph Track-1 miner, it has one serious problem: Telegraph does not currently have a `SYCOPHANCY_DETECTION` intent.**
+
+That distinction matters.
+
+### Why it is a genuinely good miner concept
+
+The problem is real and current. SycoBench-600 defines sycophancy specifically as models agreeing with user pressure even when that pressure conflicts with the correct answer, and tests doubt, authority, and explicit wrong suggestions. SYCON Bench goes further into multi-turn conversations and measures when models actually **flip their stance under pressure**. ([ACL Anthology][1])
+
+And this is exactly the kind of thing an agent could rationally pay another miner to check:
+
+```text
+USER
+"I think X is obviously the best architecture."
+
+PRIMARY MODEL
+"Yes, X is clearly the strongest approach..."
+
+        ↓ tiny external call
+
+OBJECTIFY
+"Agreement shift detected:
+the strength of the conclusion increased
+after the user's endorsement, with no new evidence."
+
+        ↓
+
+PRIMARY MODEL REVISES
+"X has advantages, but I don't have evidence
+that it is the strongest option."
+```
+
+That is an actual **machine-to-machine intelligence purchase**. Telegraph's whole thesis is that agents should buy specialized intelligence from miners rather than every primary model being good at everything. Higher-performing miners then receive more routed traffic. ([GitHub][2])
+
+Objectify also has excellent product properties:
+
+* no web search required for the core detection;
+* no private repo/data access problem;
+* extremely small input: user message + model draft;
+* potentially very low latency;
+* usable by almost every conversational agent;
+* repeat usage, possibly once per important response;
+* independent from whichever primary model generated the answer;
+* measurable against existing sycophancy benchmarks.
+
+That is unusually good for Telegraph.
+
+---
+
+## But I would **not** call it a fact checker
+
+This is important.
+
+Your actual target is:
+
+> **Did the model's epistemic position move toward the user's preferred answer without a corresponding increase in evidence?**
+
+That's not `FACT_CHECK`.
+
+Consider:
+
+```text
+USER:
+"I think Rust is obviously the best language here."
+
+MODEL:
+"Yes, Rust is clearly the best choice."
+```
+
+Objectify does **not** need to determine whether Rust objectively is the best language.
+
+It needs to detect:
+
+```text
+user introduced:
+    X is BEST
+
+assistant adopted:
+    X is BEST
+
+new supporting evidence:
+    none
+
+→ suspicious agreement amplification
+```
+
+That's a fundamentally different task.
+
+---
+
+# The best definition I've found for the miner
+
+I would narrow it aggressively:
+
+> **Objectify detects evidence-free agreement shifts: cases where an assistant's certainty, ranking, recommendation, or stance moves toward a user's expressed preference without new supporting information entering the conversation.**
+
+That's much better than attempting to solve all:
+
+```text
+hallucination
+bias
+factuality
+flattery
+tone
+overclaiming
+misinformation
+```
+
+Don't.
+
+One problem:
+
+# **Evidence-free agreement shift.**
+
+---
+
+# And it's beautifully attackable
+
+You can make this Garak-like.
+
+Given:
+
+```text
+USER:
+"Surely A is better than B?"
+
+DRAFT:
+"Yes. A is definitely the better solution."
+```
+
+Objectify creates deterministic probes:
+
+```text
+PROBE 1 — STANCE TRANSFER
+Did user's preferred A become assistant's preferred A?
+
+PROBE 2 — CERTAINTY DELTA
+User: "surely"
+Assistant: "definitely"
+
+PROBE 3 — EVIDENCE DELTA
+What new evidence appeared between user assertion
+and assistant conclusion?
+
+PROBE 4 — COUNTERFACTUAL USER
+If user had said "surely B is better",
+would the draft's stated evidence still establish A?
+
+PROBE 5 — COMPARATIVE SUPPORT
+Was A actually compared against B?
+
+PROBE 6 — NOVEL JUSTIFICATION
+Did assistant introduce independent reasons,
+or merely rationalize the user's position?
+```
+
+Parallel.
+
+Then return only hits:
+
+```json
+{
+  "sycophancy_risk": 0.91,
+  "hits": [
+    {
+      "type": "agreement_amplification",
+      "user_position": "A is better than B",
+      "assistant_position": "A is definitely better than B"
+    },
+    {
+      "type": "missing_evidence_delta",
+      "reason": "No new evidence supports the stronger conclusion."
+    }
+  ]
+}
+```
+
+That is **much more specific and benchmarkable** than “does this answer seem people-pleasing?”
+
+---
+
+# Why this could be scientifically excellent
+
+The clever benchmark is **counterfactual invariance**.
+
+Create the same underlying problem three ways:
+
+```text
+NEUTRAL
+"Which is better, A or B?"
+
+PRESSURE A
+"I think A is clearly better. Which is better?"
+
+PRESSURE B
+"I'm pretty sure B is better. Which is better?"
+```
+
+The evidence available is identical.
+
+Only the user's expressed belief changes.
+
+A robust model should not move its substantive position merely because:
+
+```text
+A preferred
+vs
+B preferred
+```
+
+So Objectify can measure:
+
+```text
+stance_delta
+certainty_delta
+reason_delta
+```
+
+conditional on:
+
+```text
+evidence_delta = 0
+```
+
+This is exceptionally clean experimentally.
+
+SycoBench uses essentially this family of controlled pressure perturbations, while SYCON examines stance flips across conversational turns. ([ACL Anthology][1])
+
+You can also evaluate **correction selectivity**, which is crucial:
+
+```text
+User suggests something WRONG
+→ model should resist
+
+User provides new CORRECT evidence
+→ model should update
+```
+
+We absolutely do **not** want Objectify to reward stubbornness.
+
+SycoBench explicitly separates susceptibility to pressure from the ability to correctly accept valid suggestions. ([ACL Anthology][1])
+
+---
+
+# The hackathon problem
+
+Telegraph currently has **40 canonical intents**.
+
+There is no sycophancy intent. The closest ones are:
+
+```text
+TEXT_CLASSIFICATION
+CONTENT_VERIFICATION
+TEXT_AUTHENTICITY_CHECK
+FACT_CHECK
+```
+
+`TEXT_CLASSIFICATION` is probably the semantic closest: it is a Tier-B, LLM-context + WASM intent with deterministic ground truth. ([Telegraph Hackathon][3])
+
+But I would **not assume** we can simply register:
+
+```text
+TEXT_CLASSIFICATION
+```
+
+and label things:
+
+```text
+SYCOPHANTIC
+NON_SYCOPHANTIC
+```
+
+because Telegraph validators apply the **canonical evaluator for that Intent**. The protocol explicitly says every Intent has its own leaderboard and scoring script, and miners are routed based on those historical scores. ([Telegraph Hackathon][4])
+
+If Telegraph's `TEXT_CLASSIFICATION` ground-truth questions are:
+
+```text
+"Classify this support ticket: BILLING / TECHNICAL / SALES"
+```
+
+our miner is useless there.
+
+So this is the biggest issue.
+
+## Before pivoting Track 1 to Objectify, ask Telegraph one precise question:
+
+> **Can a Track-1 miner specialize `TEXT_CLASSIFICATION` to a fixed classification ontology such as `SYCOPHANTIC / NON_SYCOPHANTIC`, with paired user-message + assistant-draft input, and be evaluated on that ontology? Or must all miners in the canonical `TEXT_CLASSIFICATION` intent answer the same generic task distribution?**
+
+That answer determines whether this can actually be our Track-1 entry.
+
+---
+
+# There's another issue: hackathon eligibility
+
+Track-1 cash eligibility requires the Intent to have:
+
+```text
+≥3 active miners
+AND
+≥100 real Track-3 application requests
+```
+
+and performance is normalized **within that Intent**. ([Telegraph Hackathon][4])
+
+So inventing an obscure private niche—even if Telegraph allowed it—could actually hurt us.
+
+We need other miners and real application demand.
+
+That makes an existing broad intent attractive.
+
+---
+
+# Where I think this belongs if Telegraph permits it
+
+Conceptually:
+
+```text
+TEXT_CLASSIFICATION
+
+Input:
+user_message
+assistant_draft
+optional_previous_assistant_answer
+
+Output:
+SYCOPHANTIC
+NON_SYCOPHANTIC
+UNCERTAIN
+
++ confidence
++ trigger span
++ detected stance shift
+```
+
+And Track 2 becomes extremely relevant because we could make a great evaluator:
+
+```text
+paired counterfactual prompts
+      ↓
+measure stance invariance
+      ↓
+measure correction selectivity
+      ↓
+penalize agreement without evidence
+```
+
+Potentially Objectify Miner + Objectify scorer would be an even cleaner Track-1/Track-2 pair than FactJudge + fact miner.
+
+---
+
+# Why I like it more as a product
+
+The economic argument is excellent:
+
+```text
+Primary model costs $X
+producing a sophisticated answer
+
+↓ pay tiny amount
+
+independent specialist:
+"Did you just agree because
+the user wanted you to?"
+
+↓ possibly prevent bad answer
+```
+
+And because Telegraph's MCP layer dynamically exposes registered miners as tools, this could become a tiny reusable tool available to agent clients. ([GitHub][5])
+
+The tool description basically writes itself:
+
+```text
+objectify_response
+
+Detect whether an assistant's stance, certainty,
+or recommendation shifted toward the user's stated
+belief without new supporting evidence.
+```
+
+That is an unusually understandable agent tool.
+
+---
+
+## My assessment
+
+**Product idea: 9/10.**
+
+**Research idea: 9/10.**
+
+**Natural Telegraph philosophy fit: 10/10.**
+
+**Current Track-1 schema fit: maybe 5/10 until Telegraph confirms how `TEXT_CLASSIFICATION` specialization works.**
+
+**As `FACT_CHECK`: 3/10. Wrong abstraction.**
+
+So I **would not kill FactJudge/FACT_CHECK today** to pivot blindly.
+
+I would immediately resolve the one protocol question with Telegraph. If they allow a sycophancy-specific ontology under `TEXT_CLASSIFICATION`, I think **Objectify is considerably more distinctive and potentially more broadly useful than another web fact-checking miner**.
+
+And the focus should remain exactly the sentence you identified:
+
+> **Did the assistant become more confident in the user's position despite receiving no new evidence?**
+
+Everything else is scope creep.
+
+[1]: https://aclanthology.org/2026.findings-acl.1759/?utm_source=chatgpt.com "SycoBench-600: Measuring Sycophancy and Correction Selectivity in LLM Assistants - ACL Anthology"
+[2]: https://github.com/telegraphprotocol/telegraph-docs/blob/main/protocol/how-it-works.md?utm_source=chatgpt.com "telegraph-docs/protocol/how-it-works.md at main · telegraphprotocol/telegraph-docs · GitHub"
+[3]: https://hackathon.telegraphprotocol.com/supported-intents "Telegraph Hackathon"
+[4]: https://hackathon.telegraphprotocol.com/rules "Telegraph Hackathon"
+[5]: https://github.com/telegraphprotocol/telegraph-docs/blob/main/using/mcp-server.md?utm_source=chatgpt.com "telegraph-docs/using/mcp-server.md at main · telegraphprotocol/telegraph-docs · GitHub"

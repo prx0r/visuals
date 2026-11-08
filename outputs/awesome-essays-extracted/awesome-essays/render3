@@ -1,0 +1,1591 @@
+The one-year risk is real, but it points to a fairly clean decision:
+
+> **Do not make Renderio’s renderer, Skia packs, PIL files, LTX, Veo, Manim, Blender, or any particular video model the product. Make Pāṭala’s durable product the structured world/teaching/media representation that can compile into all of them.**
+
+The frontier is converging surprisingly hard on this architecture. Google DeepMind is moving Veo toward reference-conditioned, camera-controllable, editable video; Genie toward persistent interactive worlds; and its July 2026 VIPE work shows that **visual prompts themselves are becoming programmable inputs to video/world models**, not merely text prompts. ([Google DeepMind][1])
+
+The open research frontier is saying essentially the same thing even more explicitly: World Narrative Model argues professional video generation should move from probabilistic pixel sampling to an editable **4D physical narrative**, WorldDirector separates semantic trajectory orchestration from neural rendering, and LiVER makes geometry, camera and lighting explicit control variables. ([arXiv][2])
+
+That is where I would place Pāṭala.
+
+---
+
+# 1. Where this is heading
+
+I see six major convergences.
+
+## A. “Video models” are turning into general visual/world models
+
+Google's research trajectory is particularly instructive.
+
+Veo 3.1 already exposes:
+
+* reference images/“ingredients”;
+* style references;
+* character/object consistency;
+* scene extension;
+* first/last-frame control;
+* camera movement controls;
+* native audio.
+
+([Google DeepMind][3])
+
+Google's 2025 work then showed Veo performing tasks it was not explicitly trained for—segmentation, edge detection, physical reasoning, affordance understanding and visual manipulation—suggesting generative video models are developing into more general visual reasoning systems. ([Google DeepMind][4])
+
+And the July 28, 2026 **Visual Prompt Engineering** paper goes further: automatically modifying the image supplied to a video model can improve its reasoning more effectively than text prompt engineering in some tested tasks. ([Google DeepMind][1])
+
+Full links:
+
+[https://deepmind.google/models/veo/](https://deepmind.google/models/veo/)
+
+[https://deepmind.google/research/publications/203190/](https://deepmind.google/research/publications/203190/)
+
+[https://deepmind.google/research/publications/264392/](https://deepmind.google/research/publications/264392/)
+
+[https://arxiv.org/abs/2607.25537](https://arxiv.org/abs/2607.25537)
+
+### Implication for Renderio
+
+Your keyframes, diagrams and Skia outputs may become **control programs for foundation video models**.
+
+Not obsolete.
+
+More valuable.
+
+Instead of:
+
+```text
+Skia
+→ final video
+```
+
+think:
+
+```text
+Pāṭala semantics
+→ Skia control frame / depth / mask / layout
+→ video foundation model
+→ cinematic result
+```
+
+That's a huge conceptual change.
+
+---
+
+# 2. Google Genie tells us not to bet everything on traditional 3D either
+
+Genie 3 generates persistent navigable environments at about 20–24 fps, currently 720p, with environmental consistency over minutes and promptable events. DeepMind explicitly contrasts it with explicit representations such as NeRFs and Gaussian splats: Genie maintains its “world” through a generative model rather than requiring a traditional geometric scene representation. ([Google DeepMind][5])
+
+Full links:
+
+[https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/)
+
+[https://deepmind.google/models/genie/](https://deepmind.google/models/genie/)
+
+So I would **not** build Pāṭala around:
+
+```text
+everything must become Blender geometry
+```
+
+either.
+
+Because in one year the output backend might equally be:
+
+```text
+WorldSpec
+→ Genie-like model
+```
+
+rather than:
+
+```text
+WorldSpec
+→ Blender
+→ Cycles
+```
+
+The durable thing is **WorldSpec**.
+
+---
+
+# 3. World Narrative Model is probably the most important paper for Renderio architecture
+
+Paper:
+
+[https://arxiv.org/abs/2606.31946](https://arxiv.org/abs/2606.31946)
+
+Project:
+
+[https://glassroom.sjtu.edu.cn/WNM/](https://glassroom.sjtu.edu.cn/WNM/)
+
+Their thesis is almost exactly the direction I would give Renderio:
+
+```text
+not:
+
+prompt
+→ diffusion
+→ random pixels
+
+
+but:
+
+structured physical narrative
+→ explicit 4D previsualization
+→ neural renderer
+```
+
+Their representation includes:
+
+* scene geometry;
+* object layouts;
+* character/animal skeleton motion;
+* object trajectories;
+* camera trajectories;
+* lighting;
+* temporal state.
+
+Then existing video generators are treated almost like **neural shaders**. ([arXiv][2])
+
+This is the architectural idea to steal.
+
+Not necessarily their software.
+
+---
+
+# 4. WorldDirector shows the same architecture with working code
+
+This one has inference code and model weights available now:
+
+[https://github.com/pPetrichor/WorldDirector](https://github.com/pPetrichor/WorldDirector)
+
+Paper:
+
+[https://arxiv.org/abs/2607.02517](https://arxiv.org/abs/2607.02517)
+
+WorldDirector has an LLM generate explicit 3D trajectories for objects **and the camera**. Those become control signals for a causal video generator; the system also maintains dynamic object identity when entities leave the view and later return. ([GitHub][6])
+
+The example plan is JSON.
+
+That is particularly relevant.
+
+They're essentially doing:
+
+```text
+LLM
+ ↓
+WorldPlan.json
+ ↓
+3D object trajectories
+camera trajectories
+appearance bindings
+ ↓
+video model
+```
+
+Pāṭala should have an analogous object, but far richer semantically.
+
+---
+
+# 5. Persistent state is becoming fundamental
+
+These are particularly important:
+
+### AlayaWorld
+
+[https://github.com/AlayaLab/AlayaWorld](https://github.com/AlayaLab/AlayaWorld)
+
+Long-horizon interactive video world generation with:
+
+* camera control;
+* prompt switching;
+* world consistency;
+* long-term memory;
+* pretrained weights and inference code.
+
+([GitHub][7])
+
+### HyDRA
+
+[https://github.com/H-EmbodVis/HyDRA](https://github.com/H-EmbodVis/HyDRA)
+
+Specifically solves dynamic subjects disappearing from view and later returning, combining stable scene memory with dynamic entity memory. ([GitHub][8])
+
+### Spatial Memory world models
+
+[https://github.com/spmem/spmem](https://github.com/spmem/spmem)
+
+Maintains explicit long-term spatial memory and provides inference/training code. ([GitHub][9])
+
+### minWM
+
+[https://github.com/shengshu-ai/minWM](https://github.com/shengshu-ai/minWM)
+
+A full-stack tutorial/framework for turning video foundation models into interactive action-conditioned world models. ([GitHub][10])
+
+This validates one of the changes we identified in Renderio:
+
+**FilmState should be first-class.**
+
+Your old:
+
+```python
+scene_01(t)
+scene_02(t)
+scene_03(t)
+```
+
+is the architectural thing most likely to look dated.
+
+You want:
+
+```text
+WorldState(t)
+   ↓
+ShotView(t)
+   ↓
+renderer
+```
+
+---
+
+# 6. 3D asset generation is becoming infrastructure, not a specialty tool
+
+This is another place I would avoid building your own generator.
+
+## TRELLIS.2
+
+[https://github.com/microsoft/TRELLIS.2](https://github.com/microsoft/TRELLIS.2)
+
+High-fidelity image-to-3D with:
+
+* complex topology;
+* sharp geometry;
+* full PBR materials;
+* compact structured latents;
+* 512³–1536³ output regimes.
+
+([GitHub][11])
+
+This is the kind of backend Renderio should simply call.
+
+---
+
+## EmbodiedGen V2
+
+This is even more strategically interesting:
+
+[https://github.com/HorizonRobotics/EmbodiedGen](https://github.com/HorizonRobotics/EmbodiedGen)
+
+Paper:
+
+[https://arxiv.org/abs/2607.07459](https://arxiv.org/abs/2607.07459)
+
+It doesn't merely generate meshes.
+
+It builds **simulation-ready assets and scenes**, and has a backend abstraction where 3D generation can come from SAM3D, TRELLIS or Hunyuan3D. It packages geometry, collision proxies, physical properties and exports to multiple simulators. ([GitHub][12])
+
+Their architecture is exactly the software-engineering lesson for you:
+
+```text
+semantic task
+      ↓
+stable intermediate representation
+      ↓
+pluggable backend:
+  TRELLIS
+  SAM3D
+  Hunyuan
+  future model
+```
+
+Do that for Renderio.
+
+---
+
+# 7. SAGE is another major architecture reference
+
+[https://github.com/NVlabs/sage](https://github.com/NVlabs/sage)
+
+Paper:
+
+[https://arxiv.org/abs/2602.10116](https://arxiv.org/abs/2602.10116)
+
+SAGE is an **agentic 3D scene generation pipeline**.
+
+It combines:
+
+```text
+LLM/VLM planning
++
+TRELLIS assets
++
+materials
++
+scene layout
++
+simulation environment
+```
+
+and released SAGE-10k with 10,000 scenes and 565,000 generated objects. ([GitHub][13])
+
+The lesson isn't robotics.
+
+It's:
+
+> don't make “scene generation” one model invocation.
+
+Treat scene generation as **planning + assets + layout + constraints + rendering**.
+
+Exactly what Renderio needs.
+
+---
+
+# 8. NVIDIA Lyra is worth watching very closely
+
+[https://github.com/nv-tlabs/lyra](https://github.com/nv-tlabs/lyra)
+
+Lyra 2.0, released April 2026, targets explorable generative 3D worlds with longer-horizon 3D-consistent generation; Lyra 1.0 worked on 3D/4D scene generation through video-diffusion self-distillation. ([GitHub][14])
+
+This bridges:
+
+```text
+video generation
+↔
+3D reconstruction
+↔
+world generation
+```
+
+Those boundaries are disappearing.
+
+Which again argues for renderer-neutral Pāṭala IR.
+
+---
+
+# 9. WorldClaw is perhaps the freshest signal
+
+Paper, August 5, 2026:
+
+[https://arxiv.org/abs/2608.05248](https://arxiv.org/abs/2608.05248)
+
+WorldClaw starts from text and plans:
+
+```text
+regions
+terrain
+assets
+materials
+spatial relations
+```
+
+then generates large-scale worlds using reusable assets, procedural/generative materials and editable textured meshes. ([arXiv][15])
+
+The particularly significant phrase here is:
+
+> **editable instance-level assets**
+
+That is increasingly the differentiator.
+
+One giant generated MP4 is dead data.
+
+A reusable semantic object is an asset.
+
+---
+
+# 10. Explicit scene control is winning over “gacha prompting”
+
+LiVER:
+
+[https://arxiv.org/abs/2604.07966](https://arxiv.org/abs/2604.07966)
+
+Project:
+
+[https://caiziqi.com/research/liver/](https://caiziqi.com/research/liver/)
+
+The system explicitly separates:
+
+```text
+geometry/layout
+lighting
+camera
+```
+
+and renders these into control signals for the video model. ([arXiv][16])
+
+That is probably a preview of professional AI filmmaking:
+
+```text
+semantic direction
+↓
+editable structured scene
+↓
+control passes
+↓
+foundation renderer
+```
+
+rather than repeatedly prompting until something good appears.
+
+---
+
+# 11. What Pāṭala should own
+
+This is the most important part.
+
+Do **not** make this canonical:
+
+```json
+{
+  "renderer": "skia",
+  "motif": "heart-lattice"
+}
+```
+
+Your current `SCENE-PACK` has something close to that renderer-coupled structure.
+
+Instead create an enduring:
+
+# `MediaWorldIR`
+
+Think:
+
+```yaml
+media_world:
+
+  source:
+    patala_artifact: SYN-019
+    revision: 8
+
+  teaching:
+    objectives:
+      - C019
+      - A044
+
+    misconceptions:
+      - M007
+
+  entities:
+
+    recognition_identity:
+      type: abstract_relation
+      persistent: true
+
+    manuscript_001:
+      type: source_asset
+
+    subject:
+      type: conceptual_entity
+
+  semantic_relations:
+
+    - type: identity_across_change
+      subject: recognition_identity
+
+  states:
+
+    initial:
+      identity_visibility: latent
+
+    final:
+      identity_visibility: explicit
+
+  invariants:
+    - recognition_identity
+
+  forbidden_inferences:
+    - identity_was_created
+
+  visual_roles:
+
+    recognition_identity:
+      materialization: flexible
+
+  timeline:
+    beats:
+      - B01
+      - B02
+      - B03
+```
+
+**No renderer.**
+
+That can survive ten generations of rendering technology.
+
+---
+
+# 12. Then add a physical/visual projection
+
+From `MediaWorldIR`, compile:
+
+```text
+MediaWorldIR
+       ↓
+VisualWorldSpec
+```
+
+Where `VisualWorldSpec` may contain:
+
+```yaml
+objects:
+  object_a:
+    geometry: optional
+    bbox: ...
+    transform: ...
+    appearance_ref: ...
+
+camera:
+  shot:
+    lens: ...
+    position: ...
+    trajectory: ...
+
+lighting:
+  key: ...
+
+temporal:
+  trajectories: ...
+
+2d:
+  overlays: ...
+
+semantic_bindings:
+  object_a: patala:C019
+```
+
+This is analogous to WNM's explicit 4D blueprint. ([arXiv][2])
+
+---
+
+# 13. Use OpenUSD rather than inventing your own 3D scene format
+
+This is one area where I definitely wouldn't reinvent things.
+
+OpenUSD's entire reason for existence is exactly what you need: composing geometry, shading, lighting, animation and assets into scenes/shots/worlds while allowing non-destructive overrides and interchange across tools. ([OpenUSD][17])
+
+Official docs:
+
+[https://openusd.org/release/](https://openusd.org/release/)
+
+[https://openusd.org/release/intro.html](https://openusd.org/release/intro.html)
+
+And use glTF/GLB for lightweight reusable runtime assets. glTF is an ISO-standardized runtime 3D asset delivery format supporting scenes, nodes, cameras, meshes, materials, skins and animation. ([The Khronos Group][18])
+
+Official:
+
+[https://www.khronos.org/gltf/](https://www.khronos.org/gltf/)
+
+[https://registry.khronos.org/glTF/](https://registry.khronos.org/glTF/)
+
+So:
+
+```text
+Pāṭala semantic IR
+       │
+       ▼
+VisualWorldSpec
+       │
+       ├── USD   complex scenes / shots
+       └── GLB   portable assets
+```
+
+Do not make:
+
+```text
+patala-3d-format.json
+```
+
+---
+
+# 14. Skia becomes one renderer adapter
+
+This saves all your work.
+
+Your existing packs become:
+
+```text
+VisualWorldSpec
+      ↓
+SkiaAdapter
+      ↓
+2D explanatory render
+```
+
+Human Anatomy stays.
+
+Cymatics stays.
+
+Math stays.
+
+Argument diagrams stay.
+
+But instead of being **the scene**, they become one possible materialization of a relation.
+
+For example:
+
+```text
+identity_across_change
+```
+
+might compile to:
+
+```text
+Skia:
+invariant-composition
+
+Motion Canvas:
+animated graph
+
+3D:
+persistent object transformation
+
+Veo:
+reference-controlled cinematic transformation
+
+website:
+interactive WebGL scene
+```
+
+Same Pāṭala object.
+
+Different projection.
+
+---
+
+# 15. Eventually the same lesson can become a world
+
+This is why I would make the IR more general than “video.”
+
+Suppose Pāṭala has:
+
+```text
+The 36 tattvas
+```
+
+Today:
+
+```text
+essay
+video
+diagram
+quiz
+```
+
+In 2027:
+
+```text
+interactive explorable metaphysical world
+```
+
+Maybe the student literally navigates:
+
+```text
+Śiva
+↓
+Śakti
+↓
+Sadāśiva
+↓
+Īśvara
+...
+```
+
+or manipulates the constraints and watches the ontology change.
+
+Genie explicitly describes historical exploration and education as potential uses of interactive world models. ([Google DeepMind][19])
+
+So Pāṭala's education object should compile to:
+
+```text
+text
+diagram
+video
+interactive simulation
+world
+```
+
+That is how you avoid legacy architecture.
+
+---
+
+# 16. The durable stack should therefore be
+
+```text
+                       PĀṬALA
+                          │
+                  EPISTEMIC GRAPH
+                          │
+       source / translation / claim / argument
+                          │
+                          ▼
+                    TeachingSpec
+                          │
+                          ▼
+                     MediaWorldIR
+                          │
+        ┌─────────────────┼─────────────────┐
+        ▼                 ▼                 ▼
+  VisualSemantic      AssetGraph        FilmState
+     Ledger               │                 │
+        └─────────────────┼─────────────────┘
+                          ▼
+                   VisualWorldSpec
+                          │
+         ┌────────────────┼─────────────────┐
+         ▼                ▼                 ▼
+       2D               explicit 3D       neural world
+         │                │                 │
+   Skia/Manim            USD             Veo/Genie-like
+ MotionCanvas            GLB              Wan/LTX/etc.
+         │                │                 │
+         └────────────────┼─────────────────┘
+                          ▼
+                       render
+                          │
+                          ▼
+                     RenderProof
+                          │
+                          ▼
+                 EducationProof
+```
+
+That's the architecture I would bet on.
+
+---
+
+# 17. What **not** to build
+
+This is important.
+
+## Don't build your own foundation video generator
+
+Google, Alibaba, Tencent, Lightricks and others are spending vastly more compute.
+
+Treat them as backends.
+
+---
+
+## Don't build your own general 3D generator
+
+TRELLIS.2:
+
+[https://github.com/microsoft/TRELLIS.2](https://github.com/microsoft/TRELLIS.2)
+
+EmbodiedGen:
+
+[https://github.com/HorizonRobotics/EmbodiedGen](https://github.com/HorizonRobotics/EmbodiedGen)
+
+SAGE:
+
+[https://github.com/NVlabs/sage](https://github.com/NVlabs/sage)
+
+will improve much faster than you can.
+
+---
+
+## Don't build another 300 bespoke Platinum `.py` files
+
+You already have **371 audited scenes** worth of raw visual grammar.
+
+Mine them.
+
+---
+
+## Don't make Skia your canonical representation
+
+Keep it as an excellent deterministic renderer.
+
+---
+
+## Don't build a giant conventional NLE
+
+You need:
+
+```text
+ShotGraph
++
+compiler
++
+FFmpeg compositor
+```
+
+not a clone of Premiere.
+
+---
+
+## Don't make text prompts canonical
+
+Prompts are implementation details.
+
+Store:
+
+```text
+intent
+entities
+relations
+state
+invariants
+camera
+constraints
+evidence
+```
+
+Then generate prompts from those.
+
+---
+
+# 18. What I would actively build
+
+There are **nine durable objects**.
+
+### 1. `TeachingSpec`
+
+What must the learner understand?
+
+### 2. `MediaWorldIR`
+
+What exists and changes conceptually?
+
+### 3. `VisualSemanticLedger`
+
+What does each persistent visual object mean?
+
+### 4. `AssetGraph`
+
+Every:
+
+```text
+image
+manuscript
+video
+mesh
+material
+audio
+diagram
+generated artifact
+```
+
+with provenance/hash/license.
+
+### 5. `WorldState`
+
+State at time (t).
+
+### 6. `ShotGraph`
+
+Views into WorldState, rather than self-contained scenes.
+
+### 7. `VisualWorldSpec`
+
+Concrete layout/camera/lighting/trajectories.
+
+### 8. `RenderFinding`
+
+Structured critic output.
+
+### 9. `RenderProof`
+
+Technical + aesthetic + epistemic + pedagogical evaluation.
+
+Those survive model churn.
+
+---
+
+# 19. The 3D asset graph could get extremely powerful
+
+Example:
+
+```yaml
+asset:
+  id: patala:asset:statue-abh001
+
+  source:
+    type: photograph
+    provenance: ...
+
+  representations:
+
+    image:
+      sha256: ...
+
+    glb:
+      generator: trellis2
+      sha256: ...
+
+    usd:
+      sha256: ...
+
+    embeddings:
+      visual: ...
+
+  semantics:
+    entity_ref: patala:person:abhinavagupta
+
+  rights:
+    license: ...
+
+  validation:
+    visual_match: .93
+```
+
+Then one source object can appear in:
+
+```text
+website
+video
+interactive 3D
+VR
+thumbnail
+lesson
+```
+
+without regenerating it.
+
+That's a real moat.
+
+---
+
+# 20. Frontier open-source projects I would clone/watch
+
+Here's the high-signal working-code set rather than hundreds of paper-only projects.
+
+## World / long-horizon generation
+
+### AlayaWorld
+
+[https://github.com/AlayaLab/AlayaWorld](https://github.com/AlayaLab/AlayaWorld)
+
+Open interactive long-horizon world model with pretrained weights/inference. ([GitHub][7])
+
+**Action:** clone / study architecture.
+
+---
+
+### WorldDirector
+
+[https://github.com/pPetrichor/WorldDirector](https://github.com/pPetrichor/WorldDirector)
+
+Paper:
+
+[https://arxiv.org/abs/2607.02517](https://arxiv.org/abs/2607.02517)
+
+Explicit LLM-planned 3D object/camera trajectories → video world model. ([GitHub][6])
+
+**Action:** clone immediately. Its `LLM_plan.json` is particularly relevant.
+
+---
+
+### HyDRA
+
+[https://github.com/H-EmbodVis/HyDRA](https://github.com/H-EmbodVis/HyDRA)
+
+Persistent dynamic-object memory. ([GitHub][8])
+
+**Action:** architecture study.
+
+---
+
+### Spatial Memory
+
+[https://github.com/spmem/spmem](https://github.com/spmem/spmem)
+
+Long-term spatial memory for world models. ([GitHub][9])
+
+**Action:** study memory representation.
+
+---
+
+### minWM
+
+[https://github.com/shengshu-ai/minWM](https://github.com/shengshu-ai/minWM)
+
+Full-stack interactive world-model tutorial/framework. ([GitHub][10])
+
+**Action:** clone as experimental reference.
+
+---
+
+### NVIDIA Lyra
+
+[https://github.com/nv-tlabs/lyra](https://github.com/nv-tlabs/lyra)
+
+Generative 3D/world modeling. ([GitHub][14])
+
+**Action:** monitor/experiment when hardware allows.
+
+---
+
+# 21. 3D generation / assets
+
+### TRELLIS.2
+
+[https://github.com/microsoft/TRELLIS.2](https://github.com/microsoft/TRELLIS.2)
+
+([GitHub][11])
+
+**Action:** preferred open high-end asset backend to experiment with.
+
+---
+
+### EmbodiedGen V2
+
+[https://github.com/HorizonRobotics/EmbodiedGen](https://github.com/HorizonRobotics/EmbodiedGen)
+
+Paper:
+
+[https://arxiv.org/abs/2607.07459](https://arxiv.org/abs/2607.07459)
+
+([GitHub][20])
+
+**Action:** probably the **best architecture to steal** for a pluggable AssetGraph.
+
+---
+
+### SAGE
+
+[https://github.com/NVlabs/sage](https://github.com/NVlabs/sage)
+
+Paper:
+
+[https://arxiv.org/abs/2602.10116](https://arxiv.org/abs/2602.10116)
+
+([GitHub][13])
+
+**Action:** clone and study agent → asset → layout composition.
+
+---
+
+# 22. Video automation / educational media
+
+### Code2Video
+
+[https://github.com/showlab/Code2Video](https://github.com/showlab/Code2Video)
+
+Paper:
+
+[https://arxiv.org/abs/2510.01174](https://arxiv.org/abs/2510.01174)
+
+**Steal:** Planner/Coder/Critic + TeachQuiz.
+
+This remains possibly the closest educational analogue to Renderio.
+
+---
+
+### Paper2Video
+
+[https://github.com/showlab/Paper2Video](https://github.com/showlab/Paper2Video)
+
+Paper:
+
+[https://arxiv.org/abs/2510.05096](https://arxiv.org/abs/2510.05096)
+
+**Steal:** information-transmission evaluation.
+
+---
+
+### PresentAgent-2
+
+[https://github.com/AIGeeksGroup/PresentAgent-2](https://github.com/AIGeeksGroup/PresentAgent-2)
+
+Paper:
+
+[https://arxiv.org/abs/2605.11363](https://arxiv.org/abs/2605.11363)
+
+**Steal:** presentation/video + interactive Q&A.
+
+---
+
+### ManimTrainer
+
+[https://github.com/SuienS/manim-trainer](https://github.com/SuienS/manim-trainer)
+
+Paper:
+
+[https://arxiv.org/abs/2604.18364](https://arxiv.org/abs/2604.18364)
+
+**Steal:** renderer-loop training and repair.
+
+---
+
+### OpenMontage
+
+[https://github.com/calesthio/OpenMontage](https://github.com/calesthio/OpenMontage)
+
+Open source agentic production system handling research, scripting, asset retrieval/generation and composition. ([GitHub][21])
+
+**Action:** inspect production plumbing; don't adopt epistemic architecture.
+
+---
+
+### VideoDB Director
+
+[https://github.com/video-db/Director](https://github.com/video-db/Director)
+
+Framework for agents to search, edit, generate and compose video workflows. ([GitHub][22])
+
+**Action:** study agent/tool interface.
+
+---
+
+# 23. Evaluation infrastructure
+
+This will matter more and more.
+
+### WorldModelBench
+
+[https://github.com/WorldModelBench-Team/WorldModelBench](https://github.com/WorldModelBench-Team/WorldModelBench)
+
+It uses a VLM-based judge for:
+
+```text
+instruction following
+common sense
+physical adherence
+```
+
+([GitHub][23])
+
+**Action:** steal evaluation patterns for RenderProof.
+
+---
+
+### Interactive World Model index
+
+[https://github.com/EasonTuT/Awesome-Interactive-World-Model](https://github.com/EasonTuT/Awesome-Interactive-World-Model)
+
+Not something to build on, but it's a useful continuously updated index of the world-model literature/code frontier. ([GitHub][24])
+
+**Action:** watch.
+
+---
+
+# 24. Papers I would track even where code isn't fully available yet
+
+These matter architecturally.
+
+### World Narrative Model
+
+[https://arxiv.org/abs/2606.31946](https://arxiv.org/abs/2606.31946)
+
+**Most important architecture paper.** ([arXiv][2])
+
+---
+
+### FilmWorld
+
+[https://arxiv.org/abs/2607.19038](https://arxiv.org/abs/2607.19038)
+
+Project:
+
+[https://filmworld-ai.github.io/](https://filmworld-ai.github.io/)
+
+GitHub placeholder:
+
+[https://github.com/zplusdragon/FilmWorld](https://github.com/zplusdragon/FilmWorld)
+
+The authors currently say the code is still under internal review, so I would **not count this as working code yet**. ([FilmWorld][25])
+
+But its abstraction is crucial:
+
+```text
+world construction
++
+world evolution
++
+persistent entity state
++
+state-driven shot planning
++
+closed-loop verification
+```
+
+([arXiv][26])
+
+That's essentially where long-form film automation is heading.
+
+---
+
+### LiVER
+
+[https://arxiv.org/abs/2604.07966](https://arxiv.org/abs/2604.07966)
+
+[https://caiziqi.com/research/liver/](https://caiziqi.com/research/liver/)
+
+Explicit layout/lighting/camera conditioning. ([arXiv][16])
+
+---
+
+### WorldClaw
+
+[https://arxiv.org/abs/2608.05248](https://arxiv.org/abs/2608.05248)
+
+Coarse-to-fine agentic world construction with editable instance assets. ([arXiv][15])
+
+---
+
+### Visual Prompt Engineering
+
+[https://arxiv.org/abs/2607.25537](https://arxiv.org/abs/2607.25537)
+
+[https://deepmind.google/research/publications/264392/](https://deepmind.google/research/publications/264392/)
+
+This may turn your existing deterministic visuals into **prompts for world models**, which is why I would absolutely preserve them. ([arXiv][27])
+
+---
+
+# 25. What I would do to Renderio right now
+
+The current Renderio doctrine says:
+
+> Renderio is not a renderer.
+
+That was actually prescient.
+
+Make that literally true.
+
+Refactor:
+
+```text
+renderio/
+```
+
+toward:
+
+```text
+renderio/
+
+  ir/
+    teaching.py
+    media_world.py
+    visual_semantics.py
+    world_state.py
+    shots.py
+
+  assets/
+    registry.py
+    provenance.py
+    gltf.py
+    usd.py
+
+  planners/
+    teaching_to_world.py
+    world_to_shots.py
+    visual_prompt.py
+
+  adapters/
+    skia/
+    manim/
+    motion_canvas/
+    blender/
+    usd/
+    veo/
+    ltx/
+    wan/
+    world_model/
+
+  critics/
+    visual.py
+    epistemic.py
+    pedagogy.py
+    film.py
+
+  compiler/
+    build.py
+    cache.py
+    invalidation.py
+```
+
+Then:
+
+```text
+runtime/pil/
+```
+
+becomes historical gold/training material.
+
+And:
+
+```text
+capability-packs/
+```
+
+becomes a semantic operator library, not a rendering prison.
+
+---
+
+# 26. The biggest architectural change: make 2D, 3D and neural worlds peers
+
+Not:
+
+```text
+SKIA
+ └── sometimes insert AI video
+```
+
+Instead:
+
+```text
+                MediaWorldIR
+                     │
+       ┌─────────────┼──────────────┐
+       ▼             ▼              ▼
+       2D            3D          neural
+       │             │              │
+     Skia          OpenUSD        Veo
+     Manim          Blender       Wan
+ MotionCanvas       GLB           LTX
+       │             │            Genie-like
+       └─────────────┼──────────────┘
+                     ▼
+                  compositor
+```
+
+That is far more future-proof.
+
+---
+
+# 27. The moat in a year won't be rendering
+
+Rendering quality is going to commoditize aggressively.
+
+My inference from Genie, Veo, VIPE, WNM, WorldDirector, TRELLIS and EmbodiedGen is that by 2027, creating attractive scenes/assets will be substantially easier than **deciding exactly what the scene means, what must remain invariant, what evidence it is allowed to imply, and how the learner should interact with it**. ([Google DeepMind][5])
+
+That's your moat:
+
+```text
+SOURCE
+↓
+CLAIM
+↓
+ARGUMENT
+↓
+CRUX
+↓
+TEACHING GOAL
+↓
+WORLD SEMANTICS
+↓
+MEDIA
+```
+
+not:
+
+```text
+cool graphics
+```
+
+---
+
+# 28. This also suggests a much bigger Pāṭala product
+
+The future Pāṭala lesson shouldn't really be called a “video.”
+
+It should be:
+
+# **Executable Knowledge Object**
+
+Containing:
+
+```text
+source
+translation
+claims
+argument
+teaching spec
+visual semantic model
+assets
+world state
+simulation
+video projections
+interactive projection
+questions
+review
+analytics
+```
+
+From one object, you compile:
+
+```text
+article
+lesson
+diagram
+video
+short
+interactive web
+3D world
+future VR
+agent context
+```
+
+That is where I would place the OS.
+
+---
+
+# 29. Twelve-month build strategy
+
+### Now — August/September 2026
+
+Freeze:
+
+```text
+TeachingSpec
+MediaWorldIR
+VisualSemanticLedger
+AssetGraph
+WorldState
+ShotGraph
+RenderProof
+```
+
+Do **not** expand renderer count significantly.
+
+---
+
+### Then
+
+Make Skia consume the new IR.
+
+You should be able to render your existing Human Anatomy and invariant/math mechanisms from:
+
+```text
+semantic relation
++
+state
++
+shot
+```
+
+rather than bespoke scene JSON.
+
+---
+
+### Next
+
+Add:
+
+```text
+GLB AssetGraph
++
+OpenUSD scene projection
+```
+
+Test TRELLIS.2/EmbodiedGen as external asset generators.
+
+Don't build your own.
+
+---
+
+### Then
+
+Add one neural renderer:
+
+```text
+Veo or LTX/Wan
+```
+
+but require it to consume:
+
+```text
+VisualWorldSpec
+reference frames
+first/last frame
+camera spec
+semantic constraints
+```
+
+rather than arbitrary prompts.
+
+---
+
+### Then
+
+Build one **interactive** lesson.
+
+Same `MediaWorldIR`.
+
+Different renderer.
+
+That proves the architecture survived leaving video.
+
+---
+
+# 30. The killer proof
+
+Take one Pāṭala argument and compile:
+
+```text
+                         ARG-019
+                            │
+                            ▼
+                       TeachingSpec
+                            │
+                            ▼
+                       MediaWorldIR
+                            │
+          ┌─────────────────┼──────────────────┐
+          ▼                 ▼                  ▼
+      ARTICLE            VIDEO             INTERACTIVE
+          │                 │                  │
+     Astro/HTML          Renderio           WebGL/USD
+                            │
+            ┌───────────────┼───────────────┐
+            ▼               ▼               ▼
+           Skia             3D             neural
+```
+
+Then change one upstream proposition.
+
+All outputs stale/recompile.
+
+That is Pāṭala OS.
+
+---
+
+## The strategic answer
+
+Don't abandon Skia. Don't abandon the Platinum corpus. Don't spend the next year polishing them into a giant closed ecosystem either.
+
+**Your Skia/anatomy/math/cymatics library becomes Pāṭala's deterministic visual language.**
+
+**OpenUSD/glTF become the explicit spatial asset layer.**
+
+**TRELLIS/SAGE/EmbodiedGen become replaceable 3D suppliers.**
+
+**Veo/LTX/Wan/world models become replaceable neural renderers.**
+
+**Renderio becomes the compiler/director and evaluation system.**
+
+And **Pāṭala owns the one thing these frontier labs generally do not have: a canonical, evidence-bearing semantic model of what the generated media is actually allowed to mean.**
+
+That architecture has a much better chance of becoming *more useful* as video/world models improve rather than being obsoleted by them.
+
+Because this frontier is changing almost weekly, I can monitor the world-model / agentic-video / 3D-generation literature and flag only releases that materially change this architecture.
+
+[1]: https://deepmind.google/research/publications/264392/?utm_source=chatgpt.com "Visual prompt engineering for video models — Google DeepMind"
+[2]: https://arxiv.org/abs/2606.31946?utm_source=chatgpt.com "World Narrative Model for Highly Controllable Video Generation: A Paradigm Shift from Pixel Sampling to Physical World Orchestration"
+[3]: https://deepmind.google/models/veo/?_sm_nck=1&utm_source=chatgpt.com "Veo 3.1 — Google DeepMind"
+[4]: https://deepmind.google/research/publications/203190/?utm_source=chatgpt.com "Video models are zero-shot learners and reasoners — Google DeepMind"
+[5]: https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/?utm_source=chatgpt.com "Genie 3: A new frontier for world models — Google DeepMind"
+[6]: https://github.com/pPetrichor/WorldDirector?utm_source=chatgpt.com "GitHub - pPetrichor/WorldDirector · GitHub"
+[7]: https://github.com/AlayaLab/AlayaWorld?utm_source=chatgpt.com "GitHub - AlayaLab/AlayaWorld: Full-stack open-source interactive long-horizon world model. · GitHub"
+[8]: https://github.com/H-EmbodVis/HyDRA?utm_source=chatgpt.com "GitHub - H-EmbodVis/HyDRA: Out of Sight but Not Out of Mind: Hybrid Memory for Dynamic Video World Models · GitHub"
+[9]: https://github.com/spmem/spmem?utm_source=chatgpt.com "GitHub - spmem/spmem: [NeurIPS 2025] Video World Models with Long-term Spatial Memory · GitHub"
+[10]: https://github.com/shengshu-ai/minWM?utm_source=chatgpt.com "GitHub - shengshu-ai/minWM: A Minimal and Elegant Framework & Tutorial for Real-Time Interactive World Models · GitHub"
+[11]: https://github.com/microsoft/TRELLIS.2?utm_source=chatgpt.com "GitHub - microsoft/TRELLIS.2: Native and Compact Structured Latents for 3D Generation · GitHub"
+[12]: https://github.com/HorizonRobotics/EmbodiedGen?utm_source=chatgpt.com "GitHub - HorizonRobotics/EmbodiedGen: Towards a Generative 3D World Engine for Embodied Intelligence · GitHub"
+[13]: https://github.com/NVlabs/sage?utm_source=chatgpt.com "GitHub - NVlabs/sage: Official Code Release of SAGE: Scalable Agentic 3D Scene Generation for Embodied AI · GitHub"
+[14]: https://github.com/nv-tlabs/lyra?utm_source=chatgpt.com "GitHub - nv-tlabs/lyra: Project Lyra: Open Generative 3D World Models · GitHub"
+[15]: https://arxiv.org/abs/2608.05248?utm_source=chatgpt.com "WorldClaw: Agentic 3D Open-World Generation at Scale"
+[16]: https://arxiv.org/abs/2604.07966?utm_source=chatgpt.com "Lighting-grounded Video Generation with Renderer-based Agent Reasoning"
+[17]: https://openusd.org/release/intro.html?utm_source=chatgpt.com "Introduction to USD — Universal Scene Description 26.08 documentation"
+[18]: https://www.khronos.org/gltf/?utm_source=chatgpt.com "glTF - Runtime 3D Asset Delivery"
+[19]: https://deepmind.google/models/genie/?utm_source=chatgpt.com "Genie 3 — Google DeepMind"
+[20]: https://github.com/HorizonRobotics/EmbodiedGen/blob/master/README.md?utm_source=chatgpt.com "EmbodiedGen/README.md at master · HorizonRobotics/EmbodiedGen · GitHub"
+[21]: https://github.com/calesthio/OpenMontage?utm_source=chatgpt.com "GitHub - calesthio/OpenMontage: World's first open-source, agentic video production system. 12 pipelines, 52 tools, 500+ agent skills. Turn your AI coding assistant into a full video production studio. · GitHub"
+[22]: https://github.com/video-db/Director?utm_source=chatgpt.com "GitHub - video-db/Director: AI video agents framework for next-gen video interactions and workflows. · GitHub"
+[23]: https://github.com/WorldModelBench-Team/WorldModelBench?utm_source=chatgpt.com "GitHub - WorldModelBench-Team/WorldModelBench · GitHub"
+[24]: https://github.com/EasonTuT/Awesome-Interactive-World-Model?utm_source=chatgpt.com "GitHub - EasonTuT/Awesome-Interactive-World-Model: Interactive World Model papers organized by core research challenges. · GitHub"
+[25]: https://filmworld-ai.github.io/?utm_source=chatgpt.com "FilmWorld — Agentic Novel-to-Film Generation"
+[26]: https://arxiv.org/abs/2607.19038?utm_source=chatgpt.com "FilmWorld: Agentic Novel-to-Film Generation through Dynamic Cinematic World Modeling"
+[27]: https://arxiv.org/abs/2607.25537?utm_source=chatgpt.com "Visual prompt engineering for video models"

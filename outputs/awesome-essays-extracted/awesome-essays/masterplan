@@ -1,0 +1,956 @@
+**It is not finished as a submission yet.** The core mechanism is strong, but the current repo is underselling the most valuable consequence of the work: **Aletheia is an incremental-computation and cache-invalidation layer for autonomous-agent knowledge**, not merely a “tell me when a research claim got stale” tool.
+
+There are also several concrete release problems right now.
+
+The public repo description says **“Alethiea — agentic verification framework,”** while the README and submission are still branded **Pāṭala Research CI**.   The submission still links judges to the old `prx0r/hackathon1` repository rather than this repo.  And the latest pushed commit is still the August 19 `pitch-verified.md` commit; the hardened release work we produced afterward has evidently not been integrated into GitHub yet. There are also no commit-status checks reported on that HEAD.
+
+More importantly, **the current presentation spends 80% of its attention on mechanism and perhaps 20% on why anyone should care**.
+
+## The actual product is bigger than the current pitch
+
+The README currently says:
+
+> conclusion → dependency → source change → proof obligation.
+
+Accurate. Not very exciting.
+
+The bigger abstraction is:
+
+```text
+AUTONOMOUS AGENTS PRODUCE DERIVED STATE
+
+Research
+    ↓
+analysis
+    ↓
+claims
+    ↓
+reports
+    ↓
+recommendations
+    ↓
+other agents consume those results
+    ↓
+more derived state
+```
+
+The source world keeps changing.
+
+Without Aletheia you get:
+
+```text
+SOURCE UPDATE
+     ↓
+????
+
+Should I:
+- trust everything already computed?
+- rerun everything?
+- ask another LLM?
+- invalidate the whole agent memory?
+```
+
+Aletheia provides the missing operation:
+
+```text
+SOURCE UPDATE
+     ↓
+semantic change
+     ↓
+dependency graph
+     ↓
+exact blast radius
+     ↓
+┌────────────────┬──────────────────┐
+│ unaffected     │ affected         │
+│                │                  │
+│ REUSE          │ RECOMPUTE        │
+│ no tokens      │ only this branch │
+│ no tool calls  │                  │
+└────────────────┴──────────────────┘
+```
+
+That is essentially:
+
+> **incremental computation for agent intelligence.**
+
+That phrase should be central.
+
+---
+
+# The killer analogy is build systems
+
+Imagine if every time one file changed, `cargo` did:
+
+```text
+DELETE EVERYTHING
+COMPILE THE ENTIRE WORLD AGAIN
+```
+
+We solved that decades ago with dependency graphs.
+
+Agents are currently doing the epistemic equivalent.
+
+```text
+1000 conclusions
+       │
+source changes
+       │
+       ├── naive approach
+       │      ↓
+       │   rerun 1000
+       │
+       └── Aletheia
+              ↓
+        find dependency cut
+              ↓
+         rerun affected 47
+```
+
+**Aletheia is incremental build infrastructure for derived knowledge.**
+
+That is vastly more exciting than “freshness receipts.”
+
+And unlike the current arbitrary `47/1000` example in `pitch-highsignal.md`, we should benchmark this properly before attaching percentages. The existing repo itself admits that the 58% avoided-work figure came from a comparison whose query scopes did not overlap cleanly.
+
+---
+
+# The economic value is real
+
+There are actually **four costs** Aletheia avoids.
+
+### 1. LLM inference
+
+A research agent doesn't make one LLM call.
+
+Alien describes a harness where a main agent dispatches work to specialist subagents and their internal agents operate over OpenAIRE-scale bibliometric sources. ([Alien Club][1])
+
+So maintaining one conclusion may involve:
+
+```text
+query generation
+     +
+retrieval
+     +
+relevance classification
+     +
+paper inspection
+     +
+citation analysis
+     +
+subagent synthesis
+     +
+final synthesis
+```
+
+If only one premise changed, rerunning this whole tree is wasteful.
+
+Aletheia changes:
+
+```text
+cost of maintenance
+≈ cost(original agent run)
+```
+
+into:
+
+```text
+cost of maintenance
+≈ cost(affected derivation subtree)
+```
+
+That is a real architecture-level saving.
+
+Alien themselves care enough about inference cost to use Anthropic prompt caching specifically to avoid repaying for repeated context, and their harness includes cost accounting. ([Alien Club][2])
+
+Aletheia applies essentially the same philosophy **one level higher**:
+
+> Don't merely cache prompts. **Cache justified conclusions and invalidate them correctly.**
+
+That's a superb pitch.
+
+---
+
+# 2. MCP/API/data costs
+
+This may become even more important than tokens.
+
+Alien's business is explicitly moving toward **metered agent access to datasets and MCP sources**. Their infrastructure promotes usage-based monetization and tracking each data interaction; their OpenAIRE product positions itself as an enterprise AI gateway. ([Alien Club][3])
+
+So a future research agent might spend money on:
+
+```text
+OpenAIRE call
+Crossref call
+publisher MCP call
+premium dataset call
+specialist agent call
+model call
+```
+
+A full rerun re-pays all of them.
+
+Aletheia can say:
+
+```text
+this conclusion used:
+
+OpenAIRE A
+OpenAIRE B
+PremiumSource C
+Model execution D
+
+Only B changed.
+
+Do not repurchase A.
+Do not repurchase C.
+Do not rerun D unless B affects its premise.
+```
+
+That gives you a much stronger economic line:
+
+> **Aletheia prevents agents from repurchasing intelligence they have already established.**
+
+That is good.
+
+---
+
+# 3. Human review
+
+This could be the largest saving of all.
+
+Suppose a policy intelligence product has 5,000 derived claims.
+
+A new Graph release occurs.
+
+Without dependencies:
+
+```text
+"Something changed."
+
+→ analyst checks whole report
+```
+
+With Aletheia:
+
+```text
+4,861 claims remain CURRENT
+
+117 deterministic recomputations
+
+19 need model-assisted reassessment
+
+3 need human judgment
+```
+
+Now the scarce resource—human expert attention—is routed to **three cruxes**.
+
+That fits OpenAIRE's broader ambitions particularly well because their strategy is explicitly moving toward trustworthy AI-enabled research workflows and research intelligence as accountable infrastructure. ([OpenAIRE][4])
+
+This is not just compute optimization.
+
+It's:
+
+> **attention routing.**
+
+---
+
+# 4. It avoids cascading recomputation
+
+This is probably the deepest point currently missing.
+
+Imagine:
+
+```text
+Paper A
+Paper B
+Dataset C
+    │
+    ▼
+Claim 1
+    │
+    ├────────► Claim 2
+    │             │
+    │             ▼
+    │        Recommendation
+    │             │
+    ▼             ▼
+Report        Funding Decision
+```
+
+If `Paper A` changes, the useful question isn't:
+
+> “Has OpenAIRE changed?”
+
+It is:
+
+> **“What is the transitive downstream blast radius of this change?”**
+
+That turns Aletheia into something resembling:
+
+```text
+Bazel / Cargo dependency graph
++
+database incremental view maintenance
++
+provenance
++
+agent memory
+```
+
+for derived intelligence.
+
+That's substantially more ambitious.
+
+---
+
+# This unlocks persistent autonomous agents
+
+This should probably be your primary future slide.
+
+OpenAIRE explicitly says their agents should move beyond search into literature reviews, citation analysis, author/career mapping, dataset assessment, bibliometric intelligence and cross-domain synthesis. ([OpenAIRE][5]) OpenAIRE describes the integration as a foundation for how science is accessed, funded and performed in an AI era. ([OpenAIRE Innovation][6])
+
+Alien already persists agent conversations through LangGraph/PostgreSQL and is running internal research agents against its OpenAIRE bibliometric MCP. ([Alien Club][2])
+
+Once agents persist, this becomes inevitable:
+
+```text
+Day 1
+Agent learns X
+
+Day 8
+Agent builds Y using X
+
+Day 40
+Agent recommends Z because of Y
+
+Day 91
+Source underlying X changes
+```
+
+A normal memory store knows:
+
+```text
+X exists
+```
+
+Aletheia knows:
+
+```text
+X was justified by A+B
+
+A changed
+
+therefore:
+X → recheck
+Y → potentially affected
+Z → potentially affected
+```
+
+That's **dependency-aware long-term agent memory**.
+
+Much more compelling.
+
+---
+
+# It unlocks safe agent-to-agent knowledge reuse
+
+Another huge one.
+
+Future agents won't continuously query the source themselves.
+
+They'll consume things other agents learned:
+
+```text
+Discovery Agent
+      ↓
+"Technique T is accelerating"
+
+      ↓
+
+Investment Agent
+      ↓
+"Fund T"
+
+      ↓
+
+Policy Agent
+      ↓
+"Prioritize T"
+```
+
+Aletheia lets the first agent hand over:
+
+```text
+claim
++
+evidence dependencies
++
+freshness state
++
+verification receipt
+```
+
+instead of just:
+
+```text
+string
+```
+
+Then if the source changes:
+
+```text
+upstream receipt invalidated
+       ↓
+downstream consumers know
+       ↓
+selective revalidation
+```
+
+That's **proof-carrying inter-agent knowledge**.
+
+That belongs prominently in the pitch.
+
+---
+
+# And yes: it enables smarter model routing
+
+This is where the economic story gets really strong.
+
+Aletheia produces a **proof obligation**.
+
+That obligation tells you what has to be established.
+
+So you can route the cheapest possible computation capable of satisfying it:
+
+```text
+Proof obligation
+      │
+      ▼
+Can deterministic code resolve it?
+      │
+ YES ─┘ → $≈0
+
+ NO
+      ↓
+Can cheap model resolve it?
+      │
+ YES ─┘ → cheap inference
+
+ NO
+      ↓
+frontier model
+
+still uncertain?
+      ↓
+human expert
+```
+
+This is much better than:
+
+```text
+Claude everywhere
+```
+
+It becomes:
+
+> **Verification-aware compute routing.**
+
+Or even better:
+
+> **Spend intelligence proportional to epistemic risk.**
+
+Alien already intentionally abstracts across Claude, GPT, Mistral and Gemini rather than hard-wiring one model. ([Alien Club][2])
+
+Aletheia could eventually determine **which model deserves which task**, based on:
+
+```text
+blast radius
+claim importance
+verification difficulty
+uncertainty
+recomputability
+source health
+```
+
+That gives the long-term architecture:
+
+```text
+              ALETHEIA
+                 │
+       what must be re-established?
+                 │
+                 ▼
+          proof obligation
+                 │
+          risk / crux score
+                 │
+       ┌─────────┼─────────┐
+       ▼         ▼         ▼
+ deterministic cheap      frontier
+    code        model      model
+       │         │         │
+       └─────────┼─────────┘
+                 ▼
+              VERIFY
+                 │
+                 ▼
+        Freshness Receipt
+```
+
+Now we're talking about a serious autonomous-agent control plane.
+
+---
+
+# And it enables a new optimization target
+
+This is analogous to what we just identified for Iolaus.
+
+Agents currently optimize things like:
+
+```text
+cost per call
+tokens per answer
+latency per run
+```
+
+Aletheia potentially gives you:
+
+> **cost per maintained justified conclusion**
+
+That's much more meaningful.
+
+For instance:
+
+```text
+System A
+$0.04 / conclusion initially
+
+but:
+$0.04 every time upstream changes
+
+System B + Aletheia
+$0.04 initially
+$0.002 average maintenance cost
+```
+
+Those numbers are illustrative—we must measure the real ones.
+
+But **that is the benchmark you should build.**
+
+---
+
+# The benchmark is currently the biggest missing piece
+
+Right now the submission has a technical demo.
+
+It needs an **economic benchmark**.
+
+I'd call it something like:
+
+## `AgentMaintenanceBench`
+
+Take a real Alien/OpenAIRE agent workflow.
+
+Generate, say:
+
+```text
+100 derived claims
+500 dependencies
+N tool calls
+actual measured token/API cost
+```
+
+Then produce controlled source releases:
+
+```text
+Release A:
+1% meaningful dependencies changed
+
+Release B:
+5%
+
+Release C:
+20%
+
+Release D:
+representation-only migration
+
+Release E:
+source outage
+```
+
+Run two systems.
+
+### Baseline
+
+```text
+rerun every analysis
+```
+
+### Aletheia
+
+```text
+semantic diff
+dependency impact
+rerun affected derivations only
+```
+
+Measure:
+
+```text
+LLM calls
+MCP calls
+OpenAIRE calls
+tokens
+wall time
+human-review obligations
+false invalidations
+missed invalidations
+$
+```
+
+Then your result can genuinely look like:
+
+```text
+              FULL RERUN     ALETHEIA
+
+Agent calls      1,000          83
+MCP calls          740          61
+LLM tokens        8.2M        0.7M
+Wall time          42m         4m
+Cost              $X          $Y
+Rechecks          100%        8.3%
+
+Affected recall   100%        100%
+```
+
+**Do not invent those numbers.**
+
+But if the real benchmark lands anywhere near that shape, the pitch becomes immediately legible.
+
+---
+
+# You can even derive the economic equation
+
+The core value proposition becomes:
+
+[
+\text{Savings}
+==============
+
+## C_{\text{full rerun}}
+
+\left(
+C_{\text{change detection}}
++
+C_{\text{affected recomputation}}
+\right)
+]
+
+Or per maintenance cycle:
+
+```text
+Full recomputation:
+
+C_full = Σ all derivations C(d)
+
+
+Aletheia:
+
+C_incremental =
+    C_dependency_check
+    +
+    Σ affected derivations C(d)
+```
+
+So:
+
+```text
+Savings ratio =
+1 - C_incremental / C_full
+```
+
+And at scale:
+
+```text
+Annual maintenance cost =
+number of stored derived objects
+× upstream change frequency
+× average derivation cost
+```
+
+Aletheia attacks the multiplication by replacing:
+
+```text
+all stored objects
+```
+
+with:
+
+```text
+affected objects
+```
+
+That's the economic argument.
+
+---
+
+# There is also a reliability payoff
+
+Money isn't even the whole story.
+
+Rerunning an LLM is **not equivalent to maintaining an existing derivation**.
+
+You might get:
+
+```text
+T1:
+Claim C = supported
+
+T2:
+same source data
+same question
+different sampling/model
+→ Claim C = unsupported
+```
+
+So “just rerun it” introduces unnecessary nondeterminism.
+
+Aletheia allows:
+
+```text
+nothing material changed
+        ↓
+reuse established result
+```
+
+That is better engineering.
+
+You only reopen a conclusion **when its premises require it**.
+
+---
+
+# The OpenAIRE release is actually a fantastic demo—if we use it correctly
+
+The current pitch says:
+
+> “318.7M relations removed → any agent depending on them is now potentially wrong.”
+
+Still not ideal.
+
+Because OpenAIRE says much of that was a representation cleanup: redundant `IsCitedBy` links were removed in favor of direct `Cites` links.
+
+That's actually **better for us**.
+
+A dumb invalidation engine sees:
+
+```text
+318.7M RELATIONS DELETED!!!
+
+RECOMPUTE EVERYTHING!!!
+```
+
+Aletheia should see:
+
+```text
+IsCitedBy(A,B)
+      ↓ semantic normalization
+Cites(B,A)
+
+same proposition
+
+→ NO RECOMPUTATION
+```
+
+Then show one genuine funding relation removal:
+
+```text
+semantic relationship actually disappeared
+
+→ RECHECK
+```
+
+That's a fantastic product demonstration:
+
+> **Aletheia doesn't react to data churn. It reacts to changes in meaning.**
+
+That's much more impressive.
+
+---
+
+# The current pitch has some statements I would delete immediately
+
+`pitch-highsignal.md` says:
+
+> `Pāṭala | 4.7% compute | Provably correct`
+
+But `pitch-verified.md` correctly says the 4.7% figure is wrong and that the real 58% benchmark has limitations.
+
+It also says:
+
+> “An agent that concluded something based on those relations is now wrong.”
+
+That is too strong. A relation representation migration may leave the proposition unchanged.
+
+So having both files publicly visible is actively damaging: **one is the fact-check showing another repo document contains claims we know aren't defensible.**
+
+Archive/delete the old pitch.
+
+---
+
+# I'd change the hierarchy completely
+
+Right now:
+
+```text
+Pāṭala Research CI
+Continuous Verification for Agentic Science
+
+semantic diff
+dependency
+ProofObligation
+ResolutionPlan
+receipt
+```
+
+I'd make it:
+
+# **Aletheia**
+
+### Incremental intelligence for autonomous agents
+
+> **Don't recompute what hasn't changed. Don't trust what has.**
+
+Then:
+
+```text
+Agents are becoming persistent.
+Their sources keep changing.
+
+Today you either:
+  ignore the change
+  or rerun everything.
+
+Aletheia gives agent knowledge dependencies.
+
+source change
+    ↓
+semantic diff
+    ↓
+blast radius
+    ↓
+reuse unaffected knowledge
+recompute only affected knowledge
+```
+
+**Then** explain receipts/proof obligations.
+
+---
+
+# Three business outcomes, immediately visible
+
+I would put these directly under the opening demo:
+
+### **Spend less**
+
+Reuse conclusions whose evidence hasn't materially changed.
+
+### **Know more safely**
+
+Automatically reopen conclusions whose premises did change.
+
+### **Scale autonomous agents**
+
+Allow persistent and multi-agent systems to reuse knowledge without silently accumulating stale state.
+
+That's the product.
+
+---
+
+# Then show “what it unlocks”
+
+One slide:
+
+```text
+TODAY
+──────────────────────────────
+Freshness + selective revalidation
+
+
+NEXT
+──────────────────────────────
+Incremental agent computation
+↓
+lower token / MCP / API spend
+
+
+THEN
+──────────────────────────────
+Verification-aware model routing
+↓
+cheap models for easy obligations
+frontier models only for cruxes
+
+
+THEN
+──────────────────────────────
+Proof-carrying agent-to-agent knowledge
+↓
+safe composable agent ecosystems
+
+
+THEN
+──────────────────────────────
+Continuously maintained research intelligence
+↓
+living reviews
+MONITOR
+research assessment
+policy intelligence
+funding intelligence
+```
+
+This is not random roadmap fantasy. OpenAIRE itself says it is preparing research services for AI-enabled workflows and treats research intelligence as accountable infrastructure; its OpenAIRE/Alien materials explicitly target researchers, institutions, funders and policymakers. ([OpenAIRE][4])
+
+---
+
+# The 15-second pitch should become
+
+> **Autonomous agents are starting to accumulate millions of derived conclusions. Their sources keep changing. Today you either trust stale knowledge or rerun everything. Aletheia tracks what each conclusion depended on, so agents reuse what remains justified and recompute only what actually changed.**
+
+Then:
+
+> **It's incremental computation for agent knowledge.**
+
+That gets me much more excited about it.
+
+And finally:
+
+> **OpenAIRE keeps the research graph current. Alien makes it actionable by agents. Aletheia makes the intelligence those agents produce incrementally maintainable.**
+
+That's the sponsor-specific line.
+
+## My current score
+
+**Underlying mechanism: 9/10.**
+**Long-term infrastructure thesis: 9.5/10.**
+**Current public pitch: 6.5/10.**
+**Current repo submission readiness: 6/10.**
+
+So I don't think the answer is “the product is boring.”
+
+I think **we accidentally pitched the implementation detail as the product**.
+
+The exciting product is:
+
+> **A dependency engine that turns autonomous-agent intelligence from disposable output into incrementally maintainable state.**
+
+And yes—the next thing I would add before submission is **a serious recomputation/cost benchmark**, because that turns the future story into hard evidence rather than an architectural promise.
+
+[1]: https://www.alien.club/papers/what-a-harness-actually-has-to-do/?utm_source=chatgpt.com "2026 Is the Year of the Harness. We Built a Different Kind."
+[2]: https://www.alien.club/papers/we-didnt-build-an-agent-framework.-we-built-on-one?utm_source=chatgpt.com "We Didn't Build an Agent Framework. We Built on One."
+[3]: https://www.alien.club/infrastructure/?utm_source=chatgpt.com "Alien Intelligence - Infrastructure"
+[4]: https://www.openaire.eu/openaire-sets-out-its-strategy-for-2026-2028-scaling-openness-trust-and-intelligence?utm_source=chatgpt.com "OpenAIRE Sets out its Strategy for 2026-2028: Scaling openness, trust and intelligence"
+[5]: https://www.openaire.eu/openaire-and-alien-intelligence-bringing-ai-agents-to-the-openaire-graph?utm_source=chatgpt.com "OpenAIRE and Alien Intelligence: Bringing AI agents to the OpenAIRE Graph"
+[6]: https://innovation.openaire.eu/component/content/article/ai-agents-implementation-on-openaire-graph.html?utm_source=chatgpt.com "AI agents implementation on OpenAIRE Graph"

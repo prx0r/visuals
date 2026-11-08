@@ -1,0 +1,249 @@
+{
+  "version": "1.0",
+  "composition": "recursive-proof-construction",
+  "scenes": [
+    {
+      "id": "s01",
+      "title": "One thing",
+      "claim": "Introduce o without spatial interpretation.",
+      "operation": "symbol",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s02",
+      "title": "Another thing",
+      "claim": "Introduce x because repetition of o cannot distinguish.",
+      "operation": "distinction",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s03",
+      "title": "This and that",
+      "claim": "Priority, not location, differentiates two things.",
+      "operation": "priority",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s04",
+      "title": "Difference as operation",
+      "claim": "o and x define the invariant transformation between them.",
+      "operation": "operation",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s05",
+      "title": "First and second",
+      "claim": "oo and ox secure precedence without location.",
+      "operation": "pairing",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s06",
+      "title": "The tetrad",
+      "claim": "Four symbols support three independent pairings.",
+      "operation": "tetrad",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s07",
+      "title": "Row, column, diagonal",
+      "claim": "Derive the three mutually independent interchanges.",
+      "operation": "klein-four",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s08",
+      "title": "Four-member thing",
+      "claim": "Superpose zero and three interchange operations.",
+      "operation": "superposition",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s09",
+      "title": "Sixteen-member reflexion",
+      "claim": "A tetrad of tetrads repeats the same structure.",
+      "operation": "recursive-grid",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s10",
+      "title": "Indefinite expansion",
+      "claim": "4,16,64,256\u2026 members arise recursively.",
+      "operation": "recursive-growth",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s11",
+      "title": "Invariant whole",
+      "claim": "Any member transformation permutes the set without changing it.",
+      "operation": "group-action",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s12",
+      "title": "Structure of structure",
+      "claim": "Immediate and reflexive structure share one form.",
+      "operation": "self-similarity",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "s13",
+      "title": "Infinite hierarchy",
+      "claim": "Particular/general and reflexive hierarchies extend indefinitely.",
+      "operation": "hierarchy",
+      "duration": 10,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d01",
+      "title": "Duration",
+      "claim": "Unchange and change are one invariant transformation.",
+      "operation": "duration",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d02",
+      "title": "Repeated moments",
+      "claim": "Column interchange repeats while the whole remains unchanged.",
+      "operation": "moment-cycle",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d03",
+      "title": "No finite duration",
+      "claim": "Two rates of change do not produce true duration.",
+      "operation": "cogwheel-rejection",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d04",
+      "title": "Accelerating infinity",
+      "claim": "Infinite moments converge by geometric acceleration.",
+      "operation": "zeno-series",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d05",
+      "title": "Three temporal levels",
+      "claim": "Eternal, regular and accelerating levels coexist.",
+      "operation": "three-level",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d06",
+      "title": "No absolute outside",
+      "claim": "The hierarchy extends both ways with no universal present.",
+      "operation": "nested-time",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d07",
+      "title": "Irreversible alternation",
+      "claim": "o vanishes, x becomes the new o; the system is not reversible.",
+      "operation": "replacement",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d08",
+      "title": "Intensity hierarchy",
+      "claim": "This has weight 2/3 and that 1/3; lower orders sum to unity.",
+      "operation": "weights",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d09",
+      "title": "Generality as time",
+      "claim": "Nested squares alternate between depth hierarchy and temporal corridor.",
+      "operation": "perspective-switch",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d10",
+      "title": "Past-present-future",
+      "claim": "All exist in the present as over-, fully-, and under-determined.",
+      "operation": "temporal-tetrad",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d11",
+      "title": "Three weighted interchanges",
+      "claim": "One this remains invariant while three thats vary.",
+      "operation": "weighted-klein",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d12",
+      "title": "Identity by negation",
+      "claim": "The chair remains chair through shifting relative determinations.",
+      "operation": "negative-definition",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d13",
+      "title": "Selection by repeated squaring",
+      "claim": "Weights 3:2:1 become 9:4:1, then 81:16:1 until one operation dominates.",
+      "operation": "winner-selection",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    },
+    {
+      "id": "d14",
+      "title": "Unfinished frontier",
+      "claim": "Intention, action and choice require the continuation.",
+      "operation": "frontier",
+      "duration": 12,
+      "invariant": "The same o/x transformation alphabet and frame persist.",
+      "forbiddenInference": "The page layout itself is the non-spatial structure."
+    }
+  ]
+}

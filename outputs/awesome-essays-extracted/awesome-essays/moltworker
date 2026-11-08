@@ -1,0 +1,726 @@
+Yes. I searched the current ecosystem, including GBrain, Letta, Agent Skills, gstack, Superpowers, Agent Zero, OpenHands, Memento-Skills, SkillWeaver, Voyager, Agent Workflow Memory, skills.sh, and related systems.
+
+The conclusion is fairly sharp:
+
+> **The individual components of Moltwork WorkerKit now exist. The complete “agent develops a career through paid work” system does not appear to exist.**
+
+Your existing WorkerKit concept already identifies the missing layer correctly: persistent work history, WorkRuns, capability acquisition, professional workflow, outcome learning, and eventually commercializing accumulated capability. 
+
+## The closest things I found
+
+| Project                   | What it has                                                                                       | Relevance to Moltwork                           | What it's missing                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------ |
+| **GBrain**                | Persistent brain, 34 skills, resolver, skill packs, recurring jobs, skill creation/evals          | Extremely high                                  | Jobs, money, reputation, work receipts     |
+| **Memento-Skills**        | Agent retrieves, executes, reflects on, rewrites and creates skills from experience               | **Closest research analogue to specialization** | Economic/work identity                     |
+| **Letta**                 | Stateful agents, persistent memory, shared blocks, skills, sleep-time agents, agent export/import | Best memory substrate                           | Professional workflow/economic loop        |
+| **gstack**                | 20+ specialist professional roles forming a software factory                                      | Best example of a profession pack               | General work + learning across professions |
+| **Superpowers**           | Mandatory brainstorm → plan → execute → test → review workflow                                    | Excellent base worker methodology               | Persistent career development              |
+| **Agent Zero**            | Skills + Profiles + Projects + persistent memory + learned tools                                  | Very close structurally                         | Work ledger and economic evidence          |
+| **Voyager**               | Automatic curriculum + verified skill library + iterative improvement                             | Foundational conceptual pattern                 | General professional work                  |
+| **SkillWeaver**           | Automatically discovers/hones reusable skills and turns them into APIs                            | Very relevant capability learning               | Worker lifecycle                           |
+| **Agent Workflow Memory** | Extracts reusable workflows from previous successful trajectories                                 | Directly relevant to WorkRun distillation       | Full agent substrate                       |
+| **OpenHands/OpenClaw**    | Conditional skills, project skills, gating, precedence                                            | Good implementation references                  | Career layer                               |
+
+The important discovery is that these systems mostly stop around here:
+
+```text
+GENERAL AGENT
+      ↓
+skills
+      ↓
+memory
+      ↓
+better agent
+```
+
+Moltwork continues:
+
+```text
+GENERAL AGENT
+      ↓
+WORKER KIT
+      ↓
+real job
+      ↓
+WorkRun
+      ↓
+artifact + evidence + outcome
+      ↓
+experience
+      ↓
+skill improvement
+      ↓
+specialisation
+      ↓
+better jobs
+      ↓
+revenue + reputation
+      ↓
+products / services / recurring work
+      ↺
+```
+
+That final loop is the interesting part.
+
+---
+
+# 1. GBrain is extremely relevant
+
+GBrain explicitly uses the philosophy **“thin harness, fat skills.”** Its 34 skills are routed through a resolver; skills contain workflows, activation conditions, quality bars, and can call deterministic code where LLM judgement should not be trusted. ([GitHub][1])
+
+More importantly, GBrain already has several things we should steal conceptually.
+
+Its operational set includes `daily-task-manager`, `cron-scheduler`, `reports`, `cross-modal-review`, `testing`, `skill-creator`, `skillify`, `skillpack-check`, and a durable subagent orchestrator. ([GitHub][1])
+
+Its `skillify` mechanism is especially relevant. A new skill isn't merely written; GBrain checks the skill file, scripts, unit/E2E tests, LLM evals, resolver registration, trigger behavior and overall reachability. It even detects routing gaps and unreachable skills. ([GitHub][2])
+
+This is almost exactly what Moltwork needs for:
+
+```text
+WorkRun
+   ↓
+lesson discovered
+   ↓
+candidate capability
+   ↓
+skillify
+   ↓
+eval
+   ↓
+job-local skill
+   ↓
+more successful WorkRuns
+   ↓
+promote
+   ↓
+permanent specialist capability
+```
+
+So I would **not reimplement GBrain's ideas badly**.
+
+I would either make GBrain a `Memory/SkillEvolutionProvider`, or adapt its strongest patterns into the WorkerKit abstraction.
+
+[GBrain GitHub](https://github.com/garrytan/gbrain?utm_source=chatgpt.com)
+
+---
+
+# 2. Memento-Skills is almost your specialization engine
+
+This was the most interesting find.
+
+Memento-Skills was published in March 2026 and describes a continuously learnable agent whose **skills themselves are persistent evolving memory**. A router selects a skill; the agent executes it; afterward it reflects on the result and either reinforces the skill or rewrites/improves it. New skills can also be generated. The underlying LLM weights never change. ([arXiv][3])
+
+Conceptually:
+
+```text
+READ
+retrieve best skill
+
+   ↓
+
+EXECUTE
+
+   ↓
+
+REFLECT
+what happened?
+
+   ↓
+
+WRITE
+update/create skill
+```
+
+They report improvement across successive learning rounds on GAIA and HLE. ([arXiv][3])
+
+This should probably become the intellectual model behind Moltwork specialization.
+
+But Moltwork has something Memento doesn't:
+
+```text
+MEMENTO
+
+experience
+→ skill
+
+
+MOLTWORK
+
+real paid work
+→ trace
+→ evidence
+→ acceptance/rejection
+→ economic result
+→ skill
+→ measured future performance
+→ reputation
+```
+
+That makes **work outcome the reward signal**.
+
+That distinction is substantial.
+
+[Memento-Skills GitHub](https://github.com/Memento-Teams/Memento-Skills?utm_source=chatgpt.com)
+
+---
+
+# 3. Letta fits underneath this beautifully
+
+I now think Letta is more useful here than I initially did.
+
+Letta currently describes itself specifically as a platform for **stateful agents that learn from experience**, with memory, skills, recurring schedules and persistent agents. ([Letta Docs][4])
+
+Its memory blocks are especially useful because they're persistent but attachable/detachable. That means a worker could have:
+
+```text
+CORE BLOCKS
+
+worker_identity
+professional_rules
+current_capabilities
+current_goals
+
+
+SPECIALIST BLOCKS
+
+researcher_memory
+accounting_memory
+reddit_research_memory
+customer_X_context
+```
+
+The same memory block can even be shared by multiple agents. ([Letta Docs][5])
+
+So becoming a researcher can literally mean:
+
+```text
+worker
+  +
+research-profession-pack
+  +
+research-memory-blocks
+  +
+research-skills
+  +
+research-tools
+  +
+research-evals
+```
+
+Letta also supports client skills whose descriptions and paths are surfaced to the agent, meaning external WorkerKit skills can be made visible without making Moltwork dependent on Letta's skill storage. ([Letta Docs][6])
+
+And this is particularly interesting for your idea of **selling complete agent configurations**: Letta already supports exporting/importing agents using its `.af` format. ([Letta Docs][7])
+
+So a Moltwork asset eventually could effectively be:
+
+```text
+SMB Market Researcher v12
+
+identity/profile
++ memory template
++ validated skills
++ tools
++ tool permissions
++ model routing
++ eval suite
++ examples
++ reputation evidence
+```
+
+Letta could instantiate the stateful agent while Moltwork owns the higher-level asset.
+
+---
+
+# 4. gstack proves “profession packs” work
+
+Garry Tan's gstack is another major validation.
+
+It turns one coding agent into explicit specialists such as CEO/product reviewer, engineering manager, designer, QA, release engineer and security reviewer. ([GitHub][8])
+
+That's basically:
+
+```text
+GENERAL CODING AGENT
+       +
+SOFTWARE COMPANY PACK
+       =
+SPECIALIST WORKER
+```
+
+The important lesson isn't the individual prompts.
+
+It's that **professional competence can be decomposed into cognitive roles/workflows rather than trying to construct a magical single persona**.
+
+A Moltwork researcher could similarly contain:
+
+```text
+Opportunity Analyst
+Research Planner
+Source Hunter
+Evidence Extractor
+Synthesis Analyst
+Adversarial Reviewer
+Report Editor
+Submission Agent
+```
+
+But externally this remains one worker.
+
+gstack has even added **domain skills** where the agent stores non-obvious lessons about particular websites and injects them next time it encounters that domain. That is practically job-earned procedural specialization. ([GitHub][9])
+
+[gstack GitHub](https://github.com/garrytan/gstack?utm_source=chatgpt.com)
+
+---
+
+# 5. Superpowers gives us the generic professional loop
+
+Superpowers is probably the best existing template for one particular part of WorkerKit.
+
+Its workflow is essentially:
+
+```text
+understand
+→ brainstorm
+→ plan
+→ isolate environment
+→ execute
+→ test
+→ review
+→ verify
+→ finish
+```
+
+It treats these as mandatory process skills rather than optional prompts. ([GitHub][10])
+
+That is precisely how I would define **Moltwork Core**.
+
+Not:
+
+> You are a useful worker. Work carefully.
+
+But explicit skills which govern stages of professional work.
+
+---
+
+# 6. Agent Zero is surprisingly close too
+
+Agent Zero now has a clean distinction between three concepts:
+
+| Agent Zero concept | Moltwork equivalent    |
+| ------------------ | ---------------------- |
+| **Skill**          | Procedure/capability   |
+| **Agent Profile**  | Profession/personality |
+| **Project**        | Job/workspace/context  |
+
+Its docs explicitly separate those three layers. ([GitHub][11])
+
+It also has persistent memory of previous solutions, code, facts and instructions, while exposing a general computer environment rather than requiring every capability to be a predefined tool. ([GitHub][12])
+
+That's extremely close structurally.
+
+The missing Moltwork layer is still:
+
+```text
+Opportunity
+Work contract
+WorkRun
+Submission
+Outcome
+Settlement
+Reputation
+Capability evidence
+Career progression
+```
+
+---
+
+# 7. There is now an obvious standard: Agent Skills
+
+I would **definitely not invent a Moltwork skill format**.
+
+Agent Skills is now a vendor-neutral specification built around `SKILL.md`. It supports instructions plus optional scripts, references and assets, with progressive disclosure so an agent only loads the full skill when needed. ([Agent Skills][13])
+
+Use it directly.
+
+A Moltwork specialization should therefore be a layer **above** Agent Skills.
+
+Something like:
+
+```text
+researcher.workerpack/
+│
+├── workerpack.yaml
+│
+├── skills/
+│   ├── research-plan/
+│   │   └── SKILL.md
+│   ├── source-verification/
+│   │   └── SKILL.md
+│   └── report-writing/
+│       └── SKILL.md
+│
+├── memory/
+│   └── schema.yaml
+│
+├── capabilities.yaml
+├── tools.yaml
+├── policies.yaml
+├── evals/
+└── bootstrap/
+```
+
+`SKILL.md` remains portable.
+
+`workerpack.yaml` is the Moltwork-specific thing.
+
+---
+
+# 8. And skills.sh solves much of skill distribution
+
+skills.sh has become quite large and supports installing skills into many different agent clients. Its CLI can install individual skills or complete packs, and the directory exposes install counts and security audit information. ([Skills][14])
+
+So Moltwork shouldn't try to build another generic skills.sh.
+
+Instead:
+
+```text
+skills.sh
+    =
+WHERE CAPABILITIES COME FROM
+
+
+Moltwork
+    =
+WHICH CAPABILITY SHOULD THIS WORKER USE?
+WHY?
+DID IT ACTUALLY HELP?
+HAS THIS WORKER PROVEN IT?
+SHOULD IT BECOME PERMANENT?
+WHAT IS THAT CAPABILITY WORTH?
+```
+
+That's a much stronger position.
+
+---
+
+# The actual standardized WorkerKit
+
+After looking through all these systems, I would make the base kit roughly this:
+
+| Worker capability          | Existing inspiration           | Moltwork |
+| -------------------------- | ------------------------------ | -------- |
+| `work-intake`              | Custom                         | **Own**  |
+| `opportunity-memory`       | LangGraph/GBrain ideas         | **Own**  |
+| `evaluate-opportunity`     | Custom                         | **Own**  |
+| `compile-task-contract`    | planning skills                | **Own**  |
+| `capability-gap-analysis`  | GBrain resolver/Memento router | **Own**  |
+| `find-capabilities`        | skills.sh                      | Adapter  |
+| `plan-work`                | Superpowers/gstack             | Adapt    |
+| `execute-work`             | Hermes/runtime                 | Adapter  |
+| `record-workrun`           | AWM pattern                    | **Own**  |
+| `verify-before-submit`     | Superpowers/gstack             | Adapt    |
+| `submit-work`              | Custom                         | **Own**  |
+| `outcome-ingestion`        | Custom                         | **Own**  |
+| `postmortem`               | gstack retro / ExpeL           | Adapt    |
+| `distill-experience`       | AWM/ExpeL                      | Adapt    |
+| `skill-candidate`          | GBrain Skillify/Memento        | Adapt    |
+| `skill-eval`               | GBrain/Anthropic skill creator | Adapt    |
+| `skill-promotion`          | Memento + custom evidence      | **Own**  |
+| `specialist-memory`        | Letta/GBrain/Zep               | Provider |
+| `worker-reputation`        | —                              | **Own**  |
+| `worker-economics`         | —                              | **Own**  |
+| `commercialize-capability` | —                              | **Own**  |
+
+That division of responsibility feels right.
+
+---
+
+# WorkRun should be the fundamental learning unit
+
+This is where AWM is especially useful.
+
+Agent Workflow Memory showed that agents can extract reusable task workflows from previous trajectories and selectively use them on future jobs; it reported substantial gains on WebArena and Mind2Web. ([arXiv][15])
+
+So don't do:
+
+```text
+conversation
+→ dump into vector DB
+```
+
+Do:
+
+```text
+WorkRun
+│
+├── task
+├── context
+├── plan
+├── actions
+├── capabilities_used
+├── outputs
+├── verifier_results
+├── submission
+├── external_feedback
+├── acceptance
+├── payment
+└── metrics
+        ↓
+ Experience Distiller
+        ↓
+┌────────────┬───────────────┬────────────────┐
+fact memory  workflow memory specialist skill
+```
+
+**Raw history remains immutable.**
+
+Derived memory can change.
+
+That separation will matter enormously later.
+
+---
+
+# Specialization should be evidence-driven
+
+I'd add one important concept that none of these projects quite gives you:
+
+### `CapabilityEvidence`
+
+Don't let an agent declare:
+
+> I am an expert Reddit researcher.
+
+Instead:
+
+```text
+reddit-research v4
+
+uses                 37
+verified runs        31
+successful runs      29
+accepted jobs        17
+rejected jobs         2
+
+earned            $84.20
+
+domains:
+SaaS                 12
+accounting            8
+trades                6
+consumer              5
+
+confidence          0.86
+```
+
+Then specialization emerges from real history.
+
+```text
+WORKER
+  ↓
+did research jobs
+  ↓
+proved research skill
+  ↓
+RESEARCHER
+  ↓
+did Reddit research repeatedly
+  ↓
+REDDIT RESEARCH SPECIALIST
+  ↓
+did accounting Reddit research
+  ↓
+ACCOUNTING MARKET-INTELLIGENCE SPECIALIST
+```
+
+That is far more interesting than assigning roles manually.
+
+---
+
+# Think of WorkerKit as the genome; Profession Packs are builds
+
+I think your earlier “World of Warcraft character” analogy is actually architecturally useful.
+
+```text
+                  WORKERKIT
+
+                     CORE
+                       │
+      ┌────────────────┼────────────────┐
+      │                │                │
+ Opportunity       WorkRun          Learning
+  handling         system            system
+      │                │                │
+      └────────────────┼────────────────┘
+                       │
+                  GENERAL WORKER
+                       │
+              experience selects
+                       │
+            ┌──────────┼──────────┐
+            ▼          ▼          ▼
+       Researcher   Builder    Operator
+            │
+            ▼
+     Market Researcher
+            │
+            ▼
+     Reddit Researcher
+            │
+            ▼
+ Accounting Pain-Point
+       Specialist
+```
+
+And crucially the progression doesn't have to be hard-coded.
+
+Work history builds the tree.
+
+---
+
+# The best parts to directly borrow
+
+The one concrete stack I would build toward is:
+
+```text
+Hermes / OpenClaw / Agent Zero / Letta
+          │
+          │ RuntimeAdapter
+          ▼
+┌─────────────────────────────────────┐
+│          MOLTWORK WORKERKIT         │
+│                                     │
+│ Work Ledger                         │
+│ WorkRun Recorder                    │
+│ Task Contract                       │
+│ Capability Broker                   │
+│ Skill Resolver                      │
+│ Verification Gate                   │
+│ Outcome Recorder                    │
+│ Experience Distiller                │
+│ Capability Evidence                 │
+│ Reputation / Economics              │
+└────────────────┬────────────────────┘
+                 │
+                 ▼
+          Specialization Engine
+                 │
+        ┌────────┴────────┐
+        │                 │
+   existing skill     learned skill
+        │                 │
+ skills.sh/GitHub   Memento/GBrain
+        │                 │
+        └────────┬────────┘
+                 ▼
+        Agent Skills / SKILL.md
+                 │
+                 ▼
+         Profession Packs
+```
+
+Memory is then pluggable:
+
+```text
+MemoryProvider
+
+SimpleSQLite
+Letta
+GBrain
+Zep
+Mem0
+```
+
+Execution is pluggable:
+
+```text
+RuntimeProvider
+
+Hermes
+OpenClaw
+Agent Zero
+Letta
+Codex
+Claude Code
+```
+
+Skills remain portable.
+
+Moltwork owns the **career**.
+
+---
+
+# The competitive conclusion
+
+There are now three well-developed ideas in the ecosystem:
+
+```text
+SKILL.md
+portable procedural capability
+
+GBrain / Letta
+persistent agent knowledge
+
+Memento / Voyager / SkillWeaver
+capability improvement from experience
+```
+
+What I did **not** find is a mature system that combines those with:
+
+```text
+job discovery
+→ job selection
+→ isolated WorkRun
+→ economic outcome
+→ verifiable work history
+→ competency evidence
+→ specialization
+→ marketplace reputation
+→ artifact/service monetization
+→ skill monetization
+→ full-worker monetization
+```
+
+That's Moltwork.
+
+And it changes what I'd build next.
+
+**Don't build “the ultimate agent harness.”**
+
+Build the smallest **WorkerKit protocol that can sit on top of existing harnesses**.
+
+Then initially use Hermes.
+
+The MVP goal becomes:
+
+```text
+Hermes
++ WorkerKit
++ SKILL.md ecosystem
++ WorkRuns
++ simple persistent memory
++ Skillify/Memento-style postmortem
+          ↓
+complete five real jobs
+          ↓
+show that Worker #1
+is measurably more capable
+after job #5 than job #1
+```
+
+If that works, you've proved the core of the entire Moltwork thesis.
+
+[1]: https://github.com/brookpklee/GBrain "GitHub - brookpklee/GBrain: Garry Tan Meta Skill https://x.com/garrytan/status/2053127519872614419 https://deepwiki.com/brookpklee/GBrain · GitHub"
+[2]: https://github.com/garrytan/gbrain/blob/master/skills/skillify/SKILL.md?utm_source=chatgpt.com "gbrain/skills/skillify/SKILL.md at master · garrytan/gbrain · GitHub"
+[3]: https://arxiv.org/abs/2603.18743?utm_source=chatgpt.com "Memento-Skills: Let Agents Design Agents"
+[4]: https://docs.letta.com/?utm_source=chatgpt.com "Letta Documentation | Letta Docs"
+[5]: https://docs.letta.com/tutorials/attaching-detaching-blocks/?utm_source=chatgpt.com "Attaching and detaching memory blocks | Letta Docs"
+[6]: https://docs.letta.com/api/resources/agents?utm_source=chatgpt.com "Agents | Letta Docs"
+[7]: https://docs.letta.com/api/typescript?utm_source=chatgpt.com "Letta TypeScript SDK | Letta Docs"
+[8]: https://github.com/garrytan/gstack?tblci=GiDrS5mTJ_XzTHax8DkDujjbJZYqOzPyW-KIkaNkp1yHjSDShVco2u-Gz5vr05YfMMvvSA&utm_source=chatgpt.com "GitHub - garrytan/gstack: Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Designer, Eng Manager, Release Manager, Doc Engineer, and QA · GitHub"
+[9]: https://github.com/garrytan/gstack/blob/main/docs/domain-skills.md?utm_source=chatgpt.com "gstack/docs/domain-skills.md at main · garrytan/gstack · GitHub"
+[10]: https://github.com/v587labs/obra-superpowers?utm_source=chatgpt.com "GitHub - v587labs/obra-superpowers: An agentic skills framework & software development methodology that works. · GitHub"
+[11]: https://github.com/agent0ai/agent-zero/blob/main/docs/guides/skills.md?utm_source=chatgpt.com "agent-zero/docs/guides/skills.md at main · agent0ai/agent-zero · GitHub"
+[12]: https://github.com/xcv-rbg/agent-zero?utm_source=chatgpt.com "GitHub - xcv-rbg/agent-zero: Agent Zero - A personal, organic agentic framework · GitHub"
+[13]: https://agentskills.io/specification?utm_source=chatgpt.com "Specification - Agent Skills"
+[14]: https://www.skills.sh/docs/cli?utm_source=chatgpt.com "CLI | Skills Documentation"
+[15]: https://arxiv.org/abs/2409.07429?utm_source=chatgpt.com "Agent Workflow Memory"

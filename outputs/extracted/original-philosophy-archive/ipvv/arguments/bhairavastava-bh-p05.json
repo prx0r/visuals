@@ -1,0 +1,30 @@
+{
+ "id": "pt:argument:bhairavastava:bh-p05",
+ "work_id": "bhairavastava",
+ "passage_id": "bhairavastava:bh-p05",
+ "title": "bhairavastava — bh-p05",
+ "kind": "entailment",
+ "question": "Thus — great darkness already dispelled by rays of awareness: death, Yama, ender, karma-ghosts met with salutation alone, and never do I fear.",
+ "issue": "Derived from L2 text (no argmap). Thus — great darkness already dispelled by rays of awareness: death, Yama, ender, karma-ghosts met with salutation alone, and never do I fear.",
+ "premises": [
+  {
+   "text": "ittham upoḍhabhavanmayasaṃviddīdhitidāritabhūritamisraḥ mṛtyuyamāntakakarmapiśācaiḥ nātha ! namo'stu na jātu bibhemi",
+   "label": "Sanskrit source",
+   "passage_id": "bhairavastava:bh-p05"
+  }
+ ],
+ "inference": "derived from L2 prose (no argmap reconstruction)",
+ "conclusion": {
+  "text": "Thus — great darkness already dispelled by rays of awareness: death, Yama, ender, karma-ghosts met with salutation alone, and never do I fear.",
+  "passage_id": "bhairavastava:bh-p05"
+ },
+ "unresolved": "",
+ "argument_text": "Thus — great darkness already dispelled by rays of awareness: death, Yama, ender, karma-ghosts met with salutation alone, and never do I fear.",
+ "tension_id": null,
+ "strength": "MACHINE_DRAFT",
+ "strength_basis": "derived from L2 prose (no argmap reconstruction); premises = Sanskrit source; no human review",
+ "status": "MACHINE_DRAFT",
+ "source_passage": "bhairavastava:bh-p05",
+ "sanskrit": "ittham upoḍhabhavanmayasaṃviddīdhitidāritabhūritamisraḥ mṛtyuyamāntakakarmapiśācaiḥ nātha ! namo'stu na jātu bibhemi",
+ "license": "CC BY-NC-SA 4.0"
+}

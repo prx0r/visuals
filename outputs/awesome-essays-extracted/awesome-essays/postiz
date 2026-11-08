@@ -1,0 +1,885 @@
+The current zip includes **the full native Postiz dashboard and its analytics UI**, because it runs the complete Postiz application rather than just my Python wrapper. Upstream explicitly says the self-hosted version currently has the same feature set as hosted, including scheduling/calendar, analytics, team management and media library. ([GitHub][1])
+
+But I would **not describe the zip as “all analytics done.”** There are three distinct layers:
+
+```text
+L1  Postiz dashboard              INCLUDED
+    human-facing operational UI
+
+L2  Postiz analytics APIs         INCLUDED
+    programmatic channel + post metrics
+
+L3  Our media-network intelligence dashboard
+    NOT BUILT YET
+```
+
+And **L3 is ultimately the interesting part for your system**.
+
+## What you already get visually
+
+Once the Docker stack is running at your Postiz URL, this isn't a headless service. You get the Postiz frontend with its channels, calendar/scheduling, media management and analytics screens. Postiz's frontend and backend are part of the same upstream application deployed by the image in the zip. ([GitHub][2])
+
+So conceptually:
+
+```text
+POSTIZ
+
+Dashboard
+│
+├── Calendar
+│   ├── scheduled posts
+│   ├── drafts
+│   └── published posts
+│
+├── Channels
+│   ├── YouTube A
+│   ├── TikTok A
+│   ├── Instagram A
+│   ├── YouTube B
+│   └── ...
+│
+├── Media library
+│
+├── Analytics
+│   ├── channel/platform analytics
+│   └── individual post analytics
+│
+├── Team
+│
+└── Developer/API
+```
+
+Postiz's public API exposes the same fundamental analytics primitives programmatically. There is a platform/integration analytics endpoint and a separate post analytics endpoint. Both return metric series and percentage changes, with actual metrics depending on what the social platform exposes. ([Postiz Documentation][3])
+
+### Channel analytics
+
+For each of your 15 integrations:
+
+```http
+GET /public/v1/analytics/{integration_id}?date=30
+```
+
+can return structures such as:
+
+```json
+[
+  {
+    "label": "Followers",
+    "data": [
+      {"total": "1250", "date": "2026-08-01"},
+      {"total": "1280", "date": "2026-08-02"}
+    ],
+    "percentageChange": 2.4
+  }
+]
+```
+
+The important detail is that the path uses the **actual Postiz integration ID**, not `"youtube"` or a display name. ([Postiz Documentation][4])
+
+### Post analytics
+
+For an individual published object:
+
+```http
+GET /public/v1/analytics/post/{post_id}?date=30
+```
+
+Postiz exposes the analogous post-level series—likes, comments, shares, impressions and whatever else that provider supports. ([Postiz Documentation][3])
+
+---
+
+# What my zip adds
+
+The zip has a small client already wired to both:
+
+```bash
+python3 tools/postiz_client.py \
+  analytics-integration INTEGRATION_ID \
+  --days 30
+```
+
+and:
+
+```bash
+python3 tools/postiz_client.py \
+  analytics-post POST_ID \
+  --days 30
+```
+
+It also contains:
+
+```text
+tools/snapshot_analytics.py
+```
+
+which loops over all configured brands/accounts:
+
+```text
+prehistoric
+ ├─ youtube
+ ├─ instagram
+ └─ tiktok
+
+roboblades
+ ├─ youtube
+ ├─ instagram
+ └─ tiktok
+
+...
+```
+
+and appends their raw account analytics to:
+
+```text
+data/analytics.jsonl
+```
+
+in a structure roughly like:
+
+```json
+{
+  "observed_at": "...",
+  "brand": "prehistoric",
+  "platform": "youtube",
+  "integration_id": "...",
+  "ok": true,
+  "raw": [...]
+}
+```
+
+I deliberately preserved the raw payload instead of trying to pretend that an Instagram `view`, TikTok `view`, and YouTube `view` mean precisely the same thing.
+
+That decision becomes important once we start doing statistical comparisons.
+
+---
+
+# What it does NOT yet do
+
+This is the gap I'd fix before calling it the finished analytics system.
+
+The snapshot script currently snapshots **account/integration analytics only**.
+
+It does **not yet automatically**:
+
+```text
+discover every published post
+        ↓
+retrieve analytics for each post
+        ↓
+snapshot each repeatedly
+        ↓
+join them to OUR content ID
+        ↓
+calculate comparable derived metrics
+        ↓
+display everything in our own dashboard
+```
+
+The pieces are available. The orchestration isn't built.
+
+Postiz's API can list posts over a date range and returns the integration and release URL for each one, so we can programmatically discover published content. ([Postiz Documentation][5])
+
+The proper collector becomes:
+
+```text
+every hour
+   │
+   ├── enumerate 15 integrations
+   │
+   ├── snapshot account metrics
+   │
+   ├── enumerate published posts
+   │
+   ├── fetch each post's metrics
+   │
+   ├── append observations
+   │
+   └── update derived statistics
+```
+
+---
+
+# There's also an important Postiz edge case
+
+Sometimes a platform successfully publishes something but Postiz doesn't receive/retain a usable platform release ID.
+
+Their CLI documentation explicitly has commands for this situation:
+
+```text
+posts:missing
+posts:connect
+```
+
+because post analytics require that published object to be associated with the real platform object. ([GitHub][6])
+
+So our ingestion system should track:
+
+```text
+content_id
+postiz_post_id
+platform_release_id
+release_url
+analytics_status
+```
+
+and surface:
+
+```text
+⚠ YouTube publication has no release ID
+```
+
+rather than silently losing analytics.
+
+---
+
+# What TikTok currently gives us
+
+Postiz's current TikTok provider source is revealing.
+
+At account level, it currently requests TikTok's user statistics and can expose:
+
+```text
+Followers
+Following
+Total Likes
+Videos
+```
+
+It also fetches recent videos and aggregates:
+
+```text
+Views
+Recent Likes
+Recent Comments
+Recent Shares
+```
+
+from TikTok's available video APIs. ([GitHub][7])
+
+But look at the architecture:
+
+```text
+TikTok API
+     │
+     ↓
+Postiz provider
+     │
+     ↓
+fairly coarse analytics
+```
+
+It is **not TikTok Studio replicated inside Postiz**.
+
+We cannot expect things like every proprietary recommendation-system metric to magically appear through a third-party public API.
+
+---
+
+# Instagram is similar
+
+Instagram provides more useful account insights, but Postiz has had real analytics bugs here.
+
+For example, a 2026 Postiz issue found several Instagram account metrics being displayed at exactly twice their real values because the same total was being inserted twice for graph rendering. The issue was subsequently closed with a fix. ([GitHub][8])
+
+That is actually a perfect example of why I want this architecture:
+
+```text
+SOCIAL API
+    ↓
+Postiz
+    ↓
+RAW SNAPSHOT              ← preserve
+    ↓
+our normalization
+    ↓
+our derived metrics
+```
+
+rather than:
+
+```text
+Postiz big number
+    ↓
+trust forever
+```
+
+Postiz is good infrastructure.
+
+It should not be the epistemic authority for our historical analytics database.
+
+---
+
+# YouTube is where I'd eventually bypass Postiz for analytics
+
+This is probably the biggest architectural change I'd make.
+
+Postiz can absolutely give you YouTube analytics through its common abstraction.
+
+But **YouTube is likely to become the richest analytical source for long-form content**, so eventually I'd query YouTube's native Analytics API directly in addition to Postiz.
+
+Then the architecture becomes:
+
+```text
+                         POSTING
+                            │
+                            ↓
+                         Postiz
+               ┌────────────┼────────────┐
+               ↓            ↓            ↓
+              YT           IG           TT
+
+
+                       ANALYTICS
+                            │
+          ┌─────────────────┼────────────────┐
+          │                 │                │
+     YouTube native      Postiz IG       Postiz TT
+          │                 │                │
+          └─────────────────┼────────────────┘
+                            ↓
+                     OUR ANALYTICS DB
+```
+
+Postiz remains the unified **distribution** layer.
+
+We don't have to force it to be the unified **measurement** layer.
+
+That's a very useful distinction.
+
+---
+
+# What our actual dashboard should look like
+
+I would not merely clone Postiz Analytics.
+
+Postiz answers:
+
+> How is this social account/post performing?
+
+Our dashboard should answer:
+
+> **What should the content engine make next?**
+
+That is a substantially different product.
+
+I'd give you five top-level views.
+
+## 1. Network overview
+
+```text
+NETWORK                                  LAST 24H
+
+Total views                              1.84M
+Followers gained                         +4,821
+Posts published                          41
+Failures                                 2
+Videos >100k                             5
+
+BRAND              YT       TT       IG       TOTAL
+
+Prehistoric       182k     611k     204k       997k
+RoboBlades         73k     291k     128k       492k
+Ocean              61k     143k      81k       285k
+Space              18k      29k      13k        60k
+Other               2k       3k       1k         6k
+```
+
+This doesn't exist in the custom starter yet.
+
+---
+
+# 2. Brand dashboard
+
+Click **Prehistoric**:
+
+```text
+PREHISTORIC
+
+Followers
+YT       12,440       +184 / 7d
+TT       44,182     +1,822 / 7d
+IG       18,921       +612 / 7d
+
+
+TOP CONTENT
+
+                         YT      TT      IG       TOTAL
+
+Raptor swarm            83k    622k    177k       882k
+T-Rex night vision      91k    214k     87k       392k
+Spinosaurus hunt        32k    118k     59k       209k
+```
+
+Now we're comparing the **idea**, not just platform posts.
+
+That's why every variant needs the same:
+
+```text
+content_id
+```
+
+---
+
+# 3. Content intelligence
+
+This is where this system starts becoming genuinely powerful.
+
+Imagine every generated video carries structured metadata:
+
+```json
+{
+  "content_id": "prehistoric-0042",
+
+  "subject": "velociraptor",
+  "hook": "you-have-been-lied-to",
+  "story_type": "predator-hunt",
+  "setting": "night",
+  "duration": 43.2,
+
+  "mechanisms": [
+    "pov-hunt",
+    "size-reveal",
+    "swarm"
+  ],
+
+  "asset_ids": [
+    "raptor-v3",
+    "forest-night-v2"
+  ]
+}
+```
+
+Then analytics stops being:
+
+```text
+Video A got 300k views.
+```
+
+It becomes:
+
+```text
+HOOK PERFORMANCE
+
+"you've been lied to"       median 141k
+"what if..."                 median 63k
+"scientists discovered..."   median 48k
+
+
+SUBJECT PERFORMANCE
+
+Raptor                       median 212k
+T-Rex                        median 173k
+Spinosaurus                  median 104k
+
+
+MECHANISMS
+
+POV hunt                     +34% completion
+Size reveal                  +21%
+Swarm                        +46%
+Static exposition            -28%
+```
+
+**Postiz doesn't know any of this.**
+
+We do.
+
+That's the moat.
+
+---
+
+# 4. Cross-platform adaptation
+
+We should be able to distinguish:
+
+```text
+CONTENT QUALITY
+```
+
+from:
+
+```text
+PLATFORM FIT
+```
+
+Example:
+
+```text
+RAPTOR SWARM
+
+                   views     relative performance
+
+YouTube             82k          1.7× channel norm
+TikTok             611k          4.1× channel norm
+Instagram          139k          2.2× channel norm
+```
+
+That tells us:
+
+> strong concept everywhere, especially TikTok.
+
+Versus:
+
+```text
+DINOSAUR TIMELINE
+
+YouTube            210k          3.9×
+TikTok              18k          0.3×
+Instagram           31k          0.5×
+```
+
+That means:
+
+> good content; wrong short-form packaging.
+
+That's far more useful than a generic engagement dashboard.
+
+---
+
+# 5. Publishing operations
+
+This dashboard should also replace staring at logs.
+
+Something like:
+
+```text
+PUBLICATION QUEUE
+
+✓ prehistoric-043
+  YT       published
+  TT       published
+  IG       published
+
+△ roboblades-018
+  YT       published
+  TT       retrying
+  IG       published
+
+✗ ocean-011
+  YT       failed
+  reason: media validation
+
+○ prehistoric-044
+  scheduled 09:00
+```
+
+This matters because multi-platform publishing **will fail partially**.
+
+Meta and TikTok occasionally alter API behavior, and recent Postiz issues illustrate exactly these kinds of platform-specific integration failures. ([GitHub][9])
+
+We need partial failure to be a first-class state:
+
+```text
+content publish ≠ boolean
+```
+
+It is:
+
+```text
+publication
+    ├── YouTube: success
+    ├── Instagram: success
+    └── TikTok: failed/retry
+```
+
+---
+
+# The database I'd put underneath it
+
+The current JSONL is intentionally primitive.
+
+I'd promote it to SQLite initially because you said you want **zero cost**.
+
+No need for another hosted database.
+
+```text
+analytics.sqlite
+```
+
+with:
+
+```text
+brands
+──────
+id
+slug
+name
+
+
+accounts
+────────
+id
+brand_id
+platform
+postiz_integration_id
+external_account_id
+
+
+content
+───────
+id
+brand_id
+title
+subject
+hook
+story_type
+duration
+created_at
+
+
+variants
+────────
+id
+content_id
+platform
+asset_path
+duration
+aspect_ratio
+
+
+publications
+────────────
+id
+content_id
+variant_id
+account_id
+postiz_post_id
+external_post_id
+release_url
+status
+published_at
+
+
+metric_observations
+───────────────────
+id
+publication_id
+account_id
+
+metric
+value
+source
+observed_at
+
+raw_json
+
+
+experiments
+───────────
+content_id
+variable
+value
+```
+
+Still basically free.
+
+---
+
+# And snapshot analytics at fixed ages
+
+This is more important than simply requesting "last 30 days."
+
+For every publication:
+
+```text
+T+15m
+T+1h
+T+3h
+T+6h
+T+12h
+T+24h
+T+48h
+T+7d
+T+30d
+```
+
+store a snapshot.
+
+Now we can derive:
+
+```text
+velocity_1h
+velocity_6h
+velocity_24h
+
+growth_1h_to_6h
+growth_6h_to_24h
+
+likes_per_1k_views
+comments_per_1k_views
+shares_per_1k_views
+followers_per_1k_views
+```
+
+And compare things fairly:
+
+```text
+TikTok raptor at +6 hours
+```
+
+against:
+
+```text
+TikTok T-Rex at +6 hours
+```
+
+rather than comparing one seven-day-old video against one 20-minute-old video.
+
+That distinction is huge.
+
+---
+
+# I would also store BOTH raw and normalized metrics
+
+Never:
+
+```text
+views = 92137
+```
+
+only.
+
+Instead:
+
+```text
+source              tiktok
+native_metric       view_count
+native_value        92137
+
+normalized_metric   views
+normalized_value    92137
+
+observed_at         ...
+```
+
+Because later we might decide:
+
+```text
+TikTok views ≠ YouTube views
+```
+
+for some analytical model.
+
+Then we can change normalization without rewriting history.
+
+---
+
+# There is one immediate fix I'd make to the zip
+
+At the moment:
+
+```text
+tools/snapshot_analytics.py
+```
+
+only captures **integration/account analytics**.
+
+I'd extend it to:
+
+```text
+collector
+│
+├── accounts
+│   └── channel metric snapshots
+│
+├── posts
+│   └── individual post snapshots
+│
+├── publication reconciliation
+│   └── missing release IDs
+│
+└── SQLite
+```
+
+and add a proper local web dashboard.
+
+For zero-cost customization, I'd keep that dashboard extremely boring technically:
+
+```text
+Python/FastAPI
+      +
+SQLite
+      +
+React/Vite
+```
+
+or even:
+
+```text
+FastAPI + lightweight HTML/JS
+```
+
+initially.
+
+No paid analytics SaaS. No BigQuery. No ClickHouse. No Supabase required.
+
+---
+
+# So the precise status is
+
+```text
+                                         CURRENT ZIP
+
+Full Postiz web UI                            YES
+Postiz calendar                               YES
+Channel connection UI                        YES
+Media library                                YES
+Scheduled publishing                         YES
+Drafts                                       YES
+YouTube/TikTok/Instagram adapters             YES*
+Postiz native analytics screen               YES
+Per-channel analytics API                    YES
+Per-post analytics API                       YES
+Raw account analytics snapshots              YES
+
+Automatic post-level snapshots               NO
+Our SQLite analytics warehouse               NO
+5-brand unified dashboard                    NO
+Cross-platform content aggregation           NO
+Content-ID → 3 platform variants              PARTIAL
+24h/48h cohort comparisons                    NO
+Hook/subject/mechanism analysis               NO
+Publication health dashboard                 NO
+Native YouTube deep analytics ingestion       NO
+Recommendation/feedback engine               NO
+```
+
+*subject to the social platforms' own app permissions/approval requirements.
+
+So **you absolutely have a usable dashboard right now**, because Postiz itself provides one. ([GitHub][2])
+
+But I would consider that the **operations dashboard**, not the final intelligence layer.
+
+The architecture I think is actually worth building is:
+
+```text
+                         YOUR CONTROL CENTER
+                                  │
+                ┌─────────────────┴─────────────────┐
+                │                                   │
+             CREATE                              LEARN
+                │                                   │
+         content engine                        analytics DB
+                │                                   ↑
+                ↓                                   │
+              Postiz ───────────────────────────────┤
+                │                                   │
+        ┌───────┼────────┐                          │
+        ↓       ↓        ↓                          │
+       YT      TikTok    IG ───── platform data ────┘
+```
+
+**Postiz = hands.**
+
+**Our dashboard/database = memory + brain.**
+
+That is the separation I'd preserve.
+
+[1]: https://github.com/gitroomhq/postiz-app/blob/main/README.md?utm_source=chatgpt.com "postiz-app/README.md at main · gitroomhq/postiz-app · GitHub"
+[2]: https://github.com/gitroomhq/postiz-app?utm_source=chatgpt.com "GitHub - gitroomhq/postiz-app: 📨 The ultimate agentic social media scheduling tool 🤖 · GitHub"
+[3]: https://docs.postiz.com/public-api/analytics/post?utm_source=chatgpt.com "Post Analytics - Postiz Documentation"
+[4]: https://docs.postiz.com/public-api/analytics/platform?utm_source=chatgpt.com "Platform Analytics - Postiz Documentation"
+[5]: https://docs.postiz.com/public-api/posts/list?utm_source=chatgpt.com "List Posts - Postiz Documentation"
+[6]: https://github.com/gitroomhq/postiz-agent/blob/main/SKILL.md?utm_source=chatgpt.com "postiz-agent/SKILL.md at main · gitroomhq/postiz-agent · GitHub"
+[7]: https://github.com/gitroomhq/postiz-app/blob/main/libraries/nestjs-libraries/src/integrations/social/tiktok.provider.ts?utm_source=chatgpt.com "postiz-app/libraries/nestjs-libraries/src/integrations/social/tiktok.provider.ts at main · gitroomhq/postiz-app · GitHub"
+[8]: https://github.com/gitroomhq/postiz-app/issues/1436?utm_source=chatgpt.com "Instagram analytics — likes/views/comments/shares/saves/replies shown at 2× real value · Issue #1436 · gitroomhq/postiz-app · GitHub"
+[9]: https://github.com/gitroomhq/postiz-app/issues/1338?utm_source=chatgpt.com "TikTok UPLOAD mode: privacy_level silently dropped, posts stuck in QUEUE forever · Issue #1338 · gitroomhq/postiz-app · GitHub"

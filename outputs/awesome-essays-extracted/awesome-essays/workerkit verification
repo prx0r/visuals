@@ -1,0 +1,1025 @@
+Yes. The architecture is viable, but there are **different levels of “provable.”** You do not need a TEE for WorkerKit V1. You need one only when you want to make the stronger claim:
+
+> “This exact WorkerKit runtime, with this exact agent configuration and policy, actually produced this run without the operator secretly modifying the environment.”
+
+That distinction matters.
+
+The standards landscape actually fits WorkerKit extremely well.
+
+## WorkerKit should treat every run like a software supply-chain build
+
+Instead of:
+
+```text
+agent starts
+→ does stuff
+→ creates answer
+→ submits
+```
+
+make the canonical object:
+
+```text
+WorkerRun
+│
+├── WorkerManifest
+│   ├── workerkit version
+│   ├── agent config hash
+│   ├── skill/process versions
+│   ├── source repo + commit
+│   ├── model routing policy
+│   ├── tool permissions
+│   ├── verifier policy
+│   └── execution environment
+│
+├── Inputs
+│   └── content-addressed hashes
+│
+├── RunEvents
+│   ├── model calls
+│   ├── tool calls
+│   ├── costs
+│   ├── timings
+│   ├── decisions
+│   ├── intermediate artifacts
+│   └── retries/repairs
+│
+├── Outputs
+│   └── content-addressed hashes
+│
+├── Verification
+│   ├── tests
+│   ├── critic/verifier results
+│   └── submission checks
+│
+└── Outcome
+    ├── submitted
+    ├── accepted/rejected
+    ├── reward
+    └── marketplace receipt
+```
+
+Then cryptographically bind that entire thing together.
+
+There are already standards intended for almost exactly this. The current in-toto Attestation Framework v1.2 describes authenticated metadata bound to artifact digests, with signed envelopes, and supports arbitrary predicate types. ([GitHub][1])
+
+Even better, in-toto already has a **Runtime Trace predicate** specifically intended to capture process execution, network activity and file accesses for an operation. ([GitHub][2])
+
+That means WorkerKit doesn't need to invent its cryptographic vocabulary from scratch.
+
+---
+
+# The assurance ladder I'd use
+
+### Level 1 — Cryptographically immutable WorkerRun
+
+Do this **now**.
+
+Every artifact gets SHA-256 content addressing:
+
+```text
+agent_config_hash
+skill_bundle_hash
+prompt_hash
+input_hash
+output_hash
+submission_hash
+verifier_hash
+```
+
+Every event becomes append-only:
+
+```text
+event_1
+event_2
+event_3
+...
+```
+
+and chain them:
+
+```text
+H0 = run_manifest_hash
+
+H1 = H(H0 || event1)
+H2 = H(H1 || event2)
+H3 = H(H2 || event3)
+...
+```
+
+or build a Merkle tree if you want efficient proofs of individual events.
+
+At completion:
+
+```text
+WorkerRunRoot =
+Merkle(
+  manifest,
+  inputs,
+  events,
+  costs,
+  outputs,
+  verification,
+  outcome
+)
+```
+
+Sign the root.
+
+Now if someone changes:
+
+```text
+$0.34 → $0.14
+
+or
+
+Kimi → Claude
+
+or
+
+submission A → submission B
+```
+
+the proof breaks.
+
+This gives you:
+
+> **tamper evidence + artifact identity + lineage.**
+
+It does **not** yet prove the logger was honest when it created the record.
+
+That's an important distinction.
+
+---
+
+# Level 2 — Standard signed attestations
+
+Use **in-toto + DSSE**, rather than inventing `moltwork-proof.json` crypto.
+
+in-toto's model is:
+
+```text
+subject
+    ↓
+digest
+
+predicate
+    ↓
+claims about it
+
+signed envelope
+```
+
+Its Link predicate already models a supply-chain step as:
+
+```text
+materials / inputs
+command
+environment
+byproducts
+products / outputs
+```
+
+([GitHub][3])
+
+SLSA Provenance similarly records:
+
+```text
+build definition
+external parameters
+dependencies
+
+builder identity
+invocation ID
+start/end times
+byproducts
+```
+
+([SLSA][4])
+
+Replace the word **build** with **agent run** and it's nearly WorkerKit.
+
+I would therefore create a custom:
+
+```text
+https://moltwork.com/attestation/worker-run/v1
+```
+
+in-toto predicate.
+
+Something approximately like:
+
+```text
+subject:
+    final_output digest
+
+predicate:
+    worker_manifest_digest
+
+    run_id
+
+    agent_config_digest
+    skills_digest
+    source_revision
+
+    execution_policy_digest
+
+    models_used[]
+    tools_used[]
+
+    input_artifacts[]
+    intermediate_artifacts[]
+
+    actual_cost_usd
+    token_usage
+    duration_ms
+
+    verification_attestations[]
+
+    submission:
+        destination
+        artifact_digest
+
+    outcome:
+        status
+        reward
+        evidence_digest
+```
+
+Then sign that using DSSE.
+
+---
+
+# Level 3 — Public transparency log
+
+This solves another problem:
+
+> "Okay, you signed this WorkerRun today, but did you fabricate it six months after claiming you won the bounty?"
+
+Put the signed attestation into a transparency log.
+
+**Sigstore/Rekor is a very credible existing option.**
+
+Sigstore's model is:
+
+```text
+artifact
+→ signed
+→ identity associated
+→ entry recorded in append-only Rekor log
+```
+
+Rekor uses a verifiable Merkle data structure and permits third parties to verify inclusion proofs and log consistency. ([Sigstore][5])
+
+So:
+
+```text
+WorkerRun #8391
+         ↓
+DSSE signed attestation
+         ↓
+Rekor
+         ↓
+public inclusion proof
+```
+
+Now a Moltwork buyer can check:
+
+```text
+✓ artifact unchanged
+✓ signed by expected entity
+✓ signature valid
+✓ proof was logged
+✓ log remained append-only
+```
+
+Sigstore's keyless model can also bind signatures to OIDC/workflow identities instead of you managing permanent signing keys. ([Sigstore][6])
+
+### Blockchain?
+
+You **do not need blockchain for this**.
+
+Rekor already provides the cryptographically auditable append-only log property you'd mainly be reaching for.
+
+You could later periodically anchor:
+
+```text
+Moltwork transparency root
+        ↓
+Ethereum/Base transaction
+```
+
+perhaps once per hour/day.
+
+Then you get an additional external timestamp/anchor:
+
+```text
+10,000 WorkerRuns
+        ↓
+one Merkle root
+        ↓
+one chain transaction
+```
+
+Cheap and useful.
+
+But putting every model/tool call on-chain would be pointless.
+
+---
+
+# Level 4 — Independent verification
+
+This is where it gets really valuable.
+
+Suppose:
+
+```text
+ResearchWorker v12
+
+Run #921
+
+cost: $0.31
+time: 8m43s
+submission: sha256:abc...
+result: accepted
+reward: $20
+```
+
+You shouldn't merely have the **worker itself** claiming:
+
+```text
+I did good.
+```
+
+Have an independent verifier produce another signed attestation:
+
+```text
+VerifierAttestation
+
+subject:
+    sha256:abc...
+
+checked:
+    schema_valid
+    required_sources_present
+    factuality_pass
+    bounty_constraints_pass
+
+policy:
+    sha256:verification-policy-v7
+
+result:
+    PASS
+```
+
+Conveniently, in-toto added a **Simple Verification Result** predicate for exactly this general pattern: a trusted verifier attests that an artifact was evaluated against identified policies and asserts verified properties. ([GitHub][7])
+
+So:
+
+```text
+WorkerRun attestation
+         │
+         ├── output digest
+         │
+         └── verification digest
+                    │
+                    ▼
+             Verifier attestation
+```
+
+You now have **separation of producer and verifier**.
+
+This matches the QDW philosophy extremely well.
+
+---
+
+# The difficult part: proving that it actually won
+
+This is where most supposed "cryptographic agent reputation" systems become bullshit.
+
+Your WorkerKit can cryptographically prove:
+
+```text
+this output was generated
+this run was recorded
+this verifier checked it
+these artifacts have not changed
+```
+
+But if MoltJobs says:
+
+```text
+YOU WON $20
+```
+
+WorkerKit can't magically cryptographically prove that external fact unless the external party participates somehow.
+
+Best case:
+
+```text
+marketplace signs receipt
+
+marketplace:
+   bounty=123
+   solver=worker456
+   submission_digest=abc
+   accepted=true
+   reward=$20
+   transaction=xyz
+
+signature:
+   marketplace key
+```
+
+That is perfect.
+
+Call it:
+
+```text
+OutcomeAttestation
+```
+
+---
+
+# But there's a fascinating fallback: TLSNotary
+
+This is very relevant to Oracle/Moltwork.
+
+For sites that **don't issue signed receipts**, TLSNotary is designed to make information received from HTTPS services cryptographically provable to another party.
+
+It adds a verifier/notary to the TLS interaction and allows later selective disclosure of authenticated pieces of the response. ([TLSNotary][8])
+
+For example WorkerKit could potentially prove:
+
+```text
+HTTPS response originated from gigs.example
+
+{
+   "submission_id": "381",
+   "status": "winner",
+   "reward": 20
+}
+```
+
+without revealing:
+
+```text
+authorization cookie
+API key
+other private account data
+```
+
+TLSNotary explicitly supports selective disclosure. ([TLSNotary][8])
+
+That makes this architecture possible:
+
+```text
+                    EXTERNAL MARKET
+                         │
+                         │ HTTPS
+                         ▼
+                     TLSNotary
+                         │
+                    provenance proof
+                         │
+                         ▼
+WorkerRun ──────► OutcomeAttestation
+```
+
+There are caveats. TLS itself does not normally create third-party-verifiable server responses, which is exactly why TLSNotary needs a verifier/notary. ([TLSNotary][9])
+
+And the current TLSNotary docs say TLS 1.2 is supported while TLS 1.3 remains on the roadmap, so I would treat this as an **optional advanced adapter**, not make WorkerKit depend on it. ([TLSNotary][10])
+
+Still: conceptually this is extremely useful for Moltwork.
+
+---
+
+# Now: do you need a TEE?
+
+For normal WorkerKit:
+
+**No.**
+
+For **Verified WorkerKit**:
+
+**Yes, potentially.**
+
+Without a TEE, someone controlling the machine can theoretically modify WorkerKit:
+
+```text
+actual run:
+
+cheap-model
+→ failed
+→ manually edited answer
+→ claim premium-model did it
+```
+
+and then create a perfectly valid signed log describing the lie.
+
+Cryptographic signatures prove:
+
+> whoever controlled this key signed these claims.
+
+They do not prove:
+
+> those claims accurately describe what happened.
+
+---
+
+# TEE changes that
+
+Run the critical WorkerKit execution layer inside a measured confidential environment:
+
+```text
+TEE
+│
+├── exact WorkerKit binary
+├── exact agent config
+├── exact routing policy
+├── exact verifier
+│
+└── ephemeral RUN SIGNING KEY
+```
+
+The hardware creates remote attestation proving the measurements of the environment.
+
+AWS Nitro Enclaves, for example, creates a signed attestation document containing measurements unique to the enclave. External parties can validate those measurements against expected values. ([AWS Documentation][11])
+
+So you can do:
+
+```text
+WorkerKit image
+sha256:AAAA
+
+Agent config
+sha256:BBBB
+
+Worker policy
+sha256:CCCC
+        │
+        ▼
+      TEE
+        │
+        ├── generates run key K
+        │
+        └── hardware attestation says:
+              K belongs to environment
+              AAAA + BBBB + CCCC
+```
+
+Then every WorkerRun is signed with `K`.
+
+Buyer verifies:
+
+```text
+1. hardware attestation valid
+
+2. measured runtime =
+   approved WorkerKit version
+
+3. measured config =
+   listed Worker asset version
+
+4. WorkerRun signature =
+   attested run key
+
+5. event/Merkle root valid
+
+6. output hash =
+   sold artifact hash
+```
+
+Now you've made a considerably stronger statement:
+
+> **This run came from this measured WorkerKit configuration.**
+
+That's legit remote attestation.
+
+---
+
+# Don't hard-code AWS though
+
+There is now a fairly mature vendor-neutral architecture around this.
+
+IETF's RATS architecture defines:
+
+```text
+Attester
+    ↓ evidence
+
+Verifier
+    ↓ attestation result
+
+Relying Party
+```
+
+([RFC Editor][12])
+
+And the Entity Attestation Token standard, RFC 9711, provides a standard JWT/CWT representation for attested claims. ([RFC Editor][13])
+
+Even more interesting for you is **Confidential Containers + Trustee**.
+
+Current Confidential Containers support attestation across things including:
+
+```text
+AMD SEV-SNP
+Intel TDX
+Intel SGX
+ARM CCA
+IBM Secure Execution
+NVIDIA GPUs
+```
+
+([Confidential Containers][14])
+
+Trustee gives you:
+
+```text
+Attestation Agent
+      ↓
+evidence
+
+Attestation Service
+      ↓
+policy evaluation
+
+KBS
+      ↓
+secret release
+```
+
+([Confidential Containers][15])
+
+And critically, its policy/config data can itself be measured into the attested environment. ([Confidential Containers][16])
+
+That is almost perfect for:
+
+```text
+lease ResearchWorker-v12
+       │
+       ▼
+Moltwork KBS
+       │
+       │ only release encrypted
+       │ worker config if
+       │ attestation matches
+       ▼
+verified WorkerKit TEE
+```
+
+Which leads directly to another huge feature.
+
+---
+
+# You could cryptographically lease private agent configs
+
+Imagine I'm selling:
+
+```text
+EliteRedditResearcher v19
+```
+
+I don't want to give you:
+
+```text
+system prompt
+memory
+skills
+research procedure
+routing config
+secret techniques
+```
+
+because then you copy it.
+
+Instead:
+
+```text
+encrypted Worker asset
+        │
+        ▼
+your confidential WorkerKit VM
+        │
+        ├── remote attestation
+        │
+        ▼
+Moltwork verifies:
+   approved WorkerKit image?
+   correct policy?
+   correct lease?
+   correct measured environment?
+        │
+       YES
+        │
+        ▼
+release decryption key
+inside TEE
+```
+
+The human renting it never sees the plaintext config.
+
+Yet they can verify:
+
+> **I invoked exactly Worker v19.**
+
+And the owner knows:
+
+> **my proprietary worker wasn't simply handed to them.**
+
+That is an actually defensible reason to use confidential computing in Moltwork.
+
+---
+
+# What a TEE still DOES NOT prove
+
+This is critical.
+
+Suppose the attested worker calls:
+
+```text
+OpenAI
+Anthropic
+OpenRouter
+Reddit
+Gigs.sh
+```
+
+The TEE can prove:
+
+```text
+WorkerKit made this request
+WorkerKit received these bytes
+```
+
+depending on how you capture them.
+
+It cannot magically prove:
+
+```text
+OpenAI actually ran model X internally
+```
+
+unless OpenAI signs that claim.
+
+Likewise:
+
+```text
+provider charged $0.0142
+```
+
+should ideally come from a provider-signed receipt or authenticated API evidence.
+
+Therefore evidence quality should be explicit:
+
+```text
+SELF_REPORTED
+SIGNED_BY_WORKER
+TEE_ATTESTED
+TLS_NOTARIZED
+PROVIDER_SIGNED
+INDEPENDENTLY_VERIFIED
+ONCHAIN_SETTLED
+```
+
+Never turn them all into:
+
+```text
+VERIFIED=true
+```
+
+That would destroy the whole point.
+
+---
+
+# And zk proofs?
+
+I would **not try to zk-prove the whole agent**.
+
+A zkVM is useful when you have:
+
+```text
+program
++
+committed deterministic inputs
+=
+deterministic output
+```
+
+Then:
+
+```text
+proof(program executed correctly)
+```
+
+is meaningful.
+
+An autonomous worker involves:
+
+```text
+LLM generation
+web APIs
+network
+tool calls
+timing
+external state
+randomness
+marketplaces
+```
+
+A zk proof can't tell you whether an external fact was true unless that fact enters through some trusted/verified oracle mechanism.
+
+So doing:
+
+```text
+Hermes
+→ browser
+→ models
+→ Reddit
+→ GitHub
+→ APIs
+→ 40 minute task
+```
+
+inside a zkVM would be massively complicated and still wouldn't magically solve the external trust problem.
+
+Use ZK selectively later:
+
+```text
+prove cost calculation correct
+prove score calculation correct
+prove payout > X without disclosing amount
+prove reputation threshold
+prove secret dataset satisfied condition
+```
+
+not:
+
+```text
+zk-prove GPT did research
+```
+
+---
+
+# I think the Moltwork proof architecture becomes this
+
+```text
+                       WORKER ASSET
+                            │
+                 ┌──────────┴──────────┐
+                 │                     │
+            config digest          code digest
+                 │                     │
+                 └──────────┬──────────┘
+                            ▼
+                      WORKER MANIFEST
+                            │
+                            ▼
+                     ┌─────────────┐
+                     │ WORKER RUN  │
+                     └──────┬──────┘
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+          ▼                 ▼                 ▼
+       INPUTS            EVENTS            OUTPUTS
+       hashes            chained            hashes
+                          /Merkle
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            ▼
+                      RUN MERKLE ROOT
+                            │
+                            ▼
+                   in-toto attestation
+                            │
+                     DSSE signature
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+      Sigstore          Verifier         TEE evidence
+       Rekor          attestation         optional
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            ▼
+                     VERIFIED RUN
+                            │
+                            ▼
+                       SUBMISSION
+                            │
+                            ▼
+               external outcome evidence
+                  │                    │
+             signed receipt       TLSNotary
+                  │                    │
+                  └─────────┬──────────┘
+                            ▼
+                   VERIFIED OUTCOME
+                            │
+                            ▼
+                     ASSET PROFILE
+                            │
+               empirical success/cost
+                            │
+                            ▼
+                        MOLTWORK
+```
+
+And **that** is much more powerful than merely "agent reputation."
+
+It's:
+
+> **reputation derived from cryptographically linked evidence of actual economic work.**
+
+A Worker asset might show:
+
+```text
+ResearchWorker v12
+
+identity
+sha256:8d73...
+
+verified runs                 184
+externally verified outcomes   71
+
+accepted submissions           43
+rejected submissions           28
+
+earned                       $912
+execution cost               $104
+
+mean cost/run               $0.57
+cost/$ earned               $0.114
+
+P(acceptance)                 60.4%
+
+proof coverage:
+  signed provenance           100%
+  independent verifier         94%
+  external outcome             81%
+  TEE-attested                 32%
+
+source:
+  worker manifest            [verify]
+  run history                [verify]
+  transparency log           [verify]
+```
+
+That becomes a **machine-checkable balance sheet for an agent capability**.
+
+## What I would actually build
+
+Do **not** start with TEE.
+
+Build this progression:
+
+1. **WorkerRun Bundle** — hashes, immutable event stream, exact configs/costs/artifacts.
+2. **in-toto attestations + DSSE** — use an existing standard.
+3. **Sigstore/Rekor publication** — tamper-resistant public provenance.
+4. **Independent verifier attestations.**
+5. **Outcome receipts** from marketplaces; TLSNotary adapters where particularly valuable.
+6. **TEE Verified Worker** as an optional premium execution mode.
+7. Eventually confidential leasing of proprietary Worker assets.
+8. ZK only for small private/deterministic claims.
+
+That gives WorkerKit an extremely clear identity:
+
+> **WorkerKit is an economic runtime for agents that turns arbitrary agent work into measurable, reproducible, attestable economic runs.**
+
+And the object that Moltwork sells isn't merely a prompt or an agent.
+
+It becomes:
+
+```text
+Worker =
+configuration
++
+process
++
+execution policy
++
+verification policy
++
+economic history
++
+cryptographic provenance
+```
+
+That is considerably more defensible than a marketplace full of "AI agents" with five-star ratings.
+
+[1]: https://github.com/in-toto/attestation/blob/main/spec/README.md?utm_source=chatgpt.com "attestation/spec/README.md at main · in-toto/attestation · GitHub"
+[2]: https://github.com/in-toto/attestation/blob/main/spec/predicates/runtime-trace.md?utm_source=chatgpt.com "attestation/spec/predicates/runtime-trace.md at main · in-toto/attestation · GitHub"
+[3]: https://github.com/in-toto/attestation/blob/main/spec/predicates/link.md?utm_source=chatgpt.com "attestation/spec/predicates/link.md at main · in-toto/attestation · GitHub"
+[4]: https://slsa.dev/spec/v1.2/provenance?utm_source=chatgpt.com "SLSA • Provenance"
+[5]: https://docs.sigstore.dev/logging/overview/?utm_source=chatgpt.com "Rekor - Sigstore"
+[6]: https://docs.sigstore.dev/?utm_source=chatgpt.com "Overview - Sigstore"
+[7]: https://github.com/in-toto/attestation/blob/main/spec/predicates/svr.md?utm_source=chatgpt.com "attestation/spec/predicates/svr.md at main · in-toto/attestation · GitHub"
+[8]: https://tlsnotary.org/docs/protocol/verification/?utm_source=chatgpt.com "Verification | TLSNotary"
+[9]: https://tlsnotary.org/docs/faq/?utm_source=chatgpt.com "Frequently Asked Questions | TLSNotary"
+[10]: https://tlsnotary.org/docs/intro/?utm_source=chatgpt.com "Introduction | TLSNotary"
+[11]: https://docs.aws.amazon.com/enclaves/latest/user/set-up-attestation.html?utm_source=chatgpt.com "Cryptographic attestation - AWS Nitro Enclaves"
+[12]: https://www.rfc-editor.org/info/rfc9334/?utm_source=chatgpt.com "RFC 9334: Remote ATtestation procedureS (RATS) Architecture | RFC Editor"
+[13]: https://www.rfc-editor.org/rfc/rfc9711.html?utm_source=chatgpt.com "RFC 9711: The Entity Attestation Token (EAT)"
+[14]: https://confidentialcontainers.org/docs/overview/?utm_source=chatgpt.com "Overview | Confidential Containers"
+[15]: https://confidentialcontainers.org/docs/attestation/?utm_source=chatgpt.com "Attestation with Trustee | Confidential Containers"
+[16]: https://confidentialcontainers.org/docs/attestation/policies/?utm_source=chatgpt.com "Policies | Confidential Containers"

@@ -1,0 +1,127 @@
+Cogym discovers the best way to seed another model
+
+This is the killer experiment.
+
+Take a task dataset and two models:
+
+TEACHER
+produces seed
+
+STUDENT
+actually performs task
+
+Try seeds:
+
+A — nothing
+B — normal advice
+C — full verbose plan
+D — concise plan
+E — hypotheses
+F — decision tree
+G — dependency graph
+H — uncertainty frontier
+I — negative constraints
+J — graph + priorities + unknowns
+K — evolved Cogym format
+
+Then look at the student's actual trajectory.
+
+Not:
+
+“Did you find this plan useful?”
+
+Measure:
+
+task success
+number of actions
+wrong turns
+tool calls
+retrieval calls
+tokens
+time
+repeated work
+
+That is an unusually clean science problem.
+
+There is an especially cool hypothesis
+
+Maybe the best seed isn't the answer.
+
+Maybe it's:
+
+{
+  "search_space": [...],
+  "highest_information_gain_action": "...",
+  "dead_ends": [...],
+  "unknowns": [...]
+}
+
+Because an LLM is already good at generating actions.
+
+What it often lacks is orientation.
+
+So you don't tell it:
+
+do 1
+then 2
+then 3
+then 4
+
+You tell it:
+
+HERE IS THE SHAPE OF THE PROBLEM.
+
+Important region: A
+Likely dead region: B
+Critical uncertainty: C
+Dependency: D → E
+Best discriminator: F
+
+And let the model reason from there.
+
+That's much more interesting.
+
+Then HydraDB becomes useful later
+
+Every task teaches us something:
+
+Task phenotype
+      │
+      ├── kernel representation used
+      ├── model receiving kernel
+      ├── actions taken
+      ├── failure modes
+      └── result
+
+Over thousands of Cogym runs:
+
+coding/debugging
+→ uncertainty frontier works best
+
+research
+→ evidence graph works best
+
+multi-hop information tasks
+→ dependency DAG works best
+
+simple tasks
+→ NO SEED best
+
+planning
+→ constraints + branch points best
+
+Now the miner learns:
+
+task
+ ↓
+classify phenotype
+ ↓
+retrieve successful kernel patterns
+ ↓
+generate optimal seed
+
+That would justify HydraDB.
+
+Not because “graph databases are cool,” but because you're accumulating an empirical graph of:
+
+task structure → context representation → downstream behavior.

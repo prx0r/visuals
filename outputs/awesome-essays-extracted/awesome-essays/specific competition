@@ -1,0 +1,44 @@
+TaskRabbit is all over this — but only for simple tasks. Here's the gap:
+TaskRabbit:
+- Furniture assembly, cleaning, moving
+- Tasker sets price, platform takes 20%
+- No certification required
+- No equipment needed
+- You don't need insurance to hang a shelf
+UK Trades (your market):
+- EV installers, plumbers, electricians
+- MUST be certified (NICEIC, NAPIT, OZEV)
+- MUST have insurance
+- MUST have specialized equipment
+- Complexity: permits, building regs, insurance validation
+That's the gap. TaskRabbit handles the easy stuff. The hard stuff (certified trades) is still manual, phone-based, and unreliable.
+Why the language play is sick:
+1. UK trade workforce is multilingual:
+- Polish electricians (big population)
+- Romanian plumbers
+- Hindi-speaking HVAC engineers
+- They all answer phones in their language but can't write quotes in English
+2. The voice agent becomes the universal front desk:
+- Customer calls in English → agent speaks English
+- Supplier answers in Polish → agent translates
+- Quote goes out in English
+- Booking confirmed in both languages
+3. This is actually what WhatsApp did for business communication in developing markets — you're doing it for UK trades
+The real comp map:
+Competitor	What they do
+TaskRabbit	Simple tasks
+Checkatrade	Directory
+MyBuilder	Lead gen
+Bark	Lead gen
+Uber	Logistics
+You	All of it
+The missing piece you haven't mentioned:
+Supplier onboarding is the bottleneck. Getting Jim to:
+1. Upload his certifications
+2. Set his availability
+3. Connect his calendar
+4. Set his pricing
+5. Accept the voice agent answering his phone
+That's the hard part. The tech is easy. The adoption is hard.
+Your moat isn't the software — it's the supplier relationships. Once Jim's data is in your system, he's locked in. His customers call your agent. His availability is in your calendar. His quotes come from your system.
+That's the real play.

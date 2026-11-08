@@ -1,0 +1,1949 @@
+Yes. After looking across the current open-source landscape, I would **not merely “improve the Postiz analytics page.”** I would turn the fork into a **Media OS / Mission Control** whose distribution engine happens to be Postiz.
+
+The strongest projects I found each contain a piece of what we want:
+
+* Postiz — distribution/scheduling/integrations.
+* BrightBean Studio — arguably the best open-source reference for analytics + inbox + agent-accessible social operations.
+* TryPost — brand profiles + MCP + agent-first social control.
+* Social Stats — analytics/AI insights/unified inbox ideas.
+* Mission Control — the best reference for the actual **agent fleet control-plane**.
+* Tutti — exceptional inspiration for individual-agent live inspection.
+* Langfuse — traces/evals/prompts/cost/experiments.
+* LangGraph — durable, resumable, human-gated agent workflows.
+
+The result should look less like Buffer and more like **Bloomberg Terminal + factory control room for an autonomous media company**.
+
+---
+
+# 1. The most useful GitHub projects
+
+## A. BrightBean Studio — steal heavily from this
+
+`https://github.com/brightbeanxyz/brightbean-studio`
+
+This is probably the most important discovery.
+
+BrightBean already combines:
+
+* multi-workspace social management
+* publishing
+* approval workflows
+* native platform APIs
+* channel + post analytics
+* unified inbox
+* media library
+* content queues
+* REST API
+* **MCP server specifically for agents**
+* idempotent posting
+* account-scoped permissions
+
+Its analytics include account and post-level performance, KPI cards, 7/30/90-day trends, views, engagement, follower growth, reach and watch time. ([GitHub][1])
+
+Even more useful: its MCP server exposes tools such as:
+
+```text
+list_accounts
+create_draft
+schedule_post
+schedule_draft
+get_post
+cancel_post
+search_media
+get_media
+upload_media
+get_account_analytics
+get_post_analytics
+```
+
+with workspace-scoped permissions. ([GitHub][1])
+
+**This is almost exactly the agent interface I was proposing independently.**
+
+### What to steal
+
+Not necessarily code; steal the model:
+
+```text
+Agent
+  ↓
+MCP
+  ↓
+Permission layer
+  ↓
+Media control plane
+  ↓
+Postiz/platforms
+```
+
+Also steal:
+
+* publish audit log
+* approval workflows
+* unified inbox
+* per-account rate-limit monitoring
+* media variants
+* API idempotency
+* workspace-scoped API keys
+* agent-safe read/write permissions
+
+This should materially influence our build.
+
+---
+
+# 2. TryPost
+
+`https://github.com/trypostit/trypost`
+
+TryPost has a particularly good conceptual layer that Postiz lacks: **Brand Profiles**.
+
+A brand contains tone, language, voice, colors and other characteristics, and its AI generation uses that context automatically. It also has REST + MCP as first-class interfaces and workspace isolation for separate brands. ([GitHub][2])
+
+That maps perfectly to:
+
+```text
+PREHISTORIC
+
+identity
+tone
+audience
+visual grammar
+allowed claims
+platform accounts
+assets
+characters
+successful hooks
+prompt library
+content rules
+```
+
+versus:
+
+```text
+ROBObLADES
+
+completely different brand-memory object
+```
+
+### Steal
+
+The abstraction:
+
+```text
+Brand
+  ├── Identity
+  ├── Voice
+  ├── Media
+  ├── Accounts
+  ├── Content
+  ├── Analytics
+  └── AI context
+```
+
+Don't make `YouTube channel` the primary object.
+
+**Brand is primary.**
+
+Social accounts are distribution endpoints belonging to it.
+
+---
+
+# 3. Social Stats
+
+`https://github.com/cbsshekhawat18-lab/social-stats-social-media-manager`
+
+Early-stage, but unusually aligned with where we're going.
+
+It already combines:
+
+* cross-platform analytics
+* reports
+* performance alerts
+* unified inbox
+* media studio
+* AI assistant
+* brand voice
+* trend/anomaly detection
+* forecasts
+* automated summaries
+* AI reply suggestions
+
+Its stack uses React, Recharts, PostgreSQL, task workers and WebSockets, so its dashboard architecture is also useful to inspect. ([GitHub][3])
+
+### Interesting feature to steal
+
+Not:
+
+> AI writes captions.
+
+Much more interesting:
+
+> **AI watches the analytics and explains what changed.**
+
+For example:
+
+```text
+⚠ Prehistoric TikTok 24h velocity ↓ 37%
+
+Likely contributors:
+• last 4 openings exceed 2.7 sec before subject reveal
+• dinosaur-vs-human size hooks historically outperform exposition 2.4×
+• completion rate fell from 71% → 54%
+
+Suggested experiment:
+restore immediate visual reveal for next 3 uploads.
+```
+
+That is an actual useful agent.
+
+---
+
+# 4. BrightBean is arguably a Postiz competitor
+
+This deserves emphasis.
+
+BrightBean currently supports direct official integrations for Instagram, TikTok, YouTube and numerous others, while also exposing comments, DMs and insights where supported. ([GitHub][1])
+
+It includes:
+
+```text
+Org
+ ↓
+Workspace
+ ↓
+Accounts
+ ↓
+Content
+ ↓
+Publication
+ ↓
+Analytics
+```
+
+plus approval and inbox systems.
+
+I wouldn't suddenly abandon Postiz, because Postiz has far more maturity/community and a strong distribution engine. Postiz currently has roughly 30k GitHub stars and thousands of forks, uses Next.js/NestJS/Prisma/Postgres/Temporal, and has been explicitly leaning into agentic usage. ([GitHub][4])
+
+But I would now use **BrightBean as a second reference implementation** whenever we design a dashboard feature.
+
+---
+
+# 5. Mission Control — the agent side is almost exactly our desired UI
+
+`https://github.com/builderz-labs/mission-control`
+
+This is the biggest discovery on the agent-control side.
+
+Mission Control currently exposes **32 panels** across agents, tasks, skills, logs, tokens, memory, security, cron, alerts, webhooks and pipelines. It supports real-time WebSocket/SSE updates, recurring jobs, quality gates, cost tracking, agent communication and adapters for several agent frameworks. ([GitHub][5])
+
+Its central task board is:
+
+```text
+INBOX
+  ↓
+ASSIGNED
+  ↓
+IN PROGRESS
+  ↓
+REVIEW
+  ↓
+QUALITY REVIEW
+  ↓
+DONE
+```
+
+It also supports agent trust, security auditing, cost tracking, memory visualization and approval gates. ([GitHub][5])
+
+This is exactly the paradigm I'd merge with Postiz.
+
+Except our stages are media-production stages.
+
+---
+
+# The resulting interface
+
+Imagine opening:
+
+```text
+/control
+```
+
+and seeing:
+
+```text
+┌────────────────────────────────────────────────────────────────────┐
+│ MEDIA COMMAND                                      LIVE ●         │
+├────────────────────────────────────────────────────────────────────┤
+│ NETWORK TODAY                                                     │
+│                                                                   │
+│  1.84M views    +4,821 followers    41 posts    $2.83 AI cost    │
+│                                                                   │
+│  Prehistoric     997k   ↑23%                                    │
+│  RoboBlades      492k   ↑81%                                    │
+│  Ocean           285k    ↓7%                                    │
+├────────────────────────────────────────────────────────────────────┤
+│ AGENTS                                                            │
+│                                                                   │
+│ Researcher       ● working     T-Rex feathers research            │
+│ Story Agent      ● working     RoboBlades EP018                    │
+│ Render Agent     ● working     prehistoric-044                     │
+│ QA Agent         ◐ review      prehistoric-043                     │
+│ Publisher        ● idle                                              │
+│ Analytics        ● working     24h cohort                           │
+│ Strategist       ● working     next-content ranking                │
+├────────────────────────────────────────────────────────────────────┤
+│ CONTENT FACTORY                                                   │
+│                                                                   │
+│ IDEA → RESEARCH → SCRIPT → ASSETS → RENDER → QA → PUBLISH → LEARN│
+│  12       4          3       2        2      1       6        81 │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+That's what I'd build.
+
+---
+
+# 6. Tutti — steal Agent Focus Mode
+
+`https://github.com/nutthouse/tutti`
+
+Tutti's dashboard has an excellent idea: click any agent and enter an **Agent Focus Mode** showing:
+
+* live terminal output
+* token usage
+* current git diff
+* context health
+* prompt input
+* current state
+
+all in one screen. ([GitHub][6])
+
+Our equivalent:
+
+```text
+AGENT: PREHISTORIC RESEARCHER
+
+STATUS          working
+TASK            research velociraptor pack behaviour
+MODEL           ...
+TOKENS          31,204
+COST            $0.041
+RUNTIME         03:41
+
+CURRENT ACTION
+Searching source database...
+
+──────────────────────────
+
+EVIDENCE FOUND
+
+✓ Source A
+✓ Source B
+△ Source C weak
+
+──────────────────────────
+
+OUTPUTS
+
+research.json
+sources.json
+claims.json
+
+──────────────────────────
+
+[ Pause ] [ Send instruction ] [ Cancel ]
+```
+
+Huge UX improvement.
+
+---
+
+# 7. Langfuse — don't reinvent AI observability
+
+`https://github.com/langfuse/langfuse`
+
+Langfuse already solves:
+
+* LLM traces
+* token/cost measurement
+* prompt management
+* prompt versioning
+* evaluations
+* datasets
+* experiments
+* debugging agent chains
+
+and supports self-hosting. ([GitHub][7])
+
+So I would **not build our own detailed LLM trace viewer**.
+
+Embed/link Langfuse data.
+
+Our dashboard should say:
+
+```text
+Script Agent
+
+Run #1821
+cost            $0.018
+tokens           18,441
+duration          14.3s
+evaluation        0.92
+prompt            script-v17
+
+[inspect trace]
+```
+
+Then deep inspection opens Langfuse.
+
+This avoids months of pointless work.
+
+---
+
+# 8. LangGraph — orchestration primitive
+
+`https://github.com/langchain-ai/langgraph`
+
+LangGraph's strongest capabilities for us are durable execution, state persistence and human-in-the-loop interruption/resumption. ([GitHub][8])
+
+This allows:
+
+```text
+Research
+   ↓
+Claims extraction
+   ↓
+Script
+   ↓
+Verifier
+   ↓
+   ◇ quality > threshold?
+  / \
+yes  no
+ |    ↓
+ |   revise
+ |
+ ↓
+Render
+ ↓
+Visual QA
+ ↓
+Human approval? ──optional
+ ↓
+Publish
+```
+
+If the machine crashes at Render:
+
+```text
+resume at Render
+```
+
+instead of regenerating everything.
+
+However, **Postiz already uses Temporal**, which is also a durable workflow system. ([GitHub][4])
+
+So I would avoid two competing orchestrators initially.
+
+---
+
+# Architecture decision: use Temporal first
+
+Because our Postiz deployment already has:
+
+```text
+Temporal
+```
+
+running, make **Temporal the durable production workflow backbone**.
+
+Then agent implementations can be anything:
+
+```text
+Python agents
+Claude/Codex CLI
+LangGraph agent
+OpenAI API
+local model
+external script
+```
+
+but all report back through one agent adapter.
+
+Eventually LangGraph could run *inside a Temporal activity* when an individual agent needs complex stateful reasoning.
+
+Thus:
+
+```text
+Temporal
+    │
+    ├── media workflow
+    │
+    ├── publishing workflow
+    │
+    └── agent workflow
+             │
+             ↓
+          LangGraph
+          optional
+```
+
+Not:
+
+```text
+Temporal fights LangGraph fights Celery fights BullMQ
+```
+
+---
+
+# THE ACTUAL SYSTEM
+
+I'd name the custom subsystem something like:
+
+```text
+CONTROL
+```
+
+and keep it logically separate from upstream Postiz.
+
+Repository:
+
+```text
+postiz-fork/
+│
+├── upstream Postiz
+│
+├── apps/
+│   ├── frontend/
+│   └── backend/
+│
+├── packages/
+│
+└── control/
+    ├── analytics/
+    ├── agents/
+    ├── content/
+    ├── experiments/
+    ├── intelligence/
+    └── adapters/
+```
+
+Even better, in DB:
+
+```text
+postiz tables
+```
+
+remain Postiz-owned.
+
+And we create:
+
+```text
+control_*
+```
+
+tables.
+
+Never rewrite Postiz internals unnecessarily.
+
+That makes upstream merging vastly easier.
+
+---
+
+# Canonical hierarchy
+
+This is foundational:
+
+```text
+NETWORK
+│
+├── BRAND
+│   │
+│   ├── SOCIAL ACCOUNTS
+│   │
+│   ├── CONTENT
+│   │   │
+│   │   ├── VARIANTS
+│   │   └── PUBLICATIONS
+│   │
+│   ├── ASSETS
+│   ├── EXPERIMENTS
+│   ├── KNOWLEDGE
+│   └── AGENTS
+│
+└── SHARED RESOURCES
+```
+
+Not:
+
+```text
+social account
+→ post
+```
+
+That's too primitive.
+
+---
+
+# Data model
+
+## Brands
+
+```text
+control_brand
+
+id
+slug
+name
+description
+
+voice_json
+visual_identity_json
+audience_json
+strategy_json
+
+created_at
+```
+
+---
+
+## Content
+
+One **idea/story** independent of platform:
+
+```text
+control_content
+
+id
+brand_id
+
+concept
+subject
+title
+
+content_type
+story_type
+hook_type
+
+status
+
+created_at
+```
+
+Example:
+
+```text
+content_id = prehistoric_raptor_042
+```
+
+---
+
+# Variants
+
+```text
+control_variant
+
+id
+content_id
+
+platform
+format
+
+duration
+aspect_ratio
+
+asset_uri
+
+caption
+title
+
+metadata_json
+```
+
+Thus:
+
+```text
+raptor_042
+│
+├── youtube-long
+├── youtube-short
+├── instagram-reel
+└── tiktok
+```
+
+---
+
+# Publications
+
+```text
+control_publication
+
+id
+
+variant_id
+social_account_id
+
+postiz_post_id
+external_post_id
+release_url
+
+state
+
+scheduled_at
+published_at
+```
+
+---
+
+# Metrics
+
+Use an **append-only observation model**:
+
+```text
+control_metric_observation
+
+id
+
+publication_id
+account_id
+
+source
+native_metric
+native_value
+
+normalized_metric
+normalized_value
+
+observed_at
+
+raw_json
+```
+
+Do not continuously overwrite:
+
+```text
+views = 500k
+```
+
+Keep history.
+
+---
+
+# Content features
+
+This is where our system becomes different from every social scheduler I found.
+
+```text
+control_content_feature
+
+content_id
+
+feature_type
+feature_value
+
+confidence
+source
+```
+
+Examples:
+
+```text
+subject       velociraptor
+hook          misconception
+structure     hunt
+setting       night
+visual        POV
+visual        size-comparison
+emotion       tension
+opening       immediate-action
+duration      43
+voice         documentary
+```
+
+Now analytics becomes machine-readable research.
+
+---
+
+# Analytics engine
+
+I'd implement **four levels**.
+
+## L0 — raw
+
+Exactly what APIs report.
+
+```text
+YouTube.viewCount
+TikTok.view_count
+Instagram.reach
+```
+
+---
+
+## L1 — normalized
+
+```text
+views
+reach
+likes
+comments
+shares
+followers_gained
+watch_time
+completion
+```
+
+with platform semantics preserved.
+
+---
+
+## L2 — derived
+
+```text
+views_per_hour
+views_1h
+views_6h
+views_24h
+
+share_rate
+comment_rate
+follow_conversion
+
+relative_performance
+```
+
+The most useful derived metric might be:
+
+```text
+relative_performance =
+video_views_at_age /
+brand_platform_median_views_at_same_age
+```
+
+Then:
+
+```text
+4.3×
+```
+
+actually means something across different-sized channels.
+
+---
+
+# L3 — intelligence
+
+Now aggregate over content features.
+
+```text
+subject = raptor
+
+N                 14
+median_perf       2.81×
+confidence        high
+```
+
+or:
+
+```text
+hook = question
+
+N                 21
+median_perf       0.71×
+```
+
+Eventually regression/Bayesian models can separate confounders.
+
+---
+
+# Dashboard pages
+
+I would eventually have **12 primary views**.
+
+## `/control`
+
+Mission Control.
+
+```text
+revenue/views/follows
+agents
+pipeline
+alerts
+publishing failures
+top content
+experiments
+```
+
+---
+
+## `/control/network`
+
+All brands simultaneously.
+
+Heatmap:
+
+```text
+                 YouTube    TikTok    IG
+
+Prehistoric       ↑↑          ↑↑↑      ↑
+RoboBlades         ↑          ↑↑       ↑↑
+Ocean              ↓           ↑       →
+```
+
+---
+
+## `/control/brand/:id`
+
+Complete brand cockpit.
+
+```text
+identity
+accounts
+growth
+content
+top ideas
+audience
+agent activity
+experiments
+```
+
+---
+
+# `/control/content`
+
+Content factory Kanban:
+
+```text
+IDEAS
+ ↓
+RESEARCH
+ ↓
+SCRIPT
+ ↓
+ASSETS
+ ↓
+RENDERING
+ ↓
+QA
+ ↓
+READY
+ ↓
+SCHEDULED
+ ↓
+PUBLISHED
+ ↓
+LEARNING
+```
+
+This is Mission Control's task board translated into media production.
+
+---
+
+# `/control/content/:id`
+
+This page should be absurdly detailed.
+
+```text
+RAPTOR HUNT #42
+
+CONCEPT
+metadata
+
+SOURCE MATERIAL
+research
+citations
+
+SCRIPT
+versions
+
+ASSETS
+characters
+environments
+audio
+
+RENDERS
+long
+short
+
+PUBLICATIONS
+
+YouTube
+TikTok
+Instagram
+
+ANALYTICS
+
+1h   6h   24h   72h
+
+EXPERIMENTS
+
+hook = misconception
+opening = immediate reveal
+
+AGENT HISTORY
+
+researcher
+writer
+critic
+renderer
+publisher
+analytics
+```
+
+One complete lineage.
+
+---
+
+# `/control/analytics`
+
+This is the serious analytics area.
+
+Tabs:
+
+```text
+Overview
+Content
+Platforms
+Brands
+Features
+Cohorts
+Funnels
+Experiments
+Anomalies
+Forecasts
+```
+
+---
+
+# `/control/experiments`
+
+Every hypothesis becomes explicit.
+
+Example:
+
+```text
+HYPOTHESIS
+
+Showing the creature in the first 0.7 seconds
+increases 6h relative performance.
+
+CONTROL
+late reveal
+
+VARIANT
+immediate reveal
+
+N = 18
+
+RESULT
++31%
+
+confidence = moderate
+```
+
+This stops AI agents from cargo-culting one viral video.
+
+---
+
+# `/control/agents`
+
+This is the Mission Control layer.
+
+Grid:
+
+```text
+RESEARCH
+SCRIPT
+VERIFY
+ASSET
+RENDER
+QA
+PUBLISH
+ANALYTICS
+STRATEGY
+COMMUNITY
+```
+
+Each shows:
+
+```text
+status
+task
+runtime
+cost
+last heartbeat
+queue
+failures
+```
+
+---
+
+# `/control/agents/:id`
+
+Tutti-style focus screen.
+
+```text
+Agent
+model
+status
+
+current goal
+current action
+
+live logs
+tool calls
+outputs
+
+tokens
+cost
+context
+
+evaluations
+
+memory accessed
+
+[send message]
+[pause]
+[cancel]
+[retry]
+```
+
+---
+
+# `/control/inbox`
+
+Borrow heavily from BrightBean.
+
+Everything:
+
+```text
+YouTube comments
+Instagram comments
+TikTok comments
+DMs where API permits
+mentions
+reviews
+```
+
+Agents can:
+
+```text
+classify
+summarize
+suggest reply
+identify FAQs
+detect story ideas
+```
+
+I would **not automatically let an AI blast replies everywhere initially**.
+
+Instead:
+
+```text
+AI suggestion
+→ approval
+→ send
+```
+
+until its performance is proven.
+
+---
+
+# `/control/assets`
+
+Your reusable content universe.
+
+For Prehistoric:
+
+```text
+T-Rex
+Raptor
+Triceratops
+Forest
+Desert
+Meteor
+Skull
+Fossil
+etc.
+```
+
+Every asset tracks:
+
+```text
+where used
+renders
+performance
+cost
+versions
+license/provenance
+```
+
+This ties directly into your reusable-content-engine concept.
+
+---
+
+# `/control/knowledge`
+
+Brand knowledge / memory.
+
+```text
+facts
+sources
+past research
+successful findings
+audience learnings
+style guides
+agent memories
+```
+
+---
+
+# `/control/costs`
+
+Very important if this becomes autonomous.
+
+```text
+TODAY
+
+LLM             $0.82
+rendering       $1.44
+TTS             $0.07
+storage         $0.01
+other           $0.00
+
+TOTAL           $2.34
+
+views           1.84M
+
+cost / 1k views
+$0.00127
+```
+
+Then by content:
+
+```text
+Raptor #42
+
+research       $0.012
+script         $0.008
+images         $0.071
+render         $0.143
+TTS            $0.004
+
+total          $0.238
+
+views          883k
+
+cost/1k        $0.00027
+```
+
+That's a killer optimization signal.
+
+---
+
+# Agents I'd actually create
+
+Not one giant "social agent."
+
+Specialists.
+
+### Research Agent
+
+```text
+input: story idea
+output:
+research packet
+claims
+sources
+uncertainties
+```
+
+### Story Agent
+
+```text
+research → narrative
+```
+
+### Critic Agent
+
+Checks:
+
+```text
+hook
+pacing
+logic
+unsupported claims
+repetition
+```
+
+### Asset Agent
+
+Maps scenes to:
+
+```text
+existing asset
+generate asset
+stock asset
+new reusable asset
+```
+
+### Render Agent
+
+Runs your actual rendering pipeline.
+
+### Visual QA Agent
+
+Checks rendered result:
+
+```text
+broken frames?
+text cut off?
+subject missing?
+bad transition?
+audio problems?
+```
+
+### Publisher Agent
+
+Doesn't create.
+
+It only receives approved artifacts and handles:
+
+```text
+variants
+metadata
+schedule
+Postiz
+failures
+retry
+```
+
+### Analytics Agent
+
+Runs continuously:
+
+```text
+collect
+normalize
+detect anomalies
+calculate cohort performance
+```
+
+### Strategist Agent
+
+Reads accumulated evidence and proposes:
+
+```text
+next topics
+experiments
+formats
+schedule adjustments
+```
+
+### Community Agent
+
+Reads comments:
+
+```text
+questions
+sentiment
+requested topics
+recurring misconceptions
+```
+
+feeds them back to Idea Agent.
+
+---
+
+# This creates a closed loop
+
+```text
+                       ┌──────────────┐
+                       │  AUDIENCE    │
+                       └──────┬───────┘
+                              │
+                       analytics/comments
+                              ↓
+                       ┌──────────────┐
+                       │  LEARNING    │
+                       └──────┬───────┘
+                              │
+                              ↓
+IDEA → RESEARCH → SCRIPT → ASSETS → RENDER → QA → PUBLISH
+ ↑                                                   │
+ └───────────────────────────────────────────────────┘
+```
+
+That is the actual product.
+
+Postiz occupies **one box**:
+
+```text
+PUBLISH
+```
+
+---
+
+# Agent governance
+
+Mission Control's quality gates are particularly worth copying. It explicitly supports review stages before tasks are considered complete. ([GitHub][5])
+
+Every agent task should have:
+
+```text
+INPUT CONTRACT
+OUTPUT CONTRACT
+EVALUATOR
+RETRY POLICY
+MAX COST
+TIMEOUT
+APPROVAL REQUIREMENT
+```
+
+Example:
+
+```yaml
+agent: script_writer
+
+input:
+  research_packet: required
+
+output:
+  script.json: required
+
+gate:
+  factuality_score: ">=0.95"
+  unsupported_claims: 0
+
+budget:
+  max_usd: 0.10
+
+retry:
+  max_attempts: 3
+
+publish_permission: false
+```
+
+Agent permissions matter.
+
+Research Agent:
+
+```text
+READ web
+READ knowledge
+WRITE research
+```
+
+Publisher:
+
+```text
+READ approved content
+WRITE social platforms
+```
+
+Strategist:
+
+```text
+READ analytics
+WRITE recommendations
+NO publishing
+```
+
+No agent should automatically inherit every tool.
+
+---
+
+# Agent event model
+
+Everything agents do should produce events.
+
+```text
+agent.started
+agent.tool.called
+agent.output.created
+agent.failed
+agent.completed
+
+content.created
+content.transitioned
+
+render.started
+render.completed
+
+publish.started
+publish.succeeded
+publish.failed
+
+metrics.updated
+
+experiment.started
+experiment.concluded
+```
+
+This should become a single append-only:
+
+```text
+control_event
+```
+
+table.
+
+That's what gives us a unified activity feed.
+
+---
+
+# Real-time transport
+
+Copy the Mission Control/Tutti principle:
+
+```text
+DB events
+   ↓
+SSE / WebSocket
+   ↓
+dashboard
+```
+
+Mission Control uses WebSockets/SSE to keep agent/task state fresh. ([GitHub][5])
+
+We don't need Redis pub/sub initially because Postiz/Temporal/Postgres already give us plenty of infrastructure.
+
+---
+
+# MCP becomes extremely powerful
+
+Once our control layer exposes MCP:
+
+```text
+media.list_brands
+media.get_brand
+media.list_content
+media.get_content
+
+analytics.network_summary
+analytics.content
+analytics.feature_performance
+
+agent.list
+agent.dispatch
+agent.status
+agent.message
+
+content.create
+content.approve
+content.schedule
+
+assets.search
+assets.get
+
+experiments.create
+experiments.results
+```
+
+then you can literally tell an AI:
+
+> Analyse our last 30 days, determine why RoboBlades is outperforming Prehistoric on TikTok, create three experiments, and assign the researcher and story agent to the highest-confidence one.
+
+And the AI can **operate the control room**, rather than merely chat about it.
+
+BrightBean and TryPost have already validated the idea of exposing social management primitives through MCP. ([GitHub][1])
+
+---
+
+# Build strategy
+
+I would do this in **eight commits/phases**, not one monster rewrite.
+
+## Phase 0 — Fork hygiene
+
+Before features:
+
+```text
+upstream/postiz
+origin/our-fork
+```
+
+Keep custom work primarily under:
+
+```text
+/control
+```
+
+and new modules.
+
+Goal:
+
+> `git merge upstream/main` remains survivable.
+
+---
+
+# Phase 1 — Canonical data spine
+
+Build first:
+
+```text
+control_brand
+control_content
+control_variant
+control_publication
+control_metric_observation
+control_event
+```
+
+Connect existing Postiz integrations to:
+
+```text
+control_brand
+```
+
+### Done condition
+
+We can represent:
+
+```text
+Prehistoric
+  ↓
+one story
+  ↓
+3 variants
+  ↓
+3 publications
+  ↓
+analytics observations
+```
+
+end-to-end.
+
+Nothing fancy yet.
+
+---
+
+# Phase 2 — Analytics warehouse
+
+Build:
+
+```text
+collector
+normalizer
+cohort calculator
+derived metrics
+```
+
+Schedules:
+
+```text
+15m
+1h
+3h
+6h
+12h
+24h
+48h
+7d
+30d
+```
+
+Use Temporal workflows because it already exists in Postiz.
+
+### UI
+
+Create:
+
+```text
+/control/network
+/control/analytics
+/control/content/:id
+```
+
+This alone would already be a major upgrade.
+
+---
+
+# Phase 3 — Content intelligence
+
+Add:
+
+```text
+control_feature
+control_experiment
+control_hypothesis
+```
+
+Automatically tag content with:
+
+```text
+subject
+hook
+structure
+visual mechanisms
+length
+format
+```
+
+Build comparison UI.
+
+### Goal
+
+Answer:
+
+> Which characteristics predict performance?
+
+not merely:
+
+> Which video got views?
+
+---
+
+# Phase 4 — Control Room
+
+Build:
+
+```text
+/control
+```
+
+with:
+
+* KPIs
+* pipeline
+* publication health
+* alerts
+* agent status placeholders
+* experiments
+* top/bottom performers
+
+Real-time SSE.
+
+---
+
+# Phase 5 — Agent control plane
+
+Borrow Mission Control's normalized adapter concept. Mission Control currently supports multiple agent-framework adapters rather than forcing every agent into one runtime. ([GitHub][5])
+
+Define:
+
+```typescript
+interface AgentAdapter {
+  start(task): Run;
+  status(run): Status;
+  message(run, message): void;
+  cancel(run): void;
+  logs(run): Event[];
+}
+```
+
+Implement:
+
+```text
+GenericHTTPAgent
+PythonAgent
+ClaudeCodeAgent
+CodexAgent
+LangGraphAgent
+```
+
+as needed.
+
+---
+
+# Phase 6 — agent observability
+
+Integrate Langfuse.
+
+Every run gets:
+
+```text
+trace_id
+```
+
+Record:
+
+```text
+model
+tokens
+cost
+duration
+evals
+prompt_version
+```
+
+Langfuse already provides the underlying tracing/evaluation infrastructure. ([GitHub][7])
+
+Add Tutti-style Focus Mode to our UI.
+
+---
+
+# Phase 7 — autonomous media workflow
+
+Now:
+
+```text
+Idea Agent
+ ↓
+Research
+ ↓
+Script
+ ↓
+Critic
+ ↓
+Assets
+ ↓
+Render
+ ↓
+QA
+ ↓
+approval gate
+ ↓
+Publisher
+ ↓
+Analytics
+ ↓
+Strategist
+```
+
+Temporal orchestrates it.
+
+Not until here should we turn on real autonomy.
+
+---
+
+# Phase 8 — learning engine
+
+Finally:
+
+```text
+analytics
++
+content metadata
++
+experiments
++
+cost
++
+audience signals
+```
+
+feed a recommendation model.
+
+Eventually the decision function becomes something like:
+
+[
+U(c)=
+E[\text{attention}]
++\alpha E[\text{followers}]
++\beta E[\text{revenue}]
+-\gamma E[\text{cost}]
+-\delta E[\text{risk}]
++\epsilon E[\text{learning value}]
+]
+
+That final term is important.
+
+Sometimes the best next video isn't the one expected to get the most views.
+
+It's the one that most reduces uncertainty about:
+
+```text
+Does hook A outperform hook B?
+```
+
+Then the media system starts performing **active experimentation**.
+
+---
+
+# What I would literally borrow
+
+| Project             | Take                                                   |
+| ------------------- | ------------------------------------------------------ |
+| **Postiz**          | publishing adapters, scheduler, OAuth, Temporal        |
+| **BrightBean**      | analytics architecture, MCP, inbox, permissions, audit |
+| **TryPost**         | brand profile abstraction, agent-accessible workspace  |
+| **Social Stats**    | AI insights, anomaly detection, reports, inbox AI      |
+| **Mission Control** | agent board, status, trust, gates, costs, events       |
+| **Tutti**           | live Agent Focus Mode                                  |
+| **Langfuse**        | traces, evals, prompts, costs, experiments             |
+| **LangGraph**       | complex stateful individual agents where useful        |
+
+The particularly interesting finding is that **we do not need to invent most of the primitives**. Each already exists somewhere; our advantage comes from combining them around a media-specific canonical data model.
+
+---
+
+# What not to build
+
+Do **not** spend time rebuilding:
+
+```text
+OAuth
+social-provider clients
+LLM trace visualization
+generic prompt management
+generic agent graph visualization
+generic scheduling
+generic media upload
+```
+
+Existing projects are already strong there. ([GitHub][4])
+
+Build the unique layer:
+
+```text
+CONTENT ↔ FEATURES ↔ PUBLICATIONS ↔ ANALYTICS ↔ AGENT DECISIONS
+```
+
+That's the novel part.
+
+---
+
+# My final architecture
+
+```text
+┌───────────────────────────────────────────────────────────────┐
+│                        MEDIA OS                               │
+│                                                               │
+│  NETWORK   CONTENT   ANALYTICS   EXPERIMENTS   AGENTS         │
+│  ASSETS    INBOX     COSTS       KNOWLEDGE     OPERATIONS      │
+└──────────────────────┬────────────────────────────────────────┘
+                       │
+                 CONTROL API / MCP
+                       │
+       ┌───────────────┼────────────────────┐
+       │               │                    │
+       ↓               ↓                    ↓
+   Temporal          Agents             Analytics
+       │               │                    │
+       │          ┌────┼────┐               │
+       │          ↓    ↓    ↓               │
+       │        LLM  CLI  Render             │
+       │                │                    │
+       └────────────────┼────────────────────┘
+                        ↓
+                      POSTIZ
+                        │
+               ┌────────┼────────┐
+               ↓        ↓        ↓
+            YouTube   TikTok Instagram
+               │        │        │
+               └────────┼────────┘
+                        ↓
+                 audience signals
+                        │
+                        ↓
+                  ANALYTICS STORE
+                        │
+                        ↓
+                   LEARNING LOOP
+                        │
+                        └────────────→ next content
+```
+
+**That is the build I would commit to.**
+
+The important conceptual shift is that we're no longer making a social-media scheduler. **We're making the operating system for an autonomous multi-brand media network.** Postiz becomes the reliable social I/O subsystem; analytics supplies feedback; agents perform work; Temporal coordinates them; Langfuse explains what the agents did; and the control panel gives you one place to supervise the entire factory.
+
+[1]: https://github.com/brightbeanxyz/brightbean-studio?utm_source=chatgpt.com "GitHub - brightbeanxyz/brightbean-studio: Open-source, self-hostable social media management platform. Schedule, publish, and manage content across 10+ platforms from a single dashboard. Free alternative to Buffer, Sendible, and SocialPilot. · GitHub"
+[2]: https://github.com/trypost-it/trypost?utm_source=chatgpt.com "GitHub - trypostit/trypost: Open-source social media scheduling for modern creators and teams · GitHub"
+[3]: https://github.com/cbsshekhawat18-lab/social-stats-social-media-manager?utm_source=chatgpt.com "GitHub - cbsshekhawat18-lab/social-stats-social-media-manager: Open-source, self-hostable social media management & marketing platform (Django + React) — scheduler, content calendar, analytics, unified inbox, click-to-WhatsApp bot builder, AI assistant. MIT. · GitHub"
+[4]: https://github.com/gitroomhq/postiz-app?utm_source=chatgpt.com "GitHub - gitroomhq/postiz-app: 📨 The ultimate agentic social media scheduling tool 🤖 · GitHub"
+[5]: https://github.com/builderz-labs/mission-control?utm_source=chatgpt.com "GitHub - builderz-labs/mission-control: Self-hosted AI agent orchestration platform: dispatch tasks, run multi-agent workflows, monitor spend, and govern operations from one mission control dashboard. · GitHub"
+[6]: https://github.com/nutthouse/tutti?utm_source=chatgpt.com "GitHub - nutthouse/tutti: Multi-agent orchestration CLI — your agents, all together · GitHub"
+[7]: https://github.com/langfuse/langfuse?utm_source=chatgpt.com "GitHub - langfuse/langfuse: 🪢 Open source AI engineering platform: LLM evals, observability, metrics, prompt management, playground, datasets. Integrates with OpenTelemetry, LangChain, OpenAI SDK, LiteLLM, and more. 🍊YC W23 · GitHub"
+[8]: https://github.com/langchain-ai/langgraph?utm_source=chatgpt.com "GitHub - langchain-ai/langgraph: Build resilient agents. · GitHub"

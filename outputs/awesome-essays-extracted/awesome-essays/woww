@@ -1,0 +1,900 @@
+Yes. After comparing current Unreal 5.8, Unity 6, Godot, LiveKit, Nakama and the 2026 browser/VR stack, I would **commit to Unreal — but only for the embodied world/show/VR layer**.
+
+The mistake would be making Unreal the app or the game server. The lightweight Pog Town app should remain web/native UI around an engine-independent game protocol.
+
+## Final architecture
+
+```text
+                         POG.TOWN
+                            │
+                  ┌─────────┴─────────┐
+                  │                   │
+             FREAK PACK          GAME PACK
+            persistent entity    forkable rules
+                  │                   │
+                  └─────────┬─────────┘
+                            │
+                     POG GAME RUNTIME
+                    authoritative state
+                            │
+                ┌───────────┼───────────┐
+                │           │           │
+              HUMAN        AGENT       NPC
+                │           │           │
+                └───────────┼───────────┘
+                            │
+                         NAKAMA
+                  social/matches/leagues
+                            │
+              ┌─────────────┼─────────────┐
+              │             │             │
+         Expo/iOS/Web    LiveKit       Unreal 5.8
+         party client    media         world renderer
+              │             │             │
+        WhatsApp join   speech/video   TV / VR / stage
+                                            │
+                                     cinematic feed
+                                            │
+                              Cloudflare Stream / clips
+```
+
+### Engine decision: **Unreal 5.8**
+
+I would **not use Unity or Godot as the primary engine**.
+
+Unity is actually the strongest alternative. Unity 6 supports iOS Safari in its web builds, native iOS and OpenXR, and LiveKit has an official Unity SDK including WebGL. ([Unity Documentation][1])
+
+But that's solving a problem we don't actually need solved. Your WhatsApp party-game client shouldn't be loading a Unity WebGL game just to vote in Mafia or draw something. It should be a tiny normal application.
+
+Godot is extremely attractive philosophically—MIT, open source, good OpenXR tooling—but its current browser renderer is still WebGL 2 rather than WebGPU, and Godot 4 C# projects still cannot export to web. ([Godot Engine][2])
+
+Meanwhile Unreal gives us the things that actually matter for the *world*:
+
+* ridiculous cinematic rendering
+* CineCamera/Sequencer ecosystem
+* excellent character tooling
+* Audio2Face/NVIDIA alignment
+* proper dedicated servers if we ever need physical realtime simulation
+* OpenXR / Quest / Vive / Index
+* Pixel Streaming when useful
+* huge animation/asset ecosystem
+* and, remarkably, **UE 5.8's new MetaHuman Crowd system is explicitly designed for tens to thousands of characters**. ([Epic Games Developers][3])
+
+So:
+
+> **Unreal is the Pog World renderer. It is not Pog Town itself.**
+
+That distinction prevents the rewrite.
+
+---
+
+# Your Hetzner box
+
+Your proposed:
+
+**4 vCPU / 8 GB RAM / ~80 GB disk**
+
+is a good MVP control-plane machine.
+
+I'd run Ubuntu + Docker Compose:
+
+```text
+HETZNER CONTROL BOX
+
+Caddy
+│
+├── pog-api              TypeScript
+├── pog-runtime          deterministic games
+├── Nakama               accounts/social/leagues
+├── PostgreSQL
+├── Redis
+├── agent-gateway
+├── job worker
+└── Git/game-pack service
+```
+
+Assets **do not go on the 80 GB disk**.
+
+Put:
+
+```text
+Cloudflare R2
+
+freak packs
+portraits
+GLB/VRM
+animations
+generated songs
+standup clips
+game assets
+recordings
+```
+
+there.
+
+80 GB then becomes plenty because Hetzner is mostly databases, containers, cache and logs.
+
+---
+
+# Don't put production LiveKit on that same machine
+
+You *can* for the earliest tests, but I wouldn't architect around it.
+
+LiveKit's current recommendation for a typical voice-agent worker is itself approximately **4 cores / 8 GB**, and production WebRTC is primarily constrained by CPU and bandwidth; its production docs recommend 10 Gbps networking for serious self-hosting. ([LiveKit Docs][4])
+
+Initially:
+
+```text
+Hetzner
+= control plane
+
+LiveKit Cloud
+= media
+```
+
+Later, if volume makes self-hosting worthwhile:
+
+```text
+Hetzner #1
+control plane
+
+Hetzner #2 / good-bandwidth VM
+LiveKit + TURN
+
+GPU node
+Unreal + animation
+```
+
+LiveKit self-hosting is open and supports around **3,000 users per room**, but 2,000 people watching a high-bitrate show is primarily a bandwidth/distribution problem. ([LiveKit Docs][5])
+
+---
+
+# The 2,000-person audience is absolutely possible
+
+But don't animate 2,000 full Freak rigs at MetaHuman quality.
+
+Unreal 5.8 gives us exactly the right architecture.
+
+```text
+DISTANCE FROM CAMERA
+
+0–20 people
+full Freak rig
+face
+Audio2Face
+high-res materials
+
+20–100
+skeletal body
+simpler facial animation
+
+100–500
+low-LOD skeleton
+
+500–2000+
+Mass entity
+instanced mesh / simplified skeleton
+crowd animation
+```
+
+Epic's new MetaHuman Crowd system automatically transitions between high-detail actors and lower-fidelity instanced skeletal meshes based on camera distance, specifically targeting **thousands of characters**. ([Epic Games Developers][3])
+
+We apply the same idea to Freaks.
+
+So someone sitting in row 53 hits:
+
+**😂**
+
+Game state:
+
+```json
+{
+  "audience_member": "blob_492",
+  "reaction": "laugh",
+  "intensity": 0.82
+}
+```
+
+Their avatar:
+
+* smiles
+* laughs
+* body bounces
+* maybe produces an audience audio event
+
+If the camera swings toward them, they can promote to higher LOD.
+
+That means the audience is **actually there**.
+
+---
+
+# And VR fits perfectly
+
+Eventually a Quest user enters:
+
+```text
+FREAK.TOWN
+     ↓
+Tonight's Show
+     ↓
+ENTER IN VR
+```
+
+Unreal already supports OpenXR across Quest, Vive and Index-class devices, plus hand tracking/extensions. ([Epic Games Developers][6])
+
+They appear in seat B-122 as their Freak.
+
+Or they're performing:
+
+```text
+NEXT UP:
+
+GREGOR
+```
+
+Their VR headset gives us:
+
+```text
+head pose
+left hand
+right hand
+voice
+body inference
+```
+
+Gregor walks onto the stage.
+
+User physically looks at Ella.
+
+User looks at somebody in the audience.
+
+> "Mate, why the fuck are you dressed like a toaster?"
+
+And that audience member is actually another person.
+
+That's the long-term architecture **without changing how Mafia works or how a game pack works**.
+
+---
+
+# The party-game client should NOT be Unreal
+
+For iOS/browser I'd build:
+
+### Expo + React Native + Expo Router
+
+One application family:
+
+```text
+pog.town/join/X7H9K
+
+        ↓
+
+browser
+or
+iOS
+or
+Android
+```
+
+The client contains:
+
+* Freak profile
+* feed
+* join game
+* invite
+* microphone
+* camera if needed
+* buttons/controllers
+* chat
+* drawing
+* voting
+* reactions
+* shop/gallery/etc.
+
+It does **not** need to render the full Unreal world.
+
+Most of the time it looks as lightweight as Jackbox/WhatsApp.
+
+```text
+┌────────────────────────┐
+│       MAFIA NIGHT      │
+│                        │
+│      Gregor says:      │
+│                        │
+│ "Blob is obviously     │
+│  lying."               │
+│                        │
+│ WHO DO YOU VOTE FOR?   │
+│                        │
+│ [ GREGOR ] [ BLOB ]    │
+│ [ STEVE  ] [ ELLA ]    │
+│                        │
+│ 🎤 Speak     😂 React  │
+└────────────────────────┘
+```
+
+Meanwhile the television/browser stream can look like an HBO game show.
+
+That contrast is good.
+
+---
+
+# Unreal becomes the TV studio
+
+This is where I think it's substantially superior for us.
+
+One Unreal instance renders:
+
+```text
+STAGE
+│
+├── Freaks
+├── Ella
+├── audience
+├── lighting
+├── VFX
+├── animation
+├── Audio2Face
+│
+└── DIRECTOR
+      ├── Camera 1 wide
+      ├── Camera 2 host
+      ├── Camera 3 performer
+      ├── Camera 4 judge
+      ├── Camera 5 crowd
+      ├── Camera 6 reaction
+      ├── Camera 7 dolly
+      └── Camera 8 insert
+```
+
+**Do not use an LLM to animate cameras frame-by-frame.**
+
+Create TV grammar:
+
+```text
+performer starts joke
+→ CAM_PERFORMER_MEDIUM
+
+audience laugh spikes
+→ hold performer 700ms
+→ CUT AUDIENCE
+
+Ella starts talking
+→ CAM_ELLA
+
+targeted roast
+→ performer
+→ target reaction
+→ two-shot
+
+huge applause
+→ crane/wide
+
+awkward silence
+→ slow push-in
+
+player eliminated
+→ dramatic close + sting
+```
+
+Then let an AI Director select **shots**, not manipulate transforms.
+
+That should produce much more professional television.
+
+---
+
+# GPU: use Vast before RunPod for the live Unreal node
+
+This was an important discovery from the current docs.
+
+**RunPod Pods currently do not support UDP connections.** ([Runpod Documentation][7])
+
+That's annoying for WebRTC/Pixel Streaming.
+
+Vast explicitly supports mapping both TCP **and UDP ports**. ([Vast.ai][8])
+
+Therefore:
+
+### Vast
+
+Use for:
+
+* live Unreal
+* Pixel Streaming experiments
+* Audio2Face
+* live GPU workers
+
+### RunPod
+
+Still excellent for:
+
+* batch renders
+* model inference
+* offline animation
+* generating thousands of things
+* services you expose over HTTP/TCP
+
+A **24 GB 4090-class box** is exactly where I'd start the show renderer.
+
+---
+
+# But don't send Pixel Streaming to 2,000 viewers
+
+One Unreal instance should produce **one programme feed**.
+
+Then distribute that feed.
+
+And something extremely timely just launched: Cloudflare Stream's new WebRTC live system now supports **sub-second WHIP/WHEP broadcasting to thousands of viewers**. ([Cloudflare Docs][9])
+
+So eventually:
+
+```text
+Unreal GPU
+   │
+   │ one programme feed
+   ▼
+Cloudflare Stream
+   │
+   ├── viewer 1
+   ├── viewer 2
+   ├── viewer 3
+   │
+   └── viewer 2000
+```
+
+Cloudflare says current WebRTC delivery pricing, beginning October 15, is **$1 / 1,000 viewer-minutes**. ([Cloudflare Docs][9])
+
+Thus 2,000 viewers × 30 minutes ≈ **$60 delivery**.
+
+Much better than making 2,000 Unreal Pixel Streaming sessions.
+
+LiveKit remains for the actual interactive participants.
+
+---
+
+# Unreal ↔ LiveKit
+
+We aren't blocked here either.
+
+LiveKit now has an official native **C++ SDK**, specifically described for high-performance video, broadcast and AR/VR integrations with raw frame access. ([GitHub][10])
+
+So I'd eventually make a small Unreal plugin:
+
+```text
+Plugins/
+  PogLiveKit/
+```
+
+responsible for:
+
+```text
+LiveKit audio → Unreal
+
+participant voice → character
+Ella audio → Ella
+agent audio → character
+
+Unreal programme frames → LiveKit / broadcast
+
+game events → Unreal animation
+Unreal events → Pog runtime
+```
+
+This is better than contaminating your game rules with engine networking.
+
+---
+
+# Qwen/Audio stack remains
+
+```text
+ELLA
+Qwen3.5 Omni Flash Realtime
+
+scripted character voice
+Qwen3-TTS
+
+normal character conversation
+Qwen3-TTS + LLM
+
+face
+Audio2Face 3.0
+
+emotion
+Audio2Emotion
+
+music
+Stable Audio 3 Small-Music
+
+SFX
+Stable Audio 3 Small-SFX
+```
+
+Ella gets:
+
+```text
+microphones
++
+selected Unreal camera frame/video
++
+structured game state
++
+Freak histories
++
+audience state
++
+tools
+```
+
+That combination is important.
+
+Vision tells her:
+
+> Steve is staring at Gregor.
+
+Game state tells her:
+
+> It is Steve's turn.
+
+Tools let her:
+
+> `spotlight("steve")`
+
+All three are necessary.
+
+---
+
+# `freak.pack.v1`
+
+I'd standardize this now:
+
+```text
+gregor.freak/
+
+manifest.json
+
+identity/
+  profile.json
+  personality.md
+  lore.md
+
+visual/
+  portrait.webp
+  model.glb
+  model.vrm
+
+rig/
+  skeleton.json
+  arkit-blendshapes.json
+  retargeting.json
+
+voice/
+  manifest.json
+  reference.wav
+
+motion/
+  idle.glb
+  walk.glb
+  sit.glb
+  point.glb
+  dance.glb
+
+audio/
+  walkout.wav
+  win.wav
+  loss.wav
+  sting.wav
+
+agent/
+  persona.md
+  capabilities.json
+  memory.schema.json
+
+renderers/
+  unreal.json
+  web.json
+  runway.json
+  bithuman.json
+
+social/
+  accounts.json
+
+history/
+  events.jsonl
+```
+
+Social credentials stay in AgentVault / encrypted server storage, never in the Freak pack.
+
+The pack is portable.
+
+Instagram Gregor and VR Gregor and Mafia Gregor are **the same Gregor**.
+
+---
+
+# And games should absolutely live in Git
+
+But I would slightly modify the original idea.
+
+Don't let arbitrary user TypeScript execute directly inside Nakama.
+
+Instead:
+
+```text
+pog-games/mafia/
+
+pog.game.json
+RULES.md
+AGENTS.md
+
+schemas/
+  state.json
+  observation.json
+  actions.json
+
+rules/
+  rules.pog
+
+scenes/
+  mafia-table.json
+
+ui/
+  controller.json
+
+tests/
+  mafia.spec.json
+```
+
+`rules.pog` is a small **deterministic rules DSL**.
+
+For example:
+
+```text
+phase NIGHT:
+  allow MAFIA -> choose_target
+  allow DOCTOR -> protect
+  hide actions from CIVILIAN
+
+when all_required_actions:
+  resolve night
+  transition DAY
+```
+
+An LLM can modify that incredibly reliably.
+
+And it's sandboxable.
+
+---
+
+# Prompting a new game then becomes real
+
+User:
+
+> Make Mafia but every dead person becomes a ghost and gets one anonymous sentence per round.
+
+Pog agent:
+
+```text
+mafia
+  ↓ fork
+
+mafia-ghosts
+  ↓
+edit game pack
+  ↓
+validate schema
+  ↓
+simulate 1,000 games
+  ↓
+rules tests pass
+  ↓
+git commit
+  ↓
+publish
+```
+
+Then instantly:
+
+**CREATE LEAGUE**
+
+```text
+Tom
+Jack
+Luke
+Blob
+Gregor
+Moltbook Agent #492
+```
+
+**INVITE**
+
+WhatsApp:
+
+> Mafia Ghost League
+> Tonight 8pm
+> `pog.town/join/H7PD2`
+
+No app update.
+
+No Unreal build.
+
+No server deployment.
+
+That's the crucial architectural win.
+
+---
+
+# Agents get an even simpler interface
+
+`mcp.pog.town` / HTTP/WebSocket:
+
+```text
+get_game_rules()
+observe()
+legal_actions()
+act()
+speak()
+get_character()
+```
+
+So a Moltbook agent receives:
+
+```json
+{
+  "phase": "vote",
+  "observation": [
+    "Gregor accused you",
+    "Steve abstained",
+    "Ella opened voting"
+  ],
+  "legal_actions": [
+    "vote(player)",
+    "speak(text)",
+    "abstain"
+  ]
+}
+```
+
+It doesn't know or care whether the humans see:
+
+* Unreal
+* browser
+* iPhone
+* VR
+* text terminal.
+
+This is **the agent API**.
+
+---
+
+# Nakama's exact role
+
+I'd narrow Nakama from what I said earlier.
+
+Nakama should own:
+
+```text
+accounts
+auth
+friends
+groups
+presence
+matchmaking
+chat
+leaderboards
+tournaments
+leagues
+persistent progression
+```
+
+It should **not own arbitrary game code**.
+
+`pog-runtime` owns:
+
+```text
+game pack execution
+hidden state
+turns
+legal actions
+observations
+events
+deterministic replay
+agent interface
+```
+
+That means a new game can appear without Nakama restarting.
+
+This is cleaner.
+
+---
+
+# Repository structure
+
+I would build the whole thing as:
+
+```text
+pogtown/
+│
+├── apps/
+│   ├── mobile/             Expo
+│   ├── web/                Expo Web
+│   ├── admin/
+│   └── unreal/             Pog World
+│
+├── services/
+│   ├── api/
+│   ├── runtime/
+│   ├── agent-gateway/
+│   ├── director/
+│   ├── media-worker/
+│   └── social-worker/
+│
+├── packages/
+│   ├── freak-pack/
+│   ├── game-pack/
+│   ├── protocol/
+│   ├── game-sdk/
+│   └── agent-sdk/
+│
+├── games/
+│   ├── mafia/
+│   ├── poker/
+│   ├── standup/
+│   ├── roast/
+│   └── pictionary/
+│
+├── infra/
+│   ├── docker/
+│   ├── hetzner/
+│   ├── vast/
+│   └── livekit/
+│
+└── docs/
+    ├── FREAK-PACK.md
+    ├── GAME-PACK.md
+    ├── AGENT-PROTOCOL.md
+    └── DIRECTOR-PROTOCOL.md
+```
+
+## So the finalized choices are
+
+| Layer                  | Choice                        |
+| ---------------------- | ----------------------------- |
+| Control server         | **Hetzner 4c / 8GB**          |
+| Containers             | Docker Compose                |
+| DB                     | PostgreSQL                    |
+| Social/matches/leagues | **Nakama**                    |
+| Game execution         | **Pog Runtime**               |
+| Game format            | Git + `game.pack.v1`          |
+| Character format       | `freak.pack.v1`               |
+| Cache/jobs             | Redis                         |
+| Assets                 | Cloudflare R2                 |
+| Mobile                 | **Expo / React Native**       |
+| Browser                | **Expo Web / React**          |
+| Realtime media         | **LiveKit**                   |
+| 3D/show engine         | **Unreal Engine 5.8**         |
+| VR                     | Unreal + OpenXR               |
+| Large crowd            | Unreal Mass + LOD             |
+| Live GPU               | **Vast 4090-class**           |
+| Cheap batch GPU        | Vast / RunPod                 |
+| Host intelligence      | Qwen3.5 Omni Realtime         |
+| Character TTS          | Qwen3-TTS                     |
+| Face                   | Audio2Face 3                  |
+| Emotion                | Audio2Emotion                 |
+| Music/SFX              | Stable Audio 3 Small          |
+| Cinematic direction    | Pog Director → Unreal cameras |
+| Massive broadcast      | **Cloudflare Stream WebRTC**  |
+| External agents        | HTTP/WebSocket + MCP adapter  |
+
+**I would commit to that architecture.**
+
+The core bet is not really Unreal. It's that **`Freak Pack + Game Pack + Agent Protocol + Event Protocol` are engine-independent**. That lets the lightweight party game exist today, the absurd cinematic show exist on Unreal next, and then VR becomes another client rather than Pog Town v2. Unreal gets chosen because the part it controls—embodied characters, crowds, cameras and virtual production—is exactly the part where its advantages are overwhelming.
+
+[1]: https://docs.unity3d.com/6000.0/Documentation/Manual/system-requirements.html?utm_source=chatgpt.com "Unity - Manual: System requirements for Unity 6.0"
+[2]: https://godotengine.org/license/?utm_source=chatgpt.com "License – Godot Engine"
+[3]: https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-5-8-release-notes?utm_source=chatgpt.com "Unreal Engine 5.8 Release Notes | Unreal Engine 5.8 Documentation | Epic Developer Community"
+[4]: https://docs.livekit.io/deploy/custom/deployments/?utm_source=chatgpt.com "Self-hosted deployments | LiveKit Documentation"
+[5]: https://docs.livekit.io/transport/self-hosting/?utm_source=chatgpt.com "Self-hosting overview | LiveKit Documentation"
+[6]: https://dev.epicgames.com/documentation/unreal-engine/openxr-prerequisites-in-unreal-engine?utm_source=chatgpt.com "OpenXR Prerequisites in Unreal Engine | Unreal Engine 5.8 Documentation | Epic Developer Community"
+[7]: https://docs.runpod.io/pods/configuration/expose-ports?utm_source=chatgpt.com "Expose ports - Runpod Documentation"
+[8]: https://docs.vast.ai/guides/instances/connect/networking?utm_source=chatgpt.com "Networking & Ports - Vast.ai Documentation – Affordable GPU Cloud Marketplace"
+[9]: https://developers.cloudflare.com/stream/webrtc-beta/?utm_source=chatgpt.com "Ultra-low Latency with WebRTC · Cloudflare Stream docs"
+[10]: https://github.com/livekit/client-sdk-cpp?utm_source=chatgpt.com "GitHub - livekit/client-sdk-cpp: Official native C++ client SDK for LiveKit: build realtime audio, video, and data applications using the LiveKit protocol. · GitHub"

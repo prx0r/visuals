@@ -1,0 +1,1083 @@
+Yes. Going deeper into **personal/researcher-built repos rather than institutional stacks** turns up several things that are much closer to “clone this and save ourselves work.”
+
+The main distinction I’d use is:
+
+* **CLONE** = code/data is useful enough to keep locally and inspect/integrate.
+* **VENDOR/ADAPT** = extract a stable component behind a Pāṭala adapter.
+* **INGEST DATA** = treat the repo primarily as a corpus snapshot.
+* **MINE PATTERNS** = don't create a dependency; copy architectural ideas.
+* **WATCH** = interesting, but not worth integration work yet.
+
+## 1. Dharmamitra `mitra-parallel` — this is extremely high-value
+
+Full repo:
+
+[https://github.com/dharmamitra/mitra-parallel](https://github.com/dharmamitra/mitra-parallel)
+
+FoJin is already consuming this dataset as sentence-level Sanskrit/Tibetan ↔ Buddhist Chinese parallel material, and records its license as CC BY-SA 4.0. ([GitHub][1])
+
+This solves one of the hardest Pāṭala problems:
+
+```text
+Sanskrit passage
+      ↕
+Tibetan translation
+      ↕
+Chinese translation
+```
+
+not merely at whole-text level, but at **sentence/passage level**.
+
+### What I'd do
+
+**CLONE + INGEST DATA.**
+
+```bash
+git clone https://github.com/dharmamitra/mitra-parallel.git external/mitra-parallel
+```
+
+Don't reshape Pāṭala around its schema.
+
+Write:
+
+```text
+adapters/mitra/
+    ingest.py
+    schema.py
+    crosswalk.py
+```
+
+and emit:
+
+```json
+{
+  "relation_type": "translation_parallel",
+  "source_passage": "patala:passage:...",
+  "target_passage": "...",
+  "source_language": "san",
+  "target_language": "bo",
+  "alignment_source": "mitra",
+  "confidence": 0.93
+}
+```
+
+### Why this is massive
+
+Once Pāṭala ingests Buddhist Sanskrit, you get another evidence source for damaged or obscure Sanskrit.
+
+If:
+
+```text
+Sanskrit = ambiguous
+Tibetan = interpretation X
+Chinese = interpretation X
+```
+
+that becomes **translation-witness evidence**, not just “AI thinks X.”
+
+This should eventually enter Translation Audit.
+
+**Priority: S+.**
+
+---
+
+# 2. BuddhaNexus `segmented-sanskrit`
+
+[https://github.com/BuddhaNexus/segmented-sanskrit](https://github.com/BuddhaNexus/segmented-sanskrit)
+
+This is much better than its four stars suggest.
+
+It contains segmented Sanskrit files built from GRETIL, DSBC and SuttaCentral, including a separate `checkedjson` area containing **manually checked GRETIL segmentation**, while warning that the broader machine-generated corpus is noisy. ([GitHub][2])
+
+That distinction is exactly what Pāṭala needs:
+
+```text
+machine segmented
+       ≠
+manually checked
+```
+
+### Do this
+
+**CLONE + INGEST SELECTIVELY.**
+
+```bash
+git clone https://github.com/BuddhaNexus/segmented-sanskrit.git \
+  external/buddhanexus-segmented-sanskrit
+```
+
+But don't dump all of it into canonical L1.
+
+Preserve:
+
+```text
+RAW
+ ├── segmented_files/
+ └── checkedjson/
+```
+
+and assign confidence/provenance differently:
+
+```text
+analysis_source = buddhanexus
+review_status = machine
+```
+
+versus:
+
+```text
+analysis_source = buddhanexus
+review_status = manually_checked
+```
+
+Then cross-check against Vidyut, Heritage and DCS.
+
+This gives us an immediate **four-way Sanskrit segmentation consensus system**.
+
+```text
+Vidyut
+Heritage
+DCS
+BuddhaNexus
+
+      ↓
+
+ConsensusAnalysis
+```
+
+**Priority: S.**
+
+---
+
+# 3. `hrishikeshrt/heritage` — personal wrapper around Sanskrit Heritage
+
+[https://github.com/hrishikeshrt/heritage](https://github.com/hrishikeshrt/heritage)
+
+This is exactly the kind of personal glue code I wanted to find.
+
+Instead of making Pāṭala scrape/parse the Sanskrit Heritage website itself, Hrishikesh Terdalkar has already wrapped it as structured Python APIs for:
+
+* morphological analysis
+* semantic parsing
+* declensions
+* conjugations
+* sandhi
+* lexicon search
+
+and importantly supports **both remote web mode and local compiled Heritage mode**. ([GitHub][3])
+
+### Use
+
+Don't clone initially.
+
+**VENDOR AS DEPENDENCY / ADAPTER.**
+
+```bash
+pip install heritage
+```
+
+Wrap:
+
+```python
+class HeritageAnalyzer:
+    def analyze(...)
+    def parse(...)
+    def declensions(...)
+    def conjugations(...)
+```
+
+Then Pāṭala can swap:
+
+```text
+remote INRIA
+     ↓ eventually
+local Heritage binary
+```
+
+without changing our schema.
+
+### This is better than our own Heritage integration
+
+Because he already dealt with:
+
+* request formats
+* retries
+* response parsing
+* Velthuis conversion
+* local-vs-remote execution.
+
+Use the wrapper; don't reproduce it.
+
+**Priority: S.**
+
+---
+
+# 4. Hrishikesh Terdalkar's account itself is a goldmine
+
+Profile/gists:
+
+[https://github.com/hrishikeshrt](https://github.com/hrishikeshrt)
+
+[https://gist.github.com/hrishikeshrt](https://gist.github.com/hrishikeshrt)
+
+He has lots of tiny utilities that aren't proper “products” at all. That's precisely why they're useful.
+
+His gists include wrappers/utilities for:
+
+* Sanskrit text manipulation
+* running Samsaadhanii from CLI
+* DCS transliteration
+* Indic dictionary downloading
+* transliteration tooling
+* Vyoma Sanskrit course downloading. ([Gist][4])
+
+One example:
+
+[https://gist.github.com/hrishikeshrt/130c0b494a3370c0cfd0e011a8c3a082](https://gist.github.com/hrishikeshrt/130c0b494a3370c0cfd0e011a8c3a082)
+
+contains his Sanskrit Unicode/text utility functions. ([Gist][5])
+
+### Don't clone every gist
+
+**MINE PATTERNS.**
+
+Specifically audit his GitHub for:
+
+```text
+wrapper around existing Sanskrit website?
+parser for ugly output?
+dataset downloader?
+transliteration conversion?
+Samsaadhanii integration?
+```
+
+This is exactly the developer whose account probably contains twenty annoying little integration problems already solved.
+
+---
+
+# 5. `hrishikeshrt/vaiyyakarana`
+
+[https://github.com/hrishikeshrt/vaiyyakarana](https://github.com/hrishikeshrt/vaiyyakarana)
+
+This surfaced through GitHub's declension projects. It's a personal Sanskrit-learning bot supporting stem/root lookup, declension, conjugation and compound/sandhi splitting. ([GitHub][6])
+
+I don't care about the Telegram bot.
+
+I care about **how the tools are composed**.
+
+### Use
+
+**CLONE TO INSPECT, DON'T DEPEND.**
+
+```bash
+git clone https://github.com/hrishikeshrt/vaiyyakarana.git \
+  research/vaiyyakarana
+```
+
+Inspect the adapters it uses for:
+
+```text
+word → root
+word → stem
+sandhi splitting
+compound analysis
+declension generation
+```
+
+Then compare its fallback logic to ours.
+
+Potential education use:
+
+```text
+student clicks Sanskrit word
+
+→ surface form
+→ stem
+→ root
+→ morphology
+→ paradigm
+→ sandhi explanation
+```
+
+A lot of that UX pipeline may already exist here.
+
+---
+
+# 6. `coderbhupendra/sanskrit_parallel_mahabharata_text`
+
+[https://github.com/coderbhupendra/sanskrit_parallel_mahabharata_text](https://github.com/coderbhupendra/sanskrit_parallel_mahabharata_text)
+
+This is obscure enough that the most visible reference I found is a **2016 CLTK issue** where the author offers it as a line-by-line Sanskrit ↔ romanization aligned Mahābhārata corpus. ([GitHub][7])
+
+That's useful less because we need Romanized Mahābhārata and more because it gives us an alignment fixture.
+
+### Do this
+
+**CLONE + USE AS TEST DATA.**
+
+```bash
+git clone https://github.com/coderbhupendra/sanskrit_parallel_mahabharata_text.git \
+  fixtures/mahabharata-parallel
+```
+
+Use it to test:
+
+```text
+alignment ingestion
+stable verse IDs
+script equivalence
+transliteration normalization
+round-trip matching
+```
+
+If our matching architecture can't perfectly recover a Devanagari↔Romanized line alignment, it's not ready for harder Sanskrit↔translation alignment.
+
+So this becomes a great **easy benchmark**.
+
+**Priority: A.**
+
+---
+
+# 7. `tylergneill/skrutable`
+
+[https://github.com/tylergneill/skrutable](https://github.com/tylergneill/skrutable)
+
+This one is extremely relevant because it's the same researcher who produced Pāṇḍitya and `pramana-nlp`.
+
+It includes Sanskrit:
+
+* transliteration
+* meter identification
+* scansion
+* sandhi splitting
+* compound splitting
+
+as a Python package. ([GitHub][8])
+
+### Use
+
+I wouldn't make it the canonical analyzer because Vidyut + Heritage are stronger foundations.
+
+Instead:
+
+**CLONE AND USE AS AN INDEPENDENT VOTE.**
+
+```bash
+git clone https://github.com/tylergneill/skrutable.git \
+  external/skrutable
+```
+
+Then:
+
+```text
+Vidyut analysis
+Heritage analysis
+Skrutable analysis
+DCS analysis
+```
+
+If three agree and one disagrees:
+
+```json
+{
+  "consensus": 0.75,
+  "alternatives": [...]
+}
+```
+
+Pāṭala becomes stronger precisely because it can exploit **independent analytical systems rather than trusting one**.
+
+---
+
+# 8. `tylergneill/pramana-nlp`
+
+[https://github.com/tylergneill/pramana-nlp](https://github.com/tylergneill/pramana-nlp)
+
+Still one of the best finds.
+
+It's an archived ~200 MB project specifically devoted to computational analysis of a **Sanskrit pramāṇa corpus**.
+
+### Do not merely inspect it
+
+**CLONE THE WHOLE THING.**
+
+```bash
+git clone https://github.com/tylergneill/pramana-nlp.git \
+  external/pramana-nlp
+```
+
+Then inventory:
+
+```bash
+find external/pramana-nlp -type f \
+  | sed 's/.*\.//' \
+  | sort | uniq -c | sort -rn
+```
+
+We want four separate harvests:
+
+```text
+1. raw texts
+2. cleaned texts
+3. metadata
+4. transformation/validation scripts
+```
+
+Do **not** treat derived cleaned text as L0.
+
+Structure:
+
+```text
+raw/upstream/
+derived/pramana_nlp/
+```
+
+This is especially useful because Pāṭala needs strong Nyāya/Buddhist-pramāṇa counterargument material around the Pratyabhijñā corpus.
+
+---
+
+# 9. Oliver Hellwig's personal Sanskrit repository
+
+[https://github.com/OliverHellwig/sanskrit](https://github.com/OliverHellwig/sanskrit)
+
+This is the personal research repository behind a lot of quantitative Sanskrit work. It contains directories for:
+
+```text
+corpus/
+dcs/data/
+papers/
+texts/
+translations/
+```
+
+and is explicitly data for quantitative study of Sanskrit and Vedic Sanskrit. ([GitHub][9])
+
+### Clone it
+
+```bash
+git clone https://github.com/OliverHellwig/sanskrit.git \
+  external/hellwig-sanskrit
+```
+
+But this is **research input**, not a runtime dependency.
+
+Mine it for:
+
+* frequency distributions
+* morphological datasets
+* historical corpora
+* translation pairs
+* DCS-derived processing
+* quantitative methods.
+
+This becomes especially valuable once Pāṭala starts modelling **historical semantic trajectories**:
+
+```text
+Vedic usage
+   ↓
+classical usage
+   ↓
+śāstric technical usage
+   ↓
+Tantric technical usage
+```
+
+---
+
+# 10. `ambuda-org/gretil` — obscure fork, not mainstream GRETIL
+
+[https://github.com/ambuda-org/gretil](https://github.com/ambuda-org/gretil)
+
+This one has only a few stars and is exactly what we're hunting: **someone took GRETIL's messy TEI and fixed actual structural/textual issues**.
+
+The repo explicitly says it is a GRETIL clone with ad-hoc Sanskrit and document-structure fixes and contains a `validate.py`. ([GitHub][10])
+
+### This is better than ingesting pristine upstream blindly
+
+Clone both:
+
+```bash
+git clone https://github.com/INDOLOGY/GRETIL-mirror.git \
+  raw/gretil-upstream
+
+git clone https://github.com/ambuda-org/gretil.git \
+  external/ambuda-gretil
+```
+
+Then diff them.
+
+That's gold.
+
+Create:
+
+```text
+GretilCorrection
+    source_file
+    upstream_hash
+    corrected_hash
+    changes[]
+    correcting_project
+```
+
+Every correction becomes data.
+
+We can effectively learn:
+
+> What problems did another Sanskrit digital-library team encounter when normalizing GRETIL?
+
+before encountering them ourselves.
+
+---
+
+# 11. `sanskrit-texts/gretil-corpus`
+
+Full link:
+
+[https://github.com/sanskrit-texts/gretil-corpus](https://github.com/sanskrit-texts/gretil-corpus)
+
+This showed up buried in GRETIL's own archival notes. Claudius Teodorescu reportedly worked through the Sanskrit files to make them valid XML and then valid TEI, with a change log. ([GitHub][11])
+
+This may be **even more useful than the raw GRETIL mirror**.
+
+### Clone all three versions
+
+```text
+INDOLOGY/GRETIL-mirror
+       ↕
+
+ambuda-org/gretil
+       ↕
+
+sanskrit-texts/gretil-corpus
+```
+
+Then build a three-way comparator:
+
+```text
+same text
+ │
+ ├─ archival original
+ ├─ Ambuda corrections
+ └─ Teodorescu TEI corrections
+```
+
+Where two corrected repositories independently make the same change, that is extremely high-signal normalization evidence.
+
+That's a fantastic Pāṭala ingest pattern:
+
+```text
+RAW source
+   +
+independent normalization A
+   +
+independent normalization B
+   ↓
+candidate corrected representation
+```
+
+**Priority: S+.**
+
+---
+
+# 12. FoJin — yes, it's getting larger, but the developer's ingestion code is ridiculous gold
+
+[https://github.com/xr843/fojin](https://github.com/xr843/fojin)
+
+I know this is now less “tiny,” but it appears to be an individual-driven project and its internals are too relevant to ignore.
+
+The current project claims aggregation of **613 data sources**, 10,500+ Buddhist texts, 32 dictionaries, 680K+ embedded passages and cross-canon alignments. ([GitHub][12])
+
+The truly valuable bits for us are not RAG.
+
+### Clone and strip-mine
+
+```bash
+git clone https://github.com/xr843/fojin.git \
+  research/fojin
+```
+
+Then search:
+
+```bash
+grep -R "import" backend/scripts -n
+grep -R "source" backend/scripts -n
+grep -R "license" . -n
+grep -R "alignment" backend -n
+```
+
+I would specifically extract patterns for:
+
+### A. Source registry
+
+They maintain provenance/licensing across hundreds of heterogeneous sources. Their `NOTICE` explicitly records things like SAT usage and MITRA licensing. ([GitHub][1])
+
+Steal the pattern:
+
+```json
+{
+  "source_id": "...",
+  "license": "...",
+  "content_policy": "...",
+  "local_storage_allowed": true,
+  "metadata_only": false
+}
+```
+
+### B. Citation whitelist
+
+FoJin checks generated citations against actually retrieved sources and strips/corrects unsupported citations. ([GitHub][12])
+
+Our equivalent should be even stronger:
+
+```text
+LLM cites Passage P
+       ↓
+does EvidenceUse(P) exist?
+       ↓
+does proposition surface match?
+       ↓
+does evidence role support claim?
+```
+
+### C. Quote verification
+
+FoJin verifies purported quotations against retrieved source text. ([GitHub][12])
+
+We already need exactly this.
+
+### D. Alignment pipeline
+
+Their current pipeline combines:
+
+```text
+embedding recall
+      ↓
+margin routing
+      ↓
+LLM verification
+      ↓
+human review
+      ↓
+gold alignment
+```
+
+and then refines paragraph alignments into sentence-level alignment with dynamic programming. ([GitHub][12])
+
+This maps almost perfectly onto Pāṭala translation alignment.
+
+**This repo warrants a dedicated code audit.**
+
+---
+
+# 13. `shabados/database` — outside Sanskrit, but architecturally exceptional
+
+[https://github.com/shabados/database](https://github.com/shabados/database)
+
+This isn't Indology in the narrow sense, but it's a **digital scripture corpus with a public community-sourced correction log**. ([GitHub][13])
+
+That's extremely relevant to Pāṭala Scholar.
+
+### Don't clone as dependency
+
+**MINE THE DATA GOVERNANCE MODEL.**
+
+They've already dealt with:
+
+```text
+canonical sacred text
+community corrections
+public correction history
+database releases
+downstream packages
+proofreading UX
+```
+
+We need:
+
+```text
+Translation
+    ↓
+ProposedCorrection
+    ↓
+Review
+    ↓
+Adjudication
+    ↓
+Supersession
+```
+
+Study how Shabad OS makes correction provenance public without turning the corpus into chaos.
+
+This may be more useful than generic academic peer-review software.
+
+---
+
+# 14. `kit119/D-tipitaka`
+
+[https://github.com/kit119/D-tipitaka](https://github.com/kit119/D-tipitaka)
+
+This is ancient by GitHub standards—started around 2011—and deliberately exposes a reusable Pāli–Thai Tipiṭaka database intended for developers and advanced users. ([GitHub][14])
+
+Why do we care?
+
+Because old religious-text projects often solved **stable textual addressing** before modern RAG systems existed.
+
+### Use
+
+**CLONE ONLY FOR SCHEMA ARCHAEOLOGY.**
+
+Inspect:
+
+```text
+text IDs
+volume IDs
+page IDs
+paragraph IDs
+cross-edition mappings
+```
+
+We can learn what identifiers survive 15 years of software churn.
+
+That's more valuable to Pāṭala than another fashionable vector database.
+
+---
+
+# 15. `tibetan-nlp/classical-tibetan-corpus`
+
+[https://github.com/tibetan-nlp/classical-tibetan-corpus](https://github.com/tibetan-nlp/classical-tibetan-corpus)
+
+Not personal in name, but small scholarly infrastructure with richly annotated metadata: text identity, authorship, source, translation, tagging, normalization, licensing and alignment status. ([GitHub][15])
+
+### Ingest metadata patterns, not necessarily corpus
+
+Especially:
+
+```text
+who tagged?
+who annotated?
+who aligned?
+which normalization?
+which source edition?
+```
+
+This should inform Pāṭala's annotation provenance.
+
+Instead of:
+
+```json
+"morphology": {...}
+```
+
+we need:
+
+```json
+"morphology": {
+  "value": {...},
+  "annotator": "...",
+  "method": "...",
+  "source": "...",
+  "date": "...",
+  "review_state": "..."
+}
+```
+
+---
+
+# 16. `ayushbits/saamayik`
+
+[https://github.com/ayushbits/saamayik](https://github.com/ayushbits/saamayik)
+
+This is a personal/research-team repo with ~53k English–Sanskrit sentence pairs, including explicit train/validation/test/OOD structure. ([GitHub][16])
+
+It's contemporary Sanskrit rather than philosophical Sanskrit, so **do not use it as translation truth for Abhinavagupta**.
+
+But it's perfect for infrastructure testing.
+
+### Clone
+
+```bash
+git clone https://github.com/ayushbits/saamayik.git \
+  datasets/saamayik
+```
+
+Use it for:
+
+```text
+alignment pipeline evaluation
+script normalization
+sentence pair storage
+translation-memory API
+embedding retrieval benchmarks
+MT sanity checks
+```
+
+Specifically keep it separate:
+
+```text
+domain = modern_sanskrit
+```
+
+so it never contaminates historical lexical inference.
+
+---
+
+# 17. `cyfer0618/Vaksanca`
+
+[https://github.com/cyfer0618/Vaksanca](https://github.com/cyfer0618/Vaksanca)
+
+This is a Sanskrit speech corpus project with **45,953 recorded sentences / 78+ hours**, including readings spanning multiple śāstras, plus speech-recognition recipes and pretrained-model references. ([GitHub][17])
+
+Not core today.
+
+But potentially fantastic for **Pāṭala Learn**.
+
+Imagine later:
+
+```text
+IPVV passage
+     ↓
+Sanskrit text
+     ↓
+meter / morphology
+     ↓
+audio pronunciation
+     ↓
+word-follow highlighting
+```
+
+### Decision
+
+**WATCH + DATASET CATALOG.**
+
+Don't pull 78 hours into R2 yet.
+
+Store metadata:
+
+```text
+external_dataset: Vaksanca
+capability: Sanskrit speech
+```
+
+and revisit once education gets audio.
+
+---
+
+# 18. `SriramKrishnan8/dcs_sh_alignment`
+
+[https://github.com/SriramKrishnan8/dcs_sh_alignment](https://github.com/SriramKrishnan8/dcs_sh_alignment)
+
+This remains one of the highest-value little repos.
+
+### Definitely clone
+
+```bash
+git clone https://github.com/SriramKrishnan8/dcs_sh_alignment.git \
+  external/dcs-sh-alignment
+```
+
+I would build a Pāṭala evaluation suite directly from it:
+
+```text
+eval/sanskrit_analysis/
+  dcs_vs_heritage.jsonl
+```
+
+Each case:
+
+```json
+{
+  "surface": "...",
+  "dcs": {...},
+  "heritage": {...},
+  "agreement": [...],
+  "disagreement": [...]
+}
+```
+
+Then run Vidyut and our models across the same cases.
+
+This gives us something much more valuable than generic accuracy:
+
+> **Where do established Sanskrit systems disagree?**
+
+Those are exactly the places Pāṭala should lower epistemic confidence.
+
+---
+
+# 19. `graphGita`
+
+[https://github.com/bhaskatripathi/graphGita](https://github.com/bhaskatripathi/graphGita)
+
+Only ~11 stars despite trying to map multiple Gītā interpretations into a knowledge graph with retrieval/navigation. ([GitHub][18])
+
+### Clone briefly
+
+```bash
+git clone https://github.com/bhaskatripathi/graphGita.git \
+  research/graphgita
+```
+
+Mine:
+
+```text
+schema
+UI
+graph traversal
+commentary comparison
+```
+
+Then probably delete it.
+
+The valuable idea is:
+
+```text
+root verse
+ ├─ commentator A
+ ├─ commentator B
+ ├─ commentator C
+ │
+ └─ disagreement relationships
+```
+
+Pāṭala Compare should do this much more rigorously.
+
+---
+
+# 20. One non-Indology project I think is unusually relevant: `cite`
+
+[https://github.com/JSv4/OpenContracts](https://github.com/JSv4/OpenContracts)
+
+The project now describes itself as a **ground-truth layer for humans and AI agents**, with version-controlled corpora, precise source selections, custom annotation schemas and AI operating on human-grounded citation graphs. ([GitHub][19])
+
+This is very, very close to Pāṭala's scholar layer.
+
+### Don't replace Pāṭala
+
+But **clone for architectural review**:
+
+```bash
+git clone https://github.com/JSv4/OpenContracts.git \
+  research/cite
+```
+
+Look specifically at:
+
+```text
+span annotation model
+versioning
+branching
+corpus permissions
+relation annotation
+human-ground-truth semantics
+agent interfaces
+```
+
+Our differentiator is that we go far beyond annotation into propositions, arguments, translation choices and philological provenance.
+
+But they've solved lots of generic machinery.
+
+---
+
+# My clone-now command
+
+I'd actually make an external research lake.
+
+```bash
+mkdir -p external research datasets fixtures
+
+git clone https://github.com/dharmamitra/mitra-parallel.git external/mitra-parallel
+git clone https://github.com/BuddhaNexus/segmented-sanskrit.git external/buddhanexus-segmented
+git clone https://github.com/tylergneill/pramana-nlp.git external/pramana-nlp
+git clone https://github.com/tylergneill/skrutable.git external/skrutable
+git clone https://github.com/OliverHellwig/sanskrit.git external/hellwig-sanskrit
+git clone https://github.com/ambuda-org/gretil.git external/ambuda-gretil
+git clone https://github.com/sanskrit-texts/gretil-corpus.git external/gretil-corpus
+git clone https://github.com/SriramKrishnan8/dcs_sh_alignment.git external/dcs-sh-alignment
+
+git clone https://github.com/xr843/fojin.git research/fojin
+git clone https://github.com/hrishikeshrt/vaiyyakarana.git research/vaiyyakarana
+git clone https://github.com/bhaskatripathi/graphGita.git research/graphgita
+git clone https://github.com/JSv4/OpenContracts.git research/cite
+
+git clone https://github.com/ayushbits/saamayik.git datasets/saamayik
+git clone https://github.com/coderbhupendra/sanskrit_parallel_mahabharata_text.git fixtures/mahabharata-parallel
+```
+
+I would **not vendor any code into Pāṭala itself yet**.
+
+First run an automated repo-mining pass producing:
+
+```text
+EXTERNAL-REUSE-MATRIX.jsonl
+```
+
+with one record per interesting subsystem:
+
+```json
+{
+  "repo": "dharmamitra/mitra-parallel",
+  "asset": "sentence alignments",
+  "patala_target": "TranslationParallel",
+  "reuse": "ingest",
+  "license": "CC-BY-SA-4.0",
+  "integration_cost": "low",
+  "value": "very_high"
+}
+```
+
+Then the best architecture becomes strikingly clear:
+
+```text
+                   WHAT OTHERS ALREADY BUILT
+
+ PANDiT ─────────────── bibliographic universe
+ Pāṇḍitya ───────────── PANDiT ETL
+ GRETIL fixes ───────── textual normalization
+ BuddhaNexus ────────── segmentation + parallels
+ DCS ────────────────── corpus morphology
+ DCS↔Heritage ───────── analyzer disagreement
+ Heritage.py ────────── parser API
+ Vidyut ─────────────── Sanskrit engine
+ MITRA ──────────────── cross-language alignment
+ pramana-nlp ────────── philosophy corpus ETL
+ FoJin ──────────────── hundreds-source ingestion
+ CSL ────────────────── lexical evidence
+ SARIT ──────────────── editions/witnesses
+
+                         ↓↓↓
+
+                     PĀṬALA
+
+            assertion/evidence binding
+                    argument graph
+                     crux graph
+               epistemic-strength gates
+                 translation decisions
+                  review/adjudication
+                proof-of-scholarship
+               educational derivation
+```
+
+That's the important strategic result: **the bottom 60–70% of Pāṭala increasingly looks assemblable from obscure existing work.**
+
+The part nobody seems to have built is the top layer that turns all these heterogeneous philological signals into **reviewable claims, arguments, scholarly judgements and proofs of understanding**. That's where almost all custom engineering effort should go.
+
+[1]: https://github.com/xr843/fojin/blob/master/NOTICE?utm_source=chatgpt.com "fojin/NOTICE at master · xr843/fojin · GitHub"
+[2]: https://github.com/BuddhaNexus/segmented-sanskrit?utm_source=chatgpt.com "GitHub - BuddhaNexus/segmented-sanskrit · GitHub"
+[3]: https://github.com/hrishikeshrt/heritage?utm_source=chatgpt.com "GitHub - hrishikeshrt/heritage: Heritage.py -- Python Interface to The Sanskrit Heritage Site · GitHub"
+[4]: https://gist.github.com/hrishikeshrt?utm_source=chatgpt.com "hrishikeshrt’s gists · GitHub"
+[5]: https://gist.github.com/hrishikeshrt/130c0b494a3370c0cfd0e011a8c3a082?utm_source=chatgpt.com "Sanskrit Utility Functions · GitHub"
+[6]: https://github.com/topics/declension?utm_source=chatgpt.com "declension · GitHub Topics · GitHub"
+[7]: https://github.com/cltk/cltk/issues/228?utm_source=chatgpt.com "Prepared parallel corpus for Mahabharata (Sanskrit and Romanization version) · Issue #228 · cltk/cltk · GitHub"
+[8]: https://github.com/tylergneill/skrutable?utm_source=chatgpt.com "GitHub - tylergneill/skrutable: Toolkit for manipulating Sanskrit text with Python · GitHub"
+[9]: https://github.com/OliverHellwig/sanskrit?utm_source=chatgpt.com "GitHub - OliverHellwig/sanskrit: Data for the quantitative study of (Vedic) Sanskrit · GitHub"
+[10]: https://github.com/ambuda-org/gretil?utm_source=chatgpt.com "GitHub - ambuda-org/gretil: Clone of GRETIL with adhoc changes · GitHub"
+[11]: https://github.com/INDOLOGY/GRETIL-mirror?utm_source=chatgpt.com "GitHub - INDOLOGY/GRETIL-mirror: Snapshots of the GRETIL repository of South Asian (Sanskrit, Pali, etc.) etexts · GitHub"
+[12]: https://github.com/xr843/fojin?utm_source=chatgpt.com "GitHub - xr843/fojin: Buddhist Digital Text Platform — 10,500+ texts, 613 sources, trilingual cross-canon, AI Q&A (RAG), knowledge graph, full-text search · GitHub"
+[13]: https://github.com/shabados/database?utm_source=chatgpt.com "GitHub - shabados/database: A digital representation of Sikh Bani and other Panthic texts with a public logbook of sangat-sourced corrections. · GitHub"
+[14]: https://github.com/kit119/D-tipitaka?utm_source=chatgpt.com "GitHub - kit119/D-tipitaka: Database of Tipitaka · GitHub"
+[15]: https://github.com/tibetan-nlp/classical-tibetan-corpus?utm_source=chatgpt.com "GitHub - tibetan-nlp/classical-tibetan-corpus: Linguistically analyzed Classical Tibetan texts · GitHub"
+[16]: https://github.com/ayushbits/saamayik?utm_source=chatgpt.com "GitHub - ayushbits/Saamayik: Source code and dataset for the paper 'Saamayik: A Benchmark and Dataset for English-Sanskrit Translation' · GitHub"
+[17]: https://github.com/cyfer0618/Vaksanca?utm_source=chatgpt.com "GitHub - cyfer0618/Vaksanca: Vaksanca introduces free Sanskrit speech corpus with vowel segmentation. · GitHub"
+[18]: https://github.com/bhaskatripathi/graphGita?utm_source=chatgpt.com "GitHub - bhaskatripathi/graphGita: First scientific re-interpretation of Bhagwad Gita with Knowledge Graphs improved with Monte Carlo Tree Search · GitHub"
+[19]: https://github.com/JSv4/OpenContracts?utm_source=chatgpt.com "GitHub - Open-Source-Legal/cite: Ground truth layer for humans and AI agents working together. Version control for knowledge. · GitHub"

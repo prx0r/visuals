@@ -1,0 +1,186 @@
+notes for tom:
+
+
+ --- --- ai should search for nice images after completing essay and insert into essay and link, also link to concepts
+		for each image need enough metadata about the image so in the future an ai can collate them into a video
+
+
+check chatgpt images then give deepseek below prompt to see if it can understand what it looking at
+Scheduled. It will send **50 new Imaginarium-relevant images daily** with metadata/tags, and I put a no-repeat instruction in the task. Since you did not give a time, it is on a flexible daily schedule in your Bangkok timezone.
+
+For hard no-repeats, the gallery should also store `source_page_url` and `direct_image_url` as unique keys, because the automation can be instructed not to repeat, but your database should enforce it.
+
+## Exact image/source links for the essay
+
+### 1. The Angel Surush Rescues Khusrau Parviz
+
+![The Angel Surush Rescues Khusrau Parviz](https://upload.wikimedia.org/wikipedia/commons/0/09/%22The_Angel_Surush_Rescues_Khusrau_Parviz_from_a_Cul-de-sac%22%2C_Folio_708v_from_the_Shahnama_%28Book_of_Kings%29_of_Shah_Tahmasp_MET_DT11260.jpg)
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/0/09/%22The_Angel_Surush_Rescues_Khusrau_Parviz_from_a_Cul-de-sac%22%2C_Folio_708v_from_the_Shahnama_%28Book_of_Kings%29_of_Shah_Tahmasp_MET_DT11260.jpg](https://upload.wikimedia.org/wikipedia/commons/0/09/%22The_Angel_Surush_Rescues_Khusrau_Parviz_from_a_Cul-de-sac%22%2C_Folio_708v_from_the_Shahnama_%28Book_of_Kings%29_of_Shah_Tahmasp_MET_DT11260.jpg)
+
+Source page:
+[https://www.metmuseum.org/art/collection/search/452182](https://www.metmuseum.org/art/collection/search/452182)
+
+Tags: `angel`, `Surush`, `Persian miniature`, `imaginal guide`, `Perfect Nature`, `celestial counterpart`, `Corbin`, `Suhrawardi`
+Use: best main image for the essay’s angelic/imaginal section. The Met describes Surush appearing and rescuing Khusrau after prayer, and marks the work Public Domain. ([The Metropolitan Museum of Art][1])
+
+---
+
+### 2. Bowl with Courtly and Astrological Motifs
+
+![Bowl with Courtly and Astrological Motifs](https://upload.wikimedia.org/wikipedia/commons/4/4d/Bowl_with_Courtly_and_Astrological_Motifs_MET_DP191.jpg)
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/4/4d/Bowl_with_Courtly_and_Astrological_Motifs_MET_DP191.jpg](https://upload.wikimedia.org/wikipedia/commons/4/4d/Bowl_with_Courtly_and_Astrological_Motifs_MET_DP191.jpg)
+
+Source page:
+[https://www.metmuseum.org/art/collection/search/451379](https://www.metmuseum.org/art/collection/search/451379)
+
+Tags: `Islamic cosmology`, `seven planets`, `zodiac`, `celestial spheres`, `macrocosm`, `astrology`, `planetary order`
+Use: cosmology section, especially “middle world,” planets, celestial hierarchy. The Met says the bowl shows the sun surrounded by personifications of Mars, Mercury, Venus, Moon, Saturn, and Jupiter. ([The Metropolitan Museum of Art][2])
+
+---
+
+### 3. Jibril protecting Ibrahim from Nimrod’s fire
+
+![Jibril protecting Ibrahim from Nimrod’s fire](https://upload.wikimedia.org/wikipedia/commons/7/74/Berlin%2C_Pertsch_Persisch_1016_fol_32v_Nimrud%27s_fire_doesn%27t_hurt_Ibrahim.jpg)
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/7/74/Berlin%2C_Pertsch_Persisch_1016_fol_32v_Nimrud%27s_fire_doesn%27t_hurt_Ibrahim.jpg](https://upload.wikimedia.org/wikipedia/commons/7/74/Berlin%2C_Pertsch_Persisch_1016_fol_32v_Nimrud%27s_fire_doesn%27t_hurt_Ibrahim.jpg)
+
+Source page:
+[https://commons.wikimedia.org/wiki/File:Berlin,_Pertsch_Persisch_1016_fol_32v_Nimrud%27s_fire_doesn%27t_hurt_Ibrahim.jpg](https://commons.wikimedia.org/wiki/File:Berlin,_Pertsch_Persisch_1016_fol_32v_Nimrud%27s_fire_doesn%27t_hurt_Ibrahim.jpg)
+
+Tags: `Jibril`, `angelic protection`, `fire`, `revelation`, `transfigured perception`, `sacred history`, `Persian manuscript`
+Use: Burning Bush / sacred fire / perception transformed by angelic presence. Commons identifies it as Jibril protecting Ibrahim from Nimrod’s fire and marks it public domain. ([Wikimedia Commons][3])
+
+---
+
+### 4. Splendor Solis alchemical figure
+
+![Splendor Solis](https://upload.wikimedia.org/wikipedia/commons/0/01/Splendor_Solis%2C_The_British_Library.jpg)
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/0/01/Splendor_Solis%2C_The_British_Library.jpg](https://upload.wikimedia.org/wikipedia/commons/0/01/Splendor_Solis%2C_The_British_Library.jpg)
+
+Source page:
+[https://commons.wikimedia.org/wiki/File:Splendor_Solis,_The_British_Library.jpg](https://commons.wikimedia.org/wiki/File:Splendor_Solis,_The_British_Library.jpg)
+
+PDIA source/discovery page:
+[https://pdimagearchive.org/images/7fd31676-2969-433a-99d6-3e3e0f09f76c](https://pdimagearchive.org/images/7fd31676-2969-433a-99d6-3e3e0f09f76c)
+
+Tags: `alchemy`, `winged androgyne`, `Mercury`, `sulfur`, `mirror`, `egg`, `inner work`, `transmutation`, `spiritual body`
+Use: opening alchemy / transformation / hidden secret. Note: the Commons upload is CC BY-SA 4.0, so use with attribution/share-alike unless you pull a cleaner PDIA/BL-safe source. ([Wikimedia Commons][4])
+
+---
+
+### 5. Robert Fludd macrocosm diagram
+
+![Robert Fludd Macrocosm](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/UtriusqueCosmiMacrocosm.png/1280px-UtriusqueCosmiMacrocosm.png)
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/UtriusqueCosmiMacrocosm.png/1280px-UtriusqueCosmiMacrocosm.png](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/UtriusqueCosmiMacrocosm.png/1280px-UtriusqueCosmiMacrocosm.png)
+
+Source page:
+[https://commons.wikimedia.org/wiki/File:UtriusqueCosmiMacrocosm.png](https://commons.wikimedia.org/wiki/File:UtriusqueCosmiMacrocosm.png)
+
+Tags: `macrocosm`, `microcosm`, `Hermetic cosmology`, `worlds`, `elements`, `correspondence`, `Renaissance diagram`
+Use: three-world schema, metaphysical architecture, world layers. Commons identifies this as Robert Fludd’s “Macrocosm” from *Utriusque Cosmi*. ([Wikimedia Commons][5])
+
+---
+
+### 6. Robert Fludd, *Et sic in infinitum*
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/f/f1/Houghton_EC_F6707_B638p_v.1_-_Robert_Fludd%2C_Et_sic_in_infinitum.jpg](https://upload.wikimedia.org/wikipedia/commons/f/f1/Houghton_EC_F6707_B638p_v.1_-_Robert_Fludd%2C_Et_sic_in_infinitum.jpg)
+
+Source page:
+[https://commons.wikimedia.org/wiki/File:Houghton_EC_F6707_B638p_v.1_-_Robert_Fludd,_Et_sic_in_infinitum.jpg](https://commons.wikimedia.org/wiki/File:Houghton_EC_F6707_B638p_v.1_-_Robert_Fludd,_Et_sic_in_infinitum.jpg)
+
+Tags: `void`, `darkness`, `apophatic`, `pre-creation`, `unmanifest`, `infinite`, `hidden ground`
+Use: “secret,” void, pre-formal darkness, reality before rendering. Houghton/Harvard says it claims no rights in the reproduction and that the image is free to download and reproduce. ([Wikimedia Commons][6])
+
+---
+
+### 7. Iskandar Speaks with the Bird on the Mountain
+
+![Iskandar Speaks with the Bird on the Mountain](https://upload.wikimedia.org/wikipedia/commons/d/dc/%22Iskandar_Speaks_with_the_Bird_on_the_Mountain%22%2C_Folio_from_a_Shahnama_%28Book_of_Kings%29_of_Firdausi_MET_DP108580.jpg)
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/d/dc/%22Iskandar_Speaks_with_the_Bird_on_the_Mountain%22%2C_Folio_from_a_Shahnama_%28Book_of_Kings%29_of_Firdausi_MET_DP108580.jpg](https://upload.wikimedia.org/wikipedia/commons/d/dc/%22Iskandar_Speaks_with_the_Bird_on_the_Mountain%22%2C_Folio_from_a_Shahnama_%28Book_of_Kings%29_of_Firdausi_MET_DP108580.jpg)
+
+Source page:
+[https://www.metmuseum.org/art/collection/search/452658](https://www.metmuseum.org/art/collection/search/452658)
+
+Tags: `ascent`, `mountain`, `bird messenger`, `Israfil`, `angelic world`, `threshold`, `visionary journey`
+Use: ascent/threshold scene, imagination as organ of higher perception. The Met says the bird sends Iskandar to a mountaintop where he will see Israfil. ([The Metropolitan Museum of Art][7])
+
+---
+
+### 8. The Angel Gabriel Reveals Sura 55
+
+![The Angel Gabriel Reveals Sura 55](https://collectionapi.metmuseum.org/api/collection/v1/iiif/829763/1961413/main-image)
+
+Direct image URL:
+[https://collectionapi.metmuseum.org/api/collection/v1/iiif/829763/1961413/main-image](https://collectionapi.metmuseum.org/api/collection/v1/iiif/829763/1961413/main-image)
+
+Source page:
+[https://www.metmuseum.org/art/collection/search/829763](https://www.metmuseum.org/art/collection/search/829763)
+
+Tags: `Gabriel`, `Jibril`, `revelation`, `Qajar`, `Iran`, `angel`, `sacred manuscript`, `prophetic vision`
+Use carefully: only for explicit Gabriel/revelation sections, not generic filler. The Met marks it Public Domain, but it is culturally sensitive because it depicts the Prophet face-veiled. ([The Metropolitan Museum of Art][8])
+
+---
+
+### 9. William Blake, The Dance of Albion / Glad Day
+
+Direct image URL:
+[https://upload.wikimedia.org/wikipedia/commons/4/4d/William_Blake%2C_The_Dance_of_Albion_%28Glad_Day%29%2C_c._1803-1810%2C_NGA_11492.jpg](https://upload.wikimedia.org/wikipedia/commons/4/4d/William_Blake%2C_The_Dance_of_Albion_%28Glad_Day%29%2C_c._1803-1810%2C_NGA_11492.jpg)
+
+Source page:
+[https://commons.wikimedia.org/wiki/File:William_Blake,_The_Dance_of_Albion_(Glad_Day),_c._1803-1810,_NGA_11492.jpg](https://commons.wikimedia.org/wiki/File:William_Blake,_The_Dance_of_Albion_%28Glad_Day%29,_c._1803-1810,_NGA_11492.jpg)
+
+Museum source:
+[https://www.nga.gov/artworks/11492-dance-albion-glad-day](https://www.nga.gov/artworks/11492-dance-albion-glad-day)
+
+Tags: `Blake`, `visionary imagination`, `radiant body`, `liberation`, `artist-magician`, `creative imagination`, `human microcosm`
+Use: closing section, imagination awakened into embodied radiance. I am not embedding this one inline because it is a classical nude figure; the NGA/Commons file is CC0. ([Wikimedia Commons][9])
+
+[1]: https://www.metmuseum.org/art/collection/search/452182 "Abu'l Qasim Firdausi - \"The Angel Surush Rescues Khusrau Parviz from a Cul-de-sac\", Folio 708v from the Shahnama (Book of Kings) of Shah Tahmasp - The Metropolitan Museum of Art"
+[2]: https://www.metmuseum.org/art/collection/search/451379 "Bowl with Courtly and Astrological Motifs - The Metropolitan Museum of Art"
+[3]: https://commons.wikimedia.org/wiki/File%3ABerlin%2C_Pertsch_Persisch_1016_fol_32v_Nimrud%27s_fire_doesn%27t_hurt_Ibrahim.jpg "File:Berlin, Pertsch Persisch 1016 fol 32v Nimrud's fire doesn't hurt Ibrahim.jpg - Wikimedia Commons"
+[4]: https://commons.wikimedia.org/wiki/File%3ASplendor_Solis%2C_The_British_Library.jpg "File:Splendor Solis, The British Library.jpg - Wikimedia Commons"
+[5]: https://commons.wikimedia.org/wiki/File%3AUtriusqueCosmiMacrocosm.png "File:UtriusqueCosmiMacrocosm.png - Wikimedia Commons"
+[6]: https://commons.wikimedia.org/wiki/File%3AHoughton_EC_F6707_B638p_v.1_-_Robert_Fludd%2C_Et_sic_in_infinitum.jpg "File:Houghton EC F6707 B638p v.1 - Robert Fludd, Et sic in infinitum.jpg - Wikimedia Commons"
+[7]: https://www.metmuseum.org/art/collection/search/452658 "Abu'l Qasim Firdausi - \"Iskandar Speaks with the Bird on the Mountain\", Folio from a Shahnama (Book of Kings) of Firdausi - The Metropolitan Museum of Art"
+[8]: https://www.metmuseum.org/art/collection/search/829763 "\"The Angel Gabriel Reveals Sura Annama 55 to the Prophet,\" Folio from a Hamla-yi Haidari (Attack of the Lion) - The Metropolitan Museum of Art"
+[9]: https://commons.wikimedia.org/wiki/File%3AWilliam_Blake%2C_The_Dance_of_Albion_%28Glad_Day%29%2C_c._1803-1810%2C_NGA_11492.jpg "File:William Blake, The Dance of Albion (Glad Day), c. 1803-1810, NGA 11492.jpg - Wikimedia Commons"
+
+
+Free options on GitHub:
+
+1. openrouter-image-mcp (via DavidEasden/opencode-vision or devadathanmb's plugin)
+Routes through OpenRouter using nvidia/nemotron-nano-12b-v2-vl:free — a free vision model on OpenRouter that requires no credits. This is probably your best bet — free API key, free model, no OpenCode Go credits burned.
+GitHub
+json
+
+{
+  "mcp": {
+    "openrouter_image": {
+      "type": "local",
+      "command": ["npx", "openrouter-image-mcp"],
+      "environment": {
+        "OPENROUTER_API_KEY": "your-key",
+        "OPENROUTER_MODEL": "nvidia/nemotron-nano-12b-v2-vl:free"
+      }
+    }
+  }
+}
+
+2. NickRivers1983/opencode-vision (pip package)
+MCP server that acts as a guide dog for text-only models, handling image analysis via PaddleOCR (SOTA deep learning, 100+ languages, ~15MB footprint) with Google Gemini 2.5 Flash Vision fallback. Gemini 2.5 Flash gives 1,500 free requests/day via Google AI Studio API key, no credit card required, and no OpenCode Go credits are consumed since the API call happens in the vision server, not through OpenCode's model proxy.
+PyPI + 2
+bash
+
+pip install opencode-vision[paddle]

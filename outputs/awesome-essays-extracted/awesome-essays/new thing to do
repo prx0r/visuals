@@ -1,0 +1,1332 @@
+The recent changes are a substantial improvement over the version I reviewed earlier. The **architecture is converging**, and several P0 bugs were genuinely fixed. But I would **not yet accept the new handover claim that “P0 fixes complete, architecture frozen, ready for P1.”**
+
+My revised assessment:
+
+| Area                   | Previous |     Now | Comment                                           |
+| ---------------------- | -------: | ------: | ------------------------------------------------- |
+| Core architecture      |      8.5 |   **9** | Moltwork/WorkerKit boundary is much clearer       |
+| Hash/provenance design |        2 |   **6** | Major genuine fixes, still incomplete             |
+| Verification           |        2 | **3.5** | Gate fixed; verifier still mostly placeholder     |
+| Economics              |        7 | **7.5** | Safer, but marginal EV logic still wrong          |
+| Tests                  |        3 | **5.5** | Much better intent, several tests overclaim       |
+| Packaging/runtime      |        3 | **2.5** | Old broken packaging/CLI still untouched          |
+| Repo hygiene           |        3 |   **6** | Improved, but tracked stale data remains          |
+| Production readiness   |        2 |   **4** | Definitely progressing, definitely not production |
+| ETHOnline architecture |        7 |   **9** | New strategic direction is strong                 |
+
+The most important conclusion is: **do one more P0/P0.5 hardening pass, then stop touching WorkerKit architecture and move into the real Oracle → execution lifecycle.**
+
+---
+
+# What was genuinely fixed
+
+These are real improvements, not commit-message optimism.
+
+Full SHA-256 is now actually full SHA-256 rather than 16 hexadecimal characters.
+
+`WorkerKit.close()` now commits the actual chain head plus event count rather than literally writing `"ok"`.
+
+The SDK now explicitly denies an irreversible action when `VerificationResult.status != PASS`. That fixes one of the nastiest bugs from the previous version.
+
+Per-run spending is now checked both by `Budget.can_spend()` and inside the active `Run.cost()` path.
+
+The dangerous “there's money left so continue for learning value” fallback is gone.
+
+The duplicate `WorkReceipt` definition was removed from `schema.py`, which is exactly the right cleanup.
+
+And adding `.gitignore` plus removing the Python caches was sensible repo hygiene.
+
+So this wasn't cosmetic. The implementation is meaningfully better.
+
+---
+
+# The biggest remaining problem: verification is still not real
+
+The handover says:
+
+> Verification was pretend … Now checks artifact existence + budget.
+
+That description is technically true, but the stronger claim that WorkerKit now has real verification is not.
+
+Current verification does this:
+
+```python
+if artifact_sha256:
+    artifact_exists = True
+```
+
+and for **every contract criterion**:
+
+```python
+passed = bool(artifact_sha256)
+```
+
+So I can call:
+
+```python
+await wk.verify(run, contract, "potato")
+```
+
+and `"potato"` is sufficient evidence that an artifact exists.
+
+It isn't checked for:
+
+* 64-char digest structure
+* hexadecimal validity
+* existence of corresponding bytes
+* existence of corresponding ArtifactRef
+* actual content hash
+* required filename
+* criterion semantics
+* output count
+* minimum quality
+* external conditions
+
+And importantly, `AcceptanceContract` already contains the richer concepts you need—`required_outputs`, `constraints`, `minimum_quality`, `maximum_cost`, typed `Criterion.check_type`, and `external_conditions`—but almost none of them are actually evaluated.
+
+So:
+
+**Gate enforcement is now real. Verification isn't yet.**
+
+That difference matters enormously.
+
+I would make this the final P0 blocker.
+
+---
+
+# Build a verifier registry, not more verification logic inside `sdk.py`
+
+The current `verify()` should shrink rather than grow.
+
+Something like:
+
+```text
+Criterion
+    check_type = artifact_exists
+               | digest_matches
+               | file_exists
+               | contains
+               | json_schema
+               | command_succeeds
+               | external
+               | judge
+
+VerifierRegistry
+    verifier_for(check_type)
+
+Verifier.verify(
+    criterion,
+    subject,
+    context
+) -> CheckResult
+
+CheckResult:
+    PASS | FAIL | UNKNOWN
+    evidence_refs[]
+    verifier
+    method
+    limitations[]
+```
+
+Then:
+
+```text
+AcceptanceContract
+        ↓
+Criterion[]
+        ↓
+VerifierRegistry
+        ↓
+VerificationResult
+        ↓
+CommitGate
+```
+
+And most importantly:
+
+**unsupported check type = UNKNOWN, never PASS.**
+
+That turns WorkerKit into a genuinely extensible evidence kernel without making it responsible for agent reasoning.
+
+---
+
+# The receipt is improved, but still does not prove everything you're claiming
+
+The receipt now commits to:
+
+```text
+work_order_id
+events_hash
+known_cost
+status
+len(outputs)
+```
+
+That's better now that `events_hash` actually contains the chain head.
+
+But there are still three major deficiencies.
+
+## First: `workerId` is still wrong
+
+This remains:
+
+```python
+self.worker_id = run.work_order_id
+```
+
+So your attestation still calls the WorkOrder ID a Worker ID.
+
+You already designed `WorkerManifest`. Use it.
+
+At minimum:
+
+```text
+runId
+workOrderId
+workerManifestDigest
+```
+
+Do not overload these concepts.
+
+---
+
+## Second: it still calls itself signed when it isn't signed
+
+The file literally says:
+
+> `WorkReceipt — the signed envelope`
+
+and:
+
+> `Signed receipt for a completed worker run.`
+
+There is still no signing mechanism.
+
+Your strategic Phala idea makes this especially easy to resolve conceptually:
+
+```text
+WorkReceipt Statement
+        ↓
+signature / DSSE / TEE attestation
+        ↓
+AuthenticatedWorkReceipt
+```
+
+Until then call the current thing a:
+
+**content-addressed WorkReceipt statement**
+
+not a signed receipt.
+
+---
+
+# Third: `close()` doesn't verify the chain before issuing the receipt
+
+This is subtle and important.
+
+`close()` gets the events:
+
+```python
+events = self.ledger.get_events(...)
+chain_head = events[-1]["event_sha256"]
+```
+
+and issues the receipt.
+
+It no longer calls:
+
+```python
+ledger.verify_chain(run_id)
+```
+
+first.
+
+Therefore a corrupted chain can still have a receipt issued over its final stored hash.
+
+The receipt might commit to the broken chain, but **WorkerKit has not established that the chain itself is internally valid at close time**.
+
+Make:
+
+```text
+close()
+    append completed
+    verify_chain(run)
+    if invalid:
+        refuse receipt
+    calculate chain head
+    issue receipt
+```
+
+mandatory.
+
+This is absolutely worth another invariant test.
+
+---
+
+# Your canonical event model is still split in two
+
+This was one of my previous objections and it remains unfixed.
+
+`WorkerEvent` has:
+
+* sequence
+* occurred_at
+* recorded_at
+* witness source/channel
+* actor type/id
+* subject refs
+* causation ID
+* payload
+* previous hash
+* self hash
+
+But `EventLedger` ignores `WorkerEvent` and constructs an independent schema containing only:
+
+```text
+event_id
+run_id
+event_type
+payload
+payload_sha256
+prev_sha256
+event_sha256
+recorded_at
+```
+
+It imports `WorkerEvent` and doesn't use it.
+
+That means the thing described as:
+
+> canonical truth
+
+isn't actually the thing being stored as canonical truth.
+
+Fix this before Phala/onchain anything.
+
+You need one canonical serialization:
+
+```text
+WorkerEvent
+    canonical_bytes()
+    compute_hash()
+```
+
+and then SQLite stores that exact event.
+
+Otherwise when you later add TEE attestation you will be asking:
+
+> which event representation did the TEE actually attest?
+
+You don't want that ambiguity.
+
+---
+
+# Another evidence weakness: timestamp and witness metadata aren't hash-bound
+
+The stored event hash is:
+
+```text
+event_id :
+run_id :
+event_type :
+payload :
+prev_hash
+```
+
+`recorded_at` is not part of it.
+
+And all the richer canonical-event properties such as:
+
+* occurrence time
+* witness
+* actor
+* causation
+* subject references
+
+aren't part of the ledger event at all.
+
+For an evidence system, these details matter.
+
+If you're going to claim:
+
+> agent X performed action Y at time T observed by witness W
+
+then X, Y, T and W all need to be within the committed event.
+
+---
+
+# The new tests are much better, but they still create false confidence
+
+This is probably the most important review feedback for your coding agent.
+
+The test suite *looks* dramatically stronger.
+
+But several test names don't correspond to what they actually prove.
+
+Examples:
+
+| Test says                                   | Test actually establishes                                  |
+| ------------------------------------------- | ---------------------------------------------------------- |
+| “Artifact tamper detection”                 | Two strings hash differently                               |
+| “Gate denies when verification fails”       | Doesn't pass either `vr_fail` or `vr_pass` to `CommitGate` |
+| “Event chain tamper”                        | Checks wrong/nonexistent `run_id`; never tampers an event  |
+| “Receipt root changes if any input changes” | Changes multiple run properties simultaneously             |
+| “Verification is real”                      | Empty hash fails; arbitrary nonempty string passes         |
+| “Three receipt separation”                  | Three dataclasses get three UUIDs                          |
+
+That is still better than duplicated PASS counters. But don't let **64/64** become the new **55/55**.
+
+The number itself means nothing.
+
+---
+
+# Invariant 6 is particularly misleading
+
+The test creates:
+
+```python
+vr_fail = VerificationResult(status="FAIL")
+vr_pass = VerificationResult(status="PASS")
+```
+
+Then neither variable is passed into the low-level gate.
+
+Both calls are essentially:
+
+```python
+gate.check("SUBMIT", "abc", budget_remaining=5)
+```
+
+The verification enforcement exists in the **SDK wrapper**, not `CommitGate`.
+
+That's okay if intentional, but then either:
+
+1. make `CommitGate` internal/private, or
+2. make verification status/evidence a mandatory input to `CommitGate`.
+
+Given this project's security/evidence goals, I strongly prefer #2.
+
+A developer should not be able to accidentally bypass the critical rule by importing `CommitGate` directly.
+
+---
+
+# The actual tamper test needs to tamper
+
+Add this exact family of tests conceptually:
+
+```text
+append A
+append B
+append C
+
+UPDATE event B payload directly in SQLite
+verify_chain() == False
+```
+
+Then independently:
+
+```text
+modify B.recorded_at
+verify_chain() == False
+```
+
+Then:
+
+```text
+delete B
+verify_chain() == False
+```
+
+Then:
+
+```text
+replace artifact bytes
+artifact verifier == FAIL
+```
+
+Then:
+
+```text
+take receipt + events into fresh process
+verify receipt independently == PASS
+```
+
+The last one is especially important.
+
+At the moment you can **generate** a receipt, but there is no corresponding public:
+
+```python
+verify_receipt(receipt, evidence_bundle)
+```
+
+That should exist before you move into TEE proof work.
+
+---
+
+# The economics fix is safer, but your marginal EV logic is still incorrect
+
+You correctly identified:
+
+```text
+whole_run_expected_profit
+marginal_continue_EV
+```
+
+Great.
+
+But then you require **both** to be positive:
+
+```python
+if marginal_continue > threshold
+and whole_run_expected > threshold:
+    CONTINUE
+```
+
+That reintroduces sunk-cost reasoning through the back door.
+
+Example:
+
+```text
+Reward = $10
+P(success from here) = 80%
+Remaining cost = $1
+Already spent = $20
+```
+
+Then:
+
+```text
+marginal continuation EV = $8 - $1 = +$7
+whole-run P&L = $8 - $20 - $1 = -$13
+```
+
+Continuing from the current state is economically rational because the $20 is already gone.
+
+Your code aborts.
+
+So use:
+
+```text
+CONTINUE decision:
+    marginal_continue_EV > threshold
+    AND remaining_budget >= expected_remaining
+```
+
+Store whole-run expected profit for analytics/reporting only.
+
+That will give you the clean separation:
+
+```text
+"Was this run a good investment initially?"
+vs
+"Given where we are now, should we continue?"
+```
+
+Very important for autonomous workers.
+
+---
+
+# `remaining_budget` is currently unused in `DecisionEngine`
+
+It's supplied:
+
+```python
+remaining_budget: float
+```
+
+and then never referenced.
+
+So this can happen:
+
+```text
+remaining budget = $0.10
+estimated remaining = $10
+marginal EV = +$20
+```
+
+and the controller returns `CONTINUE`.
+
+The economic controller needs **both**:
+
+```text
+worth doing?
+can afford doing?
+```
+
+Those are different predicates.
+
+---
+
+# Budget logic is duplicated and inconsistent
+
+You now have a proper `Budget` object that handles:
+
+```text
+daily_cap
+per_run_cap
+lifetime_cap
+```
+
+But the active WorkerKit runtime doesn't use it.
+
+`Run` independently reads:
+
+```python
+order.raw.get("max_cost", "999999")
+```
+
+and implements another per-run budget mechanism.
+
+This means:
+
+```text
+Budget system
+        ≠
+actual spend enforcement system
+```
+
+Integrate it.
+
+Something like:
+
+```text
+EconomicPolicy
+    per_run
+    daily
+    lifetime
+
+WorkerKit
+    owns EconomicPolicy
+
+Run.cost()
+    asks policy.authorize(...)
+```
+
+One source of spending truth.
+
+---
+
+# You're only half-using Decimal
+
+`Run.cost()` now converts the requested amount to a `Decimal`.
+
+Good.
+
+But then it passes the original float into:
+
+```python
+self.meter.record(category, amount)
+```
+
+and `RunMeter.total_cost` is still a float.
+
+Then `close()` records:
+
+```python
+known_cost_usd = str(run.meter.total_cost)
+```
+
+So your canonical recorded cost ultimately still comes from floating-point arithmetic.
+
+Finish the migration.
+
+Money inside the evidence layer should be:
+
+```text
+Decimal internally
+string at serialization boundaries
+```
+
+Never float.
+
+---
+
+# Cost provenance needs to become stronger too
+
+A caller can currently say:
+
+```python
+run.cost("llm", 0.000001)
+```
+
+and WorkerKit treats that as observed cost.
+
+That's useful for instrumentation but not evidence.
+
+Your `CostEvent` schema already anticipates this brilliantly:
+
+```text
+measurement = OBSERVED
+source = COMPUTED
+provider
+currency
+```
+
+Use it.
+
+I'd distinguish:
+
+```text
+DECLARED
+COMPUTED
+PROVIDER_REPORTED
+PAYMENT_VERIFIED
+ONCHAIN_VERIFIED
+```
+
+This fits perfectly with your new broader evidence hierarchy.
+
+---
+
+# The `WorkerRun` projection isn't actually being maintained yet
+
+`WorkerRun` contains:
+
+```text
+finished_at
+outputs
+verification_refs
+submission_ref
+outcome_ref
+settlement_ref
+```
+
+But the SDK doesn't really update them.
+
+For example:
+
+* `finished_at` stays 0
+* verifying doesn't add `VerificationResult.id`
+* there is no artifact registration method
+* submission/outcome/settlement aren't implemented
+* outputs aren't populated
+
+This reinforces something important:
+
+**P1 isn't merely wiring external integrations yet.**
+
+You still need to make the canonical local lifecycle internally coherent.
+
+---
+
+# There should be an explicit Artifact API
+
+Right now this flow:
+
+```text
+agent creates output
+↓
+some outside thing hashes it
+↓
+hands random string to wk.verify()
+```
+
+is too loose.
+
+I'd add something tiny:
+
+```text
+artifact = run.artifact(
+    name="submission.md",
+    content=...,
+    media_type="text/markdown"
+)
+```
+
+WorkerKit computes the digest.
+
+Then:
+
+```text
+verify(run, contract, artifact)
+```
+
+rather than accepting an arbitrary claimed hash.
+
+This one API change would close several trust holes at once.
+
+---
+
+# The capability/process “data moat” still isn't trustworthy
+
+None of my earlier concerns here were fixed.
+
+`CapabilityTracker.record_run()` still accepts:
+
+```text
+accepted=True/False
+cost=x
+payout=y
+```
+
+from its caller.
+
+Therefore:
+
+> “not self-reported”
+
+still isn't enforced.
+
+Capability performance must be derived from canonical receipts:
+
+```text
+SubmissionReceipt
+        ↓
+OutcomeReceipt
+        ↓
+SettlementReceipt
+        ↓
+CapabilityEvidence
+```
+
+Not:
+
+```python
+record_run(accepted=True, payout=500)
+```
+
+Also there are actual persistence bugs.
+
+`Capability.to_dict()` saves `success_rate`, but `load()` loops fields and attempts `setattr` on any existing attribute. `success_rate` is a read-only property, so that load path is suspect and does not reconstruct `successful_runs` correctly anyway.
+
+And medians are never meaningfully updated.
+
+Freeze this module until P1.
+
+---
+
+# `processes.py` is still broken
+
+`Process.to_dict()` calls:
+
+```python
+asdict(s)
+```
+
+but `asdict` isn't imported in the file.
+
+More importantly, `ProcessVersion.to_dict()` still omits the thing a process version is supposed to preserve:
+
+* steps
+* tools
+* models
+* components
+
+So saving and loading a ProcessVersion can erase the production recipe.
+
+This is exactly why I would stop touching the learning/moat layer until the underlying receipt lifecycle is finished.
+
+---
+
+# Packaging is still broken/path-dependent
+
+This was not addressed.
+
+`pyproject.toml` says:
+
+```toml
+packages = ["workerkit"]
+```
+
+But at repository root there is no `workerkit/` package directory; the files are themselves at root.
+
+The tests compensate with:
+
+```python
+sys.path.insert(0, '/root')
+```
+
+That means the current package can work if the checkout directory itself happens to be called `/root/workerkit`.
+
+Clone this repository normally as:
+
+```text
+mw/
+```
+
+and those imports cease to have that accidental package path.
+
+This is a nasty deployment trap.
+
+I would make:
+
+```text
+src/
+  workerkit/
+    __init__.py
+    sdk.py
+    core/
+    economics/
+    verify/
+```
+
+before ETHOnline.
+
+---
+
+# CLI is still outright broken
+
+This remained untouched from the prior review.
+
+It imports:
+
+```python
+WorkRun
+```
+
+although your class is:
+
+```python
+WorkerRun
+```
+
+It uses `Path` without importing it.
+
+And `cmd_status()` calls:
+
+```python
+ledger.verify_chain()
+```
+
+without a required `run_id`.
+
+So **the published console entry point should not be considered functional**.
+
+This should absolutely be caught by CI:
+
+```text
+pip install .
+wk --help
+wk run fixture.json
+```
+
+---
+
+# There is still no CI
+
+Current head has no GitHub commit status checks, and there is no `.github/workflows` directory.
+
+Also `master`, `mwmarket`, and `oracle` are all unprotected branches.
+
+For an evidence kernel, this is now worth fixing.
+
+Minimal CI:
+
+```text
+Python 3.10
+Python 3.12
+Python current
+
+pip install .
+pytest
+CLI smoke test
+ruff
+```
+
+You do not need a huge DevOps setup.
+
+But **“64/64 locally” is much less useful than “fresh checkout installs and passes CI.”**
+
+---
+
+# `.gitignore` doesn't remove files already tracked
+
+The handover says generated files were removed.
+
+Not completely.
+
+`data/` remains present on master.
+
+The old Oracle SQLite database is still tracked.
+
+And a stale receipt remains committed whose alleged SHA-256 is still only 16 hex characters and whose `eventsHash` is still literally `"ok"`.
+
+That's particularly bad because somebody browsing the repository sees an example artifact that contradicts the new protocol guarantees.
+
+Delete it or deliberately move a freshly generated valid example to:
+
+```text
+examples/receipts/
+```
+
+and explain that it is a fixture.
+
+---
+
+# README is now stale
+
+README still says:
+
+> 11 record families. 55/55 tests.
+
+and still instructs:
+
+```text
+python tests/test_invariants.py  # 55 tests
+```
+
+while the handover claims 10 canonical record families and 64 tests.
+
+Tiny issue, but this is precisely the sort of repo inconsistency judges notice immediately.
+
+Once you start treating this as the ETHOnline artifact, README becomes part of the product.
+
+---
+
+# The strategic handover is the strongest change
+
+Now the good part.
+
+The new positioning:
+
+> **open labor intelligence + execution + verification layer for autonomous agents**
+
+is much stronger than “agent marketplace.”
+
+And:
+
+```text
+opportunity anywhere
+→ evaluate
+→ execute anywhere
+→ prove
+→ get paid anywhere
+```
+
+is genuinely the right abstraction.
+
+This resolves a lot of the circling we've been doing around Oracle vs WorkerKit vs marketplace.
+
+I now see the architecture as:
+
+```text
+MOLTWORK
+│
+├── Discovery / intelligence
+│      Oracle
+│
+├── Economic decision layer
+│      opportunity ranking
+│      cost projection
+│      expected value
+│
+├── WorkerKit
+│      execution instrumentation
+│      budgets
+│      artifact provenance
+│      verification
+│      irreversible-action gates
+│
+├── Evidence
+│      receipts
+│      outcomes
+│      settlements
+│      attestations
+│
+└── Views / distribution
+       Board
+       SDK/API
+       marketplace
+       external protocols
+```
+
+That's very good.
+
+---
+
+# One important strategic correction: don't say “built on ERC-8004 / 8183 / 7710” yet
+
+They're excellent targets.
+
+But **all three are currently Draft ERCs**.
+
+ERC-8004 is explicitly Draft and defines identity, reputation and validation registries for agent trust. ([Ethereum Improvement Proposals][1])
+
+ERC-8183 is also Draft. Its model is particularly relevant to Moltwork because it explicitly defines an agent-commerce job lifecycle around `Open → Funded → Submitted → Completed/Rejected/Expired` with a separate evaluator. ([Ethereum Improvement Proposals][2])
+
+ERC-7710 is likewise Draft and standardizes delegated capabilities, including bounded permissions for automated/AI systems. ([Ethereum Improvement Proposals][3])
+
+So the architecture should say:
+
+> **compatible with / integrating emerging ERC-8004, ERC-8183 and ERC-7710**
+
+rather than making them foundational dependencies.
+
+This actually reinforces your chain-agnostic thesis.
+
+Your canonical schema should survive if any of those drafts change.
+
+---
+
+# ERC-8183 is unusually aligned with what you've independently designed
+
+This is worth highlighting.
+
+You already independently separated:
+
+```text
+SubmissionReceipt
+OutcomeReceipt
+SettlementReceipt
+```
+
+ERC-8183 independently separates work submission from evaluation and escrow completion/rejection. Its provider submits, while an evaluator separately completes/rejects. ([Ethereum Improvement Proposals][2])
+
+That's a strong signal that your data model is pointing in the right direction.
+
+I would create an adapter later:
+
+```text
+ERC8183Job
+        ↕
+Moltwork WorkOrder
+
+JobSubmitted
+        ↕
+SubmissionReceipt
+
+Completed / Rejected
+        ↕
+OutcomeReceipt
+
+ERC20 transfer
+        ↕
+SettlementReceipt
+```
+
+But **do not mutate WorkerKit's canonical lifecycle to literally become ERC-8183's lifecycle**.
+
+Adapter, not foundation.
+
+Exactly as you're now saying about Virtuals.
+
+---
+
+# ERC-8004 fits the Oracle better than WorkerKit
+
+This is another useful architectural distinction.
+
+ERC-8004 explicitly expects sophisticated reputation aggregation to happen off-chain while exposing feedback and validation primitives that are composable onchain. ([Ethereum Improvement Proposals][1])
+
+That's basically begging for Moltwork Oracle.
+
+The Oracle can ingest:
+
+```text
+WorkerKit receipts
+ERC-8004 feedback
+ERC-8004 validation
+ERC-8183 jobs/outcomes
+x402 payments
+Web2 bounty outcomes
+GitHub evidence
+hackathon results
+```
+
+and calculate:
+
+```text
+empirical success rates
+realized revenue
+realized cost
+latency
+acceptance rate
+counterparty reliability
+market liquidity
+capability performance
+```
+
+That is where I think the deepest moat is.
+
+Not another reputation token.
+
+**The longitudinal dataset.**
+
+---
+
+# TEE/Phala should come after receipt semantics are frozen
+
+Your new evidence ladder is excellent conceptually:
+
+```text
+SELF REPORTED
+OBSERVED
+PAYMENT VERIFIED
+TEE VERIFIED
+REEXECUTED
+ZK VERIFIED
+```
+
+Keep that.
+
+But don't start writing Phala code yet.
+
+A TEE can attest garbage just as rigorously as it can attest a good schema.
+
+You first need to know exactly what is being attested:
+
+```text
+canonical WorkOrder digest
+canonical WorkerManifest digest
+canonical policy digest
+canonical event schema version
+canonical artifact digest
+canonical VerificationResult digest
+canonical receipt digest
+```
+
+**Then** put that computation inside a TEE.
+
+Otherwise you'll have to migrate the attestation scheme immediately.
+
+---
+
+# Agent leasing is interesting but definitely P4+
+
+The TEE-based constrained agent leasing idea in the handover is genuinely interesting.
+
+But it is a separate product-level primitive:
+
+```text
+owner secrets
++
+TEE
++
+delegated permissions
++
+budget constraints
++
+lease identity
++
+revenue split
+```
+
+Do not touch it for ETHOnline core until one autonomous WorkerKit lifecycle is running.
+
+Put it in the architecture doc as:
+
+> future application enabled by WorkerKit evidence + constrained execution.
+
+That's enough.
+
+---
+
+# What I would make the coding agent do next
+
+I would **not** give it “P1: real Hermes task” yet.
+
+Give it one final hardening milestone:
+
+| Priority | Work                                                          |
+| -------- | ------------------------------------------------------------- |
+| **P0**   | Real ArtifactRef registration, WorkerKit computes digests     |
+| **P0**   | Real typed verifier registry; unsupported criterion → UNKNOWN |
+| **P0**   | Gate accepts/binds VerificationResult explicitly              |
+| **P0**   | `close()` refuses invalid event chains                        |
+| **P0**   | Canonical `WorkerEvent` becomes the ledger representation     |
+| **P0**   | Fix `workerId`/add WorkerManifest reference                   |
+| **P0**   | Stop calling unsigned receipts signed                         |
+| **P0**   | Fix marginal EV and enforce `remaining_budget`                |
+| **P0**   | Use Decimal all the way through monetary accounting           |
+| **P0**   | Fix packaging + CLI                                           |
+| **P0**   | CI from clean checkout                                        |
+| **P0**   | Actual tamper tests                                           |
+| **P0**   | Delete stale DB/receipts from Git                             |
+| **P0.5** | Add `verify_receipt(bundle)` independent verifier             |
+| **P0.5** | Freeze capability/process learning modules                    |
+
+Then stop.
+
+Don't turn this into another architecture week.
+
+---
+
+# The actual definition of “WorkerKit v0.1 done”
+
+I would set exactly one acceptance test:
+
+```text
+fresh machine
+↓
+git clone
+↓
+pip install .
+↓
+Oracle fixture → WorkOrder
+↓
+WorkerKit starts run
+↓
+real executor produces bytes
+↓
+WorkerKit registers artifact itself
+↓
+artifact SHA-256 computed internally
+↓
+real deterministic acceptance contract evaluated
+↓
+VerificationResult PASS
+↓
+gate allows SUBMIT
+↓
+SubmissionReceipt produced
+↓
+OutcomeReceipt recorded independently
+↓
+SettlementReceipt recorded independently
+↓
+WorkReceipt/evidence bundle produced
+↓
+new process verifies full bundle from scratch
+↓
+modify ANY canonical event or artifact
+↓
+verification fails
+```
+
+If that passes, **freeze WorkerKit v0.1**.
+
+That is far more meaningful than 64 assertions.
+
+---
+
+# Then yes: go straight to the Oracle
+
+Once the above is done, I strongly agree with the new handover:
+
+```text
+Oracle opportunity
+→ WorkOrder
+→ WorkerKit
+→ artifact
+→ verify
+→ submit
+→ outcome
+→ settlement
+→ telemetry back to Oracle
+```
+
+That is the system.
+
+And this is the part I think has sharpened considerably since the previous review:
+
+**Moltwork doesn't need to own where work is posted, which agent framework does the work, or which chain pays for it.**
+
+It owns the normalization and intelligence around:
+
+> **What work exists? What should an agent attempt? What actually happened? What did it cost? Did it work? Did it get paid? What evidence backs those claims?**
+
+That is much more defensible than a marketplace.
+
+### Current verdict
+
+I would now label the repository:
+
+> **WorkerKit v0.1 architecture validated; core integrity hardening in progress.**
+
+Not production-ready, not “P0 complete,” but significantly past toy status.
+
+The most valuable change isn't even the SHA fix. It's that **the conceptual boundaries now look right**. Another focused hardening pass can make WorkerKit boring and trustworthy, at which point the Oracle becomes the thing worth spending most of the ETHOnline build time on.
+
+[1]: https://eips.ethereum.org/EIPS/eip-8004 "ERC-8004: Trustless Agents"
+[2]: https://eips.ethereum.org/EIPS/eip-8183 "ERC-8183: Agentic Commerce"
+[3]: https://eips.ethereum.org/EIPS/eip-7710 "ERC-7710: Smart Contract Delegation"

@@ -1,0 +1,65 @@
+Completed. The final implementation pack is built and validated against the reviewed `prx0r/cuntgoblin` head, while explicitly preserving the strongest existing components rather than proposing another rewrite. It replaces the current “Hermes for everything / one model” doctrine with **Factory OS as canonical state + Hermes as the default executor + HotSwap as the economic/compute router**, while preserving the repo’s existing requirement that nothing counts without reproducible logged evidence.
+
+The biggest architectural change is that orchestration becomes a hierarchy:
+
+```text
+Opportunity Oracle
+      ↓
+Portfolio allocation
+"what deserves compute?"
+      ↓
+Factory selection
+      ↓
+Canonical WorkGraph
+      ↓
+Economic scheduler
+"what is worth doing next?"
+      ↓
+HotSwap
+"how should this task be executed?"
+      ↓
+Hermes / deterministic / optional other worker
+      ↓
+Independent verification
+      ↓
+Artifact + certificate
+      ↓
+Release
+      ↓
+Revenue / usage / quality / cost
+      ↓
+Learning
+      ↺
+```
+
+Beads/Gas City ideas are incorporated selectively—atomic claiming, dependency-ready work, discovered-from relationships and reusable graph/formula semantics—without making either system another source of truth. That matches the useful primitives exposed by Beads and Gas City while keeping VentureLab domain-general. ([GitHub][1])
+
+The ZIP contains **176 files** and includes the previous peer-review ZIP as an upstream reference. The most important additions are:
+
+* complete `reference/venturelab_os/` runnable core with SQLite WAL, WorkGraph, atomic leases, retries and executor protocol;
+* hash-chained append-only event ledger, RFC6962-style Merkle epochs, inclusion proofs, Ed25519 signing and optional external timestamp/transparency adapters—the underlying standards support Merkle audit proofs and trusted assertions that data existed at a specified time; ([rfc-editor.org][2])
+* Hermes executor plus optional Beads mirror;
+* economic scheduler and opportunity-cost calculations above HotSwap;
+* composite HotSwap route design: **executor + profile + model + provider + capabilities**;
+* cost ledger, release/outcome lineage, Beta factory-performance posteriors, replay framework and exploration/exploitation allocation;
+* immutable factory manifests and JSON schemas;
+* **10 factory types:** API, App/Micro-SaaS, Connector, Agent Service, Directory, Shop/Marketplace, Developer Tool/CLI, Browser Extension, Dataset/Benchmark and Data Pipeline;
+* **14 reusable global teams:** research, architecture, builder, QA, red team, security, provenance, FinOps, docs, release, post-release, observability, maintenance and portfolio review;
+* Shopify/Etsy/eBay/Amazon marketplace abstractions plus country-market snapshots and cross-country arbitrage schemas. These are deliberately dynamic rather than hard-coded: Shopify exposes merchant-defined Markets, Etsy's API models shop/listing and shipping-country concerns, eBay offers are marketplace-specific, and Amazon SP-API is region/marketplace aware. ([Shopify][3])
+* explicit `UNKNOWN` treatment for missing shipping, duties, fees, returns or prices—no fake arbitrage margin;
+* canonical recurring schedules independent of Hermes cron;
+* production certificates linking source commit → WorkGraph → artifacts → gates → costs → Merkle root;
+* a migration map showing exactly what to preserve, retire, modify and add in the current repo;
+* `MASTER_IMPLEMENTATION_PROMPT.md` instructing the coding agent phase by phase;
+* 23 explicit implementation tasks and acceptance criteria;
+* anti-cheat tests covering event mutation, Merkle mutation, atomic claims, dependency ordering, factory version immutability, cost/economic behavior and certificates.
+
+The reference implementation itself is clean: **0 Python syntax failures, 0 JSON validation/parsing failures, 20/20 reference tests pass, and ZIP integrity passes**. The ZIP SHA-256 is `e3de58b43a4138aa8de4786d9479f14fbb3cd19d2ea8238debdd59f266a9eed8`.
+
+Start the implementation agent with `agent/MASTER_IMPLEMENTATION_PROMPT.md`. It explicitly tells it to repair the previously identified P0 boot problems first, preserve HotSwap/market/AgentHub, and then transplant the OS incrementally rather than bulldozing the repository.
+
+[Download the complete VentureLab Factory OS implementation pack](sandbox:/mnt/data/venturelab_factory_os_final_2026-08-18.zip)
+
+[1]: https://github.com/gastownhall/beads/blob/main/npm-package/INTEGRATION_GUIDE.md?utm_source=chatgpt.com "beads/npm-package/INTEGRATION_GUIDE.md at main · gastownhall/beads · GitHub"
+[2]: https://www.rfc-editor.org/info/rfc6962/ "https://www.rfc-editor.org/info/rfc6962/"
+[3]: https://shopify.dev/docs/api/admin-graphql/2026-04/queries/markets "https://shopify.dev/docs/api/admin-graphql/2026-04/queries/markets"

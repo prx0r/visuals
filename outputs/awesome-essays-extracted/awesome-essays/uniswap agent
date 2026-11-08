@@ -1,0 +1,1357 @@
+Yes. I’d structure it as **three layers**:
+
+**Your normal wallet → dedicated Safe treasury → agent signer.**
+
+For the first version, make the Safe **2-of-2**: your human wallet + the agent signer. That means the agent can research, quote, simulate, construct, and even pre-sign transactions, but **cannot move funds without your final signature**. Safe explicitly supports this model; its Uniswap agent example notes that higher signing thresholds require the additional signatures. ([Safe Docs][1])
+
+Uniswap’s official `uniswap-ai` repo already provides `swap-integration`, `viem-integration`, `index-bot`, DCA and other agent skills, and is designed to work with arbitrary coding agents. ([GitHub][2])
+
+For MetaMask, create a **new wallet with a completely new recovery phrase**, rather than merely “Account 2” under your existing phrase. Keep that recovery phrase offline and never put it on your VPS or into an AI prompt. If a service has age/eligibility requirements, do not bypass them.
+
+Copy this whole prompt into the coding agent:
+
+# Build a Human-Gated Uniswap Spot Execution Agent
+
+You are the lead engineer responsible for designing, implementing, testing, and documenting a secure local crypto execution agent.
+
+The goal is NOT to create an unconstrained trading bot.
+
+The goal is to build a deterministic execution system that can:
+
+1. research and verify assets,
+2. inspect live liquidity,
+3. fetch competing swap quotes,
+4. detect wrappers/depegs and bad routes,
+5. construct transactions,
+6. simulate every transaction,
+7. present an exact human-readable execution plan,
+8. require explicit human approval,
+9. execute only approved transactions through a dedicated Safe smart account,
+10. verify the resulting balances onchain.
+
+The human should never have to manually calculate routes, token quantities, gas requirements, liquidity, approvals, or transaction calldata.
+
+The human should only be asked to perform actions that genuinely require human custody or consent.
+
+---
+
+# 0. NON-NEGOTIABLE SECURITY MODEL
+
+Never request, display, log, transmit, or store the human's:
+
+* Secret Recovery Phrase
+* seed phrase
+* main-wallet private key
+* MetaMask private key
+
+Never instruct the human to paste those values into:
+
+* this project
+* `.env`
+* shell
+* VPS
+* GitHub
+* an LLM
+* Hermes
+* a web form
+
+The human wallet is NOT an execution key.
+
+Use a Safe Smart Account as the trading treasury.
+
+Initial Safe configuration:
+
+Human owner + agent signer
+
+Threshold:
+
+2-of-2
+
+Therefore:
+
+AGENT CAN:
+
+* inspect
+* quote
+* plan
+* simulate
+* construct
+* propose
+* sign its portion
+
+AGENT CANNOT:
+
+* unilaterally spend money
+
+HUMAN MUST:
+
+* provide final Safe signature
+
+Do not reduce the Safe threshold to 1 without a separate explicit human decision.
+
+Do not install an unrestricted Safe module.
+
+Do not grant an agent unlimited token spending authority.
+
+---
+
+# 1. USE OFFICIAL TOOLING
+
+Investigate the current upstream versions before implementing.
+
+Use the official:
+
+* `Uniswap/uniswap-ai`
+* Uniswap swap integration skill
+* Uniswap viem integration skill
+* Uniswap driver where useful
+* Uniswap index-bot concepts where useful
+* current Uniswap Trading API / Universal Router architecture
+* `viem`
+* Safe Protocol Kit
+* official Safe SDKs
+
+Install the current Uniswap AI skills using the method currently recommended in the upstream repository.
+
+Do not blindly copy old API examples.
+
+Read current official documentation first.
+
+Record:
+
+* versions used
+* git commit hashes where appropriate
+* chain support
+* relevant contract addresses
+* API assumptions
+
+in:
+
+`docs/UPSTREAM.md`
+
+Prefer official sources over blogs or aggregators.
+
+---
+
+# 2. TARGET NETWORKS
+
+Initial supported networks:
+
+Ethereum
+chainId = 1
+
+Base
+chainId = 8453
+
+Do not support arbitrary networks.
+
+Use an explicit chain allowlist.
+
+Every transaction must verify its expected chain ID before signing.
+
+Abort on chain mismatch.
+
+---
+
+# 3. INITIAL TARGET PORTFOLIO
+
+The human currently wants the system capable of acquiring approximately the following spot exposures:
+
+## Ethereum
+
+### TAO exposure
+
+Candidate:
+
+wTAO
+
+Expected candidate contract:
+
+`0x77E06c9eCCf2E797fd462A92B6D7642EF85b0A44`
+
+Desired token exposure:
+
+`0.991 TAO-equivalent`
+
+IMPORTANT:
+
+Do NOT trust the supplied address automatically.
+
+Independently verify:
+
+* token identity
+* wrapping mechanism
+* backing
+* bridge/custodian
+* redeemability
+* current liquidity
+* current onchain price
+* native TAO reference price
+
+The agent must detect whether wTAO is trading at a material premium or discount to native TAO.
+
+If wrapper deviation exceeds configured tolerance:
+
+DO NOT EXECUTE.
+
+Tell the human why.
+
+### ONDO
+
+Candidate contract:
+
+`0xfAbA6f8e4a5E8Ab82F62fe7C39859FA577269BE3`
+
+Desired amount:
+
+`174 ONDO`
+
+Verify independently before use.
+
+### NIL
+
+Candidate contract:
+
+`0x7Cf9a80db3B29eE8efE3710AadB7b95270572d47`
+
+Desired amount:
+
+`522 NIL`
+
+Verify independently, including the current Nillion migration documentation.
+
+---
+
+## Base
+
+### LTC exposure
+
+Candidate:
+
+Universal Litecoin / uLTC
+
+Expected candidate contract:
+
+`0x3EB097375fc2FC361e4a472f5E7067238c547c52`
+
+Desired amount:
+
+`2.32 LTC-equivalent`
+
+Verify:
+
+* Universal registry
+* backing mechanism
+* current redemption status
+* current liquidity
+* deviation from native LTC
+
+### VIRTUAL
+
+Expected candidate contract:
+
+`0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b`
+
+Desired amount:
+
+`50.3 VIRTUAL`
+
+Verify independently against authoritative Virtuals sources and onchain metadata.
+
+---
+
+# 4. NEVER ASSUME THE PROVIDED CONTRACTS ARE CORRECT
+
+Create:
+
+`src/verification/assetVerifier.ts`
+
+Every configured token receives a verification record containing:
+
+```ts
+interface AssetVerification {
+  symbol: string
+  chainId: number
+  address: `0x${string}`
+  decimals: number
+
+  officialSourceVerified: boolean
+  explorerVerified: boolean
+
+  wrapper: boolean
+
+  underlyingAsset?: string
+  backingDescription?: string
+
+  referencePriceUsd?: number
+  dexPriceUsd?: number
+  deviationBps?: number
+
+  liquidityUsd?: number
+  volume24hUsd?: number
+
+  verifiedAt: string
+  sources: string[]
+
+  status:
+    | "VERIFIED"
+    | "REJECTED"
+    | "NEEDS_HUMAN_REVIEW"
+}
+```
+
+No asset with status other than `VERIFIED` may enter the execution planner.
+
+---
+
+# 5. CONFIGURATION
+
+Create:
+
+`config/portfolio.json`
+
+and
+
+`config/policy.json`
+
+Portfolio configuration should NOT contain private keys.
+
+Example conceptual structure:
+
+```json
+{
+  "ethereum": [
+    {
+      "symbol": "wTAO",
+      "targetAmount": "0.991"
+    },
+    {
+      "symbol": "ONDO",
+      "targetAmount": "174"
+    },
+    {
+      "symbol": "NIL",
+      "targetAmount": "522"
+    }
+  ],
+  "base": [
+    {
+      "symbol": "uLTC",
+      "targetAmount": "2.32"
+    },
+    {
+      "symbol": "VIRTUAL",
+      "targetAmount": "50.3"
+    }
+  ]
+}
+```
+
+---
+
+# 6. HARD RISK LIMITS
+
+Implement policy-based circuit breakers.
+
+Start with conservative CONFIGURABLE defaults such as:
+
+```text
+MAX_TOTAL_SESSION_USD=500
+MAX_SINGLE_SWAP_USD=250
+
+MAX_PRICE_IMPACT_BPS=50
+MAX_SLIPPAGE_BPS=50
+
+MAX_WRAPPER_DEVIATION_BPS=150
+
+MIN_LIQUIDITY_MULTIPLE=100
+
+REQUIRE_SIMULATION=true
+REQUIRE_HUMAN_SIGNATURE=true
+ALLOW_UNLIMITED_APPROVALS=false
+
+AUTO_EXECUTE=false
+```
+
+These values must live in configuration, not scattered through code.
+
+The system must display them to the human before execution.
+
+Do not silently relax a limit to make a trade pass.
+
+If a limit fails:
+
+STOP.
+
+Explain which invariant failed.
+
+---
+
+# 7. FUNDING ASSET
+
+Support USDC as the initial funding asset.
+
+Before generating trades, calculate:
+
+* current USDC on each chain
+* required USDC
+* estimated gas
+* gas token balance
+* expected output
+* expected execution cost
+* expected residual balance
+
+Do not automatically bridge merely because one chain lacks funds.
+
+Instead generate a funding plan for the human.
+
+Example:
+
+```text
+ETHEREUM SAFE
+
+Need:
+$311.72 USDC
+0.0041 ETH estimated gas reserve
+
+Current:
+$0 USDC
+0 ETH
+
+HUMAN ACTION REQUIRED:
+Fund Ethereum Safe with:
+~312 USDC
+~0.005 ETH
+```
+
+Use live calculations rather than these sample values.
+
+---
+
+# 8. HUMAN ACTION ENGINE
+
+Create:
+
+`src/human/actions.ts`
+
+The agent should distinguish between:
+
+## Agent-resolvable work
+
+Do automatically:
+
+* research
+* contract verification
+* RPC querying
+* balance querying
+* liquidity inspection
+* route discovery
+* price comparison
+* gas estimation
+* transaction construction
+* simulation
+* portfolio calculations
+* logging
+* post-trade verification
+
+## Human-only work
+
+Ask the human only when necessary:
+
+* create custody wallet
+* record recovery phrase offline
+* connect wallet
+* deploy Safe
+* fund Safe
+* sign Safe ownership transaction
+* approve final execution bundle
+
+Every human instruction must be extremely explicit.
+
+For example:
+
+```text
+HUMAN ACTION REQUIRED — 2/5
+
+Open MetaMask.
+
+Connect the wallet you created specifically for this system.
+
+Expected human owner address:
+
+0x...
+
+You are about to create a Safe on Base.
+
+Expected Safe owners:
+
+Human:
+0x...
+
+Agent:
+0x...
+
+Threshold:
+2 of 2
+
+Do not continue if those values differ.
+
+When complete, paste ONLY the resulting Safe address here.
+
+Never paste your recovery phrase or private key.
+```
+
+The agent must then validate whatever address the human supplies.
+
+---
+
+# 9. WALLET SETUP WORKFLOW
+
+The first interactive run should guide the human through setup.
+
+## Step A — Human custody wallet
+
+Tell human:
+
+Create a NEW wallet with a NEW Secret Recovery Phrase.
+
+Do NOT simply create another account derived from the existing MetaMask recovery phrase if isolation is desired.
+
+The recovery phrase stays offline.
+
+Never ask to see it.
+
+Collect only:
+
+`HUMAN_OWNER_ADDRESS`
+
+---
+
+## Step B — Agent signer
+
+Create a dedicated agent signer.
+
+It must be entirely unrelated to the human custody key.
+
+Do NOT print its private key to normal logs.
+
+Store its secret using an appropriate local secret mechanism.
+
+At minimum:
+
+`.env` must be gitignored.
+
+Prefer a dedicated secrets mechanism if available.
+
+Create:
+
+`.env.example`
+
+with placeholders only.
+
+Never commit the real secret.
+
+The agent signer contains only the authority explicitly granted through Safe.
+
+---
+
+## Step C — Create Safe
+
+Create/deploy a Safe on each required chain.
+
+Owners:
+
+1. human owner address
+2. agent signer address
+
+Threshold:
+
+2
+
+Validate onchain after deployment.
+
+Record:
+
+* chain
+* Safe address
+* owners
+* threshold
+* deployment tx
+
+in:
+
+`state/safes.json`
+
+No secret material belongs in this file.
+
+---
+
+# 10. ETHEREUM AND BASE ARE SEPARATE
+
+Treat:
+
+Ethereum Safe
+
+and:
+
+Base Safe
+
+as logically separate accounts.
+
+Never assume because an address exists on Ethereum that its corresponding Safe has been deployed on Base.
+
+Check deployment state independently.
+
+Check balances independently.
+
+Check approvals independently.
+
+Check nonces independently.
+
+---
+
+# 11. QUOTE ENGINE
+
+Create:
+
+`src/swaps/quote.ts`
+
+For each desired asset:
+
+1. verify token
+2. identify funding asset
+3. query official Uniswap routing infrastructure
+4. identify best valid route
+5. estimate:
+
+   * input
+   * output
+   * price
+   * price impact
+   * gas
+   * route
+   * pool(s)
+   * fee tier(s)
+6. compare against independent market reference
+7. enforce risk policy
+8. return deterministic quote object
+
+Store quote timestamp.
+
+Quotes expire.
+
+Default:
+
+`QUOTE_TTL_SECONDS=60`
+
+Never execute an expired quote.
+
+---
+
+# 12. LIQUIDITY VALIDATION
+
+Do NOT treat raw TVL as enough.
+
+For every proposed trade calculate actual executable conditions.
+
+At minimum inspect:
+
+* available route
+* estimated price impact
+* pool liquidity
+* quote output
+* current pool state
+* fee
+* token transfer behavior
+* suspicious or non-standard token behavior where relevant
+
+The user's order should be insignificant relative to available liquidity.
+
+If not:
+
+reject or request human review.
+
+---
+
+# 13. WRAPPER VALIDATION
+
+wTAO and uLTC are special cases.
+
+Create:
+
+`src/verification/wrapperVerifier.ts`
+
+The wrapper verifier checks:
+
+* official issuer
+* underlying asset
+* custody/bridge model
+* backing claim
+* redeemability
+* current operational status
+* onchain supply if available
+* collateral/reserve information if available
+* DEX price
+* native underlying reference price
+* price deviation
+
+Produce:
+
+```text
+WRAPPER REPORT
+
+Asset: wTAO
+
+DEX price:
+$...
+
+Native TAO reference:
+$...
+
+Deviation:
+...%
+
+Backing:
+...
+
+Liquidity:
+$...
+
+Result:
+PASS / FAIL / HUMAN REVIEW
+```
+
+Never substitute a wrapped token for native exposure without explicitly showing this report.
+
+---
+
+# 14. TRANSACTION APPROVALS
+
+Avoid unlimited ERC-20 approvals.
+
+Prefer:
+
+* exact approvals
+* safely bounded Permit2 permissions
+* short-lived/scoped permissions where supported
+
+Do not approve arbitrary contracts.
+
+Only interact with verified Uniswap contracts obtained from authoritative deployment records.
+
+Maintain an explicit contract allowlist.
+
+---
+
+# 15. TRANSACTION SIMULATION
+
+Every transaction MUST be simulated before human signature.
+
+Create:
+
+`src/simulation/simulate.ts`
+
+Verify:
+
+* transaction does not revert
+* recipient is correct
+* Safe is correct
+* input token is correct
+* input amount is correct
+* output token is correct
+* minimum output is correct
+* spender is approved
+* chain ID is correct
+* calldata target is allowlisted
+* estimated state change matches expectation
+
+Generate a before/after state diff.
+
+Example:
+
+```text
+BEFORE
+
+USDC:
+312.00
+
+ONDO:
+0
+
+AFTER SIMULATION
+
+USDC:
+245.91
+
+ONDO:
+~174
+
+Maximum USDC spent:
+66.09
+
+Minimum ONDO received:
+173.13
+
+Gas estimate:
+...
+
+SIMULATION:
+PASS
+```
+
+---
+
+# 16. EXECUTION PLAN
+
+Before requesting any human signature, output ONE complete plan.
+
+Example format:
+
+```text
+=================================
+PROPOSED SPOT PORTFOLIO EXECUTION
+=================================
+
+Ethereum Safe:
+0x...
+
+Base Safe:
+0x...
+
+TOTAL MAXIMUM SPEND:
+$...
+
+---------------------------------
+ETHEREUM
+---------------------------------
+
+wTAO
+Target: 0.991
+Expected spend: $...
+Price impact: ...
+Wrapper deviation: ...
+Status: PASS
+
+ONDO
+Target: 174
+Expected spend: $...
+Price impact: ...
+Status: PASS
+
+NIL
+Target: 522
+Expected spend: $...
+Price impact: ...
+Status: PASS
+
+---------------------------------
+BASE
+---------------------------------
+
+uLTC
+Target: 2.32
+Expected spend: $...
+Price impact: ...
+Wrapper deviation: ...
+Status: PASS
+
+VIRTUAL
+Target: 50.3
+Expected spend: $...
+Price impact: ...
+Status: PASS
+
+---------------------------------
+
+Estimated assets:
+$...
+
+Estimated network costs:
+$...
+
+Worst-case allowed execution:
+$...
+
+ALL SAFETY CHECKS:
+PASS
+
+Human signature required:
+YES
+```
+
+---
+
+# 17. NO AMBIGUOUS CONFIRMATIONS
+
+Do not treat:
+
+* "ok"
+* "sounds good"
+* "continue"
+* "yeah"
+
+as authorization to spend funds.
+
+When transactions are ready, instruct the human to review them in Safe/MetaMask.
+
+Cryptographic signing is the actual authorization.
+
+The agent should never manufacture or substitute the human signature.
+
+---
+
+# 18. EXECUTION
+
+After the human provides the required Safe signature:
+
+1. re-check quote freshness
+2. re-check chain state
+3. re-check balance
+4. re-check policy limits
+5. re-simulate if anything changed materially
+6. collect required Safe signatures
+7. submit
+8. wait for receipt
+9. verify status
+10. verify resulting balances
+
+Never blindly resubmit a failed transaction.
+
+Never repeatedly retry a transaction that spends money without diagnosing the failure.
+
+---
+
+# 19. IDEMPOTENCY
+
+The entire system must be idempotent.
+
+Maintain:
+
+`state/executions.jsonl`
+
+Every intended action gets a unique ID.
+
+Track:
+
+```text
+PLANNED
+QUOTED
+SIMULATED
+AWAITING_HUMAN
+SIGNED
+SUBMITTED
+CONFIRMED
+FAILED
+CANCELLED
+```
+
+Before any transaction:
+
+check whether that logical action was previously submitted or confirmed.
+
+Prevent duplicate purchases.
+
+---
+
+# 20. POST-TRADE VERIFICATION
+
+After execution, query balances directly from the chains.
+
+Produce:
+
+```text
+FINAL PORTFOLIO
+
+Ethereum Safe
+-------------
+
+wTAO:
+...
+
+ONDO:
+...
+
+NIL:
+...
+
+USDC remaining:
+...
+
+Base Safe
+---------
+
+uLTC:
+...
+
+VIRTUAL:
+...
+
+USDC remaining:
+...
+
+Transaction hashes:
+...
+
+Target deviations:
+...
+
+Execution cost:
+...
+
+STATUS:
+COMPLETE
+```
+
+The transaction receipt, rather than agent memory, is authoritative.
+
+---
+
+# 21. CLI
+
+Create a simple CLI.
+
+Commands:
+
+```bash
+agent-wallet setup
+agent-wallet status
+agent-wallet verify-assets
+agent-wallet balances
+agent-wallet plan
+agent-wallet simulate
+agent-wallet propose
+agent-wallet execute
+agent-wallet audit
+```
+
+`execute` must never bypass Safe's human-signature requirement.
+
+---
+
+# 22. DRY RUN
+
+Support:
+
+```bash
+agent-wallet plan --dry-run
+```
+
+Dry-run mode must never:
+
+* broadcast transactions
+* create approvals
+* sign spending transactions
+* alter Safe state
+
+The first complete run MUST be dry-run.
+
+---
+
+# 23. TESTNET / FORK TESTING
+
+Before real funds:
+
+Test the complete transaction lifecycle using either:
+
+* appropriate test networks where practical, and/or
+* local mainnet forks
+
+Test:
+
+* success path
+* stale quote
+* insufficient funds
+* wrong chain
+* wrong token
+* fake contract
+* excessive slippage
+* wrapper depeg
+* missing liquidity
+* simulation revert
+* RPC failure
+* duplicate execution
+* changed nonce
+* human rejection
+* partial transaction completion
+
+Mainnet execution is prohibited until tests pass.
+
+---
+
+# 24. ADVERSARIAL TESTS
+
+Specifically test that the agent CANNOT:
+
+* spend > session limit
+* use an unapproved token
+* use an unapproved chain
+* swap into an unverified token
+* bypass wrapper verification
+* use an expired quote
+* use arbitrary calldata
+* approve an arbitrary spender
+* create unlimited approval
+* spend without the required Safe signatures
+* leak private keys into logs
+* commit secrets into Git
+
+Add automated tests for these invariants.
+
+---
+
+# 25. DEPENDENCY SECURITY
+
+Audit dependencies.
+
+Use lockfiles.
+
+Avoid obscure packages where established official libraries exist.
+
+Run available:
+
+* type checking
+* linting
+* unit tests
+* integration tests
+* dependency audit
+
+Do not suppress serious security warnings merely to make CI green.
+
+---
+
+# 26. OUTPUT REPOSITORY
+
+Final repository should look approximately like:
+
+```text
+agent-wallet/
+├── README.md
+├── AGENTS.md
+├── HUMAN.md
+├── SECURITY.md
+├── package.json
+├── .gitignore
+├── .env.example
+├── config/
+│   ├── assets.json
+│   ├── portfolio.json
+│   └── policy.json
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── UPSTREAM.md
+│   ├── THREAT_MODEL.md
+│   └── RECOVERY.md
+├── src/
+│   ├── cli/
+│   ├── chains/
+│   ├── safe/
+│   ├── verification/
+│   ├── market/
+│   ├── swaps/
+│   ├── simulation/
+│   ├── execution/
+│   ├── human/
+│   ├── policy/
+│   └── state/
+├── state/
+│   └── .gitkeep
+└── tests/
+```
+
+---
+
+# 27. HUMAN.md
+
+Create an extremely simple guide for the human.
+
+Assume the human does NOT want to think about implementation details.
+
+It should say things like:
+
+## What you need to do
+
+### 1. Create your control wallet
+
+Create a brand-new wallet with a separate recovery phrase.
+
+Write the recovery phrase down offline.
+
+Never send it to the agent.
+
+Give the agent ONLY the public `0x...` address.
+
+### 2. Create the Safe
+
+The program will walk you through this.
+
+Before signing, verify:
+
+Human owner:
+`0x...`
+
+Agent owner:
+`0x...`
+
+Threshold:
+`2 of 2`
+
+### 3. Fund it
+
+The program calculates exactly how much:
+
+USDC
+ETH
+
+you need on each chain.
+
+It will display the Safe address.
+
+Verify the address before sending funds.
+
+### 4. Ask for a dry run
+
+Run:
+
+`agent-wallet plan --dry-run`
+
+### 5. Inspect the final plan
+
+The agent shows:
+
+* tokens
+* addresses
+* quantities
+* prices
+* liquidity
+* wrapper status
+* price impact
+* gas
+* maximum spend
+
+### 6. Sign
+
+Only if everything matches.
+
+The agent cannot complete the trade without the required human signature.
+
+---
+
+# 28. RECOVERY
+
+Document how to recover if:
+
+* VPS dies
+* agent key is lost
+* RPC provider disappears
+* Uniswap API is unavailable
+* Safe frontend is unavailable
+* agent software is corrupted
+
+Never make recovery depend on the AI system.
+
+Human custody must survive destruction of the entire agent environment.
+
+---
+
+# 29. OPTIONAL FUTURE AUTONOMY
+
+DO NOT enable this now.
+
+Architect the system so a future version could use:
+
+* Safe Roles/Modules
+* session keys
+* delegated permissions
+* spending caps
+* token allowlists
+* expiry times
+* maximum transaction values
+
+for limited autonomous execution.
+
+But the initial production configuration remains:
+
+`2-of-2 + human final signature`
+
+Autonomy must be an explicit later migration.
+
+---
+
+# 30. IMPLEMENTATION BEHAVIOR
+
+You are an engineering agent, not a conversational consultant.
+
+Do not merely explain how this could be built.
+
+Actually:
+
+1. inspect upstream documentation,
+2. initialize the repository,
+3. install dependencies,
+4. implement the system,
+5. write tests,
+6. run tests,
+7. fix failures,
+8. perform security review,
+9. run dry-run,
+10. generate the exact HUMAN ACTION REQUIRED instructions.
+
+Whenever you reach an operation requiring human custody or irreversible human authorization:
+
+STOP execution.
+
+Print:
+
+`HUMAN ACTION REQUIRED`
+
+Explain exactly:
+
+* what the human must do
+* why
+* what values they should verify
+* what they should return to you
+
+Never ask the human to perform something you can safely determine yourself.
+
+Never ask for a private key or recovery phrase.
+
+Continue automatically after receiving the non-secret information required.
+
+---
+
+# 31. DEFINITION OF DONE
+
+Do not call the project complete until all of these are true:
+
+* [ ] official Uniswap AI tooling integrated
+* [ ] Safe integration working
+* [ ] Ethereum supported
+* [ ] Base supported
+* [ ] asset verification implemented
+* [ ] wrapper verification implemented
+* [ ] liquidity validation implemented
+* [ ] quote engine working
+* [ ] policy circuit breakers working
+* [ ] transaction simulation working
+* [ ] human approval workflow working
+* [ ] 2-of-2 Safe enforced
+* [ ] execution idempotency implemented
+* [ ] post-trade verification implemented
+* [ ] private-key leakage tests pass
+* [ ] duplicate-execution tests pass
+* [ ] adversarial tests pass
+* [ ] dry-run succeeds
+* [ ] HUMAN.md complete
+* [ ] SECURITY.md complete
+* [ ] no secrets committed
+* [ ] no mainnet funds moved without human cryptographic authorization
+
+At the end, give the human only the next concrete action required.
+
+The key design decision in that prompt is the **2-of-2 Safe**. You get almost all of the convenience: the agent can do the tedious 95%—contract verification, live pricing, routing, liquidity checks, simulation and transaction construction—while your only recurring job is essentially **inspect → sign**.
+
+Later, once you trust the implementation, Uniswap smart-wallet technology supports automation/session-style permissions, so you could move toward bounded autonomous execution rather than giving an agent unrestricted wallet control. ([support.uniswap.org][3])
+
+[1]: https://docs.safe.global/home/ai-agent-actions/ai-agent-swaps-on-uniswap?utm_source=chatgpt.com "AI agent swaps on Uniswap – Safe Docs"
+[2]: https://github.com/Uniswap/uniswap-ai?utm_source=chatgpt.com "GitHub - Uniswap/uniswap-ai: AI tools for building on Uniswap — skills, plugins, and agents for any coding agent. · GitHub"
+[3]: https://support.uniswap.org/hc/en-us/articles/36391987158797-Smart-Wallets-and-Delegation?utm_source=chatgpt.com "Smart Wallets and Delegation – Uniswap Labs"

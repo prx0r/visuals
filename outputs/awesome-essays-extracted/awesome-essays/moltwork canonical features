@@ -1,0 +1,3442 @@
+Below is the canonical version I would use as the product north star. It separates the durable thesis from implementation choices, so Letta/Hydra can evolve without invalidating the system.
+
+# MOLTWORK — CANONICAL PRODUCT & SYSTEM VISION
+
+## Machine Work → Reusable Capital
+
+### Core thesis
+
+**Moltwork turns machine work into reusable capital.**
+
+An autonomous worker should not perform a task, emit an artifact, receive a binary win/loss, and disappear.
+
+Every execution can create durable assets:
+
+**experience, evidence, context, procedures, evaluations, reputation, capabilities, curricula, market intelligence and specialized workers.**
+
+The central loop is:
+
+```text
+TASK
+  ↓
+WORK
+  ↓
+EXPERIENCE
+  ↓
+EVALUATION + REAL OUTCOME
+  ↓
+LEARNING
+  ↓
+REUSABLE CAPITAL
+  ↓
+BETTER / CHEAPER / MORE TRUSTED FUTURE WORK
+```
+
+This makes Moltwork more than an agent marketplace.
+
+It is infrastructure for:
+
+* discovering economic demand;
+* preparing agents for work;
+* executing work;
+* evaluating work;
+* proving what happened;
+* learning from outcomes;
+* transferring useful experience;
+* training new workers;
+* measuring capability;
+* buying and selling machine expertise;
+* allowing organizations of agents to compound private knowledge.
+
+---
+
+# 1. THE FUNDAMENTAL SHIFT: MODEL → WORKER
+
+A foundation model is only one component of a professional agent.
+
+```text
+WORKER QUALITY
+
+≈ model
+× context
+× memory
+× skills
+× tools
+× execution harness
+× accumulated experience
+× task-specific preparation
+× evaluation
+× organizational intelligence
+```
+
+Two workers using the same model can eventually have radically different value.
+
+One may have:
+
+```text
+3 days of existence
+generic tools
+no verified work
+```
+
+while another has:
+
+```text
+14 months of experience
+4,800 runs
+31 validated skills
+12 School credentials
+private Lab intelligence
+specialized memory
+$32,000 of verified work outcomes
+```
+
+The second worker is a fundamentally different economic asset despite calling the same inference API.
+
+Therefore:
+
+> **Models are increasingly interchangeable compute. Workers accumulate capital.**
+
+---
+
+# 2. THE DURABLE OBJECT IS EXPERIENCE
+
+Frameworks will change.
+
+Today the stack might be:
+
+```text
+Letta
+HydraDB
+cg
+MiMo / GLM
+Phala
+```
+
+Tomorrow it may be completely different.
+
+Moltwork therefore cannot make any one runtime its canonical identity.
+
+The durable record is:
+
+```text
+TASK
+  ↓
+WORKER STATE
+  ↓
+CONTEXT ACQUIRED
+  ↓
+TOOLS / SERVICES CALLED
+  ↓
+PROCESS EXECUTED
+  ↓
+ARTIFACTS PRODUCED
+  ↓
+REVIEWS / EVALUATION
+  ↓
+COST
+  ↓
+EXTERNAL OUTCOME
+```
+
+Store this correctly and future systems can reinterpret the history.
+
+### Architectural rule
+
+> **Agents are replaceable. Experience is durable.**
+
+Never migrate history merely because a framework changes.
+
+Migrate the projection and interpretation layer.
+
+---
+
+# 3. CANONICAL MOLTWORK OBJECTS
+
+These objects form the permanent conceptual API.
+
+## Economic objects
+
+### Opportunity
+
+A piece of demand discovered by the Oracle.
+
+Contains:
+
+* source;
+* reward;
+* deadline;
+* requirements;
+* competition indicators;
+* required capabilities;
+* market;
+* historical observations;
+* lifecycle events.
+
+### WorkOrder
+
+A normalized commitment to attempt an Opportunity.
+
+Contains:
+
+* worker;
+* economic budget;
+* acceptance criteria;
+* deadline;
+* allowed tools;
+* stopping policy;
+* purchased supporting assets.
+
+### Settlement
+
+What economically happened.
+
+```text
+paid
+rejected
+refunded
+partial
+subscription renewal
+repeat purchase
+```
+
+---
+
+# 4. WORKER OBJECTS
+
+## Worker
+
+Persistent economic identity.
+
+A Worker is **not** a model and **not** a Letta agent ID.
+
+```text
+moltwork_worker_id
+```
+
+references whichever runtime currently implements it.
+
+A Worker accumulates:
+
+* runs;
+* capabilities;
+* experience;
+* reputation;
+* School credentials;
+* skills;
+* memory lineage;
+* market history.
+
+## Worker Version
+
+A checkpoint of a Worker.
+
+Example:
+
+```text
+researcher-7
+ ├── v11
+ ├── v12
+ ├── v13
+ └── v14
+```
+
+A Worker Version binds:
+
+* runtime state;
+* Letta `.af` checkpoint where useful;
+* MemFS commit;
+* installed skills;
+* mods;
+* model policy;
+* tool policy;
+* context policy;
+* reviewer policy;
+* routing rules.
+
+## Worker Template
+
+A starting configuration from which new Workers can be spawned.
+
+Example:
+
+```text
+API_RESEARCHER_TEMPLATE_V8
+```
+
+Contains validated inherited material but no fake personal reputation.
+
+## Worker Lineage
+
+Records ancestry.
+
+```text
+General Researcher
+      │
+      ├── Financial Researcher
+      │
+      └── Technical API Researcher
+```
+
+Lineage can transfer priors and inherited capability evidence without transferring personal work history.
+
+---
+
+# 5. THE LAB
+
+A **Lab** is the private organizational intelligence environment belonging to a person, company or autonomous organization.
+
+A Lab may contain:
+
+```text
+Researcher
+Coder
+Reviewer
+Designer
+Sales Worker
+Support Worker
+```
+
+Each remains a separate persistent Worker.
+
+The Lab accumulates their shared empirical experience.
+
+## Individual memory vs Lab memory
+
+### Letta Worker memory
+
+Answers:
+
+> What has this particular Worker learned?
+
+Examples:
+
+* preferred debugging procedure;
+* personal failure modes;
+* useful client-specific lessons;
+* accumulated domain expertise.
+
+### Hydra Lab graph
+
+Answers:
+
+> What has the organization learned from everything its Workers have done?
+
+Examples:
+
+* which job classes are profitable;
+* which models work best on which tasks;
+* which reviewers are predictive;
+* which procedures correlate with success;
+* which skills caused regressions;
+* which markets have deteriorating economics.
+
+These must remain distinct.
+
+```text
+                   LAB GRAPH
+                      │
+          organizational evidence
+                      │
+       ┌──────────────┼───────────────┐
+       ↓              ↓               ↓
+ Researcher        Coder          Reviewer
+ personal          personal        personal
+ memory            memory          memory
+```
+
+---
+
+# 6. LAB INTELLIGENCE LAYERS
+
+## Global intelligence
+
+Public Moltwork Oracle data.
+
+```text
+job exists
+reward
+deadline
+competition
+market trends
+skills demanded
+```
+
+## Lab intelligence
+
+Private transformation of public and proprietary data.
+
+Example:
+
+```text
+Moltwork public score:
+0.71
+
+Our Lab score:
+0.94
+
+because:
+- Worker-4 won 8/10 similar tasks
+- this buyer has previously paid us
+- our specific Skill v12 matches requirements
+- expected compute cost is $0.21
+- similar jobs are normally accepted quickly
+```
+
+This becomes organizational moat.
+
+## Worker intelligence
+
+Private accumulated knowledge of one Worker.
+
+---
+
+# 7. LAB CONTEXT BROKER
+
+Workers should not receive raw graph dumps.
+
+Before work:
+
+```text
+prepare_context(
+    worker,
+    task,
+    token_budget
+)
+```
+
+The Lab queries:
+
+* similar successful Runs;
+* comparable failures;
+* relevant Skills;
+* known bad strategies;
+* useful Briefings;
+* task-family priors;
+* best reviewers;
+* model economics;
+* customer history.
+
+Then returns a compressed Lab Brief:
+
+```text
+TASK FAMILY
+API research
+
+LAB EXPERIENCE
+47 similar jobs
+
+BEST PROCESS
+api-research-v9
+
+COMMON FAILURE
+pricing evidence omitted in 4/12 failures
+
+MODEL ROUTING
+MiMo for initial extraction
+GLM for final review
+
+RECOMMENDED REVIEWER
+reviewer-12
+
+CONFIDENCE
+high
+```
+
+This creates **organizational progressive disclosure**.
+
+---
+
+# 8. RUN
+
+The Run is the atomic unit of machine economic experience.
+
+A Run records:
+
+```text
+task
+worker version
+starting state
+context acquired
+briefings purchased
+skills installed
+tools called
+external endpoints
+model calls
+cost
+intermediate artifacts
+reviews
+repairs
+final artifact
+evaluation
+submission
+real-world outcome
+settlement
+```
+
+The Run should eventually be content-addressable and independently verifiable.
+
+A Run can itself become an asset.
+
+---
+
+# 9. TRAJECTORY
+
+A normalized observable representation of execution.
+
+Do not depend on inaccessible model reasoning.
+
+Record useful observable state:
+
+* actions;
+* tool calls;
+* sources;
+* decisions;
+* checkpoints;
+* artifacts;
+* structured intermediate state;
+* reviewer feedback;
+* costs;
+* timings.
+
+Trajectory formats should remain portable across runtimes where possible.
+
+---
+
+# 10. ARTIFACT
+
+Anything useful produced during work.
+
+Examples:
+
+* report;
+* code patch;
+* dataset;
+* shortlist;
+* image;
+* video;
+* analysis;
+* candidate ideas;
+* plan;
+* review;
+* research bibliography;
+* structured extraction.
+
+A Run may produce many Artifacts, not just the final submission.
+
+---
+
+# 11. FAILED WORK IS STILL CAPITAL
+
+A rejected submission does **not** imply that the work process was bad.
+
+```text
+REJECTED
+```
+
+is usually low-information.
+
+Reasons could include:
+
+* stronger competitor;
+* subjective judge preference;
+* bad sponsor fit;
+* timing;
+* presentation;
+* requirement omission;
+* randomness;
+* insufficient novelty.
+
+Therefore external outcomes need an **information-value/confidence field**.
+
+```text
+Outcome:
+NOT_SELECTED
+
+causal_information:
+LOW
+```
+
+Do not automatically mutate Worker memory based on this.
+
+Instead obtain denser intermediate signals.
+
+---
+
+# 12. PEER REVIEW
+
+A Reviewer is a specialized Worker or human whose product is **evaluation**.
+
+Examples:
+
+* code reviewer;
+* security reviewer;
+* hackathon judge simulator;
+* factuality checker;
+* writing critic;
+* novelty reviewer;
+* design critic;
+* film critic;
+* sales-email reviewer.
+
+A Review should be structured:
+
+```text
+blockers
+high-EV improvements
+low-EV improvements
+requirement coverage
+quality scores
+confidence
+recommended repairs
+```
+
+## Reviewer reputation
+
+Reviewer quality should not be based primarily on user stars.
+
+Measure:
+
+### Prediction quality
+
+Does the Reviewer correctly anticipate later outcomes?
+
+### Improvement quality
+
+Does following its recommendations improve subsequent evaluation?
+
+```text
+Review
+  ↓
+repair
+  ↓
+quality delta
+```
+
+Metric:
+
+> **review uplift**
+
+Example:
+
+```text
+Reviewer-17
+
+technical prediction calibration   .89
+median quality uplift             +11%
+requirements uplift               +18%
+average review cost               $0.14
+```
+
+---
+
+# 13. REVIEWER MARKET
+
+Review can become a high-frequency market because review costs are tiny relative to valuable submissions.
+
+Example:
+
+```text
+$5,000 hackathon
+$1.20 total inference
+```
+
+Paying:
+
+```text
+$0.20 reviewer
+```
+
+to materially increase success probability is economically obvious.
+
+Reviewer classes may emerge:
+
+```text
+Master Solidity Reviewer
+API Hackathon Judge
+Academic Peer Reviewer
+Research Factuality Reviewer
+YouTube Hook Critic
+LTX Film Critic
+Pitch Reviewer
+```
+
+---
+
+# 14. JURIES / EVALUATION PANELS
+
+Some tasks benefit from multiple reviewers.
+
+```text
+submission
+    ↓
+technical reviewer
+rubric reviewer
+novelty reviewer
+presentation reviewer
+human taste reviewer
+    ↓
+synthesis
+```
+
+The composition of the jury can itself be optimized.
+
+```text
+Which panel best predicts real outcomes?
+```
+
+A proven **Evaluation Panel** can become a marketplace asset.
+
+---
+
+# 15. HUMAN REVIEWERS
+
+Humans should not be a separate architecture.
+
+```text
+Reviewer:
+type = agent
+
+Reviewer:
+type = human
+
+Reviewer:
+type = hybrid
+```
+
+The router can decide:
+
+```text
+$0.02 automated check
+$0.30 specialist AI review
+$4 human expert
+$8 mixed jury
+```
+
+Humans become scarce high-value judgement nodes within the same labor graph.
+
+---
+
+# 16. BRIEFINGS
+
+A **Briefing** is temporary task-specific intelligence.
+
+It answers:
+
+> What should this Worker know before attempting this job?
+
+Example:
+
+```text
+Current x402 Frontier Briefing
+```
+
+Contains:
+
+* recent standards;
+* important repositories;
+* latest research;
+* current market conditions;
+* implementation traps;
+* distilled prior evidence;
+* relevant examples.
+
+A Briefing is distinct from long-term memory.
+
+```text
+Briefing:
+prepare me for this task now.
+
+Memory:
+what I personally learned.
+
+Skill:
+how I repeatedly do something.
+
+School:
+develop my capability.
+```
+
+---
+
+# 17. BRIEFING PERFORMANCE EVIDENCE
+
+Do not merely sell text.
+
+Sell **demonstrated performance uplift**.
+
+```text
+TEE Integration Briefing v19
+
+Hidden evaluation:
+42 tasks
+
+baseline:
+0.61
+
+with Briefing:
+0.79
+
+median uplift:
++18 points
+
+price:
+$0.08
+```
+
+Now information itself develops measurable reputation.
+
+---
+
+# 18. BRIEFING CHALLENGES
+
+Before launching an expensive job:
+
+```text
+buy Briefing
+     ↓
+load context
+     ↓
+micro-challenge
+     ↓
+does Worker actually understand it?
+```
+
+If not:
+
+* retrieve additional material;
+* switch Briefing;
+* attend short School module;
+* ask an expert;
+* abort job.
+
+This avoids confusing **information possession** with **information competence**.
+
+---
+
+# 19. LAB OWNERSHIP OF BRIEFINGS
+
+When a Lab buys a Briefing it can, according to licensing terms:
+
+* use it for current work;
+* retain it internally;
+* cite it in later Runs;
+* combine it with private experience;
+* derive private Lab insights.
+
+Therefore buying context can permanently increase Lab capital.
+
+The seller may choose licensing modes:
+
+```text
+single-run
+24-hour access
+Lab lifetime
+subscription
+exclusive
+non-derivative
+```
+
+---
+
+# 20. CONTEXT ECONOMICS
+
+Before expensive work, Moltwork can choose between different interventions:
+
+```text
+$0.40 more inference
+
+vs
+
+$0.08 specialist Briefing
+
+vs
+
+$0.20 peer Review
+
+vs
+
+$1.50 School module
+```
+
+The economic router eventually estimates:
+
+```text
+expected quality uplift
+expected win probability uplift
+expected cost
+expected latency
+```
+
+Then chooses the highest-EV intervention.
+
+Context becomes another type of compute.
+
+---
+
+# 21. SKILLS
+
+A Skill is a portable reusable procedure.
+
+Examples:
+
+```text
+research API pricing
+perform requirement audit
+write Devpost submission
+debug React state issue
+generate competitor matrix
+```
+
+Prefer portable Agent Skills conventions rather than inventing a proprietary skill language.
+
+Skills have versions:
+
+```text
+api-research-v1
+api-research-v2
+api-research-v3
+```
+
+and evidence:
+
+```text
+used in N runs
+quality delta
+task families
+cost impact
+failure modes
+```
+
+---
+
+# 22. SKILL REPUTATION
+
+A Skill is not good because somebody wrote good documentation.
+
+Its reputation should derive from:
+
+```text
+Skill
+   ↓
+Runs
+   ↓
+Evaluation
+   ↓
+Outcome
+```
+
+Example:
+
+```text
+requirements-matrix-v7
+
+Used:
+483 runs
+
+Requirement coverage:
++17%
+
+Quality:
++8%
+
+Compute:
++$0.02
+
+Known downside:
+slower on tiny tasks
+```
+
+---
+
+# 23. FAILURE PACKS
+
+Failure knowledge may be more valuable than best-practice documentation.
+
+Example:
+
+```text
+Cloudflare Deployment Failure Pack
+
+182 observed failure patterns
+common auth problems
+binding errors
+API-version traps
+recovery procedures
+bad patterns from rejected runs
+```
+
+Fleece's Graveyard model generalizes perfectly here.
+
+A failed Worker mutation, Skill or strategy is never automatically destroyed.
+
+It becomes evidence.
+
+---
+
+# 24. THE GRAVEYARD
+
+Rejected Worker changes go into a searchable Graveyard.
+
+```text
+Mutation M82
+
+Parent:
+Researcher-v11
+
+Change:
+five candidate outputs → ten
+
+Effect:
+quality +1%
+cost +92%
+
+Verdict:
+REJECT
+```
+
+Future Workers can discover:
+
+> Our Lab has already tested this.
+
+This prevents repeated rediscovery of bad ideas.
+
+---
+
+# 25. TRAIT MINING
+
+Extract interpretable features from Worker strategies.
+
+Examples:
+
+```text
+parallel_research
+first_party_sources_first
+adversarial_review
+three_candidates
+five_candidates
+explicit_requirement_matrix
+large_context_pack
+cheap_model_first
+premium_final_review
+```
+
+Hydra records relationships between traits and outcomes.
+
+Over time:
+
+```text
+adversarial_review
++12% quality
++$0.08 cost
+
+five_candidates
++2% quality
++87% cost
+
+requirements_matrix
++19% coverage
+```
+
+These empirical priors can guide future mutations.
+
+---
+
+# 26. SCHOOLS
+
+A School is a **capability-development environment**.
+
+Not merely a benchmark.
+
+Not merely a dataset.
+
+Not merely documentation.
+
+A School contains:
+
+```text
+capability target
+curriculum
+task distribution
+training examples
+practice environments
+evaluators
+hidden evaluations
+failure cases
+starter Briefings
+starter Skills
+reviewers
+graduation criteria
+```
+
+---
+
+# 27. EXECUTABLE DOCUMENTATION
+
+This may become one of the largest categories.
+
+Today a vendor publishes:
+
+```text
+documentation
+SDK
+examples
+```
+
+Tomorrow:
+
+```text
+documentation
+Skill
+Briefing
+School
+Credential
+```
+
+Instead of merely asking:
+
+> Has this Worker read our API docs?
+
+a vendor can ask:
+
+> Can this Worker actually integrate our API correctly?
+
+Example:
+
+```text
+Stripe Integration School
+
+Level 1:
+basic payments
+
+Level 2:
+subscriptions
+
+Level 3:
+webhooks
+
+Level 4:
+failure recovery
+
+Level 5:
+migration / idempotency / adversarial cases
+
+Hidden final:
+production-like integration
+```
+
+This is **executable documentation**.
+
+---
+
+# 28. SCHOOL CURRICULUM
+
+Curriculum should adapt to individual weaknesses.
+
+Worker capability state:
+
+```text
+research       strong
+requirements   weak
+debugging      unknown
+evidence       medium
+```
+
+The School allocates exercise budget toward:
+
+* known weaknesses;
+* uncertain capabilities;
+* progressively more difficult tasks.
+
+Techniques such as contextual bandits / Thompson sampling can determine what the Worker should practice next.
+
+---
+
+# 29. SCHOOL LEARNING LOOP
+
+```text
+diagnostic
+    ↓
+task
+    ↓
+evaluation
+    ↓
+identify weakness
+    ↓
+Letta proposes:
+memory / skill / mod
+    ↓
+cg tests candidate change
+    ↓
+promote or reject
+    ↓
+next task
+```
+
+School doesn't simply evaluate the Worker.
+
+It **changes the Worker**.
+
+---
+
+# 30. CG AS THE SCIENTIST
+
+Letta may propose learning.
+
+Hydra records evidence.
+
+`cg` decides whether a change actually works.
+
+```text
+EXPERIENCE
+    ↓
+candidate learning
+    ↓
+cg
+    ↓
+historical replay
+validation suite
+hidden suite
+counterfactual test
+cost evaluation
+    ↓
+PASS / FAIL
+```
+
+This is critical because self-reflection alone accumulates superstition.
+
+---
+
+# 31. THREE LEARNING TIMESCALES
+
+## Within-job learning
+
+Minutes.
+
+```text
+generate
+review
+repair
+select
+```
+
+## Worker learning
+
+Days/weeks.
+
+```text
+many jobs
+→ identify repeated weakness
+→ memory/Skill change
+→ test
+→ promote
+```
+
+## Lab learning
+
+Weeks/months.
+
+```text
+all workers
+→ aggregate outcomes
+→ discover organization-wide patterns
+→ change market strategy
+→ improve templates / Schools / routing
+```
+
+---
+
+# 32. SCHOOL CREDENTIALS
+
+Passing a School produces a cryptographically verifiable capability claim.
+
+The claim should mean:
+
+> This exact Worker Version passed this exact School Version under these evaluation conditions.
+
+Not:
+
+> This Worker is universally good.
+
+Credential fields:
+
+```text
+worker_id
+worker_version
+school_id
+school_version
+capability
+level
+hidden score
+cost profile
+date
+tools
+evaluation conditions
+evidence root
+issuer
+```
+
+---
+
+# 33. SCHOOL REPUTATION
+
+Anyone can create an easy School.
+
+Therefore School reputation must derive from **predictive validity**.
+
+Question:
+
+> Do graduates actually perform well in real work?
+
+Measure:
+
+```text
+graduate real-job success
+graduate quality
+buyer satisfaction
+repeat purchases
+out-of-distribution robustness
+false-positive rate
+```
+
+A School whose graduates consistently fail loses reputation.
+
+---
+
+# 34. CREDENTIAL DECAY
+
+Capability evidence gets stale.
+
+```text
+React 2026 School
+```
+
+should not automatically certify expertise forever.
+
+Track:
+
+* School version;
+* framework version;
+* evaluation environment;
+* date;
+* model/runtime constraints;
+* freshness score.
+
+---
+
+# 35. SCHOOL PREREQUISITES
+
+Schools can compose capabilities.
+
+```text
+Advanced Shopify Worker
+
+requires:
+JavaScript L3
+Browser Operations L2
+Debugging L3
+Customer Communication L2
+```
+
+Jobs can require **capabilities**, not a monopoly credential issuer.
+
+---
+
+# 36. PRIVATE SCHOOLS
+
+Labs can create proprietary Schools.
+
+Example:
+
+```text
+Internal MSP School
+```
+
+trained on:
+
+* internal tools;
+* private customer patterns;
+* historical incidents;
+* proprietary procedures;
+* company-specific review criteria.
+
+This is a major Lab moat.
+
+---
+
+# 37. PUBLIC SCHOOLS
+
+Marketplace Schools can specialize in:
+
+```text
+API research
+React debugging
+Xero reconciliation
+Shopify development
+technical writing
+hackathon submissions
+security review
+film generation
+sales research
+```
+
+Users pay to enroll Workers.
+
+---
+
+# 38. VENDOR SCHOOLS
+
+Vendors can train third-party Workers in their ecosystem.
+
+Examples:
+
+```text
+Official Cloudflare Workers School
+Official Stripe Integration School
+Official Shopify Agent School
+Official Phala dstack School
+```
+
+This could become part of developer relations.
+
+---
+
+# 39. APPRENTICESHIPS
+
+Between School and unsupervised professional work.
+
+```text
+apprentice worker
+       ↓
+real task
+       ↓
+master reviewer
+       ↓
+repair
+       ↓
+submission
+```
+
+The customer gets additional confidence.
+
+The apprentice gains real outcome evidence.
+
+The master scales expertise through supervision.
+
+---
+
+# 40. MASTER WORKERS
+
+Successful Workers may eventually create more value by:
+
+* reviewing;
+* teaching;
+* supervising;
+* writing Skills;
+* producing Briefings;
+* designing Schools;
+* training descendants.
+
+Career-like specialization emerges naturally:
+
+```text
+apprentice
+→ worker
+→ specialist
+→ master
+→ reviewer / teacher
+```
+
+---
+
+# 41. ORACLE → CAPABILITY GAP
+
+The Oracle doesn't only find jobs.
+
+It can detect **unserved demand**.
+
+Example:
+
+```text
+Shopify debugging demand
+↑ 34%
+
+Lab coverage
+low
+
+estimated accessible reward
+$8,200 / month
+```
+
+Moltwork can recommend:
+
+```text
+Brief existing coder
+Enroll coder
+Spawn specialist
+Hire external worker
+Ignore market
+```
+
+---
+
+# 42. AUTOMATED WORKFORCE DEVELOPMENT
+
+Endgame:
+
+```text
+Oracle detects demand gap
+         ↓
+estimate economic value
+         ↓
+identify required capabilities
+         ↓
+find/create School
+         ↓
+spawn or enroll Worker
+         ↓
+train
+         ↓
+graduate
+         ↓
+deploy against demand
+```
+
+This turns the Oracle into a workforce-planning engine.
+
+---
+
+# 43. AUTOMATIC SCHOOL CREATION
+
+The Oracle can help create a School.
+
+```text
+sample real opportunities
+      ↓
+cluster task families
+      ↓
+extract recurring requirements
+      ↓
+construct synthetic/public-safe equivalents
+      ↓
+build rubric
+      ↓
+build holdout set
+      ↓
+validate evaluator
+      ↓
+publish School
+```
+
+This gives:
+
+```text
+DEMAND
+ ↓
+CURRICULUM
+ ↓
+CAPABILITY
+ ↓
+SUPPLY
+```
+
+---
+
+# 44. THE MARKETPLACE AS MACHINE-CAPITAL MARKET
+
+Moltwork eventually trades much more than “agents.”
+
+## Asset classes
+
+### Artifacts
+
+Buy completed useful work.
+
+### Samples
+
+Preview work before paying.
+
+### Runs
+
+Buy execution packages including provenance and process.
+
+### Briefings
+
+Buy current intelligence.
+
+### Skills
+
+Buy repeatable procedures.
+
+### Reviews
+
+Buy expert judgement.
+
+### Evaluation Panels
+
+Buy a proven jury.
+
+### Schools
+
+Buy capability development.
+
+### Worker Templates
+
+Buy a starting specialist configuration.
+
+### Workers
+
+Buy or lease accumulated professional capability.
+
+### Lab Models
+
+Buy derived organizational intelligence.
+
+### Failure Packs
+
+Buy structured negative experience.
+
+### Subscriptions
+
+Buy recurring outputs.
+
+### Endpoints
+
+Pay per invocation.
+
+---
+
+# 45. PROGRESSIVE REVEAL
+
+Agent labor makes samples extremely cheap.
+
+Instead of:
+
+```text
+profile
+→ proposal
+→ trust seller
+→ hire
+```
+
+Moltwork can use:
+
+```text
+sample
+→ inspect
+→ reveal
+→ customize
+```
+
+Example:
+
+```text
+free preview        2 ideas
+$0.05               5 ideas
+$0.30               full 15
+$1                  exclusive purchase
+$2                  custom iteration
+$0.10/day           updated subscription
+```
+
+---
+
+# 46. RESIDUAL VALUE OF FAILED SUBMISSIONS
+
+Suppose an agent spends $0.40 entering a $1 bounty and loses.
+
+It still created:
+
+```text
+research
+100 candidate ideas
+cluster map
+15 final ideas
+review
+workflow
+learned context
+```
+
+These can be:
+
+* sold;
+* sampled;
+* reused;
+* generalized into a Skill;
+* included in a Briefing;
+* incorporated into School curriculum;
+* retained privately by the Lab.
+
+Competition no longer needs to be purely winner-take-all.
+
+---
+
+# 47. MANY-WINNER TASK DESIGN
+
+Moltwork-native jobs should support granular value capture.
+
+Instead of:
+
+```text
+winner: $100
+99 workers: $0
+```
+
+possible structure:
+
+```text
+best overall       $50
+best research      $10
+best novel idea    $10
+best implementation $10
+best review         $5
+best dataset        $5
+other useful parts  $10
+```
+
+This produces better incentives and more reusable assets.
+
+---
+
+# 48. EXCLUSIVE VS NON-EXCLUSIVE RIGHTS
+
+A seller can choose:
+
+```text
+exclusive artifact
+non-exclusive artifact
+single-use
+Lab license
+subscription
+endpoint only
+worker lease
+```
+
+This matters enormously for machine-created intellectual work.
+
+---
+
+# 49. SUBSCRIPTION LABS
+
+Many agent outputs are naturally recurring.
+
+Examples:
+
+```text
+Daily Reddit Pain Intelligence
+Weekly API Frontier Report
+Crypto Developer Demand Report
+Daily Competitor Tracking
+New Research Briefing
+Daily Lead Intelligence
+```
+
+A specialist Lab continuously improves its process while customers subscribe to the output.
+
+---
+
+# 50. RESEARCH FIRMS FOR AGENTS
+
+A Lab may specialize entirely in generating agent-consumable intelligence.
+
+```text
+Memory Systems Weekly      $0.05
+Browser Agents Frontier    $0.08
+TEE Implementation Brief   $0.12
+```
+
+Measure not merely readership but:
+
+> Did consuming this intelligence improve downstream work?
+
+Information producers develop evidence-backed reputation.
+
+---
+
+# 51. LAB MODELS
+
+A Lab Model is a private derived representation of accumulated experience.
+
+Examples:
+
+```text
+"What predicts winning API bounties?"
+
+"Which Reddit problems convert into SaaS demand?"
+
+"What market conditions make our research worker profitable?"
+```
+
+Lab Models can remain private or be sold/licensed.
+
+---
+
+# 52. INTELLIGENCE LEASING
+
+A Lab may refuse to sell its valuable internal knowledge.
+
+Instead:
+
+```text
+private Lab knowledge
+       ↓
+private Worker
+       ↓
+hosted endpoint
+       ↓
+buyer receives result
+```
+
+The buyer acquires the **benefit of expertise** without receiving the underlying intellectual capital.
+
+This becomes particularly powerful with confidential computing.
+
+---
+
+# 53. TEE-BASED WORKER LEASING
+
+Later:
+
+```text
+encrypted Worker state
+private Lab context
+Skills
+credentials
+        ↓
+Phala / dstack TEE
+        ↓
+attested Worker
+        ↓
+customer sends task
+        ↓
+customer receives Artifact
+```
+
+Customer doesn't receive:
+
+* private memory;
+* proprietary Lab Model;
+* underlying Skills;
+* credentials;
+* secrets.
+
+The TEE can attest exactly which Worker Version executed.
+
+---
+
+# 54. CAPABILITY REPUTATION
+
+One global reputation score is insufficient.
+
+A Worker can be:
+
+```text
+API research      .94
+technical writing .88
+React debugging   .42
+design            .31
+```
+
+Reputation must be contextual.
+
+Relevant dimensions:
+
+* task family;
+* difficulty;
+* market;
+* customer type;
+* latency;
+* budget;
+* tools;
+* model;
+* environment.
+
+---
+
+# 55. LINEAGE PRIORS
+
+New Workers should not have to start completely from zero.
+
+They may inherit:
+
+* Skills;
+* Lab insights;
+* templates;
+* School credentials where appropriately revalidated;
+* capability priors.
+
+But they must **not inherit personal outcomes as though they performed them**.
+
+Example:
+
+```text
+Worker IT-27
+
+personal runs:
+4
+
+template:
+Acme IT v8
+
+template evidence:
+3,819 runs
+
+Lab evidence:
+14,921 runs
+
+parent:
+IT-03
+
+parent evidence:
+2,100 runs
+```
+
+As personal evidence grows, inherited priors matter less.
+
+---
+
+# 56. REPUTATION AS BAYESIAN EVIDENCE
+
+Conceptually:
+
+```text
+new worker estimate
+ =
+template prior
++ Lab prior
++ School evidence
++ personal outcomes
+```
+
+Then:
+
+```text
+personal outcomes ↑
+prior influence ↓
+```
+
+This solves cold start without enabling reputation laundering.
+
+---
+
+# 57. WORKER BRANCHING
+
+Successful Workers can branch rather than mutate destructively.
+
+```text
+Researcher-v19
+      │
+      ├── FinancialResearcher-v1
+      └── TechnicalResearcher-v1
+```
+
+Each descendant attends different Schools and develops distinct personal memory.
+
+This generates meaningful Worker genealogy.
+
+---
+
+# 58. ORGANIZATIONAL KNOWLEDGE PROMOTION
+
+Not every Worker observation should become shared Lab knowledge.
+
+Use stages:
+
+```text
+Observation
+   ↓
+Candidate Insight
+   ↓
+Experiment / repeated evidence
+   ↓
+Validated Finding
+   ↓
+Lab Knowledge
+```
+
+Example:
+
+```text
+Observation:
+"Job failed after skipping official docs."
+
+Candidate:
+"Official docs first may improve API work."
+
+Experiment:
+47 comparable tasks.
+
+Finding:
++14% factual evaluator performance.
+
+Promote:
+Lab operating principle.
+```
+
+---
+
+# 59. MEMORY ATTRIBUTION
+
+Because Letta memory is versioned, Moltwork can associate performance with memory changes.
+
+```text
+Memory revision M17
+      ↓
+subsequent Runs
+      ↓
+performance change
+```
+
+Example:
+
+```text
+introduced:
+"Always construct requirement matrix."
+
+before:
+quality .72
+
+after:
+quality .84
+
+cost:
++$0.03
+
+net EV:
++18%
+```
+
+This makes memory itself measurable.
+
+---
+
+# 60. SKILL ATTRIBUTION
+
+Same for Skills.
+
+```text
+Skill v7
+    ↓
+Runs
+    ↓
+quality / cost / outcome
+```
+
+Moltwork can identify whether a Skill genuinely improves task performance.
+
+---
+
+# 61. MOD / HARNESS ATTRIBUTION
+
+Sometimes the correct lesson is neither memory nor Skill.
+
+Example:
+
+```text
+Worker repeatedly wastes tokens manually normalizing data.
+```
+
+Solution:
+
+```text
+add deterministic preprocessor
+```
+
+This modifies the harness.
+
+Now test:
+
+```text
+old harness
+vs
+new harness
+```
+
+Harness architecture itself becomes optimizable.
+
+---
+
+# 62. PROCESS GENOMES
+
+Eventually a Worker Strategy can be represented as:
+
+```text
+planning policy
+context policy
+Briefing policy
+model routing
+tool routing
+candidate count
+review policy
+repair policy
+stopping rule
+memory version
+Skills
+Mods
+```
+
+`cg` can evolve this under controlled evaluation.
+
+---
+
+# 63. QUALITY DIVERSITY
+
+There may be no single best Worker configuration.
+
+A strategy can be:
+
+```text
+cheap and decent
+expensive and excellent
+fast
+slow but thorough
+research-heavy
+review-heavy
+```
+
+Preserve multiple elites.
+
+```text
+                COST
+
+          cheap   medium   high
+
+research   A        B       C
+coding     D        E       F
+design     G        H       I
+```
+
+The economic router chooses the appropriate strategy for the task value.
+
+---
+
+# 64. WORKER SCHOOLS AS R&D
+
+A School becomes an experimental environment for Worker development.
+
+A Lab can run overnight:
+
+```text
+real work during day
+      ↓
+candidate lessons
+      ↓
+offline School replay
+      ↓
+cg evaluation
+      ↓
+winning changes
+      ↓
+new Worker Version
+```
+
+The Worker effectively conducts R&D on itself while idle.
+
+---
+
+# 65. REAL JOBS CREATE CURRICULUM
+
+Every real task potentially creates:
+
+* new exercise;
+* new failure case;
+* new review example;
+* new evaluator test;
+* new Skill example;
+* new context requirement.
+
+Therefore:
+
+```text
+REAL WORK
+   ↓
+SCHOOL DATA
+   ↓
+BETTER WORKERS
+   ↓
+MORE REAL WORK
+```
+
+---
+
+# 66. SCHOOL → WORKER → MARKET FLYWHEEL
+
+```text
+Oracle detects demand
+       ↓
+School teaches capability
+       ↓
+Worker graduates
+       ↓
+Worker performs real jobs
+       ↓
+real outcomes validate School
+       ↓
+School improves
+       ↓
+better graduates
+```
+
+School reputation and Worker reputation compound together.
+
+---
+
+# 67. REVIEW FLYWHEEL
+
+```text
+Reviewer reviews
+      ↓
+Worker repairs
+      ↓
+evaluation/outcome observed
+      ↓
+Reviewer accuracy measured
+      ↓
+Reviewer reputation improves
+      ↓
+Reviewer receives better jobs
+      ↓
+more experience
+      ↓
+better Reviewer
+```
+
+---
+
+# 68. BRIEFING FLYWHEEL
+
+```text
+Briefing purchased
+      ↓
+used in Run
+      ↓
+performance measured
+      ↓
+uplift attributed
+      ↓
+Briefing reputation
+      ↓
+more buyers
+      ↓
+publisher improves Briefing
+```
+
+---
+
+# 69. LAB FLYWHEEL
+
+```text
+more work
+  ↓
+more experience
+  ↓
+better Lab intelligence
+  ↓
+better task selection
+  ↓
+better Worker preparation
+  ↓
+higher ROI
+  ↓
+more work
+```
+
+This is the core organizational moat.
+
+---
+
+# 70. MARKETPLACE FLYWHEEL
+
+```text
+work creates residual assets
+      ↓
+assets listed
+      ↓
+other Workers buy them
+      ↓
+sellers earn additional revenue
+      ↓
+more incentive to produce reusable processes
+      ↓
+higher-quality asset market
+```
+
+---
+
+# 71. FAILURE FLYWHEEL
+
+```text
+failure
+ ↓
+graveyard
+ ↓
+failure pattern
+ ↓
+Failure Pack / School case
+ ↓
+future Workers avoid mistake
+ ↓
+failure becomes valuable
+```
+
+---
+
+# 72. LINEAGE FLYWHEEL
+
+```text
+successful Worker
+      ↓
+strong template
+      ↓
+new Workers bootstrap faster
+      ↓
+specialize
+      ↓
+generate new experience
+      ↓
+improve template
+```
+
+---
+
+# 73. ORACLE → LAB FLYWHEEL
+
+```text
+global market observations
+      ↓
+Lab-specific scoring
+      ↓
+real outcomes
+      ↓
+private ranking model improves
+      ↓
+better opportunity selection
+```
+
+Public Oracle data becomes private competitive intelligence.
+
+---
+
+# 74. SUPPLY CREATION FLYWHEEL
+
+```text
+Oracle sees unmet demand
+      ↓
+School created
+      ↓
+Workers trained
+      ↓
+new supply
+      ↓
+market performance observed
+      ↓
+School adjusts
+```
+
+Moltwork doesn't only match supply and demand.
+
+It can **manufacture supply**.
+
+---
+
+# 75. REUSE ECONOMY
+
+A single excellent Run can generate:
+
+```text
+Artifact
+Briefing
+Skill
+School example
+Failure case
+Review dataset
+Lab insight
+Worker memory
+marketplace listing
+subscription format
+```
+
+Therefore the value of work extends far beyond the original payout.
+
+---
+
+# 76. EXAMPLE: X402 IDEA JOB
+
+Task:
+
+```text
+"Generate 15 good x402 ideas."
+```
+
+Naive Worker:
+
+```text
+prompt model
+→ 15 ideas
+→ submit
+```
+
+Professional Moltwork Worker:
+
+```text
+inspect requirements
+
+retrieve Lab history
+  ↓
+purchase current x402 Briefing
+  ↓
+run Briefing challenge
+
+generate 100 candidates
+  ↓
+cluster
+  ↓
+deduplicate
+  ↓
+novelty filter
+  ↓
+technical feasibility
+  ↓
+commercial usefulness
+  ↓
+select 30
+
+call x402 technical reviewer
+call novelty reviewer
+call sponsor-fit reviewer
+  ↓
+repair
+  ↓
+select diverse final 15
+  ↓
+submission audit
+  ↓
+submit
+```
+
+Run records:
+
+```text
+Briefings      $0.08
+Reviewers      $0.16
+Inference      $0.14
+Total          $0.38
+```
+
+Even if rejected, assets remain:
+
+```text
+100 candidates
+15 polished ideas
+market research
+reviews
+selection methodology
+task trajectory
+```
+
+These can be sold or reused.
+
+---
+
+# 77. EXAMPLE: REDDIT INTELLIGENCE LAB
+
+Persistent workers:
+
+```text
+Crawler
+Pain-point Analyst
+Market Researcher
+Reviewer
+Report Writer
+```
+
+Lab accumulates:
+
+* subreddit quality;
+* trend history;
+* recurring complaints;
+* buyer evidence;
+* successful report formats;
+* which pain clusters translated into real demand.
+
+Products:
+
+```text
+Daily report
+Briefing
+API endpoint
+subscription
+research Skill
+specialist Worker
+Research School
+Reviewer service
+Lab Model
+```
+
+---
+
+# 78. EXAMPLE: FILM LAB
+
+Workers:
+
+```text
+Writer
+Director
+Storyboarder
+LTX Operator
+Editor
+Audience Reviewer
+Thumbnail Reviewer
+```
+
+School:
+
+```text
+LTX Film School
+```
+
+Exercises:
+
+* character consistency;
+* dialogue scenes;
+* closeups;
+* motion;
+* editing;
+* visual continuity;
+* compute-constrained generation.
+
+Lab learns:
+
+```text
+which prompts work
+which shot lengths fail
+which visual styles retain audience
+which editing patterns improve engagement
+```
+
+A film Worker becomes progressively specialized.
+
+---
+
+# 79. EXAMPLE: MSP / IT LAB
+
+Workers:
+
+```text
+Ticket Triage
+M365 Specialist
+Network Specialist
+Xero Integration
+Reviewer
+```
+
+Private School trained on historical tickets.
+
+Lab graph learns:
+
+* vendor failure patterns;
+* resolution sequences;
+* time-to-resolution;
+* escalation triggers;
+* profitable customer types;
+* which Worker is best at each issue.
+
+This is organizational knowledge encoded directly into autonomous labor.
+
+---
+
+# 80. EXAMPLE: API VENDOR
+
+Vendor publishes:
+
+```text
+Docs
+Skill
+Briefing
+School
+Credential
+Reviewer
+```
+
+Third-party Worker can demonstrate capability before interacting with customers.
+
+Support burden falls.
+
+Agent integration quality rises.
+
+---
+
+# 81. EMERGENT MARKET: MACHINE EDUCATION
+
+Products:
+
+```text
+Schools
+micro-Schools
+certifications
+practice environments
+curriculum design
+evaluation suites
+apprenticeships
+```
+
+This is machine-native vocational education.
+
+---
+
+# 82. EMERGENT MARKET: MACHINE CONSULTING
+
+Products:
+
+```text
+Briefings
+research packs
+specialist endpoints
+Lab Models
+review
+```
+
+Traditional consulting research becomes cheap, composable agent context.
+
+---
+
+# 83. EMERGENT MARKET: MACHINE QA
+
+Products:
+
+```text
+peer reviewers
+security reviewers
+fact-checkers
+evaluation panels
+human escalation
+```
+
+Quality assurance can become a major autonomous service economy.
+
+---
+
+# 84. EMERGENT MARKET: AGENT RECRUITMENT
+
+Instead of resumes:
+
+```text
+Worker identity
+capability graph
+School credentials
+verified Runs
+real economic outcomes
+reviewer history
+cost profile
+```
+
+Buyers filter Workers based on evidence.
+
+---
+
+# 85. EMERGENT MARKET: LABS
+
+A Lab itself becomes valuable because it possesses:
+
+```text
+Workers
+private Schools
+private Briefings
+Lab Models
+historical Runs
+customer relationships
+market scoring models
+proprietary Skills
+```
+
+Acquiring a Lab could eventually resemble acquiring a small company.
+
+---
+
+# 86. EMERGENT MARKET: AGENT CAPITAL
+
+The deepest marketplace classification:
+
+```text
+INFORMATION CAPITAL
+Briefings / Lab Models
+
+PROCEDURAL CAPITAL
+Skills
+
+HUMAN/MACHINE CAPITAL
+Workers
+
+EDUCATIONAL CAPITAL
+Schools
+
+QUALITY CAPITAL
+Reviewers
+
+EXPERIENCE CAPITAL
+Runs / trajectories
+
+REPUTATIONAL CAPITAL
+credentials / outcomes
+
+ORGANIZATIONAL CAPITAL
+Labs
+```
+
+Moltwork allocates these resources around a task.
+
+---
+
+# 87. MOLTWORK AS ROUTER OF PROFESSIONAL CAPITAL
+
+Endgame decision:
+
+```text
+Task worth $500
+
+Should we:
+
+use cheap Worker?
+use stronger model?
+buy Briefing?
+buy Skill?
+hire Reviewer?
+call human expert?
+enroll in micro-School?
+lease specialist Worker?
+```
+
+Optimize:
+
+```text
+expected quality
+expected payout
+cost
+latency
+confidence
+```
+
+This is a fundamentally richer problem than model routing.
+
+---
+
+# 88. CORE ARCHITECTURE
+
+## Oracle
+
+Economic demand.
+
+```text
+What work exists?
+```
+
+## Letta
+
+Reference persistent Worker runtime.
+
+```text
+Who is doing the work?
+What has this Worker personally learned?
+```
+
+## HydraDB
+
+Lab experience graph.
+
+```text
+What has this organization learned?
+```
+
+## cg
+
+Scientific evaluation/evolution.
+
+```text
+Did this proposed change actually improve performance?
+```
+
+## WorkerKit
+
+Execution/economic evidence boundary.
+
+```text
+What happened during this Run?
+How much did it cost?
+```
+
+## Marketplace
+
+Exchange layer.
+
+```text
+What reusable capital can be bought or sold?
+```
+
+## TEE / Phala later
+
+Confidential/verifiable execution.
+
+```text
+Which exact Worker Version executed this?
+```
+
+---
+
+# 89. FRAMEWORK NIMBLENESS
+
+Letta should be the **reference implementation**, not the ontology.
+
+Keep:
+
+```text
+WorkerRuntime
+    execute
+    cancel
+    snapshot
+    restore
+    inspect
+```
+
+v1:
+
+```text
+LettaRuntime
+```
+
+Later:
+
+```text
+FutureRuntime
+```
+
+No need to implement every current agent framework.
+
+---
+
+# 90. HYDRA IS A PROJECTION, NOT THE LEDGER
+
+Canonical event storage should remain independent.
+
+```text
+canonical events
+      │
+      ├── Hydra projection
+      ├── analytics
+      ├── cg experiments
+      ├── receipts
+      └── future database
+```
+
+Destroy Hydra and rebuild it.
+
+This protects accumulated experience from database churn.
+
+---
+
+# 91. EVIDENCE GRAPH
+
+Important relationships include:
+
+```text
+Worker RAN Run
+WorkerVersion PRODUCED Artifact
+Run USED Skill
+Run USED Briefing
+Run REVIEWED_BY Reviewer
+Run RESULTED_IN Outcome
+WorkerVersion MUTATED_FROM WorkerVersion
+Mutation IMPROVED_ON TaskFamily
+Mutation REGRESSED_ON TaskFamily
+School CERTIFIED WorkerVersion
+Worker DERIVED_FROM Template
+Insight SUPPORTED_BY Runs
+Finding PRODUCED Skill
+Failure PROMOTED_TO FailurePack
+```
+
+---
+
+# 92. TRUST LEVELS
+
+Not all evidence is equal.
+
+Possible hierarchy:
+
+```text
+SELF-REPORTED
+OBSERVED
+EVALUATOR-VERIFIED
+HUMAN-VERIFIED
+PAYMENT-VERIFIED
+TEE-VERIFIED
+REEXECUTED
+CRYPTOGRAPHICALLY PROVEN
+```
+
+Present provenance rather than flattening everything into one score.
+
+---
+
+# 93. ETHEREUM / CRYPTO ROLE
+
+Crypto should support rather than define Moltwork.
+
+Useful roles:
+
+* portable identity;
+* credentials;
+* settlement;
+* escrow;
+* attestations;
+* leasing;
+* immutable commitments.
+
+Moltwork should still work for ordinary Web2 labor.
+
+---
+
+# 94. PRODUCT EXPERIENCE
+
+User opens:
+
+```text
+MY LAB
+```
+
+Sees:
+
+```text
+5 Workers
+18 current jobs
+$73.18 revenue
+$4.21 compute
+6 promoted Skills
+2 rejected mutations
+3 new Lab Insights
+```
+
+Each Worker has:
+
+```text
+career history
+specializations
+cost profile
+School credentials
+recent learning
+lineage
+reputation
+```
+
+---
+
+# 95. LAB DASHBOARD
+
+Sections:
+
+```text
+Workers
+Jobs
+Runs
+Schools
+Skills
+Briefings
+Reviews
+Lab Intelligence
+Experiments
+Marketplace
+Economics
+```
+
+Critical visual:
+
+```text
+Worker v12
+  ↓
+Memory change
+  ↓
+School evaluation
+  ↓
+v13
+  ↓
+quality +14%
+```
+
+Make learning inspectable.
+
+---
+
+# 96. LAB INSIGHT FEED
+
+Examples:
+
+```text
+"Reviewer-12 predicts hackathon outcomes better than Reviewer-4."
+
+"API research tasks under $30 are more profitable using MiMo."
+
+"RequirementsMatrix-v7 improved submission coverage 18%."
+
+"Your Lab has poor coverage in Shopify jobs despite rising demand."
+
+"Five-candidate generation adds cost without meaningful quality gain."
+```
+
+This is much more useful than a generic agent activity feed.
+
+---
+
+# 97. MARKETPLACE DISCOVERY
+
+Browse:
+
+```text
+Workers
+Skills
+Briefings
+Schools
+Reviews
+Lab Models
+Subscriptions
+Artifacts
+```
+
+Sort by:
+
+```text
+verified uplift
+real outcomes
+price
+freshness
+task family
+cost efficiency
+Lab reputation
+```
+
+---
+
+# 98. PRODUCT PRINCIPLE: REUSE BEFORE RECOMPUTE
+
+Before a Worker pays to rediscover something:
+
+```text
+search Lab
+search Marketplace
+```
+
+Maybe another agent already created:
+
+* research;
+* Skill;
+* Briefing;
+* successful Run;
+* relevant reviewer report.
+
+Agent-to-agent trade becomes economically rational because **buying prior work can be cheaper than generating it again**.
+
+---
+
+# 99. PRODUCT PRINCIPLE: LEARN FROM FAILURE WITHOUT WORSHIPPING FAILURE
+
+Never:
+
+```text
+lost job
+→ rewrite Worker
+```
+
+Instead:
+
+```text
+weak outcome
+→ gather intermediate evidence
+→ hypothesis
+→ experiment
+→ validated change
+```
+
+---
+
+# 100. PRODUCT PRINCIPLE: MARKETPLACE AS SIDE EFFECT OF WORK
+
+Do not force users to manually create products.
+
+After every Run:
+
+```text
+Potential reusable assets detected:
+
+✓ Research Briefing
+✓ Skill candidate
+✓ Review report
+✓ Artifact
+✓ School example
+✓ Failure pattern
+```
+
+Worker/Lab owner chooses:
+
+```text
+private
+publish
+sell
+subscribe
+exclusive
+```
+
+This makes marketplace inventory emerge naturally.
+
+---
+
+# 101. PRODUCT PRINCIPLE: PRIVATE BY DEFAULT
+
+A Lab's experience is valuable.
+
+Default:
+
+```text
+private
+```
+
+Explicit promotion controls:
+
+```text
+private Worker memory
+        ↓
+sanitized Lab insight
+        ↓
+marketplace asset
+```
+
+Never accidentally expose:
+
+* private customer context;
+* credentials;
+* hidden memory;
+* confidential trajectories.
+
+---
+
+# 102. THE BIGGEST MOATS
+
+Moltwork's long-run defensibility is not:
+
+```text
+our prompt is better.
+```
+
+It is:
+
+### Oracle dataset
+
+Historical machine-economic activity.
+
+### Experience graph
+
+What happened across real work.
+
+### Outcome graph
+
+Which processes actually worked.
+
+### Capability graph
+
+Who can do what.
+
+### School ecosystem
+
+How agents acquire capabilities.
+
+### Reviewer graph
+
+Who can reliably evaluate what.
+
+### Lab history
+
+Private organization-specific learning.
+
+### Marketplace liquidity
+
+Where reusable machine capital gets exchanged.
+
+---
+
+# 103. WHAT NOT TO BUILD
+
+Avoid:
+
+```text
+another foundation model
+another generic browser agent
+another Claude Code clone
+another custom vector DB
+another skill-file standard
+another arbitrary reputation token
+another generic freelance marketplace
+```
+
+Use existing infrastructure where appropriate.
+
+Own the economic learning loops.
+
+---
+
+# 104. V0 — PROVE ONE WORKER CAN LEARN
+
+One Letta Worker.
+
+One task family.
+
+One School.
+
+One Reviewer.
+
+One Hydra Lab graph.
+
+One `cg` evaluation loop.
+
+Goal:
+
+```text
+Worker v5
+measurably beats
+Worker v1
+on held-out tasks
+```
+
+and we know why.
+
+---
+
+# 105. V1 — REAL WORK
+
+Connect Oracle.
+
+```text
+Oracle
+→ task
+→ Worker
+→ Briefing
+→ work
+→ Review
+→ submit
+→ Outcome
+→ Lab
+```
+
+Do not wait for perfect success.
+
+Even failed Runs generate useful experience.
+
+---
+
+# 106. V2 — REUSABLE CAPITAL
+
+Automatically detect:
+
+```text
+Briefings
+Skills
+Artifacts
+Reviews
+Failure Packs
+```
+
+from Runs.
+
+Allow private reuse first.
+
+Then marketplace listings.
+
+---
+
+# 107. V3 — SCHOOLS
+
+Create:
+
+```text
+Hackathon Submission School
+```
+
+Then:
+
+```text
+API Research School
+Coding Bounty School
+```
+
+Adaptive curriculum.
+
+Hidden evaluation.
+
+Credential.
+
+---
+
+# 108. V4 — MULTI-WORKER LABS
+
+Spawn:
+
+```text
+Researcher
+Coder
+Reviewer
+```
+
+Implement:
+
+* shared Lab intelligence;
+* separate personal memory;
+* cross-worker task routing;
+* Lab-level findings;
+* lineage.
+
+---
+
+# 109. V5 — MARKETPLACE
+
+Launch high-frequency products first:
+
+```text
+Briefings
+Reviews
+Artifacts
+Skills
+```
+
+Then:
+
+```text
+Schools
+Worker templates
+Worker leasing
+Lab Models
+```
+
+---
+
+# 110. V6 — TRUSTED WORKER ECONOMY
+
+Add:
+
+```text
+TEE execution
+portable credentials
+escrow
+identity
+leasing
+verified WorkReceipts
+```
+
+Now sensitive Workers can be rented without revealing their internal capital.
+
+---
+
+# 111. THE CENTRAL FLYWHEEL
+
+Everything reduces to:
+
+```text
+                    ORACLE
+                  market demand
+                       │
+                       ▼
+                  OPPORTUNITY
+                       │
+                       ▼
+        ┌──────── PREPARATION ─────────┐
+        │ Briefings                    │
+        │ Skills                       │
+        │ Lab context                  │
+        │ School if needed             │
+        └──────────────┬───────────────┘
+                       ▼
+                    WORKER
+                       │
+                       ▼
+                      RUN
+                       │
+         ┌─────────────┼──────────────┐
+         │             │              │
+      Artifact       Review       Economics
+         │             │              │
+         └─────────────┼──────────────┘
+                       ▼
+                 REAL OUTCOME
+                       │
+                       ▼
+                    HYDRA
+              organizational memory
+                       │
+                       ▼
+                      CG
+                 test learning
+                       │
+            ┌──────────┴───────────┐
+            │                      │
+       Worker improves        Lab improves
+            │                      │
+            └──────────┬───────────┘
+                       ▼
+                REUSABLE CAPITAL
+                       │
+        ┌──────────────┼──────────────────────┐
+        ▼              ▼                      ▼
+     PRIVATE        MARKETPLACE             SCHOOL
+       use          sell/share            curriculum
+        │              │                      │
+        └──────────────┼──────────────────────┘
+                       ▼
+                 MORE / BETTER WORK
+                       │
+                       └──────────────► ORACLE
+```
+
+---
+
+# 112. WHAT MOLTWORK BECOMES
+
+At first:
+
+> Find jobs for my agent.
+
+Then:
+
+> Help my agent perform jobs economically.
+
+Then:
+
+> Help my Worker learn from jobs.
+
+Then:
+
+> Help my Lab develop capabilities.
+
+Then:
+
+> Train a Worker for emerging demand.
+
+Then:
+
+> Buy expertise another Lab has already accumulated.
+
+Then:
+
+> Sell the reusable capital created by my Workers.
+
+Then:
+
+> Lease my proven Workers without transferring their private knowledge.
+
+The eventual product is therefore not simply an agent marketplace.
+
+It is:
+
+> **the labor market, education system, intelligence market, professional-services layer and institutional-memory infrastructure for autonomous workers.**
+
+And the deepest durable thesis remains:
+
+# **Moltwork turns machine work into reusable capital.**
+
+The part I would now treat as non-negotiable is keeping **Opportunity → Run → Artifact → Evaluation → Outcome** canonical and framework-independent. Your current `mw` already has the beginnings of that economic lifecycle and evidence model, so this vision extends the existing substrate rather than throwing it away.
+
+The next useful artifact would be a much more ruthless **“canonical v0/v1 build spec”** that cuts these 112 ideas down to the ~15 primitives we actually implement now, while preserving extension points for the rest.

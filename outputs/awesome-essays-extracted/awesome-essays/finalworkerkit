@@ -1,0 +1,1274 @@
+Yes. I would now make an explicit architectural bet:
+
+> **WorkerKit is not an agent framework. It is the thin economic/evidence control plane around arbitrary agent frameworks.**
+
+If gbrain, Hermes, PydanticAI, Claude Code, LangGraph, whatever comes next becomes dramatically more sophisticated, WorkerKit should get *better* rather than become obsolete.
+
+The underlying worker can be almost completely opaque.
+
+```text
+                    WORKERKIT
+
+ WorkOrder ───────────────────────────────────┐
+                                             │
+ economics / budgets                         │
+ evidence / artifacts                        │
+ verification                                │
+ irreversible-action policy                  │
+ provenance                                  │
+ external outcomes                           │
+ receipts / reputation                       │
+                                             ▼
+                                   ┌───────────────────┐
+                                   │ arbitrary worker  │
+                                   │                   │
+                                   │ gbrain            │
+                                   │ Hermes            │
+                                   │ PydanticAI        │
+                                   │ LangGraph         │
+                                   │ Claude Code       │
+                                   │ Codex             │
+                                   │ A2A agent         │
+                                   │ shell process     │
+                                   └───────────────────┘
+```
+
+PydanticAI Harness is already doing sophisticated capabilities, persistence, spend limits, agent composition and durable integrations. DBOS and Temporal already solve workflow durability. Reimplementing any of that inside WorkerKit would be strategically wrong. ([Pydantic][1])
+
+## The three integration levels
+
+This is how I would make WorkerKit future-proof.
+
+### L0 — black-box worker
+
+**Zero agent modification.**
+
+WorkerKit knows:
+
+```text
+input
+worker identity/version
+started_at
+finished_at
+exit/result
+artifacts
+verification
+submission
+external outcome
+payment
+```
+
+Interface:
+
+```python
+class WorkerAdapter(Protocol):
+    async def execute(
+        self,
+        work: WorkOrder,
+        context: RunContext,
+    ) -> ExecutionResult: ...
+```
+
+Adapters might be:
+
+```text
+CommandAdapter
+PythonAdapter
+HTTPAdapter
+A2AAdapter
+HermesAdapter
+GBrainAdapter
+```
+
+A2A already defines a task as an independently managed unit whose outputs are Artifacts, so it is particularly clean as a remote-worker transport. ([A2A Protocol][2])
+
+This level is already enough for:
+
+```text
+run provenance
+artifact hashing
+independent verification
+submission proof
+outcome proof
+settlement proof
+WorkReceipt
+```
+
+That means a seller **does not need to rewrite their agent to use Moltwork**.
+
+---
+
+### L1 — observable worker
+
+The worker emits telemetry.
+
+Prefer:
+
+```text
+OpenTelemetry
++
+OpenInference
+```
+
+rather than WorkerKit inventing model/tool tracing.
+
+OpenInference already defines standard span kinds for `AGENT`, `LLM`, `TOOL`, `EVALUATOR`, `GUARDRAIL`, `PROMPT`, etc., while OpenTelemetry provides the general semantic-convention substrate. ([GitHub][3])
+
+WorkerKit consumes them and translates important observations into its ledger:
+
+```text
+OpenInference LLM span
+        ↓
+ModelCallObservation
+
+OpenInference TOOL span
+        ↓
+ToolCallObservation
+```
+
+No coupling to the actual harness.
+
+---
+
+### L2 — economically controlled worker
+
+Optional.
+
+The harness allows WorkerKit to authorize expensive actions before they happen:
+
+```python
+decision = await context.authorize(
+    ResourceRequest(
+        kind="model",
+        estimated_cost="0.08",
+        ...
+    )
+)
+```
+
+Possible decisions:
+
+```text
+ALLOW
+DENY
+SWITCH
+BUY_HELP
+REQUIRE_APPROVAL
+ABORT_RUN
+```
+
+This is where QDW economics eventually plugs in.
+
+But **do not require L2 for WorkerKit adoption**.
+
+That distinction is important.
+
+Pydantic's own documentation makes a useful distinction here: `SpendLimits` is a brake on runaway spending, not an authoritative accounting ledger, and its semantics become tricky inside durable workflows. ([pydantic.dev][4])
+
+WorkerKit therefore owns:
+
+```text
+authoritative CostEvents
+```
+
+independent of whichever harness happens to implement a budget guard.
+
+---
+
+# Canonical WorkerKit v1
+
+I would freeze the architecture around **11 record types**.
+
+Not 50.
+
+```text
+1. WorkOrder
+2. AcceptanceContract
+3. WorkerManifest
+
+4. WorkerRun
+5. WorkerEvent
+6. ArtifactRef
+7. CostEvent
+
+8. VerificationResult
+9. CommitDecision
+
+10. SubmissionReceipt
+11. ExternalOutcome / SettlementReceipt
+
+        ↓
+
+     WorkReceipt
+```
+
+Strictly speaking `WorkReceipt` is the signed envelope over these, rather than mutable runtime state.
+
+---
+
+# 1. `WorkOrder`
+
+Oracle has the rich market opportunity.
+
+WorkerKit does **not** duplicate Oracle.
+
+When an opportunity is selected:
+
+```text
+Oracle Opportunity
+       ↓ freeze
+WorkerKit WorkOrder
+```
+
+Canonical form:
+
+```yaml
+schema: https://moltwork.com/schemas/workerkit/v1/work-order
+
+work_order_id: UUIDv7
+
+source:
+  system: taskmarket
+  external_id: "task-8291"
+  snapshot: ArtifactRef
+
+objective: ArtifactRef
+inputs: [ArtifactRef]
+
+acceptance_contract: ArtifactRef
+
+economics:
+  reward:
+    value: "25.00"
+    currency: USD
+  deadline: 2026-09-01T12:00:00Z
+
+submission:
+  adapter: taskmarket
+  target: "task-8291"
+
+created_at: RFC3339
+```
+
+Crucially:
+
+```text
+reward unknown → null
+```
+
+not:
+
+```text
+reward = 0
+```
+
+---
+
+# 2. `AcceptanceContract`
+
+This is one of the best things to steal from Builda.
+
+The Worker **must not control its own definition of success**.
+
+```yaml
+schema: .../acceptance-contract
+
+contract_id: UUIDv7
+
+required_outputs:
+  - role: final
+    media_types:
+      - text/markdown
+
+constraints:
+  - id: minimum_sources
+    operator: ">="
+    value: 10
+
+  - id: citations_required
+    operator: "=="
+    value: true
+
+verifiers:
+  - verifier: research-quality-v3
+    required: true
+
+submission_constraints: []
+
+policy:
+  minimum_verification: PASS
+```
+
+Builda already implements the correct doctrine: actual exported bytes and executed probes outrank worker status, while agent narrative is untrusted.
+
+WorkerKit should make this universal:
+
+> **The worker cannot mark itself successful.**
+
+---
+
+# 3. `WorkerManifest`
+
+A Worker is identified without requiring its internals to be public.
+
+```yaml
+schema: .../worker-manifest
+
+worker_id: worker_123
+version: "17"
+
+executor:
+  adapter: gbrain
+
+package:
+  digest:
+    sha256: "..."
+  uri: null
+
+configuration:
+  digest:
+    sha256: "..."
+  disclosure: PRIVATE
+
+skills:
+  - digest:
+      sha256: "..."
+
+policies:
+  economics: ArtifactRef
+  verification: ArtifactRef
+
+created_at: ...
+```
+
+This allows:
+
+```text
+public worker
+private worker
+encrypted worker
+TEE-confidential worker
+```
+
+to use the same identity model.
+
+Only the digest has to be visible.
+
+---
+
+# 4. `WorkerRun`
+
+Important:
+
+> **WorkerRun is a projection. Events are canonical truth.**
+
+```yaml
+run_id: UUIDv7
+
+work_order: WorkOrderRef
+worker: WorkerManifestRef
+
+status: RUNNING | COMPLETED | FAILED | ABORTED
+
+started_at: ...
+finished_at: ...
+
+events:
+  first_sequence: 1
+  last_sequence: 188
+
+outputs: [ArtifactRef]
+
+known_cost:
+  value: "0.2381"
+  currency: USD
+
+unpriced_cost_events: 1
+
+verification_refs: []
+submission_refs: []
+outcome_refs: []
+settlement_refs: []
+```
+
+Delete the projection and it should be reconstructable from events.
+
+That's one of the strongest lessons from Pāṭala.
+
+---
+
+# 5. `WorkerEvent`
+
+This is probably the most important schema.
+
+```yaml
+schema: https://moltwork.com/schemas/workerkit/v1/event
+
+event_id: UUIDv7
+run_id: UUIDv7
+sequence: 81
+
+event_type: artifact.created
+
+occurred_at: ...
+observed_at: ...
+recorded_at: ...
+
+actor:
+  type: WORKER | RUNTIME | VERIFIER | PLATFORM | HUMAN
+  id: ...
+
+source:
+  system: workerkit
+  version: 0.1.0
+
+causation_id: ...
+correlation_id: ...
+
+artifact_refs: []
+
+payload_schema:
+  https://moltwork.com/schemas/workerkit/v1/events/artifact-created
+
+payload:
+  ...
+
+integrity:
+  payload_sha256: ...
+  previous_run_event_sha256: ...
+  event_sha256: ...
+```
+
+### Hash rule
+
+For structured records:
+
+```text
+SHA256(
+    RFC8785_JCS(
+        event excluding integrity.event_sha256
+    )
+)
+```
+
+For artifacts:
+
+```text
+SHA256(raw bytes)
+```
+
+in-toto's standard `ResourceDescriptor` already models names, URIs, digest maps, content locations, media types and annotations, so `ArtifactRef` should stay close to it instead of inventing another artifact vocabulary. ([Go Packages][5])
+
+---
+
+# 6. `ArtifactRef`
+
+Keep it extremely boring.
+
+```yaml
+artifact_id: UUIDv7
+
+name: final-report.md
+uri: cas://sha256/abc...
+media_type: text/markdown
+size_bytes: 19831
+
+digest:
+  sha256: abc...
+
+disclosure:
+  PUBLIC | PRIVATE | ENCRYPTED | REDACTED
+
+annotations:
+  role: final-output
+```
+
+Large/raw content lives outside the ledger.
+
+```text
+R2 / S3 / local CAS
+```
+
+The event ledger contains hashes and references.
+
+This is also important for privacy: prompts, memories, proprietary skills and raw tool output should **not automatically get dumped into the public receipt**.
+
+---
+
+# 7. `CostEvent`
+
+This stays first-class.
+
+Do not derive canonical spending entirely from telemetry.
+
+```yaml
+schema: .../cost-event
+
+cost_id: UUIDv7
+
+run_id: ...
+
+category:
+  MODEL | API | TOOL | COMPUTE | SERVICE | PAYMENT | OTHER
+
+resource:
+  provider: openrouter
+  service: null
+  model: some-model
+
+usage:
+  input_tokens: 18291
+  cached_input_tokens: 4000
+  output_tokens: 2189
+
+amount:
+  value: "0.03182"
+  currency: USD
+
+measurement:
+  OBSERVED | DERIVED | UNKNOWN
+
+source:
+  PROVIDER_REPORTED | COMPUTED | RECEIPT | MANUAL
+
+receipt_ref: ArtifactRef | null
+
+occurred_at: ...
+```
+
+Money values are **decimal strings**.
+
+Never IEEE float.
+
+And:
+
+```text
+UNKNOWN ≠ 0
+```
+
+If one API call can't be priced:
+
+```yaml
+amount: null
+measurement: UNKNOWN
+```
+
+Then WorkerRun says:
+
+```text
+known actual cost = $0.31
+unpriced events = 1
+```
+
+instead of lying that cost was $0.31 total.
+
+---
+
+# 8. `EconomicDecision`
+
+I'd make this a standard event payload rather than another major entity.
+
+```yaml
+event_type: economics.decision
+
+payload:
+  decision: CONTINUE
+
+  expected_reward:
+    value: "20.00"
+    currency: USD
+
+  expected_remaining_cost:
+    value: "0.44"
+    currency: USD
+
+  p_success: "0.62"
+
+  expected_net_value: "11.96"
+
+  alternatives:
+    - route: BUY_EXTERNAL_REPORT
+      expected_cost: "1.50"
+
+  reason_codes:
+    - POSITIVE_INCREMENTAL_EV
+
+  policy_digest:
+    sha256: ...
+```
+
+QDW can generate these.
+
+WorkerKit merely records them.
+
+This lets the economics engine evolve independently.
+
+---
+
+# 9. `VerificationResult`
+
+Absolutely no:
+
+```json
+{"verified": true}
+```
+
+Instead:
+
+```yaml
+verification_id: UUIDv7
+
+subject:
+  artifact:
+    sha256: ...
+
+claim:
+  type: OUTPUT_SATISFIES_ACCEPTANCE_CONTRACT
+  scope: final-output
+
+verifier:
+  id: research-quality-v3
+  version: "3.1"
+  method: inspect-ai
+
+result:
+  status: PASS | FAIL | INCONCLUSIVE
+  score: "0.87"
+
+evidence_refs:
+  - ArtifactRef
+
+limitations:
+  - "Does not establish platform acceptance"
+  - "Does not establish settlement"
+
+issued_at: ...
+```
+
+This is where Inspect fits.
+
+Inspect already supports arbitrary external agents, sandboxes, tasks and independent scoring, so it makes sense as a **certification/eval backend**, not as the WorkerKit execution engine. ([Inspect][6])
+
+---
+
+# Keep the Pāṭala epistemic ladder
+
+Per claim:
+
+```text
+DECLARED
+OBSERVED
+DERIVED
+VERIFIED
+```
+
+Example:
+
+```text
+"The worker used model X"
+OBSERVED
+
+"The output hash is ABC"
+DERIVED
+
+"The output passed verifier V"
+VERIFIED
+
+"The agent earned $20"
+VERIFIED only when settlement evidence exists
+```
+
+This is substantially more useful than one global verification level.
+
+---
+
+# 10. `CommitDecision`
+
+Every irreversible action passes one generic gate.
+
+```yaml
+commit_id: UUIDv7
+
+run_id: ...
+
+action:
+  SUBMIT | PAY | PUBLISH | SIGN | DEPLOY | TRANSFER
+
+target:
+  adapter: taskmarket
+  external_id: ...
+
+subject:
+  artifact:
+    sha256: ...
+
+checks:
+  - id: artifact_matches_verified_subject
+    status: PASS
+    evidence_refs: [...]
+
+  - id: acceptance_contract
+    status: PASS
+
+  - id: budget
+    status: PASS
+
+  - id: required_authority
+    status: PASS
+
+decision:
+  ALLOW | DENY | REQUIRE_APPROVAL
+
+policy_digest:
+  sha256: ...
+
+decided_at: ...
+```
+
+This generalizes both the Builda release gate and the Foxit/Proofdesk evidence gate.
+
+It is one of the very few pieces of actual **control logic** WorkerKit should own.
+
+---
+
+# 11. Keep submission, outcome and settlement separate
+
+Non-negotiable.
+
+```text
+SUBMITTED
+≠
+ACCEPTED
+≠
+PAID
+```
+
+### `SubmissionReceipt`
+
+```yaml
+submission_id: ...
+run_id: ...
+
+adapter: taskmarket
+external_submission_id: ...
+
+artifact_refs: [...]
+
+request_digest:
+  sha256: ...
+
+response_digest:
+  sha256: ...
+
+submitted_at: ...
+
+evidence_refs: [...]
+```
+
+### `OutcomeReceipt`
+
+```yaml
+outcome_id: ...
+submission_id: ...
+
+status:
+  UNKNOWN
+  SUBMITTED
+  ACCEPTED
+  PARTIAL
+  REJECTED
+  DISPUTED
+  REVERSED
+
+observed_at: ...
+
+issuer:
+  system: taskmarket
+
+evidence_refs: [...]
+```
+
+### `SettlementReceipt`
+
+```yaml
+settlement_id: ...
+outcome_id: ...
+
+status:
+  UNSETTLED
+  PENDING
+  SETTLED
+  REVERSED
+
+amount:
+  value: "20.00"
+  currency: USDC
+
+transaction_ref: ...
+
+settled_at: ...
+
+evidence_refs: [...]
+```
+
+x402 should simply be one payment/settlement adapter. The protocol's job is programmatic HTTP-native payment, not work provenance. ([x402][7])
+
+---
+
+# `WorkReceipt` is not another bespoke crypto format
+
+This is where I would simplify our previous thinking.
+
+Use:
+
+```text
+in-toto Statement v1
+    ↓
+WorkerKit predicate
+    ↓
+DSSE
+    ↓
+Sigstore bundle
+```
+
+in-toto Statement v1 already defines:
+
+```text
+_type
+subject[]
+predicateType
+predicate
+```
+
+and DSSE standardizes the signed envelope. ([Go Packages][5])
+
+Sigstore bundles can carry the signature, certificate, timestamp and transparency-log material needed to verify later. ([Sigstore][8])
+
+So:
+
+```json
+{
+  "_type": "https://in-toto.io/Statement/v1",
+
+  "subject": [
+    {
+      "name": "final-report.md",
+      "digest": {
+        "sha256": "..."
+      }
+    },
+    {
+      "name": "worker-run-bundle",
+      "digest": {
+        "sha256": "..."
+      }
+    }
+  ],
+
+  "predicateType":
+    "https://moltwork.com/attestation/worker-run/v1",
+
+  "predicate": {
+    "runId": "...",
+    "workerManifestDigest": "...",
+    "workOrderDigest": "...",
+
+    "eventCheckpoint": {
+      "root": "...",
+      "firstSequence": 1,
+      "lastSequence": 188
+    },
+
+    "economics": {
+      "knownActualCost": "0.2381",
+      "currency": "USD",
+      "unpricedEvents": 0
+    },
+
+    "outputs": [...],
+
+    "verificationRefs": [...],
+
+    "submissionRef": "...",
+    "outcomeRef": "...",
+    "settlementRef": "..."
+  }
+}
+```
+
+That's enough.
+
+Don't invent our own signing envelope.
+
+---
+
+# Optional proof providers sit off the side
+
+This becomes beautifully modular:
+
+```text
+VerificationResult
+       │
+       ├── deterministic verifier
+       ├── Inspect evaluator
+       ├── human reviewer
+       ├── platform receipt
+       ├── Sigstore
+       ├── dstack TEE
+       └── DeepProve zkML
+```
+
+DeepProve can prove a model inference from committed input/model to output; it should remain a **specific evidence provider**, not WorkerKit's execution substrate. ([Lagrange][9])
+
+Similarly, dstack can prove that a particular workload/configuration ran in an attested confidential environment and can gate secret/key release based on that attestation. ([dstack][10])
+
+ERC-8004 then becomes an optional publication target for these validation/reputation signals; its design explicitly supports pluggable validation approaches including zkML and TEE while leaving payment orthogonal. ([Ethereum Improvement Proposals][11])
+
+---
+
+# Storage architecture
+
+Keep this equally small.
+
+```text
+WORKER MACHINE
+
+SQLite WAL
+    events
+    outbox
+    run projection
+          │
+          │ spool-first
+          ▼
+WORKERKIT SERVER
+
+Postgres
+    canonical events
+    projections
+    external receipts
+
+R2 / S3
+    content-addressed artifacts
+
+          │
+          ▼
+periodic Merkle checkpoints
+
+          │ optional
+          ▼
+Sigstore / chain anchor
+```
+
+The Builda spool-first pattern is worth copying: write locally before transmission and acknowledge only successfully accepted events.
+
+I would **not use Temporal/DBOS as WorkerKit's canonical state store**.
+
+If an underlying Worker uses DBOS, excellent. DBOS provides durable recovery, idempotent workflow IDs and checkpointed steps. ([DBOS Docs][12])
+
+WorkerKit merely records:
+
+```text
+executor = dbos
+execution_id = xyz
+```
+
+Same for Temporal.
+
+---
+
+# The minimal WorkerKit API can genuinely be tiny
+
+This is roughly all I want publicly:
+
+```python
+run = wk.start(
+    work_order=work,
+    worker=worker,
+)
+
+run.observe(event)
+
+run.artifact(...)
+
+run.cost(...)
+
+verification = run.verify(...)
+
+decision = run.authorize(
+    action="SUBMIT",
+    subject=output,
+)
+
+submission = run.submitted(...)
+
+run.outcome(...)
+
+run.settlement(...)
+
+receipt = run.close()
+```
+
+And an even easier black-box CLI:
+
+```bash
+workerkit run \
+  --work work.json \
+  --worker worker.json \
+  --output ./result \
+  -- gbrain run task.md
+```
+
+WorkerKit:
+
+```text
+starts process
+captures lifecycle
+captures output
+hashes artifacts
+runs verifier
+applies gate
+records outcome
+produces receipt
+```
+
+No prompt management.
+
+No memory management.
+
+No agent loops.
+
+---
+
+# What WorkerKit explicitly MUST NOT build
+
+I would put this in the architecture README.
+
+**WorkerKit MUST NOT own:**
+
+* agent reasoning loops;
+* planning;
+* memory;
+* context management;
+* subagents;
+* prompt compaction;
+* skill execution engines;
+* browser automation;
+* MCP clients;
+* generic tool registries;
+* coding agents;
+* workflow durability;
+* model-provider abstractions;
+* UI chat protocols.
+
+PydanticAI/Harness, Temporal, DBOS, A2A and similar projects are already getting very good at those things. ([Pydantic][1])
+
+WorkerKit **MUST own**:
+
+```text
+WorkOrder freezing
+Worker identity/version binding
+canonical events
+artifact commitments
+actual economic ledger
+acceptance contracts
+independent verification
+irreversible-action gates
+submission evidence
+external outcomes
+settlement evidence
+WorkReceipt generation
+learning signals
+```
+
+That's it.
+
+---
+
+# There are really only five actual WorkerKit modules
+
+I'd collapse our earlier package plan further:
+
+```text
+workerkit/
+│
+├── core/
+│   ├── schema
+│   ├── events
+│   ├── artifacts
+│   └── receipts
+│
+├── economics/
+│   ├── costs
+│   ├── budgets
+│   └── decisions
+│
+├── verify/
+│   ├── contracts
+│   ├── gates
+│   └── verifier adapters
+│
+├── adapters/
+│   ├── execution
+│   ├── telemetry
+│   ├── marketplaces
+│   └── payments
+│
+└── server/
+    ├── ingest
+    ├── postgres
+    └── object_store
+```
+
+No `agent/`.
+
+No `memory/`.
+
+No `planner/`.
+
+No `skills/`.
+
+No `orchestrator/`.
+
+That is the architectural line I would enforce.
+
+---
+
+# Then certification sits above runtime
+
+The marketplace-facing thing becomes a derived artifact:
+
+```yaml
+WorkerCertification:
+
+worker:
+  digest: ...
+
+claim_class:
+  SYN | NAT | GEN
+
+suite:
+  digest: ...
+
+runs:
+  count: 100
+  receipt_root: ...
+
+metrics:
+  verifier_pass_rate: "0.91"
+  external_acceptance_rate: "0.68"
+  settlement_rate: "0.65"
+  median_known_cost_usd: "0.19"
+
+evidence:
+  inspect_eval: ...
+  work_receipts: ...
+
+limitations: [...]
+```
+
+This imports the best part of Pāṭala's evaluation discipline.
+
+Then a marketplace profile can show:
+
+```text
+Research Worker v17
+
+SYN certification     94%
+NAT external success  68%
+
+128 recorded runs
+87 accepted
+81 settled
+
+Median cost            $0.18
+Median revenue          $8.40
+
+Proof coverage
+✓ signed receipts
+✓ platform outcomes
+✓ settlement evidence
+12 TEE-attested runs
+3 zkML-verified runs
+```
+
+And **every number resolves back to receipts**.
+
+That is the moat.
+
+---
+
+## The canonical data flow
+
+I think this is the architecture to freeze:
+
+```text
+                         ORACLE
+                           │
+                    rich Opportunity
+                           │
+                     select + freeze
+                           ▼
+                       WorkOrder
+                           │
+                    AcceptanceContract
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                       WORKERKIT                         │
+│                                                         │
+│ start run                                               │
+│ record economics                                        │
+│ capture evidence                                        │
+│                                                         │
+│                         │                               │
+└─────────────────────────┼───────────────────────────────┘
+                          ▼
+                   ARBITRARY WORKER
+             gbrain / Hermes / Pydantic /
+             A2A / Claude / future thing
+                          │
+                          ▼
+                       Artifact
+                          │
+                    independent
+                     Verification
+                          │
+                     CommitGate
+                          │
+                      Submission
+                          │
+                  External Outcome
+                          │
+                     Settlement
+                          │
+                          ▼
+                     WorkReceipt
+                          │
+             ┌────────────┴────────────┐
+             ▼                         ▼
+      Worker learning             Moltwork profile
+      / economics                 / reputation
+```
+
+The most important insight from reviewing all of this is that **WorkerKit's sophistication should move into its evidence model, economics, and accumulated outcome data—not into its agent loop**.
+
+The actual execution surface should become *thinner* as agent harnesses get better.
+
+That gives you a durable product boundary:
+
+> **Bring any agent. WorkerKit turns what it does into economically measurable, independently verifiable work.**
+
+That is the canonical thesis I would now code against.
+
+[1]: https://pydantic.dev/docs/ai/harness/?utm_source=chatgpt.com "Pydantic AI Harness | Pydantic Docs"
+[2]: https://a2a-protocol.org/dev/specification/?utm_source=chatgpt.com "Overview - A2A Protocol"
+[3]: https://github.com/Arize-ai/openinference/blob/main/spec/semantic_conventions.md?utm_source=chatgpt.com "openinference/spec/semantic_conventions.md at main · Arize-ai/openinference · GitHub"
+[4]: https://pydantic.dev/docs/ai/harness/spend/?utm_source=chatgpt.com "Spend | Pydantic Docs"
+[5]: https://pkg.go.dev/github.com/in-toto/attestation%40v1.2.0/go/v1?utm_source=chatgpt.com "v1 package - github.com/in-toto/attestation/go/v1 - Go Packages"
+[6]: https://inspect.aisi.org.uk/?lang=en-US&utm_source=chatgpt.com "Inspect"
+[7]: https://docs.x402.org/introduction?utm_source=chatgpt.com "Welcome to x402 - x402"
+[8]: https://docs.sigstore.dev/quickstart/quickstart-cosign/?utm_source=chatgpt.com "Sigstore Quickstart with Cosign - Sigstore"
+[9]: https://lagrange.dev/engineering-updates/inside-deepprove-proving-an-llm-end-to-end?utm_source=chatgpt.com "Inside DeepProve: Proving an LLM, End to End"
+[10]: https://dstack.org/?utm_source=chatgpt.com "dstack — Open-Source Runtime for Confidential AI"
+[11]: https://eips.ethereum.org/EIPS/eip-8004?utm_source=chatgpt.com "ERC-8004: Trustless Agents"
+[12]: https://docs.dbos.dev/python/tutorials/workflow-tutorial?utm_source=chatgpt.com "Workflows | DBOS Docs"

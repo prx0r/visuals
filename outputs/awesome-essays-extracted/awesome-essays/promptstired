@@ -1,0 +1,98 @@
+
+My metaphysics #1
+
+animate siva art - YOU ARE CONSCIOUSNESS - 
+oh hey - recognisingsiva
+
+use the yogis as opportunities to apply tantra logic
+
+
+scrape all bettina baumer lecture content and use as commentary 
+when creating vid
+
+
+
+alan wallace lectures longform
+
+Tantrafiles - slideshow nice art, quotes
+sharp analysis of abhinavagupta tantrafiles. recognition. biography.
+yogi spiritual, plato, theurgy, Yogis
+
+dzkoswki long form content, lectures edited and made into nighttime 
+edits
+
+Ochema - sharp short, diagram explainers
+geometric short versions sharp
+proclus, ficino, nanavira, buddhist logic
+
+
+long essays on corbin etc night time
+
+
+Intelligent Others - diagram explainers , animations stock, nice art
+Speculative synthesis, levin, data, abhinavaupta, ai, consciousness
+robots, 
+
+astrobiology, etc
+
+
+hidden mechanics of yoga - gonna be a series on mallinson yoga texts
+
+tantraloka.xyz - fully focused on tantraloka? youtube channel devoted? 
+
+next step is getting LLM to design the essays with the visuals in mind (easier for them)
+
+
+de sole
+
+new agent:
+zoho mail set up emails
+instagram / tiktok hubs
+
+new thinking allowed create visual content
+
+https://www.youtube.com/watch?v=N5F7b7dwyvo - ma ai vid
+
+dzkoswki night material
+
+explaint the content with my own voice
+
+understand the tantraloka before vids
+
+the essays may need to be more contemplative,
+need to have working art pipeline to insert into movie script thing
+need working wquotes thing with interesting sparkle
+coudl record my voice for first one and then do tts science on pacing 
+etc then qwen audio
+
+
+Straight answer: the three datasets you're describing are real, but they're frozen historical archives, not live APIs. You can't point your discovery engine at them and get today's data. Here's what's actually going on with each, and what you need for a live pipeline.
+
+The three datasets (real, static, one-time downloads)
+
+Global YouTube Trending Dataset (2022–2025) — real, 78.4M entries, 104 countries, four snapshots/day. Data stops June 30, 2025, because YouTube killed the public Trending page that day. It will never update again. DOI: 10.13012/B2IDB-9307654_V1, hosted on Illinois Data Bank. Paper: arxiv.org/abs/2510.23645.
+
+GoogleTrendArchive — real, 7.6M trend episodes, 125 countries, Nov 2024–Jan 3, 2026. Built because Google's own "Trending Now" feed only shows 7 days of history and has no API. This archive is also a fixed snapshot, not a subscription feed. Code/data linked from arxiv.org/abs/2603.21871.
+
+TubeCensus — real, distributed as a pip package, built by scraping Wayback Machine captures of channel pages (not the YouTube API), covers ~30–36% of channels by content volume, has historical subscriber counts. Also static — it's whatever was captured up to the paper's cutoff.
+
+All three are good for backtesting your Opportunity formula — validate that search acceleration + low competition actually predicted breakout niches historically. They are useless for running the system going forward, because none of them update live.
+
+What you need for the live version
+
+Competing videos, median views, channel concentration, production difficulty → YouTube Data API v3. Free, 10k quota units/day, search.list (100 units/call) + videos.list (1 unit/call) + channels.list. This gets you view counts, video duration (production difficulty proxy), channel-level video counts (concentration), publish dates.
+
+Search acceleration / source velocity → There is no official Google Trends API. Your options, no sugarcoating:
+
+pytrends — free, unofficial, scrapes trends.google.com, breaks constantly when Google changes their frontend, gets rate-limited/blocked in production. Fine for prototyping, not for a real pipeline.
+SerpApi Google Trends API or DataForSEO Trends API — paid, actually stable, this is what you use if this needs to run unattended.
+
+Translation gap → run the same YouTube search with relevanceLanguage=en vs es/pt, compare first-publish dates and view velocity per language cluster. No dataset does this for you; it's a query you build.
+
+Packaging gap → not queryable directly. You infer it: pull contentDetails.duration, title text, and description from existing top videos in a niche via videos.list, then score them (duration > 20min + generic/institutional-sounding title + low comment-to-view ratio = badly packaged). This is a heuristic layer you write, not a field any API hands you.
+
+Visual suitability → also not in any dataset. You're either hand-tagging niches or building a cheap classifier off the subject matter (e.g., does it involve places, objects, data, physical demonstrations vs. pure talking-heads opinion).
+
+Bottom line
+
+Use the three archives to validate the formula against known 2022–2025 breakouts. Build the actual running system on YouTube Data API v3 (free)

@@ -1,0 +1,1828 @@
+The recent pushes make `livellm` a credible hackathon project now. The repo has live SerpApi usage, working CI, targeted official-source search, MCP/Markdown outputs, an economics module, cross-provider data, and—most importantly—a real current market event: OpenCode is publicly showing **2× GLM-5.3-Flash usage for a limited time**, while Z.ai currently has **50% discounted GLM-5.3-Flash pricing until September 9, 2026**. ([OpenCode][1])
+
+For the hackathon, though, I would change the strategic direction slightly.
+
+## Winning version
+
+Do **not** submit this as:
+
+> LiveLLM — economic telemetry for AI compute.
+
+You don't actually have telemetry yet.
+
+Do **not** submit it primarily as:
+
+> an agent cost oracle.
+
+You don't actually have usage accounting, credit inventory, outcome quality, or cost forecasting yet. Your own vision document correctly lists those as future work.
+
+Submit:
+
+> **LiveLLM — turns live web search into verified, versioned market intelligence for AI agents.**
+
+And:
+
+> **LLM pricing is the first reference vertical.**
+
+That is the strongest project **for this specific sponsor**.
+
+SerpApi asks for an innovative AI application using reliable structured real-time web data where live search materially improves the experience, and judges originality, technical execution, SerpApi integration, usability, and potential impact. ([DevNetwork Hackathon 2026][2])
+
+Your submission should make every one of those five criteria painfully obvious.
+
+---
+
+# Where the repo is now
+
+Latest main I reviewed:
+
+`0b1982e076052965e42b6930abc3acb5ec573769`
+
+The GitHub workflow for that exact commit completed successfully.
+
+That's a substantial improvement from the previous review.
+
+### What you've added well
+
+You fixed the worst correctness problems from the prior version:
+
+* replay/live extraction parity;
+* fail-closed fixture behavior;
+* runtime valid-field checking;
+* unit validation;
+* `force_fresh` precedence;
+* truthful cache semantics;
+* quota governor;
+* real live SerpApi smoke testing;
+* CI.
+
+The subsequent commits add:
+
+* targeted official-source discovery;
+* MCP;
+* Markdown agent payload;
+* economics/reconciliation;
+* cross-provider comparisons;
+* JSON Restrictor;
+* real live market examples;
+* promotion research;
+* product vision.
+
+That is good progress.
+
+But the newest additions contain a new class of problem:
+
+> **The repository increasingly describes manual research findings as though LiveLLM itself detected and verified them automatically.**
+
+Fix that before the demo.
+
+---
+
+# The biggest remaining issue: “promotion detection” isn't actually implemented
+
+This is the most important current peer-review finding.
+
+The commit:
+
+> `fix: GLM-5.3-Flash 2× usage promotion detected`
+
+did not add promotion detection.
+
+It manually changed:
+
+```ts
+requests: 7900
+providerUsage: 15
+```
+
+to:
+
+```ts
+requests: 15800
+providerUsage: 30
+```
+
+inside `seed-economics.ts`.
+
+Likewise, the Z.ai “promotion detected” commit manually changed:
+
+```ts
+0.15 / 0.03 / 0.50
+```
+
+to:
+
+```ts
+0.075 / 0.015 / 0.25
+```
+
+in seed data.
+
+The facts themselves are legitimate.
+
+Z.ai's current official pricing page explicitly shows:
+
+* list input: $0.15 → promo $0.075;
+* cached: $0.03 → $0.015;
+* output: $0.50 → $0.25;
+* promotion ends September 9, 2026. ([Overview - Z.AI DEVELOPER DOCUMENT][3])
+
+OpenCode's current public page explicitly says GLM-5.3-Flash gets **2× usage for a limited time** and currently displays 3,160 requests/5h. ([OpenCode][4])
+
+So these are **excellent demo events**.
+
+But right now:
+
+```text
+human notices promotion
+→ human edits seed
+→ LiveLLM calculates economics
+```
+
+not:
+
+```text
+SerpApi discovers promotion
+→ LiveLLM locates official source
+→ AI extracts promo
+→ deterministic validation
+→ temporal fact
+→ economics recompute
+```
+
+That distinction will matter if a technical judge reads the commits.
+
+### P0
+
+Make GLM-5.3-Flash the actual end-to-end golden path.
+
+---
+
+# Your fact schema cannot currently represent the demo you want
+
+Current `VALID_FIELDS` includes:
+
+```text
+input_price
+output_price
+cached_price
+monthly_price
+...
+promotion_end_at
+```
+
+but it does **not** include:
+
+```text
+requests_per_month
+requests_per_5h
+provider_usage_usd
+usage_multiplier
+promotion_start_at
+promotion_discount_pct
+list_price
+```
+
+Yet `seed-economics.ts` writes things like:
+
+```text
+requests_per_month
+provider_usage_usd
+```
+
+straight into the database anyway.
+
+Therefore your seeded economics data is bypassing your canonical fact schema.
+
+That's exactly the opposite of the trust model.
+
+Fix the schema.
+
+I would add:
+
+```ts
+type FactField =
+  | "input_price_usd_per_million"
+  | "cached_input_price_usd_per_million"
+  | "output_price_usd_per_million"
+
+  | "list_input_price_usd_per_million"
+  | "list_cached_input_price_usd_per_million"
+  | "list_output_price_usd_per_million"
+
+  | "subscription_price_usd_month"
+
+  | "request_limit_5h"
+  | "request_limit_week"
+  | "request_limit_month"
+
+  | "usage_value_usd_5h"
+  | "usage_value_usd_week"
+  | "usage_value_usd_month"
+
+  | "promotion_type"
+  | "promotion_multiplier"
+  | "promotion_discount_pct"
+  | "promotion_start_at"
+  | "promotion_end_at";
+```
+
+Then the actual OpenCode promo becomes:
+
+```json
+{
+  "entity": "OpenCode Go:GLM-5.3-Flash",
+  "field": "promotion_multiplier",
+  "value": 2,
+  "unit": "x",
+  "evidence": "GLM-5.3-Flash gets 2x usage limits for a limited time"
+}
+```
+
+And Z.ai becomes:
+
+```json
+{
+  "entity": "Z.ai:GLM-5.3-Flash",
+  "field": "promotion_discount_pct",
+  "value": 50,
+  "unit": "percent"
+}
+```
+
+with:
+
+```text
+promotion_end_at =
+2026-09-09T16:00:00Z
+```
+
+because 24:00 September 9 UTC+8 = 16:00 UTC.
+
+That is genuine temporal market intelligence.
+
+---
+
+# Your economics engine still contains dangerous fallback assumptions
+
+This is the biggest pure-code issue in the newest work.
+
+`calculateEconomics()` currently falls back to:
+
+```ts
+cachedRate =
+  inputPrice * 0.2;
+```
+
+if no cached rate exists.
+
+It also falls back to:
+
+```ts
+requestsPerMonth = 30_000;
+```
+
+Then the CLI adds even more guesses:
+
+```ts
+output_per_1m:
+  output?.value ?? input.value * 3
+
+requests_per_month:
+  requests?.value ?? 30000
+
+provider_usage_usd:
+  providerUsage?.value ?? 60
+```
+
+This is unacceptable for the submission you're trying to pitch.
+
+If a fact is absent:
+
+```text
+UNKNOWN
+```
+
+must mean unknown.
+
+Not:
+
+```text
+probably 3×
+probably 30K
+probably $60
+probably cache = 20%
+```
+
+### Change immediately
+
+```ts
+if (!outputPrice)
+  return notComputable("missing_output_price");
+
+if (!requestsPerMonth)
+  return notComputable("missing_request_limit");
+
+if (cacheTokens > 0 && cachedRate == null)
+  return notComputable("missing_cache_price");
+```
+
+Your whole selling point is trustworthy live economics.
+
+Never fabricate missing economics.
+
+---
+
+# There is also a zero-price bug
+
+You added direct provider records:
+
+```text
+Z.ai monthly_price = 0
+OpenRouter monthly_price = 0
+```
+
+But:
+
+```ts
+effectiveMultiple =
+  simulatedMonthly /
+  pricing.monthly_price
+```
+
+means:
+
+```text
+monthly_price = 0
+→ Infinity
+```
+
+Conceptually PAYG providers don't even have a “subscription multiple.”
+
+Separate:
+
+```text
+PAYG economics
+```
+
+from:
+
+```text
+subscription economics
+```
+
+Types:
+
+```ts
+type PricingPlan =
+  | {
+      kind: "payg";
+      input: number;
+      output: number;
+    }
+  | {
+      kind: "subscription";
+      monthlyPrice: number;
+      includedUsage?: number;
+      limits: ...;
+    };
+```
+
+This also makes cross-provider comparison much cleaner.
+
+---
+
+# Another economics bug: `provider_requests` isn't really used
+
+Your type contains both:
+
+```ts
+requests_per_month?
+provider_requests?
+```
+
+but the return value does:
+
+```ts
+provider_requests:
+  pricing.requests_per_month
+```
+
+instead of:
+
+```ts
+pricing.provider_requests
+```
+
+Pick one semantic meaning.
+
+I recommend:
+
+```text
+provider_estimated_requests
+```
+
+for a provider-published estimate.
+
+And:
+
+```text
+simulated_requests
+```
+
+only when LiveLLM itself generates one.
+
+Don't conflate them.
+
+---
+
+# The universal workload should no longer be your headline metric
+
+Current engine uses:
+
+```text
+830 input
+71,500 cached
+295 output
+```
+
+for every model.
+
+That was originally the MiMo workload.
+
+OpenCode now publishes **different observed workloads per model**.
+
+For example, current official docs state:
+
+```text
+GLM-5.3-Flash
+1000 input
+55,000 cached
+200 output
+
+GPT 5.6 Luna
+1000 input
+50,000 cached
+220 output
+
+Kimi K2.7
+870 input
+55,000 cached
+200 output
+
+MiMo V2.5
+830 input
+71,500 cached
+295 output
+```
+
+([OpenCode][5])
+
+This is fantastic for LiveLLM.
+
+You can now have two modes:
+
+### Provider workload
+
+> “What economics does the provider's own observed workload imply?”
+
+### Custom workload
+
+> “What economics does my agent workload imply?”
+
+That explains your Kimi discrepancy properly.
+
+Don't frame the 10.5× as:
+
+> Kimi is objectively a 10.5× deal.
+
+Frame:
+
+> Under the **MiMo-style high-cache workload**, Kimi is 10.5×; under OpenCode's Kimi-specific observed workload, the economics differ.
+
+That's much more sophisticated.
+
+---
+
+# This unlocks a much better feature: sensitivity analysis
+
+Add a workload selector:
+
+```text
+Provider observed
+Coding-agent high-cache
+Chat
+Research
+Custom
+```
+
+Then:
+
+```text
+Kimi K2.7
+
+Provider workload             6.0×
+High-cache coding workload   10.5×
+Low-cache workload            3.1×
+
+VALUE IS WORKLOAD-SENSITIVE
+```
+
+Now you are not merely scraping price tables.
+
+You're showing why simple LLM price comparison is insufficient.
+
+That is a genuinely valuable product insight.
+
+---
+
+# The GLM promotion is your best live demo
+
+This is much stronger than MiMo alone.
+
+As of today, OpenCode's product page shows:
+
+> GLM-5.3-Flash gets 2× usage limits for a limited time. ([OpenCode][1])
+
+Z.ai's official page shows:
+
+```text
+list:
+$0.15 input
+$0.03 cache
+$0.50 output
+
+promo:
+$0.075
+$0.015
+$0.25
+```
+
+and gives an explicit expiration date. ([Overview - Z.AI DEVELOPER DOCUMENT][3])
+
+OpenRouter currently exposes the discounted:
+
+```text
+$0.075/M input
+$0.25/M output
+```
+
+and labels GLM-5.3-Flash as 50% off. ([OpenRouter][6])
+
+You have all the ingredients for a killer live intelligence example:
+
+```text
+                   GLM-5.3-FLASH
+
+Z.ai
+50% price promotion
+expires Sept 9
+
+OpenRouter
+passes through discounted PAYG rate
+
+OpenCode Go
+still uses base token pricing
+BUT
+temporarily doubles subscription usage
+
+                       ↓
+
+            LIVELLM NORMALIZES BOTH
+
+                       ↓
+
+Which route is cheaper depends on workload.
+```
+
+This is **far more interesting** than:
+
+> model X costs $0.075.
+
+---
+
+# But do not say OpenCode is “not passing the discount through”
+
+Your promotion document says:
+
+> OpenCode Go charges 2× more / isn't passing through upstream discounts.
+
+I'd remove that wording.
+
+Why?
+
+OpenCode Go is a subscription product with negotiated capacity and temporary doubled usage.
+
+Its economics aren't equivalent to Z.ai PAYG.
+
+You don't know that OpenCode procures GLM from Z.ai at the public rate or has any obligation to mirror its promo.
+
+Say:
+
+> **The PAYG and subscription routes expose the same model through different temporary economic incentives.**
+
+Much safer and more interesting.
+
+---
+
+# Current README has one significant overclaim
+
+It says:
+
+> LiveLLM “measures when AI answers have gone stale.”
+
+I searched current `main`.
+
+There is no implemented:
+
+```text
+google_ai_mode
+google_ai_overview
+get_ai_freshness
+freshness audit
+```
+
+The MCP source comments even mention a seventh tool:
+
+```text
+get_ai_freshness
+```
+
+but the actual exported `TOOLS` array contains only six tools.
+
+Either build it or remove the claim.
+
+For a hackathon submission, I strongly prefer:
+
+**build one tiny version.**
+
+---
+
+# The AI freshness feature is the one additional feature I would allow
+
+Only after the core GLM live event works.
+
+Ask SerpApi AI Mode:
+
+> What does GLM-5.3-Flash cost right now?
+
+Extract the answer.
+
+Compare it against:
+
+```text
+LiveLLM verified fact ledger
+```
+
+Then:
+
+```text
+MATCH
+STALE
+UNSUPPORTED
+```
+
+This maps almost perfectly to the sponsor challenge:
+
+> live search data improves AI accuracy. ([DevNetwork Hackathon 2026][2])
+
+It also makes your project obviously an **AI application**, rather than a pricing crawler with an LLM extractor.
+
+But do not build Trends, Autocomplete, Pixel Position, regional intelligence, and AI Overview as well.
+
+One wow feature.
+
+---
+
+# JSON Restrictor claim also needs evidence
+
+README currently says:
+
+> JSON Restrictor: **60% smaller payloads**
+
+But the latest query registry I inspected doesn't actually contain `json_restrictor` parameters.
+
+Maybe it's being injected elsewhere, but I don't see it in the canonical query definitions.
+
+And I don't see a benchmark establishing “60%.”
+
+For winning:
+
+either show:
+
+```text
+raw bytes:        24,102
+restricted bytes: 8,934
+reduction:         62.9%
+```
+
+from a real captured request,
+
+or say simply:
+
+> uses JSON Restrictor to reduce unused response fields.
+
+No unsupported percentage.
+
+---
+
+# Package setup is currently broken relative to README
+
+README tells judges:
+
+```bash
+npm run economics
+npm run md
+```
+
+and documents `mcp`, `dashboard`, etc.
+
+But `package.json` currently only defines:
+
+```text
+build
+test
+radar
+record
+replay
+demo
+migrate
+account
+```
+
+So:
+
+```bash
+npm run economics
+```
+
+doesn't exist.
+
+That's exactly the sort of stupid issue that damages hackathon judging more than missing an advanced API.
+
+Add every documented script.
+
+---
+
+# Testing is now the limiting factor
+
+CI is green. Good.
+
+But the test suite is still the **same seven test files** from before:
+
+* canonical request
+* hashes
+* normalization
+* prefilter
+* radar
+* scheduler
+* URLs
+
+There are still no executable tests for:
+
+```text
+economics
+AI extraction
+fact validation
+fact supersession
+official discovery
+promotion parsing
+MCP
+materialization
+quota integration
+Search Archive
+```
+
+So the README saying “37 tests” is literally true, but no longer representative of the current codebase.
+
+## Before adding anything else
+
+Get this to ~70–100 tests.
+
+Especially:
+
+### Economics
+
+```text
+no subscription price → no multiplier
+zero subscription price → no divide by zero
+missing cache price → unknown, not 20% guess
+missing request count → not computable
+MiMo exact 6×
+provider-specific workload calculation
+custom workload calculation
+```
+
+### Promotion
+
+```text
+struck-through price + current price
+→ discount fact
+
+"2x usage for limited time"
+→ multiplier=2
+
+explicit end time
+→ parsed correctly
+
+"up to 2x"
+→ not equivalent to multiplier=2
+```
+
+### Provenance
+
+```text
+every verified fact
+has evidence
+
+every evidence
+has source observation
+
+every source observation
+has source URL
+
+every discovered candidate
+has SerpApi search ID
+```
+
+### MCP
+
+```text
+all documented tools exist
+tools/list count matches docs
+live radar requires explicit authorization
+read-only tools don't spend credits
+```
+
+---
+
+# MCP is useful, but don't make it a major demo section
+
+The MCP server is a good **impact proof**.
+
+It says:
+
+> Agents can consume these facts.
+
+That's enough.
+
+However, `run_radar` is currently exposed as an MCP tool and can spend SerpApi credits.
+
+For submission:
+
+```text
+read-only MCP
+```
+
+should be the default.
+
+Maybe:
+
+```text
+get_market_snapshot
+get_model_details
+get_recent_changes
+compare_routes
+```
+
+Then live refresh should require:
+
+```text
+--allow-spend
+```
+
+or an authenticated operator path.
+
+Don't let an agent accidentally burn the sponsor API quota.
+
+---
+
+# Review of the product visions
+
+Your vision document has seven larger directions.
+
+For **winning this hackathon**, I would rank them:
+
+| Vision                       | Product potential | Hackathon fit | Build now?       |
+| ---------------------------- | ----------------: | ------------: | ---------------- |
+| Verified market intelligence |                 9 |        **10** | **YES**          |
+| Cost Oracle                  |                10 |             7 | Small tease only |
+| Market telemetry             |                10 |             6 | No               |
+| Moltwork economic layer      |                10 |             5 | No               |
+| Cost per accepted outcome    |                10 |             4 | No               |
+| Counterfactual analysis      |                 9 |             3 | No               |
+| Hierarchical budgets         |                 8 |             2 | No               |
+
+## Why Verified Market Intelligence wins
+
+Because SerpApi is indispensable:
+
+```text
+without SerpApi
+→ you don't know what changed
+
+with SerpApi
+→ you discover unknown changes
+→ identify official sources
+→ verify
+→ derive economic impact
+```
+
+That maximizes **SerpApi integration depth**.
+
+---
+
+# Why Cost Oracle is weaker for this event
+
+The Cost Oracle is probably the stronger long-term product.
+
+But it needs:
+
+```text
+provider billing APIs
+usage events
+credit balances
+request telemetry
+task outcome measurements
+forecasting
+```
+
+SerpApi becomes only one input among many.
+
+The more you build that now, the more a SerpApi judge can reasonably ask:
+
+> Why is SerpApi actually central to this?
+
+That's bad.
+
+Save it for after submission.
+
+---
+
+# Why Moltwork integration should be one slide, not product scope
+
+Long term, this architecture makes perfect sense:
+
+```text
+LiveLLM
+→ market economics
+
+WorkerKit
+→ execution economics
+
+Moltwork
+→ opportunity economics
+```
+
+But in this submission:
+
+> **Do not require a judge to understand Moltwork.**
+
+Say only:
+
+> “The output is machine-readable through MCP, so autonomous agents can use the verified market state when choosing infrastructure.”
+
+Then show one MCP call.
+
+Done.
+
+---
+
+# Why “economic telemetry layer” is wrong today
+
+Telemetry conventionally implies observed operational measurements:
+
+```text
+actual tokens
+actual request cost
+latency
+failures
+rate-limit events
+```
+
+Your VISION document acknowledges those aren't built.
+
+Calling LiveLLM telemetry now invites technical criticism.
+
+After hackathon? Absolutely.
+
+Today:
+
+> **verified live market intelligence**
+
+is accurate.
+
+---
+
+# My final product formulation
+
+## LiveLLM
+
+**Verified live market intelligence for AI agents.**
+
+> AI model prices, quotas and promotions change faster than static datasets and model knowledge can keep up. LiveLLM uses SerpApi to discover market changes, verifies them against authoritative sources, converts them into versioned facts, and calculates how those changes affect real workloads.
+
+### Reference implementation
+
+> LLM pricing and compute economics.
+
+### Generalizable primitive
+
+```text
+LIVE WEB
+   ↓
+DISCOVERY
+   ↓
+AUTHORITATIVE VERIFICATION
+   ↓
+TEMPORAL FACTS
+   ↓
+DOMAIN-SPECIFIC DERIVATION
+```
+
+That's the generalization.
+
+Don't build another vertical.
+
+---
+
+# Show generality through an adapter interface
+
+You were right earlier that LLM pricing should be “one of many implementations.”
+
+Make that real with 50 lines of architecture rather than another product.
+
+Something like:
+
+```ts
+interface VerticalAdapter<
+  Candidate,
+  Fact,
+  Derived
+> {
+  id: string;
+
+  discoveryQueries(): DiscoveryQuery[];
+
+  classify(
+    result: SearchResult
+  ): Candidate | null;
+
+  authoritativeSources(
+    candidate: Candidate
+  ): SourcePolicy[];
+
+  extractionSchema: Schema;
+
+  validate(
+    proposedFact: unknown,
+    observation: SourceObservation
+  ): FactValidation<Fact>;
+
+  derive(
+    facts: Fact[],
+    context?: unknown
+  ): Derived[];
+}
+```
+
+Then:
+
+```text
+src/verticals/llm-pricing/
+```
+
+contains:
+
+```text
+queries
+fact schema
+promotion rules
+price normalization
+economics
+```
+
+That is enough to justify:
+
+> “LLM pricing is a reference vertical.”
+
+No second vertical needed.
+
+---
+
+# Judge-facing score if you submitted today
+
+My approximate sponsor score:
+
+| Criterion           |   Current |
+| ------------------- | --------: |
+| Originality         |    8.5/10 |
+| Technical execution |      7/10 |
+| SerpApi integration |      8/10 |
+| Usability           |      6/10 |
+| Potential impact    |    8.5/10 |
+| **Total**           | **38/50** |
+
+The main deductions are not concept.
+
+They're:
+
+* manually seeded facts posing as detection;
+* broken README commands;
+* sparse tests around newest functionality;
+* some economics guesses;
+* no actual AI freshness feature despite claiming one;
+* frontend/demo not yet telling the story.
+
+With the plan below I think this can become roughly **45–47/50 quality**.
+
+---
+
+# Exact dev plan for winning
+
+## P0 — stop expanding scope
+
+Freeze:
+
+* usage ledger;
+* budgets;
+* WorkerKit;
+* Moltwork;
+* counterfactuals;
+* Trends;
+* regional pricing;
+* agent routing.
+
+No more future-product work until submission assets are done.
+
+---
+
+# P1 — make GLM promotion fully automatic
+
+This is the highest-value engineering task.
+
+Build an actual recorded/live path:
+
+```text
+SerpApi query
+"GLM-5.3-Flash pricing 2x usage promotion"
+          ↓
+candidate
+          ↓
+official OpenCode result
+official Z.ai result
+          ↓
+fetch official page
+          ↓
+AI extraction
+          ↓
+promotion facts
+          ↓
+deterministic validator
+          ↓
+temporal ledger
+          ↓
+cross-provider economics
+```
+
+A judge should be able to trace **every field**.
+
+---
+
+# P2 — remove `seed.local` from the demo path
+
+Current economics seed creates:
+
+```text
+https://seed.local
+authority=seed
+```
+
+and then inserts fake evidence text like:
+
+```text
+OpenCode:MiMo V2.5 input_price... = 0.14
+```
+
+Fine for unit testing.
+
+Absolutely wrong for anything shown as VERIFIED in the actual demo DB.
+
+Split:
+
+```text
+data/demo-recorded.db
+```
+
+from:
+
+```text
+data/test-synthetic.db
+```
+
+No synthetic provenance in the judge demo.
+
+---
+
+# P3 — make recorded fixtures first-class
+
+For the golden event, save:
+
+```text
+fixtures/recorded/
+  serpapi/
+    discovery.json
+    official-opencode.json
+    official-zai.json
+
+  sources/
+    opencode-go.html
+    zai-pricing.html
+
+  ai/
+    opencode-promotion-extraction.json
+    zai-promotion-extraction.json
+```
+
+Metadata:
+
+```json
+{
+  "recorded_at": "...",
+  "search_id": "...",
+  "source_url": "...",
+  "sha256": "..."
+}
+```
+
+Demo can be replayed deterministically while still visibly proving the original calls were genuine.
+
+---
+
+# P4 — fix economics purity
+
+Delete all guesses.
+
+Create:
+
+```ts
+type EconomicsStatus =
+  | {
+      status: "computed";
+      result: ...
+    }
+  | {
+      status: "not_computable";
+      missing: FactField[];
+    };
+```
+
+Add explicit workload:
+
+```ts
+type Workload = {
+  uncachedInputTokens: number;
+  cachedInputTokens: number;
+  outputTokens: number;
+};
+```
+
+`calculateEconomics()` should require one.
+
+No global invisible workload.
+
+---
+
+# P5 — provider workload + custom workload
+
+For OpenCode, ingest the actual model-specific observed workload from the official page. The documentation already publishes it. ([OpenCode][5])
+
+Then UI:
+
+```text
+WORKLOAD
+
+● Provider-observed
+○ Coding-agent high-cache
+○ Custom
+```
+
+This turns the strange Kimi result into a strength.
+
+---
+
+# P6 — temporal promotions
+
+Every promotion needs:
+
+```text
+detected_at
+verified_at
+effective_from
+effective_until
+```
+
+Z.ai's September 9 expiry is perfect.
+
+The dashboard should actually show:
+
+```text
+GLM-5.3-Flash
+
+50% OFF
+
+$0.15 → $0.075 input
+$0.50 → $0.25 output
+
+Ends in 10 days
+VERIFIED FROM Z.AI
+```
+
+And:
+
+```text
+OpenCode Go
+2× USAGE
+temporary
+end date not published
+```
+
+Notice the difference:
+
+```text
+known expiry
+```
+
+versus:
+
+```text
+unknown expiry
+```
+
+That's epistemically clean.
+
+---
+
+# P7 — cross-provider route model
+
+Do not model:
+
+```text
+model = price
+```
+
+Model:
+
+```text
+Model
+  GLM-5.3-Flash
+
+Route A
+  Z.ai PAYG
+
+Route B
+  OpenRouter PAYG
+
+Route C
+  OpenCode Go subscription
+```
+
+Facts attach appropriately:
+
+```text
+model facts
+provider-route facts
+subscription facts
+promotion facts
+```
+
+Then compare **routes**, not merely models.
+
+This is exactly what makes LiveLLM useful.
+
+---
+
+# P8 — add the missing tests
+
+Target >70 before final demo.
+
+At minimum:
+
+```text
+economics.test.ts
+promotion.test.ts
+fact-validation.test.ts
+fact-supersede.test.ts
+provenance.test.ts
+official-discovery.test.ts
+mcp.test.ts
+integration-glm-promo.test.ts
+```
+
+The last one should be your centerpiece:
+
+```text
+recorded SerpApi
+→ candidate
+→ official sources
+→ facts
+→ promo
+→ economics
+```
+
+One deterministic full stack test.
+
+---
+
+# P9 — fix every README command
+
+Either add:
+
+```json
+"economics": "node dist/cli.js economics",
+"md": "node dist/cli.js md",
+"summary": "node dist/cli.js summary",
+"mcp": "node dist/cli.js mcp",
+"dashboard": "node dist/cli.js dashboard",
+"official": "node dist/cli.js official"
+```
+
+or change README.
+
+I strongly prefer adding them.
+
+A judge should run:
+
+```bash
+npm ci
+npm run build
+npm test
+npm run demo
+```
+
+Nothing else required.
+
+---
+
+# P10 — build one actual web experience
+
+Don't make judges run five CLIs to understand it.
+
+Homepage:
+
+```text
+LiveLLM
+Verified live market intelligence for AI
+
+[ Run Radar ]
+
+LIVE CHANGES
+
+GLM-5.3-Flash
+────────────────────────
+
+Z.ai
+50% OFF
+$0.15 → $0.075
+expires Sep 9
+
+OpenCode Go
+2× usage
+1,580 → 3,160 requests / 5h
+
+OpenRouter
+$0.075/M current input
+
+[ View evidence ]
+```
+
+Then:
+
+```text
+Economic impact
+```
+
+and:
+
+```text
+Provenance
+```
+
+below.
+
+---
+
+# P11 — provenance drawer
+
+This will impress SerpApi judges.
+
+Click:
+
+```text
+WHY DO WE BELIEVE THIS?
+```
+
+Show:
+
+```text
+DISCOVERY
+
+SerpApi engine
+Google Light
+
+Query
+...
+
+Search ID
+...
+
+Observed
+...
+
+
+VERIFICATION
+
+Official source
+docs.z.ai
+
+Evidence
+GLM-5.3-Flash ... $0.075 ...
+
+Observed
+...
+
+
+FACT
+
+input_price
+old $0.15
+new $0.075
+
+
+DERIVATION
+
+50% discount
+```
+
+The SerpApi Search Archive belongs here.
+
+---
+
+# P12 — show SerpApi integration breadth
+
+Not as a slide full of logos.
+
+Show actual roles:
+
+```text
+Google News Light
+→ emerging announcements
+
+Google Light
+→ official-source discovery
+
+Search Index Deep
+→ unknown providers / offers
+
+Account API
+→ economic quota control
+
+Search Archive
+→ reproducible provenance
+
+JSON Restrictor
+→ efficient structured acquisition
+```
+
+Five APIs/behaviors, each with a reason.
+
+That's integration depth.
+
+---
+
+# P13 — one AI Mode truth-audit feature if core is done
+
+Only then.
+
+Question:
+
+> “How much does GLM-5.3-Flash cost?”
+
+Capture Google AI Mode answer.
+
+Compare:
+
+```text
+AI ANSWER
+vs
+VERIFIED LIVELLM FACT
+```
+
+If current:
+
+```text
+CURRENT ✓
+```
+
+If not:
+
+```text
+STALE ✗
+```
+
+This makes your sponsor alignment nearly impossible to miss.
+
+---
+
+# P14 — evaluation page
+
+Show real numbers, not adjectives.
+
+Example:
+
+```text
+RADAR EVALUATION
+
+4 SerpApi searches
+40 results
+25 prefilter candidates
+14 unique candidates
+8 official sources located
+N verified market facts
+M material changes
+
+Search credits spent: 4
+```
+
+You have already actually performed a four-query live smoke test according to the commit history.
+
+Keep numbers auditable.
+
+Also report:
+
+```text
+record/replay tests
+CI status
+payload bytes before/after restriction
+```
+
+---
+
+# P15 — make the demo short
+
+The judging window is only **September 3 from 10:00 AM to 1:00 PM PDT**, and the deadline is September 3 at 10:00 AM PDT. ([DevNetwork Hackathon 2026][7])
+
+Assume judges have almost no time.
+
+## 2:30 demo
+
+### 0:00–0:20 — Problem
+
+> AI pricing changes constantly. Static price databases and AI model knowledge go stale.
+
+### 0:20–0:45 — Live radar
+
+Press:
+
+```text
+RUN RADAR
+```
+
+Show SerpApi.
+
+### 0:45–1:15 — real discovery
+
+GLM promo:
+
+```text
+OpenCode → 2× usage
+Z.ai → 50% off
+OpenRouter → discounted PAYG
+```
+
+### 1:15–1:40 — verification
+
+Open provenance.
+
+Show actual official evidence.
+
+### 1:40–2:00 — economics
+
+Switch workload profile.
+
+Show route comparison changes.
+
+### 2:00–2:15 — agent interface
+
+One MCP query:
+
+> compare GLM routes
+
+### 2:15–2:30 — generalization
+
+> LLM pricing is the reference vertical. LiveLLM's core primitive is live discovery → authoritative verification → temporal facts → domain derivation.
+
+Done.
+
+---
+
+# What I would delete from the hackathon presentation
+
+Do not talk about:
+
+```text
+hierarchical lab budgets
+scarcity shadow prices
+WorkerKit internals
+Moltwork marketplace
+counterfactual model routing
+quality-by-task
+cost per accepted outcome
+agent leasing
+crypto
+TEEs
+```
+
+Those are interesting.
+
+They lower your hackathon score because they make the working thing harder to understand.
+
+---
+
+# What belongs in the README vs VISION
+
+## README
+
+Only what works.
+
+```text
+problem
+demo
+architecture
+SerpApi role
+setup
+tests
+current reference vertical
+```
+
+## VISION.md
+
+All the agent-economic ideas.
+
+Keep it because it shows future impact.
+
+But explicitly label:
+
+```text
+NOT PART OF HACKATHON IMPLEMENTATION
+```
+
+Your current VISION doc mostly does this correctly.
+
+---
+
+# Final priority stack
+
+If you do nothing else, do these in this order:
+
+1. **Make GLM promotion discovery truly end-to-end rather than seeded.**
+2. Fix the fact schema for route/promotional economics.
+3. Remove every economics fallback/guess.
+4. Split PAYG vs subscription calculations.
+5. Add provider-specific workloads.
+6. Add full provenance for GLM promo.
+7. Add tests for every post-37-test feature.
+8. Fix package scripts/README.
+9. Build polished live dashboard.
+10. Build recorded GLM replay demo.
+11. Add evidence/provenance drawer.
+12. Add measurable evaluation panel.
+13. Add one MCP comparison call.
+14. **Only if all of that is solid:** AI Mode truth audit.
+15. Record final 2–3 minute video.
+
+## Final positioning
+
+I would enter with:
+
+> **LiveLLM — Verified live market intelligence for AI agents.**
+
+One line:
+
+> **LiveLLM uses SerpApi to discover AI pricing, quota and promotion changes, verifies them against authoritative sources, turns them into versioned facts, and calculates their real economic impact.**
+
+And the expansion sentence:
+
+> **LLM pricing is our first reference vertical; the underlying live-search → verification → temporal-fact pipeline is domain-independent.**
+
+That gives you the strongest balance of **originality, visibly deep SerpApi integration, technical credibility, usability, and believable impact**—the exact sponsor criteria. ([DevNetwork Hackathon 2026][2])
+
+I would resist every temptation to make the submission bigger than this. This version is already more technically distinctive than a conventional “SerpApi search → LLM answer” project; winning now is mostly about making the provenance, automatic promotion detection, economics, and demo unquestionably real.
+
+[1]: https://opencode.ai/go "https://opencode.ai/go"
+[2]: https://api-cloud-ai-hackathon-2026.devpost.com/ "https://api-cloud-ai-hackathon-2026.devpost.com/"
+[3]: https://docs.z.ai/guides/overview/pricing "https://docs.z.ai/guides/overview/pricing"
+[4]: https://dev.opencode.ai/go "https://dev.opencode.ai/go"
+[5]: https://dev.opencode.ai/docs/go/ "https://dev.opencode.ai/docs/go/"
+[6]: https://openrouter.ai/models/?fmt=cards&input_modalities=image&output_modalities=text&q=free "https://openrouter.ai/models/?fmt=cards&input_modalities=image&output_modalities=text&q=free"
+[7]: https://api-cloud-ai-hackathon-2026.devpost.com/details/dates "https://api-cloud-ai-hackathon-2026.devpost.com/details/dates"

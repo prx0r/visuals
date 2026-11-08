@@ -1,0 +1,101 @@
+Hackathon Structure
+
+One hackathon, three interconnected tracks. Track 3 starts only after Track 1 and 2 close. Winners are announced once, after all tracks end.
+Track 1: Miners
+Building and running high-quality Miners
+Aug 17 – Aug 31
+15 days
+Track 2: Script Authors
+Writing and improving evaluation scripts
+Aug 17 – Aug 31
+15 days
+Track 3: Applications
+Building real applications and agents using Telegraph
+Aug 31 – Sep 7
+7 days
+Winner Selection
+Selecting winners across all 3 tracks
+Sep 8 – Sep 18
+10 days
+Announcement & Prizes
+Announce winners and distribute prizes
+Sep 19 – Sep 25
+7 days
+
+How winners are chosen
+Judging Criteria
+50%Improvement over Baseline
+
+How accurately and effectively the script evaluates Miner outputs vs the current Canonical Script.
+30%Robustness & Code Quality
+
+Clean code structure, proper handling of edge cases, and adherence to WASM/sandbox constraints.
+10%Engagement & Updates on X
+
+Quality, consistency, reach, and engagement of updates posted on X. Tag @Telegraphprotoc in all update posts.
+10%Community Engagement & Adoption
+
+Mentions, feedback, and actual adoption of your script by others.
+What is the Canonical Script?
+
+For each Intent, the protocol has one official evaluation script called the Canonical Script. This is the current benchmark used to score Miner responses for that Intent.
+
+In Track 2, participants submit improved evaluation scripts, reviewed against the current Canonical Script to measure improvement in accuracy, robustness, and code quality.
+
+The current Canonical Script for each participating Intent will be shared in the official hackathon repository before the hackathon starts.
+
+The Top 3 scripts with the highest overall scores win the global cash prizes ($500 / $300 / $200). Winners are determined through a focused manual review by the core team.
+
+Non-negotiable
+Important Rules
+01
+
+Applications in Track 3 must use real Telegraph Miners. Simulated or mocked data is not allowed.
+02
+
+Miners and Script Authors must remain live and operational throughout Track 3.
+03
+
+All updates used for judging must be publicly posted on X and properly tagged.
+04
+
+Artificial inflation of metrics or gaming the system will result in disqualification.
+05
+
+Each intent operates with its own independent leaderboard. You only compete with Miners in the same domain for Normalized Performance scoring. Cash prizes are awarded to the Top 3 Miners with the highest overall normalized scores across all intents.
+06
+
+All participants must join the official Hackathon Discord. Important discussions, announcements, and support will happen there. Staying active in the Discord is expected.
+
+What you can win
+Prize Distribution
+
+All prizes paid in USD after final results are announced.
+
+Miner Track
+
+$2,000
+1st$1,000
+2nd$600
+3rd$400
+
+Script Author Track
+
+$1,000
+1st$500
+2nd$300
+3rd$200
+
+Application Track
+
+$2,000
+1st$1,000
+2nd$600
+3rd$400
+Total Prize Pool$5,000 USD
+
+This hackathon is designed to test and prove Telegraph's core value proposition: a ranked, verified, and economically incentivized intelligence layer that gets stronger with real usage.
+
+If you understand and believe in building a competitive intelligence layer for machines rather than another aggregator, we welcome you to participate.
+
+Good luck.

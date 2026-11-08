@@ -1,0 +1,30 @@
+Handover — for the next agent (get stuck in now)
+The project in one line
+Mangy = an emotion-conditioned ambient music engine (Rust, CPU-only, no GPU) + a scientific lab + a thesis. It generates ambient/techno/drone tracks from real chord data, predicts emotion, and tests its own hypotheses.
+Repo
+/home/box/Documents/patala (monorepo). Start with docs/README.md (index) and docs/HANDOVER_NEXT.md (continuation + vision).
+Low-RAM rules (non-negotiable)
+- cargo -j 2, ninja -j 1, detached builds (setsid nohup ... & disown), kill by PID (not pkill). 4 GB machine. Never load big files whole.
+What works right now (tested, exposed via API)
+- Engine (soundworld/src/): brainwave (binaural tone bed), seq (note sequencer + style patches + influence %), emotion (valence/arousal + fit), rasa (6D chord-graph + 9 rasas), neurosynth (focus arc), drone, corpus/producer (real-audio hybrid), eval/tune (closed-loop), live (realtime), harmony_data (seeded with real CHORDONOMICON priors).
+- API: /commands (all mechanisms), /llm, /harmony, /verify, /evaluate, /state. MCP server (mcp/mangy_mcp.py) exposes it to any LLM agent.
+- 62+ tests pass.
+- Scientific lab (tools/study/run_study.py) runs H1–H3 on real CHORDONOMICON data → tools/study/STUDY_RESULTS.md. H1/H2 supported; H3 framed.
+- Real data: data/chordonomicon/chord_transitions.json (from 4,556 songs); 3 CC-ambient refs.
+Do this next (in order)
+1. Build soundworld/src/surprise.rs — real surprisal −log₂ P(chord|prev) + entropy under the priors; wire into emotion::predict + rasa D6.
+2. Add a temperature sampler to harmony_data/seq (fix the greedy I→V collapse; enable H2).
+3. Build soundworld/src/symmetry.rs (Tymoczko symmetry index) → test H5 (STV: symmetry→valence).
+4. Richer harmonic model — the bigram is weak (perplexity 6.13); try higher-order/key-normalized. Makes H1 strong.
+5. H3 with DEAM — fetch DEAM valence/arousal annotations, correlate with progression entropy (tools/study/datasets.py stub ready).
+6. GPU phase (docs/DEV_PLAN.md): DDSP/FAD generator + learned judge + MUSHRA listening.
+Verify each step
+CARGO_TARGET_DIR=/root/mangy-cargo-target cargo test -j 2 and python3 tools/study/run_study.py ... — update STUDY_RESULTS.md as hypotheses are tested. Commit after each.
+Gotchas
+- API key (sk-...): env var only, never commit.
+- CHORDONOMICON chord symbols are noisy — normalize before trusting counts.
+- Honest line: music-emotion/surprise/Tymoczko/data = established; STV/QRI/FEP-strong = speculative, framed as hypotheses, never claims.
+- data/ + reference_tracks/*audio* are gitignored (on disk); metadata CSVs committed.
+Vision (the thesis)
+Test "Predicting Emotional Valence from Harmonic Geometry and Surprise" — a publishable result. The engine is a scientific instrument: every track logs surprise/symmetry/valence; a "Goldilocks" surprisal control keeps progressions in the preference window (Miles et al.); STV is an honest, falsifiable frontier. Full outline: thesis/THESIS_OUTLINE.md.
+First action: cd soundworld && CARGO_TARGET_DIR=/root/mangy-cargo-target cargo test -j 2 to confirm green, then build surprise.rs

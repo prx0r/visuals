@@ -1,0 +1,404 @@
+{
+  "version": "1.0",
+  "id": "fundamental-structure-static-dynamic",
+  "title": "Fundamental Structure",
+  "description": "A complete visual construction of the supplied Static and Dynamic Aspects using one persistent o/x transformation alphabet.",
+  "theme": "whiteScientific",
+  "seed": 261117,
+  "capabilityPacks": [
+    "fundamental-structure",
+    "invariant-composition",
+    "temporal-processes",
+    "systems-dynamics",
+    "pathkit-geometry"
+  ],
+  "audioManifest": "build/fundamental-structure/features.json",
+  "render": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "crf": 16,
+    "preset": "medium",
+    "transitionDuration": 0
+  },
+  "scenes": [
+    {
+      "id": "s01",
+      "title": "One thing",
+      "subtitle": "Introduce o without spatial interpretation.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Introduce o without spatial interpretation.",
+      "params": {
+        "operation": "symbol",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s02",
+      "title": "Another thing",
+      "subtitle": "Introduce x because repetition of o cannot distinguish.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Introduce x because repetition of o cannot distinguish.",
+      "params": {
+        "operation": "distinction",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s03",
+      "title": "This and that",
+      "subtitle": "Priority, not location, differentiates two things.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Priority, not location, differentiates two things.",
+      "params": {
+        "operation": "priority",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s04",
+      "title": "Difference as operation",
+      "subtitle": "o and x define the invariant transformation between them.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "o and x define the invariant transformation between them.",
+      "params": {
+        "operation": "operation",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s05",
+      "title": "First and second",
+      "subtitle": "oo and ox secure precedence without location.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "oo and ox secure precedence without location.",
+      "params": {
+        "operation": "pairing",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s06",
+      "title": "The tetrad",
+      "subtitle": "Four symbols support three independent pairings.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Four symbols support three independent pairings.",
+      "params": {
+        "operation": "tetrad",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s07",
+      "title": "Row, column, diagonal",
+      "subtitle": "Derive the three mutually independent interchanges.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Derive the three mutually independent interchanges.",
+      "params": {
+        "operation": "klein-four",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s08",
+      "title": "Four-member thing",
+      "subtitle": "Superpose zero and three interchange operations.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Superpose zero and three interchange operations.",
+      "params": {
+        "operation": "superposition",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s09",
+      "title": "Sixteen-member reflexion",
+      "subtitle": "A tetrad of tetrads repeats the same structure.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "A tetrad of tetrads repeats the same structure.",
+      "params": {
+        "operation": "recursive-grid",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s10",
+      "title": "Indefinite expansion",
+      "subtitle": "4,16,64,256… members arise recursively.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "4,16,64,256… members arise recursively.",
+      "params": {
+        "operation": "recursive-growth",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s11",
+      "title": "Invariant whole",
+      "subtitle": "Any member transformation permutes the set without changing it.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Any member transformation permutes the set without changing it.",
+      "params": {
+        "operation": "group-action",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s12",
+      "title": "Structure of structure",
+      "subtitle": "Immediate and reflexive structure share one form.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Immediate and reflexive structure share one form.",
+      "params": {
+        "operation": "self-similarity",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "s13",
+      "title": "Infinite hierarchy",
+      "subtitle": "Particular/general and reflexive hierarchies extend indefinitely.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 10,
+      "narration": "Particular/general and reflexive hierarchies extend indefinitely.",
+      "params": {
+        "operation": "hierarchy",
+        "section": "STATIC"
+      }
+    },
+    {
+      "id": "d01",
+      "title": "Duration",
+      "subtitle": "Unchange and change are one invariant transformation.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Unchange and change are one invariant transformation.",
+      "params": {
+        "operation": "duration",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d02",
+      "title": "Repeated moments",
+      "subtitle": "Column interchange repeats while the whole remains unchanged.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Column interchange repeats while the whole remains unchanged.",
+      "params": {
+        "operation": "moment-cycle",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d03",
+      "title": "No finite duration",
+      "subtitle": "Two rates of change do not produce true duration.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Two rates of change do not produce true duration.",
+      "params": {
+        "operation": "cogwheel-rejection",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d04",
+      "title": "Accelerating infinity",
+      "subtitle": "Infinite moments converge by geometric acceleration.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Infinite moments converge by geometric acceleration.",
+      "params": {
+        "operation": "zeno-series",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d05",
+      "title": "Three temporal levels",
+      "subtitle": "Eternal, regular and accelerating levels coexist.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Eternal, regular and accelerating levels coexist.",
+      "params": {
+        "operation": "three-level",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d06",
+      "title": "No absolute outside",
+      "subtitle": "The hierarchy extends both ways with no universal present.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "The hierarchy extends both ways with no universal present.",
+      "params": {
+        "operation": "nested-time",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d07",
+      "title": "Irreversible alternation",
+      "subtitle": "o vanishes, x becomes the new o; the system is not reversible.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "o vanishes, x becomes the new o; the system is not reversible.",
+      "params": {
+        "operation": "replacement",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d08",
+      "title": "Intensity hierarchy",
+      "subtitle": "This has weight 2/3 and that 1/3; lower orders sum to unity.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "This has weight 2/3 and that 1/3; lower orders sum to unity.",
+      "params": {
+        "operation": "weights",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d09",
+      "title": "Generality as time",
+      "subtitle": "Nested squares alternate between depth hierarchy and temporal corridor.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Nested squares alternate between depth hierarchy and temporal corridor.",
+      "params": {
+        "operation": "perspective-switch",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d10",
+      "title": "Past-present-future",
+      "subtitle": "All exist in the present as over-, fully-, and under-determined.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "All exist in the present as over-, fully-, and under-determined.",
+      "params": {
+        "operation": "temporal-tetrad",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d11",
+      "title": "Three weighted interchanges",
+      "subtitle": "One this remains invariant while three thats vary.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "One this remains invariant while three thats vary.",
+      "params": {
+        "operation": "weighted-klein",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d12",
+      "title": "Identity by negation",
+      "subtitle": "The chair remains chair through shifting relative determinations.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "The chair remains chair through shifting relative determinations.",
+      "params": {
+        "operation": "negative-definition",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d13",
+      "title": "Selection by repeated squaring",
+      "subtitle": "Weights 3:2:1 become 9:4:1, then 81:16:1 until one operation dominates.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Weights 3:2:1 become 9:4:1, then 81:16:1 until one operation dominates.",
+      "params": {
+        "operation": "winner-selection",
+        "section": "DYNAMIC"
+      }
+    },
+    {
+      "id": "d14",
+      "title": "Unfinished frontier",
+      "subtitle": "Intention, action and choice require the continuation.",
+      "term": "Fundamental structure",
+      "devanagari": "",
+      "motif": "fundamental-structure",
+      "duration": 12,
+      "narration": "Intention, action and choice require the continuation.",
+      "params": {
+        "operation": "frontier",
+        "section": "DYNAMIC"
+      }
+    }
+  ]
+}

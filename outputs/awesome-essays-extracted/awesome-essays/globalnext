@@ -1,0 +1,1349 @@
+I checked the current remote heads rather than relying on the session summaries:
+
+* **Agent 1:** `agent1-argument-layer-a1b @ c73b45b` — latest work is P17 scholar corroboration on the live T1 defects.
+* **Agent 2:** `agent2 @ c25642f` — Era B/overnight corpus compiler documented; Era C rebuild engine underway.
+
+The overall architecture is converging correctly. But the audit found **two overclaims that should be corrected before adding more features**:
+
+1. **Agent 2 should not yet call Era B fully “DONE / certified.”** The factory works, but the certificate is not yet a trustworthy run certificate and the live corpus currently violates its own integrity condition.
+2. **Agent 1's newest P17 object is not yet genuine “scholar corroboration.”** It currently attributes lexical claims to Dyczkowski without verified Dyczkowski spans; it is better characterized as machine-proposed lexical/source evidence pending span verification.
+
+Those are fixable. After that, the division of responsibility becomes very clean.
+
+---
+
+# Global state
+
+The project has crossed an important boundary.
+
+We are no longer primarily building:
+
+```text
+workers
+eval scaffolds
+schemas
+demo passages
+```
+
+We now have the beginnings of:
+
+```text
+                    PĀṬALA
+
+        PRODUCTION                  VERIFICATION
+
+        Agent 2                     Agent 1
+
+SOURCE ───────┐
+              │
+T1 ───────────┼──────────────► natural-error tests
+              │                regression fixtures
+L0 ───────────┼──────────────► losslessness proof
+              │
+ARGMAP ───────┼──────────────► argument reconstruction proof
+              │
+L2 ───────────┼──────────────► atomic licensing
+              │
+L200 ─────────┼──────────────► translation-decision audit
+              │
+C1 ───────────┘──────────────► commentary/locality proof
+
+         │                            │
+         └────────────┬───────────────┘
+                      ▼
+           MachineTranslationProof
+                      │
+                      ▼
+               scholar evidence
+                      │
+                      ▼
+             human ReviewEvents
+                      │
+                      ▼
+          propositions / arguments
+                      │
+                      ▼
+              scholar products
+```
+
+That should now be the governing picture.
+
+---
+
+# Agent 2 — audit
+
+## What is genuinely strong
+
+Agent 2 has moved well beyond toy automation.
+
+The current build contains:
+
+* DAG-wide eligible-job enumeration;
+* multi-work scheduling;
+* free-draining deterministic L0;
+* model-call budgets;
+* throttling;
+* size-aware T1 timeouts;
+* durable retry history;
+* isolation of failures;
+* dashboard;
+* repeated factory loop;
+* restart/watchdog support;
+* supersession;
+* dependency invalidation;
+* targeted regeneration.
+
+The current Era B/C record explicitly describes Agent 2 as moving from worker-builder to **corpus OS**, which is the correct conceptual shift.
+
+That architecture should stay.
+
+### Especially good
+
+The `current()` fix is fundamental:
+
+```text
+ALL versions superseded
+→ current() = None
+```
+
+Without that, dependency invalidation wasn't real. Agent 2 recognized and fixed it.
+
+The overnight architecture also sounds right:
+
+```text
+launcher
+   ↓
+watchdog
+   ↓
+factory loop
+   ↓
+DAG scheduler
+   ↓
+worker → validator → registry.commit
+   ↓
+next eligible jobs
+```
+
+That is exactly what the production plane should eventually look like.
+
+---
+
+# But Agent 2 has one serious certification issue
+
+Agent 2 currently describes:
+
+```text
+Era B = DONE
+```
+
+and calls:
+
+```text
+factory_certificate.py
+```
+
+the Era-B exit gate.
+
+Yet the real corpus certificate reportedly contains:
+
+```text
+11 duplicate current versions
+781 orphan/bad-parent L0 objects
+```
+
+Agent 2 acknowledges these as pre-existing cruft.
+
+That's fine.
+
+What's not fine is simultaneously treating the **corpus integrity gate as passed**.
+
+The certificate's own implementation also reveals a deeper problem.
+
+## The current “run certificate” is mostly a corpus snapshot
+
+Its fields say:
+
+```json
+{
+  "jobs": {
+    "attempted": ...,
+    "committed": ...,
+    "retryable": ...,
+    "rejected": ...,
+    "already_current": ...
+  }
+}
+```
+
+But the implementation sets:
+
+```python
+"attempted": sum(by_layer.values())
+"committed": sum(by_layer.values())
+"rejected": 0
+"already_current": 0
+```
+
+Those are not actual jobs attempted/committed during that run.
+
+They're current object counts in the registry.
+
+So if the corpus contains 900 old objects and this run creates 4, the certificate can report something resembling 900 “attempted/committed.”
+
+That means:
+
+> **`factory_certificate.py` is currently a useful corpus-state/integrity report, not yet an immutable execution certificate.**
+
+The code confirms this.
+
+---
+
+# There is another certificate bug
+
+Its CLI exit condition is:
+
+```python
+return 0 if duplicates == 0 and resume_test == "PASS" else 1
+```
+
+It calculates:
+
+```text
+bad_parent_hashes
+registry_conflicts
+```
+
+but they do not affect the exit status.
+
+So a certificate could theoretically report:
+
+```text
+duplicates = 0
+bad_parent_hashes = 700
+registry_conflicts = 300
+resume_test = PASS
+```
+
+and still exit `0`.
+
+That's not an integrity exit gate.
+
+It should be:
+
+```text
+PASS iff
+
+new_run_duplicates == 0
+AND
+new_run_bad_parents == 0
+AND
+new_run_registry_conflicts == 0
+AND
+resume_test == PASS
+```
+
+while separately reporting pre-existing legacy debt.
+
+The distinction should be:
+
+```text
+CORPUS LEGACY DEBT
+vs
+THIS RUN INTRODUCED
+```
+
+For example:
+
+```json
+{
+  "baseline_integrity": {
+    "duplicates": 11,
+    "bad_parents": 781
+  },
+
+  "run_delta": {
+    "new_duplicates": 0,
+    "new_bad_parents": 0,
+    "new_conflicts": 0
+  },
+
+  "run_result": "PASS"
+}
+```
+
+**That** lets Agent 2 honestly say:
+
+> Era B compiler does not introduce new corruption despite inherited registry debt.
+
+That's a strong claim.
+
+Right now “Era B DONE” is about 85–90% justified operationally, but its proof artifact needs this correction.
+
+---
+
+# Agent 2 also has stale docs
+
+Its current DEV-PLAN still contains:
+
+> T1 worker … Agent-1 evaluated `gloss_accuracy 1.000`.
+
+That has been falsified by Agent 1's larger NAT evaluation:
+
+```text
+acceptance ≈ 0.556
+```
+
+The `1.000` result was the tiny machine-adjudicated sample.
+
+Agent 2 should replace that line with something like:
+
+```text
+T1 worker:
+AUTONOMOUSLY_PRODUCIBLE
+natural evaluation v0.4 ≈ 0.556 acceptance
+known segmentation failures
+MACHINE_PROPOSED
+```
+
+Its DEV-PLAN also still contains older sections about:
+
+```text
+RAW-L0
+Sanskrit-only replay
+Build 1–6
+agent3_queue
+```
+
+after declaring the canonical architecture:
+
+```text
+SOURCE → T1 → L0 → ARGMAP → L2 → L200 → C1
+```
+
+That's historical residue.
+
+**Agent 2 should prune/mark those sections superseded rather than leave competing execution plans inside the canonical DEV-PLAN.**
+
+---
+
+# Agent 2's actual next mission
+
+After fixing certification semantics, Agent 2 should **stop adding orchestration features** for a while.
+
+It needs to do three things.
+
+### A2-G1 — repair the real T1 defects
+
+Agent 1 has supplied natural failures:
+
+```text
+siramaisvaraiḥ     unglossed
+kāraṇam            oversegmented
+gaṇeśaḥ            oversegmented
+vṛttimīśaḥ         malformed
+```
+
+This is exactly what the production/evaluation feedback loop is for.
+
+Agent 2 should:
+
+```text
+fix generator/segmentation handling
+→ regenerate exact failing objects
+→ let dependency engine rebuild descendants
+→ notify Agent1
+```
+
+No hand-editing outputs.
+
+---
+
+### A2-G2 — fix the certificate
+
+Create a genuine:
+
+```text
+FactoryRunCertificate
+```
+
+from an append-only event/run ledger.
+
+Every scheduler execution should emit events:
+
+```text
+JOB_ELIGIBLE
+JOB_ATTEMPT
+MODEL_CALL
+JOB_COMMITTED
+JOB_RETRYABLE
+JOB_REJECTED
+JOB_ALREADY_CURRENT
+JOB_FAILED
+```
+
+Then certificate aggregates **only events with that `run_id`**.
+
+The registry remains corpus truth.
+
+The run ledger becomes execution truth.
+
+---
+
+### A2-G3 — finish Era C
+
+Then:
+
+```text
+DependencyImpactReport
+ReviewBundle
+```
+
+Those are absolutely the right next features.
+
+Agent 2 should emit:
+
+```text
+changed object
+↓
+superseded versions
+↓
+invalidated descendants
+↓
+rebuilt descendants
+↓
+unresolved descendants
+```
+
+No philosophical interpretation.
+
+Then:
+
+```text
+ReviewBundle
+├ SOURCE
+├ T1
+├ L0
+├ ARGMAP
+├ L2
+├ L200
+├ C1
+├ exact versions
+├ parent links
+├ unresolved/open state
+└ Agent1 proof refs
+```
+
+That is the seam into the scholarly system.
+
+---
+
+# Agent 1 — audit
+
+Agent 1 has improved dramatically.
+
+Revision 9 correctly says:
+
+> construction phase complete; now natural-error → regression → fix verification.
+
+That's exactly right.
+
+Recent accomplishments are substantive:
+
+```text
+T1-HARD       63 frozen decisions
+T1-NAT        larger real corpus run
+REGRESSION    actual naturally occurring failures
+L0            content-loss diagnosis
+ARGMAP proof  existing 51-exemplar base
+C1 proof      pilot
+Proof envelope
+scholar evidence pilot
+```
+
+The biggest conceptual win is the new per-passage proof envelope.
+
+---
+
+# MachineTranslationProof is the right abstraction
+
+The current implementation already preserves:
+
+```text
+SOURCE
+T1
+L0
+ARGMAP
+C1
+```
+
+as separate statuses instead of manufacturing one confidence score.
+
+Even better, it revealed propagation:
+
+```text
+cidgagana T1 segmentation failure
+        ↓
+L0 coverage/roundtrip failure
+```
+
+That is exactly the behavior we wanted proof composition to reveal.
+
+This should become the **primary product of Agent 1's verification plane**.
+
+---
+
+# But the proof envelope needs one architectural upgrade
+
+Current implementation has:
+
+```python
+source = PASS if passage in t1 registry
+```
+
+That's not really source proof.
+
+Likewise ARGMAP currently passes based largely on required-section presence, and C1 based on required-section presence.
+
+Those are structural witnesses, not semantic proofs.
+
+So the envelope should stop using naked:
+
+```text
+PASS
+```
+
+and explicitly name **what property passed**.
+
+For example:
+
+```json
+"argmap": {
+  "structural_contract": "PASS",
+  "semantic_reconstruction": "NOT_SCORED",
+  "speaker_attribution": "NOT_SCORED",
+  "edge_faithfulness": "NOT_SCORED"
+}
+```
+
+Likewise:
+
+```json
+"source": {
+  "registry_binding": "PASS",
+  "hash_integrity": "PASS",
+  "source_text_verified": "PASS"
+}
+```
+
+This makes the proof genuinely compositional.
+
+Otherwise `PASS` becomes ambiguous again.
+
+---
+
+# Agent 1's newest P17 commit needs correction
+
+This is the sharpest issue I found.
+
+P17 says it attaches:
+
+> published-scholar corroboration … grounded in `gretil_tantraloka`
+
+and generates:
+
+```text
+Publication:
+Dyczkowski, Tantrāloka translation
+
+SourceAssertion:
+attributed_to Dyczkowski
+```
+
+But the records themselves say:
+
+```text
+verification = SPAN_UNVERIFIED
+```
+
+and the evidence appears to be things such as:
+
+```text
+"kāraṇam occurs 34x in gretil_tantraloka"
+"gaṇeśaḥ occurs 5x"
+"vṛtti occurs 78x"
+```
+
+That establishes something like:
+
+```text
+LEXICAL/SOURCE CORROBORATION
+```
+
+It does **not yet establish**:
+
+```text
+DY CZKOWSKI ASSERTS THIS READING
+```
+
+unless Agent 1 has resolved and verified the actual Dyczkowski span.
+
+This is exactly a Pāṭala error class:
+
+```text
+ATTRIBUTION_MISMATCH
+possibly FALSE_INDEPENDENCE
+```
+
+The artifact itself is admirably transparent (`SPAN_UNVERIFIED`), but Claim P-046 says:
+
+> SUPPORTED as scholar-evidence.
+
+That's too strong.
+
+---
+
+# Fix P17 like this
+
+Until exact scholar spans resolve:
+
+```text
+SourceAssertion.attributed_to = UNKNOWN / MACHINE_RECONSTRUCTION
+```
+
+or classify the evidence as:
+
+```text
+PRIMARY_LEXICAL_ATTESTATION
+```
+
+not:
+
+```text
+PUBLISHED_SCHOLAR_SUPPORT
+```
+
+Then do:
+
+```text
+Dyczkowski edition/translation
+↓
+exact page/passage
+↓
+verify actual rendered translation
+↓
+SourceSpan
+↓
+SourceAssertion
+↓
+CorroborationEvent
+```
+
+Only then:
+
+```text
+SCHOLARLY_CORROBORATED_PRELIMINARY
+```
+
+This correction is important because **scholar attribution is part of your moat**. It has to be stricter than ordinary retrieval.
+
+---
+
+# Agent 1 should not do more broad scholar integration yet
+
+P17 is actually useful because it exposed precisely what the scholar evidence compiler still needs:
+
+```text
+exact span verification
+publication identity
+scholar attribution
+independence
+```
+
+So rather than doing another 50 scholar matches, Agent 1 should make **these four existing records airtight**.
+
+That's more valuable.
+
+---
+
+# Agent 1's next priority after that: real ARGMAP NAT
+
+Agent 1 already has:
+
+```text
+ARGMAP-PROOF-v0
+51 real IPVV exemplars
+8 mutation families
+7 dimensions
+```
+
+Stop improving synthetic ARGMAP.
+
+As Agent 2's overnight factory produces actual ARGMAP objects:
+
+```text
+run NAT evaluation
+↓
+discover naturally occurring mistakes
+↓
+freeze regressions
+↓
+Agent2 repair
+```
+
+Exactly the same successful T1 loop.
+
+This should become the pattern for every AI layer.
+
+---
+
+# The global protocol should now be standardized
+
+This is the biggest global next step.
+
+Every semantic layer should use exactly this lifecycle:
+
+```text
+                PRODUCTION / VERIFICATION LOOP
+
+Agent 2
+generates candidate
+     │
+     ▼
+MACHINE_PROPOSED
+     │
+     ├────────────────────────────► Agent 1
+     │                              freeze exact version
+     │                              evaluate
+     │                              │
+     │                              ├── PASS dimensions
+     │                              ├── FAIL dimensions
+     │                              └── OPEN dimensions
+     │
+     │                        natural failure?
+     │                              │
+     │                              ▼
+     │                     NAT-REGRESSION fixture
+     │                              │
+     ◄──────────────────────────────┘
+fix worker
+     │
+regenerate
+     │
+retest
+     ▼
+MACHINE_EVALUATED
+```
+
+Use this for:
+
+```text
+T1
+ARGMAP
+L2
+L200
+C1
+```
+
+There should not be five differently invented QA workflows.
+
+---
+
+# Responsibility split going forward
+
+## Agent 2 owns **production truth**
+
+Agent 2 should own:
+
+* corpus registration;
+* object generation;
+* worker prompts/skills;
+* deterministic conversion;
+* registry;
+* hashes;
+* versioning;
+* scheduling;
+* retries;
+* model/resource control;
+* source→parent dependency declaration;
+* stale state;
+* supersession;
+* targeted regeneration;
+* run ledger;
+* operational certificates;
+* dependency impact;
+* review-bundle materialization;
+* corpus dashboard.
+
+The governing question:
+
+> **Can this corpus be continuously and correctly materialized as versioned machine-proposed scholarly objects?**
+
+Agent 2 must **not** decide whether an interpretation is academically correct.
+
+---
+
+## Agent 1 owns **epistemic verification**
+
+Agent 1 should own:
+
+* Inspect;
+* frozen datasets;
+* DEV/TEST/NAT/REGRESSION splits;
+* layer contracts;
+* natural-error evaluation;
+* metamorphic testing;
+* external baselines;
+* Vidyut/Heritage witness composition;
+* semantic verification;
+* false-certainty/abstention;
+* MachineTranslationProof;
+* argument extraction/evaluation;
+* scholar evidence compiler;
+* SourceAssertions;
+* CorroborationEvents;
+* evidence independence;
+* eventual human-review calibration;
+* failure taxonomies;
+* recommendations to Agent 2.
+
+Governing question:
+
+> **What exactly has been established about this generated scholarly object, by what evidence, and what remains unresolved?**
+
+Agent 1 must not repair production outputs.
+
+---
+
+# Shared boundary
+
+There should now be one explicit cross-lane contract.
+
+## Agent 2 → Agent 1
+
+`EvaluationCandidate`
+
+```json
+{
+  "object_ref": "...",
+  "layer": "T1",
+  "version": 3,
+
+  "source_ref": "...",
+  "source_hash": "...",
+
+  "parent_refs": [...],
+
+  "worker_sha": "...",
+  "skill_hash": "...",
+  "prompt_hash": "...",
+  "model": "...",
+
+  "created_at": "...",
+
+  "payload_hash": "..."
+}
+```
+
+Frozen.
+
+Never mutable.
+
+---
+
+## Agent 1 → Agent 2
+
+`EvaluationFinding`
+
+```json
+{
+  "finding_id": "...",
+  "object_ref": "...",
+  "exact_version": 3,
+
+  "layer_contract": "T1-v1",
+
+  "dimension": "SEGMENTATION",
+
+  "result": "FAIL",
+
+  "failure_class": "OVER_SEGMENTATION",
+
+  "evidence": [...],
+
+  "regression_fixture": "T1-REG-002",
+
+  "recommendation": "..."
+}
+```
+
+No rewriting object.
+
+Then Agent 2 can link:
+
+```text
+fix commit
+→ finding_id
+```
+
+and Agent 1 can link:
+
+```text
+retest
+→ fix commit
+```
+
+That gives you a beautiful audit trail.
+
+---
+
+# Global priority 0 — fix the two truth-boundary issues
+
+Before either agent starts new major features:
+
+### Agent 2
+
+Fix:
+
+```text
+FactoryRunCertificate
+```
+
+so its run fields actually describe the run and integrity gate includes all relevant conditions.
+
+Also separate:
+
+```text
+legacy corpus debt
+from
+new corruption introduced by run
+```
+
+### Agent 1
+
+Downgrade/fix P17:
+
+```text
+SPAN_UNVERIFIED Dyczkowski attribution
+```
+
+until actual scholar spans resolve.
+
+These aren't boring cleanup tasks.
+
+They protect the two core trust claims:
+
+```text
+Agent2: "this execution happened safely"
+Agent1: "this scholar actually supports this"
+```
+
+Those are foundational.
+
+---
+
+# Global priority 1 — close T1/L0 defect loop
+
+No more T1 architecture work.
+
+Agent 2:
+
+```text
+fix segmentation/gloss defects
+regenerate failed passages
+rebuild affected L0 descendants
+```
+
+Agent 1:
+
+```text
+blind replay NAT-REGRESSION-v1
+verify repair
+update MachineTranslationProof
+```
+
+Exit condition:
+
+```text
+4/4 historical regressions resolved
++
+fresh NAT sample shows no catastrophic segmentation class
+```
+
+Not “T1 perfect.”
+
+Just:
+
+> current known defect class fixed and prevented from regression.
+
+---
+
+# Global priority 2 — ARGMAP becomes the active semantic frontier
+
+Then shift both agents together.
+
+Agent 2:
+
+```text
+produce real ARGMAP corpus objects
+```
+
+Agent 1:
+
+```text
+ARGMAP NAT
+```
+
+Score:
+
+```text
+node recovery
+role accuracy
+typed relations
+speaker
+scope
+OPEN
+unsupported inference
+```
+
+Watch especially:
+
+```text
+GROUNDING_AS_INFERENCE
+OBJECTION_AS_AUTHOR_VIEW
+RESPONSE_DIRECTION_FLIP
+FALSE_CONTRADICTION
+INVENTED_BRIDGE
+OPEN_AS_RESOLVED
+```
+
+This is probably where Pāṭala starts becoming intellectually interesting rather than merely philological.
+
+---
+
+# Global priority 3 — finally get real L2
+
+Agent 1's readiness check says current committed L2 is still transliteral rather than canonical readable prose.
+
+That is important.
+
+Do not pretend L2 verification exists until Agent 2 produces:
+
+```text
+SOURCE
++ T1
++ L0
++ ARGMAP
+→ actual readable prose L2
+```
+
+Then Agent 1 builds the strongest experiment yet:
+
+```text
+SOURCE → L2
+
+SOURCE+T1 → L2
+
+SOURCE+T1+ARGMAP → L2
+```
+
+Same source set.
+
+Measure:
+
+```text
+coverage
+license
+scope conservation
+modality
+speaker
+unsupported additions
+```
+
+That experimentally tells you whether Pāṭala's intermediate representations **actually improve translation**.
+
+This could become an academically interesting result itself.
+
+---
+
+# Global priority 4 — L200/C1 proofs
+
+Once canonical L2 is real:
+
+```text
+L200
+```
+
+becomes meaningful again.
+
+Agent 1 evaluates:
+
+```text
+MT precision/recall
+IA precision/recall
+OPEN precision/recall
+false certainty
+derivation linkage
+```
+
+Then:
+
+```text
+C1
+```
+
+against:
+
+```text
+locality
+upstream licensing
+speaker
+technical claims
+boundary
+```
+
+Now the complete passage can receive:
+
+```text
+MachineTranslationProof
+```
+
+through C1.
+
+---
+
+# Global priority 5 — finish Era C / review seam
+
+In parallel with those evaluations, Agent 2 should finish:
+
+```text
+DependencyImpactReport
+ReviewBundle
+```
+
+Then you have:
+
+```text
+MachineTranslationProof
+        +
+ReviewBundle
+```
+
+which is the exact unit the scholar product needs.
+
+This is the convergence point.
+
+---
+
+# Global priority 6 — proposition/argument compiler
+
+Only then shift the center of gravity upward:
+
+```text
+C1 + ARGMAP
+↓
+Proposition
+Commitment
+Position
+Inference
+Attack
+Crux
+```
+
+Agent 1 owns the **semantics/contracts/evaluation**.
+
+Agent 2 later owns the **autonomous producer** once frozen.
+
+So the lifecycle repeats:
+
+```text
+Agent1:
+manually/gold define proposition contract
+↓
+Agent2:
+autonomous producer
+↓
+Agent1:
+NAT eval/regressions
+```
+
+This should be your general development pattern forever.
+
+---
+
+# Global priority 7 — scholar products
+
+Once those objects exist, split scholar product work as a third concern rather than polluting A1/A2.
+
+I would eventually instantiate an **Agent 3 = scholar/product lane**.
+
+Not now this second, but soon.
+
+It would own:
+
+```text
+Lemma Tracker
+Term Audit
+Peer Assessment UI
+Review Workbench
+Translation Compare
+Argument Explorer
+Scholarly Diff
+Review queues
+contributor profiles
+```
+
+It would consume:
+
+```text
+Agent2 corpus objects
++
+Agent1 proof/evidence objects
+```
+
+and should own neither truth source.
+
+Conceptually:
+
+```text
+Agent 2 = BUILD
+Agent 1 = PROVE
+Agent 3 = REVIEW / USE
+```
+
+That separation will become very useful.
+
+---
+
+# Recommended 3-agent final architecture
+
+```text
+┌───────────────────────────────────────────────────────────┐
+│                     PĀṬALA KERNEL                         │
+│ IDs · provenance · versions · dependencies · supersession │
+└───────────────────────────────────────────────────────────┘
+
+          │                     │                    │
+          ▼                     ▼                    ▼
+
+     AGENT 2                AGENT 1              AGENT 3
+   PRODUCTION             VERIFICATION           SCHOLARS
+                                                    
+ corpus compiler          Inspect/evals          review workflow
+ workers                  gold/regressions        workbench
+ scheduler                semantic proofs        term explorer
+ rebuild                   scholar evidence       argument explorer
+ versioning               argument audit         compare
+ ImpactReport             calibration            peer assessment
+ ReviewBundle             MachineProof           products
+```
+
+That's the clean long-term division.
+
+---
+
+# What nobody should build right now
+
+For the next phase:
+
+**Don't**:
+
+* integrate more orchestration frameworks;
+* add another Sanskrit morphology stack unless Vidyut/Heritage demonstrably fail;
+* continue broad scholar tool pilots;
+* do more clustering;
+* add THEME/ESSAY/EDUCATION production;
+* build contributor reputation;
+* build payments;
+* build cross-tradition production;
+* optimize glossy UI.
+
+Those are downstream.
+
+Current bottleneck is much simpler:
+
+```text
+Can Agent2 generate a canonical object?
+             ↓
+Can Agent1 prove exactly what is/isn't trustworthy about it?
+             ↓
+Can a correction propagate and be independently reverified?
+```
+
+Get that loop impeccable.
+
+---
+
+# My revised project checkpoints
+
+I would replace the current scattered milestones with this global sequence:
+
+```text
+G0  CORPUS EXECUTION TRUTH
+    Agent2 run certificate fixed
+
+G1  EVIDENCE ATTRIBUTION TRUTH
+    Agent1 scholar-span attribution fixed
+
+G2  T1/L0 LOOP CLOSED
+    natural regressions repaired + blindly retested
+
+G3  ARGMAP NATURAL VALIDATION
+    real production graphs evaluated
+
+G4  CANONICAL L2
+    readable prose generated post-ARGMAP
+
+G5  L2 ABLATION + PROOF
+    SOURCE vs +T1 vs +ARGMAP
+
+G6  L200/C1 VERIFIED
+    full SOURCE→C1 MachineTranslationProof
+
+G7  ERA C COMPLETE
+    correction → invalidation → rebuild → proof refresh
+
+G8  PROPOSITION/ARGUMENT COMPILER
+    audited arguments + cruxes
+
+G9  SCHOLAR REVIEW
+    exact-version ReviewEvent / adjudication
+
+G10 SCHOLAR PRODUCTS
+    lemma tracker / compare / peer assessment / argument explorer
+
+G11 TRUST API
+    external agents query proof-carrying claims
+
+G12 CROSS-TRADITION
+    second language compiler
+```
+
+That is now a coherent project rather than parallel feature streams.
+
+## The immediate marching orders
+
+**Agent 2:** fix the factory certificate semantics; update stale T1 claims/docs; repair the four T1/L0 regressions through the worker; regenerate them; finish DependencyImpactReport and ReviewBundle; continue running the corpus, but do not expand upward past C1 yet.
+
+**Agent 1:** correct P17's unverified scholar attribution; wait for the regenerated T1 objects and blind-retest regressions; strengthen MachineTranslationProof statuses to property-specific proof dimensions; then move immediately to natural ARGMAP evaluation as real factory ARGMAP objects accumulate. Keep GlossLM parked and broad scholar-tool work secondary.
+
+**Globally:** the next milestone is not “more features.” It is demonstrating this closed loop on a real passage:
+
+```text
+Agent2 generates wrong T1
+      ↓
+Agent1 discovers + freezes defect
+      ↓
+Agent2 fixes worker
+      ↓
+dependency engine regenerates T1/L0/...
+      ↓
+Agent1 blindly verifies correction
+      ↓
+MachineTranslationProof updates
+      ↓
+DependencyImpactReport records consequence
+      ↓
+ReviewBundle becomes ready for scholar
+```
+
+Once that works cleanly, **the central architecture of Pāṭala is proven**. Everything you've specced—lemma tracking, audited arguments, peer assessment, scholar adjudication, scholarly diffs, education, APIs—is downstream composition over that loop.

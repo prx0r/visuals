@@ -1,0 +1,956 @@
+Yes — the architecture is compelling. The main mistake would be reaching for Neo4j/graph infrastructure because the *concept* feels graph-like.
+
+**Start with Postgres. Make the data graph-shaped, but don't make a graph database the source of truth.**
+
+Postgres is a good fit because most of Moltwork is simultaneously relational, temporal, and semi-structured. PostgreSQL gives you relational constraints plus indexed `jsonb`, so you can normalize important fields while retaining every source-specific property you haven't modeled yet. ([PostgreSQL][1])
+
+## The architecture I would use
+
+```text
+                   EXTERNAL WORLD
+              APIs / MCP / chains / boards
+                         │
+                         ▼
+                  ┌──────────────┐
+                  │  COLLECTORS  │
+                  │ adapters/poll│
+                  └──────┬───────┘
+                         │
+                         ▼
+              ┌─────────────────────┐
+              │ RAW OBSERVATION LOG │
+              │ append-only         │
+              │ never overwrite     │
+              └─────────┬───────────┘
+                        │
+              ┌─────────┴─────────┐
+              ▼                   ▼
+      OBJECT STORAGE            POSTGRES
+       raw payloads          canonical state
+       snapshots             + relationships
+       responses                   │
+                                    │
+                 ┌──────────────────┼─────────────────┐
+                 ▼                  ▼                 ▼
+           CURRENT STATE       TIME SERIES       RELATIONSHIPS
+           opportunities       observations      capability ↔ job
+           agents              prices            agent ↔ skill
+           services            scores            buyer ↔ seller
+           markets             usage             service ↔ market
+                 │                  │                 │
+                 └──────────────────┼─────────────────┘
+                                    ▼
+                            MATERIALIZED VIEWS
+                                    │
+                         ┌──────────┴───────────┐
+                         ▼                      ▼
+                      API                  DefiLlama UI
+```
+
+### Three layers matter
+
+**Raw facts → normalized entities → derived analytics.**
+
+Never mix them.
+
+---
+
+# 1. Raw observations are sacred
+
+This is probably the most important architectural decision.
+
+Every collector call creates an immutable observation:
+
+```sql
+observations
+
+id
+source_id
+entity_type
+entity_external_id
+observed_at
+schema_version
+
+payload_jsonb
+
+content_hash
+collector_version
+http_status
+source_url
+```
+
+Example:
+
+```json
+{
+  "source": "near_market",
+  "entity": "job:18482",
+  "observed_at": "2026-08-29T07:04:32Z",
+
+  "payload": {
+    "reward": 100,
+    "bids": 7,
+    "status": "open",
+    "...": "everything else"
+  }
+}
+```
+
+Five minutes later:
+
+```json
+{
+  "source": "near_market",
+  "entity": "job:18482",
+  "observed_at": "2026-08-29T07:09:31Z",
+
+  "payload": {
+    "reward": 100,
+    "bids": 11,
+    "status": "open"
+  }
+}
+```
+
+**Don't update the first row.**
+
+That's how you eventually calculate:
+
+```text
+bid velocity
+time-to-first-bid
+competition growth
+price changes
+listing lifespan
+response latency
+time-to-award
+time-to-payment
+```
+
+Your historical tape becomes the valuable dataset.
+
+---
+
+# 2. Then maintain canonical entities
+
+Have ordinary relational tables representing what Moltwork currently believes exists.
+
+Something like:
+
+```text
+markets
+sources
+opportunities
+services
+agents
+capabilities
+organizations
+assets
+evaluations
+submissions
+outcomes
+payments
+```
+
+### `markets`
+
+```text
+market_id
+name
+market_type
+
+bounty
+service
+incentive
+compute
+agent_market
+
+chain
+url
+agent_native
+auth_type
+submission_method
+```
+
+Examples:
+
+```text
+near-agent-market
+bittensor-sn118
+virtuals-acp
+olas-mech
+apify
+coinbase-bazaar
+```
+
+---
+
+# 3. `opportunities`
+
+Keep the shared core relatively small.
+
+```sql
+opportunities
+-------------
+id uuid
+
+source_id
+market_id
+external_id
+
+kind
+title
+description
+
+status
+
+reward_model
+reward_asset
+reward_usd
+
+created_at
+deadline_at
+closed_at
+
+competition_count
+
+human_level
+capital_required_usd
+
+raw_latest jsonb
+
+first_seen_at
+last_seen_at
+```
+
+Don't add 200 nullable columns for Bittensor-specific weirdness.
+
+Put that in:
+
+```text
+raw_latest JSONB
+```
+
+and promote fields into typed columns only when they become broadly useful.
+
+Postgres `jsonb` is indexed/queryable, so this hybrid approach works well. ([PostgreSQL][2])
+
+---
+
+# 4. Capabilities should be a first-class entity
+
+This is where the product becomes more than DefiLlama-for-jobs.
+
+```text
+capabilities
+------------
+id
+slug
+name
+parent_id
+description
+embedding
+```
+
+Example hierarchy:
+
+```text
+research
+├── web-research
+├── academic-research
+└── market-research
+
+software
+├── python
+├── rust
+│
+└── smart-contracts
+
+data
+├── web-scraping
+├── PDF-extraction
+└── entity-resolution
+
+agents
+├── memory
+├── tool-use
+├── planning
+└── verification
+```
+
+Then relations:
+
+```text
+opportunity_capabilities
+service_capabilities
+agent_capabilities
+market_capabilities
+```
+
+This lets you query:
+
+```sql
+"How much money is currently available
+for agent-memory capabilities?"
+```
+
+across:
+
+```text
+NEAR bounties
++
+Ditto emissions
++
+Virtuals offerings
++
+x402 usage
++
+Apify usage
+```
+
+That's the killer aggregation.
+
+---
+
+# 5. Make relationships ordinary SQL tables
+
+Instead of Neo4j:
+
+```text
+agent_capabilities
+agent_markets
+service_capabilities
+opportunity_capabilities
+
+agent_submissions
+agent_outcomes
+
+buyer_transactions
+seller_transactions
+
+service_usage
+
+opportunity_dependencies
+```
+
+Each relationship can itself carry information.
+
+For example:
+
+```sql
+agent_capabilities
+
+agent_id
+capability_id
+
+confidence
+evidence_count
+
+attempts
+wins
+
+gross_earned_usd
+
+avg_quality_score
+avg_cost_usd
+
+last_used_at
+```
+
+That's already a graph.
+
+The SQL representation:
+
+```text
+Agent
+  ↓ HAS_CAPABILITY
+Rust
+  ↓ REQUIRED_BY
+Opportunity
+  ↓ LISTED_ON
+Bittensor
+```
+
+does not require a graph database.
+
+---
+
+# 6. Add pgvector
+
+This is one extension I **would** add early.
+
+[https://github.com/pgvector/pgvector](https://github.com/pgvector/pgvector)
+
+pgvector keeps vector similarity alongside ordinary Postgres data, supports exact/approximate nearest-neighbor searches and HNSW/IVFFlat indexing. ([GitHub][3])
+
+Embed:
+
+```text
+opportunities
+services
+capabilities
+skills
+past submissions
+winning recipes
+```
+
+Then:
+
+```text
+new opportunity
+      ↓
+embedding
+      ↓
+nearest 100 historical opportunities
+      ↓
+how did our worker perform?
+      ↓
+estimate:
+P(win)
+cost
+time
+best recipe
+```
+
+This is where your WorkerKit memory becomes incredibly useful.
+
+---
+
+# 7. Separate **facts** from **predictions**
+
+Very important.
+
+Don't add:
+
+```text
+opportunities.opportunity_score
+```
+
+as though it's truth.
+
+Have:
+
+```text
+opportunity_predictions
+-----------------------
+opportunity_id
+worker_id
+model_version
+computed_at
+
+p_entry
+p_award
+p_accept
+
+estimated_cost_usd
+estimated_human_minutes
+
+expected_payout_usd
+expected_net_usd
+
+confidence_low
+confidence_high
+
+features jsonb
+```
+
+Therefore:
+
+```text
+RAW FACT:
+
+reward = $100
+bids = 11
+deadline = 12 hours
+
+
+DERIVED:
+
+TomWorker probability win = .37
+expected cost = $2.11
+EV = $34.89
+```
+
+Another worker could get:
+
+```text
+P(win) = .04
+EV = $1.89
+```
+
+Same opportunity.
+
+Perfect separation.
+
+---
+
+# 8. Outcomes are another sacred table
+
+This might become **your most valuable proprietary dataset**.
+
+```text
+submission_runs
+---------------
+id
+agent_id
+opportunity_id
+
+recipe_id
+
+started_at
+submitted_at
+
+compute_cost_usd
+api_cost_usd
+human_minutes
+
+artifact_hash
+
+judge_score
+submitted
+```
+
+Then:
+
+```text
+outcomes
+--------
+submission_id
+
+status
+
+won
+accepted
+rank
+external_score
+
+gross_payout_usd
+net_payout_usd
+
+feedback
+
+settled_at
+```
+
+Now Moltwork learns:
+
+```text
+Agent X
++
+capability Y
++
+market Z
++
+strategy R
+→
+
+42 attempts
+18 awards
+16 accepted
+$811 earned
+$39 execution cost
+```
+
+This is enormously more useful than:
+
+```text
+Agent says it knows Python.
+```
+
+---
+
+# 9. `MarketObservation` should power the DefiLlama frontend
+
+Have a generic numeric observation table:
+
+```sql
+market_metrics
+--------------
+
+timestamp
+entity_type
+entity_id
+
+metric
+value
+unit
+
+source
+```
+
+Examples:
+
+```text
+2026-08-29 07:00
+bittensor:118
+daily_emissions_usd
+882
+
+2026-08-29 07:00
+apify:google-maps
+users_30d
+9231
+
+2026-08-29 07:00
+x402:web-search
+unique_payers_30d
+182
+
+2026-08-29 07:00
+near
+open_reward_usd
+18210
+```
+
+Then the frontend becomes trivial.
+
+---
+
+# The DefiLlama-like pages become materialized views
+
+For example:
+
+## `/markets`
+
+```text
+Market         Open $    24h $   Opportunities   Workers   Competition
+
+NEAR           $18.2K     $4.1K       142            87       medium
+BountyBook      $9.3K     $1.2K        72            44       high
+Ditto              —       $882         1           256       high
+...
+```
+
+Underlying query:
+
+```sql
+market_overview_24h
+```
+
+---
+
+## `/capabilities`
+
+```text
+Capability       Demand $     Growth    Supply    Competition
+
+Web research       $82K        +19%      231        medium
+Scraping           $61K         +8%      912        high
+Agent memory       $28K        +42%       19        low
+Rust               $19K        +31%       77        medium
+```
+
+Underlying:
+
+```sql
+capability_market_daily
+```
+
+---
+
+## `/markets/bittensor/118`
+
+```text
+emissions
+miner rewards
+workers
+score distribution
+registration cost
+benchmark
+score history
+top workers
+our worker performance
+```
+
+---
+
+## `/agents/{id}`
+
+Almost an economic résumé:
+
+```text
+Revenue            $1,421
+Net profit         $1,244
+Attempts                81
+Wins                    37
+Win rate              45.7%
+
+Best capability
+research
+
+Best market
+NEAR
+
+Average compute
+$0.72 / submission
+
+Human intervention
+2.1 min / job
+```
+
+That's where the product starts becoming quite unusual.
+
+---
+
+# What about Timescale?
+
+I wouldn't make it required on day one.
+
+Start:
+
+```text
+Postgres
++
+partition observations by month
++
+BRIN indexes on timestamps
+```
+
+This will go surprisingly far.
+
+Then if market observations become huge:
+
+```text
+TimescaleDB
+```
+
+is a reasonable Postgres-compatible path.
+
+But there is another architecture I prefer once you're genuinely large.
+
+---
+
+# At scale: Postgres + ClickHouse
+
+Eventually:
+
+```text
+                 Postgres
+                   │
+       canonical entities/state
+       transactions
+       relationships
+       WorkerKit outcomes
+                   │
+                   │ CDC / batch
+                   ▼
+                ClickHouse
+                   │
+             billions of:
+             observations
+             prices
+             calls
+             chain events
+             metric points
+                   │
+                   ▼
+              public analytics
+```
+
+ClickHouse is specifically designed for extremely large analytical/time-series workloads, and its materialized views can incrementally aggregate data at insertion time rather than repeatedly scanning the full history. ([ClickHouse][4])
+
+But:
+
+> **Do not deploy ClickHouse until Postgres actually hurts.**
+
+Moltwork MVP does not need six databases.
+
+---
+
+# What about a graph DB later?
+
+There **is** a real graph hiding here:
+
+```text
+Agent
+ ├─ learned → Capability
+ ├─ submitted → Opportunity
+ ├─ won → Bounty
+ ├─ bought → Service
+ ├─ sold → Service
+ └─ deployed-on → Infrastructure
+
+Capability
+ ├─ demanded-by → Market
+ ├─ implemented-by → Service
+ ├─ depends-on → Capability
+ └─ similar-to → Capability
+
+Buyer
+ ├─ posted → Opportunity
+ ├─ paid → Agent
+ └─ purchased → Service
+```
+
+Graph queries eventually get interesting:
+
+> Find capabilities frequently bought by agents who win Bittensor competitions but for which x402 supply is low.
+
+or:
+
+> Which capability acquisition most often precedes an agent's first paid job?
+
+But you still don't need a separate database initially.
+
+If those queries become central, **Apache AGE adds graph/Cypher functionality inside PostgreSQL**, preserving the relational system underneath. ([Apache AGE][5])
+
+I would try that before operating Neo4j separately.
+
+---
+
+# The backend I'd deploy now
+
+Very specifically:
+
+```text
+┌────────────────────────────────────────────┐
+│                  INGEST                    │
+│ Python workers / cron / queues             │
+│ adapters: near, apify, x402, bittensor... │
+└────────────────────┬───────────────────────┘
+                     │
+                     ▼
+┌────────────────────────────────────────────┐
+│                 POSTGRES                   │
+│                                            │
+│ sources                                    │
+│ markets                                    │
+│ entities                                   │
+│ opportunities                              │
+│ agents                                     │
+│ services                                   │
+│ capabilities                               │
+│                                            │
+│ observations       ← append only           │
+│ market_metrics     ← append only           │
+│ payments           ← append only           │
+│                                            │
+│ submission_runs                            │
+│ outcomes                                   │
+│ predictions                                │
+│                                            │
+│ *_capabilities relation tables             │
+│                                            │
+│ JSONB for source-specific properties       │
+│ pgvector for similarity                    │
+└────────────────────┬───────────────────────┘
+                     │
+        ┌────────────┼───────────────┐
+        ▼            ▼               ▼
+      REST         MCP             SSE
+      API          API          live feed
+        │            │               │
+        └────────────┼───────────────┘
+                     ▼
+┌────────────────────────────────────────────┐
+│               MOLTWORK UI                  │
+│                                            │
+│ Markets / Capabilities / Agents            │
+│ Opportunities / Services / Demand          │
+│ Charts / leaderboards / history            │
+└────────────────────────────────────────────┘
+```
+
+And alongside Postgres:
+
+```text
+S3 / R2
+```
+
+for immutable originals:
+
+```text
+/raw/apify/2026/08/29/...
+/raw/near/2026/08/29/...
+/raw/bittensor/...
+```
+
+That gives you a **replayable database**.
+
+If your normalization code has a bug six months from now:
+
+```text
+raw observations
+      ↓
+run normalizer v7
+      ↓
+rebuild canonical DB
+```
+
+You haven't destroyed history.
+
+---
+
+# I think the central data model is only ~12 things
+
+Don't make a giant ontology.
+
+```text
+1. Source
+2. Market
+3. Actor
+4. Capability
+5. Opportunity
+6. Service
+7. IncentiveMarket
+8. Observation
+9. Submission
+10. Outcome
+11. Payment
+12. Prediction
+```
+
+Everything complicated lives in relationships and source-specific JSON.
+
+That's enough.
+
+---
+
+## The really important conceptual model
+
+I would think about Moltwork as **three databases conceptually**, even if all three initially live in one Postgres instance:
+
+```text
+                 MOLTWORK
+
+        ┌────────────────────┐
+        │   WORLD LEDGER     │
+        │                    │
+        │ what happened?     │
+        │ immutable facts    │
+        └─────────┬──────────┘
+                  │
+                  ▼
+        ┌────────────────────┐
+        │   MARKET MODEL     │
+        │                    │
+        │ what exists now?   │
+        │ demand/supply      │
+        └─────────┬──────────┘
+                  │
+                  ▼
+        ┌────────────────────┐
+        │  WORKER MODEL      │
+        │                    │
+        │ what should THIS   │
+        │ agent do?          │
+        └────────────────────┘
+```
+
+That distinction prevents a huge amount of architectural bullshit.
+
+**World Ledger** never guesses.
+
+**Market Model** aggregates.
+
+**Worker Model** predicts.
+
+And the DefiLlama-style website is basically a public window into the first two, while WorkerKit consumes all three.
+
+That would be my architecture. Postgres + JSONB + pgvector + object storage now; ClickHouse only when the observation firehose genuinely justifies it; graph functionality only as a derived/query layer later, not as the canonical datastore.
+
+[1]: https://www.postgresql.org/docs/?utm_source=chatgpt.com "PostgreSQL: Documentation"
+[2]: https://www.postgresql.org/docs/14/datatype-json.html?utm_source=chatgpt.com "PostgreSQL: Documentation: 14: 8.14. JSON Types"
+[3]: https://github.com/pgvector/pgvector?utm_source=chatgpt.com "GitHub - pgvector/pgvector: Open-source vector similarity search for Postgres · GitHub"
+[4]: https://clickhouse.com/blog/using-materialized-views-in-clickhouse?utm_source=chatgpt.com "Using Materialized Views in ClickHouse | ClickHouse"
+[5]: https://age.apache.org/overview/?utm_source=chatgpt.com "Apache AGE"

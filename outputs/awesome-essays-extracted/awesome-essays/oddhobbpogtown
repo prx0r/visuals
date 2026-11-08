@@ -1,0 +1,729 @@
+ok now for the site design itself can u just remove the top banner completely remove 'oddhobb' and teh buttons below it then keep the username and basket icons in the top right but just make them floating now our main pages can take up more space.. also i love our funnier engine idea basically im thinking add this to visions 'funnier' as a doc i think we need something like credits on our site that they can earn with voting on funnier, this simultaneously lets us figure out the users tasteand also trains our huour engine which is useful for when we are creating cards or assessing pogtown sets, we can then also allow people to submit their pogtown sets here and we can have like champion sets emerge (along with user tag who made it) then imagine you can clikc that characters profile and see their other sets etc this is the start of influencer for funny ai agetn
+# Funnier — canonical vision and repository review
+
+Funnier should become the humour-discovery and taste-learning layer shared by OddHobb and Pogtown. It gives people a reason to visit OddHobb even when they're not buying anything, while building an audience for AI comedians and improving the humour used in personalised gifts.
+
+I've reviewed the three repositories and written the implementation vision.
+
+Funnier — Canonical Vision v1.0
+
+Product vision · Architecture · Credits · Identity · P0–P3 roadmap
+
+Download vision-funnier.md
+
+Intended repository location: `prx0r/pogpet/docs/vision-funnier.md`. GitHub rejected the write with HTTP 403, so the file is ready to commit but has not been pushed.
+
+## 1. What already exists
+
+| Repository                                          | Existing foundations                                                                                  | What remains                                                |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [OddHobb / pogpet](https://github.com/prx0r/pogpet) | Real GLB assets, video generation, video feed, product links, jaw-morph experiments, Google auth code | Reliable 3D MP4 pipeline, voting, reward wallet             |
+| [Freaktown](https://github.com/prx0r/freaktown)     | Character bundles, voices, scripts, animation cues, stage renderer, camera direction                  | Generic Meshy GLB compatibility, production video capture   |
+| [Pogtown](https://github.com/prx0r/pogtown)         | Portable character identities, stand-up rules, audience reactions, performance events, bundle import  | Account linking, public creator profiles, ranking/discovery |
+
+There's a particularly useful piece in `pogpet/docs/video-episodes-roadmap.md`: it already describes almost exactly the performance compiler we want.
+
+It also reports that the existing Blender jaw-morph path has produced a shareable MP4. That's a substantially better starting point than introducing another video generation model.
+
+### One important incompatibility
+
+Freaktown's current `StageRenderer.ts` expects VRM metadata, whereas our Meshy assets can be ordinary GLBs.
+
+That means a generic Meshy model may load successfully into a normal Three.js viewer but fail in Freaktown's VRM-specific stage.
+
+We need a plain GLB fallback renderer, not an entirely new avatar system.
+
+## 2. The Funnier user experience
+
+## Which is funnier?
+
+Interactive concept
+
+[Variety by @youtemmusic | Suno](https://images.openai.com/static-rsc-4/mwyaXL0KF-vc1DVcGhmMX1ycU2--Jqu8osomICkyn_P02wj8guR6J48QYMLVzrolZ8s60lRthdSbZdOA3lSojDFIybShl6bz6JI-00OaCtWom2ougFW3o4P135jrsWg710pG9TcSzC7fUBd34p2AAOFHEGWoDkQlCxMeTjGANfY?purpose=inline)
+
+A — Conspiracy Pigeon
+
+Absurdist · 32 sec
+
+[Agent Opus Tools | AI Video Generator for Social Media](https://images.openai.com/static-rsc-4/WhQLvmycx-Q6vsJEVyDL_MFSAXhkqgeJ5qV7mRYwYds39K2HxQSEcnseXSdjuE8AeY_tLekgHfe67heO2tzhrrH28KawKvfJFJ5kMWwjsch0kPIFFRWbu0jIEwuyVBUck9IIpDRDcLNnDiBsym_MV9wyuc1p5k1mkgoAXudOcy0?purpose=inline)
+
+B — Corporate Robot
+
+Deadpan · 29 sec
+
+A was funnier
+
+B was funnier
+
+Equally funny
+
+Neither
+
+Illustrative characters, not assets fetched from your repositories.
+
+The important details are that votes are pairwise, both clips are genuinely watchable, and the voter sees the character's profile after choosing.
+
+That reduces popularity bias and gives us better preference data than a generic like button.
+
+## 3. Credits are the commercial flywheel
+
+I'd introduce OddHobb Credits as a promotional currency, distinct from Meshy generation credits.
+
+For example, a verified user completes three meaningful comparisons and earns a small amount of store credit, subject to daily limits.
+
+The same account can then apply those credits toward a personalised card or figurine.
+
+This does three jobs simultaneously:
+
+- Builds repeat visits to Funnier.
+- Produces measurable humour preferences.
+- Encourages first purchases on OddHobb.
+
+Crucially, rewards are for participating, never for voting for a particular joke.
+
+I'd use an append-only server ledger with caps, reversals, fraud controls and Shopify redemption rules. Do not use client-side balances or unlimited rewards.
+
+## 4. The creator economy
+
+A successful comedian should become a recognisable, persistent Pogtown character.
+
+[Modelos 3D gratis de Perros | Hyper3D](https://images.openai.com/static-rsc-4/P4sWCxAfXX3ENXxuEhvasL-V68jd_-dGMjiZ6O7LHMjbOrmncuDaT2rjV20lUPUklaYpqySkD-qxnkAZaIWE-NghT90oockDDMBjyvzgW3kvrwXwUXxoarFbNQ1ZbQPeZjlMLnmPLWJedIcywuAPWWdOhTdtp_WH0dPVJYppYMA?purpose=inline)
+
+## No-Nose Nolan
+
+Illustrative Pogtown character profile
+
+Created by @creator
+
+# 12
+
+Sets
+
+# 3
+
+Top sets
+
+# 1
+
+Creator
+
+The detective dog who doesn't know he can't smell, but is convinced he's an outstanding investigator.
+
+Users can browse the character's archive, follow them, submit reactions to new sets, and discover other characters by the same creator.
+
+Over time, top-rated sets become recurring performers. Their profiles can link to real OddHobb figurines, printed cards, gift videos and eventually physical Pogtown houses.
+
+That is how AI characters become influencers with an attributable creator, catalogue, audience and commercial identity.
+
+## 5. The actual P0 build order
+
+1
+
+Select one real mesh
+
+Use an existing OddHobb GLB and preserve its appearance and asset identity.
+
+2
+
+Give it a comedy performance
+
+Script + voice + timing + stage + supported facial or body animation.
+
+3
+
+Render an actual MP4
+
+Blender bake or deterministic WebGL capture; not a narrated still photograph.
+
+4
+
+Publish two playable sets
+
+Reuse OddHobb's existing video feed and asset hosting.
+
+5
+
+Add Funnier voting
+
+A/B comparison, durable choices and bounded credit awards.
+
+6
+
+Connect character identities
+
+Verified OddHobb account ↔ Pogtown actor link, profile and product references.
+
+My main implementation recommendation is to reuse Freaktown as the performance engine, Pogtown as the character identity and event system, and OddHobb as the discovery and commerce surface.
+
+Do not build separate versions of characters, stage animation, or account ownership for each service.
+
+The first measurable milestone is straightforward: one existing personalised mesh performing a genuinely funny 3D set in a real, shareable MP4, with a link back to the physical product.
+
+Then add the second set, Funnier comparisons, reward credits and public profiles.
+
+That gives you a coherent loop:
+
+Make a character → watch it perform → vote on comedy → discover its creator → follow the character → buy a physical version.
+
+The architecture should be OddHobb Funnier as the discovery gateway, Pogtown as the social home of each character, and Freaktown as the performance engine.
+
+A customer encounters a funny character while voting on OddHobb, clicks More from this Pog, and arrives at that character's Pogtown profile, where they can follow it, watch more sets, discover its creator and eventually interact with it.
+
+Below is the implementation brief for your coding agent, based on the repository structures reviewed.
+
+# CODING AGENT BRIEF — FUNNIER × ODDHOBB × POGTOWN
+
+**Priority:** P0 → P1\
+**Primary repository:** `prx0r/pogpet`\
+**Supporting repositories:** `prx0r/freaktown`, `prx0r/pogtown`\
+**Target:** OddHobb Funnier tab → character discovery → Pogtown profile → creator economy
+
+## 1. Mission
+
+Implement **Funnier**, a consumer-facing comedy discovery experience inside `oddhobb.com`, connected to the existing Pogtown character ecosystem.
+
+The experience must achieve five things:
+
+1. Display genuine MP4 performances starring existing OddHobb GLB characters.
+2. Let users compare two comedy sets and vote on which is funnier.
+3. Award bounded OddHobb promotional credits for qualifying participation.
+4. Link every performance to a canonical Pogtown character profile.
+5. Allow users to move naturally from OddHobb to Pogtown and discover the character's other performances, creator, followers and merchandise.
+
+**Fundamental rule:** Do not create an independent character universe inside OddHobb. Characters belong to Pogtown. OddHobb provides discovery, personalisation and commerce.
+
+## 2. Read existing code before editing
+
+Inspect the latest branches, not only the README files.
+
+### OddHobb
+
+Repository: `prx0r/pogpet`
+
+Read:
+
+- `AGENTS.md`
+- `HANDOVER.md`
+- `docs/vision.md`
+- `docs/video-episodes-roadmap.md`
+- `docs/video-integration.md`
+- `docs/standup-p0.md`
+- `docs/comedy-graph.md`
+- `docs/joke-blocks.md`
+- `docs/cardspec.md`
+- `backend/video.py`
+- `backend/auth.py`
+- `backend/server.py`
+- `site/index.html`
+- `site/stage.html`
+- Existing video, credits, user and product-binding database implementations.
+
+Read or install `docs/vision-funnier.md` as the canonical product document.
+
+### Freaktown
+
+Repository: `prx0r/freaktown`
+
+Read:
+
+- `ARCHITECTURE.md`
+- `docs/CHARACTER_PACK.md`
+- `packages/stage-runtime/src/StageRenderer.ts`
+- `packages/stage-runtime/src/LipSync.ts`
+- `packages/stage-runtime/src/AudioBus.ts`
+- `packages/stage-runtime/src/CameraDirector.ts`
+- `backend/services/clips/planner.py`
+- Relevant performance, bundle and rendering services.
+
+### Pogtown
+
+Repository: `prx0r/pogtown`
+
+Read:
+
+- `README.md`
+- `docs/FREAKTOWN-LINK.md`
+- `docs/FREAK-PACK.md`
+- `docs/P0-NOTES.md`
+- `games/standup/rules.mjs`
+- `packages/freak-pack/fromFreaktown.mjs`
+- Existing `/v1/freaks`, `/v1/rooms`, replay and performance APIs.
+
+Do not rewrite systems that already exist.
+
+## 3. Architecture and ownership
+
+Assign responsibilities strictly.
+
+| Responsibility                           | Owner                                         |
+| ---------------------------------------- | --------------------------------------------- |
+| Customer account and shop session        | OddHobb                                       |
+| User-facing Funnier voting               | OddHobb                                       |
+| Reward credit ledger                     | OddHobb                                       |
+| Card/product personalisation             | OddHobb                                       |
+| Shopify checkout                         | OddHobb                                       |
+| Character identity and canonical profile | Pogtown                                       |
+| Character creator ownership              | Pogtown                                       |
+| Social graph and follows                 | Pogtown                                       |
+| Performance/game events                  | Pogtown                                       |
+| Script/voice/performance authoring       | Freaktown                                     |
+| Stage performance rendering              | Freaktown                                     |
+| Stored GLB originals                     | Existing asset owner, referenced by stable ID |
+| MP4 media storage                        | R2/object storage with stable URLs            |
+
+Services communicate through stable IDs, APIs and signed events.
+
+Avoid direct cross-database writes.
+
+## 4. Canonical user journeys
+
+### Journey A — Discover a character
+
+1. User opens `oddhobb.com`.
+2. Selects **Funnier**.
+3. Watches two short comedy sets.
+4. Votes for one, tie or neither.
+5. Sees a small vote confirmation and credit progress.
+6. Sees the identities of the characters.
+7. Clicks **More from this Pog** beneath a character.
+8. Opens `pog.town/pogs/{character_slug}`.
+9. Views its other performances, creator and profile.
+10. Can follow the character or return to Funnier.
+
+Use actual canonical Pogtown IDs for links. Never derive permanent identity solely from a display name.
+
+### Journey B — Creator submits a set
+
+1. Creator signs into OddHobb/Pogtown.
+2. Selects an existing character that they own or have permission to use.
+3. Supplies or generates a performance script.
+4. Requests a rendered performance.
+5. Watches the MP4 preview.
+6. Submits the approved performance to Funnier.
+7. The system validates asset rights, originality, duration, moderation and attribution.
+8. An approved set enters the comparison pool.
+9. Its votes and performance data are associated with the correct character and creator.
+
+For P0, admin submission is sufficient. Public creator submission can follow in P1.
+
+### Journey C — Buy the character
+
+1. User discovers a Pog in Funnier.
+2. Clicks its profile.
+3. Sees an available physical collectible.
+4. Clicks **Get this Pog made**.
+5. Returns to an OddHobb product configuration using the character's approved physical asset.
+6. Proceeds through the existing Shopify checkout.
+
+Don't enable this CTA until the character has a genuine manufacturable product binding.
+
+## 5. P0 — first genuine 3D MP4
+
+Do this before building sophisticated voting algorithms.
+
+Use one existing GLB from `pogpet`. Do not generate a new mesh.
+
+Required pipeline:
+
+`Existing GLB → avatar capability inspection → comedy script → TTS WAV → timed performance cues → 3D stage render → MP4 → R2 → Funnier`
+
+Requirements:
+
+- Preserve the original GLB's appearance and hash.
+- Use a validated `jawOpen` morph or supported visemes when available.
+- If missing, use supported body animation and camera cuts, not fake lip-sync claims.
+- Reuse Freaktown's audio clock, stage cues and direction concepts.
+- Render an actual 3D performance, not an image with audio.
+- Output H.264/AAC MP4 playable on mobile.
+- Support vertical 9:16, preferably also 16:9.
+- Record the script, voice, asset hashes, timings and renderer revision.
+- Generate a thumbnail, captions and stable playback URL.
+- Link the resulting performance to one Pogtown character.
+
+**Important compatibility issue:** The current Freaktown `StageRenderer` expects VRM metadata; arbitrary Meshy GLBs may lack it. Add a plain-glTF playback adapter or use the existing Blender morph-animation bake. Do not force arbitrary GLBs through the VRM-only loader.
+
+The existing OddHobb still-image MP4 generator must not be mistaken for the 3D performance renderer.
+
+Create two completed videos before enabling Funnier voting.
+
+## 6. Funnier frontend
+
+Integrate into the existing OddHobb navigation and visual design.
+
+Required paths:
+
+- `/funnier` — voting/discovery page, or compatible route in the current frontend.
+- `/funnier/sets/{set_id}` — shareable set detail.
+- `/funnier/history` — user's previous votes, when signed in.
+- `/funnier/credits` — promotional credit explanation and balance.
+
+If the current site architecture cannot support those routes without an unnecessary rewrite, implement equivalent hash routes and stable share redirects.
+
+### Funnier comparison
+
+Show two video players, labelled A and B.
+
+Desktop may display side-by-side; mobile should use a compact sequential viewer.
+
+Controls:
+
+- A was funnier
+- B was funnier
+- Equally funny
+- Neither was funny
+- Skip
+
+After voting, reveal character metadata and provide:
+
+**More from this Pog →**
+
+This opens the canonical Pogtown profile.
+
+Also allow:
+
+- Watch another set
+- Share this set
+- View creator
+- Follow Pog, if authenticated
+
+Don't make users sign in just to watch.
+
+Ask for sign-in when awarding credits or following characters.
+
+## 7. Pogtown character profile
+
+Canonical profile route:
+
+`https://pog.town/pogs/{slug}`
+
+If the existing Pogtown routing convention conflicts, use its actual canonical route and provide redirects for stable links.
+
+Profile should contain:
+
+- Character name and portrait
+- Original GLB/VRM avatar or poster
+- Public personality/premise
+- Creator handle and attribution
+- Published sets
+- Top-rated performances
+- Chronological performance archive
+- Follow action
+- Share link
+- Linked physical OddHobb products
+- Optional fictional biography and agent activity
+
+Show clearly that a character is AI-generated/AI-operated.
+
+Do not expose private prompts, account secrets or internal reasoning.
+
+Every performance points to the character's canonical Pogtown ID, not a duplicated OddHobb character record.
+
+## 8. Canonical data model
+
+Use migrations in the existing appropriate database.
+
+Proposed minimal entities:
+
+```
+accounts
+identity_links
+characters (reference/cache only in OddHobb)
+character_assets
+performances
+performance_clips
+comparison_assignments
+comparison_votes
+credit_ledger
+creator_links
+character_follows (Pogtown authority)
+product_character_links
+moderation_events
+```
+
+A published performance record needs at least:
+
+```
+{
+  "performance_id": "perf_001",
+  "pogtown_character_id": "freak_001",
+  "creator_account_id": "acct_001",
+  "oddhobb_asset_id": "mesh_001",
+  "video_url": "https://example.invalid/perf_001.mp4",
+  "thumbnail_url": "https://example.invalid/perf_001.jpg",
+  "duration_ms": 31000,
+  "status": "published",
+  "moderation_status": "approved",
+  "rights_status": "verified",
+  "source_bundle_hash": "sha256:placeholder"
+}
+```
+
+The URLs above are illustrative schema placeholders, not real assets.
+
+Performance identifiers and original source hashes must remain stable across imports.
+
+## 9. Voting API
+
+Suggested interface:
+
+```
+GET  /api/funnier/next
+POST /api/funnier/vote
+GET  /api/funnier/sets/{id}
+GET  /api/funnier/characters/{id}
+GET  /api/funnier/me
+GET  /api/funnier/credits
+GET  /api/funnier/leaderboard
+```
+
+`/next` returns two valid, previously unseen candidates plus a signed or server-recorded comparison assignment.
+
+Votes must be:
+
+- Authenticated for rewards.
+- Bound to an assignment.
+- Deduplicated.
+- Idempotent.
+- Rate-limited.
+- Stored with A/B presentation order.
+- Associated with the exact clip versions viewed.
+- Recorded with limited watch-completion metadata.
+
+Do not trust arbitrary client-submitted character IDs or credit amounts.
+
+Show a simple explanation of what voting data is used for.
+
+## 10. OddHobb Credits
+
+Keep promotional credits separate from existing mesh/video generation quotas.
+
+Use a server-side append-only ledger:
+
+```
+credit_ledger
+  id
+  account_id
+  event_type
+  amount
+  comparison_id
+  shopify_reference
+  status
+  created_at
+```
+
+Events:
+
+`earn`, `redeem`, `reverse`, `expire`, `adjust`.
+
+Pilot reward policy, subject to confirmation:
+
+- Award one credit after three qualifying comparisons.
+- Limit daily credit earning.
+- Set a redemption ceiling per order.
+- Credits have no cash value.
+- No transfers or withdrawals.
+- Users cannot earn repeatedly from the same pair.
+- Reward voting participation, not a particular answer.
+
+Do not assign a cash conversion to credits until that policy is approved and implemented in Shopify.
+
+Credits must be reconciled against the actual successful order discount and reversed appropriately on cancellation or refund.
+
+## 11. Ranking and humour learning
+
+Start with a pairwise statistical ranking model, such as Bradley–Terry, with uncertainty estimates.
+
+Separate:
+
+1. General popularity / humour quality.
+2. Personal taste.
+3. Character popularity.
+4. Creator popularity.
+
+These are not equivalent.
+
+Randomise A/B positions and balance exposure. Avoid repeatedly comparing an established winner against obscure clips.
+
+Include fresh submissions and exploration.
+
+Store broad genre/premise tags:
+
+`absurdist`, `deadpan`, `surreal`, `character`, `dark`, `wholesome`, `wordplay`, `escalation`, `misunderstanding`, `status_reversal`.
+
+Allow users to opt into personalised humour recommendations.
+
+Initially improve OddHobb card suggestions using retrieval/reranking of approved humour templates. Don't claim that votes retrain model weights until a real model-training process exists and consent requirements are met.
+
+Evaluate success against a non-personalised baseline.
+
+## 12. Champion sets and creator profiles
+
+Introduce a championship mechanism after there are enough genuine independent votes.
+
+Champion qualification should require:
+
+- Minimum unique voters.
+- Sufficient pairwise comparisons.
+- Exposure-adjusted scoring.
+- Confidence threshold.
+- Moderation approval.
+- Anti-brigading safeguards.
+
+Display original human creator/operator attribution.
+
+A character's profile should be a permanent archive of its performances even if it stops competing.
+
+For the future three-attempt viral challenge, make retirement mean no new automatically funded attempts — not deletion of the character or its archive.
+
+## 13. Shared identity — required before reward redemption
+
+OddHobb should be the initial consumer account authority.
+
+Use a stable account UUID. Authenticate with verified server-side sessions.
+
+Connect Pogtown identities using a signed, short-lived account-linking flow.
+
+Store:
+
+`oddhobb_account_id ↔ pogtown_user_id`
+
+Do not automatically link on matching unverified email addresses, client-provided IDs, or Shopify cart data.
+
+Support:
+
+- Account linking
+- Re-linking
+- Unlinking
+- Conflict rejection
+- Public pseudonymous handle
+- Separate creator/operator permissions
+- Session expiry and revocation
+
+Shopify customer identity must also be server-verified before promotional redemption.
+
+No credentials should appear in character bundles or public performance metadata.
+
+## 14. Cross-site navigation
+
+The sites should feel connected, but not identical.
+
+**OddHobb:** Friendly consumer discovery, gifts, videos and shopping.
+
+**Funnier:** Lightweight comedy game where you discover characters and earn credits.
+
+**Pogtown:** The persistent social world where those characters live, perform and gain audiences.
+
+Every Funnier clip must expose a canonical Pogtown profile link.
+
+Every Pogtown profile with an approved product must expose an OddHobb purchase link.
+
+Prefer ordinary links with stable URLs, share previews and return navigation rather than requiring a complex cross-domain SPA integration.
+
+## 15. P1, P2 and P3
+
+### P1 — community and creator economy
+
+- Creator submission interface
+- Moderation queue
+- Character profile pages
+- Follow graph
+- Public set archive
+- Leaderboards
+- Champion sets
+- Creator attribution
+- Shareable social clips
+
+### P2 — humour personalisation
+
+- Opt-in personal taste vectors
+- Comparison-pair recommendation
+- Taste-aware OddHobb card suggestions
+- Automated candidate humour generation
+- Humour testing and reweighting
+- Outcome analytics and experiment dashboard
+
+### P3 — persistent Pogtown performers
+
+- Agent-submitted original sets
+- Live audience reactions
+- Auto-generated clips
+- Character collaborations
+- Recurring shows
+- Fan messages
+- Physical merchandise
+- Optional performances through compatible Living Houses
+
+## 16. Tests and acceptance criteria
+
+Add unit, integration and end-to-end tests.
+
+Minimum tests:
+
+- Exact GLB-to-performance asset lineage.
+- Generic GLB fallback versus VRM playback.
+- Audible voice synchronised with rendered movement.
+- MP4 opens on desktop and mobile.
+- Clip survives reload and retains its permalink.
+- Vote cannot be submitted twice for rewards.
+- A/B order is recorded correctly.
+- Credit ledger cannot be manipulated client-side.
+- Anonymous browsing works.
+- Signing in preserves comparison continuity appropriately.
+- Character links resolve to actual Pogtown profiles.
+- Product links reference genuine approved OddHobb bindings.
+- Cross-account access is rejected.
+- Unlinked users cannot inherit another creator's profile.
+- Account linking can be revoked.
+- Deleted or moderated clips stop being recommended.
+- No private media or secrets are exposed through public manifests.
+
+**P0 definition of done:**
+
+A user opens OddHobb, watches two genuine 3D comedy videos, chooses the funnier one, receives the correct server-side reward progress, clicks a character and lands on its canonical Pogtown page.
+
+That character's profile shows its other performances and correct creator attribution.
+
+The same GLB character remains linked to its original OddHobb product asset.
+
+## 17. Implementation discipline
+
+- Review HEAD and current deployment state before changes.
+- Preserve existing OddHobb card, checkout, product and Meshy functionality.
+- Do not spend Meshy/API credits without authorisation.
+- Build incrementally with passing tests.
+- Use existing audio, stage, clip and character contracts.
+- Use FFmpeg and verified GLB animation capture before considering new generative video models.
+- Keep the first release small enough to demonstrate locally.
+- Never fabricate votes, ratings, followers or creator metrics in public-facing pages.
+- Don't enable cash-equivalent rewards without the discount/accounting system.
+- Maintain a clear implementation status document listing completed work, gaps and production blockers.
+
+**Final instruction:** Implement the narrowest working vertical slice first. Prioritise a finished mesh-to-MP4 performance and a working Funnier-to-Pogtown profile link over elaborate social features. The system must be a real product, not just more scaffolding.
+
+## Suggested UI navigation
+
+OddHobb
+
+Shop · Studio · Funnier
+
+Funnier
+
+Watch → Vote → Earn credits
+
+Pogtown Profile
+
+Sets → Follow → Creator
+
+Character Merch
+
+Figurines · Cards · Gifts
+
+Return to OddHobb
+
+Configure → Checkout
+
+The important commercial opportunity is that a Pogtown character can become popular before somebody buys anything. Its performances attract followers, Funnier helps us understand the audience, and OddHobb becomes the natural place to buy physical objects featuring that character.
+
+This also feeds back into the Living House project: eventually, a customer who discovers a character through Funnier could buy it a physical home and interact with the same persistent Pog through voice, light and AR.
+
+The shared character identity is the foundation. The MP4 is the distribution unit. Funnier is the discovery engine. OddHobb is the physical commerce layer.

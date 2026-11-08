@@ -1,0 +1,2469 @@
+Yes. The strongest ETHOnline build is **not “make Moltwork more blockchainy.”** It is: take the WorkerKit execution/evidence loop you already have and make a run independently verifiable, economically settleable, and safely delegatable using existing standards. Your current repo is already unusually well-shaped for this because the append-only ledger, run lifecycle, verification gate, cost model, and receipt abstraction already exist.
+
+One important constraint first: ETHGlobal’s Classic track prohibits pre-existing project-specific work, while Continuity tracks explicitly permit extending an existing codebase if you disclose the baseline and build substantive new functionality during the event. For `prx0r/mw`, **Continuity / Extend Open Source is the natural route**. Do architecture/research now; preserve the cryptographic integration itself as hackathon-period work. ([ETHGlobal][1])
+
+# MOLTWORK ETHONLINE 2026 — CRYPTOGRAPHIC WORK PROTOCOL DEVELOPMENT PLAN
+
+## 0. The hackathon project in one sentence
+
+**Moltwork lets an autonomous agent accept paid work, execute it inside a verifiable TEE, produce a cryptographically bound execution receipt, settle the job through standard Ethereum commerce primitives, and optionally lease narrowly scoped agent capabilities without revealing the agent's secrets.**
+
+The flow is:
+
+```text
+Opportunity
+     ↓
+WorkerKit economic decision
+     ↓
+ERC-8183 funded job
+     ↓
+ERC-7710 capability delegation
+     ↓
+Phala/dstack TEE
+     ↓
+WorkerKit execution
+     ↓
+append-only event chain
+     ↓
+artifact + cost + outcome commitments
+     ↓
+TEE-derived signature
+     ↓
+fresh remote attestation
+     ↓
+independent verifier
+     ↓
+ERC-8004 validation/reputation
+     ↓
+ERC-8183 completion + settlement
+     ↓
+Moltwork labor graph / marketplace
+```
+
+That gives us a real primitive:
+
+> **Verifiable autonomous work.**
+
+And later:
+
+> **Leaseable verifiable autonomous workers.**
+
+---
+
+# 1. Do not rewrite WorkerKit
+
+The existing WorkerKit already has most of the non-chain semantics we want.
+
+Its current lifecycle is approximately:
+
+```text
+WorkOrder
+  ↓
+WorkerRun
+  ↓
+WorkerEvent[]
+  ↓
+CostEvent[]
+  ↓
+Artifact
+  ↓
+VerificationResult
+  ↓
+CommitDecision
+  ↓
+SubmissionReceipt
+  ↓
+OutcomeReceipt
+  ↓
+SettlementReceipt
+```
+
+The event store is append-only and hashes every event against the previous event for that run.
+
+And `WorkerKit.close()` already computes the chain head and places it into a `WorkReceipt`.
+
+**That is exactly where the crypto boundary should go.**
+
+Current:
+
+```text
+WorkerKit.close()
+      ↓
+WorkReceipt
+      ↓
+JSON file
+```
+
+ETHOnline version:
+
+```text
+WorkerKit.close()
+      ↓
+canonical run commitment
+      ↓
+TEE-derived signature
+      ↓
+dstack Attestation
+      ↓
+AttestedWorkReceiptV1
+      ↓
+independent verifier
+      ↓
+on-chain evidence
+```
+
+Do not make blockchain calls permeate WorkerKit.
+
+WorkerKit should remain capable of running completely off-chain.
+
+---
+
+# 2. There is one important deficiency in the current receipt
+
+Your existing `WorkReceipt` is a good prototype, but it isn't yet a serious cryptographic receipt.
+
+Right now its root commits to roughly:
+
+```text
+work_order_id
+events_hash
+known_cost
+status
+number_of_outputs
+```
+
+and emits an in-toto-shaped statement.
+
+It does **not** yet cryptographically bind:
+
+```text
+actual artifact hashes
+worker manifest
+agent identity
+execution policy
+container/image identity
+TEE identity
+job contract
+job ID
+delegation
+payment references
+model configuration
+input commitment
+receipt signer
+attestation freshness
+```
+
+Also, `worker_id` is currently populated from `run.work_order_id`, which is semantically wrong even if it doesn't currently break anything.
+
+So don't mutate `WorkReceipt` into an enormous object.
+
+Add a new layer:
+
+```text
+WorkReceipt
+     ↓
+AttestedWorkReceiptV1
+```
+
+---
+
+# 3. Recommended chain: Base Sepolia
+
+For the core demo I would standardize on **Base Sepolia**.
+
+Why?
+
+ERC-8004 has official Identity and Reputation Registry deployments there. ([GitHub][2])
+
+The MetaMask Delegation Framework is deployed there. ([GitHub][3])
+
+x402 v2 supports Base Sepolia directly, including the public `x402.org` testnet facilitator without an API key. ([Coinbase Developer Documentation][4])
+
+ERC-8183 can simply be deployed there from its reference implementation.
+
+So:
+
+```text
+Base Sepolia
+├── ERC-8004 Identity
+├── ERC-8004 Reputation
+├── ERC-8183 job escrow
+├── ERC-7710 delegation
+├── x402 USDC payments
+└── Moltwork verifier/hook
+```
+
+Do **not** make the core hackathon demo multichain.
+
+Chain abstraction comes later.
+
+---
+
+# 4. The protocol boundary
+
+Create a clean separation:
+
+```text
+MOLTWORK DOMAIN
+────────────────────────────
+oracle
+economics
+workerkit
+capabilities
+processes
+
+CRYPTOGRAPHIC PROTOCOL
+────────────────────────────
+commitments
+attested receipts
+TEE execution
+TEE verification
+identity
+jobs
+delegation
+payments
+
+EXTERNAL PROTOCOL ADAPTERS
+────────────────────────────
+ERC-8004
+ERC-8183
+ERC-7710
+x402
+A2A
+MCP
+ENS
+Virtuals
+Hedera
+```
+
+This is important.
+
+Never make:
+
+```python
+WorkerKit = EthereumWorkerKit
+```
+
+Instead:
+
+```python
+workerkit.run(...)
+crypto.attest(run)
+chain.publish(evidence)
+```
+
+---
+
+# 5. Proposed repository structure
+
+On the ETHOnline branch:
+
+```text
+mw/
+├── core/
+│   ├── schema.py
+│   ├── events.py
+│   ├── receipts.py
+│   └── commitments.py           NEW
+│
+├── protocol/
+│   ├── attested_receipt.py      NEW
+│   ├── canonical.py             NEW
+│   ├── evidence.py              NEW
+│   └── policy.py                NEW
+│
+├── tee/
+│   ├── dstack.py                NEW
+│   ├── keys.py                  NEW
+│   ├── attest.py                NEW
+│   └── verifier.py              NEW
+│
+├── chain/
+│   ├── erc8004.py               NEW
+│   ├── erc8183.py               NEW
+│   ├── delegation.py            NEW
+│   └── evidence.py              NEW
+│
+├── payments/
+│   └── x402.py                  NEW
+│
+├── contracts/
+│   ├── src/
+│   │   ├── MoltworkTEEValidator.sol
+│   │   └── MoltworkEvidenceHook.sol
+│   └── test/
+│
+├── api/
+│   ├── receipt.py
+│   ├── verify.py
+│   └── agent_card.py
+│
+├── indexer/
+│   └── projection.py
+│
+├── tests/
+│   ├── test_tee_invariants.py
+│   ├── test_receipt_invariants.py
+│   ├── test_delegation.py
+│   └── test_e2e.py
+│
+├── PROTOCOL.md
+├── THREATMODEL.md
+├── ETHONLINE_BASELINE.md
+├── DEMO.md
+└── docker-compose.yml
+```
+
+---
+
+# 6. AttestedWorkReceiptV1
+
+This should become the canonical object connecting WorkerKit to the crypto world.
+
+Something approximately like:
+
+```json
+{
+  "schemaVersion": "moltwork.attested-work-receipt.v1",
+
+  "run": {
+    "runId": "...",
+    "workOrderId": "...",
+    "workerManifestDigest": "...",
+    "inputCommitment": "...",
+    "policyDigest": "...",
+    "eventChainHead": "...",
+    "eventCount": 34
+  },
+
+  "artifacts": [
+    {
+      "sha256": "...",
+      "mediaType": "application/zip"
+    }
+  ],
+
+  "economics": {
+    "knownCost": "0.83",
+    "currency": "USD"
+  },
+
+  "agent": {
+    "chainId": 84532,
+    "identityRegistry": "0x...",
+    "agentId": "..."
+  },
+
+  "job": {
+    "protocol": "ERC-8183",
+    "chainId": 84532,
+    "contract": "0x...",
+    "jobId": "..."
+  },
+
+  "delegation": {
+    "delegationHash": "...",
+    "policyDigest": "...",
+    "expiresAt": "..."
+  },
+
+  "tee": {
+    "platform": "dstack",
+    "appId": "...",
+    "instanceId": "...",
+    "composeHash": "...",
+    "signingPublicKey": "...",
+    "attestationDigest": "...",
+    "attestationUri": "..."
+  },
+
+  "payments": [],
+
+  "receiptDigest": "...",
+  "signature": "..."
+}
+```
+
+Not all fields need to be mandatory.
+
+The minimum serious receipt is:
+
+```text
+run ID
+work order ID
+event chain head
+event count
+artifact hashes
+worker manifest hash
+policy hash
+agent ID
+receipt digest
+TEE signing public key
+signature
+attestation evidence
+```
+
+---
+
+# 7. Hashing rules
+
+Don't create one mystery `hash()` helper and use it for everything.
+
+Use explicit domains.
+
+### SHA-256
+
+Keep SHA-256 for:
+
+```text
+artifacts
+WorkerKit event chain
+Docker/OCI material
+files
+in-toto-style evidence
+```
+
+WorkerKit already does this.
+
+### Keccak-256
+
+Use `keccak256` for commitments passed into Ethereum contracts:
+
+```text
+validation request hash
+receipt commitment
+delegation policy commitment
+job evidence commitment
+```
+
+### Typed Ethereum messages
+
+Where a user/agent signs something intended for Ethereum, use EIP-712 rather than inventing textual signatures.
+
+A receipt signing domain could eventually resemble:
+
+```text
+MoltworkReceipt(
+    bytes32 runIdHash,
+    bytes32 eventChainHead,
+    bytes32 artifactRoot,
+    bytes32 policyDigest,
+    uint256 agentId,
+    uint256 chainId,
+    address jobContract,
+    uint256 jobId
+)
+```
+
+For the hackathon, don't implement a Merkle forest unless necessary.
+
+A hash over a deterministically encoded list of artifact digests is enough.
+
+---
+
+# 8. Phala/dstack is the first thing to implement
+
+dstack already gives us the difficult primitives:
+
+```text
+info()
+getKey()
+getQuote()
+attest()
+```
+
+The guest communicates through `/var/run/dstack.sock`.
+
+The current API's `/v1/Attest` gives versioned attestation evidence, and `GetKey` derives application-bound key material with a signature chain. ([GitHub][5])
+
+Their examples already include:
+
+```text
+01-attestation-oracle
+02-persistence-and-kms
+03-gateway-and-ingress
+04-upgrades
+```
+
+and specifically describe binding arbitrary data into an attestation and deriving persistent cryptographic keys. ([GitHub][6])
+
+### First experiment
+
+Before touching ERC-8004:
+
+```text
+WorkerKit
+   ↓
+dstack simulator
+   ↓
+execute tiny deterministic job
+   ↓
+close run
+   ↓
+derive signing key
+   ↓
+sign receiptDigest
+   ↓
+attest(receiptDigest)
+   ↓
+verify outside TEE
+```
+
+If that works, you've already built the core innovation.
+
+---
+
+# 9. TEE-derived agent execution key
+
+Do not put a long-lived raw Ethereum private key in an environment variable inside the container if you can avoid it.
+
+Use dstack key derivation.
+
+Conceptually:
+
+```python
+receipt_key = dstack.get_key(
+    "/moltwork/agents/<agent-id>/receipt-signing"
+)
+```
+
+dstack currently supports secp256k1 and ed25519 interpretation of derived key material; its docs explicitly recommend algorithm-specific paths if independent keys are needed. ([GitHub][7])
+
+For Ethereum compatibility:
+
+```text
+secp256k1
+```
+
+Then derive:
+
+```text
+TEE public key
+        ↓
+Ethereum address
+        ↓
+teeSigner
+```
+
+Important distinction:
+
+```text
+Agent smart account != TEE signer
+```
+
+The **agent wallet** owns funds and permissions.
+
+The **TEE signer** proves a specific attested workload produced something.
+
+That separation becomes very useful for leasing.
+
+---
+
+# 10. Bind the receipt into the attestation
+
+The crucial trick is `report_data`.
+
+dstack allows up to 64 bytes of application-controlled data in quote/attestation evidence. ([GitHub][7])
+
+Don't merely attest:
+
+```text
+"I am Moltwork container X"
+```
+
+Attest:
+
+```text
+"I am Moltwork container X,
+and this exact workload produced receipt R
+for fresh verifier challenge N."
+```
+
+For example:
+
+```text
+receiptDigest = keccak256(receipt)
+challengeHash = keccak256(verifierNonce)
+
+reportData =
+    receiptDigest      32 bytes
+    ||
+    challengeHash      32 bytes
+```
+
+Exactly 64 bytes.
+
+Now the attestation is bound to:
+
+```text
+code identity
++
+current run receipt
++
+fresh verifier request
+```
+
+This kills a huge class of replay bullshit.
+
+---
+
+# 11. Independent verification
+
+Never let the worker say:
+
+```json
+{"teeVerified": true}
+```
+
+and treat that as evidence.
+
+Verification must happen externally.
+
+dstack provides:
+
+```text
+dstack-verifier
+dcap-qvl
+Phala Trust Center
+```
+
+for verification. ([GitHub][8])
+
+Your verifier should check at least:
+
+```text
+✓ attestation signature valid
+✓ acceptable TCB
+✓ expected OS measurement
+✓ compose hash correct
+✓ container images pinned by SHA256 digest
+✓ runtime event log replays correctly
+✓ challenge is fresh
+✓ receiptDigest appears in reportData
+✓ public signing key matches expected workload
+✓ receipt signature valid
+✓ policyDigest matches expected policy
+```
+
+These checks closely track dstack's own security checklist. ([GitHub][9])
+
+The security property becomes:
+
+> Someone can independently verify that the expected Moltwork workload, running inside genuine confidential hardware, signed this exact work receipt.
+
+That is far stronger than merely putting a hash on Ethereum.
+
+---
+
+# 12. Pin every container image
+
+Absolutely no:
+
+```yaml
+image: moltwork/worker:latest
+```
+
+Instead:
+
+```yaml
+image: moltwork/worker@sha256:...
+```
+
+The compose hash becomes part of attested identity.
+
+dstack specifically recommends verifying the compose hash and using SHA-256 image digests rather than mutable image tags. ([GitHub][9])
+
+Your marketplace can eventually show:
+
+```text
+Worker Runtime
+workerkit 0.8.0
+
+Code commitment
+sha256:7e5...
+
+TEE
+VERIFIED
+
+Build
+reproducible
+
+Last attestation
+2 minutes ago
+```
+
+Now runtime integrity becomes visible market information.
+
+---
+
+# 13. ERC-8004: identity and trust, not payments
+
+ERC-8004 explicitly separates:
+
+```text
+Identity Registry
+Reputation Registry
+Validation Registry
+```
+
+and explicitly lists **TEE oracles** as a validation mechanism. ([Ethereum Improvement Proposals][10])
+
+Perfect match.
+
+### Registration
+
+Register the WorkerKit agent using the official Base Sepolia registry.
+
+Current official testnet deployments are:
+
+```text
+IdentityRegistry
+0x8004A818BFB912233c491871b3d84c89A494BD9e
+
+ReputationRegistry
+0x8004B663056A597Dffe9eCcC1965A193B7388713
+```
+
+([GitHub][2])
+
+Agent registration metadata should advertise things such as:
+
+```json
+{
+  "name": "Moltwork Worker 001",
+  "description": "...",
+  "services": [
+    {
+      "name": "A2A",
+      "endpoint": "..."
+    }
+  ],
+  "supportedTrust": [
+    "tee-attestation"
+  ],
+  "moltwork": {
+    "workerManifest": "...",
+    "attestationEndpoint": "...",
+    "receiptSchema": "moltwork.attested-work-receipt.v1"
+  }
+}
+```
+
+Do **not** invent another agent NFT.
+
+---
+
+# 14. ERC-8004 Validation
+
+The standard defines:
+
+```solidity
+validationRequest(
+    address validatorAddress,
+    uint256 agentId,
+    string requestURI,
+    bytes32 requestHash
+)
+```
+
+where `requestHash` commits to the off-chain validation material. ([Ethereum Improvement Proposals][10])
+
+That maps directly to:
+
+```text
+requestURI
+  → AttestedWorkReceiptV1 bundle
+
+requestHash
+  → keccak256(receipt bundle)
+```
+
+Your verifier then performs the dstack validation and records its response.
+
+However, these agent standards are young and still evolving.
+
+So isolate ERC-8004 behind:
+
+```python
+class IdentityAdapter
+class ReputationAdapter
+class ValidationAdapter
+```
+
+Never scatter raw ABI calls throughout WorkerKit.
+
+---
+
+# 15. MoltworkTEEValidator.sol
+
+I'd build one small custom contract.
+
+Not custom cryptography.
+
+Just a bridge between verified TEE evidence and Ethereum.
+
+Conceptually:
+
+```solidity
+requestValidation(receiptHash, evidenceURI)
+
+recordValidation(
+    receiptHash,
+    evidenceHash,
+    result
+)
+```
+
+Events:
+
+```solidity
+event ValidationRequested(
+    bytes32 indexed receiptHash,
+    string evidenceURI
+);
+
+event ValidationRecorded(
+    bytes32 indexed receiptHash,
+    bytes32 indexed evidenceHash,
+    bool valid
+);
+```
+
+The actual Intel/dstack verification should remain **off-chain** for the hackathon.
+
+Don't attempt to verify giant TDX quotes directly in Solidity unless the entire core is already finished.
+
+Ethereum records the cryptographic commitment and validator result.
+
+---
+
+# 16. ERC-8183: the actual paid work lifecycle
+
+ERC-8183 is almost absurdly well matched to WorkerKit.
+
+Its canonical state machine is:
+
+```text
+Open
+ ↓
+Funded
+ ↓
+Submitted
+ ↓
+Completed
+  OR
+Rejected
+  OR
+Expired
+```
+
+Roles:
+
+```text
+Client
+Provider
+Evaluator
+```
+
+and payment sits in escrow until evaluation. ([Ethereum Improvement Proposals][11])
+
+Map it directly:
+
+```text
+ERC-8183             MOLTWORK
+
+Client        →      buyer
+Provider      →      WorkerKit agent
+Evaluator     →      TEE verifier / evaluator
+Job           →      WorkOrder
+Funded        →      execution permitted
+Submitted     →      SubmissionReceipt
+Completed     →      OutcomeReceipt
+Payout        →      SettlementReceipt
+```
+
+This is beautifully clean.
+
+---
+
+# 17. Do not write MoltworkEscrow.sol
+
+Seriously.
+
+There is almost no justification now.
+
+Use ERC-8183.
+
+The reference implementation already includes:
+
+```text
+escrow
+role restrictions
+state transitions
+hooks
+EIP-712 authorization extension
+refund semantics
+```
+
+([GitHub][12])
+
+Spend hackathon time on the **TEE/evidence integration**, not rebuilding escrow.
+
+---
+
+# 18. MoltworkEvidenceHook.sol
+
+ERC-8183 includes `beforeAction` / `afterAction` hooks. ([GitHub][12])
+
+This gives us a neat extension point.
+
+Create:
+
+```text
+MoltworkEvidenceHook
+```
+
+Eventually it could enforce:
+
+```text
+provider has ERC-8004 identity
+agent supports TEE trust
+receipt commitment exists
+validation succeeded
+```
+
+For the hackathon I'd make it lightweight.
+
+For example:
+
+```text
+on SUBMIT:
+    associate receiptHash
+
+on COMPLETE:
+    require validation status == valid
+```
+
+Now the job cannot complete unless there is acceptable execution evidence.
+
+That is a compelling protocol demo.
+
+---
+
+# 19. The actual WorkerKit → ERC-8183 flow
+
+```text
+1. Oracle sees opportunity
+
+2. Opportunity normalized to WorkOrder
+
+3. ERC-8183 job created
+
+4. Client deposits USDC
+
+5. WorkerKit observes FUNDED
+
+6. Economics engine computes:
+   reward
+   estimated cost
+   expected EV
+   constraints
+
+7. WorkerKit accepts
+
+8. TEE begins run
+
+9. WorkerEvents accumulate
+
+10. Artifact generated
+
+11. WorkerKit verification gate runs
+
+12. run closes
+
+13. AttestedWorkReceiptV1 produced
+
+14. independent verifier validates TEE evidence
+
+15. receiptHash submitted with ERC-8183 deliverable
+
+16. evaluator completes job
+
+17. escrow pays provider
+
+18. SettlementReceipt records tx
+
+19. ERC-8004 feedback/validation updated
+
+20. Oracle ingests economic outcome
+```
+
+This closes the entire loop you have been circling around.
+
+---
+
+# 20. ERC-7710: this is where leasing comes from
+
+ERC-7710 exists specifically for a contract to delegate capabilities to another account or contract and explicitly mentions bounded permissions for automated systems/AI agents. ([Ethereum Improvement Proposals][13])
+
+Do not invent:
+
+```text
+MoltworkCustomAgentPermissionProtocol™
+```
+
+Use MetaMask's Delegation Framework as the implementation.
+
+It supports:
+
+```text
+EIP-712 delegation signatures
+ERC-1271
+revocation
+delegation chains
+batch processing
+caveat enforcers
+```
+
+([GitHub][14])
+
+---
+
+# 21. Agent leasing model
+
+Suppose I own:
+
+```text
+Agent #928
+```
+
+and I want to lease it to another user.
+
+The renter should never receive:
+
+```text
+agent wallet private key
+API credentials
+memory database
+GitHub token
+proprietary process data
+model keys
+```
+
+Instead:
+
+```text
+OWNER SMART ACCOUNT
+        │
+        │ ERC-7710 delegation
+        ↓
+TEE EXECUTION ADDRESS
+        │
+        │ bounded capabilities
+        ↓
+allowed job actions
+```
+
+The TEE holds/accesses the worker runtime and secrets.
+
+Ethereum constrains what the TEE signer can actually do on-chain.
+
+---
+
+# 22. Two independent policy layers
+
+This is extremely important.
+
+### TEE policy
+
+Controls:
+
+```text
+which tools may be invoked
+which credentials are visible
+which websites/APIs are usable
+what memory can be accessed
+what files can leave the TEE
+model budget
+job type
+submission target
+```
+
+### ERC-7710 caveats
+
+Control:
+
+```text
+which contracts may be called
+which methods may be called
+maximum ETH value
+maximum token spend
+expiry
+number of calls
+token transfer limits
+```
+
+Therefore:
+
+```text
+TEE compromised
+      ↓
+onchain authority still limited
+
+smart-wallet permissions compromised?
+      ↓
+TEE still does not reveal agent secrets
+```
+
+Layered security.
+
+---
+
+# 23. Don't write custom delegation enforcement
+
+MetaMask already has caveat contracts for this.
+
+Current deployment includes:
+
+```text
+DelegationManager
+0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3
+
+AllowedMethodsEnforcer
+0x2c21fD0Cb9DC8445CB3fb0DC5E7Bb0Aca01842B5
+
+AllowedTargetsEnforcer
+0x7F20f61b1f09b08D970938F6fa563634d65c4EeB
+
+ERC20TransferAmountEnforcer
+0xf100b0819427117EcF76Ed94B358B1A5b5C6D2Fc
+
+LimitedCallsEnforcer
+0x04658B29F6b82ed55274221a06Fc97D318E25416
+```
+
+and the same deterministic framework deployment covers Base Sepolia. ([GitHub][3])
+
+Use those.
+
+---
+
+# 24. Example lease
+
+A Moltwork lease can therefore just be a higher-level object around a standard delegation.
+
+```json
+{
+  "leaseId": "lease_123",
+  "agentId": "8004:84532:918",
+  "delegate": "0xTEE_SIGNER",
+
+  "validUntil": 1789000000,
+
+  "budget": {
+    "USDC": "10.00"
+  },
+
+  "targets": [
+    "ERC8183_CONTRACT",
+    "APPROVED_PAYMENT_CONTRACT"
+  ],
+
+  "methods": [
+    "submit(...)",
+    "redeemDelegations(...)"
+  ],
+
+  "policyDigest": "0x..."
+}
+```
+
+Moltwork doesn't need an on-chain lease NFT in v1.
+
+A lease is:
+
+```text
+standard delegation
++
+off-chain policy
++
+TEE identity
++
+cryptographic receipt trail
+```
+
+That's already enough to demonstrate the primitive.
+
+---
+
+# 25. Best malicious-action demo
+
+Hackathon judges love seeing that security properties actually matter.
+
+After executing a normal job, show:
+
+```text
+LEASE ALLOWS
+ERC8183.submit()
+max 5 USDC spend
+expires in 20 minutes
+```
+
+Then deliberately attempt:
+
+```text
+transfer 50 USDC
+```
+
+Result:
+
+```text
+REVERT
+ERC20TransferAmountEnforcer
+```
+
+or attempt:
+
+```text
+call arbitrary contract
+```
+
+Result:
+
+```text
+REVERT
+AllowedTargetsEnforcer
+```
+
+That makes “agent leasing with constrained authority” immediately understandable.
+
+---
+
+# 26. x402 has a different job
+
+ERC-8183:
+
+> asynchronous jobs / escrow / evaluator / payout.
+
+x402:
+
+> tiny machine-to-machine HTTP purchases.
+
+Do not conflate them.
+
+Use x402 for something such as:
+
+```text
+POST /v1/verify-receipt
+price: $0.01
+```
+
+or:
+
+```text
+POST /v1/evaluate-opportunity
+price: $0.001
+```
+
+Then your autonomous WorkerKit itself pays for the service.
+
+x402 v2 is now the recommended version, using:
+
+```text
+PAYMENT-REQUIRED
+PAYMENT-SIGNATURE
+PAYMENT-RESPONSE
+
+CAIP-2:
+eip155:84532
+```
+
+([Coinbase Developer Documentation][4])
+
+On Base Sepolia, the public test facilitator is:
+
+```text
+x402.org
+```
+
+and requires no API key. ([Coinbase Developer Documentation][15])
+
+---
+
+# 27. The ideal x402 demonstration
+
+Run:
+
+```text
+Worker A
+   │
+   │ needs external receipt verification
+   ↓
+GET /verify
+   │
+402 Payment Required
+   ↓
+Worker A signs x402 payment
+   ↓
+USDC settles
+   ↓
+verifier returns result
+   ↓
+payment reference added to WorkerEvent
+   ↓
+final receipt commits to payment
+```
+
+Now we have:
+
+```text
+agent autonomously buys service
++
+service verifies agent work
++
+payment is recorded in run evidence
+```
+
+Very good hackathon material.
+
+---
+
+# 28. ERC-8004 reputation only from real outcomes
+
+Do not let Moltwork reputation become stars.
+
+After ERC-8183 completion:
+
+```text
+OutcomeReceipt
+SettlementReceipt
+VerificationResult
+actualCost
+duration
+artifact
+```
+
+become inputs into reputation.
+
+Examples:
+
+```text
+completion.success = 1
+cost.actual = 0.83
+cost.estimate = 0.76
+duration.seconds = 412
+tee.verified = 1
+payment.settled = 1
+```
+
+Your Oracle can compute:
+
+```text
+success rate
+cost calibration
+P(win)
+mean earnings
+median execution cost
+reward/cost ratio
+failure rate
+verification tier
+```
+
+ERC-8004 stores portable feedback/evidence.
+
+Moltwork computes the useful intelligence.
+
+---
+
+# 29. Evidence tiers
+
+Formalize the existing concept:
+
+```text
+E0 SELF_REPORTED
+
+E1 OBSERVED
+Moltwork independently observed output
+
+E2 PAYMENT_VERIFIED
+Settlement/payments independently verified
+
+E3 TEE_VERIFIED
+Attested expected workload executed receipt
+
+E4 REEXECUTED
+Independent execution reproduced result
+
+E5 ZK_VERIFIED
+Cryptographic computation proof
+```
+
+Don't touch zkML during ETHOnline unless everything else works.
+
+The TEE tier is already difficult and valuable enough.
+
+---
+
+# 30. Marketplace extension becomes trivial
+
+This architecture naturally gives the marketplace its schema.
+
+An agent listing eventually looks like:
+
+```text
+MOLTW0RK WORKER #481
+
+Identity
+ERC-8004 #481
+
+Runtime
+WorkerKit 0.8
+
+Execution
+Phala/dstack TEE
+
+Runtime digest
+sha256:b839...
+
+Trust
+TEE VERIFIED
+
+Jobs
+183
+
+Paid jobs
+142
+
+Success
+77.6%
+
+Median cost
+$0.43
+
+Median reward
+$8.90
+
+Cost calibration
+91%
+
+Capabilities
+Research
+Frontend
+Data analysis
+
+Lease
+AVAILABLE
+
+Price
+$0.30/hour + inference
+
+Authority requested
+✓ submit ERC-8183 jobs
+✓ spend ≤ $4 USDC/hour
+✗ withdraw treasury
+✗ export memory
+✗ transfer arbitrary assets
+```
+
+Nothing here requires reinventing the backend later.
+
+Every field derives from the protocol you're building now.
+
+---
+
+# 31. Marketplace architecture
+
+```text
+                    MOLTWORK BOARD
+
+ERC-8004 ─────────── identity/reputation ────┐
+                                             │
+ERC-8183 ─────────── jobs/settlements ───────┤
+                                             │
+TEE verifier ─────── attestations ───────────┤
+                                             │
+WorkerKit ────────── cost/process evidence ──┼→ INDEXER
+                                             │      ↓
+x402 ─────────────── micropayments ──────────┤  DATABASE
+                                             │      ↓
+ERC-7710 ─────────── leases/delegations ─────┘  BOARD/API
+```
+
+So the board is mostly a **projection**.
+
+Not the source of truth.
+
+This is exactly what we want.
+
+---
+
+# 32. A2A should be a thin interoperability layer
+
+A2A 1.0 defines discovery through an Agent Card and task-based agent-to-agent interaction. ([GitHub][16])
+
+Expose:
+
+```text
+/.well-known/agent-card.json
+```
+
+Skills:
+
+```text
+execute_work_order
+quote_work_order
+verify_receipt
+```
+
+Later perhaps:
+
+```text
+request_lease
+```
+
+A2A deliberately allows agents to remain internally opaque. That's perfect: nobody needs WorkerKit's chain-of-thought or private memory to interact with it. ([GitHub][16])
+
+---
+
+# 33. MCP stays tool-side
+
+Use the distinction:
+
+```text
+A2A
+agent ↔ agent
+
+MCP
+agent ↔ tool/resource
+```
+
+The A2A project itself explicitly describes the two as complementary rather than competing standards. ([GitHub][17])
+
+MCP's latest specification is dated 2026-07-28. ([Model Context Protocol Blog][18])
+
+Do not spend early hackathon days writing MCP wrappers.
+
+The current priority is:
+
+```text
+TEE
+→ receipt
+→ verification
+→ job
+→ delegation
+```
+
+---
+
+# 34. ENS integration is optional but unusually natural
+
+ETHOnline currently has a $500 **Continuity-specific ENSv2 integration prize**, and the prize description explicitly encourages AI agent identity and delegated permissions. ENSv2 is currently on Ethereum Sepolia. ([ETHGlobal][19])
+
+You could later give:
+
+```text
+alice.moltwork.eth
+researcher.alice.moltwork.eth
+frontend.alice.moltwork.eth
+```
+
+different delegated rights.
+
+Example:
+
+```text
+agent42.moltwork.eth
+
+8004.agentId = 481
+a2a.endpoint = ...
+moltwork.attestation = ...
+moltwork.runtimeHash = ...
+```
+
+But this is **P2**, not core architecture.
+
+Don't introduce a second chain until the Base Sepolia lifecycle works.
+
+---
+
+# 35. ETHOnline sponsor strategy
+
+Current ETHOnline 2026 prizes include The Graph, Hedera, Arc, World, 1inch, ENS, Uniswap Foundation, Ledger, Privy and Chainlink. Several prize descriptions are still unpublished as of August 29. ([ETHGlobal][19])
+
+The unusually good current fit is Hedera's **AI & Agentic Payments** category, whose published scoring explicitly mentions:
+
+```text
+x402
+A2A / ACP
+ERC-8004
+agent discovery
+verifiable payment audit trails
+```
+
+([ETHGlobal][19])
+
+However, don't distort Moltwork around Hedera.
+
+If partner eligibility and time permit:
+
+```text
+Moltwork core
+      ↓
+Hedera x402 adapter
+```
+
+not:
+
+```text
+Moltwork = Hedera application
+```
+
+The same rule applies to every sponsor.
+
+---
+
+# 36. Threat model — write this before implementing
+
+Your `THREATMODEL.md` should explicitly enumerate:
+
+### Infrastructure operator
+
+Threat:
+
+```text
+host modifies worker
+host reads secrets
+host fabricates run
+```
+
+Defense:
+
+```text
+TEE isolation
+measured workload
+remote attestation
+```
+
+### Mutable deployment
+
+Threat:
+
+```text
+registry serves malicious "latest" image
+```
+
+Defense:
+
+```text
+digest-pinned images
+compose hash verification
+```
+
+### Attestation replay
+
+Threat:
+
+```text
+old valid quote reused
+```
+
+Defense:
+
+```text
+fresh verifier nonce bound into reportData
+```
+
+### Receipt substitution
+
+Threat:
+
+```text
+valid quote attached to different run
+```
+
+Defense:
+
+```text
+receiptDigest bound into reportData
+```
+
+### Malicious renter
+
+Threat:
+
+```text
+renter drains agent wallet
+```
+
+Defense:
+
+```text
+ERC-7710 caveats
+allowed target
+allowed methods
+spend cap
+expiry
+```
+
+### Compromised worker
+
+Threat:
+
+```text
+agent runtime attempts unauthorized transaction
+```
+
+Defense:
+
+```text
+onchain delegation caveats still enforce policy
+```
+
+### Malicious model provider
+
+If you're calling OpenAI/Anthropic/etc. externally from inside the TEE:
+
+```text
+TEE DOES NOT make the external inference provider confidential.
+```
+
+The provider can still see whatever request you send to them.
+
+Be explicit about that.
+
+### Malicious WorkerKit application
+
+Attestation proves:
+
+> this was the expected code.
+
+It does **not** prove:
+
+> this code was logically correct.
+
+dstack itself distinguishes code identity from application correctness. ([GitHub][9])
+
+### Secret leakage through logs
+
+Never include:
+
+```text
+API keys
+wallet secrets
+private prompts
+raw credentials
+sensitive memory
+```
+
+in attested public receipts.
+
+Commit to them if required.
+
+Do not reveal them.
+
+---
+
+# 37. Test suite
+
+## Receipt invariants
+
+```text
+same run → same canonical digest
+changed artifact → different digest
+changed policy → different digest
+changed chain head → different digest
+changed job → different digest
+```
+
+## Ledger invariants
+
+You already have these conceptually:
+
+```text
+modify event → chain invalid
+delete middle event → chain invalid
+change previous hash → invalid
+empty chain → invalid
+```
+
+## TEE invariants
+
+```text
+wrong compose hash → reject
+wrong workload measurement → reject
+bad signature → reject
+wrong receipt digest → reject
+stale challenge → reject
+replayed attestation → reject
+untrusted signing key → reject
+```
+
+## Delegation invariants
+
+```text
+allowed target → succeeds
+unapproved target → reverts
+
+allowed selector → succeeds
+unapproved selector → reverts
+
+$2 spend under $5 limit → succeeds
+$10 spend → reverts
+
+before expiry → succeeds
+after expiry → reverts
+
+revoked lease → reverts
+```
+
+## ERC-8183 invariants
+
+```text
+cannot submit before funded
+wrong provider cannot submit
+cannot complete before submission
+wrong evaluator cannot complete
+completion releases expected funds
+expired job refunds according to protocol
+receipt hash preserved
+```
+
+## End-to-end invariant
+
+One command should eventually prove:
+
+```text
+create job
+fund job
+delegate authority
+run worker in TEE
+generate artifact
+close WorkerKit run
+sign receipt
+create attestation
+independently verify
+submit job
+complete job
+settle funds
+write outcome
+update agent evidence
+verify entire WorkerKit chain
+```
+
+That is your golden test.
+
+---
+
+# 38. P0 / P1 / P2
+
+## P0 — mandatory
+
+Do not move on until this works:
+
+```text
+WorkerKit inside dstack
++
+TEE-derived signing key
++
+AttestedWorkReceiptV1
++
+fresh remote attestation
++
+independent verification
++
+ERC-8004 agent identity
++
+ERC-8183 funded → submitted → completed
+```
+
+If ETHOnline ended there, you would still have a legitimate project.
+
+## P1 — the memorable innovation
+
+```text
+ERC-7710 agent lease
++
+bounded spend
++
+allowed methods/targets
++
+malicious action rejected
++
+x402 paid verification call
+```
+
+This is what makes it feel like a protocol rather than an integration demo.
+
+## P2 — presentation / interoperability
+
+```text
+Moltwork board
+A2A Agent Card
+ENSv2 identity
+Hedera adapter
+marketplace listing
+```
+
+Do P2 only after P0/P1 are solid.
+
+---
+
+# 39. Hackathon development schedule
+
+## Before kickoff
+
+Do **not** disguise pre-existing implementation as hackathon work.
+
+Instead prepare:
+
+```text
+PROTOCOL.md
+THREATMODEL.md
+architecture diagrams
+dependency research
+ABI notes
+test vectors
+demo storyboard
+baseline commit hash
+existing-feature disclosure
+```
+
+You can play with the public dstack simulator to understand how it works, but if you prototype the actual Moltwork integration before kickoff, treat it as pre-existing rather than pretending it is event work.
+
+ETHGlobal requires Continuity projects to disclose their pre-existing state and show substantive new event-period work. ([ETHGlobal][1])
+
+## September 4
+
+```text
+tag/freeze existing Moltwork baseline
+create ethonline-2026 branch
+write ETHONLINE_BASELINE.md
+add protocol package skeleton
+add AttestedWorkReceiptV1
+```
+
+## September 5
+
+```text
+run WorkerKit in dstack simulator
+call info()
+derive secp256k1 workload key
+sign receipt digest
+```
+
+## September 6
+
+```text
+generate versioned attestation
+bind fresh nonce + receipt digest
+build external verifier
+write tampering/replay tests
+```
+
+At the end of this day:
+
+> **One Moltwork run is independently TEE-verifiable.**
+
+That is milestone #1.
+
+## September 7
+
+```text
+deploy worker on actual Phala/dstack environment
+pin image digests
+verify compose hash
+publish evidence bundle
+create public /verify endpoint
+```
+
+## September 8
+
+```text
+register ERC-8004 identity
+connect TEE signer metadata
+implement ValidationAdapter
+```
+
+## September 9
+
+```text
+deploy ERC-8183 contracts Base Sepolia
+create real funded test job
+map WorkOrder ↔ job
+```
+
+## September 10
+
+```text
+full:
+fund
+→ work
+→ submit
+→ verify
+→ complete
+→ settlement
+```
+
+Milestone #2:
+
+> **A cryptographically evidenced agent completed a paid standard job.**
+
+## September 11
+
+```text
+integrate ERC-7710
+create delegated execution path
+AllowedTargets
+AllowedMethods
+expiry
+budget restriction
+```
+
+## September 12
+
+```text
+turn delegation into Moltwork Lease
+TEE signer becomes lease redeemer
+malicious transfer test
+revocation test
+```
+
+Milestone #3:
+
+> **An agent can be leased without handing over its wallet or secrets.**
+
+## September 13
+
+```text
+x402 v2 paid verification endpoint
+agent autonomously pays verifier
+payment recorded in WorkerKit
+```
+
+## September 14
+
+```text
+thin board/indexer
+worker profile
+jobs
+receipts
+attestation status
+leases
+settlements
+```
+
+## September 15
+
+```text
+A2A Agent Card if useful
+optional ENSv2
+optional sponsor integration
+
+freeze functionality
+hardening
+README
+threat model
+diagrams
+demo video rehearsal
+```
+
+## September 16
+
+```text
+integration tests
+fresh deployment
+fresh transaction traces
+final video
+submission
+```
+
+---
+
+# 40. The demo
+
+Make the demo tell one story.
+
+### Scene 1 — agent exists
+
+Show:
+
+```text
+Moltwork Worker #481
+ERC-8004 identity
+TEE runtime verified
+```
+
+### Scene 2 — someone wants work
+
+Create:
+
+```text
+$5 ERC-8183 job
+```
+
+Fund it.
+
+### Scene 3 — lease worker
+
+Give the TEE execution identity:
+
+```text
+20-minute authority
+≤ $1 USDC spend
+only ERC-8183 contract
+only approved methods
+```
+
+### Scene 4 — worker starts
+
+WorkerKit receives job.
+
+Show:
+
+```text
+reward
+estimated cost
+EV
+budget
+```
+
+### Scene 5 — TEE execution
+
+Show:
+
+```text
+dstack app ID
+compose hash
+runtime
+public signing key
+```
+
+### Scene 6 — receipt
+
+WorkerKit produces:
+
+```text
+event chain
+artifact hash
+cost
+policy hash
+job reference
+receipt digest
+TEE signature
+```
+
+### Scene 7 — verification
+
+Independent verifier checks:
+
+```text
+hardware
+workload
+fresh challenge
+receipt binding
+signature
+```
+
+Green:
+
+```text
+TEE VERIFIED
+```
+
+### Scene 8 — settlement
+
+Submit work.
+
+Evaluator approves.
+
+ERC-8183 releases money.
+
+### Scene 9 — reputation
+
+Board updates:
+
+```text
+job +1
+successful +1
+actual cost $0.74
+reward $5
+TEE verified
+payment verified
+```
+
+### Scene 10 — security punchline
+
+Attempt to make leased worker transfer more than allowed.
+
+Transaction reverts.
+
+Then say:
+
+> The renter can use the agent's productive capacity, but cannot take control of its secrets or treasury.
+
+That's the demo.
+
+---
+
+# 41. What not to build
+
+Do not build:
+
+```text
+custom agent NFT
+custom escrow protocol
+custom wallet
+custom delegation crypto
+custom TEE verification algorithm
+custom x402 implementation
+complex staking
+token
+DAO
+agent launchpad
+full marketplace
+cross-chain bridge
+zkML system
+full Virtuals replacement
+```
+
+Those all dilute the protocol.
+
+Compose mature primitives.
+
+---
+
+# 42. The crypto primitive Moltwork actually contributes
+
+Ethereum gives you:
+
+```text
+identity
+escrow
+delegation
+payments
+```
+
+Phala gives you:
+
+```text
+confidential execution
+derived keys
+attestation
+```
+
+WorkerKit gives you:
+
+```text
+economic work semantics
+execution history
+event chain
+cost accounting
+verification gates
+artifacts
+outcomes
+process learning
+```
+
+Moltwork's contribution is the **binding layer**:
+
+```text
+economic work
+      ↕
+cryptographically verifiable execution
+      ↕
+portable agent identity
+      ↕
+standard settlement
+      ↕
+bounded delegated authority
+```
+
+That is not another marketplace.
+
+That's infrastructure from which the marketplace falls out.
+
+---
+
+# 43. Long HTTPS source pack
+
+## Moltwork
+
+[https://github.com/prx0r/mw](https://github.com/prx0r/mw?utm_source=chatgpt.com)
+
+## ETHGlobal
+
+[https://ethglobal.com/rules](https://ethglobal.com/rules?utm_source=chatgpt.com)
+
+[https://ethglobal.com/events/ethonline2026/prizes](https://ethglobal.com/events/ethonline2026/prizes?utm_source=chatgpt.com)
+
+## Phala / dstack
+
+[https://github.com/Dstack-TEE/dstack](https://github.com/Dstack-TEE/dstack?utm_source=chatgpt.com)
+
+[https://github.com/Dstack-TEE/dstack-examples](https://github.com/Dstack-TEE/dstack-examples?utm_source=chatgpt.com)
+
+[https://github.com/Dstack-TEE/dstack/blob/next/docs/verification.md](https://github.com/Dstack-TEE/dstack/blob/next/docs/verification.md?utm_source=chatgpt.com)
+
+[https://github.com/Dstack-TEE/dstack/blob/next/docs/security/security-model.md](https://github.com/Dstack-TEE/dstack/blob/next/docs/security/security-model.md?utm_source=chatgpt.com)
+
+[https://github.com/Dstack-TEE/dstack/blob/next/sdk/curl/api.md](https://github.com/Dstack-TEE/dstack/blob/next/sdk/curl/api.md?utm_source=chatgpt.com)
+
+[https://github.com/Dstack-TEE/dstack/blob/master/sdk/python/README.md](https://github.com/Dstack-TEE/dstack/blob/master/sdk/python/README.md?utm_source=chatgpt.com)
+
+[https://github.com/Phala-Network/trust-center](https://github.com/Phala-Network/trust-center?utm_source=chatgpt.com)
+
+## ERC-8004 — agent identity / reputation / validation
+
+[https://eips.ethereum.org/EIPS/eip-8004](https://eips.ethereum.org/EIPS/eip-8004?utm_source=chatgpt.com)
+
+[https://github.com/erc-8004/erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts?utm_source=chatgpt.com)
+
+[https://github.com/erc-8004/erc-8004-contracts/blob/master/ERC8004SPEC.md](https://github.com/erc-8004/erc-8004-contracts/blob/master/ERC8004SPEC.md?utm_source=chatgpt.com)
+
+## ERC-8183 — agent jobs / escrow / evaluation
+
+[https://eips.ethereum.org/EIPS/eip-8183](https://eips.ethereum.org/EIPS/eip-8183?utm_source=chatgpt.com)
+
+[https://github.com/erc-8183/base-contracts](https://github.com/erc-8183/base-contracts?utm_source=chatgpt.com)
+
+[https://github.com/erc-8183/base-contracts/blob/main/docs/01-architecture.md](https://github.com/erc-8183/base-contracts/blob/main/docs/01-architecture.md?utm_source=chatgpt.com)
+
+[https://github.com/erc-8183/base-contracts/blob/main/docs/02-hook-system.md](https://github.com/erc-8183/base-contracts/blob/main/docs/02-hook-system.md?utm_source=chatgpt.com)
+
+## ERC-7710 / agent delegation
+
+[https://eips.ethereum.org/EIPS/eip-7710](https://eips.ethereum.org/EIPS/eip-7710?utm_source=chatgpt.com)
+
+[https://eips.ethereum.org/EIPS/eip-7715](https://eips.ethereum.org/EIPS/eip-7715?utm_source=chatgpt.com)
+
+[https://github.com/MetaMask/delegation-framework](https://github.com/MetaMask/delegation-framework?utm_source=chatgpt.com)
+
+[https://github.com/MetaMask/delegation-framework/blob/main/documents/Deployments.md](https://github.com/MetaMask/delegation-framework/blob/main/documents/Deployments.md?utm_source=chatgpt.com)
+
+[https://github.com/MetaMask/delegation-framework/blob/main/documents/CaveatEnforcers.md](https://github.com/MetaMask/delegation-framework/blob/main/documents/CaveatEnforcers.md?utm_source=chatgpt.com)
+
+## x402
+
+[https://github.com/x402-foundation/x402](https://github.com/x402-foundation/x402?utm_source=chatgpt.com)
+
+[https://github.com/x402-foundation/x402/tree/main/specs](https://github.com/x402-foundation/x402/tree/main/specs?utm_source=chatgpt.com)
+
+[https://github.com/x402-foundation/x402/blob/main/specs/x402-specification-v2.md](https://github.com/x402-foundation/x402/blob/main/specs/x402-specification-v2.md?utm_source=chatgpt.com)
+
+[https://docs.cdp.coinbase.com/x402/migration-guide](https://docs.cdp.coinbase.com/x402/migration-guide?utm_source=chatgpt.com)
+
+[https://docs.cdp.coinbase.com/x402/network-support](https://docs.cdp.coinbase.com/x402/network-support?utm_source=chatgpt.com)
+
+## A2A
+
+[https://github.com/a2aproject/A2A](https://github.com/a2aproject/A2A?utm_source=chatgpt.com)
+
+[https://github.com/a2aproject/A2A/blob/main/docs/specification.md](https://github.com/a2aproject/A2A/blob/main/docs/specification.md?utm_source=chatgpt.com)
+
+[https://github.com/a2aproject/A2A/blob/main/docs/topics/a2a-and-mcp.md](https://github.com/a2aproject/A2A/blob/main/docs/topics/a2a-and-mcp.md?utm_source=chatgpt.com)
+
+## MCP
+
+[https://modelcontextprotocol.io/specification/2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28?utm_source=chatgpt.com)
+
+[https://github.com/modelcontextprotocol/modelcontextprotocol/tree/main/docs/specification/2026-07-28](https://github.com/modelcontextprotocol/modelcontextprotocol/tree/main/docs/specification/2026-07-28?utm_source=chatgpt.com)
+
+## ENSv2 — optional continuity integration
+
+[https://docs.ens.domains/ensv2/overview](https://docs.ens.domains/ensv2/overview?utm_source=chatgpt.com)
+
+[https://docs.ens.domains/ensv2/enhanced-access-control](https://docs.ens.domains/ensv2/enhanced-access-control?utm_source=chatgpt.com)
+
+[https://docs.ens.domains/ensv2/permissioned-registry](https://docs.ens.domains/ensv2/permissioned-registry?utm_source=chatgpt.com)
+
+[https://docs.ens.domains/ensv2/permissioned-resolver](https://docs.ens.domains/ensv2/permissioned-resolver?utm_source=chatgpt.com)
+
+---
+
+# 44. The first thing to build at kickoff
+
+Ignore ERC-8183 initially.
+
+Ignore the marketplace.
+
+Ignore x402 initially.
+
+Ignore ENS.
+
+The first engineering target should be exactly this:
+
+```text
+existing WorkerKit run
+        ↓
+dstack TEE
+        ↓
+event chain
+        ↓
+artifact
+        ↓
+AttestedWorkReceiptV1
+        ↓
+TEE-derived secp256k1 signature
+        ↓
+fresh dstack attestation
+        ↓
+external independent verifier
+        ↓
+VERIFIED
+```
+
+Once that works, **everything else becomes composition**.
+
+Then:
+
+```text
++ ERC-8004
+```
+
+Then:
+
+```text
++ ERC-8183
+```
+
+Then the fun thing:
+
+```text
++ ERC-7710 lease
+```
+
+Then:
+
+```text
++ x402
+```
+
+Then expose all of it through the Moltwork board.
+
+That sequence keeps the difficult, genuinely differentiated primitive at the center instead of getting distracted by marketplace UI.
+
+The core technical thesis I'd use for ETHOnline is therefore **“proof of work, not proof-of-compute”**: proving which agent/runtime/policy performed a real economic job, what it produced, what authority it had, what it cost, and how it settled. ERC-8004 explicitly anticipates TEE validation, ERC-8183 gives you the commerce lifecycle, ERC-7710 gives you bounded autonomous authority, and dstack gives you the execution root of trust. ([Ethereum Improvement Proposals][10])
+
+The strongest immediate move is to **freeze `mw` as the pre-hackathon baseline and write the protocol/test vectors now, then make `AttestedWorkReceiptV1 + dstack verifier` the first event-period implementation.** That gives you one very sharp target instead of twenty integrations.
+
+ETHOnline's partner requirements are still changing—Ledger and some others currently say “prize details coming soon.” ([ETHGlobal][19]) I can monitor that and flag any newly published prize that this architecture can hit without distorting Moltwork.
+
+[1]: https://ethglobal.com/rules?utm_source=chatgpt.com "ETHGlobal | Code of Conduct"
+[2]: https://github.com/erc-8004/erc-8004-contracts?utm_source=chatgpt.com "GitHub - erc-8004/erc-8004-contracts: Registry contracts curated by the 8004 team · GitHub"
+[3]: https://github.com/MetaMask/delegation-framework/blob/main/documents/Deployments.md "delegation-framework/documents/Deployments.md at main · MetaMask/delegation-framework · GitHub"
+[4]: https://docs.cdp.coinbase.com/x402/migration-guide?utm_source=chatgpt.com "Migration Guide (v1 → v2) - Coinbase Developer Documentation"
+[5]: https://github.com/Dstack-TEE/dstack/blob/next/sdk/curl/api.md?utm_source=chatgpt.com "dstack/sdk/curl/api.md at next · Dstack-TEE/dstack · GitHub"
+[6]: https://github.com/dstack-tee/dstack-examples?utm_source=chatgpt.com "GitHub - Dstack-TEE/dstack-examples: examples and utilities of dstack applications · GitHub"
+[7]: https://github.com/Dstack-TEE/dstack/blob/master/sdk/python/README.md?utm_source=chatgpt.com "dstack/sdk/python/README.md at master · Dstack-TEE/dstack · GitHub"
+[8]: https://github.com/Dstack-TEE/dstack/blob/next/docs/verification.md?utm_source=chatgpt.com "dstack/docs/verification.md at next · Dstack-TEE/dstack · GitHub"
+[9]: https://github.com/Dstack-TEE/dstack/blob/next/docs/security/security-model.md?utm_source=chatgpt.com "dstack/docs/security/security-model.md at next · Dstack-TEE/dstack · GitHub"
+[10]: https://eips.ethereum.org/EIPS/eip-8004?utm_source=chatgpt.com "ERC-8004: Trustless Agents"
+[11]: https://eips.ethereum.org/EIPS/eip-8183?utm_source=chatgpt.com "ERC-8183: Agentic Commerce"
+[12]: https://github.com/erc-8183/base-contracts?utm_source=chatgpt.com "GitHub - erc-8183/base-contracts: This is the base contracts for ERC 8183 implementation. · GitHub"
+[13]: https://eips.ethereum.org/EIPS/eip-7710 "ERC-7710: Smart Contract Delegation"
+[14]: https://github.com/MetaMask/delegation-framework?utm_source=chatgpt.com "GitHub - MetaMask/delegation-framework: The contracts that power the Delegation Framework · GitHub"
+[15]: https://docs.cdp.coinbase.com/x402/network-support?utm_source=chatgpt.com "Network Support - Coinbase Developer Documentation"
+[16]: https://github.com/a2aproject/A2A/blob/main/docs/specification.md?utm_source=chatgpt.com "A2A/docs/specification.md at main · a2aproject/A2A · GitHub"
+[17]: https://github.com/a2aproject/A2A/blob/main/docs/topics/a2a-and-mcp.md?utm_source=chatgpt.com "A2A/docs/topics/a2a-and-mcp.md at main · a2aproject/A2A · GitHub"
+[18]: https://blog.modelcontextprotocol.io/posts/2026-07-28/?utm_source=chatgpt.com "The 2026-07-28 Specification | Model Context Protocol Blog"
+[19]: https://ethglobal.com/events/ethonline2026/prizes "ETHGlobal"

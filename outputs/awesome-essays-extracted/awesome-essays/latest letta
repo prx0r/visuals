@@ -1,0 +1,1729 @@
+I could not resolve `https://github.com/prx0r/mwok` through the GitHub connector; it returns 404. Given your note about the ETHOnline branch, I reviewed **`prx0r/mw` → `ethonline-2026`** at current HEAD `ad43fc7`. That branch is the real project: it is **23 commits ahead of `master`, 0 behind**.
+
+## Verdict
+
+**Architecture: 8.5/10**
+**WorkerKit core: 8/10**
+**ETHOnline submission readiness today: ~5/10**
+**Potential after hardening the actual demo path: 9/10**
+
+The problem has flipped from where it was yesterday.
+
+You no longer have an under-designed project. You now have **too many excellent-looking layers whose implementations are less real than their names/documentation imply**.
+
+The canonical WorkerKit is still the strongest thing in the repo. The newer frontier architecture is directionally excellent. But if I were a technically aggressive ETHOnline judge and cloned this today, I could break several of the headline claims very quickly.
+
+The critical priority is now:
+
+> **Stop adding abstractions. Make P0–P9 literally true in one reproducible execution.**
+
+---
+
+# The biggest positive change
+
+The latest branch is substantially better conceptually than `master`.
+
+The branch added all of the things we were discussing:
+
+```text
+interfaces/
+    RuntimeAdapter
+    MemoryRef
+    WorkspaceRef
+    TrajectoryRef
+    SkillRef
+
+workspace/
+    Git worktrees
+
+services/runtime-letta/
+    Letta Agent SDK
+
+lab/
+    brief
+    context
+    reflection
+    synthesis
+    router
+    projections
+
+learning/
+    proposal
+    promote
+
+campaigns/
+opportunities/
+packs/hackathon/
+harvest/
+inventory/
+
+TEE
+ERC-8004
+ERC-8183
+leasing
+receipts
+```
+
+The newest commit explicitly frames this as “delete abstractions, use smallest interfaces,” which is exactly right.
+
+Your `interfaces/__init__.py` is one of the best architectural files in the repo now. Five boundaries—
+
+```text
+RuntimeAdapter
+MemoryRef
+WorkspaceRef
+TrajectoryRef
+SkillRef
+```
+
+—are enough to keep Moltwork independent of whatever wins in agents/memory/trajectory later.
+
+**Keep this. Freeze it.**
+
+---
+
+# P0 BLOCKER 1 — HEAD is not actually covered by the “319 tests pass” claim
+
+This is important.
+
+The commit history says:
+
+> `98547d5` — All 319 tests pass.
+
+Then **after that**:
+
+* `85e1300` added interfaces, synthesis and router.
+* `ad43fc7` replaced WorkerManifest with v1 and new refs.
+
+And I can already statically see that the existing Letta test is stale.
+
+`tests/test_letta.py` calls:
+
+```python
+build_manifest(
+    ...,
+    runtime_image="..."
+)
+```
+
+and later checks:
+
+```python
+m.worker
+```
+
+But current `build_manifest()` no longer accepts `runtime_image`, and current `WorkerManifest` exposes:
+
+```python
+worker_id
+```
+
+rather than `worker`.
+
+So **current HEAD almost certainly does not satisfy the previous 319-pass statement**.
+
+Before anything else:
+
+```bash
+pytest / equivalent all suites at ad43fc7
+npm test services/runtime-letta
+typecheck
+package-install smoke test
+```
+
+and make that a CI badge.
+
+---
+
+# P0 BLOCKER 2 — WorkerManifest v1 hashing is currently broken
+
+This is the most serious cryptographic/data-model bug I found.
+
+Current:
+
+```python
+def manifest_hash(self):
+    d = {
+        ...
+        "versionId": self.version_id,
+        ...
+    }
+```
+
+Then:
+
+```python
+"versionId": self.version_id or self.manifest_hash()
+```
+
+So initially:
+
+```text
+version_id = ""
+hash = H(manifest with versionId="")
+```
+
+But after loading the saved manifest:
+
+```text
+version_id = first hash
+new hash = H(manifest with versionId=first hash)
+```
+
+That is different.
+
+You have introduced a self-reference.
+
+`versionId` cannot be both:
+
+```text
+the digest
+```
+
+and:
+
+```text
+an input to that digest
+```
+
+unless you explicitly define a fixed canonical placeholder.
+
+Much simpler:
+
+```text
+manifestDigest = H(canonical manifest excluding:
+    versionId
+    manifestHash
+    createdAt
+)
+```
+
+and:
+
+```text
+versionId = manifestDigest
+```
+
+Never hash `versionId`.
+
+---
+
+## Worse: the current manifest hash omits fields it is supposed to bind
+
+The manifest defines:
+
+```text
+model_settings_digest
+tool_policy_digest
+tool_schema_digest
+workerkit_version
+evidence_schema
+```
+
+but `manifest_hash()` does not include them.
+
+So I can change:
+
+```text
+tool policy
+model settings
+WorkerKit evidence version
+```
+
+without changing the purported WorkerVersion digest.
+
+That breaks the core claim:
+
+> exact Worker state commitments produce reproducible digest.
+
+Your P2 fails until fixed.
+
+### Correct content
+
+Hash at least:
+
+```text
+schemaVersion
+workerId
+parentVersion
+
+runtime:
+  adapter
+  backend
+  sdkVersion
+  image digest
+
+agent:
+  provider
+  agent ID / portable state digest
+
+memory:
+  MemFS commit
+  tree digest
+
+skills:
+  all refs
+  skill tree digest
+
+model:
+  ID
+  provider
+  settings digest
+
+tools:
+  policy digest
+  schema digest
+
+WorkerKit:
+  version
+  evidence schema
+
+promotion:
+  proposal receipt
+  experiment receipt
+```
+
+This should have brutal mutation tests:
+
+```text
+change each field individually
+→ manifest digest MUST change
+```
+
+---
+
+# P0 BLOCKER 3 — the Git workspace path is actually broken
+
+This one will bite the first genuine autonomous run.
+
+`GitWorkspaceManager._git()` is:
+
+```python
+def _git(self, *args):
+    return _run(... cwd=self.repo_path)
+```
+
+But `commit_all()` calls:
+
+```python
+self._git("add", "-A", cwd=cwd)
+```
+
+`_git` does not accept `cwd`.
+
+That raises:
+
+```text
+TypeError: _git() got an unexpected keyword argument 'cwd'
+```
+
+on the exact flow you care about.
+
+The close path calls it:
+
+```python
+self.git.commit_all(
+    f"run: {run_id} completed",
+    ws.worktree_path
+)
+```
+
+so real worktree closure is broken too.
+
+### Fix
+
+Don't wrap Git inconsistently.
+
+Have:
+
+```python
+def _git(self, *args, cwd: Path | None = None):
+    return _run(
+        ["git", *args],
+        cwd=str(cwd or self.repo_path)
+    )
+```
+
+And test:
+
+```text
+init temporary git repo
+commit baseline
+create worktree
+modify file
+commit from worktree
+assert worktree HEAD != base
+assert main working tree unchanged
+close
+remove worktree
+```
+
+A **real subprocess Git test**, not mocked Git.
+
+---
+
+# P0 BLOCKER 4 — `mwgo init` is mostly an installer-shaped mock right now
+
+The file is excellent as a specification of what init should do.
+
+But it doesn't do what the docstring says.
+
+It claims:
+
+> Creates Git repo + WorkerKit + Letta agent + MemFS + WorkerManifest + Lab projection.
+
+Actual implementation:
+
+```text
+✓ creates directory
+✓ git init
+✓ writes config
+✓ creates directories
+✓ writes empty manifest
+✓ writes empty lineage
+✓ initial git commit
+
+✗ does not start/install Letta
+✗ does not create Letta Agent
+✗ does not obtain letta_agent_id
+✗ does not discover MemFS
+✗ does not record MemFS commit
+✗ does not instantiate WorkerKit ledger schema
+✗ does not create actual Lab projection
+✗ does not perform health test
+✗ does not create .af snapshot
+✗ does not compute WorkerManifest hash
+```
+
+The manifest literally starts with:
+
+```json
+"agentId": "",
+"afSnapshotDigest": "",
+"memfsCommit": "",
+"memfsTreeDigest": ""
+```
+
+yet the script finishes:
+
+> my-lab is ready.
+
+That's okay as a scaffold during development, but **do not demo this yet**.
+
+---
+
+## Also: this isn't actually `npx mwgo`
+
+You currently have:
+
+```text
+packages/mwgo/src/init.py
+```
+
+but no npm package/CLI in the branch diff.
+
+So the UX we've been describing:
+
+```bash
+npx mwgo init my-lab
+```
+
+does not currently exist.
+
+I'd either:
+
+### MVP fastest
+
+Make it Python:
+
+```bash
+pipx install moltwork
+mwgo init my-lab
+```
+
+or:
+
+### Product direction
+
+Create a real tiny npm wrapper:
+
+```text
+packages/mwgo/
+    package.json
+    bin/mwgo.js
+```
+
+which shells into or bundles the WorkerKit distribution.
+
+Don't call something `npx mwgo` until that path works from a clean machine.
+
+---
+
+# P0 BLOCKER 5 — your ETHOnline test falsely marks simulation as “Real TEE”
+
+This must be fixed before judges see it.
+
+Your ETHOnline plan correctly says:
+
+> **P4 Real TEE — dstack with `is_simulated=false`, externally verifiable attestation.**
+
+Yet `tests/test_ethonline.py` does:
+
+```python
+sim = DstackSimulator(...)
+...
+test("attestation is_simulated", att.is_simulated)
+```
+
+and finally hardcodes:
+
+```python
+("P4", "Real TEE (simulator)", True)
+```
+
+That's exactly the kind of thing a judge can call out.
+
+A simulator is useful for:
+
+```text
+P4-SIM development test
+```
+
+It is absolutely not:
+
+```text
+P4 REAL TEE PASS
+```
+
+Change the output to:
+
+```text
+P4 REAL TEE: SKIPPED / FAIL
+reason: DSTACK simulator
+```
+
+and only flip P4 when:
+
+```python
+att.is_simulated is False
+```
+
+and quote verification succeeds independently.
+
+---
+
+# The dstack implementation itself is much better
+
+This is worth preserving.
+
+`tee/dstack.py` explicitly separates:
+
+```text
+RealDstackClient
+DstackSimulator
+```
+
+and puts `is_simulated` on its public objects. It also avoids treating simulator derivation as equivalent cryptography.
+
+That is good design.
+
+One change:
+
+```python
+def is_inside_tee():
+    if DSTACK_SIMULATOR_ENDPOINT:
+        return True
+```
+
+is semantically confusing.
+
+A simulator endpoint means:
+
+```text
+dstack available
+```
+
+not:
+
+```text
+inside TEE
+```
+
+Rename:
+
+```text
+dstack_endpoint_available()
+```
+
+and have an explicit:
+
+```text
+execution_mode = REAL | SIMULATOR | NONE
+```
+
+Much harder to misuse.
+
+---
+
+# P0 BLOCKER 6 — P6 “cryptographic lease” is currently not cryptographic
+
+The current `Lease` is useful as a policy object.
+
+But the docstring says:
+
+> Cryptographic lease object.
+
+It currently has:
+
+```text
+no signature
+no authenticated issuer
+no key release
+no TEE binding
+no onchain authority
+no replay store
+in-memory counters
+```
+
+So it's currently:
+
+> **a local authorization policy data structure**
+
+not a cryptographic lease.
+
+---
+
+## There are also enforcement bugs
+
+`LeaseLimits` contains:
+
+```python
+max_run_spend_usd
+max_duration_hours
+```
+
+But `record_invocation()` doesn't enforce per-run max spend.
+
+If:
+
+```text
+max_run_spend = $5
+remaining lease budget = $100
+```
+
+I can call one invocation costing:
+
+```text
+$75
+```
+
+and it accepts it.
+
+Likewise `max_duration_hours` isn't used for execution duration.
+
+---
+
+## Lease hash doesn't commit all economic/security terms
+
+The hash includes:
+
+```text
+max_invocations
+max_spend
+max_run_spend
+tools
+network domains
+```
+
+but appears to omit:
+
+```text
+max_duration_hours
+wallet_max_value_usd
+owner_bps
+renter_bps
+```
+
+So terms can be altered without changing the lease digest.
+
+P6 needs the same mutation-test treatment as WorkerManifest.
+
+---
+
+# P0 BLOCKER 7 — P7 is not ERC-8004 proof yet
+
+Your dedicated ERC-8004 file is currently an **off-chain in-memory representation**:
+
+```python
+self._registrations = {}
+self._reputation = {}
+self._validations = {}
+```
+
+That's fine as schema/domain code.
+
+But `tests/test_ethonline.py` doesn't even use that for P7.
+
+Instead it generates:
+
+```python
+"erc8004_id":
+    "0x" + sha256("researcher-03")[:40]
+```
+
+and:
+
+```text
+researcher03.moltwork.eth
+```
+
+plus hypothetical API endpoints.
+
+That is not portable onchain identity.
+
+For P7 you need something like:
+
+```text
+actual testnet tx hash
+actual registry contract
+actual agent token/ID
+actual registration URI
+actual service endpoint
+```
+
+Then the demo can independently resolve it.
+
+---
+
+# P0 BLOCKER 8 — P10 says “real evaluator” while using `DeterministicMockEvaluator`
+
+This is another judge-dangerous mismatch.
+
+The test comments:
+
+> Compute REAL scores from evaluator — not hardcoded
+
+then imports:
+
+```python
+DeterministicMockEvaluator
+```
+
+and evaluates `v1` vs `v2` through it.
+
+Your `cg/evolve.py` itself correctly says:
+
+> Hash-based scoring — FOR TESTS ONLY. Not evidence of learning.
+
+So don't have the ETHOnline proof test contradict the module.
+
+P10 should remain:
+
+```text
+NOT PROVEN
+```
+
+until real parent and candidate workers actually execute held-out tasks.
+
+---
+
+# P0 BLOCKER 9 — `LearningPromoter` does not implement the promotion guarantees in its own docs
+
+Its claimed flow is excellent:
+
+```text
+candidate MemFS worktree
+→ patch
+→ cg held-out validation
+→ PASS
+→ merge
+→ Git commit
+→ WorkerManifest
+```
+
+Actual flow:
+
+```text
+mkdir
+cp -r MemFS
+write patch
+check patch exists
+write promotions/foo.json
+hash JSON
+return success=True
+```
+
+It never:
+
+```text
+creates Git worktree
+runs cg
+requires an ExperimentResult
+checks before/after scores
+checks gate regressions
+merges MemFS
+creates Git commit
+updates WorkerManifest
+```
+
+`experiment_result=None` is perfectly acceptable to `promote()`.
+
+This is the biggest mismatch between architecture and implementation outside the ETHOnline proof test.
+
+### Make it impossible to promote without:
+
+```python
+assert experiment_result is not None
+assert experiment_result.promoted
+assert candidate_manifest.parent_version == production_manifest.version_id
+assert no_gate_regressions
+```
+
+And return the **real MemFS commit**, not a hash of the promotion metadata.
+
+---
+
+# P1 — `lab/router.py` should probably not exist yet
+
+Conceptually excellent.
+
+Implementation currently routes keywords and then every backend returns:
+
+```python
+results=[]
+confidence=0.5
+```
+
+So:
+
+```text
+Rekal-style router
+```
+
+is currently just a design placeholder.
+
+I would either:
+
+### Option A
+
+Remove it from the demo path.
+
+Or:
+
+### Option B
+
+Implement just three genuine queries:
+
+```text
+structure → git ls-tree / inventory
+episode   → trajectory lookup
+why       → decision records
+```
+
+Don't pretend it's a retrieval system until retrieval occurs.
+
+---
+
+# Same problem in `lab/synthesis.py`
+
+Calling it “Trace2Skill-style” overstates current implementation.
+
+Today:
+
+```text
+loop trajectories
+extract failure/review/decision strings
+dedupe by first 50 characters
+format Markdown
+```
+
+No parallel trajectory analysis.
+
+No semantic conflict resolution.
+
+No actual procedure induction.
+
+No LLM synthesizer.
+
+No validation filtering.
+
+Again, architecture is correct.
+
+Name it something more modest for now:
+
+```text
+RuleBasedSkillCandidateBuilder
+```
+
+Then later:
+
+```text
+Trace2SkillSynthesizer
+```
+
+can implement the actual upstream-inspired algorithm.
+
+---
+
+# P0/P1 — the Letta runtime still has safety/integration debt
+
+The runtime service has the right core lifecycle:
+
+```text
+moltwork_worker_id
+      ↓
+persistent Letta agent ID
+
+each run
+      ↓
+fresh Letta session
+```
+
+This is exactly correct.
+
+But there are several issues.
+
+## `permissionMode: "approve-all"`
+
+Current execution does:
+
+```ts
+permissionMode: "approve-all"
+```
+
+This undercuts the WorkerKit `CommitGate` story.
+
+If Moltwork says:
+
+> irreversible operations require an independently validated gate
+
+then the runtime cannot simultaneously be configured to approve arbitrary execution permissions.
+
+Translate:
+
+```text
+WorkOrder policy
+→ allowedTools
+→ per-tool authorization
+→ WorkerKit gate for irreversible actions
+```
+
+---
+
+## Budget is passed, not enforced
+
+Request:
+
+```ts
+budget?: number
+```
+
+is accepted.
+
+But I don't see it governing Letta execution.
+
+It simply goes unused in the session logic.
+
+The WorkerKit budget should be a hard stop, not prompt metadata.
+
+---
+
+## Health endpoint doesn't probe health
+
+It constructs:
+
+```ts
+const client = getClient()
+```
+
+then immediately returns:
+
+```json
+{"ok": true}
+```
+
+No operation is awaited.
+
+So you can potentially return healthy while the actual local backend is unusable.
+
+Use the real SDK operation you're already attempting at startup.
+
+---
+
+## Learning endpoint bypasses your new cg architecture
+
+It directly prompts the agent:
+
+```text
+/remember Update...
+```
+
+or:
+
+```text
+Create or update skills/.../SKILL.md
+```
+
+That should **not exist as an unrestricted production API**.
+
+At minimum:
+
+```text
+POST /learning/proposals
+```
+
+not:
+
+```text
+POST /learning
+```
+
+Only Moltwork promotion should mutate durable production state.
+
+---
+
+# P1 — pin upstream dependencies
+
+Runtime `package.json` currently has:
+
+```json
+"@letta-ai/letta-agent-sdk": "latest",
+"@letta-ai/trajectory": "latest"
+```
+
+For a project whose main product claim is:
+
+> reproducible WorkerVersion
+
+this is particularly bad.
+
+Worker versioning cannot meaningfully attest:
+
+```text
+runtime: Letta
+```
+
+while runtime means:
+
+```text
+whatever npm latest meant that day
+```
+
+Pin exact versions.
+
+Prefer lockfile + version in WorkerManifest:
+
+```json
+{
+  "adapter": "letta-agent-sdk",
+  "sdkVersion": "x.y.z",
+  "packageLockDigest": "sha256:..."
+}
+```
+
+---
+
+# P0 — Python packaging needs cleanup before a judge clones it
+
+`pyproject.toml` says:
+
+```toml
+packages = ["workerkit"]
+```
+
+and entrypoint:
+
+```toml
+wk = "workerkit.wk:main"
+```
+
+But the repository structure you've built is top-level:
+
+```text
+core/
+lab/
+tee/
+workspace/
+sdk.py
+wk.py
+...
+```
+
+not obviously:
+
+```text
+workerkit/
+    core/
+    lab/
+```
+
+The test files compensate with things like:
+
+```python
+sys.path.insert(0, "/root")
+```
+
+and import a mixture of:
+
+```python
+from workerkit.sdk ...
+```
+
+and:
+
+```python
+from core.hashing ...
+```
+
+This is a classic:
+
+> works in my `/root/workerkit` checkout
+
+problem.
+
+### Fix before submission
+
+Make a real source tree:
+
+```text
+src/
+  workerkit/
+      core/
+      economics/
+      verify/
+      ...
+```
+
+or make `mw` the actual package.
+
+Then all imports are one form:
+
+```python
+from workerkit.core.hashing import ...
+```
+
+No absolute `/root`.
+
+---
+
+# P0 — add CI
+
+I checked `.github` on `ethonline-2026`; there is no workflow directory exposed.
+
+That is a substantial credibility miss for a project centered around:
+
+```text
+proof
+verification
+test invariants
+reproducibility
+```
+
+You need at least:
+
+```yaml
+python:
+  install package cleanly
+  pytest
+
+node:
+  npm ci
+  npm run typecheck
+  npm test
+
+integrity:
+  manifest mutation tests
+  receipt mutation tests
+  lease mutation tests
+
+integration:
+  git worktree real subprocess
+```
+
+Then README:
+
+```text
+319 tests passing
+```
+
+actually means something.
+
+---
+
+# README is now dangerously stale
+
+Current ETHOnline README still says:
+
+```text
+11 record families
+55/55 tests
+~1,200 lines
+
+WorkerKit is NOT:
+memory
+skills
+orchestration
+marketplace
+```
+
+But the branch now has:
+
+```text
+Letta
+lab
+learning
+skills
+campaigns
+opportunities
+harvest
+inventory
+leasing
+TEE
+Ethereum protocols
+```
+
+This README describes `master`, not your actual ETHOnline project.
+
+A judge landing there will think the giant branch is either unfinished or undocumented.
+
+---
+
+# The ETHOnline binary proof matrix as it actually stands
+
+I would currently score your own P0–P11 like this:
+
+| Proof                         | Current state | Assessment                                                                   |
+| ----------------------------- | ------------- | ---------------------------------------------------------------------------- |
+| **P0 Taxonomy**               | 🟢            | Real enough                                                                  |
+| **P1 Persistent Worker**      | 🔴            | Test uses an `.af` fixture, not real Letta Agent SDK persistence             |
+| **P2 WorkerVersion**          | 🔴            | Manifest hash bug + omitted binding fields                                   |
+| **P3 WorkReceipt**            | 🟢            | Strongest part                                                               |
+| **P4 Real TEE**               | 🔴            | Explicit simulator                                                           |
+| **P5 Receipt ↔ TEE**          | 🟠            | Commitment model exists; real attestation chain not demonstrated             |
+| **P6 Bounded lease**          | 🔴            | Local mutable policy object, not cryptographic lease                         |
+| **P7 ERC-8004 identity**      | 🔴            | Synthetic ID in demo test                                                    |
+| **P8 Independent validation** | 🟢/🟠         | Local receipt validation is meaningful; external validation not demonstrated |
+| **P9 Experience reuse**       | 🟠            | Lab context exists; actual Letta reuse needs live demonstration              |
+| **P10 Learning**              | 🔴            | Deterministic mock evaluator                                                 |
+| **P11 Reusable capital**      | 🟠            | Inventory/harvesting scaffolding exists                                      |
+
+That's not bad.
+
+Because the three green/near-green pieces are **the core intellectual contribution**:
+
+```text
+WorkOrder
+→ witnessed execution
+→ event chain
+→ artifact
+→ economics
+→ verification
+→ gate
+→ receipt
+```
+
+You don't need eleven fake green boxes.
+
+Five indisputable proofs are far more impressive.
+
+---
+
+# `AttestedWorkReceiptV1` is promising but not fully wired
+
+The receipt object itself is sensible.
+
+It binds fields for:
+
+```text
+run
+WorkOrder
+WorkerManifest
+input
+policy
+event chain
+artifacts
+economics
+identity
+job
+delegation
+TEE
+payments
+```
+
+That's a strong object.
+
+But `from_workerkit_receipt()` currently populates only a small fraction:
+
+```text
+run_id
+work_order_id
+event_chain
+cost
+artifact hashes
+```
+
+and leaves things like:
+
+```text
+worker_manifest_digest
+policy
+ERC-8004 identity
+job
+delegation
+TEE
+payments
+```
+
+empty.
+
+This is actually where I would focus.
+
+Rather than more modules, make **one receipt contain real values across every subsystem you choose to demo**.
+
+---
+
+# `test_full_loop.py` is not actually a full Letta learning loop
+
+The title says:
+
+> `.af → WorkerKit → receipt → Letta learn → .af v+1`
+
+But the "Letta learning" section constructs `snap_v2` directly:
+
+```python
+snap_v2 = exporter.snapshot_from_agent(
+    blocks=[
+       ...
+       "Before generating ideas, construct a requirement matrix."
+    ],
+    memfs_commit="abc002"
+)
+```
+
+No Letta agent learned anything.
+
+No MemFS commit occurred.
+
+No cg experiment caused it.
+
+No real held-out comparison occurred.
+
+Rename this today to:
+
+```text
+test_full_provenance_model.py
+```
+
+because that's what it is actually testing.
+
+Then create:
+
+```text
+test_real_letta_learning_e2e.py
+```
+
+that genuinely requires the runtime.
+
+This matters because otherwise your test names inflate what is proven.
+
+---
+
+# What I would delete/defer immediately
+
+To get this submission hard:
+
+**Do not spend the next week improving:**
+
+```text
+lab/router.py
+lab/synthesis.py
+marketplace
+complex campaign orchestration
+more taxonomy types
+more protocol wrappers
+more docs
+more crypto primitives
+more speculative asset types
+```
+
+They're fine conceptually.
+
+They don't solve the current credibility gap.
+
+---
+
+# The next development sequence
+
+I would now do this in this exact order.
+
+### PR 1 — restore green HEAD
+
+Fix all tests against `ad43fc7`.
+
+Add CI.
+
+Target:
+
+```text
+HEAD
+Python tests: PASS
+TS tests: PASS
+TS typecheck: PASS
+clean package install: PASS
+```
+
+No new features.
+
+---
+
+### PR 2 — fix WorkerManifest formally
+
+Define canonical manifest hashing.
+
+Mutation tests on every security-relevant field.
+
+Test:
+
+```text
+save → load → digest unchanged
+```
+
+This should be non-negotiable.
+
+---
+
+### PR 3 — real Git worktree lifecycle
+
+Fix `cwd`.
+
+Run a real temporary repository integration test:
+
+```text
+base commit
+→ worktree
+→ modify
+→ commit
+→ WorkerSpaceRef
+→ close
+→ verify exact commit
+```
+
+Now GCC-style branch memory/work becomes real.
+
+---
+
+### PR 4 — make `mwgo init` genuine
+
+Acceptance test from empty temp directory:
+
+```bash
+mwgo init demo
+cd demo
+mwgo doctor
+```
+
+Must output real:
+
+```text
+Git ✓
+WorkerKit ✓
+Letta ✓
+worker ID ✓
+agent ID ✓
+MemFS ✓
+Manifest digest ✓
+```
+
+If Letta can't start:
+
+```text
+INIT FAIL
+```
+
+not:
+
+```text
+ready
+```
+
+---
+
+### PR 5 — real Letta P1
+
+Run:
+
+```text
+create Worker
+→ record mapping
+→ WorkOrder A / conversation A
+→ durable fact/skill exists
+→ restart runtime
+→ WorkOrder B / conversation B
+→ same agent
+→ retrieval succeeds
+```
+
+Capture:
+
+```text
+worker_id
+letta_agent_id
+conversation_a
+conversation_b
+MemFS commit
+```
+
+into evidence.
+
+This proves P1.
+
+---
+
+### PR 6 — real WorkerVersion P2
+
+After Letta exists:
+
+```text
+Agent ID
+MemFS commit
+Skills tree
+model
+tool policy
+runtime version
+```
+
+→ real WorkerManifest.
+
+Then receipt actually contains that digest.
+
+---
+
+### PR 7 — real dstack P4 + P5
+
+Do one actual deployed TEE run.
+
+No simulator fallback in the demo.
+
+```text
+is_simulated == false
+```
+
+Receipt digest committed to report data.
+
+External verifier takes:
+
+```text
+receipt
+attestation
+public quote data
+```
+
+and independently reports:
+
+```text
+VALID
+```
+
+This is the ETHOnline money shot.
+
+---
+
+### PR 8 — ERC-8004 actual testnet identity
+
+One worker.
+
+One transaction.
+
+One public registration.
+
+Don't build a giant identity SDK.
+
+Just make P7 true.
+
+---
+
+### PR 9 — bounded lease honestly
+
+For the hackathon, I'd reduce P6 to:
+
+```text
+TEE-enforced invocation capability
+3 calls
+$1 cap
+expiry
+specific WorkerVersion
+specific lessee
+```
+
+Every invocation generates a receipt.
+
+Then a second wallet can genuinely invoke without receiving worker private state.
+
+That's enough.
+
+---
+
+### PR 10 — one real Lab reuse demo
+
+Not self-improvement yet.
+
+Simpler:
+
+```text
+Run 1
+→ review/outcome
+→ Lab Brief
+
+Run 2
+→ same Worker
+→ Lab Brief injected
+```
+
+Show receipt dependency:
+
+```text
+briefing_id = ...
+```
+
+That makes P9 true.
+
+---
+
+# Then P10 only if time remains
+
+P10 is awesome but harder.
+
+Do:
+
+```text
+Worker v1
+5–10 training runs
+Trace2Skill-style candidate
+cg
+real held-out tasks
+Worker v2
+```
+
+If:
+
+```text
+quality up
+no gate regression
+```
+
+promote.
+
+If not, proudly show:
+
+```text
+candidate rejected
+```
+
+That's actually stronger scientifically than rigging green.
+
+---
+
+# The demo I would submit
+
+Don't show every module.
+
+Show this:
+
+```text
+1. Oracle finds a weird task
+
+2. Moltwork shows:
+   reward
+   expected cost
+   taxonomy
+   Worker version
+
+3. Second wallet invokes leased Worker
+
+4. Letta persistent Agent starts
+   in isolated Git worktree
+
+5. Worker creates real artifact
+
+6. WorkerKit live:
+   events
+   cost
+   tool actions
+
+7. Verification PASS
+
+8. CommitGate allows submission
+
+9. dstack:
+   simulated = FALSE
+
+10. Receipt:
+    WorkOrder
+    WorkerVersion
+    Git commit
+    artifact
+    cost
+    event root
+    TEE quote
+
+11. ERC-8004:
+    exact Worker identity
+
+12. Verify receipt from a separate process
+
+13. Lab:
+    run becomes experience
+```
+
+That's an exceptional submission.
+
+You don't need the marketplace.
+
+You barely even need learning.
+
+---
+
+# What I think the repo actually is now
+
+The good news is that the recent architecture work did not ruin WorkerKit.
+
+The central design is clearer:
+
+```text
+                    MOLTWORK
+
+Oracle                              Market
+  │                                   ▲
+  ▼                                   │
+Opportunity                           │
+  │                                   │
+  ▼                                   │
+WorkerKit ◄──── Letta + Git ──────────┤
+  │                                   │
+  ├── economics                       │
+  ├── evidence                        │
+  ├── verification                    │
+  └── receipts                        │
+          │                           │
+          ▼                           │
+         Lab ───── reusable capital ──┘
+```
+
+But I would now impose a hard engineering rule:
+
+> **No new file/module unless it makes an existing ETHOnline proof move from red → green.**
+
+Right now that means the most valuable work in the entire repository is not another frontier paper integration. It is:
+
+```text
+HEAD truly green
+WorkerManifest correct
+Git worktree really works
+mwgo really initializes
+Letta really persists
+dstack really attests
+receipt really binds it
+ERC-8004 really resolves it
+```
+
+Once those are true, `ethonline-2026` stops looking like an extremely ambitious prototype and starts looking like a genuinely novel protocol implementation.

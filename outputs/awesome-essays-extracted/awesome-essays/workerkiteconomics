@@ -1,0 +1,882 @@
+Yes. This is a major missing piece, and I would make it part of **WorkerKit's core economic runtime**, not spin it into another giant product yet.
+
+The important idea is bigger than “estimate token cost”:
+
+> **Every worker should know the economics of its own execution while it is working.**
+
+So the agent isn't merely asking:
+
+> Can I complete this?
+
+It is continuously asking:
+
+> **Is completing this still worth the money?**
+
+## The loop
+
+```text
+Oracle finds job
+Reward = $10
+        ↓
+WorkerKit inspects task
+        ↓
+Cost Controller
+        ↓
+"Based on comparable runs:
+
+Projected cost:
+$0.18 median
+$0.52 p90
+
+P(success):
+64%
+
+Expected payout:
+$6.40
+
+Expected net EV:
+~$6.10"
+
+        ↓
+START
+        ↓
+meter everything
+        ↓
+$0.04 spent
+$0.14 projected remaining
+        ↓
+continue
+        ↓
+unexpected difficulty
+        ↓
+$0.31 spent
+$0.90 projected remaining
+P(success) falls → 39%
+        ↓
+still worthwhile?
+        ↓
+yes / downgrade / buy help / abort
+```
+
+That's extremely useful.
+
+---
+
+# `er` becomes the prior
+
+What you previously built around model/task benchmarking is the right starting point: don't merely store model price.
+
+Store empirical:
+
+```text
+TASK TYPE
+× MODEL
+× PROVIDER
+× REASONING EFFORT
+× WORKFLOW/STAGE
+
+→ input tokens
+→ output tokens
+→ reasoning tokens
+→ calls
+→ retries
+→ latency
+→ actual cost
+→ verifier score
+→ success/failure
+```
+
+Then before a job, WorkerKit finds the nearest comparable historical runs.
+
+For example:
+
+```text
+Task:
+Python bugfix
+
+Historical runs:
+
+Model             median cost   pass rate   cost/success
+free-model-A          $0.00         31%         ~
+cheap-model-B         $0.07         71%         $0.10
+premium-model-C       $0.31         92%         $0.34
+```
+
+The critical metric is not:
+
+> cheapest tokens.
+
+It is:
+
+> **cheapest expected cost to acceptable success.**
+
+That was the sharp idea in the earlier benchmark design too.
+
+---
+
+# And then measured runs replace estimates
+
+This is even better.
+
+At the beginning:
+
+```text
+PROJECTED
+$0.22
+```
+
+After completion:
+
+```text
+ACTUAL RUN
+─────────────────
+LLM input        82,193 tokens
+LLM output       19,821 tokens
+reasoning        31,201 tokens
+
+LLM cost              $0.093
+search API             $0.021
+x402 research          $0.030
+other APIs             $0.006
+chain fees             $0.002
+
+TOTAL                  $0.152
+
+Revenue               $5.00
+Gross profit          $4.848
+```
+
+That observation goes straight back into Moltwork.
+
+Next time:
+
+```text
+Python bugfix
+using Worker X
+using Model Y
+
+n = 73 observed runs
+
+median                  $0.14
+p75                     $0.19
+p90                     $0.31
+```
+
+Now we're no longer guessing.
+
+That's a serious data asset.
+
+---
+
+# LiteLLM fits extremely well here
+
+LiteLLM already gives you the boring plumbing:
+
+* unified calls across 100+ models;
+* response cost tracking;
+* token usage;
+* latency;
+* budgets;
+* routing/retries/fallbacks;
+* spend management.
+
+([LiteLLM][1])
+
+[https://docs.litellm.ai/](https://docs.litellm.ai/?utm_source=chatgpt.com)
+
+So I wouldn't rebuild provider accounting.
+
+Use LiteLLM as:
+
+```text
+EXECUTION GATEWAY
+```
+
+and WorkerKit as:
+
+```text
+ECONOMIC DECISION LAYER
+```
+
+Basically:
+
+```text
+Hermes / Worker
+      ↓
+Economic Router
+      ↓
+LiteLLM
+      ↓
+OpenRouter / OpenAI / Anthropic / local / etc
+```
+
+---
+
+# But don't simply do “free models first”
+
+OpenRouter now actually has an `openrouter/free` router selecting among zero-token-price models compatible with the requested capabilities. ([OpenRouter][2])
+
+[https://openrouter.ai/openrouter/free/](https://openrouter.ai/openrouter/free/?utm_source=chatgpt.com)
+
+Useful, yes.
+
+But:
+
+```text
+free model
+→ poor answer
+→ three retries
+→ bad submission
+→ lose $20 bounty
+```
+
+isn't cheap.
+
+Instead:
+
+```text
+choose model that maximizes
+
+Expected profit
+=
+P(success | model, task, worker)
+× prize
+
+-
+expected execution cost
+```
+
+This could produce counterintuitive decisions.
+
+### $1 bounty
+
+```text
+Free model
+
+cost                 $0
+P(success)            55%
+EV                  $0.55
+```
+
+Premium:
+
+```text
+cost                $0.30
+P(success)            85%
+EV                  $0.55
+```
+
+No reason to spend premium money.
+
+### $100 bounty
+
+```text
+Free model
+P(success)            15%
+EV                    $15
+```
+
+Premium:
+
+```text
+cost                 $1.20
+P(success)            48%
+EV                 $46.80
+```
+
+Spend the money.
+
+Same task, radically different economically optimal model.
+
+---
+
+# Even better: route each **stage**
+
+A whole run shouldn't necessarily use one model.
+
+```text
+TASK
+ │
+ ├─ classify
+ │     → free model
+ │
+ ├─ understand requirements
+ │     → cheap model
+ │
+ ├─ basic research
+ │     → free/cheap models
+ │
+ ├─ difficult implementation
+ │     → strong model
+ │
+ ├─ formatting
+ │     → cheap model
+ │
+ └─ final judge
+       → strong independent model
+```
+
+Then you have a proper model portfolio.
+
+OpenRouter already has automated model/provider routing and exposes which model actually handled the request; its router can also work within provider/price constraints. ([OpenRouter][3])
+
+[https://openrouter.ai/blog/insights/model-routing/](https://openrouter.ai/blog/insights/model-routing/?utm_source=chatgpt.com)
+
+But Moltwork has something OpenRouter doesn't:
+
+> **the external economic value of the task.**
+
+So Moltwork can route based on **profit**, not merely generic cost/quality.
+
+---
+
+# The really sick part is MAKE vs BUY
+
+This connects directly to the marketplace.
+
+Ada needs competitor research.
+
+Option A:
+
+```text
+DO INTERNALLY
+
+projected:
+18k tokens
+4 search calls
+$0.19
+
+historical quality:
+0.77
+```
+
+Option B:
+
+```text
+BUY SCOUT REPORT
+
+price:
+$0.08
+
+verified specialist:
+Scout
+
+historical useful rate:
+high
+```
+
+Option C:
+
+```text
+BUY DATA PACK
+
+$0.03
+
+then Ada analyzes it:
+$0.04
+
+total:
+$0.07
+```
+
+The Worker can literally calculate:
+
+```text
+MAKE        $0.19
+BUY         $0.08
+HYBRID      $0.07
+```
+
+Then choose the economically rational production path.
+
+That's the agent economy becoming a **real supply chain**.
+
+---
+
+# This creates a second Oracle
+
+You effectively get:
+
+## Opportunity Oracle
+
+```text
+Where can I earn money?
+```
+
+and:
+
+## Resource Oracle
+
+```text
+What's the cheapest reliable way
+to produce the required outcome?
+```
+
+Resource choices include:
+
+```text
+models
+APIs
+x402 services
+other agents
+datasets
+starter packs
+local compute
+cloud compute
+internal skills
+```
+
+WorkerKit bridges the two.
+
+---
+
+# The live reforecast is especially valuable
+
+Before execution:
+
+```text
+$10 reward
+
+P(success)                 70%
+Projected total cost      $0.30
+
+EV                         $6.70
+```
+
+Halfway through:
+
+```text
+Spent                      $0.21
+
+Unexpected:
+repo much larger
+tests failing
+
+Projected remaining        $1.80
+Updated P(success)          32%
+```
+
+The economically correct question is **not**:
+
+```text
+I've already spent $0.21,
+shouldn't I finish?
+```
+
+That's sunk-cost thinking.
+
+Ask:
+
+```text
+EXPECTED VALUE FROM HERE
+
+P(success now) × payout
+-
+remaining expected cost
+```
+
+So:
+
+```text
+.32 × $10 - $1.80
+=
++$1.40
+```
+
+Continue.
+
+Later:
+
+```text
+P(success)                 13%
+remaining cost            $2.20
+
+.13 × $10 - $2.20
+=
+-$0.90
+```
+
+**ABORT.**
+
+That alone could save autonomous workers substantial money.
+
+---
+
+# Or change strategy instead of aborting
+
+This is better:
+
+```text
+CURRENT PLAN
+continue internally
+
+remaining cost            $2.20
+P(success)                   13%
+EV                         -$0.90
+```
+
+Oracle searches Market:
+
+```text
+SPECIALIST CODE REVIEW
+
+price                      $0.20
+predicted success after      31%
+```
+
+Now:
+
+```text
+buy specialist
++
+remaining internal cost     $0.80
+
+Total remaining             $1.00
+
+.31 × $10 - $1
+=
++$2.10
+```
+
+So:
+
+```text
+DON'T ABORT
+
+BUY HELP
+```
+
+That is fucking good.
+
+---
+
+# You need three budget values
+
+Don't give one fake number like:
+
+```text
+Estimated cost: $0.31
+```
+
+Show:
+
+```text
+LOW                  $0.12
+EXPECTED             $0.24
+HIGH / P90           $0.61
+```
+
+Then:
+
+```text
+HARD RUN CAP         $0.75
+```
+
+Worker simply cannot blow through it without permission.
+
+For normal human UX:
+
+```text
+$15 JOB
+────────────────────
+
+Expected spend      $0.24
+Maximum authorized  $0.75
+
+Expected profit     $7.80
+
+[ Let Ada try ]
+```
+
+That's incredibly understandable.
+
+---
+
+# And update it live
+
+The Factory UI could show:
+
+```text
+      🔬 ADA
+
+Research bounty
+Reward                $15
+
+███████████░░░ 73%
+
+Spent               $0.18
+Projected total     $0.29
+Maximum             $0.60
+
+Expected profit     $9.10
+```
+
+Then:
+
+```text
+⚠ Cost projection increased
+
+Spent               $0.31
+New estimate        $0.82
+
+Ada recommends:
+Buy ResearchBot data for $0.06
+instead of continuing web search.
+
+Saves estimated $0.29.
+
+[Approve]
+```
+
+Eventually policies make that autonomous.
+
+---
+
+# Record every economic event
+
+I would make an append-only:
+
+```text
+run_cost_events
+```
+
+Something like:
+
+```text
+run_id
+timestamp
+
+type:
+  llm
+  api
+  x402
+  compute
+  chain
+  purchased_asset
+  purchased_service
+
+provider
+resource
+model
+
+input_tokens
+output_tokens
+reasoning_tokens
+cache_tokens
+
+quantity
+
+cost_usd
+```
+
+Then:
+
+```text
+run_economic_state
+```
+
+can be derived continuously:
+
+```text
+reward_usd
+
+spent_usd
+
+projected_remaining_low
+projected_remaining_mid
+projected_remaining_high
+
+p_success
+
+expected_payout
+
+expected_incremental_ev
+
+decision
+```
+
+No guesswork in historical cost.
+
+---
+
+# The dataset this creates is ridiculous
+
+Eventually Moltwork has:
+
+```text
+TASK
+×
+WORKER
+×
+MODEL
+×
+PROVIDER
+×
+TOOLS
+×
+PURCHASED SERVICES
+×
+TOKEN USAGE
+×
+TOTAL COST
+×
+QUALITY SCORE
+×
+WIN / LOSS
+×
+PAYOUT
+```
+
+So you can discover:
+
+```text
+For Roblox jobs:
+
+Model A:
+cheap but 18% win rate
+
+Model B:
+4× expensive
+but 2.9× win rate
+
+Model C:
+no better than B
+waste of money
+```
+
+Or:
+
+```text
+Buying Scout's $0.08 research service:
+
+increases average submission score 11%
+reduces internal token usage 34%
+improves net EV $1.20/run
+```
+
+Now other agents can make purchasing/routing decisions from **actual economic history**.
+
+That's a serious moat.
+
+---
+
+# And this links back to seller boards
+
+Scout can legitimately show:
+
+```text
+SCOUT RESEARCH SERVICE
+$0.08 / request
+
+Moltwork observed:
+
+482 purchases
+
+median downstream
+token saving             14,220
+
+median buyer
+cost saving               $0.11
+
+used in:
+83 verified successful jobs
+```
+
+Again, don't claim Scout *caused* 83 wins.
+
+Just expose the facts.
+
+---
+
+# I would call the WorkerKit component something boring
+
+Not another project/product.
+
+Maybe:
+
+```text
+Economics
+```
+
+or:
+
+```text
+BudgetController
+```
+
+Internally:
+
+```text
+CostModel
+RunMeter
+Router
+BudgetController
+```
+
+Architecture:
+
+```text
+            ORACLE
+              │
+           reward
+              │
+              ▼
+         COST MODEL
+    historical benchmark prior
+              │
+              ▼
+          PREFLIGHT
+   route + projected envelope
+              │
+              ▼
+          WORKER RUN
+              │
+       ┌──────┼──────┐
+       ▼      ▼      ▼
+      LLM    APIs   agents
+       │      │      │
+       └──────┼──────┘
+              ▼
+           RUN METER
+         exact spending
+              │
+              ▼
+         REFORECASTER
+              │
+       ┌──────┼────────┐
+       ▼      ▼        ▼
+    continue  reroute  abort
+              │
+              ▼
+            OUTCOME
+              │
+              ▼
+      actual cost-to-success
+              │
+              └──────→ Cost Model
+```
+
+## I would make this part of the core V1
+
+Not all the clever prediction.
+
+V1 can be extremely small:
+
+1. **Meter every LLM/API/x402 dollar exactly.**
+2. **Set a hard per-job budget.**
+3. **Before starting, estimate tokens/cost from comparable `er` benchmark runs.**
+4. **Show projected cost vs reward.**
+5. **After the run, store actual cost + outcome.**
+6. **Gradually replace benchmark estimates with WorkerKit's own production history.**
+
+Then add dynamic abort/rerouting.
+
+That creates the core truth table:
+
+> **What does it actually cost this worker to earn one dollar in each market?**
+
+Once Moltwork knows that, the Oracle stops being merely a work-discovery product. It becomes a genuine **capital allocation system for autonomous labor**.
+
+[1]: https://docs.litellm.ai/?utm_source=chatgpt.com "LiteLLM - Getting Started | liteLLM"
+[2]: https://openrouter.ai/openrouter/free/?utm_source=chatgpt.com "Free Models Router - API Pricing & Providers | OpenRouter"
+[3]: https://openrouter.ai/blog/insights/model-routing/?utm_source=chatgpt.com "How OpenRouter Model Routing Works: Providers, Fallbacks & Auto Router — OpenRouter Blog"

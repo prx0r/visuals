@@ -1,0 +1,1058 @@
+I reviewed the current `prx0r/powphysical` main branch at commit `3833dd7`. The architecture direction is right, but **this is still a scaffold, not a working MVP yet**. The 22 passing tests substantially overstate completion because they mostly test the fixture universe against itself.
+
+The biggest issue is that the thing we actually care about — **“given capabilities, find the smallest credible combination of real orderable products”** — is not implemented correctly yet.
+
+## The core resolver is currently wrong
+
+The current resolver resolves **each capability independently**.
+
+So if `ATOM-ECHO` provides:
+
+```text
+hear
+speak
+glow
+wifi
+compute
+```
+
+and the request is:
+
+```text
+hear + speak + glow + wifi
+```
+
+the resolver can select ATOM-ECHO separately for each capability and charge for it repeatedly.
+
+Conceptually it's currently doing:
+
+```text
+hear  → Atom Echo
+speak → Atom Echo
+glow  → Atom Echo
+wifi  → Atom Echo
+```
+
+rather than:
+
+```text
+Atom Echo
+covers:
+  hear
+  speak
+  glow
+  wifi
+```
+
+This breaks the entire economic premise.
+
+The resolver needs to become a small **weighted set-cover / bounded combinatorial solver**.
+
+For every offer:
+
+```python
+covered = requested_caps ∩ offer.capabilities
+```
+
+Choose the combination minimizing something like:
+
+```text
+uncovered capability penalty
++ actual quantity-adjusted cost
++ integration penalty
++ supplier fragmentation penalty
++ compatibility penalty
+```
+
+Multifunction modules should naturally dominate four separate modules when appropriate.
+
+That is the highest-priority fix.
+
+---
+
+## There is an even worse hidden problem: raw ICs are treated like finished modules
+
+Right now an LCSC `INMP441`, `MAX98357A`, `WS2812B`, ESP32 module and a servo can be returned as a supposedly `"low"` integration-effort physical build.
+
+Those aren't equivalent to:
+
+```text
+ATOM Echo
+servo module
+```
+
+The raw IC route requires:
+
+```text
+PCB
+passives
+power design
+connectors
+layout
+assembly
+firmware
+```
+
+Yet the resolver doesn't understand that distinction.
+
+We explicitly said:
+
+```text
+qty 1–10:
+prefer known-good modules
+
+qty 100+:
+raw components become candidates for custom PCBA
+```
+
+That needs to actually exist.
+
+Add:
+
+```python
+implementation_level:
+    component
+    module
+    dev_board
+    subsystem
+    finished_product
+```
+
+and ideally:
+
+```python
+requires_custom_pcb: bool
+requires_soldering: bool
+requires_firmware: bool
+```
+
+For prototype requests, raw LCSC ICs must either:
+
+1. be excluded from normal module composition, or
+2. create a `custom_pcba` route with explicitly high integration effort.
+
+Otherwise POW will confidently propose nonsense.
+
+---
+
+# Critical bugs I found
+
+### 1. M5Stack and Waveshare aren't actually normalized
+
+`M5StackAdapter` and `WaveshareAdapter` inherit:
+
+```python
+BaseAdapter.normalize()
+```
+
+which simply returns the fixture unchanged.
+
+But the resolver expects:
+
+```python
+supplier_sku
+source_url
+verification
+documentation_urls
+```
+
+Their fixtures use:
+
+```python
+sku
+```
+
+not:
+
+```python
+supplier_sku
+```
+
+So routes built from those suppliers frequently get:
+
+```python
+offer_id = ""
+supplier_sku = ""
+```
+
+This also means multiple routes can hash to identical IDs.
+
+And saved-build repricing for these parts becomes unreliable because:
+
+```python
+get_product("")
+```
+
+can't find anything.
+
+Fix immediately.
+
+Every adapter must output **exactly one canonical Offer schema**.
+
+No raw dictionaries downstream of adapter normalization.
+
+---
+
+### 2. `pow_resolve(require_linux=...)` doesn't actually propagate constraints
+
+The MCP creates:
+
+```python
+request = {
+    'require_wifi': require_wifi,
+    'require_linux': require_linux,
+}
+```
+
+and then never passes `request` to the resolver.
+
+The resolver instead hardcodes:
+
+```python
+self._check_compatibility(route, {'require_wifi': True})
+```
+
+So:
+
+```text
+require_linux
+```
+
+does nothing.
+
+And `require_wifi=False` does nothing either.
+
+This is a straightforward correctness bug.
+
+Resolver should accept a proper `BuildRequest`, not six disconnected arguments.
+
+---
+
+### 3. Failed compatibility doesn't reject a route
+
+Current behavior:
+
+```python
+passed, warnings = ...
+if not passed:
+    route['risks'].append(warnings)
+```
+
+Then the invalid route stays in the results.
+
+That's dangerous.
+
+You need:
+
+```text
+hard incompatibility
+→ reject route
+
+soft incompatibility
+→ retain + warning
+```
+
+Have rules return something like:
+
+```python
+CompatibilityResult(
+    severity="reject" | "warning" | "info",
+    code="...",
+    message="..."
+)
+```
+
+A route with a genuine voltage/interface incompatibility must never rank first because it happens to be cheap.
+
+---
+
+### 4. Compatibility checks don't have the data they need anyway
+
+Resolver strips offers down into:
+
+```text
+offer_id
+name
+supplier
+sku
+qty
+price
+capabilities
+source_url
+```
+
+Then compatibility gets those stripped part dicts.
+
+So this check:
+
+```python
+part.get('electrical', {})
+```
+
+almost always sees nothing.
+
+Same problem for:
+
+```text
+interfaces
+dimensions
+software compatibility
+power
+```
+
+Compatibility should run on full `Offer` objects or retain full normalized technical data.
+
+---
+
+### 5. `CameraComputeCheck` is theater
+
+It calculates:
+
+```python
+has_camera
+has_mcu
+has_linux
+```
+
+then:
+
+```python
+pass
+```
+
+and always returns success.
+
+Delete fake checks until they actually enforce something.
+
+Better five real checks than twenty decorative ones.
+
+---
+
+### 6. Budget handling is incorrect
+
+`max_cost` is currently passed into each supplier search as:
+
+```text
+max individual part price
+```
+
+That is **not**:
+
+```text
+maximum build cost
+```
+
+A $50 build can contain:
+
+```text
+$40 module
+$40 camera
+$30 actuator
+```
+
+because every individual item passes `$50`.
+
+The resolver must generate routes first and then enforce:
+
+```python
+route_cost <= BuildRequest.max_parts_cost_usd
+```
+
+Supplier search can optionally use the budget as an optimization bound, but it cannot enforce the total build budget.
+
+---
+
+### 7. Price breaks aren't quantity-aware
+
+Current:
+
+```python
+min(b['unit_price'] for b in breaks)
+```
+
+That will eventually take the `$1.20 @ 1000` tier when the user wants one unit.
+
+Need:
+
+```python
+price_for_quantity(offer, quantity)
+```
+
+choosing the highest `min_qty <= quantity`.
+
+And if:
+
+```text
+MOQ > requested quantity
+```
+
+either reject it or price the minimum purchasable quantity explicitly.
+
+This is absolutely fundamental to the product.
+
+---
+
+### 8. Quantity semantics are muddled
+
+Current route does:
+
+```python
+total_cost += price * quantity
+```
+
+but part record says:
+
+```python
+qty: 1
+```
+
+We need explicit concepts:
+
+```text
+units_to_build = 10
+
+part quantity per unit = 2
+procurement quantity = 20
+```
+
+For a two-servo head:
+
+```text
+servo.qty_per_build = 2
+
+quantity=10
+
+purchase_qty=20
+```
+
+The present model can't correctly represent this.
+
+---
+
+### 9. Multi-axis motion is modeled incorrectly
+
+A servo has:
+
+```text
+pan
+tilt
+rotate
+```
+
+capabilities.
+
+That implies **one SG90 can simultaneously satisfy pan + tilt**.
+
+It can't.
+
+This is another reason simple set membership isn't enough.
+
+Represent actuators with capacity/count constraints:
+
+```text
+axis_motion: 1
+```
+
+and request:
+
+```text
+axis_motion: 2
+```
+
+or at minimum encode:
+
+```text
+pan_tilt
+requires:
+  servo ×2
+```
+
+The current desk-head benchmark can return one servo while claiming pan + tilt.
+
+---
+
+### 10. Search doesn't search
+
+All current adapter:
+
+```python
+search(query)
+```
+
+implementations ignore `query`.
+
+So:
+
+```text
+pow_search("camera")
+```
+
+does not actually search `"camera"`.
+
+Tests don't catch this because they search by capability.
+
+Implement basic fixture search now:
+
+```text
+title
+manufacturer
+MPN
+SKU
+category
+```
+
+and later replace/augment it with live supplier queries.
+
+---
+
+# The biggest product-level problem: none of the supplier integrations are actually live
+
+`LCSCAdapter` says:
+
+```python
+if not self.api_key:
+    fixture
+
+# Would call LCSC API here
+# For MVP, use seed fixtures
+return fixture
+```
+
+Even **with an API key**, it still returns fixtures.
+
+M5Stack and Waveshare are fixtures too.
+
+So we currently have:
+
+> resolver over hand-entered demo data
+
+not:
+
+> normalized supplier API.
+
+That's okay for the first commit, but don't call this checkpoint complete.
+
+The next checkpoint needs at least **one genuinely live supplier**.
+
+I would make that LCSC or whichever official endpoint can be authenticated quickest.
+
+The adapter contract needs:
+
+```text
+mode:
+live
+fixture
+cached
+```
+
+and every returned result needs:
+
+```text
+source_mode
+observed_at
+raw_hash
+```
+
+Never make fixture data look live.
+
+---
+
+# Some fixture data itself looks suspect
+
+There are entries such as:
+
+```text
+manufacturer: "Esprentic"
+```
+
+for ESP32.
+
+There are also LCSC records for things like `SG90`/`HC-SR501` that need verification because those may not map to the exact canonical LCSC parts/SKUs being claimed.
+
+This matters immensely.
+
+**Fake-but-plausible supplier data is worse than no data** for POW.
+
+Seed records need evidence.
+
+Every seed should be stored separately, e.g.:
+
+```yaml
+supplier: m5stack
+supplier_sku: ATOM-ECHO
+title: ...
+price:
+source_url:
+observed_at:
+verified_at:
+capabilities:
+evidence:
+```
+
+Do not bury source-of-truth fixtures inside Python source files.
+
+---
+
+# Evidence is currently decorative
+
+Every route gets things like:
+
+```python
+{
+  'type': 'supplier_spec',
+  'source': 'LCSC/M5Stack/Waveshare fixtures'
+}
+```
+
+That's not evidence.
+
+We want evidence attached to each claim:
+
+```json
+{
+  "claim": "supports hear",
+  "type": "manufacturer_spec",
+  "source_url": "...",
+  "observed_at": "...",
+  "field": "microphone"
+}
+```
+
+Likewise:
+
+```text
+price → supplier listing/API
+dimension → manufacturer drawing
+interface → datasheet
+compatibility → known build/manual rule
+```
+
+POW is supposed to be trusted infrastructure. Provenance is not decoration.
+
+---
+
+# There is no data garden yet
+
+You created:
+
+```text
+src/db/
+src/normalize/
+```
+
+but they're empty.
+
+`BaseAdapter._cache_response()` exists but none of the adapters call it.
+
+So we currently aren't preserving observations.
+
+For checkpoint 1 I would implement the smallest possible observation store:
+
+```sql
+raw_observations
+----------------
+id
+supplier_id
+source_key
+retrieved_at
+content_hash
+raw_json
+adapter_version
+```
+
+and:
+
+```sql
+offers
+------
+supplier_id
+supplier_sku
+observed_at
+normalized_json
+raw_observation_id
+```
+
+SQLite is completely fine.
+
+Every live lookup gets saved.
+
+That immediately starts the garden.
+
+---
+
+# Saved builds cannot remain in memory
+
+Current:
+
+```python
+self.builds = {}
+```
+
+Every restart destroys everything.
+
+`pow_save_build()` must persist to SQLite.
+
+Also this:
+
+```python
+build_id = sha256(name)
+```
+
+means saving `"Desk Agent"` twice overwrites the same conceptual ID.
+
+Use UUID/ULID and explicit versioning:
+
+```text
+build_id
+build_version
+created_at
+request_json
+route_json
+```
+
+Eventually:
+
+```text
+build:abc
+v1
+v2
+v3
+```
+
+is much more useful.
+
+---
+
+# This isn't actually an MCP server yet
+
+This is particularly important.
+
+`PowPhysicalMCP` is a Python class whose methods happen to be named:
+
+```text
+pow_search
+pow_resolve
+...
+```
+
+But there is no actual MCP SDK/transport/server registration in `pyproject.toml`.
+
+Dependencies are only:
+
+```text
+requests
+```
+
+So Muse/Claude/ChatGPT cannot currently connect to this as MCP.
+
+That should be fixed this push.
+
+Use the official/current Python MCP SDK and expose actual tools over stdio initially.
+
+Something like conceptually:
+
+```python
+@mcp.tool()
+def pow_search(...):
+    ...
+
+@mcp.tool()
+def pow_resolve(...):
+    ...
+```
+
+and provide:
+
+```text
+python -m powphysical.mcp
+```
+
+or a proper console script.
+
+Then test it using an actual MCP client, not direct Python calls.
+
+This is probably the biggest discrepancy between the commit message and reality.
+
+---
+
+# Repo hygiene is also broken
+
+You committed:
+
+```text
+__pycache__/
+*.pyc
+```
+
+throughout the repo.
+
+Add `.gitignore` and remove them from Git immediately.
+
+Also add:
+
+```text
+README.md
+.env.example
+LICENSE or explicit license decision
+```
+
+The README should contain one runnable test:
+
+```text
+install
+run MCP
+call pow_resolve
+expected response
+```
+
+No huge philosophy document yet.
+
+---
+
+# Packaging needs cleanup
+
+The imports are:
+
+```python
+from powphysical.src...
+```
+
+while the repository contains:
+
+```text
+/src
+/tests
+```
+
+rather than the normal:
+
+```text
+src/powphysical/
+```
+
+package layout.
+
+Tests also manipulate:
+
+```python
+sys.path.insert(...)
+```
+
+which masks packaging problems.
+
+Use:
+
+```text
+src/
+  powphysical/
+    adapters/
+    resolve/
+    mcp/
+    models/
+```
+
+and configure setuptools/hatch/uv properly.
+
+Then tests should import normally with no path hacks.
+
+The test for the package should include:
+
+```bash
+pip install -e .
+python -c "import powphysical"
+```
+
+from a clean environment.
+
+---
+
+# The current tests are mostly theater
+
+Not useless — but they prove too little.
+
+For example:
+
+```python
+test_desk_head
+```
+
+only checks:
+
+```python
+status == resolved
+len(routes) > 0
+cost <= 50
+```
+
+It does **not** prove:
+
+```text
+all requested capabilities are satisfied
+exactly two axes exist
+Wi-Fi exists if required
+parts connect together
+supplier SKUs exist
+evidence exists
+route is genuinely orderable
+```
+
+Likewise `test_plant_node` doesn't even assert that soil moisture was satisfied — and there isn't an obvious soil moisture fixture in the adapters I inspected.
+
+So the system may say `"resolved"` while failing the request.
+
+Replace benchmark tests with hard invariants:
+
+```python
+assert set(requested_caps) <= set(route["capabilities_satisfied"])
+assert route["capabilities_missing"] == []
+assert route["estimated_parts_cost_usd"] <= budget
+assert all(part["supplier_sku"] for part in route["parts"])
+assert all(part["source_url"] for part in route["parts"])
+```
+
+And importantly:
+
+```python
+assert no_hard_compatibility_failures(route)
+```
+
+---
+
+# What I want the coding agent to do next
+
+Do **not add more suppliers yet**.
+
+Fix the kernel first.
+
+Priority order:
+
+1. **Move to proper package structure** and remove pycache.
+2. **Canonical Offer normalization** across every adapter.
+3. Move fixtures into data files with evidence/provenance.
+4. Implement **quantity-aware pricing/MOQ**.
+5. Replace per-capability selection with a **bounded set-cover resolver**.
+6. Distinguish `component` versus `module` and prevent bare ICs becoming effortless prototype routes.
+7. Model repeated resources such as two servos for two axes.
+8. Pass the complete `BuildRequest` through all layers.
+9. Hard reject incompatible routes.
+10. Make route budget enforcement real.
+11. Persist raw observations/offers/builds in SQLite.
+12. Make **one supplier genuinely live**.
+13. Expose a **real MCP server**, not merely a Python class.
+14. Upgrade acceptance tests to hit the real MCP transport.
+15. Only then add supplier #2 live.
+
+The architecture after this push should be:
+
+```text
+REAL / FIXTURE SOURCE
+        │
+        ▼
+Supplier Adapter
+        │
+        ├── raw observation → immutable store
+        │
+        ▼
+Canonical Offer
+        │
+        ▼
+Candidate Store
+        │
+        ▼
+Resolver
+  set-cover
+  quantity pricing
+  implementation level
+  compatibility
+        │
+        ▼
+Build Route
+        │
+        ├── evidence
+        ├── cost
+        ├── confidence
+        └── warnings
+        │
+        ▼
+Real MCP tool
+```
+
+## The definitive acceptance test
+
+I would give the coding agent exactly this test.
+
+Start the MCP server from a clean install and ask:
+
+```text
+Resolve:
+hear
+speak
+glow
+pan
+tilt
+wifi
+
+quantity = 1
+budget = $50
+optimize = lowest_integration
+```
+
+A passing result must:
+
+```text
+✓ satisfy every requested capability
+✓ not count a multifunction module multiple times
+✓ contain two independent motion axes if needed
+✓ contain a compute/control path
+✓ contain no bare IC unless route says custom-PCBA
+✓ stay under $50 total
+✓ use quantity-1 prices
+✓ return nonempty supplier SKU for every part
+✓ return evidence/source for every part
+✓ contain no hard compatibility failures
+✓ persist the resolve observation
+✓ save/reload build across process restart
+✓ reprice it
+✓ be callable through actual MCP
+```
+
+Then run:
+
+```text
+same request
+quantity = 100
+```
+
+and verify the architecture **can differ** rather than simply multiplying the quantity-one retail route by 100.
+
+That second test is where this starts becoming the product we actually want.
+
+### Bottom line
+
+The coding agent got the **shape** right extremely quickly: adapters → canonical-ish data → resolver → MCP-ish layer → tests. Keep that.
+
+But right now the repo's strongest claims are ahead of the implementation:
+
+```text
+"3 adapters"
+→ really fixture adapters
+
+"MCP server"
+→ really Python service class
+
+"compatibility"
+→ mostly non-enforcing
+
+"resolver"
+→ independent capability picker
+
+"evidence"
+→ generic labels
+
+"data garden"
+→ not persisted
+```
+
+So **do not expand scope**. This next push should make this tiny kernel brutally real.
+
+Once the six-capability desk-head request works correctly against even **one live supplier plus our verified module fixtures**, then adding LCSC/Waveshare/M5Stack/Seeed/AliExpress becomes straightforward adapter work rather than multiplying errors.

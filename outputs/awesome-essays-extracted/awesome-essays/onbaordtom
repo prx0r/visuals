@@ -1,0 +1,94 @@
+ONBOARDING PROMPT — Pāṭala education organism (copy this to your agent)
+
+You are taking over the Pāṭala education-serving organism. Read everything below IN ORDER, run the
+gates, and only then start building. Your job is to become proficient in this codebase FAST, then
+execute DEV-PLAN-NEXT-AGENT.md.
+
+## 0. FIRST — READ THESE (in order)
+
+1. `/root/smellycock/README.md` — the repo map (start here)
+2. `/root/smellycock/AGENTS.md` — the governing file (the ONE RULE + read order)
+3. `/root/smellycock/AXIOMS.md` — naming, organisation, operating axioms, banned words, status ladders
+4. `/root/smellycock/education-organism/MASTER-REFERENCE.md` — the organized index of the organism
+5. `/root/smellycock/education-organism/FLAWS.md` — ⚠️ the theatre audit (what's NOT wired/tested)
+6. `/root/smellycock/education-organism/DEV-PLAN-NEXT-AGENT.md` — the executable plan (your job)
+7. `/root/smellycock/notes/HANDOVER-EDUCATION-ORGANISM.md` — the state + what happened
+8. `/root/smellycock/MANIFEST.json` — the machine resolver (every doc → id/owner/validator)
+
+## 1. THE PROJECT (one line)
+
+**Pāṭala = a production-grade Sanskrit epistemic-scholarship protocol. The education organism is the
+co-evolving learning→scholarship engine: learner answers become granular events → derived progress →
+a conductor picks the next session → games/content project the data.** The moat is editorial provenance
++ the authority invariant; games are PROJECTIONS over content packs, not content generators.
+
+## 2. THE REPOS TO LOOK AT (in order of relevance)
+
+- **`/root/smellycock/`** — the CANONICAL reference + your workspace (`education-organism/`). DOCS only
+  (per AXIOMS §7 — points at code, holds references).
+- **`/root/patalacheckpoints/`** — the WORKING repo (PRODUCES). The translation factory, the registries
+  (source/t1/l0/l2/l200/c1/argument/essay), the product engines. THIS is where the data lives.
+- **`/root/fuck-off/`** — the ip-graph sibling (VALIDATES + SERVES). `lib/epistemic.py` = the
+  epistemic-ceiling invariant (the moat). The `ecosystem/` = 40+ cloned frontier repos.
+- **`/root/patalacheckpoints/source-evidence/repos/prx0r__sanskrithelp/`** — the sibling learning app
+  with the AI-tutor + progress architecture (conductor/navigator/profile) + the Phaser game scenes.
+- **`/root/fuck-off/ecosystem/`** — the cloned frontier (pyBKT, pykt, fsrs, OATutor, graphiti, etc.)
+
+## 3. THE ARCHITECTURE (three layers)
+
+LEARNER → events.py (granular event stream = TRUTH) → progress.py (derived) → conductor.py (next session)
+    ↑                                                                                    │
+    └──── games project ContentPacks; profile drives selection ─────────────────────────┘
+CONTENT PACKS = cruxes, arguments, concepts, boundaries, sources  (per text: ipvv, kramasadbhava, tantraloka)
+GAME RUNTIMES = millionaire, jeopardy, only-connect, chase, web, textlogic, philosophy  (project pack fields)
+
+**GAME-AS-PROJECTION:** games add NO content — each runtime declares its `requires` (pack fields) and the
+studio gates compatibility.
+
+## 4. THE KEY KERNELS (in `/root/smellycock/education-organism/kernels/`)
+
+Closed loop: `events.py` · `progress.py` (zone_levels/retry/weekly_arc/streak + discrete mastery levels)
+· `conductor.py` (retry-then-remedial) · `store.py` (fuel port) · `user_profile.py` (UserKnowledgeState)
+· `memory_scheduler.py` (FSRS) · `user_trajectory.py` · `question_cluster.py` (anti-poisoning) ·
+`discovery.py` (ResearchValue).
+
+Games: `gameshow_millionaire.py` · `gameshow_jeopardy.py` · `gameshow_onlyconnect.py` · `gameshow.py` ·
+`web_games.py` · `text_logic_games.py` · `philosophy_games.py` · `game_studio.py` · `counterfactual.py` ·
+`recommender.py` · `hermes_generator.py`.
+
+## 5. ⚠️ THE HONEST STATE (from FLAWS.md — read this)
+
+- ✅ The closed loop is REAL + live: `POST /api/session` → events → progress → next session (200).
+- 🔴 The GAME API is NOT wired: `/api/millionaire`, `/api/jeopardy`, `/api/onlyconnect`, `/api/webgame`
+  all **404** — the kernels exist + generate, but serve-organism.py doesn't expose them.
+- 🟠 Game kernels are minimally tested. Personalizer (profile→content selection) is MISSING.
+- 🟡 No real user data, no measured-learning eval.
+- ⚠️ Many kernels were LOST mid-session (a `git pull --rebase` removed uncommitted work); I rewrote all
+  17 from spec+docs+tests. **They are NOT committed — commit them first.**
+
+## 6. YOUR GATE (must pass before claiming done)
+
+```bash
+cd /root/smellycock && python3 check.py --status   # PASS (ignore the other lane's infra-deepdive ref)
+python3 check_epistemic.py                          # PASS (26 products)
+cd education-organism && python3 scripts/run-tests.py   # 71/71 (should GROW)
+python3 scripts/integration-ipvv.py                 # 12/12 real gold
+7. THE AXIOMS YOU MUST RESPECT
+NEVER present DESIGN as BUILT — a feature is real only when its gate passes on real data.
+Banned words: PROVED/TRUTH/CORRECT/BEST/WINS. Use: SUPPORTED BY / PASSED CHECK X / MACHINE-PROPOSED.
+Hermes for GENERATION, .py for REDUCTION — hermes_driver/hermes_generator for LLM parts; .py gates.
+Anti-theatre — run the audit mindset from FLAWS.md before claiming done.
+Commit to git (untracked work is fragile on this shared box).
+Don't fight the other lane's infra-deepdive/04 ref — theirs to fix.
+No sleep-wait, no pkill — background long jobs, kill by PID (shared 4-core/8GB box, 2 agents).
+8. YOUR FIRST TASKS (execute DEV-PLAN-NEXT-AGENT.md)
+1. P1: Wire the game API into serve-organism.py (millionaire/jeopardy/onlyconnect/webgame/chase/studio) — fix the 404s.
+2. P2: Add per-game tests.
+3. P3: Rebuild the personalizer (profile → game/content/media selection).
+4. P4: Get one real learner through the loop.
+5. P5: The measured-learning eval.
+Keep the gates green throughout. Commit your work. Read FLAWS.md before claiming done. Start now.
+
+---
+
+That's the full onboarding prompt — it gives the next agent the repos to look at (smellycock, patalacheckpoints, fuck-off, sanskrithelp, ecosystem), the architecture, the honest state (including the 404 game API + the lost-kernels recovery), the gates, the axioms, and the first tasks. They'll be proficient enough to start building immediately.

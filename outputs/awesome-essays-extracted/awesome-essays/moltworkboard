@@ -1,0 +1,692 @@
+Yes. The loop still works, but the verification claim needs to be much narrower than “this WorkerKit config caused this win.”
+
+The clean rule should be:
+
+> **Moltwork verifies externally observable facts. Sellers make everything else as explicit claims.**
+
+A wallet transaction is useful evidence, but by itself it proves only that **address A paid address B amount X at time T**. It does not prove the payment came from legitimate work, that the seller did the work, or that a particular kit caused the result. ERC-8004 explicitly separates identity/reputation/validation from payments for essentially this reason. ([Ethereum Improvement Proposals][1])
+
+## The evidence ladder
+
+I think Moltwork only needs four levels.
+
+| Evidence                 | Moltwork can say                                     | Example                             |
+| ------------------------ | ---------------------------------------------------- | ----------------------------------- |
+| **Payment receipt**      | “Payment verified”                                   | 23 USDC arrived                     |
+| **External outcome**     | “Job accepted/won and payout verified”               | NEAR job accepted + escrow released |
+| **Artifact link**        | “This committed artifact was the submitted artifact” | submitted repo/zip hash matches     |
+| **Execution provenance** | “This exact run produced that artifact”              | Moltwork-controlled/attested runner |
+
+Notice the wording gets progressively stronger.
+
+### Level 1 — verified payment
+
+Very easy with crypto.
+
+```text
+wallet A
+↓
+23 USDC
+↓
+wallet B
+```
+
+Moltwork verifies chain data.
+
+Show:
+
+```text
+✓ PAYMENT VERIFIED
+23 USDC
+Base
+tx 0x...
+```
+
+**Do not show:**
+
+```text
+✓ EARNED $23 DOING ROBLOX
+```
+
+because that requires more evidence.
+
+And self-payments matter. Someone can transfer $1,000 between their own wallets. So raw wallet volume should never become seller reputation automatically.
+
+---
+
+# Level 2 is the really useful one: external work receipt
+
+NEAR is a great example because the API exposes the lifecycle itself:
+
+```text
+job
+→ award
+→ submission
+→ accept
+→ escrow release
+```
+
+Its API has endpoints for submitting deliverables and requester acceptance/release of escrow. ([NEAR Market][2])
+
+Therefore Moltwork can say:
+
+```text
+✓ EXTERNAL SUCCESS VERIFIED
+
+Market: NEAR Agent Market
+Job: #abc
+Worker: Agent X
+Status: accepted
+Payout: $37.00
+Completed: Aug 28
+```
+
+That's extremely strong evidence.
+
+Full API docs:
+
+[https://market.near.ai/api-docs/](https://market.near.ai/api-docs/?utm_source=chatgpt.com)
+
+For every Oracle marketplace, one of the things we should determine is:
+
+```text
+Can we independently retrieve:
+
+job?
+worker?
+submission?
+outcome?
+payment?
+```
+
+Then give it an evidence capability:
+
+```text
+NEAR              █████ 5/5
+Bittensor         ████░
+Virtuals          ████░
+random web gig    █░░░░
+```
+
+This becomes useful Oracle metadata anyway.
+
+---
+
+# Level 3 — prove the thing being sold was involved
+
+This is where it gets trickier.
+
+Suppose seller says:
+
+> “This research process made me $37.”
+
+We should **not** try to prove causality.
+
+Instead, seller can commit the asset before the work:
+
+```text
+Research Kit
+hash = ABC
+timestamp = 10:00
+
+        ↓
+
+Worker does job
+
+        ↓
+
+submission
+hash = XYZ
+
+        ↓
+
+NEAR accepts
+
+        ↓
+
+$37
+```
+
+If the platform lets us associate the submitted artifact with the committed artifact directly, great.
+
+For something such as code:
+
+```text
+seller commits git commit:
+abcd1234
+
+submission references:
+github.com/.../commit/abcd1234
+```
+
+Then we can legitimately say:
+
+> **This exact artifact was used in a verified successful submission.**
+
+GitHub already supports artifact attestations that bind software artifacts to where/how they were built, and those attestations can be independently verified. ([GitHub Docs][3])
+
+Full docs:
+
+[https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations?utm_source=chatgpt.com)
+
+But a **starter pack or process** isn't usually identical to the submitted artifact.
+
+So the strongest honest wording may simply be:
+
+```text
+✓ $37 SUCCESS VERIFIED
+
+○ Seller states this kit was used
+  during that successful run.
+```
+
+And that's okay.
+
+---
+
+# Level 4 — proving WorkerKit actually executed it
+
+This is the part I would **not build for V1**.
+
+Because if WorkerKit runs entirely on the seller's computer, then:
+
+```text
+run.json
+config.json
+trace.json
+```
+
+are ultimately controlled by the seller.
+
+They can fabricate them.
+
+Hashing a fake trace merely proves:
+
+> This fake trace existed at timestamp T.
+
+Sigstore/Rekor is excellent for proving that an identified signer signed a particular digest at a particular time; Rekor provides an append-only transparency log. It does **not** independently establish that everything asserted inside an arbitrary signed document is true. ([Sigstore][4])
+
+Full references:
+
+[https://docs.sigstore.dev/](https://docs.sigstore.dev/?utm_source=chatgpt.com)
+
+[https://docs.sigstore.dev/logging/overview/](https://docs.sigstore.dev/logging/overview/?utm_source=chatgpt.com)
+
+So don't pretend a signed WorkerKit log is proof.
+
+Call it:
+
+```text
+◐ WORKERKIT ATTESTED
+```
+
+not:
+
+```text
+✓ MOLTWORK VERIFIED
+```
+
+---
+
+# There is one simple way to make it truly verified later
+
+Have an optional:
+
+```text
+Moltwork Verified Run
+```
+
+The job executes through infrastructure Moltwork can trust.
+
+For example:
+
+```text
+Opportunity
+↓
+Moltwork runner starts
+
+committed worker/config
+↓
+execution
+↓
+artifact generated
+↓
+artifact hash recorded
+↓
+submission
+↓
+external outcome
+```
+
+Now Moltwork can attest to the run.
+
+Or much later:
+
+```text
+TEE / trusted execution
+```
+
+ERC-8004's Validation Registry explicitly anticipates things like TEE validators, re-execution and cryptographic verification for independent validation. ([Ethereum Improvement Proposals][1])
+
+But this should be **optional premium evidence**, not marketplace plumbing.
+
+---
+
+# So I would NOT make "worker config success" the marketplace foundation
+
+This was the messy part.
+
+The foundation should remain:
+
+```text
+SELLER BOARD
+    │
+    ├── factual reputation
+    │
+    ├── verified external receipts
+    │
+    ├── services
+    │
+    └── committed assets
+             │
+             ▼
+          SAMPLE
+             │
+             ▼
+       BUYER DECIDES
+```
+
+WorkerKit adds evidence automatically whenever available.
+
+It doesn't become a prerequisite.
+
+---
+
+# Seller reputation then becomes much cleaner
+
+Imagine this board:
+
+```text
+POLYBOT
+3D / Roblox Specialist
+
+EXTERNAL WORK
+────────────────────────
+
+Verified accepted jobs          34
+Verified payouts            $812.40
+Verified markets                  3
+
+Bittensor benchmark successes     4
+
+MOLTWORK
+
+Asset buyers                     83
+Full unlocks                     41
+Service jobs                    121
+Returning customers              29
+```
+
+That tells me quite a lot.
+
+Then:
+
+```text
+Roblox Starter Kit        $1.00
+
+SELLER CLAIMS
+"Used throughout my Roblox workflow."
+
+CONNECTED EVIDENCE
+✓ 12 successful Roblox jobs
+✓ $283 verified payouts
+◐ 9 WorkerKit runs linked
+○ claimed average 2h saved/job
+
+SAMPLE
+$0.02
+```
+
+That is enough.
+
+I don't need Moltwork to declare:
+
+> This kit is 94% good.
+
+I can inspect the producer, inspect actual evidence, and sample the product.
+
+---
+
+# Successful agents now have three businesses simultaneously
+
+This is the beautiful part.
+
+A genuinely good Roblox worker can:
+
+```text
+1. OPERATE
+   enter Roblox jobs itself
+   → earn $
+
+
+2. SERVE
+   accept paid requests from other agents
+   → earn $ per call/job
+
+
+3. TEACH / WHOLESALE
+   sell:
+   reports
+   starter packs
+   processes
+   datasets
+   templates
+   examples
+   → earn $
+```
+
+And **1 validates 2 and 3**.
+
+```text
+External success
+      ↓
+demonstrated expertise
+      ↓
+other agents trust service
+      ↓
+other agents inspect assets
+      ↓
+sales
+```
+
+Your guru/course analogy is useful economically:
+
+> The difference is Moltwork can make the guru show receipts.
+
+And then let you buy **$0.02 of the course before deciding**.
+
+---
+
+# Services are arguably even cleaner than assets
+
+Suppose the agent is excellent at 3D model QA.
+
+It needn't reveal how.
+
+Board:
+
+```text
+POLYBOT
+
+VERIFIED:
+34 accepted 3D jobs
+$812 earnings
+
+SERVICES
+
+Check my Roblox mesh       $0.04
+Optimize Roblox asset      $0.18
+Generate texture pack      $0.25
+Review submission          $0.07
+```
+
+Another WorkerKit sees a $20 opportunity:
+
+```text
+estimated internal QA    mediocre
+Polybot QA               $0.07
+
+expected win uplift      +8%
+
+BUY
+```
+
+The great worker keeps its secret sauce.
+
+The weaker worker gets better output.
+
+Polybot earns additional revenue.
+
+External customer gets higher-quality work.
+
+**Positive-sum.**
+
+That's probably the cleanest form of agent-to-agent economy.
+
+---
+
+# How I'd classify claims
+
+Don't create 100 badge types.
+
+Just:
+
+### `VERIFIED`
+
+Independent source available.
+
+Examples:
+
+```text
+✓ payout
+✓ accepted job
+✓ benchmark score from authoritative API
+✓ on-chain transaction
+✓ asset commitment/hash
+```
+
+### `ATTESTED`
+
+Authenticated party says it happened.
+
+Examples:
+
+```text
+◐ WorkerKit run
+◐ seller execution cost
+◐ runtime
+◐ tool usage
+```
+
+### `CLAIMED`
+
+Seller marketing statement.
+
+Examples:
+
+```text
+○ saves two hours
+○ improves quality
+○ used by top agents
+```
+
+That's enough.
+
+---
+
+# And specifically: can wallet transactions prove earnings?
+
+**They can strongly prove payment, but not necessarily earnings.**
+
+This distinction needs to be hard-coded.
+
+### Wallet only
+
+```text
+✓ RECEIVED PAYMENT
+$50 USDC
+```
+
+Confidence:
+
+```text
+payment existence: VERY HIGH
+work attribution: UNKNOWN
+```
+
+### Wallet + marketplace job
+
+If we can link:
+
+```text
+market job ID
+worker identity
+submission
+acceptance
+escrow contract
+payout transaction
+```
+
+then:
+
+```text
+✓ VERIFIED WORK EARNINGS
+$50
+```
+
+Excellent.
+
+### Wallet + random incoming transfer
+
+Never call it earnings.
+
+```text
+✓ $50 incoming transaction
+```
+
+That's all.
+
+This also stops people pumping their own reputation by shuffling tokens between wallets.
+
+---
+
+# I'd give every market a `verification_adapter`
+
+Alongside:
+
+```python
+discover()
+submit()
+```
+
+have:
+
+```python
+verify_outcome()
+```
+
+Output:
+
+```json
+{
+  "opportunity": "near:123",
+  "worker": "agent:456",
+
+  "result": "accepted",
+
+  "payment": {
+    "amount_usd": 37,
+    "verified": true,
+    "tx": "..."
+  },
+
+  "evidence": {
+    "job": true,
+    "submission": true,
+    "outcome": true,
+    "payment": true
+  }
+}
+```
+
+Then Oracle accumulates these receipts automatically.
+
+That's worth building because **it serves both WorkerKit learning and future marketplace reputation**.
+
+---
+
+# What I would actually build now
+
+Very small.
+
+WorkerKit completion creates:
+
+```text
+OutcomeReceipt
+
+opportunity_id
+market
+agent_id
+external_submission_id
+
+result
+score/rank if applicable
+
+payout
+payout_asset
+tx_hash if available
+
+artifact_hash optional
+
+workerkit_run_id optional
+```
+
+Then fields each have:
+
+```text
+VERIFIED
+ATTESTED
+UNKNOWN
+```
+
+Example:
+
+```text
+Outcome Receipt #3912
+────────────────────────
+
+Opportunity        ✓ verified
+Submission         ✓ verified
+Accepted           ✓ verified
+Payment $37        ✓ verified
+Artifact hash      ✓ verified
+
+WorkerKit run      ◐ attested
+Exact config       ◐ attested
+"Causal uplift"    ○ unverified
+```
+
+**Stop there.**
+
+No auditors.
+
+No refunds department.
+
+No global quality score.
+
+No giant config-provenance system.
+
+No attempt to prove causality.
+
+That single `OutcomeReceipt` becomes ridiculously useful:
+
+```text
+Oracle analytics
++
+WorkerKit learning
++
+seller reputation
++
+asset evidence
++
+service credibility
+```
+
+All from the same primitive.
+
+And if one day enough economic value depends on proving exact execution, add an optional **Verified Runner**. Until then, external receipts + sampling give you probably 90% of the useful trust with 10% of the infrastructure.
+
+[1]: https://ercs.ethereum.org/ERCS/erc-8004?utm_source=chatgpt.com "Trustless Agents | Ethereum Improvement Proposals"
+[2]: https://market.near.ai/api-docs/?utm_source=chatgpt.com "Swagger UI"
+[3]: https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations?utm_source=chatgpt.com "Using artifact attestations to establish provenance for builds - GitHub Docs"
+[4]: https://docs.sigstore.dev/?utm_source=chatgpt.com "Overview - Sigstore"

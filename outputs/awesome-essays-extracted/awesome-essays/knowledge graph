@@ -1,0 +1,1256 @@
+`5e9587b` **is currently `origin/master`** for `prx0r/drop`; there are no later commits. I reviewed the push sequence leading into it, plus the GitGoblin theses that generated the newer direction.
+
+## Bottom line
+
+This has become substantially better.
+
+The project is no longer really a “dropshipping intelligence system.” The coherent thesis emerging is:
+
+> **Drop is a resolution/fulfillment graph that turns messy real-world supply into reliable, machine-transactable endpoints for agents.**
+
+That is much stronger than the earlier three-business framing. The GitGoblin vision already says this explicitly and correctly: product identification/compatibility and service qualification converge into supplier normalization → transaction → fulfillment → observed outcome → graph.
+
+And this is becoming more valuable, not less, because Shopify/Google UCP is standardizing the *transaction grammar*. UCP now supports APIs, MCP and A2A, while Shopify has opened Catalog/UCP access broadly to developers. That means the scarce layer increasingly becomes **accurate underlying state: compatibility, serviceability, availability, price, trust and fulfillment**, exactly where Drop is moving. ([Google Developers Blog][1])
+
+### The recent pushes actually tell a very clean story
+
+The progression was roughly:
+
+`EV campaign` → `installed-base lifecycle commerce` → `three businesses` → `supplier OS as wedge` → `agent-native fulfillment architecture` → `GitGoblin protocol/repo research` → `nine thesis objects` → `ML layer` → `market intelligence`.
+
+That's a genuine conceptual advance.
+
+But there is one contradiction: the repo itself correctly concluded **“stop building infrastructure, start running experiments”**, and then immediately spent another large run building thesis files, collection scripts and hypothetical ML models.
+
+We are now at the point where **another abstraction layer is harmful unless it directly produces a real transaction**.
+
+---
+
+# The newer theses are not nine equal theses
+
+This is the main architectural correction I would make.
+
+Right now `thesisTesting/` presents these as nine peer experiments. They aren't.
+
+They form a dependency graph:
+
+```text
+                         USER INTENT
+                              │
+              ┌───────────────┴───────────────┐
+              ▼                               ▼
+         PRODUCT PROBLEM                 SERVICE PROBLEM
+              │                               │
+     compatibility graph                 SERVICE SKU
+              │                               │
+              └──────────────┬────────────────┘
+                             ▼
+                    SUPPLIER RESOLUTION
+                             │
+                    API VIRTUALIZATION
+                             │
+              live price / availability / fit
+                             │
+                         TRANSACTION
+                             │
+                         FULFILLMENT
+                             │
+                    VERIFICATION LEDGER
+                             │
+                      TRUST / RANKING
+                             │
+                 INSTALLED-BASE MEMORY
+```
+
+The GitGoblin report is already pointing in precisely this direction: the missing layer is the **stateful compatibility + serviceability + availability graph**, and it specifically found that UCP Location/serviceability should be treated as a base primitive rather than inventing everything bespoke.
+
+## My ranking now
+
+| Thesis                              | Role                                |                           Value |
+| ----------------------------------- | ----------------------------------- | ------------------------------: |
+| **08 Verification/Trust Graph**     | Core moat                           |                       **10/10** |
+| **05 Service SKUs**                 | Core protocol primitive             |                      **9.8/10** |
+| **06 API Virtualization**           | Critical analogue→agent bridge      |                      **9.7/10** |
+| **Compatibility Graph API**         | Core product primitive              |                      **9.7/10** |
+| **03 Photo-to-PO**                  | Excellent monetizable wedge         |                      **9.4/10** |
+| **01 Agentic RFQ Broker**           | Excellent live experiment           |                      **9.2/10** |
+| **Agentic Aftersales-as-a-Service** | Excellent B2B monetization          |                      **9.1/10** |
+| **02 Compatibility Commerce**       | Excellent consumer wedge            |                      **9.0/10** |
+| **04 Supplier OS**                  | Distribution/data-acquisition wedge |                      **8.7/10** |
+| **07 Installed-Base Graph**         | Massive eventual moat               |       **8.5/10 now / 10 later** |
+| **09 Grants/Compliance**            | Vertical extension                  | **6.5/10 as standalone thesis** |
+
+Two interesting things jump out.
+
+### You accidentally dropped two of the best theses
+
+The GitGoblin vision contains **11 models**, but `drop/thesisTesting` contains only nine. The two missing ones are:
+
+**Compatibility Graph as an API**
+and
+**Agentic Aftersales-as-a-Service**.
+
+Those should absolutely come back.
+
+In fact, I think they're potentially *more commercially interesting* than generic compatibility dropshipping.
+
+Imagine Bosch-sized companies are too large. But there are thousands of mid-sized manufacturers/distributors sitting on PDFs, CSVs, terrible Magento sites, ERP exports and distributor spreadsheets.
+
+You say:
+
+> Give us your mess. We return a normalized compatibility graph + agent-readable catalog + photo lookup + UCP/MCP endpoint + checkout + parts assistant.
+
+That is an actual B2B product with setup fee + SaaS + transaction revenue, and every customer improves the underlying normalization engine.
+
+---
+
+# Thesis 05: Service SKUs is much more important than the file makes it look
+
+The current file is tiny: standardized qualification fields, certifications, duration, parts, ranges, exclusions, warranties and evidence.
+
+But this is arguably **the Rosetta Stone of the entire service business**.
+
+Today:
+
+```text
+"electrician"
+"EV installer"
+"plumber"
+```
+
+are useless categories for an autonomous agent.
+
+An agent needs:
+
+```text
+EV-INSTALL-7KW-STANDARD
+postcode: NG7
+off_street_parking: true
+supply: single_phase
+cable_run_m: 8
+charger: zappi_v2
+fuseboard_upgrade: false
+certification_required: OZEV
+expected_duration: 2.5h
+price_band: £800–£950
+```
+
+Now Jim, Sarah and ABC Electrical aren't merely “electricians.”
+
+They are **fulfillment nodes for particular service SKUs**.
+
+That is huge.
+
+And importantly, UCP is now creating a common commerce capability language rather than requiring every agent to learn every merchant backend. Drop should therefore be designed as a **service-domain superset/extension of these emerging standards**, not another entirely separate ontology. ([Google Developers Blog][1])
+
+---
+
+# Thesis 06: API virtualization might be the cleverest new insight
+
+This deserves promotion.
+
+The file's formulation is excellent:
+
+> human WhatsApp = slow backend adapter.
+
+That solves the chicken-and-egg problem of agentic services.
+
+You don't wait for 50,000 electricians to adopt APIs.
+
+Externally:
+
+```text
+check_availability(
+    service="EV-INSTALL-7KW-STANDARD",
+    postcode="NG7",
+    date="2026-09-10"
+)
+```
+
+Internally:
+
+```text
+cache confidence 0.61
+        ↓
+WhatsApp Jim
+"NG7 Zappi install Thursday?"
+        ↓
+👍
+        ↓
+structured response
+```
+
+After 200 interactions:
+
+```text
+Jim:
+usually Mon–Thu
+NG1–NG9
+EV installs <15m cable run
+£850–£1,050
+median response 94 sec
+Thursday acceptance probability 0.78
+```
+
+Eventually you query Jim less.
+
+**That is the bridge from today's analogue economy to agent-native supply.**
+
+---
+
+# Thesis 08 is the actual moat
+
+The trust graph file is excellent conceptually because it rejects star ratings and instead records measurable outcomes: quote vs invoice, promised vs actual arrival, expected vs actual duration, cancellations and completion.
+
+This is the thing I'd protect most carefully.
+
+Eventually an agent should be able to ask:
+
+```text
+P(job completes successfully | supplier, SKU, postcode,
+  property, requested date, quoted price)
+```
+
+Then supplier ranking becomes something like:
+
+```text
+expected_utility =
+    success_probability
+  × price_quality
+  × availability_confidence
+  × timing_accuracy
+  × first_time_fix_probability
+  - cancellation_risk
+  - dispute_risk
+```
+
+That is vastly more valuable than:
+
+> Jim Electrical — ⭐ 4.8/5
+
+And it is extremely difficult for a competitor to copy because the data exists **only after transactions occur**.
+
+---
+
+# Supplier OS: one important conceptual downgrade
+
+The repo repeatedly calls the AI receptionist the moat.
+
+I don't think that is quite right anymore.
+
+It is the **wedge**.
+
+The GitGoblin research itself found the counterexample: Probook deliberately attacked dispatch rather than front-desk AI because voice/chat/follow-up had become crowded point solutions. a16z explicitly describes dispatch as the central decision layer of a home-services business. ([Andreessen Horowitz][2])
+
+So:
+
+```text
+AI receptionist = acquisition mechanism
+WhatsApp = operator interface
+Supplier OS = data collection mechanism
+
+MOAT =
+actual availability
++ actual acceptance
++ actual pricing
++ actual job outcomes
++ service compatibility
++ customer assets
+```
+
+Much sharper.
+
+You should happily swap LiveKit for Retell or Twilio or something better later.
+
+You cannot swap out **five years of observed fulfillment state**.
+
+---
+
+# There are several serious correctness bugs in the latest pushes
+
+This is the part I would fix before allowing any autonomous agent to reason over these files.
+
+## 1. “Backed by BigQuery” is currently false
+
+The nine JSON files repeatedly contain this:
+
+```text
+400 Table "products" must be qualified with a dataset
+400 Table "graph_edges" must be qualified...
+400 Table "fact_merchants" must be qualified...
+```
+
+The errors are literally being written into `bigquery_data`.
+
+And the cause is visible in `collect_data_v3.py`:
+
+```sql
+FROM products
+FROM competition_signals
+FROM fact_series_installed_base
+FROM graph_edges
+```
+
+rather than fully qualified canonical tables.
+
+Worse, this function does:
+
+```python
+except Exception as e:
+    return [{"error": str(e)}]
+```
+
+and downstream:
+
+```python
+[0].get("count", 0)
+```
+
+So **a failed query silently turns into `0`**.
+
+That's poison for the research engine.
+
+It makes:
+
+```text
+no evidence
+```
+
+indistinguishable from:
+
+```text
+evidence says zero
+```
+
+### This needs a rigid invariant
+
+```text
+QUERY_ERROR ≠ ZERO
+MISSING ≠ ZERO
+UNKNOWN ≠ FALSE
+```
+
+No failed extraction should ever update thesis evidence.
+
+Fail closed.
+
+---
+
+# 2. The latest “market intelligence” already contains factual contamination
+
+`5e9587b` says Probook has:
+
+```text
+funding: "0M from a16z and Sequoia"
+```
+
+inside the Supplier OS thesis.
+
+Probook actually announced **$40M total funding: a $34M Series A led by a16z plus a $6M seed led by Sequoia**. ([Andreessen Horowitz][2])
+
+That isn't a subtle estimation error. It means the latest commit's claim:
+
+> “All theses now backed by real market data”
+
+needs to be treated as unverified.
+
+There also aren't provenance objects next to those numbers.
+
+Every factual field should instead be:
+
+```json
+{
+  "metric": "probook_total_funding_usd",
+  "value": 40000000,
+  "as_of": "2026-06-23",
+  "source_url": "...",
+  "source_type": "first_party",
+  "retrieved_at": "...",
+  "confidence": 1.0
+}
+```
+
+Never:
+
+```json
+"funding": "0M"
+```
+
+---
+
+# 3. The Right-to-Repair intelligence is also too loose
+
+The compatibility thesis currently says:
+
+```text
+repairability_score: 0–10 at point of sale
+green_taxes_below_6: true
+```
+
+as UK market intelligence.
+
+Current GB tumble-dryer regulation instead introduces an **A–E repairability classification** based on an underlying score, with the new label regime coming into force in 2026/27. ([GOV.UK][3])
+
+Perhaps the original research combined several jurisdictions.
+
+That's exactly why every observation needs:
+
+```text
+country
+jurisdiction
+product_scope
+effective_date
+source
+```
+
+Otherwise GoldProbe cross-country information will slowly leak together.
+
+---
+
+# 4. The ML push is premature—and parts are technically wrong
+
+The intent is good. The implementation shouldn't be trusted yet.
+
+The ML document proposes:
+
+```text
+Profit Predictor
+CPC Forecaster
+TimesFM
+Product Embeddings
+Merchant Quality Scorer
+Anomaly Detector
+```
+
+while simultaneously stating that most of the outcome tables needed to train them are empty.
+
+There are bigger problems.
+
+### TimesFM
+
+The document shows a conventional:
+
+```sql
+ML.FORECAST(MODEL ...)
+```
+
+style call for TimesFM.
+
+Current BigQuery's built-in TimesFM is invoked through **`AI.FORECAST` over an input historical series**, not by training a TimesFM model with that pattern. ([Google Cloud Documentation][4])
+
+“Zero-shot” means *no domain-specific training*, not *no historical time-series observations*.
+
+### Anomaly detection
+
+The proposed:
+
+```sql
+model_type='ANOMALY_DETECTOR'
+```
+
+doesn't match the documented BigQuery approach. BigQuery supports `AI.DETECT_ANOMALIES` with TimesFM or `ML.DETECT_ANOMALIES` using supported models such as ARIMA/K-means/PCA/autoencoders. ([Google Cloud Documentation][5])
+
+### Photo-to-part
+
+The existing proposal embeds:
+
+```text
+product_name + category + features
+```
+
+and calls that “Product Similarity.”
+
+That's text similarity.
+
+For Photo-to-PO you actually want:
+
+```text
+photo
+   ↓
+multimodal embedding
+   +
+OCR / model plate
+   +
+known dimensions/connectors
+   +
+manufacturer
+   +
+candidate retrieval
+   ↓
+HARD COMPATIBILITY VERIFIER
+```
+
+BigQuery can now generate actual multimodal/image embeddings, so this is feasible. ([Google Cloud Documentation][6])
+
+But embedding similarity must **retrieve candidates**, never certify fitment.
+
+---
+
+# 5. Merchant Quality Scorer directly contradicts your Trust Graph
+
+The ML plan wants an LLM to read merchant pages and output:
+
+```text
+quality_score = 0–10
+```
+
+But thesis 08 correctly says:
+
+> don't use fuzzy reputation; use observed empirical outcomes.
+
+Those cannot coexist as the same confidence variable.
+
+Make:
+
+```text
+DISCOVERY_PRIOR
+```
+
+from website/reviews/certifications.
+
+Then separately:
+
+```text
+OBSERVED_RELIABILITY_POSTERIOR
+```
+
+from actual jobs.
+
+Once actual jobs exist, the latter should rapidly dominate.
+
+---
+
+# The canonical thesis schema now needs changing
+
+Instead of each JSON being “description + architecture + whatever data we found”, I'd enforce:
+
+```json
+{
+  "thesis_id": "...",
+
+  "layer": "distribution|schema|supply|transaction|trust|memory",
+  "depends_on": [],
+
+  "claim": "...",
+  "economic_mechanism": "...",
+
+  "customer": "...",
+  "supplier": "...",
+
+  "value_created": "...",
+  "value_capture": "...",
+
+  "existing_alternatives": [],
+
+  "evidence": {
+    "supporting": [],
+    "contradicting": [],
+    "unknown": []
+  },
+
+  "hypothesis": {
+    "prediction": "...",
+    "falsifier": "...",
+    "minimum_effect": "..."
+  },
+
+  "experiment": {
+    "unit": "...",
+    "sample_target": 20,
+    "primary_metric": "...",
+    "secondary_metrics": [],
+    "stop_rule": "...",
+    "success_rule": "..."
+  },
+
+  "protocol_mapping": {
+    "ucp": [],
+    "mcp": [],
+    "schema_org": [],
+    "custom_extension_required": []
+  },
+
+  "data_requirements": [],
+
+  "status": "UNTESTED",
+
+  "decision": null
+}
+```
+
+Crucially:
+
+**TAM is evidence that a market exists. It is not evidence that the thesis works.**
+
+---
+
+# I would stop treating ML confidence as the next step
+
+For now use explicit Bayesian evidence updates.
+
+Example:
+
+```text
+H:
+Tradesmen will respond to structured EV-install RFQs over WhatsApp
+within 10 minutes sufficiently often to create real-time agentic supply.
+
+Prior: 0.50
+
+Test:
+50 legitimate RFQs × 10 onboarded installers
+
+Primary:
+P(response <10 min)
+
+Success:
+>70%
+
+Weak:
+40–70%
+
+Falsified:
+<40%
+```
+
+Then:
+
+```text
+response_latency
+acceptance_rate
+quote_variance
+booking_rate
+completion_rate
+human_interventions
+gross_contribution/job
+```
+
+produce the evidence.
+
+**Then** ML has something worth learning.
+
+---
+
+# What I would actually build next
+
+Not nine experiments.
+
+One experiment with the primitives embedded inside it.
+
+## EV Nottingham becomes the canonical kernel test
+
+```text
+CUSTOMER
+"I need a Zappi installed"
+
+        ↓
+
+JOB INTENT
+
+        ↓
+
+SERVICE SKU
+EV-INSTALL-7KW-STANDARD
+
+        ↓
+
+QUALIFICATION
+postcode
+parking
+supply
+cable run
+property
+charger
+
+        ↓
+
+SUPPLIER RESOLVER
+
+        ↓
+
+API VIRTUALIZER
+Jim → WhatsApp
+Sarah → calendar
+ABC → API
+
+        ↓
+
+3 EXECUTABLE OFFERS
+
+        ↓
+
+BOOKING
+
+        ↓
+
+OBSERVED OUTCOME
+
+        ↓
+
+TRUST GRAPH
+```
+
+Now **one real £900 EV installation tests six of your theses simultaneously**.
+
+That is massively better information gain than researching each thesis independently.
+
+---
+
+# And run the replacement experiment simultaneously
+
+The other side:
+
+```text
+PHOTO
+ ↓
+OBJECT
+ ↓
+MODEL
+ ↓
+PART
+ ↓
+COMPATIBILITY
+ ↓
+SUPPLIER
+ ↓
+LOCATION/ETA
+ ↓
+BUY
+ ↓
+OUTCOME
+```
+
+This tests the exact same kernel against a product rather than service.
+
+If both work, you've found the abstraction.
+
+If only one works, you've learned something extremely valuable.
+
+---
+
+# One very timely point
+
+The W3C/GS1 **E-Commerce for Humans and AI Agents** workshop starts **September 8, 2026—tomorrow—and runs September 8–9**, hosted by Google. Its explicit objective is to examine how web/e-commerce information should be structured for AI-agent intermediaries and identify standardization opportunities. ([W3C][7])
+
+Given where `drop` has just arrived, that is probably the single highest-information external event to monitor right now.
+
+---
+
+## The biggest conclusion
+
+The new thesis is stronger than:
+
+> build an AI middleman for EV chargers.
+
+It's stronger than:
+
+> give tradesmen an AI receptionist.
+
+And stronger than:
+
+> optimize ecommerce for ChatGPT.
+
+It is:
+
+```text
+INTENT
+  ↓
+RESOLVE EXACT NEED
+  ↓
+RESOLVE EXACT PRODUCT/SERVICE
+  ↓
+RESOLVE WHO CAN ACTUALLY FULFILL IT
+  ↓
+VERIFY PRICE / FIT / LOCATION / AVAILABILITY
+  ↓
+TRANSACT
+  ↓
+OBSERVE WHAT REALLY HAPPENED
+  ↓
+MAKE THE NEXT RESOLUTION BETTER
+```
+
+**That loop is the company.**
+
+The storefront, voice agent, dropshipping margin, lead fee, procurement affiliate revenue, service booking and financing are different ways of monetizing the same underlying resolution graph.
+
+The next repo push should therefore not be another research report. It should be **a canonical `resolution_event` + `fulfillment_outcome` schema and one live EV transaction flowing through it end-to-end**.
+
+[1]: https://developers.googleblog.com/under-the-hood-universal-commerce-protocol-ucp/?utm_source=chatgpt.com "Under the Hood: Universal Commerce Protocol (UCP) - Google Developers Blog"
+[2]: https://a16z.com/announcement/investing-in-probook/?utm_source=chatgpt.com "Investing in Probook | Andreessen Horowitz"
+[3]: https://www.gov.uk/government/consultations/raising-product-standards-for-household-tumble-dryers/raising-standards-for-household-tumble-dryers-new-requirements-accessible-webpage?utm_source=chatgpt.com "Raising standards for household tumble dryers: new requirements (accessible webpage) - GOV.UK"
+[4]: https://docs.cloud.google.com/bigquery/docs/timesfm-model?hl=en&utm_source=chatgpt.com "The TimesFM model  |  BigQuery  |  Google Cloud Documentation"
+[5]: https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-detect-anomalies?utm_source=chatgpt.com "The AI.DETECT_ANOMALIES function  |  BigQuery  |  Google Cloud Documentation"
+[6]: https://docs.cloud.google.com/bigquery/docs/generate-visual-content-embedding?hl=en&utm_source=chatgpt.com "Generate image embeddings by using the AI.GENERATE_EMBEDDING function  |  BigQuery  |  Google Cloud Documentation"
+[7]: https://www.w3.org/2026/ecommerce-agents/?utm_source=chatgpt.com "Workshop overview - Workshop: E-Commerce for humans and AI Agents"
+
+
+Yes. The thesis survives current verification, but the best version is slightly more precise:
+
+> **Own the evidence-backed compatibility graph and live supplier state; use Merchant Center, Shopify Catalog, structured web data and eventually UCP/ACP as distribution rails.**
+
+The feeds are extraordinarily well matched to this business, but **the feeds themselves are not the moat**. The moat is knowing, with unusually high certainty, *what the object is, what fits it, what does not fit it, what superseded it, and who actually has the correct replacement available now*.
+
+Google's current Merchant Center schema strongly validates the direction. `related_product` is explicitly intended for conversational AI and supports `required_part`, `substitute`, `accessory`, `different_brand`, etc.; `product_detail` supports up to 100 structured details; Q&A supports up to 30 entries; manuals can be provided through `document_link`; and Google specifically recognizes the brand+MPN pattern for replacement/OEM parts that do not have GTINs. ([Google Help][1])
+
+There is one important correction to `f66e7f6`: **`related_product` is not itself a general installed-base compatibility graph.** Google's relation points to other products in the merchant's inventory. So if you sell a Bosch pump but don't sell the 12-year-old Bosch dishwasher it fits, you cannot rely on `related_product` to express the crucial dishwasher→pump edge. That edge belongs in our canonical graph and gets flattened outward into `product_detail`, carefully chosen Q&A, manuals, PDP text/JSON-LD and images. `related_product` then represents relations among products we actually sell: old part→new part, substitute→substitute, required accessory, etc. ([Google Help][1])
+
+That makes the internal object closer to:
+
+```text
+INSTALLED ASSET
+Bosch SMS46MI08E
+        │
+        ├── has_part ────── Bosch 00631200
+        │                       │
+        │                       ├── superseded_by → 00651956
+        │                       ├── voltage → 230V
+        │                       ├── connector → X
+        │                       └── incompatible_with → ...
+        │
+        ├── model_plate_location
+        ├── production_years
+        └── visual signatures
+
+                         ↓ flatten
+
+GOOGLE
+brand + MPN
+product_detail
+question_and_answer
+document_link
+related_product
+images/video
+availability
+price
+local inventory
+
+SHOPIFY
+rich PDP
+structured variants
+Catalog
+machine-readable inventory
+
+WEB
+JSON-LD
+crawlable compatibility pages
+manual/evidence pages
+```
+
+That distinction is important because **our private graph can be much richer than any one distribution protocol**.
+
+## Where I would hunt first
+
+Reviewing the markets we've already investigated and then checking today's merchant landscape changes the ranking quite a bit.
+
+| Rank  | Market / niche                                         | Why it fits                                                                                                              | Current verdict                                                     |
+| ----- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| **1** | 🇫🇮 **Allaway legacy central-vacuum parts**           | 250k+ Finnish homes, decades of legacy systems, serial/model dependence, huge local B2B parts inventories                | **Exceptional**                                                     |
+| **2** | 🇫🇮 **Vallox legacy ventilation parts**               | Old installed units, model plates, fans/boards/sensors/controllers, manufacturer doesn't sell spares direct to consumers | **Exceptional**                                                     |
+| **3** | 🇳🇴 **Cabin water-system replacement graph**          | Enormous cottage base, pumps/pressure switches/diaphragms/strainers with voltage/pressure/thread compatibility           | **Very strong**                                                     |
+| **4** | 🇫🇮 **Heat-pump lifecycle electronics**               | 1.8m cumulative heat pumps; aging replacement base; controls/sensors/receivers/boards                                    | **Strong, but not remotes alone**                                   |
+| **5** | 🇳🇴/🇸🇪/🇫🇮 **Automower legacy charging ecosystem** | Year/generation/amp/pinout ambiguity, huge installed base                                                                | **Great benchmark; merchant quality already decent**                |
+| **6** | 🇫🇮 **Helo/Tylö/Harvia legacy controls**              | ~3m sauna installed base, obsolete controllers and adapters                                                              | **Strong but safety/competition penalty**                           |
+| **7** | 🇳🇴 **Jabsco/Johnson marine pump/impeller identity**  | Almost perfect “what is this?” photo problem                                                                             | **Technically perfect; existing merchant data surprisingly strong** |
+| **8** | 🇬🇧 **EV charger aftersales parts + repair**          | Large installed base, new repair wave, compatibility + technician need                                                   | **Excellent hybrid product/service model**                          |
+
+The **country ranking** is now Finland first, Norway second, Sweden probably third, UK fourth. Germany and the Netherlands often look more useful as **source markets** because their specialist ecommerce is stronger and prices lower, rather than as the first demand market.
+
+### 1. Allaway Finland is the cleanest first campaign I have seen in this entire research program
+
+Allaway says its central vacuum systems are installed in **more than 250,000 Finnish homes**. Current manufacturer material still discusses compatibility when replacing old KP/AW-series machines, while Finnish wholesale catalogs contain large ranges of legacy filters, accessories, hoses, receivers and replacement units. Onninen alone exposes hundreds of central-vacuum products and a large Allaway range, much of it oriented to trade purchasing rather than an exceptional consumer decision experience. ([allaway.fi][2])
+
+This is exactly the asymmetry:
+
+```text
+SUPPLY:
+warehouse ✓
+inventory ✓
+OEM relationships ✓
+shipping ✓
+30 years of SKUs ✓
+
+CONSUMER:
+"What Allaway do I have?"
+"What replaced KP1200?"
+"Does this hose fit my inlet?"
+"Is this the old or new receiver?"
+"What filter fits my 1992 unit?"
+```
+
+And unlike an entire heat pump or sauna controller, many of the first products are easy parcel shipments and DIY-compatible.
+
+I would create something like **Allaway Finder Finland**, not a generic vacuum-parts shop.
+
+Start with perhaps 10–15 historical machine families and 50–100 replacement SKUs. For every legacy machine: front image, badge/model-plate examples, production dates, aliases, compatible filter, bag, hose, wall-inlet accessories, receiver, replacement machine and supersession chain.
+
+That's almost laboratory-perfect for the thesis.
+
+### 2. Vallox may be even more strategically interesting
+
+Vallox explicitly tells consumers that they **cannot buy spare parts directly from Vallox** and should obtain them through authorized service channels. It also maintains old manuals and parts information, including components such as fans, boards, sensors, actuators and control panels. ([Vallox][3])
+
+Read that economically:
+
+```text
+OEM knows the relationships
+        +
+distribution has the stock
+        +
+consumer has the intent
+        +
+consumer retail resolution is fragmented
+```
+
+That is Supplier Digital Arbitrage.
+
+The only thing I wouldn't assume yet is the commercial relationship. We need an actual supplier willing to blind-ship or otherwise fulfill our orders at adequate margin.
+
+But conceptually, **Vallox Legacy Parts Resolver** is stronger than another generic ecommerce store.
+
+### 3. Norway cabin water systems remains excellent—but niche much harder
+
+Norway has roughly **483,000 holiday houses in the SSB holiday-house-area measure**, with a very large long-tail of remote properties. Existing cabin specialists already sell 12V/230V water pumps and associated plumbing systems. ([SSB][4])
+
+Don't build:
+
+> Norwegian cabin replacement parts.
+
+Build:
+
+> **Norwegian cabin pressure-water resolver.**
+
+A user uploads this:
+
+```text
+[old dirty pump photo]
+
+SEAFLO
+12 V
+???
+3.0 GPM
+45 PSI
+```
+
+We determine:
+
+```text
+brand: Seaflo
+family: 33-series
+voltage: 12V
+flow: ~11.3 L/min
+cutoff: 45 PSI
+ports: 1/2"
+replacement: SKU X
+alternatives: Y/Z
+needs new fittings: no
+local stock: Oslo supplier A
+delivery: tomorrow
+```
+
+Then expand:
+
+```text
+pump
+→ pressure switch
+→ diaphragm/service kit
+→ strainer
+→ accumulator
+→ connectors
+→ replacement pump
+```
+
+**One subsystem at a time.**
+
+That creates a real graph rather than a catalog.
+
+## The Mitsubishi remote thesis has actually become a useful negative control
+
+Finland's heat-pump macro thesis remains excellent. SULPU reported about **112,000 heat pumps sold in Finland in 2025**, including roughly 96,000 air-to-air units, taking the cumulative installed base to around **1.8 million**. ([SULPU][5])
+
+But Mitsubishi remotes specifically are weaker than we originally thought.
+
+Current Finnish specialist retailers already publish numerous Mitsubishi remote models with explicit LN/RW/FT/AP/FH/EF/SF-series compatibility, inventory status and even instructions to photograph the indoor-unit model plate and old remote when unsure. ([Innoair][6])
+
+That means our research process is working.
+
+```text
+MACRO:
+Finnish heat-pump lifecycle = YES
+
+MICRO:
+Mitsubishi remote lookup = merchant gap increasingly CLOSED
+```
+
+Don't throw away heat pumps. Move deeper:
+
+```text
+controller boards
+receiver boards
+temperature sensors
+Wi-Fi/interface modules
+condensate components
+fan/control components
+obsolete controller supersessions
+```
+
+The ideal edge is not:
+
+> MSZ-FH35 → remote X
+
+if five competitors already explain it perfectly.
+
+It's:
+
+> photo + plate + error/problem → exact obscure lifecycle component.
+
+That is where the information rent is.
+
+## Automower is real, but I would use it as our benchmark corpus
+
+Husqvarna's own catalog exposes multiple Automower power supplies—1A, 1.3A, 2.2A, 4.2A, 7A—with model fitment, while specialists publish superseded part numbers and year/model compatibility. Users still encounter confusing generation differences around chargers, stations, output ratings and older pinouts. ([Husqvarna][7])
+
+That is excellent evidence that **compatibility pain is economically real**.
+
+But it's also evidence that the seller data gap is narrower.
+
+So I'd use Automower as a **benchmark**:
+
+> Can our graph answer compatibility questions more accurately than Husqvarna + the best specialist?
+
+If yes, our data engine is good.
+
+Then deploy it in a market where the incumbent pages are much worse.
+
+## Finland is becoming the obvious proving ground
+
+There is an interesting confluence:
+
+```text
+~1.8m heat pumps
+250k+ Allaway households
+~3m saunas
+large mechanical-ventilation installed base
+long equipment lifetimes
+Finnish-language documentation
+excellent local logistics
+lots of competent technical distributors
+```
+
+That is far more interesting for this thesis than generic “low ecommerce competition.”
+
+It is **installed-base density × technical fragmentation**.
+
+And the agent-distribution timing is real: Google's AI Mode currently supports both **Finland and Norway**, including Finnish and Norwegian language availability. ([Google Help][8])
+
+There's a useful distinction on Shopify, though. Shopify Catalog can improve how products are represented to AI-shopping systems, but Shopify's direct **Sell on ChatGPT** channel currently requires the merchant to sell to U.S. customers. Therefore for a Finland-first store, I would prioritize:
+
+```text
+1. Google Merchant Center
+2. excellent crawlable PDP/JSON-LD
+3. Google Images/Lens readiness
+4. Shopify as commerce backend + Catalog
+5. ChatGPT direct channel when Nordic eligibility expands
+6. UCP/ACP/MCP later
+```
+
+Shopify itself says eligible store products are automatically made available to Shopify Catalog for AI shopping, but inclusion does not guarantee that a product is selected in an answer. ([Shopify Help Center][9])
+
+## There's another Google feature I would elevate: local inventory
+
+Your phrase **“locally stocked”** can be represented directly.
+
+Google's local inventory data supports store-level availability and lets merchants express whether a particular product exists at a particular location; Finland and Norway are among supported local-inventory markets. ([Google Help][10])
+
+That means if a Finnish distributor has:
+
+```text
+Tampere: 6
+Helsinki: 14
+Turku: 2
+```
+
+our system should know this.
+
+Even if we don't expose all those exact counts publicly:
+
+```text
+in_stock
+local
+dispatch_today
+pickup_possible
+supplier_confidence
+```
+
+is enormously useful agent state.
+
+So supplier inventory synchronization is not a boring backend issue. **It is part of the recommendation advantage.**
+
+## One further refinement to the feed strategy
+
+Don't mechanically fill all 30 Q&As and 100 attributes.
+
+Google explicitly advises avoiding redundant Q&A when the same answers exist in submitted documents, because it can extract information from those documents. ([Google Help][11])
+
+The optimized pattern is:
+
+| Surface               | Put here                                                             |
+| --------------------- | -------------------------------------------------------------------- |
+| `product_detail`      | Deterministic structured facts                                       |
+| `question_and_answer` | Ambiguities, negative compatibility, common human questions          |
+| `document_link`       | OEM manual, installation guide, parts diagram                        |
+| `related_product`     | Other products **we sell** that are substitutes/required/accessories |
+| MPN/brand/GTIN        | Entity resolution                                                    |
+| images                | Visual identity and differentiators                                  |
+| video                 | Angles, connectors, model plate, physical recognition                |
+
+Google added `video_link` in 2026 too, which is almost tailor-made for physical compatibility products because we can show the object, label, connector and mounting geometry. ([Google Help][12])
+
+## The screening formula I'd now make canonical
+
+Your previous research repeatedly showed why “few competitors” is the wrong metric. Some markets have few sellers because there's no demand; others have many sellers but all are terrible at solving the decision.
+
+So I would score:
+
+```text
+HIGH_CERTAINTY_COMMERCE_SCORE =
+
+installed_base
+× replacement_frequency
+× identity_difficulty
+× compatibility_complexity
+× supersession_complexity
+× wrong_part_cost
+× purchase_urgency
+× supplier_stock_depth
+× supplier_operational_quality
+× digital_merchant_gap
+× language_fragmentation
+× visual_identifiability
+× gross_margin
+× shipping_suitability
+
+÷ OEM_DTC_quality
+÷ best_specialist_quality
+÷ return_risk
+÷ installation/safety_risk
+```
+
+And I'd make **BEST_SPECIALIST_QUALITY** a killer feature of the screening system.
+
+Not:
+
+> How many sellers?
+
+But:
+
+> **Can we materially beat the single best seller on certainty?**
+
+If Innoair already gives the exact Mitsubishi mappings, plate-photo support and local stock, kill it.
+
+If Onninen has the SKU but requires a trade login and doesn't solve a 1991 Allaway consumer's identity problem, attack it.
+
+That distinction is the alpha.
+
+## Supplier requirements become Priority Zero
+
+I agree that feeds are the implementation priority on the demand/distribution side.
+
+But before a niche can go live, I'd force a supplier gate:
+
+```text
+stock access                PASS
+stable supplier SKU         PASS
+wholesale economics         PASS
+blind/direct shipping       PASS
+dispatch SLA                PASS
+returns/RMA                 PASS
+stock freshness             PASS
+consumer-safe packaging     PASS
+```
+
+Because the business has **no fulfillment operations**, its reputation is entirely downstream of suppliers.
+
+And there is a legal distinction worth preserving: if the customer buys from **our store**, supplier dropshipping does not mean we cease being the retailer. EU distance-selling rules still generally give consumers withdrawal rights and statutory remedies against the seller for faulty goods. ([European Union][13])
+
+So:
+
+> no warehouse, yes.
+> no shipping operation, yes.
+> no inventory capital, yes.
+> no retail responsibility, no.
+
+That needs to be priced into margins.
+
+# What I would launch first
+
+**Finland → Allaway legacy central-vacuum compatibility.**
+
+Not because central vacuums are exciting. Precisely because they aren't.
+
+It has essentially every desired feature:
+
+```text
+boring
+old
+large installed base
+model-dependent
+visual identity possible
+many aliases/generations
+consumables + failures + upgrades
+small parcel goods
+local stock
+trade-oriented distribution
+repeat demand
+high informational value
+low fashion risk
+```
+
+Build 50–100 SKUs insanely well instead of 5,000 mediocre SKUs.
+
+Then run **Vallox legacy ventilation** through the same engine.
+
+Then **Norwegian cabin water**.
+
+If those three work, the reusable company is obvious:
+
+```text
+NICHE DISCOVERY
+      ↓
+OEM DOCUMENT INGEST
+      ↓
+ASSET/PART GRAPH
+      ↓
+VISUAL IDENTIFICATION DATASET
+      ↓
+SUPPLIER NORMALIZATION
+      ↓
+GMC + SHOPIFY + WEB
+      ↓
+TRANSACTION
+      ↓
+WRONG-PART / SUCCESS OUTCOME
+      ↓
+GRAPH IMPROVES
+      ↓
+CLONE INTO NEXT INSTALLED BASE
+```
+
+That is dramatically better than conventional dropshipping because every launch leaves behind a reusable **resolution engine**, and each sale produces compatibility evidence rather than merely revenue.
+
+The newest thesis has therefore sharpened the earlier one substantially: **we aren't searching for products with an ad arbitrage. We're searching for broken information markets attached to large physical installed bases.** That's a much more defensible search space.
+
+[1]: https://support.google.com/merchants/answer/17085213?hl=en "https://support.google.com/merchants/answer/17085213?hl=en"
+[2]: https://allaway.fi/en/ "https://allaway.fi/en/"
+[3]: https://www.vallox.com/en/support-and-instructions/frequently-asked-questions/ "https://www.vallox.com/en/support-and-instructions/frequently-asked-questions/"
+[4]: https://www.ssb.no/en/natur-og-miljo/areal/statistikk/fritidsbyggomrader "https://www.ssb.no/en/natur-og-miljo/areal/statistikk/fritidsbyggomrader"
+[5]: https://www.sulpu.fi/heat-pump-sales-returned-to-a-growth-path-a-rise-of-10-pump-sales-in-finland-already-worth-10-billion/ "https://www.sulpu.fi/heat-pump-sales-returned-to-a-growth-path-a-rise-of-10-pump-sales-in-finland-already-worth-10-billion/"
+[6]: https://www.innoair.fi/ilmalampopumppujen-suodattimet-ja-kaukosaatimet "https://www.innoair.fi/ilmalampopumppujen-suodattimet-ja-kaukosaatimet"
+[7]: https://www.husqvarna.com/uk/accessories-category/maintenance-and-spare-parts/power-supply-unit/ "https://www.husqvarna.com/uk/accessories-category/maintenance-and-spare-parts/power-supply-unit/"
+[8]: https://support.google.com/websearch/answer/16011537 "https://support.google.com/websearch/answer/16011537"
+[9]: https://help.shopify.com/en/manual/shopify-catalog "https://help.shopify.com/en/manual/shopify-catalog"
+[10]: https://support.google.com/merchants/answer/14819809?hl=en "https://support.google.com/merchants/answer/14819809?hl=en"
+[11]: https://support.google.com/merchants/answer/17085211?hl=en "https://support.google.com/merchants/answer/17085211?hl=en"
+[12]: https://support.google.com/merchants/answer/16989427?hl=en "https://support.google.com/merchants/answer/16989427?hl=en"
+[13]: https://europa.eu/youreurope/business/selling-in-eu/consumer-contracts-guarantees/consumer-guarantees/index_en.htm "https://europa.eu/youreurope/business/selling-in-eu/consumer-contracts-guarantees/consumer-guarantees/index_en.htm"
+

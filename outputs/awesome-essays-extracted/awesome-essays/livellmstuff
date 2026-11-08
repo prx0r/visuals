@@ -1,0 +1,1879 @@
+The latest `livellm` push is materially better. At `fa0c51c`, it is now a runnable prototype with a CLI, SQL.js persistence, replay fixtures, 37 tests, candidate generation, AI extraction modules, fact supersession, materialization, dashboard generation, and SerpApi archive plumbing.
+
+The main risk has changed. It is no longer “this is mostly a spec.” It is now:
+
+> **The demo can currently produce apparently verified facts through paths that are weaker than the live path, including synthetic fallbacks and unvalidated replay data.**
+
+That is exactly what I would fix before adding Trends, AI Mode, or other fancy sponsor features.
+
+## Updated assessment
+
+| Area                  | Current | After fixes |
+| --------------------- | ------: | ----------: |
+| Concept               |  9.5/10 |         9.5 |
+| Architecture          |    9/10 |         9.5 |
+| SerpApi use           |    7/10 |         9.5 |
+| Actual implementation |  6.5/10 |           9 |
+| Provenance/trust      |    4/10 |         9.5 |
+| Calculation rigor     |    6/10 |           9 |
+| Tests                 |    6/10 |         9.5 |
+| Demo readiness        |    5/10 |           9 |
+| Generality            |    7/10 |           9 |
+
+I would **not submit this exact commit**, but you're now at the point where fixing correctness is much more valuable than adding another large feature.
+
+---
+
+# 1. The most serious bug: replay bypasses validation
+
+Your module description says:
+
+> parse → deterministic validation → return accepted facts.
+
+But that is only true for the live LLM branch.
+
+In `extractFacts()` the live branch does:
+
+```text
+LLM response
+→ parseExtractionOutput
+→ validateProposedFacts
+→ acceptedFacts
+```
+
+But `tryReplay()` simply parses the fixture and returns:
+
+```ts
+facts: extraction.facts
+```
+
+with no validation at all.
+
+This is a huge anti-cheat problem because your hackathon demo is likely to run replay mode.
+
+Replay must replay **the external response**, not bypass the software being tested.
+
+Correct architecture:
+
+```text
+LIVE:
+LLM → raw JSON ─┐
+                ├→ parse → validate → canonicalize → facts
+REPLAY:
+fixture JSON ───┘
+```
+
+Not:
+
+```text
+LIVE:
+LLM → validation → fact
+
+REPLAY:
+fixture → fact
+```
+
+Make a shared function:
+
+```ts
+processExtractionOutput(
+  rawOutput,
+  sourceText
+)
+```
+
+and both live and replay must go through it.
+
+---
+
+# 2. Missing source fixtures literally invent a pricing page
+
+This is the most obvious “cheat-looking” behavior in the repo.
+
+`getReplayContent()` currently tries to find the official-source fixture and, if it does not exist, returns:
+
+```html
+Input tokens  $0.25 per million
+Output tokens $1.25 per million
+Free tier     1,000 requests/day
+```
+
+for **any provider URL**.
+
+Delete that immediately.
+
+Missing fixture should cause:
+
+```text
+MISSING_REPLAY_FIXTURE
+```
+
+and fail closed.
+
+This is exactly the sort of thing that could make an otherwise legitimate hackathon entry look staged if somebody reads the source.
+
+---
+
+# 3. Some of your AI fixtures are actually wrong
+
+The current fixtures aren't merely artificial examples; some violate their own evidence.
+
+The clearest example is the OpenAI fixture added in the latest commit:
+
+```text
+field = input_price_usd_per_million
+value = 0.01
+unit  = USD/1M tokens
+
+quote:
+"$0.01 per 1K tokens"
+```
+
+That's a **1,000× unit error**.
+
+If the source says:
+
+```text
+$0.01 / 1K
+```
+
+then:
+
+```text
+$0.01 × 1000 = $10 / 1M
+```
+
+Your own extraction prompt tells the LLM to multiply `/1K` pricing by 1,000.
+
+Yet because replay bypasses validation, the fixture can enter the demo as `$0.01/M`.
+
+This is exactly the test case you want—but it should be an **adversarial rejected fixture**, not a successful extraction fixture.
+
+Another bad one is Together AI. The fixture claims both:
+
+```text
+$0.10 / 1M
+1,000,000 free tokens/month
+```
+
+but its supporting quote is only:
+
+> “Together AI offers competitive pricing for open source Llama, Mistral, and Qwen models”
+
+That quote supports neither numeric fact.
+
+Again: excellent adversarial test. Terrible accepted demo fact.
+
+---
+
+# 4. Your validator says it validates units. It doesn't.
+
+The comments say:
+
+```text
+1. quote exists
+2. numeric value
+3. reasonable range
+4. unit consistent
+5. confidence
+```
+
+But the actual validator checks:
+
+```text
+quote
+numeric
+range
+confidence
+entity
+```
+
+There is no unit consistency check.
+
+`normalizePrice()` exists later in the same file but isn't called by the validator or investigation path.
+
+So currently this can pass:
+
+```json
+{
+  "field": "input_price_usd_per_million",
+  "value": 0.01,
+  "unit": "USD/1K tokens"
+}
+```
+
+as long as the quote appears.
+
+Fix this before anything else.
+
+I'd make price normalization a separate deterministic parser:
+
+```text
+extracted raw value + raw unit
+           ↓
+canonical unit conversion
+           ↓
+field/unit compatibility check
+           ↓
+canonical fact
+```
+
+The LLM should not perform authoritative arithmetic.
+
+---
+
+# 5. Runtime schema validation is missing
+
+`ProposedFact` is only a TypeScript type.
+
+`parseExtractionOutput()` does:
+
+```ts
+JSON.parse(...)
+facts: Array.isArray(parsed.facts)
+  ? parsed.facts
+  : []
+```
+
+It doesn't validate that `field` belongs to your enum.
+
+This creates a subtle validator bypass. An LLM could output:
+
+```json
+{
+  "field": "super_cheap_price",
+  "value": 0.000001,
+  ...
+}
+```
+
+The numeric range tests only run for recognized numeric fields, so an unknown field may pass the remaining checks.
+
+Use Zod/AJV/JSON Schema before deterministic semantic validation:
+
+```text
+JSON syntax
+→ structural schema
+→ canonical units
+→ evidence entailment
+→ range/invariant checks
+→ fact
+```
+
+---
+
+# 6. “Cheerio-based extraction” currently isn't real
+
+`investigate.ts` says:
+
+> “Extract relevant content (cheerio-based)”
+
+but it does not import Cheerio and the package doesn't depend on Cheerio. It simply calls `res.text()` and passes raw HTML onward.
+
+Remove the claim or implement it.
+
+Same principle throughout the repo: comments should describe **what exists now**, not the intended CP12 version.
+
+---
+
+# 7. Evidence provenance is currently wired incorrectly
+
+This one is structurally serious.
+
+Your SQL model says:
+
+```text
+evidence.observation_id
+        ↓ FK
+source_observations.observation_id
+```
+
+That is correct.
+
+But investigation currently creates evidence with:
+
+```ts
+observationId:
+  notes.searchId ?? "synthetic"
+```
+
+A **SerpApi search ID is not an official-source observation ID**.
+
+Those are two separate provenance chains:
+
+```text
+DISCOVERY
+
+SerpApi SearchRun
+    ↓
+SearchResult
+    ↓
+Candidate
+
+
+VERIFICATION
+
+Candidate
+    ↓
+Source
+    ↓
+SourceObservation
+    ↓
+Evidence
+    ↓
+Fact
+```
+
+Do not collapse them.
+
+Your database already has the right conceptual separation. The implementation needs to follow it.
+
+And because foreign keys are enabled in `openDb()`, this wiring should also be tested against a completely fresh database.
+
+---
+
+# 8. I suspect CP6 hasn't actually been tested end-to-end on a clean DB
+
+The latest commit says:
+
+> AI extraction, economics, dashboard, provenance
+
+but your executable test directory still contains only the earlier tests:
+
+* canonical request
+* hash
+* normalize
+* prefilter
+* radar
+* scheduler
+* URL
+
+There are **no executable tests for CP6–CP9** visible yet.
+
+So “37 tests passing” is true, but could easily be misunderstood as “the whole current pipeline has 37 tests.”
+
+It doesn't.
+
+There are also currently **no GitHub status checks attached to `fa0c51c`**, so these are local-test claims rather than independently visible CI results.
+
+Add CI now.
+
+Also remove `--forceExit` once possible. `jest --forceExit` can hide dangling-resource problems.
+
+---
+
+# 9. Candidate `verified` state is too permissive
+
+This code effectively does:
+
+```ts
+if (factsChanged > 0) {
+  state = "verified"
+} else {
+  state = "verified"
+}
+```
+
+So that condition currently has no effect.
+
+I'd separate:
+
+```text
+verified_new_fact
+verified_changed_fact
+verified_no_change
+rejected_bad_evidence
+rejected_not_official
+needs_review
+```
+
+or keep a simpler state machine and store a distinct `outcome`.
+
+“Verified” should mean the evidence/fact was validated, not merely that investigation completed.
+
+---
+
+# 10. New facts are counted as changes, but don't generate change events
+
+`supersedeFact()` returns:
+
+```ts
+changed: true
+```
+
+when there was no previous fact.
+
+But it doesn't create a `change_event` in that branch.
+
+Therefore:
+
+```text
+factsChanged = 1
+changeEvents = 0
+```
+
+is possible.
+
+Use:
+
+```ts
+outcome:
+  "created" |
+  "unchanged" |
+  "changed"
+```
+
+Then report separately:
+
+```text
+new facts
+changed facts
+unchanged verified facts
+```
+
+Much cleaner.
+
+---
+
+# 11. Fact supersession needs a transaction
+
+Current sequence is:
+
+```text
+UPDATE old fact
+INSERT change event
+INSERT new fact
+save database
+```
+
+Wrap it:
+
+```sql
+BEGIN;
+
+UPDATE ...
+INSERT ...
+INSERT ...
+
+COMMIT;
+```
+
+rollback on any failure.
+
+A truth ledger particularly shouldn't permit a half-completed supersession.
+
+---
+
+# 12. `occurred_at` is currently fabricated
+
+You're setting:
+
+```text
+occurred_at = now
+detected_at = now
+```
+
+for every changed fact.
+
+Those have different meanings.
+
+You actually need:
+
+```text
+published_at   provider announcement time, if known
+effective_at   when the price applies, if known
+observed_at    when LiveLLM fetched the official page
+detected_at    when radar first discovered it
+verified_at    when fact validation succeeded
+```
+
+If actual effective time is unknown:
+
+```text
+effective_at = NULL
+```
+
+Do not invent it from detection time.
+
+Gemini provides a fantastic demonstration of why this matters: its current official page already publishes one price through **December 31, 2026** and a higher price effective **January 1, 2027**. ([Google AI for Developers][1])
+
+That's exactly what LiveLLM should model.
+
+---
+
+# 13. Official-source domain validation is vulnerable
+
+This currently decides whether a URL is official:
+
+```ts
+hit.url.includes(domain)
+```
+
+So these can pass:
+
+```text
+https://openai.com.evil.example/
+https://evil.example/?url=openai.com
+https://notopenai.com/
+```
+
+Parse hostname.
+
+Use:
+
+```ts
+host === domain ||
+host.endsWith("." + domain)
+```
+
+And don't classify every page on `github.com` as authoritative GitHub corporate evidence.
+
+A random repo isn't an official Copilot pricing source.
+
+---
+
+# 14. There's also no SSRF protection yet
+
+The source verification path fetches whatever URL it receives. The code itself acknowledges that proper SSRF protection is future work.
+
+Before exposing investigation through a web endpoint, block:
+
+```text
+loopback
+private ranges
+link-local
+IPv6 loopback/private
+non-http protocols
+redirects into private networks
+```
+
+plus response size/redirect limits.
+
+---
+
+# 15. A candidate can be assigned an unrelated “official source”
+
+This is subtle.
+
+For every candidate, `radar.ts` calls:
+
+```ts
+findOfficialUrl(response.hits, providerHint)
+```
+
+against **all hits in that SERP**, not merely a link specifically related to the candidate event.
+
+Imagine:
+
+```text
+result #2: article about new OpenAI price
+result #8: old OpenAI docs page
+```
+
+The candidate from #2 can be linked to #8 simply because it is an OpenAI domain.
+
+Better:
+
+```text
+candidate
+   ↓
+targeted official-source discovery
+site:openai.com ...
+   ↓
+source_candidate
+   ↓
+fetch
+   ↓
+does source actually support proposed fact?
+```
+
+This is worth spending a SerpApi search on for high-value candidates.
+
+---
+
+# 16. SerpApi cache provenance is currently wrong
+
+This is a factual bug.
+
+The code does:
+
+```ts
+fromCache: freshness === "cache_ok"
+cacheSource:
+  freshness === "cache_ok"
+    ? "serpapi_cache"
+    : "live"
+```
+
+But:
+
+```text
+cache_ok
+```
+
+means:
+
+> SerpApi is allowed to serve a cached response.
+
+It does **not** mean:
+
+> this response was actually returned from cache.
+
+Rename this:
+
+```text
+serpapi_cache_allowed = true
+```
+
+and reserve:
+
+```text
+local_cache_hit
+```
+
+for your own cache where you know what happened.
+
+Don't claim upstream cache provenance you can't observe.
+
+---
+
+# 17. `force_fresh` can currently be overridden
+
+You first set:
+
+```text
+no_cache=true
+```
+
+from your internal freshness policy.
+
+Then you merge caller params afterwards.
+
+That means:
+
+```ts
+freshness: "force_fresh",
+params: { no_cache: false }
+```
+
+can defeat the internal invariant.
+
+Merge arbitrary params first.
+
+Then enforce:
+
+```ts
+if forceFresh:
+    params.no_cache = true
+```
+
+Also reject incompatible async/fresh combinations.
+
+---
+
+# 18. Date normalization is lying slightly
+
+Current normalizer sets:
+
+```ts
+publishedAt =
+  r.iso_date ?? r.date
+```
+
+But News Light can give:
+
+```text
+"2 hours ago"
+```
+
+That is not an ISO timestamp.
+
+Have:
+
+```text
+published_at_iso
+published_at_raw
+published_at_precision
+```
+
+Don't overload one field.
+
+---
+
+# 19. The Account/quota governor isn't wired into the actual radar
+
+You built `allowedPaidBatch()`.
+
+Good.
+
+But `runRadar()` currently simply iterates all due discovery queries. It doesn't obtain the Account API result and cap the selected search batch.
+
+So the architectural promise:
+
+> preserve an emergency search reserve
+
+isn't enforced in the production path.
+
+Wire:
+
+```text
+Account API
+↓
+remaining quota
+↓
+reserve
+↓
+scheduler
+↓
+top N due queries
+```
+
+before any SerpApi call.
+
+---
+
+# 20. The “economics engine” in the latest commit isn't actually economics yet
+
+This is one piece I would rename rather than defend.
+
+Latest commit says:
+
+> CP7 — LLMDeals economics
+
+but `materialize.ts` doesn't calculate:
+
+```text
+cost/request
+effective multiple
+PAYG comparison
+deal ranking
+profile economics
+```
+
+It groups active facts into:
+
+```json
+{
+  "models": [...],
+  "generated_at": "...",
+  "stats": {...}
+}
+```
+
+Its comment even says the output includes:
+
+```text
+providers
+models
+offers
+```
+
+when the actual return doesn't.
+
+Call CP7:
+
+> **market-state materialization**
+
+until the actual economics engine is ported.
+
+That is still useful work.
+
+---
+
+# 21. Materialized provenance is too lossy
+
+Each materialized model currently gets one:
+
+```ts
+evidence?: string
+```
+
+and SQL chooses one arbitrary active fact quote using `LIMIT 1`.
+
+But:
+
+```text
+input price
+output price
+rate limit
+context
+free quota
+```
+
+can come from different sources and observations.
+
+Use field-level provenance:
+
+```json
+{
+  "input_price": {
+    "value": 0.14,
+    "unit": "USD/1M",
+    "fact_id": "...",
+    "evidence_id": "...",
+    "source_id": "...",
+    "verified_at": "..."
+  }
+}
+```
+
+Don't assign one quote to a whole model.
+
+---
+
+# 22. Quota units are being thrown away
+
+Current materializer turns:
+
+```text
+free_tier_quota
+```
+
+into:
+
+```json
+{
+  "quota": 100000
+}
+```
+
+while its underlying fact could mean:
+
+```text
+100,000 tokens/day
+100,000 tokens/month
+100,000 requests/day
+```
+
+That's dangerous.
+
+Model:
+
+```json
+{
+  "quantity": 100000,
+  "unit": "tokens",
+  "period": "day"
+}
+```
+
+or, better, separate typed rate-limit facts.
+
+---
+
+# 23. The dashboard can confuse page time with data freshness
+
+The latest dashboard template does:
+
+```js
+generated.textContent =
+  new Date().toISOString()
+```
+
+in the browser.
+
+That's **page render time**, not market observation time.
+
+Show separately:
+
+```text
+Snapshot generated
+Last radar search
+Last official verification
+Oldest active fact
+Newest active fact
+```
+
+This is central to the product.
+
+---
+
+# 24. “37 passing tests” is good, but the next 37 matter more
+
+The current tests are legitimately useful—they cover the request canonicalizer, normalization, prefiltering, scheduler, hashes, URLs and replay radar.
+
+But now the danger sits downstream.
+
+## Anti-cheat test suite I would add
+
+| Test                              | Expected failure if system is cheating/wrong        |
+| --------------------------------- | --------------------------------------------------- |
+| **Replay/live parity**            | Replay produces a fact live validation would reject |
+| **Missing source fixture**        | Any synthetic fallback is generated                 |
+| **Missing AI fixture**            | System silently fabricates extraction               |
+| **No-network replay**             | Any `fetch()` occurs in replay mode                 |
+| **Bad evidence quote**            | Fact accepted when quote isn't present              |
+| **Unsupported number**            | Quote says no number but AI invents one             |
+| **$0.01/1K conversion**           | Anything except $10/1M                              |
+| **$25/100M conversion**           | Anything except $0.25/1M                            |
+| **Unknown field**                 | `made_up_price` accepted                            |
+| **Wrong unit/field**              | requests/day stored as tokens/day                   |
+| **Official-domain spoof**         | `openai.com.evil.test` accepted                     |
+| **Query-string spoof**            | `evil.test/?q=openai.com` accepted                  |
+| **SSRF**                          | localhost/private/link-local fetched                |
+| **Official → private redirect**   | redirect followed                                   |
+| **News-vs-source conflict**       | SERP snippet overwrites official fact               |
+| **Search result shuffle**         | candidate's evidence source changes incorrectly     |
+| **Duplicate story**               | multiple stories create multiple same events        |
+| **Same fact again**               | new fact row/change event generated                 |
+| **First fact**                    | counted as a changed previous fact                  |
+| **Supersession failure**          | old fact closed without replacement                 |
+| **Synthetic fixture isolation**   | synthetic data visible in production mode           |
+| **Build freshness**               | rebuild changes verified/observed timestamp         |
+| **Page freshness**                | browser render time shown as verification time      |
+| **Quota reserve**                 | live radar can spend below reserve                  |
+| **Concurrent identical query**    | more than one SerpApi call                          |
+| **force_fresh override**          | caller can disable `no_cache`                       |
+| **Randomized provider names**     | same hard-coded facts magically emerge              |
+| **Delete fixture**                | demo continues successfully                         |
+| **Clean DB E2E**                  | provenance foreign keys fail                        |
+| **All verified facts provenance** | any verified fact lacks source observation          |
+| **Snippet-as-evidence audit**     | search result is authoritative evidence             |
+
+The most important CI invariant should literally be:
+
+```text
+every verified fact
+→ evidence
+→ source observation
+→ authoritative source
+```
+
+and separately:
+
+```text
+candidate
+→ search result
+→ SerpApi search run
+```
+
+Those chains may meet through the candidate, but must not be confused.
+
+---
+
+# 25. Add a “synthetic poisoning” test
+
+This is the one I especially want.
+
+Take your recorded pipeline and inject a SerpApi result saying:
+
+```text
+OpenCode cuts Kimi to $0.01/M!
+```
+
+while the official source still says:
+
+```text
+$0.95/M
+```
+
+Expected:
+
+```text
+candidate discovered       YES
+official investigation     YES
+canonical price changed    NO
+candidate outcome          contradiction / rejected
+```
+
+Then invert it:
+
+```text
+SERP snippet unchanged
+official page changes
+```
+
+Known-source polling should still detect it.
+
+That beautifully proves your architecture.
+
+---
+
+# 26. Anti-overfitting test the search queries
+
+Your synthetic SerpApi fixtures currently mirror your handcrafted detector vocabulary.
+
+You need a held-out corpus containing:
+
+```text
+true changes without the exact words "pricing" or "free tier"
+irrelevant articles containing every positive keyword
+company financial “price” stories
+job listings mentioning rate limits
+tutorials quoting outdated prices
+comparison posts quoting old pricing
+provider launches unrelated to API economics
+```
+
+Measure:
+
+```text
+candidate recall
+candidate precision
+official-source verification precision
+verified-event precision
+```
+
+The last metric should be near **100%**, even if candidate precision is mediocre.
+
+That's the whole point of the trust boundary.
+
+---
+
+# 27. Add differential tests against provider truth
+
+For the LLM-pricing vertical, keep a small **gold set** of official-source snapshots.
+
+On every change to parsers/economics:
+
+```text
+fixture official page
+→ facts
+→ economics
+→ expected canonical snapshot
+```
+
+Hash the final snapshot.
+
+Then randomly mutate:
+
+```text
+whitespace
+navigation
+table row order
+footer text
+tracking parameters
+```
+
+and assert the economic facts don't change.
+
+Change the actual pricing cell and assert they do.
+
+This tests your three-hash idea properly.
+
+---
+
+# 28. Independent LLMDeals check: a lot is right
+
+I independently checked current official provider material rather than trusting the seed.
+
+Several core claims remain solid.
+
+Cloudflare still currently gives **10,000 Neurons/day free**, with paid usage above that at **$0.011/1,000 Neurons**. It also now has an important nuance: some newer frontier models require paid billing even within Workers AI. ([Cloudflare Docs][2])
+
+Gemini still genuinely has free input/output for supported free-tier models, but pricing is increasingly temporally structured—for example Gemini 3.7 Flash has one price through December 31, 2026 and another from January 1, 2027. ([Google AI for Developers][1])
+
+OpenRouter still documents **50 free-model requests/day** for accounts below the credit threshold and **1,000/day** once at least 10 credits have been purchased. ([OpenRouter][3])
+
+Hugging Face currently still gives free users **$0.10/month** of Inference Providers credits, explicitly marked “subject to change.” ([Hugging Face][4])
+
+GitHub currently lists Copilot Pro at **$10 with 1,500 AI credits**, Pro+ at **$39 with 7,000**, and Max at **$100 with 20,000**; GitHub defines one AI credit as $0.01. ([GitHub Docs][5])
+
+Groq's generic seed claim that the free tier has **model-specific RPM/RPD/TPM/TPD limits** is also correct. Current values vary substantially by model; for example GPT-OSS-120B currently shows 30 RPM, 1K RPD, 8K TPM and 200K TPD. ([GroqCloud][6])
+
+So LLMDeals isn't generally filled with nonsense.
+
+The main issue is **precision and freshness semantics**.
+
+---
+
+# 29. The current `$5 first month` OpenCode claim appears stale
+
+Your current LLMDeals API still publishes:
+
+```text
+price_intro_usd = 5
+price_recurring_usd = 10
+```
+
+and gives an August 23 observation.
+
+Current OpenCode material I found now simply says:
+
+> $10/month
+
+and the product page repeats $10/month throughout. ([OpenCode][7])
+
+I found no current official `$5 first month` wording.
+
+That doesn't prove the old offer never existed. It means:
+
+```text
+$5 intro
+```
+
+should now be:
+
+```text
+STALE / REVERIFY
+```
+
+rather than confidently active.
+
+This is literally the LiveLLM demo use-case.
+
+---
+
+# 30. The MiMo 6× calculation is excellent
+
+LLMDeals uses this fixed simulated request profile:
+
+```text
+830 uncached input tokens
+71,500 cached-read tokens
+295 output tokens
+```
+
+and calculates:
+
+```text
+cost/request =
+(input_rate × 830
+ + cache_rate × 71,500
+ + output_rate × 295)
+ / 1,000,000
+```
+
+Then:
+
+```text
+effective multiple =
+requests/month
+× simulated cost/request
+÷ subscription price
+```
+
+For current MiMo V2.5:
+
+```text
+input        $0.14/M
+cache        $0.0028/M
+output       $0.28/M
+requests     150,400/month
+subscription $10
+```
+
+Current OpenCode docs confirm those rates and the 150,400 estimate. ([OpenCode][8])
+
+Calculation:
+
+```text
+cost/request
+=
+(0.14×830 + 0.0028×71500 + 0.28×295)
+÷ 1,000,000
+
+= $0.000399
+
+150,400 × $0.000399
+= $60.0096
+
+$60.0096 / $10
+= 6.00096×
+```
+
+So **MiMo ≈6× is exceptionally clean**.
+
+And OpenCode itself says its aim is approximately six times the $10 subscription cost in usage. ([OpenCode][8])
+
+That's the best demo model.
+
+---
+
+# 31. Hy3 also reconciles almost exactly
+
+Using current OpenCode values:
+
+```text
+input    0.14
+cached   0.035
+output   0.58
+requests 21,500
+```
+
+gives:
+
+```text
+cost/request = $0.0027898
+
+21,500 requests
+= $59.9807 equivalent
+
+÷ $10
+= 5.99807×
+```
+
+Current OpenCode lists Hy3 with a $60 usage amount. ([OpenCode][8])
+
+Again: extremely good.
+
+---
+
+# 32. Kimi 10.5× is mathematically reproducible—but I would stop calling it “the honest metric”
+
+Current Kimi K2.7 Code pricing is:
+
+```text
+input       $0.95/M
+cached      $0.19/M
+output      $4/M
+requests    6,750/month
+```
+
+([OpenCode][8])
+
+Your workload gives:
+
+```text
+cost/request
+=
+(0.95×830
+ + 0.19×71500
+ + 4×295)
+ / 1M
+
+= $0.0155535
+
+× 6,750
+= $104.986125
+
+÷ $10
+= 10.4986125×
+```
+
+So the **10.5× is not a math error**.
+
+But OpenCode's current table associates Kimi K2.7 with **$60 usage**, and its general stated target is around 6×. ([OpenCode][8])
+
+Your simulation says approximately $105.
+
+That's a **74.98% residual** versus the provider's $60 figure.
+
+Therefore the correct wording is:
+
+> Under the LLMDeals high-cache agent workload, Kimi's 6,750-request estimate corresponds to about $105 of public token pricing, or 10.5× the subscription price. This workload simulation materially exceeds OpenCode's own $60 usage figure.
+
+That's interesting!
+
+Don't hide the discrepancy.
+
+Make it a feature.
+
+---
+
+# 33. That discrepancy can become a killer LiveLLM metric
+
+Create:
+
+```text
+PROVIDER IMPLIED VALUE
+$60
+
+LIVELLM WORKLOAD SIMULATION
+$105
+
+MODEL RESIDUAL
++75%
+```
+
+Then investigate why.
+
+Potential reasons include:
+
+```text
+different token mix
+different cache assumptions
+provider “typical request” profile differs
+model-specific billing behavior
+rounding/estimation
+```
+
+Do not decide which without evidence.
+
+This turns a potentially embarrassing inconsistency into useful intelligence.
+
+---
+
+# 34. Other reconciliation results
+
+Using exactly your existing workload:
+
+| Model                      | Simulated value | Provider usage |    Residual | Simulation multiple |
+| -------------------------- | --------------: | -------------: | ----------: | ------------------: |
+| MiMo V2.5                  |          $60.01 |            $60 |  **+0.02%** |           **6.00×** |
+| Hy3                        |          $59.98 |            $60 |  **−0.03%** |           **6.00×** |
+| Muse Spark                 |          $64.58 |            $60 |  **+7.64%** |           **6.46×** |
+| DeepSeek V4 Flash off-peak |          $33.18 |            $30 | **+10.60%** |           **3.32×** |
+| Kimi K2.7 Code             |         $104.99 |            $60 | **+74.98%** |          **10.50×** |
+
+The source request counts/rates/usage amounts are current OpenCode data. ([OpenCode][8])
+
+This is exactly the sort of **anti-BS reconciliation test** you should build into the LLM pricing vertical.
+
+I'd flag:
+
+```text
+<10%      consistent
+10–25%    model/profile mismatch warning
+>25%      major disagreement
+```
+
+Those thresholds are your policy, so label them as such.
+
+---
+
+# 35. There's a separate economics bug in the old LLMDeals model
+
+This is important.
+
+`build-data.mjs` assumes:
+
+```ts
+ratio =
+price_recurring_usd /
+allowance_month_usd
+```
+
+and the OpenCode offer has one global:
+
+```text
+allowance_month_usd = 60
+```
+
+But the current OpenCode table has model-specific usage figures:
+
+```text
+GPT 5.6 Luna       $15
+GLM-5.3 Flash      $15
+GLM-5.3            $15
+GLM-5.2            $60
+Kimi K3            $15
+Kimi K2.7          $60
+DeepSeek V4 Flash  $30
+Hy3                 $60
+...
+```
+
+([OpenCode][8])
+
+Therefore this:
+
+```text
+effective_input_per_m =
+list_input × $10/$60
+```
+
+is **wrong for routes whose provider usage figure is $15 or $30**.
+
+The allowance belongs on the:
+
+```text
+provider × plan × model route
+```
+
+not solely on the subscription offer.
+
+This should be one of LiveLLM's canonical fact types:
+
+```text
+plan_model_usage_allowance_usd
+```
+
+---
+
+# 36. There is another scoring bug in LLMDeals
+
+Your function is:
+
+```js
+function throughputScore(rpm, rpd) {
+  if (rpm)
+    return Math.min(1, rpm / 150000)
+...
+}
+```
+
+But you call it as:
+
+```js
+throughputScore(
+  route.requests_per_month,
+  offer.free_requests_per_day
+)
+```
+
+So a variable conceptually named:
+
+```text
+requests per minute
+```
+
+is receiving:
+
+```text
+requests per month
+```
+
+and then you're calling that **throughput**.
+
+That's just wrong semantically.
+
+Rename or remove it.
+
+A monthly consumption allowance is capacity, not throughput.
+
+True throughput needs:
+
+```text
+RPM
+TPM
+concurrency
+latency
+```
+
+---
+
+# 37. “Quality score” is not model quality
+
+Your old score gives points for:
+
+```text
+tools
+vision
+JSON
+context size
+role bonus
+```
+
+That's:
+
+> **capability fit**
+
+not quality.
+
+It says nothing directly about coding accuracy, reasoning ability, instruction-following, reliability, benchmark quality, etc.
+
+Rename:
+
+```text
+quality → capability_fit
+```
+
+until benchmark evidence actually exists.
+
+---
+
+# 38. `blended()` is an unexplained heuristic
+
+This:
+
+```js
+inputPrice + outputPrice * 3
+```
+
+feeds the cost score.
+
+Why 3?
+
+If it represents a 3:1 output/input weighting, document it.
+
+But you already have a concrete workload profile elsewhere, so using a second arbitrary cost proxy creates inconsistency.
+
+I'd eliminate it and calculate cost from explicit profiles:
+
+```text
+coding agent
+chat
+research
+long-context agent
+batch extraction
+custom
+```
+
+---
+
+# 39. Silent economics defaults are dangerous
+
+This code:
+
+```js
+(price_recurring_usd ?? 10)
+/
+(allowance_month_usd ?? 60)
+```
+
+means missing economics can silently become:
+
+```text
+$10 / $60
+```
+
+That is unacceptable for the truth-engine version.
+
+Missing data should produce:
+
+```text
+null
+unknown
+not_computable
+```
+
+Never fabricated defaults.
+
+---
+
+# 40. Cloudflare's `$3.30/month equivalent` is arithmetic, not cash value
+
+LLMDeals says:
+
+> “$3.30/mo equivalent value at paid rates.”
+
+Calculation:
+
+```text
+10,000 neurons/day
+× 30 days
+= 300,000
+
+300 × $0.011/1K
+= $3.30
+```
+
+So the arithmetic is correct. Current Cloudflare pricing confirms both numbers. ([Cloudflare Docs][2])
+
+But call it:
+
+> **reference value at paid marginal rate**
+
+not generic economic “value.”
+
+Free-plan users can't necessarily simply consume that as cash-equivalent paid usage, and current model eligibility has paid-billing caveats. ([Cloudflare Docs][2])
+
+---
+
+# 41. GitHub AI credits are also not cash savings
+
+These calculations:
+
+```text
+1,500 × $0.01 = $15
+7,000 × $0.01 = $70
+20,000 × $0.01 = $200
+```
+
+are mathematically correct because GitHub defines an AI credit as $0.01. ([GitHub Docs][5])
+
+But don't say:
+
+```text
+Copilot Pro gives $15 value for $10
+= 1.5× deal
+```
+
+without qualification.
+
+Those are internal metered usage units within a subscription product, not redeemable cash.
+
+Call it:
+
+```text
+included metered-usage reference amount
+```
+
+---
+
+# 42. The general LiveLLM framing is much stronger
+
+I agree with your direction.
+
+Do **not** present:
+
+> “We built an LLM pricing site.”
+
+Present:
+
+> **LiveLLM is infrastructure for turning the changing public web into versioned, provenance-backed machine facts. LLM pricing is the first reference implementation.**
+
+LLM pricing is almost the ideal demo vertical because it has:
+
+```text
+frequent change
+quantitative facts
+clear official sources
+high cost of stale information
+temporal pricing
+easy before/after derivations
+obvious AI-agent consumers
+```
+
+Then after the working demo:
+
+> The same discovery → verification → fact → derivation pipeline can support other fast-changing structured domains.
+
+Don't say you already support ten domains.
+
+Say:
+
+> **reference vertical / first adapter**
+
+and make generality technically real.
+
+---
+
+# 43. Introduce a `VerticalAdapter`
+
+Something approximately:
+
+```ts
+interface VerticalAdapter<Candidate, Fact> {
+  id: string;
+
+  discoveryQueries(): DiscoveryQuery[];
+
+  classifyCandidate(
+    hit: SearchHit
+  ): Candidate | null;
+
+  sourcePolicy(
+    candidate: Candidate
+  ): SourcePolicy;
+
+  extractionSchema: JsonSchema;
+
+  validateFact(
+    proposal: unknown,
+    observation: SourceObservation
+  ): ValidationResult<Fact>;
+
+  derive(
+    facts: Fact[]
+  ): DerivedMetric[];
+}
+```
+
+Then:
+
+```text
+verticals/
+  llm-pricing/
+    adapter.ts
+    schema.ts
+    queries.ts
+    validators.ts
+    economics.ts
+    sources.ts
+```
+
+Now “one of many possible implementations” is an architectural fact rather than pitch language.
+
+---
+
+# 44. Repo organization
+
+I would **not** turn it into a giant workspace before the deadline.
+
+Use:
+
+```text
+livellm/
+├── README.md
+├── package.json
+├── LICENSE
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── src/
+│   ├── core/
+│   │   ├── facts/
+│   │   ├── observations/
+│   │   ├── evidence/
+│   │   ├── changes/
+│   │   └── provenance/
+│   │
+│   ├── integrations/
+│   │   └── serpapi/
+│   │       ├── client.ts
+│   │       ├── account.ts
+│   │       ├── archive.ts
+│   │       ├── engines/
+│   │       └── normalize.ts
+│   │
+│   ├── radar/
+│   │   ├── scheduler.ts
+│   │   ├── candidates.ts
+│   │   └── queries.ts
+│   │
+│   ├── sources/
+│   │   ├── fetch.ts
+│   │   ├── ssrf.ts
+│   │   ├── authority.ts
+│   │   └── extract.ts
+│   │
+│   ├── verticals/
+│   │   └── llm-pricing/
+│   │       ├── adapter.ts
+│   │       ├── queries.ts
+│   │       ├── schema.ts
+│   │       ├── economics.ts
+│   │       └── reconcile.ts
+│   │
+│   ├── app/
+│   │   └── dashboard/
+│   │
+│   └── cli.ts
+│
+├── db/
+│   └── migrations/
+│
+├── fixtures/
+│   ├── recorded/
+│   │   ├── serpapi/
+│   │   ├── sources/
+│   │   └── llm/
+│   └── synthetic/
+│       └── adversarial/
+│
+└── tests/
+    ├── unit/
+    ├── contract/
+    ├── replay/
+    ├── anti-cheat/
+    └── live-smoke/
+```
+
+The crucial organizational distinction is:
+
+```text
+recorded/
+```
+
+versus:
+
+```text
+synthetic/
+```
+
+Never mingle them again.
+
+---
+
+# 45. Clean up repo archaeology too
+
+Current README still starts:
+
+> `LLMDeals × SerpApi Integration Kit`
+
+and describes the project as a migration pack.
+
+That is now stale.
+
+Rewrite it around LiveLLM.
+
+`DEV-PLAN.md` is ~41 KB while eight older planning docs remain. That's useful working history but noisy for a judge. Consolidate:
+
+```text
+README
+ARCHITECTURE
+TRUST-MODEL
+SERPAPI-INTEGRATION
+LLM-PRICING-REFERENCE
+EVALUATION
+DEMO
+```
+
+Move outdated implementation plans to:
+
+```text
+docs/archive/
+```
+
+or remove them from the submission branch.
+
+Also `MANIFEST.json` still represents the original tiny integration kit and its file count is now obsolete.
+
+`data/known-urls.json` is mutable runtime state and shouldn't be committed as if it were canonical source configuration.
+
+---
+
+# 46. Development order from this exact commit
+
+1. **Delete synthetic source fallback.**
+2. **Make replay and live run through the exact same validation path.**
+3. Add runtime fact schemas.
+4. Implement unit normalization + unit compatibility.
+5. Turn the broken OpenAI and Together fixtures into adversarial rejection tests.
+6. Separate `fixtures/recorded` from `fixtures/synthetic`.
+7. Create actual source-observation records before evidence.
+8. Fix evidence/search provenance separation.
+9. Make supersession transactional.
+10. Split `created / unchanged / changed`.
+11. Fix candidate verification outcomes.
+12. Fix official-hostname checking and SSRF protection.
+13. Wire Account API quota governor into `runRadar()`.
+14. Fix cache provenance semantics.
+15. Persist every SearchResult and candidate-search relationship.
+16. Update `verified_change_count` after investigation.
+17. Add CP6–CP9 E2E tests on a clean temporary DB.
+18. Add CI and remove `--forceExit` if possible.
+19. Port the real LLMDeals economics as a **vertical module**.
+20. Replace universal OpenCode `$60` allowance with route/model-specific usage facts.
+21. Rename quality → capability fit and throughput → appropriate capacity metric.
+22. Remove silent `$10/$60` defaults.
+23. Add provider-vs-simulation reconciliation.
+24. Rewrite README as LiveLLM.
+25. Only then add Trends / AI Mode / richer SerpApi surfaces.
+
+---
+
+## The demo I would build around this
+
+Start with a simple current fact:
+
+```text
+OpenCode Go / MiMo V2.5
+
+Provider price            $10/month
+Provider usage            $60
+Provider requests         150,400/month
+
+LiveLLM workload model
+830 input
+71,500 cached
+295 output
+
+Simulated PAYG            $60.01
+Simulation multiple       6.00×
+Provider reconciliation   +0.02%  ✓
+```
+
+Then click **Run Live Radar**.
+
+Show a SerpApi observation discovering a current change, the candidate as explicitly **UNVERIFIED**, fetch the official source, extract and validate the fact, show its evidence and Search Archive provenance, supersede the old fact, then recompute the economics.
+
+After that, show Kimi:
+
+```text
+Provider-stated usage      $60
+Our simulated workload    $104.99
+Residual                   +74.98%
+
+⚠ workload does not reconcile
+```
+
+That second example is arguably more impressive than pretending everything perfectly agrees. It demonstrates that LiveLLM isn't just scraping numbers—it can detect when **different representations of the market don't reconcile**.
+
+Then end with:
+
+> **LLM pricing is the reference vertical. LiveLLM itself is the reusable live-truth pipeline: discovery, authoritative verification, temporal facts, provenance, and deterministic derivation.**
+
+That is a much stronger and more defensible submission than either the old static LLMDeals site or an over-engineered generic search-agent demo.
+
+[1]: https://ai.google.dev/gemini-api/docs/pricing?hl=en&utm_source=chatgpt.com "Gemini Developer API pricing  |  Gemini API  |  Google AI for Developers"
+[2]: https://developers.cloudflare.com/workers-ai/platform/pricing/?utm_source=chatgpt.com "Pricing · Cloudflare Workers AI docs"
+[3]: https://openrouter.ai/docs/faq?utm_source=chatgpt.com "OpenRouter FAQ | Developer Documentation | OpenRouter | Documentation"
+[4]: https://huggingface.co/docs/inference-providers/pricing?utm_source=chatgpt.com "Pricing and Billing · Hugging Face"
+[5]: https://docs.github.com/en/billing/concepts/product-billing/github-copilot-billing?utm_source=chatgpt.com "GitHub Copilot billing - GitHub Docs"
+[6]: https://console.groq.com/docs/rate-limits?utm_source=chatgpt.com "Rate Limits - GroqDocs"
+[7]: https://dev.opencode.ai/go?utm_source=chatgpt.com "OpenCode Go | Low cost coding models for everyone"
+[8]: https://dev.opencode.ai/docs/go/?utm_source=chatgpt.com "Go | OpenCode"

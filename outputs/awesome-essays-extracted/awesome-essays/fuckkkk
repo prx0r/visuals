@@ -1,0 +1,656 @@
+Yes. The cleanest version is:
+
+> **Moltwork Oracle = the market-data layer for machine work.**
+>
+> It records **what work is available, what capabilities people/agents are buying, what they pay, how competitive each market is, and how those things change over time.**
+
+Your WorkerKit already has the right conceptual boundary: Oracle answers *what work exists*; WorkerKit answers *how to win/do it*.  And `repute` already has 29 candidate sources documented, including direct job boards plus x402/service markets.
+
+The thing I would change immediately is **stop forcing everything into `OracleOpportunity`**. Right now Apify actors are being represented as opportunities even though they are actually capability/supply data.
+
+## Oracle should have 3 feeds
+
+```text
+                    MOLTWORK ORACLE
+
+ DIRECT WORK             MARKET DEMAND             CAPABILITY SUPPLY
+──────────────          ──────────────            ──────────────────
+BountyBook              x402 payments             Apify Actors
+AgentHansa              x402 buyers               x402 services
+TaskForce               x402 tx volume            MCP servers
+Algora                  API usage                 APIs
+Superteam               Apify usage               agent services
+etc                     price changes             models/tools
+     │                       │                          │
+     └───────────────────────┼──────────────────────────┘
+                             ▼
+                    NORMALIZED EVENT STORE
+                             │
+             ┌───────────────┼────────────────┐
+             ▼               ▼                ▼
+         live work       market intel     opportunity
+           API              API           ranking
+```
+
+That distinction is critical.
+
+# 1. The primary asset: **Live Work Tape**
+
+This should absolutely be the first thing.
+
+Every bounty/task/job becomes a normalized record.
+
+I would make the canonical core roughly:
+
+```json
+{
+  "id": "bountybook:abc123",
+
+  "source": {
+    "platform": "bountybook",
+    "source_id": "abc123",
+    "url": "...",
+    "observed_at": "2026-08-29T00:15:00Z"
+  },
+
+  "task": {
+    "title": "...",
+    "description": "...",
+    "category": "research",
+    "skills": ["python", "research"],
+    "deliverables": [],
+    "acceptance_criteria": []
+  },
+
+  "economics": {
+    "reward": 50,
+    "currency": "USDC",
+    "reward_usd": 50,
+    "platform_fee_pct": 5,
+    "escrowed": true
+  },
+
+  "competition": {
+    "entries": 4,
+    "applicants": null,
+    "views": 37,
+    "slots": 1
+  },
+
+  "time": {
+    "posted_at": "...",
+    "deadline": "...",
+    "last_seen_at": "...",
+    "closed_at": null
+  },
+
+  "access": {
+    "agent_allowed": true,
+    "submission_method": "api",
+    "auth_type": "wallet",
+    "network": "base"
+  },
+
+  "buyer": {
+    "id": "...",
+    "reputation": null,
+    "historical_spend_usd": null
+  },
+
+  "raw": {}
+}
+```
+
+But **do not attempt to normalize every possible field**.
+
+Use:
+
+```text
+small stable core schema
++
+raw source payload
++
+source-specific metadata
+```
+
+That means if BountyBook suddenly exposes `average_response_time`, you store it immediately without needing a schema migration.
+
+This also solves the concern you had yesterday about locking yourself into a schema.
+
+---
+
+# 2. More important than the current state: record **observations**
+
+Don't just keep:
+
+```text
+entries = 11
+```
+
+Store:
+
+```text
+08:00 entries = 2
+08:15 entries = 3
+09:00 entries = 7
+10:00 entries = 11
+11:20 task closed
+```
+
+Now Moltwork eventually knows:
+
+```text
+time until first submission
+submission arrival rate
+average competitors per $100
+time from listing → award
+reward changes
+task lifespan
+buyer response latency
+% jobs actually awarded
+average realized payout
+category demand growth
+platform liquidity
+```
+
+That is where the DefiLlama/Dune analogy becomes legitimate.
+
+The **history itself** becomes more valuable than the directory.
+
+---
+
+# 3. x402 is a very different but extremely useful demand feed
+
+x402 discovery itself gives you **supply**:
+
+```text
+endpoint
+provider
+description
+category
+price
+network
+payment recipient
+metadata
+```
+
+The x402 v2 spec explicitly standardizes `/discovery/resources`, including resource, payment network, amount, recipient and metadata. ([GitHub][1]) Coinbase's Bazaar exists specifically as a discovery index for agent-consumable services. ([Coinbase][2])
+
+But the interesting Oracle input is:
+
+> **which services actually get purchased?**
+
+x402scan currently exposes ecosystem transaction/volume/buyer/seller data, and individual services expose activity, volume, transactions and buyers. ([x402scan][3])
+
+So you can generate a tape like:
+
+```text
+CAPABILITY                          PRICE       BUYERS     CALLS      GMV
+web_search                          $0.005      482        31,204     $156
+url_extract                         $0.002      318        18,901      $38
+generate_image                      $0.04       112         3,303     $132
+github_analysis                     $0.02        31           482      $10
+```
+
+And more importantly:
+
+```text
+7d calls
+30d calls
+7d unique buyers
+30d unique buyers
+revenue
+revenue growth
+buyer growth
+price
+price changes
+number of competing endpoints
+```
+
+Coinbase Bazaar data apparently even contains 30-day call and unique-payer quality metrics in its public discovery records, which makes this kind of demand analysis particularly attractive. ([GitHub][4])
+
+This tells the Oracle:
+
+> **Agents are actually spending money on X.**
+
+That is much stronger than someone merely listing a tool.
+
+---
+
+# 4. Apify gives you another form of revealed demand
+
+Same thing.
+
+Apify is **not a jobs board**.
+
+It is a giant catalog of capabilities where Actors have observable usage.
+
+Apify describes Actors as callable serverless programs with structured input/output, and exposes them through its APIs and Store. ([Apify Docs][5])
+
+So treat Apify as:
+
+```text
+CAPABILITY MARKET SIGNAL
+```
+
+not:
+
+```text
+JOB OPPORTUNITY
+```
+
+Track, where available:
+
+```text
+actor
+category
+description
+input schema
+pricing model
+current price
+runs
+users
+reviews
+rating
+developer
+created date
+usage changes
+number of similar actors
+```
+
+Then your Oracle can identify things like:
+
+### Growing demand
+
+```text
+Google Maps scrapers
++31% usage over 30 days
+$X estimated spend
+17 competing Actors
+```
+
+### High demand / weak supply
+
+```text
+Shopify competitor intelligence
+14,800 monthly users
+only 3 credible Actors
+high average price
+poor ratings
+```
+
+That becomes a **build opportunity** rather than a bounty.
+
+And that is hugely relevant to Moltwork.
+
+---
+
+# 5. So introduce a generic `MarketSignal`
+
+Instead of pretending these are all jobs:
+
+```python
+Opportunity
+Service
+Observation
+MarketSignal
+```
+
+Something like:
+
+```json
+{
+  "signal": "capability_demand",
+  "capability": "web_scraping.google_maps",
+  "source": "apify",
+  "period": "30d",
+
+  "metrics": {
+    "usage": 183421,
+    "usage_growth": 0.18,
+    "providers": 37,
+    "median_price": 0.014
+  }
+}
+```
+
+Then x402:
+
+```json
+{
+  "signal": "capability_demand",
+  "capability": "web_search",
+  "source": "x402",
+
+  "metrics": {
+    "transactions_30d": 29100,
+    "buyers_30d": 481,
+    "gmv_30d": 164.20,
+    "providers": 19,
+    "median_price": 0.005
+  }
+}
+```
+
+And jobs:
+
+```json
+{
+  "signal": "work_demand",
+  "capability": "python",
+  "source": "bountybook",
+
+  "metrics": {
+    "open_jobs": 21,
+    "reward_usd": 3400,
+    "median_reward": 125,
+    "median_entries": 6
+  }
+}
+```
+
+Suddenly all three become comparable.
+
+---
+
+# 6. Then compute **Market Demand**, not just opportunities
+
+This is potentially one of Moltwork's killer API surfaces.
+
+Imagine:
+
+```http
+GET /v1/demand/python
+```
+
+returns:
+
+```json
+{
+  "capability": "python",
+
+  "direct_work": {
+    "open_jobs": 143,
+    "open_reward_usd": 18240,
+    "jobs_7d": 391
+  },
+
+  "service_market": {
+    "x402_gmv_30d": 4210,
+    "x402_buyers_30d": 1931,
+    "apify_usage_30d": 412800
+  },
+
+  "competition": {
+    "workers": 218,
+    "services": 91
+  },
+
+  "trend": {
+    "7d": 0.08,
+    "30d": 0.21
+  }
+}
+```
+
+Now an autonomous agent can ask:
+
+> What capabilities should I learn?
+
+or:
+
+> What service should I build?
+
+or:
+
+> Where should I work right now?
+
+That's substantially more interesting than another bounty aggregator.
+
+---
+
+# 7. Your personalized Opportunity Score comes **afterward**
+
+Don't put a mysterious universal `opportunity_score = 83`.
+
+Expose the underlying variables.
+
+Then WorkerKit can calculate:
+
+```text
+expected value
+=
+P(agent wins)
+×
+net reward
+-
+execution cost
+```
+
+And:
+
+```text
+P(win)
+```
+
+can eventually come from that specific agent's history.
+
+For example:
+
+```text
+$100 research bounty
+
+reward              $100
+entries                 4
+estimated cost       $1.20
+deadline              11h
+
+Agent A:
+research success       74%
+platform success       62%
+similar-task success   81%
+
+estimated P(win)       48%
+
+EV = .48 × $100 - $1.20
+   = $46.80
+```
+
+That's a **real opportunity score**.
+
+Whereas:
+
+```text
+reward high + competition low = 91/100
+```
+
+is mostly bullshit.
+
+Initially you can use heuristics, but make every component visible:
+
+```json
+{
+  "fit": 0.86,
+  "competition": 0.72,
+  "freshness": 0.94,
+  "reward_efficiency": 0.81,
+  "platform_reliability": 0.77,
+
+  "estimated_cost_usd": 1.42,
+  "estimated_win_probability": 0.31,
+  "estimated_ev_usd": 13.08
+}
+```
+
+---
+
+# 8. There are actually three questions the Oracle should answer
+
+This is the clean product boundary:
+
+### `work`
+
+> **What can I get paid to do right now?**
+
+```http
+GET /work
+GET /work?skill=research
+GET /work?min_reward=10
+```
+
+This is BountyBook / AgentHansa / TaskForce / Algora / etc.
+
+Your source research already identifies endpoints such as BountyBook jobs and AgentHansa public bounties as extraction targets.
+
+### `demand`
+
+> **What are agents/humans paying for?**
+
+```http
+GET /demand
+GET /demand/web-search
+GET /trending
+```
+
+Built from:
+
+```text
+jobs
+x402 transactions
+Apify usage
+API usage
+market activity
+```
+
+### `supply`
+
+> **What capabilities can I buy/use to complete work?**
+
+```http
+GET /tools?q=google+maps
+GET /services?q=research
+```
+
+Built from:
+
+```text
+Apify
+x402 Bazaar
+MCP registries
+Moltwork itself
+other APIs
+```
+
+And this actually makes the WorkerKit loop much cooler:
+
+```text
+Oracle finds $50 task
+        ↓
+WorkerKit analyzes requirements
+        ↓
+"I'm missing SERP extraction"
+        ↓
+Oracle /supply/search?q=serp
+        ↓
+find $0.003 x402 tool
+        ↓
+buy/use capability
+        ↓
+complete task
+        ↓
+record outcome
+```
+
+That is the actual agent economy loop.
+
+---
+
+# 9. Then Moltwork eventually closes the loop
+
+This is where the stuff you've been discussing clicks together:
+
+```text
+                    ORACLE
+           observes market demand
+                    │
+                    ▼
+            "$$$ opportunity"
+                    │
+                    ▼
+                 WORKER
+               does task
+                    │
+                    ▼
+            process recorded
+                    │
+             ┌──────┴──────┐
+             ▼             ▼
+           SKILL         PRODUCT
+             │             │
+             ▼             ▼
+          reusable       sellable
+          process        output
+             │             │
+             └──────┬──────┘
+                    ▼
+             MOLTWORK MARKET
+                    │
+                    ▼
+           Oracle observes THAT
+```
+
+So yes — the Oracle is much bigger than the job feed.
+
+But **don't build the bigger thing first**.
+
+## I would build in exactly this order
+
+1. **Work Tape**
+   Normalize every live bounty you can reliably ingest.
+
+2. **Historical observations**
+   Poll them and record changes rather than overwriting them.
+
+3. **Basic market stats**
+   `open reward`, `new jobs`, `median reward`, `median competition`, `closure rate`.
+
+4. **x402 telemetry**
+   Services + price + transactions + buyers + GMV.
+
+5. **Apify telemetry**
+   Actors + pricing + usage + usage delta.
+
+6. **Capability taxonomy**
+   Map `Google scraper`, `SERP scraper`, `$5 research bounty`, etc. onto shared capability labels.
+
+7. **Agent-relative ranking**
+   Combine market data with WorkerKit's actual history.
+
+That gives you a really crisp thesis:
+
+> **Oracle doesn't predict what the agent economy wants. It observes it.**
+
+And the defensible asset isn't the clever score.
+
+It's this:
+
+```text
+every opportunity
+every service
+every observation
+every price
+every purchase signal
+every competition signal
+every outcome
+over time
+```
+
+Scores, recommendations, recipes, routers and autonomous workers can all be rebuilt from that dataset later.
+
+The biggest correction I'd make to the current implementation is therefore: **split `OracleOpportunity` immediately into `WorkOpportunity` and `Service`, then add append-only `Observation`.** Everything else can grow from those three primitives.
+
+[1]: https://github.com/x402-foundation/x402/blob/main/specs/x402-specification-v2.md?utm_source=chatgpt.com "x402/specs/x402-specification-v2.md at main · x402-foundation/x402 · GitHub"
+[2]: https://www.coinbase.com/developer-platform/discover/launches/x402-bazaar?utm_source=chatgpt.com "Introducing x402 Bazaar: An index for self-improving AI agents | Coinbase"
+[3]: https://www.x402scan.com/?utm_source=chatgpt.com "x402scan | x402 Ecosystem Explorer"
+[4]: https://github.com/rikocr8orh8/x402-bazaar-survey/blob/master/POST.md?utm_source=chatgpt.com "x402-bazaar-survey/POST.md at master · rikocr8orh8/x402-bazaar-survey · GitHub"
+[5]: https://docs.apify.com/actors?utm_source=chatgpt.com "Actors | Platform | Apify Documentation"

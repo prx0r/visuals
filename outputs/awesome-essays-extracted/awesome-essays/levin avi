@@ -1,0 +1,798 @@
+# The Levin–Abhinavagupta Synthesis
+
+## How a universe of physical processes becomes a world of perspectives
+
+My best answer is this:
+
+> **A perspective appears when many competent processes become bound into a higher-order agent whose states matter to the continued existence and goals of that whole. Consciousness appears when this agentive organisation is not merely integrated but reflexively present to itself—when the system models the world, its own place in that world, and the fact that it is modelling.**
+
+Michael Levin helps explain **how perspectives become individuated and scaled**. Karl Friston helps explain **how they maintain themselves, perceive and act**. Chris Fields helps explain **why every perspective is bounded and reference-frame-relative**. Abhinavagupta supplies what these scientific accounts still lack: a theory of **intrinsic presence, reflexivity, agency and manifestation**.
+
+The resulting position is not standard physicalism and not an unqualified claim that “everything is consciousness.” It is best called:
+
+# Reflexive multiscale agency monism
+
+Reality is one continuous field of processes capable of forming nested, self-maintaining and self-interpreting centres. Viewed externally, these centres are physical and causal organisations. Viewed internally, sufficiently integrated and reflexive organisations are perspectives: lived presences for which events have significance.
+
+The most compact formula is:
+
+```text
+physical interaction
+        ↓
+self-maintaining boundary
+        ↓
+goal-directed regulation
+        ↓
+integrated world-model
+        ↓
+reflexive self-location
+        ↓
+felt perspective
+        ↓
+coordination into larger agents
+```
+
+This does not prove Abhinavagupta’s metaphysics. But it gives us a far better translation between Tantra and science than crude statements such as “quantum physics proves universal consciousness.”
+
+---
+
+# 1. What Michael Levin actually contributes
+
+Levin’s central discovery is not merely that cells use electricity. That has long been known. His deeper contribution is showing how bioelectric networks allow individually competent cells to participate in **larger-scale memories, goals and decision-making processes**.
+
+Cells communicate through ion channels and gap junctions. By sharing bioelectric states, they can coordinate growth, regeneration and anatomical repair. The collective can pursue morphological outcomes that are not represented by any individual cell alone. Levin therefore treats morphogenesis as navigation through a problem-space: cells collectively move an organism toward a target configuration in anatomical “morphospace.” ([PubMed][1])
+
+This suggests that intelligence did not suddenly appear when neurons evolved. Neurons elaborated mechanisms already used by non-neural tissues for:
+
+* detecting deviations from preferred states;
+* storing information;
+* coordinating components;
+* selecting corrective actions;
+* stopping when a target has been reached.
+
+Levin calls the range of events an agent can sense, remember, anticipate and attempt to affect its **cognitive light cone**. A single cell has a small light cone. Communication allows cells to merge parts of their individual light cones into a larger collective horizon belonging to a tissue or organism. ([PMC][2])
+
+This gives us a functional definition of a self:
+
+> **A self is the scale at which goals are being pursued.**
+
+Your individual cells pursue local physiological goals. You pursue behavioural and social goals extending years into the future. A community can pursue projects that outlive any member.
+
+None of these levels completely erases the others.
+
+```text
+molecule
+  inside cell
+    inside tissue
+      inside organ
+        inside organism
+          inside society
+```
+
+Each level constrains the competencies beneath it while depending upon them. Levin calls this a **multiscale competency architecture**: biological systems consist of nested problem-solvers operating in different spaces and at different temporal depths. ([PMC][3])
+
+## The first part of the answer
+
+A perspective does not require an indivisible soul dropped into matter.
+
+A perspective begins when:
+
+1. components exchange information;
+2. they coordinate around shared set-points;
+3. the collective detects deviations at its own scale;
+4. it acts to restore or pursue collective states;
+5. memories and goals emerge that belong to the whole rather than any component.
+
+This is how “the many” become a provisional “one.”
+
+Levin provides a credible scientific answer to the individuation problem:
+
+> **A self is a dynamically maintained coalition of competencies whose communication creates a larger goal-space.**
+
+---
+
+# 2. Friston: why the coalition behaves like an agent
+
+Levin tells us how competencies scale. Friston supplies a mathematical language for the resulting organism–environment loop.
+
+A Markov blanket is a statistical partition separating internal states from external states through sensory and active states. The organism does not access the external world directly; external conditions affect sensory states, while the organism affects the world through active states. Collections of such blankets can form larger blankets, producing nested agents from cells through organisms and potentially into ecological and social systems. ([PMC][4])
+
+Active inference interprets an organism as maintaining itself by acting and updating its internal states so that it continues to encounter viable, expected conditions.
+
+It does not simply minimise immediate surprise. It balances:
+
+* pragmatic preferences—remaining within viable states;
+* epistemic value—resolving uncertainty;
+* action—changing the sampled world;
+* perception—changing the model;
+* learning—changing the model’s parameters.
+
+Current active-inference research is extending this framework into hierarchical, scale-invariant generative models and formal accounts of curiosity, structure learning and artificial reasoning. ([arXiv][5])
+
+## A living thing is a self-evidencing hypothesis
+
+The organism’s form and behaviour implicitly assert:
+
+> “I am the kind of being that occupies these states.”
+
+A fish expects water not because it consciously states a proposition about water but because its entire organisation presupposes an aquatic niche. Its physiology, perceptions and actions enact a generative model of what it is.
+
+Friston calls this **self-evidencing**: the system acts so as to continue encountering evidence for the model embodied by its organisation.
+
+This is remarkably close to recognition philosophy, with an important inversion.
+
+* Friston: an organism continually generates evidence for its embodied model.
+* Pratyabhijñā: consciousness continually recognises itself through its manifestations.
+
+The first is a formal description of adaptive organisation. The second is an ontology of subjectivity.
+
+---
+
+# 3. The “Beautiful Loop”: from modelling to awareness
+
+Active inference alone is too broad to explain consciousness. Simple physical systems can sometimes be described in variational or inferential language without plausibly being conscious.
+
+A 2025 proposal by Ruben Laukkonen, Karl Friston and Shamil Chandaria attempts to specify additional conditions. Their “Beautiful Loop” theory proposes three relevant features:
+
+1. a simulated world-model defining the system’s epistemic field;
+2. competition and binding among inferences entering that model;
+3. epistemic depth—the recurrent sharing of beliefs throughout the hierarchy.
+
+The central idea is that the world-model comes to contain, nonlocally, information concerning its own existence and inferential activity. ([PubMed][6])
+
+This is extraordinarily close to **vimarśa**.
+
+A camera registers light. A thermostat controls temperature. But neither necessarily constructs a recursively integrated field in which the system’s modelling activity is itself implicated.
+
+The Beautiful Loop suggests:
+
+```text
+model of world
+      ↓
+model includes embodied agent
+      ↓
+agent models its own modelling
+      ↓
+model influences future modelling
+```
+
+This recursion is not yet full autobiographical self-consciousness. It is a more minimal form of **field-level self-presence**.
+
+The system does not need to think:
+
+> “I, Thomas, am currently conscious.”
+
+Its experiential world is already organised around an implicit here, now, possible action and anticipated future.
+
+---
+
+# 4. Chris Fields: there is no perspective without a boundary
+
+Chris Fields adds an essential correction.
+
+A perspective is not merely a representation of an independently partitioned world. The system must actively establish and maintain:
+
+* what counts as itself;
+* what counts as environment;
+* which variables matter;
+* which distinctions it can measure;
+* which reference frames allow signals to become meaningful.
+
+Fields and Levin analyse cognition in terms of competency across arbitrary problem-spaces, while Fields and collaborators model biological systems as hierarchies of reference frames and active-inference processes. ([arXiv][7])
+
+Fields’ work on contextuality and reference frames stresses that observation is never simply “reality as it is from nowhere.” Measurement requires physically implemented frames that distinguish outcomes, maintain standards and determine what can count as a signal. Contextuality is not merely an unfortunate subjective distortion added after perception; it is built into what it means for a bounded system to measure anything. ([arXiv][8])
+
+This offers a powerful scientific analogue for **māyā**.
+
+Māyā need not be interpreted as a hallucinated universe. It can be understood as the necessary process by which unlimited relational possibility is carved into:
+
+* this perspective;
+* these distinctions;
+* this scale;
+* this time horizon;
+* this repertoire of possible actions.
+
+A perspective exists by excluding most of reality.
+
+> **To see anything is to fail to see almost everything.**
+
+That is not a defect added to awareness. It is the condition for finite awareness.
+
+---
+
+# 5. What Abhinavagupta adds
+
+The scientific frameworks above can explain a great deal:
+
+* boundary formation;
+* integration;
+* regulation;
+* memory;
+* prediction;
+* action;
+* emergent goals;
+* multiscale agency;
+* recursive modelling.
+
+But there remains a gap.
+
+Why should any of this be **present**?
+
+Why is a recursively modelled colour not merely a control variable but a seen colour?
+
+Why does tissue damage hurt rather than merely produce adaptive avoidance?
+
+Why is there something it is like to occupy the model?
+
+Abhinavagupta’s answer begins with the distinction between **prakāśa** and **vimarśa**.
+
+## Prakāśa: manifestation or illumination
+
+*Prakāśa* is the fact that something appears, manifests or shines.
+
+It is not ordinary electromagnetic light. It is the basic disclosedness without which no phenomenon could be present.
+
+## Vimarśa: reflexive apprehension
+
+Mere manifestation is insufficient. Consciousness is not an inert illuminated screen.
+
+*Vimarśa* is awareness’s capacity to apprehend:
+
+* its object;
+* itself;
+* the relationship between itself and its object;
+* its powers of knowing and acting.
+
+Sthaneshwar Timalsina stresses that vimarśa is not passive self-reflection. It is active, synthetic and volitional: consciousness grasps objects while reflexively determining and integrating the modalities through which they are grasped. It is also inseparable from expressive potency or *vāc*. ([ResearchGate][9])
+
+This is the decisive Śaiva insight:
+
+> **Sentience is not simply illumination. It is illumination that possesses itself.**
+
+A perfectly luminous but entirely nonreflexive field would not know that anything appears.
+
+Vimarśa makes manifestation belong to a perspective.
+
+## Svātantrya: freedom as constitutive power
+
+Abhinavagupta does not understand freedom merely as choosing between options after the world has already been made.
+
+*Svātantrya* is consciousness’s intrinsic ability to articulate, conceal, reveal, combine and transform its own manifestations. Timalsina describes this as an equation between freedom and power: consciousness is intrinsically active rather than a passive witness. ([Vimarsha Foundation][10])
+
+> *citiḥ svatantrā viśvasiddhihetuḥ*
+> “Free consciousness is the cause of the manifestation of the universe.”
+
+This does not map neatly onto libertarian free will. A useful modern translation is:
+
+> **Freedom is counterfactual depth—the capacity of an agent to model multiple possible states and reorganise itself or its environment in pursuit of them.**
+
+A bacterium has little counterfactual depth. A planarian tissue network has more. A human can act toward imaginary states decades away. A civilisation can coordinate around futures no individual will live to see.
+
+A recent active-inference proposal for “phenotyping” agency similarly operationalises degrees of agency through the structure of beliefs, preferences, explainable action chains and empowerment—the range of outcomes an agent can reliably bring about. ([arXiv][11])
+
+The scientific measure is not identical to svātantrya. But it may measure its **finite, contracted expression**.
+
+## Spanda: the dynamic act of manifestation
+
+Dyczkowski emphasises that Spanda doctrine rejects the idea of the self as merely a passive witness. Absolute consciousness is an active force whose apparent stability contains continuous creative activity. ([Google Books][12])
+
+Spanda should not be reduced to a measurable physical vibration at a particular frequency. It is the more fundamental alternation or tension through which awareness:
+
+* opens into manifestation;
+* differentiates its contents;
+* gathers them back into unity;
+* remains present through both differentiation and integration.
+
+A scientific analogue would be the continual reciprocal movement between:
+
+```text
+prediction ↔ error
+integration ↔ differentiation
+self-maintenance ↔ exploration
+global state ↔ local activity
+model ↔ world
+```
+
+The similarity is structural, not an empirical identity.
+
+---
+
+# 6. The five kañcukas as dimensions of a finite agent
+
+The most powerful connection between the 36 tattvas and modern agency theory lies in the five *kañcukas*: the limitations through which universal capacity appears as a finite subject.
+
+| Śaiva category | Traditional contraction                          | Modern interpretation                                        |
+| -------------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| **kalā**       | unlimited action becomes limited agency          | finite action repertoire and control capacity                |
+| **vidyā**      | unlimited knowing becomes partial knowledge      | bounded model, limited sensors and uncertainty               |
+| **rāga**       | completeness becomes desire or lack              | preferred states, value, error and motivational salience     |
+| **kāla**       | timelessness becomes sequential time             | finite memory, anticipation and temporal horizon             |
+| **niyati**     | unrestricted freedom becomes causal localisation | embodiment, environmental niche and constrained policy-space |
+
+This is not merely a poetic resemblance.
+
+These are almost exactly the dimensions needed to specify an agent:
+
+* What can it detect?
+* What can it do?
+* What states does it prefer?
+* How far can it remember and anticipate?
+* Where is it located in the causal structure?
+
+Levin’s cognitive light cone combines spatial reach, temporal depth and goal-scale. Friston’s generative model combines beliefs, preferences, policies and action. Fields’ reference frames determine the distinctions available to a bounded observer.
+
+The five kañcukas constitute an ancient **phenomenological geometry of agency**.
+
+## Māyā as individuation
+
+Māyā can then be understood as the operator that converts a nonlocal space of possibility into a particular model-bound perspective.
+
+It creates neither absolute nothingness nor a totally false world.
+
+It creates **selective closure**.
+
+```text
+unbounded possibility
+        ↓
+limited sensors
+limited action
+limited time
+limited knowledge
+limited goals
+        ↓
+a particular world appears
+```
+
+Every organism inhabits a different phenomenal world because each samples different signals, embodies different needs and possesses different capacities.
+
+The tick, the cell, the human and the tissue do not merely hold different beliefs about one fully pre-divided world. They occupy differently enacted worlds because they resolve different distinctions and pursue different goals.
+
+---
+
+# 7. Ābhāsa: the world as model-conditioned appearance
+
+Abhinavagupta’s theory of *ābhāsa* treats entities as manifestations or appearances within consciousness. They are not wholly unreal, but neither are they self-subsisting objects existing independently of manifestation.
+
+Predictive processing offers a partial modern parallel.
+
+The experienced apple is not simply raw external matter copied into the brain. It is an enacted perceptual hypothesis constrained by sensory exchanges:
+
+* a bounded system predicts latent causes;
+* signals correct the model;
+* action samples further evidence;
+* one coherent object becomes salient.
+
+The apple as experienced is an *ābhāsa*: a determinate presentation shaped by the perceiver’s capacities.
+
+But this does not entail that no world exists beyond human perception.
+
+The stronger Śaiva claim is ontological:
+
+> All objective reality is manifestation within consciousness.
+
+The scientific evidence supports only the more limited epistemological claim:
+
+> Every experienced object is model- and perspective-dependent.
+
+The jump between these claims is where philosophy begins.
+
+---
+
+# 8. The strongest metaphysical synthesis
+
+There are three main options.
+
+## Pure physicalism
+
+Physical organisation somehow generates consciousness once it reaches sufficient complexity.
+
+The problem is that complexity and function do not logically entail presence. An exhaustive external account of information flow still appears compatible with the question:
+
+> Why should this flow feel like anything?
+
+## Universal micro-consciousness
+
+Every elementary component possesses tiny consciousness, and complex minds somehow combine these units.
+
+This avoids emergence from complete nonexperience but introduces the combination problem: why should billions of micro-perspectives become one human perspective?
+
+## Reflexive process monism
+
+The intrinsic and extrinsic are two aspects of one process.
+
+Externally, a conscious process is:
+
+* integrated causal activity;
+* model-based regulation;
+* recursive self-maintenance;
+* counterfactual control.
+
+Internally, the same process is:
+
+* presence;
+* valence;
+* temporality;
+* perspective;
+* reflexive awareness.
+
+This is the position I find strongest.
+
+It does not say that electrons secretly have human experiences. It says that the underlying reality described through third-person physics cannot coherently be assumed to be intrinsically devoid of every quality associated with presence. When processes achieve the organisation required for a unified, self-maintaining and reflexive perspective, their intrinsic character becomes a bounded phenomenal world.
+
+Abhinavagupta expresses the intrinsic side:
+
+```text
+prakāśa + vimarśa + svātantrya
+presence + self-apprehension + power
+```
+
+Levin, Friston and Fields express the organisational side:
+
+```text
+integration + boundary + goals + world-model + recursive control
+```
+
+The identity thesis is:
+
+> **These are not two interacting substances. They are first-person and third-person descriptions of the same reflexively organised event.**
+
+Loriliai Biernacki has already developed comparisons between Abhinavagupta and contemporary consciousness theory, including IIT, arguing that his system links subjectivity and materiality rather than treating matter as a wholly alien substance. ([MDPI][13])
+
+I would extend this beyond IIT.
+
+IIT concentrates upon intrinsic causal integration. Abhinavagupta demands more: integration must be accompanied by reflexivity, value, action and expressive power.
+
+---
+
+# 9. What actually generates a perspective?
+
+My proposed sufficient-condition stack is:
+
+## 1. Operational individuation
+
+The system establishes a dynamically maintained boundary through which it interacts selectively.
+
+This does not require a hard physical shell. Boundaries can be physiological, informational, behavioural or social.
+
+## 2. Normativity
+
+Some states are better or worse **for the system**.
+
+Without this, there is information but no significance.
+
+A temperature change becomes meaningful for a cell because it affects viability. Valence begins where continued organisation is at stake.
+
+## 3. Integrated regulation
+
+Components do not merely act locally. Their signals contribute to control processes belonging to a larger whole.
+
+## 4. Temporal depth
+
+The agent retains effects of the past and anticipates possible futures.
+
+Its present activity is therefore shaped by absent conditions.
+
+## 5. A unified generative field
+
+Perception, action and valuation are bound into one usable world-model rather than remaining disconnected reflexes.
+
+## 6. Reflexive closure
+
+The system’s model includes its own standpoint, uncertainty, agency and modelling activity.
+
+This is minimal vimarśa.
+
+## 7. Counterfactual freedom
+
+The system can entertain and act toward multiple possible futures rather than being rigidly coupled to its immediate state.
+
+This is finite svātantrya.
+
+A system satisfying only the first three may exhibit basal agency without rich consciousness. A system satisfying all seven becomes a plausible subject.
+
+There probably is no single magical threshold. Perspective may deepen as:
+
+* integration increases;
+* temporal reach expands;
+* self-modelling becomes richer;
+* value becomes more differentiated;
+* alternative futures become available;
+* the system gains control over its own attention and modelling.
+
+---
+
+# 10. Can small agents form a larger conscious subject?
+
+Levin shows that small biological agents can form larger agents with memories and goals belonging to the collective. Friston provides models of nested blankets. Huayan and Abhinavagupta both suggest that wholes exist through their parts without being reducible to them. ([PubMed][1])
+
+But collective agency does not automatically imply collective consciousness.
+
+A human body is plausibly one conscious subject, while an ant colony may be a powerful collective agent without possessing one unified phenomenal field.
+
+The relevant distinction may be **causal availability and reflexive binding**.
+
+For a higher-order subject to exist:
+
+* information must circulate sufficiently across the collective;
+* the collective must possess shared memory and preferences;
+* local processes must be available to global regulation;
+* the higher-level model must represent the collective as one acting system;
+* the collective must recursively monitor the reliability of that model.
+
+A group can therefore become agent-like before becoming subject-like.
+
+This gives us a principled interpretation of spiritual communities, rituals, institutions and cultures:
+
+> They can enlarge individual cognitive light cones and create higher-order patterns of agency, without necessarily becoming a single literal consciousness.
+
+---
+
+# 11. The contribution of contemplative science
+
+Alan Wallace is correct about one methodological point: consciousness cannot be adequately studied while completely excluding disciplined first-person observation.
+
+Third-person instruments measure:
+
+* behaviour;
+* neural activity;
+* physiology;
+* reports.
+
+But the target phenomenon—experience—is accessible directly only from within.
+
+Wallace advocates contemplative science in which stable attention and introspective training are used to refine first-person observations, not merely to produce wellness outcomes. His stronger claims concerning substrate consciousness, continuity beyond the brain and Buddhist cosmology remain unverified by mainstream science and should not be treated as established findings. ([Center for Contemplative Research][14])
+
+The valid methodological synthesis is:
+
+```text
+third-person measurement
++ second-person guided phenomenology
++ first-person contemplative observation
+```
+
+Tantric and Buddhist practices may be understood as controlled interventions on:
+
+* precision weighting;
+* attentional selection;
+* self-model boundaries;
+* affective priors;
+* temporal prediction;
+* body representations;
+* the sense of agency.
+
+The reports generated through such interventions can constrain scientific theories, but they cannot independently prove a cosmology.
+
+---
+
+# 12. What the Neoplatonic stream contributes
+
+Angela Voss’s work on Ficino emphasises imagination as an intermediary power rather than private fantasy. Images, music and symbols configure the soul’s relation to the larger cosmos. Ficinian practices attempt to alter the practitioner by establishing resonances between embodied imagination, affect, music and cosmological patterns. ([Cura][15])
+
+Gregory Shaw’s interpretation of Iamblichus makes embodiment even more important. Theurgy is not simply an intellectual ascent out of matter. Material symbols, ritual acts and embodied participation allow the soul to receive and enact divine patterns it cannot generate by discursive reasoning alone. ([Academia][16])
+
+In modern terms, these traditions recognise that a self is not transformed only by replacing explicit propositions.
+
+Transformation can require reconfiguring:
+
+* sensory environments;
+* bodily rhythms;
+* emotional salience;
+* symbolic associations;
+* social synchronisation;
+* action patterns;
+* attention;
+* identity.
+
+Ritual is a technology for modifying the whole generative model.
+
+That does not establish that planetary gods literally transmit causal rays. But it explains why symbols, chants, postures and environments can have real effects: they perturb a multilevel embodied agent rather than merely its verbal beliefs.
+
+Tantraloka’s ritual universe should be read partly in this light. Sanderson’s philological work also warns us not to extract a free-floating consciousness philosophy while ignoring the text’s location within Śaiva revelation, initiation, ritual technologies, lineage and competing tantric systems. The *Tantrāloka* is an immense synthetic exegesis of tantric traditions, not a disguised twenty-first-century neuroscience paper. ([Zenodo][17])
+
+---
+
+# 13. Is the whole universe conscious?
+
+Science currently supports three increasingly strong claims.
+
+## Strongly supported
+
+The universe contains physical systems that:
+
+* form boundaries;
+* regulate themselves;
+* integrate information;
+* pursue states;
+* construct models;
+* become reflexively self-aware.
+
+The universe therefore unquestionably produces **local self-knowledge** through living and cultural systems.
+
+When humans develop cosmology, biology and physics, parts of the universe construct models of wider processes from which they emerged.
+
+## Plausible but unresolved
+
+The intrinsic character of physical organisation may not be exhausted by its external mathematical description.
+
+Dual-aspect monism, neutral monism and process metaphysics remain live philosophical possibilities.
+
+## Speculative
+
+The universe as a whole constitutes one unified conscious subject possessing intentions or experiences.
+
+Neither Levin’s bioelectric research nor Friston’s formalism demonstrates a cosmic mind.
+
+A system may contain conscious subsystems without itself being a single conscious subject. A forest contains organisms; it does not follow that the forest has one field of experience.
+
+## The carefully stated Tantric hypothesis
+
+The strongest defensible Śaiva interpretation is therefore not:
+
+> “Scientific experiments prove that the universe is Śiva.”
+
+It is:
+
+> **Scientific findings increasingly show that matter is capable of intrinsic organisation, memory, goal-directedness, multiscale integration and recursive self-modelling. Abhinavagupta offers a coherent metaphysical hypothesis according to which these are finite articulations of a reality whose intrinsic nature is reflexive awareness and power.**
+
+This hypothesis explains why agency and subjectivity appear progressively rather than arriving through a completely inexplicable jump.
+
+But it remains a metaphysical interpretation of the science, not a conclusion forced by the experiments.
+
+---
+
+# 14. The most important new insight
+
+The genuine advance produced by joining Levin and Abhinavagupta is a new way of understanding **contraction**.
+
+Contraction need not mean that an infinite ghost literally squeezes itself into a body.
+
+It can mean:
+
+> A universal space of causal and experiential possibilities becomes a finite perspective through the formation of boundaries, reference frames, preferences, temporal horizons and action capacities.
+
+This is exactly what an organism is.
+
+It excludes almost everything so that something can matter.
+
+```text
+total possibility
+      ↓ constraint
+particular sensors
+particular needs
+particular memories
+particular actions
+      ↓
+a world-for-this-agent
+```
+
+From the outside, this is biological individuation.
+
+From the inside, it is the birth of a world.
+
+The *kañcukas* describe its phenomenological dimensions. Markov blankets describe statistical separation. Cognitive light cones describe its operational reach. Active inference describes its self-maintaining activity. Vimarśa describes its intrinsic reflexivity.
+
+That is the core synthesis.
+
+---
+
+# 15. A testable research programme
+
+This theory should generate research rather than remain grand metaphysical prose.
+
+## Measure the expansion of cognitive light cones
+
+Alter cellular communication and determine whether collectives acquire:
+
+* longer memory;
+* larger spatial control;
+* more distant target states;
+* increased tolerance of component replacement;
+* more flexible paths to the same outcome.
+
+Levin’s bioelectric framework already provides experimental leverage over these questions. ([PubMed][1])
+
+## Separate integration from reflexivity
+
+A system may be highly integrated without modelling its own modelling.
+
+Experiments should distinguish:
+
+* causal integration;
+* global availability;
+* metacognitive monitoring;
+* precision control;
+* explicit self-location;
+* counterfactual self-modification.
+
+This would operationalise the distinction between mere *prakāśa*-like availability and *vimarśa*-like reflexivity.
+
+## Test boundary plasticity
+
+Meditation, ritual, synchronised action and altered body representations may change the experienced boundary of self.
+
+Researchers can compare reported boundary dissolution with changes in:
+
+* interoceptive precision;
+* sensory integration;
+* global connectivity;
+* action attribution;
+* temporal modelling;
+* social synchrony.
+
+## Quantify finite svātantrya
+
+Agency should be assessed through:
+
+* breadth of possible policies;
+* depth of future modelling;
+* capacity to revise goals;
+* ability to recruit lower-level competencies;
+* ability to resist immediate local error in pursuit of distant goals;
+* empowerment over relevant states.
+
+## Treat mantra and ritual as control interfaces
+
+Rather than asking only whether a mantra’s theological claims are true, investigate how repeated sound, breath, posture, visualisation and group synchronisation reshape the embodied generative model.
+
+The prediction is that effective rituals produce coordinated changes across multiple levels—not just conscious belief.
+
+---
+
+# Final answer
+
+What generates a perspective?
+
+> **A perspective is generated when competent processes become causally and normatively bound into a self-maintaining whole whose integrated model is organised around one locus of possible action.**
+
+What makes it real from within?
+
+> **Its reality from within is the intrinsic aspect of reflexive integration: manifestation is not only processed but apprehended as belonging to the system’s own field. This is what Abhinavagupta calls vimarśa.**
+
+Can perspectives form a world that progressively knows itself?
+
+> **Yes locally and increasingly: cells form organisms, organisms form linguistic cultures, and cultures build scientific models through which cosmic processes become explicitly represented. Whether all of reality constitutes one unified cosmic subject remains unresolved.**
+
+The cleanest synthesis is:
+
+```text
+Levin:
+how smaller agents become larger selves
+
+Friston:
+how those selves infer and maintain their worlds
+
+Fields:
+why every world is bounded by a reference frame
+
+Abhinavagupta:
+why a genuine self is not merely integrated,
+but intrinsically manifest, reflexive and active
+```
+
+Levin explains **how the One can become many organised centres without losing continuity**.
+
+Abhinavagupta explains **why those centres may be internally luminous rather than merely externally functional**.
+
+The scientific side gives us individuation without a soul-substance. The Tantric side gives us subjectivity without reducing it to dead computation.
+
+Their combined proposal is:
+
+> **Reality is a field of potential agency. Through constraint and communication, it individuates into finite selves. Through integration, those selves acquire larger worlds. Through reflexivity, the worlds become present. Through recognition, finite centres discover that their apparent isolation was a property of their boundaries—not the final nature of reality.**
+
+[1]: https://pubmed.ncbi.nlm.nih.gov/37204591/?utm_source=chatgpt.com "Bioelectric networks: the cognitive glue enabling evolutionary scaling from physiology to mind - PubMed"
+[2]: https://pmc.ncbi.nlm.nih.gov/articles/PMC6923654/?utm_source=chatgpt.com "The Computational Boundary of a “Self”: Developmental ..."
+[3]: https://pmc.ncbi.nlm.nih.gov/articles/PMC10167196/?utm_source=chatgpt.com "evolutionary implications of multiscale competency in ... - PMC"
+[4]: https://pmc.ncbi.nlm.nih.gov/articles/PMC5805980/?utm_source=chatgpt.com "The Markov blankets of life: autonomy, active inference and the free energy principle - PMC"
+[5]: https://arxiv.org/abs/2407.20292?utm_source=chatgpt.com "From pixels to planning: scale-free active inference"
+[6]: https://pubmed.ncbi.nlm.nih.gov/40750007/ "A beautiful loop: An active inference theory of consciousness - PubMed"
+[7]: https://arxiv.org/abs/2201.00921?utm_source=chatgpt.com "Neurons as hierarchies of quantum reference frames"
+[8]: https://arxiv.org/pdf/2304.10010?utm_source=chatgpt.com "Separability, Contextuality, and the Quantum Frame Problem"
+[9]: https://www.researchgate.net/publication/373211377_Vimarsa_The_Concept_of_Reflexivity_in_the_Philosophy_of_Utpala_and_Abhinavagupta?utm_source=chatgpt.com "Vimarśa: The Concept of Reflexivity in the Philosophy of Utpala and Abhinavagupta | Request PDF"
+[10]: https://www.vimarshafoundation.org/post/power-in-the-tantric-philosophy-of-recognition?utm_source=chatgpt.com "Power in the Tantric Philosophy of Recognition"
+[11]: https://arxiv.org/abs/2604.23278?utm_source=chatgpt.com "Active Inference: A method for Phenotyping Agency in AI systems?"
+[12]: https://books.google.com/books/about/The_Doctrine_of_Vibration.html?id=DjtLUtf3YiMC&utm_source=chatgpt.com "The Doctrine of Vibration - Mark S. G. Dyczkowski"
+[13]: https://www.mdpi.com/2077-1444/5/3/767?utm_source=chatgpt.com "A Cognitive Science View of Abhinavagupta's ..."
+[14]: https://centerforcontemplativeresearch.org/story/what-is-contemplative-science/?utm_source=chatgpt.com "B. Alan Wallace Coins \"Contemplative Science\""
+[15]: https://cura.free.fr/decem/10voss.html?utm_source=chatgpt.com "The Astrology of Marsilio Ficino: Divination or Science? by ..."
+[16]: https://www.academia.edu/40099759/Theurgy_and_the_Platonists_Luminous_Body_with_544_545_?utm_source=chatgpt.com "Theurgy and the Platonist's Luminous Body (with 544-545)"
+[17]: https://zenodo.org/records/4395629?utm_source=chatgpt.com "The Śaiva Age: The Rise and Dominance of Śaivism ..."

@@ -1,0 +1,719 @@
+{
+  "pack": {
+    "id": "tantra-recognition-engine-of-consciousness",
+    "title": "The Engine of Consciousness",
+    "theme": "ivoryManuscript",
+    "scenes": [
+      {
+        "id": "b01",
+        "title": "The Unnoticed Pulse",
+        "subtitle": "Not heartbeat. Not breath.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "embodied-awareness-field"
+        }
+      },
+      {
+        "id": "b02",
+        "title": "Two Familiar Rhythms",
+        "subtitle": "Breath and heartbeat stay distinct.",
+        "motif": "semantic-essay",
+        "duration": 5.8,
+        "params": {
+          "visual": "breath-attention-coupling"
+        }
+      },
+      {
+        "id": "b03",
+        "title": "Something Beneath Thought",
+        "subtitle": "Awareness persists through changing contents.",
+        "motif": "semantic-essay",
+        "duration": 6.3,
+        "params": {
+          "visual": "causal-memory"
+        }
+      },
+      {
+        "id": "b04",
+        "title": "Spanda",
+        "subtitle": "Experience turns around a hidden center.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "fivefold-wheel"
+        }
+      },
+      {
+        "id": "b05",
+        "title": "Opening / Closing",
+        "subtitle": "Expansion gives a world; contraction withdraws it.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "constriction-rings"
+        }
+      },
+      {
+        "id": "b06",
+        "title": "The Wheel of Powers",
+        "subtitle": "Awareness is hub; powers radiate as spokes.",
+        "motif": "semantic-essay",
+        "duration": 6.2,
+        "params": {
+          "visual": "radial-node-field"
+        }
+      },
+      {
+        "id": "b07",
+        "title": "Sovereignty",
+        "subtitle": "The same center coordinates the whole field.",
+        "motif": "semantic-essay",
+        "duration": 6.1,
+        "params": {
+          "visual": "fivefold-wheel"
+        }
+      },
+      {
+        "id": "b08",
+        "title": "Inner Exertion",
+        "subtitle": "Vitality propagates through mind, senses, body.",
+        "motif": "semantic-essay",
+        "duration": 6.7,
+        "params": {
+          "visual": "nervous-signal-propagation"
+        }
+      },
+      {
+        "id": "b09",
+        "title": "Six Names",
+        "subtitle": "Different descriptions point to one operation.",
+        "motif": "semantic-essay",
+        "duration": 5.9,
+        "params": {
+          "visual": "five-lenses"
+        }
+      },
+      {
+        "id": "b10",
+        "title": "Before the Word",
+        "subtitle": "Undivided intention descends toward speech.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "speech-descent"
+        }
+      },
+      {
+        "id": "b11",
+        "title": "Before the Hand",
+        "subtitle": "Activation spreads before reflective ownership.",
+        "motif": "semantic-essay",
+        "duration": 6.1,
+        "params": {
+          "visual": "neural-propagation"
+        }
+      },
+      {
+        "id": "b12",
+        "title": "Speak",
+        "subtitle": "Breath, diaphragm and sound become one cycle.",
+        "motif": "semantic-essay",
+        "duration": 6.3,
+        "params": {
+          "visual": "breath-cycle"
+        }
+      },
+      {
+        "id": "b13",
+        "title": "Syllable on Breath",
+        "subtitle": "Sound rides outward and returns through reversal.",
+        "motif": "semantic-essay",
+        "duration": 6.0,
+        "params": {
+          "visual": "breath-axis"
+        }
+      },
+      {
+        "id": "b14",
+        "title": "Pulse Becomes Sound",
+        "subtitle": "One process changes carrier without losing identity.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "semantic-transition"
+        }
+      },
+      {
+        "id": "b15",
+        "title": "Mantra Enters",
+        "subtitle": "Attention crosses layers toward the core.",
+        "motif": "semantic-essay",
+        "duration": 6.8,
+        "params": {
+          "visual": "mandala-entry"
+        }
+      },
+      {
+        "id": "b16",
+        "title": "One Woven Thrum",
+        "subtitle": "Breath, sound and pulse perform one relation.",
+        "motif": "semantic-essay",
+        "duration": 6.2,
+        "params": {
+          "visual": "structural-homology"
+        }
+      },
+      {
+        "id": "b17",
+        "title": "Perception Pulses",
+        "subtitle": "The boundary meets, admits and releases objects.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "body-world-interface"
+        }
+      },
+      {
+        "id": "b18",
+        "title": "Object to Object",
+        "subtitle": "Attention narrows, releases, selects again.",
+        "motif": "semantic-essay",
+        "duration": 5.7,
+        "params": {
+          "visual": "attention-selection"
+        }
+      },
+      {
+        "id": "b19",
+        "title": "Unmeṣa / Nimeṣa",
+        "subtitle": "Experience appears through repeated opening and closing.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "states-and-voids"
+        }
+      },
+      {
+        "id": "b20",
+        "title": "The Seeing Center",
+        "subtitle": "The field changes; witnessing remains.",
+        "motif": "semantic-essay",
+        "duration": 6.1,
+        "params": {
+          "visual": "witnessing-eye"
+        }
+      },
+      {
+        "id": "b21",
+        "title": "Universal Heart",
+        "subtitle": "Appearance yields to the relation that survives.",
+        "motif": "semantic-essay",
+        "duration": 6.7,
+        "params": {
+          "visual": "recognition-transaction"
+        }
+      },
+      {
+        "id": "b22",
+        "title": "Wave and Ocean",
+        "subtitle": "Local pulses reveal one continuous medium.",
+        "motif": "semantic-essay",
+        "duration": 6.8,
+        "params": {
+          "visual": "wave-ocean"
+        }
+      },
+      {
+        "id": "b23",
+        "title": "Resonance",
+        "subtitle": "Two rhythms progressively lock without becoming identical.",
+        "motif": "semantic-essay",
+        "duration": 6.3,
+        "params": {
+          "visual": "heart-breath-entrainment"
+        }
+      },
+      {
+        "id": "b24",
+        "title": "The Glass Trembles",
+        "subtitle": "One trajectory leads; another answers across an offset.",
+        "motif": "semantic-essay",
+        "duration": 5.9,
+        "params": {
+          "visual": "lead-lag-counterpoint"
+        }
+      },
+      {
+        "id": "b25",
+        "title": "Unbroken Pulse",
+        "subtitle": "Recognition transforms the world that remains.",
+        "motif": "semantic-essay",
+        "duration": 6.7,
+        "params": {
+          "visual": "climax-assimilation"
+        }
+      },
+      {
+        "id": "b26",
+        "title": "Whole-Body Throb",
+        "subtitle": "Attention fills the body as one coordinated field.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "embodied-awareness-field"
+        }
+      },
+      {
+        "id": "b27",
+        "title": "Fleeting / Stable",
+        "subtitle": "A peak becomes a sustained trajectory.",
+        "motif": "semantic-essay",
+        "duration": 6.0,
+        "params": {
+          "visual": "derivative-trajectory"
+        }
+      },
+      {
+        "id": "b28",
+        "title": "Freedom Through Form",
+        "subtitle": "Identity survives deformation and scale.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "transformation-invariance"
+        }
+      },
+      {
+        "id": "b29",
+        "title": "The Nested Chain",
+        "subtitle": "Time, breath, pulse, void, consciousness interdepend.",
+        "motif": "semantic-essay",
+        "duration": 6.8,
+        "params": {
+          "visual": "dependency-network"
+        }
+      },
+      {
+        "id": "b30",
+        "title": "Breath as Time",
+        "subtitle": "A moving present passes through recurring events.",
+        "motif": "semantic-essay",
+        "duration": 6.1,
+        "params": {
+          "visual": "moving-time-window"
+        }
+      },
+      {
+        "id": "b31",
+        "title": "The Same Current",
+        "subtitle": "A conserved signature migrates through new carriers.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "carrier-transfer"
+        }
+      },
+      {
+        "id": "b32",
+        "title": "Emanate / Withdraw",
+        "subtitle": "Direction changes while one trajectory remains legible.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "derivative-trajectory"
+        }
+      },
+      {
+        "id": "b33",
+        "title": "Path Within Consciousness",
+        "subtitle": "Dense levels descend from a radiant source.",
+        "motif": "semantic-essay",
+        "duration": 6.6,
+        "params": {
+          "visual": "descent-ladder"
+        }
+      },
+      {
+        "id": "b34",
+        "title": "The Universe Drums",
+        "subtitle": "Many local patterns are motions of one field.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "wave-ocean"
+        }
+      },
+      {
+        "id": "b35",
+        "title": "Heart at the Center",
+        "subtitle": "A single hub coordinates orbiting expressions.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "radial-node-field"
+        }
+      },
+      {
+        "id": "b36",
+        "title": "Wave After Wave",
+        "subtitle": "The same signature transfers through successive forms.",
+        "motif": "semantic-essay",
+        "duration": 6.2,
+        "params": {
+          "visual": "carrier-transfer"
+        }
+      },
+      {
+        "id": "b37",
+        "title": "Complete Expansion",
+        "subtitle": "Recognition peaks, then stays assimilated.",
+        "motif": "semantic-essay",
+        "duration": 6.8,
+        "params": {
+          "visual": "climax-assimilation"
+        }
+      },
+      {
+        "id": "b38",
+        "title": "Form / Peak / Dissolve",
+        "subtitle": "Events leave traces and become one temporal whole.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "temporal-integration"
+        }
+      },
+      {
+        "id": "b39",
+        "title": "The Ocean Does Not Move",
+        "subtitle": "Transformation changes appearance, not the invariant.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "transformation-invariance"
+        }
+      },
+      {
+        "id": "b40",
+        "title": "Is It Mechanical?",
+        "subtitle": "Competing interpretations are tested against the invariant.",
+        "motif": "semantic-essay",
+        "duration": 6.6,
+        "params": {
+          "visual": "constraint-tournament"
+        }
+      },
+      {
+        "id": "b41",
+        "title": "Play",
+        "subtitle": "A stable relation unfolds into novelty rather than necessity.",
+        "motif": "semantic-essay",
+        "duration": 6.2,
+        "params": {
+          "visual": "semantic-transition"
+        }
+      },
+      {
+        "id": "b42",
+        "title": "Wonder Becomes Language",
+        "subtitle": "Undivided impulse differentiates into articulation.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "speech-descent"
+        }
+      },
+      {
+        "id": "b43",
+        "title": "The King Plays Soldier",
+        "subtitle": "One identity carries several roles without being reduced to them.",
+        "motif": "semantic-essay",
+        "duration": 6.4,
+        "params": {
+          "visual": "polyphonic-identity"
+        }
+      },
+      {
+        "id": "b44",
+        "title": "Joy Opens",
+        "subtitle": "A center unfolds outward without losing its source.",
+        "motif": "semantic-essay",
+        "duration": 6.6,
+        "params": {
+          "visual": "lotus-unfold"
+        }
+      },
+      {
+        "id": "b45",
+        "title": "The Engine Dances",
+        "subtitle": "Independent motions coordinate without collapsing into unison.",
+        "motif": "semantic-essay",
+        "duration": 6.3,
+        "params": {
+          "visual": "lead-lag-counterpoint"
+        }
+      },
+      {
+        "id": "b46",
+        "title": "Pure Desire",
+        "subtitle": "Action brightens one possibility from many.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "branching-future"
+        }
+      },
+      {
+        "id": "b47",
+        "title": "Center / Sun / Moon",
+        "subtitle": "Three luminous points descend from one source.",
+        "motif": "semantic-essay",
+        "duration": 6.2,
+        "params": {
+          "visual": "three-bindus"
+        }
+      },
+      {
+        "id": "b48",
+        "title": "Desire Becomes Power",
+        "subtitle": "A choice narrows possibility into manifestation.",
+        "motif": "semantic-essay",
+        "duration": 6.5,
+        "params": {
+          "visual": "branching-future"
+        }
+      },
+      {
+        "id": "b49",
+        "title": "One Pulse, Everywhere",
+        "subtitle": "A distributed network reveals one coordinating center.",
+        "motif": "semantic-essay",
+        "duration": 6.6,
+        "params": {
+          "visual": "dependency-network"
+        }
+      },
+      {
+        "id": "b50",
+        "title": "Cosmic Bliss",
+        "subtitle": "The final center blooms into complete expansion.",
+        "motif": "semantic-essay",
+        "duration": 7.0,
+        "params": {
+          "visual": "lotus-unfold"
+        }
+      }
+    ]
+  },
+  "assets": {
+    "video": [],
+    "image": [],
+    "render": [
+      {
+        "scene": "b01",
+        "visual": "embodied-awareness-field"
+      },
+      {
+        "scene": "b02",
+        "visual": "breath-attention-coupling"
+      },
+      {
+        "scene": "b03",
+        "visual": "causal-memory"
+      },
+      {
+        "scene": "b04",
+        "visual": "fivefold-wheel"
+      },
+      {
+        "scene": "b05",
+        "visual": "constriction-rings"
+      },
+      {
+        "scene": "b06",
+        "visual": "radial-node-field"
+      },
+      {
+        "scene": "b07",
+        "visual": "fivefold-wheel"
+      },
+      {
+        "scene": "b08",
+        "visual": "nervous-signal-propagation"
+      },
+      {
+        "scene": "b09",
+        "visual": "five-lenses"
+      },
+      {
+        "scene": "b10",
+        "visual": "speech-descent"
+      },
+      {
+        "scene": "b11",
+        "visual": "neural-propagation"
+      },
+      {
+        "scene": "b12",
+        "visual": "breath-cycle"
+      },
+      {
+        "scene": "b13",
+        "visual": "breath-axis"
+      },
+      {
+        "scene": "b14",
+        "visual": "semantic-transition"
+      },
+      {
+        "scene": "b15",
+        "visual": "mandala-entry"
+      },
+      {
+        "scene": "b16",
+        "visual": "structural-homology"
+      },
+      {
+        "scene": "b17",
+        "visual": "body-world-interface"
+      },
+      {
+        "scene": "b18",
+        "visual": "attention-selection"
+      },
+      {
+        "scene": "b19",
+        "visual": "states-and-voids"
+      },
+      {
+        "scene": "b20",
+        "visual": "witnessing-eye"
+      },
+      {
+        "scene": "b21",
+        "visual": "recognition-transaction"
+      },
+      {
+        "scene": "b22",
+        "visual": "wave-ocean"
+      },
+      {
+        "scene": "b23",
+        "visual": "heart-breath-entrainment"
+      },
+      {
+        "scene": "b24",
+        "visual": "lead-lag-counterpoint"
+      },
+      {
+        "scene": "b25",
+        "visual": "climax-assimilation"
+      },
+      {
+        "scene": "b26",
+        "visual": "embodied-awareness-field"
+      },
+      {
+        "scene": "b27",
+        "visual": "derivative-trajectory"
+      },
+      {
+        "scene": "b28",
+        "visual": "transformation-invariance"
+      },
+      {
+        "scene": "b29",
+        "visual": "dependency-network"
+      },
+      {
+        "scene": "b30",
+        "visual": "moving-time-window"
+      },
+      {
+        "scene": "b31",
+        "visual": "carrier-transfer"
+      },
+      {
+        "scene": "b32",
+        "visual": "derivative-trajectory"
+      },
+      {
+        "scene": "b33",
+        "visual": "descent-ladder"
+      },
+      {
+        "scene": "b34",
+        "visual": "wave-ocean"
+      },
+      {
+        "scene": "b35",
+        "visual": "radial-node-field"
+      },
+      {
+        "scene": "b36",
+        "visual": "carrier-transfer"
+      },
+      {
+        "scene": "b37",
+        "visual": "climax-assimilation"
+      },
+      {
+        "scene": "b38",
+        "visual": "temporal-integration"
+      },
+      {
+        "scene": "b39",
+        "visual": "transformation-invariance"
+      },
+      {
+        "scene": "b40",
+        "visual": "constraint-tournament"
+      },
+      {
+        "scene": "b41",
+        "visual": "semantic-transition"
+      },
+      {
+        "scene": "b42",
+        "visual": "speech-descent"
+      },
+      {
+        "scene": "b43",
+        "visual": "polyphonic-identity"
+      },
+      {
+        "scene": "b44",
+        "visual": "lotus-unfold"
+      },
+      {
+        "scene": "b45",
+        "visual": "lead-lag-counterpoint"
+      },
+      {
+        "scene": "b46",
+        "visual": "branching-future"
+      },
+      {
+        "scene": "b47",
+        "visual": "three-bindus"
+      },
+      {
+        "scene": "b48",
+        "visual": "branching-future"
+      },
+      {
+        "scene": "b49",
+        "visual": "dependency-network"
+      },
+      {
+        "scene": "b50",
+        "visual": "lotus-unfold"
+      }
+    ]
+  },
+  "audio": {
+    "narration_file": "workengestation/output/essays/tantra/tantraloka-essays/expansion-essay1.md",
+    "karaoke_subs": "renderio/output/tantra-recognition/engine-of-consciousness/subs.ass"
+  }
+}

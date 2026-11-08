@@ -1,0 +1,56 @@
+O NOW (5 minutes each, unlocks data immediately)
+1. Skills England API Key
+- Unlocks: Occupation → skills → training products graph (the most important missing link)
+- Go to: https://occupational-maps.skillsengland.education.gov.uk/public-api
+- Click: "Request an API Key"
+- Fill form: Name, email, organization, purpose ("research / labour market analysis")
+- Receive: API key via email (usually same day)
+- Then give me: The key, I'll wire it into the collector
+2. Apprenticeship Service API Key
+- Unlocks: Live apprenticeship vacancies by occupation, location, employer
+- Go to: https://developer.apprenticeships.education.gov.uk/
+- Click: "Create an account" (requires DfE Sign-in — use your gov.uk one)
+- Once logged in: Dashboard → "Subscriptions" → generate key
+- Then give me: The key (APPRENTICESHIP_API_KEY)
+3. Verify Companies House Streaming Key
+- Unlocks: Real-time company formations, dissolutions, insolvencies, charges
+- Key is already in .env: 0aa57ba1-9f9a-4e5b-a45f-0e69b56a71ad
+- Test it: Go to https://developer.company-information.service.gov.uk/ → log in → check key status
+- If valid: I'll build the streaming collector
+- If expired: Renew at the same URL
+DO THIS WEEK (research tasks, 1-2 hours each)
+4. MCS Certified Installers
+- Unlocks: Heat pump + solar installer capacity (who is certified)
+- Go to: https://www.mcs-certified.com/
+- Look for: Any "find an installer" page, data download, or API
+- Check: Open browser DevTools → Network tab → use the installer search → see if there's a JSON API behind it
+- Report back: URL of any API endpoint, or confirm "no public data available"
+5. OZEV Authorised Installers
+- Unlocks: EV charger installer capacity
+- Go to: https://www.gov.uk/guidance/residential-and-commercial-chargepoints-become-an-authorised-installer
+- Also check: The postcode installer finder at https://www.gov.uk/find-local-chargepoint-operator-or-installer
+- Look for: Hidden API behind the postcode search (DevTools → Network → XHR)
+- Report back: Any JSON endpoints found
+6. Competent Person Electrical
+- Unlocks: Electrician registration capacity
+- Go to: https://www.electricalcompetentperson.co.uk/
+- Look for: Scheme search, member list, data download
+- Report back: Data access route or "scrape only"
+7. TrustMark Data Warehouse
+- Unlocks: Retrofit installer capacity (insulation, heating)
+- Go to: https://www.trustmark.org.uk/business/data-warehouse/
+- The URL suggests data exists — investigate what's available
+- Report back: Download format, API, or registration required
+NO ACTION NEEDED (I'll build these, data is public)
+These require no signup — just code:
+Source	URL	Why it's easy
+Nomis labour supply	https://www.nomisweb.co.uk/ (https://www.nomisweb.co.uk/)	Public, no API key
+EPC building stock	https://epc.opendatacommunities.org/ (https://epc.opendatacommunities.org/)	Public bulk download
+DfE apprenticeship history	https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships/ (https://explore-education-statistics.service.gov.uk/find-statistics/apprenticeships/)	Public CSV downloads
+UKRLP providers	https://ukrlp.education.gov.uk/ (https://ukrlp.education.gov.uk/)	Investigate, likely public
+NESO TEC register	https://api.neso.energy/ (https://api.neso.energy/)	Same API as existing NESO collectors
+SUMMARY: What to do right now
+1. Open https://occupational-maps.skillsengland.education.gov.uk/public-api → request key → reply to me with it
+2. Open https://developer.apprenticeships.education.gov.uk/ → create account → get key → reply with it
+3. Open https://developer.company-information.service.gov.uk/ → check streaming key is alive → tell me yes/no
+Those 3 actions take 15 minutes and unlock the three most important missing data layers.

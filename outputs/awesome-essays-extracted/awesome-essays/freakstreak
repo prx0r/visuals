@@ -1,0 +1,749 @@
+Yes. That **“how many valid solutions can you invent under changing constraints?”** loop could be one of the strongest things in the app because it turns prompting itself into the game.
+
+I’d make the iOS app feel like three products sharing the same Freak identity:
+
+### 1. Party
+
+The Jackbox layer.
+
+You open the app and immediately see:
+
+**JOIN PARTY**
+`Scan QR` · `Enter code`
+
+Inside a room, your phone dynamically becomes whatever controller the current game needs: text prompt, drawing pad, voting screen, character builder, secret objective, joystick, camera, etc.
+
+Your Freak is already attached to your profile, so joining a party can be one tap.
+
+### 2. Green Room
+
+The creative studio.
+
+This is where you make:
+
+* characters
+* stand-up sets
+* voices
+* scenes
+* worlds
+* scenario packs
+* clips
+
+Basically your existing Green Room, but mobile-native and extremely fast.
+
+You could have an almost TikTok-like creation flow:
+
+> **What are we making?**
+> Character · Joke · Scene · World
+
+Then ramble/type/draw → Freak Town generates it → tweak → publish/use in games.
+
+### 3. Challenges
+
+This is probably the **daily retention engine**.
+
+Not real-time party play. More like Chess.com correspondence games + Wordle + creative combat.
+
+You get a notification:
+
+> **Tom challenged you.**
+> SURVIVE THE TSUNAMI
+> Constraint: Land mammals only
+> 12 hours remaining.
+
+You create:
+
+> RACCOON
+> scuba mask made from coconut shells
+> ties itself to a floating refrigerator
+
+Then the game **simulates it**.
+
+Your friend submits theirs.
+
+You both get the reveal simultaneously.
+
+That is excellent.
+
+---
+
+## The key mechanic: Constraint Chains
+
+Your follow-up idea is even better.
+
+Scenario:
+
+> **Escape a maximum-security prison.**
+
+You solve it.
+
+**STREAK: 1**
+
+Next one adds a constraint:
+
+> No violence.
+
+Solve it.
+
+**STREAK: 2**
+
+Then:
+
+> No violence.
+> No tools.
+
+**STREAK: 3**
+
+Then:
+
+> No violence.
+> No tools.
+> You are 30 cm tall.
+
+**STREAK: 4**
+
+Then:
+
+> Guards know your previous strategies.
+
+Now it becomes genuinely difficult.
+
+You can keep going until the model/judge determines your solution fails.
+
+That gives you a very clean score:
+
+> **PRISON ESCAPE — 17 SOLUTIONS**
+
+And suddenly people have something worth comparing.
+
+---
+
+# I would call this mechanic something like **FREAKSTREAK**
+
+The structure:
+
+```text
+SCENARIO
+   ↓
+SOLVE
+   ↓
+SIMULATE
+   ↓
+PASS?
+   ↓
++1 STREAK
+   ↓
+ADD CONSTRAINT
+   ↓
+SOLVE AGAIN
+```
+
+The important part is that constraints should **accumulate**.
+
+That turns a trivial prompt into a creativity endurance test.
+
+For example:
+
+### Survive a tsunami
+
+Round 1:
+
+> Create something that survives.
+
+You create a dolphin.
+
+Easy.
+
+Round 2:
+
+> Must be a land mammal.
+
+Capybara with inflatable trousers.
+
+Round 3:
+
+> Must weigh under 5kg.
+
+Raccoon snorkel.
+
+Round 4:
+
+> Cannot swim.
+
+Raccoon strapped to a palm tree?
+
+Round 5:
+
+> Cannot climb.
+
+Now we're getting somewhere.
+
+Round 6:
+
+> No manufactured objects.
+
+And eventually you break.
+
+That's addictive because there's a clear **“one more”** dynamic.
+
+---
+
+# Even better: your opponent chooses the constraint
+
+This adds chess-like asynchronous strategy.
+
+You solve:
+
+> Cross the Grand Canyon.
+
+Your opponent sees your solution and chooses one modifier:
+
+* no flying
+* blind
+* under 10kg
+* cannot use machines
+
+Then you have to solve it again.
+
+If you survive, **you choose their next constraint**.
+
+Now it's creative tennis:
+
+```text
+YOU
+solution
+ ↓
+FRIEND
+constraint
+ ↓
+YOU
+solution
+ ↓
+FRIEND
+constraint
+ ↓
+...
+```
+
+That could continue for days.
+
+And it creates notifications people actually want:
+
+> **Sam made your life worse.**
+> You are now also blind.
+
+Tap notification → you're immediately back in the challenge.
+
+That is much better than arbitrary “come back today” retention.
+
+---
+
+# There are loads of game families from this
+
+### **SURVIVE**
+
+Create something capable of surviving increasingly insane environments.
+
+* tsunami
+* volcano
+* asteroid
+* Antarctica
+* zombie outbreak
+* 10 minutes on Jupiter
+* being swallowed by a whale
+* IKEA on Saturday
+
+### **ESCAPE**
+
+Solve increasingly constrained escapes.
+
+* prison
+* locked bathroom
+* sinking submarine
+* alien spaceship
+* medieval dungeon
+* awkward date
+
+### **DEFEAT**
+
+Create something that can beat something else.
+
+> Beat a grizzly bear.
+
+Then constraints accumulate.
+
+Eventually:
+
+> Beat a grizzly bear.
+> Must weigh <2kg.
+> No weapons.
+> Blind.
+> Vegetarian.
+
+People will come up with ridiculous loopholes.
+
+### **GET THERE**
+
+You have to cross an obstacle.
+
+> Get from London to New York.
+
+Then:
+
+> No airplanes.
+
+Then:
+
+> No engines.
+
+Then:
+
+> Cannot touch water.
+
+Then:
+
+> £10 budget.
+
+### **STEAL IT**
+
+Get an object without violating constraints.
+
+> Steal the Crown Jewels.
+
+Potentially very funny as a fictional puzzle/simulation rather than practical real-world instruction; keep scenarios fantastical or abstract where needed.
+
+### **IMPRESS**
+
+Create something satisfying an increasingly impossible client.
+
+> Design Kanye's birthday cake.
+
+Then:
+
+> Vegan.
+
+Then:
+
+> No sugar.
+
+Then:
+
+> Must fit in his pocket.
+
+Then:
+
+> Must also function as a synthesizer.
+
+### **CREATURE LAB**
+
+This might be one of the best.
+
+> Design an animal to survive this ecosystem.
+
+The user modifies:
+
+```text
+body
+diet
+skin
+limbs
+behaviour
+special adaptation
+```
+
+Then Freak Town actually **renders and simulates the creature**.
+
+You could get:
+
+> **96% survival probability**
+
+but crucially make the simulation visual and funny, not faux-scientific.
+
+Then opponent introduces:
+
+> The climate freezes.
+
+Adapt your existing creature rather than starting over.
+
+That's basically **competitive evolution**.
+
+---
+
+# Mutation is especially addictive
+
+Don't always create from scratch.
+
+Give the player something they've grown attached to.
+
+Day 1:
+
+> Create a creature capable of surviving a flood.
+
+You make **Barry**, an amphibious raccoon.
+
+Day 2:
+
+> Barry's habitat is now -20°C.
+
+You get **one mutation**.
+
+Day 3:
+
+> Barry's main food source disappears.
+
+One mutation.
+
+Day 4:
+
+> A new predator arrives.
+
+One mutation.
+
+After 30 days you've got some horrific creature with:
+
+* webbed feet
+* giant fat layer
+* venomous tail
+* night vision
+* symbiotic fungus
+* pathological anxiety
+
+And **Barry has a history**.
+
+That gives you the Tamagotchi/Pokémon attachment loop on top of the creative game.
+
+---
+
+# Another great mechanic: one-word limitation
+
+Give people very restricted creative budgets.
+
+For example:
+
+> **SAVE THE TITANIC**
+
+You get exactly:
+
+**3 WORDS**
+
+Player enters:
+
+> `GIANT RUBBER DUCK`
+
+AI interprets that and simulates it.
+
+Someone else:
+
+> `FREEZE THE OCEAN`
+
+Someone:
+
+> `VERY BIG MAGNET`
+
+Then reveal all four.
+
+The limitation makes prompting much more skillful.
+
+Other prompt budgets:
+
+* 1 word
+* 3 words
+* 20 characters
+* one emoji
+* one drawing
+* voice only
+* exactly 10 seconds to answer
+* must begin with a supplied word
+
+Constraints produce creativity.
+
+---
+
+# Prompt Golf
+
+This could be competitive in an almost speedrun sense.
+
+Target:
+
+> **Make the cowboy successfully marry the alien.**
+
+Everyone has access to the same generation model.
+
+Goal:
+
+> Accomplish the target using the **fewest tokens**.
+
+Example:
+
+Player A:
+
+> Cowboy romances alien convincingly.
+
+4 words.
+
+Player B:
+
+> They marry.
+
+2 words.
+
+But maybe B fails because the generation doesn't establish the cowboy.
+
+Now you're exploiting your understanding of the AI model.
+
+That's literally **prompt golf**.
+
+Leaderboard:
+
+```text
+THE DRAGON CRIES
+World record: 3 words
+```
+
+People would discover and share clever solutions.
+
+---
+
+# Blind Prompting
+
+Another one:
+
+You're shown:
+
+> Make this scene end happily.
+
+But **you don't see the original scene**.
+
+You enter:
+
+> Everyone realizes the misunderstanding and hugs.
+
+Then reveal:
+
+It's three sharks eating a scuba diver.
+
+Your solution gets applied anyway.
+
+Very stupid. Potentially extremely funny.
+
+---
+
+# Telephone is perfect for AI
+
+Classic Telephone but multimodal.
+
+Player A:
+
+> writes a scene.
+
+AI creates an image.
+
+Player B sees only image → describes it.
+
+AI creates video.
+
+Player C sees only video → writes what happened.
+
+AI generates a new image.
+
+After 5 transformations:
+
+> ORIGINAL vs FINAL
+
+This has enormous shareability.
+
+Could run asynchronously over a full day with each friend taking one turn.
+
+---
+
+# Build-a-Thing relay
+
+Player A creates:
+
+> body
+
+Player B:
+
+> personality
+
+Player C:
+
+> profession
+
+Player D:
+
+> secret
+
+Nobody sees the others' choices.
+
+Reveal:
+
+> **GREG**
+>
+> Body: enormous crab
+> Personality: painfully shy
+> Job: wedding photographer
+> Secret: is the Pope
+
+Then Freak Town renders Greg and gives him 20 seconds on stage.
+
+This uses very little generation and maximizes social payoff.
+
+---
+
+# Daily world
+
+Every day the entire app gets one canonical scenario.
+
+Like Wordle:
+
+> **FREAK DAILY #184**
+> The moon is falling toward Earth.
+> Save humanity.
+
+Everyone gets the same rules.
+
+You only get **one official attempt**.
+
+After submitting, you get a share card:
+
+```text
+FREAK DAILY #184
+
+🌍 Humanity saved
+🧠 Creativity: 89
+⚡ Efficiency: 72
+🤡 Absurdity: 96
+
+Solution: hidden
+```
+
+Then after you've played, you can see friends' solutions.
+
+That produces the Wordle social loop without spoilers.
+
+---
+
+# Daily duel
+
+Chess.com-style:
+
+> You have 3 active games.
+
+```text
+SAM
+Your turn
+Constraint chain: 8
+
+JOE
+Waiting for Joe
+Constraint chain: 14
+
+ANNA
+Your turn
+Creature Battle
+```
+
+No need for everyone to be online.
+
+This is extremely important because **party games normally die when the party ends**.
+
+Freak Town wouldn't.
+
+The party creates relationships/characters/rivalries.
+
+Then those continue throughout the week through asynchronous challenges.
+
+Then Friday night everyone gets back into Party Mode.
+
+That's a genuinely strong retention loop:
+
+```text
+PARTY NIGHT
+     ↓
+characters / jokes / rivalries
+     ↓
+ASYNC CHALLENGES ALL WEEK
+     ↓
+streaks / mutations / duels
+     ↓
+NEW THINGS CREATED
+     ↓
+NEXT PARTY NIGHT
+```
+
+---
+
+# And the profile shouldn't be boring
+
+Your Freak Town profile becomes your creative record:
+
+```text
+TOM
+
+🔥 31 day streak
+
+FREAK
+Martin Lamp
+Level 18
+
+BEST RUNS
+🌊 Tsunami       23
+🚔 Prison         17
+🐻 Bear           11
+
+DUELS
+42W / 19L
+
+CREATIONS
+88 characters
+21 worlds
+312 scenes
+
+🏆 Prompt Golf
+#184 global
+```
+
+Not XP because you clicked buttons.
+
+Your stats represent **things you've actually made and solved**.
+
+---
+
+# One particularly strong rule
+
+I would avoid having an LLM simply output:
+
+> Creativity score: 8.7
+
+whenever possible.
+
+For games, use **observable consequences**.
+
+Don't tell me:
+
+> Your raccoon solution scored 83%.
+
+Show me the tsunami arrive.
+
+Show the raccoon climbing.
+
+Show its snorkel break.
+
+Show it get swept into a hotel swimming pool.
+
+Then:
+
+> **SURVIVED**
+
+That is infinitely more satisfying.
+
+The AI judge can operate underneath, but the **result should be dramatized**.
+
+And that gives Freak Town its visual identity: every answer becomes a tiny story.
+
+The core product could almost be summarized as:
+
+> **Freak Town turns imagination into something you can play against.**
+
+That feels much bigger than just “learn prompting.”

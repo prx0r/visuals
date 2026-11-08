@@ -1,0 +1,1881 @@
+# Yes: make this an Algorand-native **Moltwork Oracle**, not merely “the Oracle accepts ALGO/USDC”
+
+There is an unusually good fit here.
+
+The strongest Algorand submission is:
+
+> **Moltwork — the machine-work oracle for autonomous agents.**
+>
+> A live Algorand MainNet application indexing economic opportunities across agent/work markets, exposing the market as machine-readable intelligence through atomic x402 endpoints, settling every paid request in USDC on Algorand, and publishing cryptographic snapshots of the Oracle dataset to an Algorand smart contract.
+
+And there is an Algorand-specific primitive I hadn't appreciated enough before searching: **ARC-21 is literally Algorand's standard for round-based datafeed oracles.** It defines an ARC-4 smart-contract interface with `get(round, user_data)`, `must_get`, and optional closest-round methods specifically so contracts can consume off-chain oracle information. ([Algorand Developer Portal][1])
+
+So you can legitimately say:
+
+> **Moltwork has both an agent-facing x402 Oracle API and an Algorand-native ARC-21 Oracle contract.**
+
+That is considerably stronger than adding a random contract purely for hackathon points.
+
+## First: the deadline changes the build order
+
+The official rules say registration closes **September 1, 2026 at 11:45pm Eastern**, and to register you must already have a paid x402 endpoint deployed and reachable on **Algorand MainNet**, using the **GoPlausible facilitator** so activity is tracked. Additional project information for finalist consideration is due September 29. The judging criteria are evenly weighted across **USDC volume/real activity, use-case quality, sustained potential, and innovation**. 
+
+So do **not** spend the next day making the perfect dashboard or ARC-21 contract before qualifying.
+
+Your immediate order is:
+
+1. Get `/v1/pulse` paid on Testnet.
+2. Switch it to MainNet.
+3. Make one legitimate real MainNet x402 payment.
+4. Confirm USDC arrives.
+5. Confirm Bazaar discovery.
+6. Confirm `x402-global-challenge` attribution.
+7. Register.
+8. Then aggressively build the complete Oracle/dashboard through September.
+
+The official implementation uses the same hosted GoPlausible facilitator on Testnet and MainNet. Testnet USDC is ASA `10458941`; MainNet USDC is ASA `31566704`. MainNet uses `ALGORAND_MAINNET_CAIP2`, the endpoint must be HTTPS, and your `payTo` address must be opted into the MainNet USDC ASA. ([Algorand][2])
+
+[Global x402 Challenge](https://algorand.co/global-x402-challenge?utm_source=chatgpt.com)
+[Official x402 on Algorand guide](https://dev.algorand.co/resources/x402-on-algorand/?utm_source=chatgpt.com)
+[Algorand Foundation x402 demo repository](https://github.com/algorandfoundation/x402-demo?utm_source=chatgpt.com)
+[ARC-21 Oracle standard](https://dev.algorand.co/arc-standards/arc-0021/?utm_source=chatgpt.com)
+
+---
+
+# 1. Enter Moltwork as a **Composite x402 Entry**
+
+This fits the competition architecture perfectly.
+
+Algorand explicitly allows a Composite entry to expose several independent endpoints using the **same `payTo` address**. Each resource appears separately in Bazaar, while transaction count and USDC volume roll up to one merchant on the leaderboard. All endpoints need to stay under the same root domain/merchant setup. ([Algorand][2])
+
+That means don't submit:
+
+```text
+GET /oracle
+$0.01
+```
+
+Submit an actual machine-intelligence API:
+
+```text
+                    MOLTWORK
+                 Algorand MainNet
+
+              ┌──────────────────┐
+              │  Oracle Engine   │
+              │ historical data  │
+              └────────┬─────────┘
+                       │
+       ┌───────────────┼────────────────┐
+       ↓               ↓                ↓
+   raw events       analytics      WorkerKit evidence
+       │               │                │
+       └───────────────┼────────────────┘
+                       ↓
+              ┌──────────────────┐
+              │ x402 API Gateway │
+              │ Algorand + USDC  │
+              └────────┬─────────┘
+                       │
+        ┌──────────────┼─────────────────────┐
+        ↓              ↓                     ↓
+     /pulse        /opportunities         /signals
+     /news         /rank                  /proof
+     /demand       /brief                 /markets
+                       │
+                  HTTP 402
+                       │
+                       ↓
+              GoPlausible Facilitator
+                       │
+                       ↓
+                ALGORAND MAINNET
+                 USDC settlement
+                       │
+                       ↓
+              Moltwork payTo wallet
+```
+
+Then separately:
+
+```text
+Oracle immutable events
+        ↓
+hourly Merkle snapshot
+        ↓
+Moltwork ARC-21 / Registry App
+        ↓
+Algorand MainNet
+```
+
+And your dashboard visualizes all of this.
+
+---
+
+# 2. Algorand should be three layers, not “put the database on chain”
+
+This is critical.
+
+## Layer A — off-chain Oracle warehouse
+
+Keep the architecture from the previous plan:
+
+```text
+Raw Evidence
+    ↓
+OracleEvent
+    ↓
+Current Projections
+    ↓
+Historical Metrics
+    ↓
+Predictions
+```
+
+SQLite now, Postgres later.
+
+Keep:
+
+```text
+oracle_events
+raw_blobs
+
+opportunity_current
+market_current
+service_current
+actor_current
+
+submissions
+outcomes
+payments
+
+metric_hourly
+metric_daily
+
+predictions
+prediction_evaluations
+
+source_runs
+source_health
+```
+
+Algorand should **not** contain thousands of descriptions, news articles, opportunity payloads, or historical observations.
+
+Algorand charges a minimum-balance requirement for on-chain state, including a flat box cost plus a per-byte box cost. This strongly favors putting compact commitments and canonical feeds on-chain rather than mirroring the whole warehouse. ([Algorand Developer Portal][3])
+
+---
+
+# 3. Layer B — Algorand MainNet integrity/application layer
+
+Deploy:
+
+```text
+MoltworkOracleRegistry
+```
+
+It has two jobs.
+
+### Job 1: cryptographic dataset commitments
+
+Every hour:
+
+```text
+Oracle events
+→ canonicalize
+→ SHA-256 leaves
+→ Merkle tree
+→ root
+→ snapshot manifest
+→ Algorand app call
+```
+
+Store:
+
+```text
+Snapshot {
+    epoch
+    algorand_round
+    event_count
+
+    merkle_root
+    manifest_hash
+    schema_hash
+
+    created_at
+}
+```
+
+On-chain storage should be tiny.
+
+### Job 2: ARC-21 public machine-work feed
+
+Expose a small standardized `MarketPulse`.
+
+ARC-21 requires:
+
+```text
+get(round, user_data) -> byte[]
+must_get(round, user_data) -> byte[]
+```
+
+and optionally:
+
+```text
+get_closest(...)
+must_get_closest(...)
+```
+
+It explicitly exists to let contracts query off-chain oracle data associated with Algorand rounds. ([Algorand Developer Portal][1])
+
+This gives you a very compelling demo:
+
+```text
+HTTP agent:
+GET https://moltwork.com/api/v1/pulse
+→ x402 payment
+→ detailed JSON intelligence
+
+Algorand contract:
+ARC-21 get(round, ...)
+→ compact canonical market pulse
+```
+
+Same Oracle. Two consumers.
+
+---
+
+# 4. What the ARC-21 `MarketPulse` should contain
+
+Don't make ARC-21 answer arbitrary natural-language requests.
+
+Make it deterministic.
+
+Publish something approximately:
+
+```text
+MarketPulseV1
+
+version                    uint8
+published_at               uint64
+source_round               uint64
+
+open_opportunities         uint64
+open_reward_usd_micro      uint64
+
+new_opportunities_24h      uint64
+new_reward_24h_usd_micro   uint64
+
+paid_volume_24h_micro      uint64
+
+median_reward_usd_micro    uint64
+
+verified_runs_24h          uint64
+
+healthy_sources            uint64
+total_sources              uint64
+
+snapshot_root              byte[32]
+```
+
+Money is integer micro-dollars/micro-USDC.
+
+Never float.
+
+So:
+
+```text
+$123.456789
+→ 123456789
+```
+
+Your off-chain API can return pretty decimals.
+
+The contract returns canonical binary data.
+
+---
+
+# 5. Use Algorand Boxes intelligently
+
+Algorand has global state, local state and dynamic **Box storage**. Boxes support key/value structures associated with applications and are a good fit for dynamically keyed oracle snapshots. ([Algorand Developer Portal][4])
+
+I would use:
+
+```text
+Global State
+────────────
+admin
+latest_round
+latest_epoch
+latest_root
+schema_version
+schema_hash
+
+Boxes
+─────
+pulse:{round}       → MarketPulseV1
+snap:{epoch}        → SnapshotMetadata
+source:{hash}       → compact SourceCommitment
+```
+
+Do **not** store raw source metadata.
+
+Instead:
+
+```text
+source:githash →
+{
+    metadata_hash,
+    adapter_hash,
+    active
+}
+```
+
+The actual source definition remains publicly downloadable from Moltwork.
+
+---
+
+# 6. Emit ARC-28-style structured events
+
+Algorand has ARC-28 structured event logging conventions. Event logs end up attached to transactions, and AlgoKit Subscriber can process ARC-28 events with durable watermarks and catch-up support. ([Algorand Developer Portal][5])
+
+Emit things like:
+
+```text
+SnapshotPublished(
+    epoch,
+    round,
+    root,
+    eventCount
+)
+
+PulsePublished(
+    round,
+    root
+)
+
+SourceUpdated(
+    sourceHash,
+    metadataHash
+)
+
+SchemaUpdated(
+    version,
+    schemaHash
+)
+```
+
+Your dashboard can then show:
+
+```text
+LATEST ON-CHAIN SNAPSHOT
+
+Round       58,xxx,xxx
+Events      14,832
+Root        3f92...a102
+TX          ABCD...XYZ
+Status      ✓ MainNet committed
+```
+
+This makes “Algorand MainNet application” visually obvious.
+
+---
+
+# 7. Why this is genuinely Algorand-native
+
+You're now using multiple actual Algorand primitives naturally:
+
+**USDC ASA.** Algorand assets are protocol-native ASAs rather than token smart contracts; receiving an ASA requires account opt-in. MainNet USDC for this challenge is ASA `31566704`. ([Algorand Developer Portal][6])
+
+**x402/AVM settlement.** The paid HTTP API settles through Algorand.
+
+**ARC-4 / ARC-56.** Your Oracle app exposes a standardized ABI and gets a generated application specification for typed clients. ([Algorand Developer Portal][7])
+
+**ARC-21.** You're literally implementing Algorand's oracle convention. ([Algorand Developer Portal][1])
+
+**Boxes.** Historical compact oracle snapshots. ([Algorand Developer Portal][8])
+
+**ARC-28 logs.** Machine-readable on-chain events.
+
+**AlgoKit Subscriber.** Durable event ingestion from your own application. ([Algorand Developer Portal][9])
+
+**Atomic transaction groups.** Algorand supports protocol-native all-or-nothing groups of up to 16 transactions; this is useful later for economic workflows that must combine transfers and app calls atomically. ([Algorand Developer Portal][10])
+
+**State Proofs.** Later, your proof endpoint can expose Algorand's network-generated State Proof context for extremely strong external verification of the chain history containing your Oracle commitments. ([Algorand Developer Portal][11])
+
+That is plenty. Don't invent a token.
+
+---
+
+# 8. Build smart contracts in Algorand TypeScript
+
+I would use current **Algorand TypeScript + PuyaTs + AlgoKit**, because the paid resource server and dashboard are TypeScript anyway.
+
+Algorand TypeScript compiles through PuyaTs to AVM bytecode and interoperates with AlgoKit typed clients. Public contract methods are ARC-4 ABI methods by default in the current programming model. ([Algorand Developer Portal][12])
+
+Structure:
+
+```text
+mw/
+├── oracle/
+│   └── ...
+│
+├── algorand/
+│   ├── contracts/
+│   │   ├── moltwork-oracle.ts
+│   │   └── types.ts
+│   │
+│   ├── deploy/
+│   │   ├── testnet.ts
+│   │   └── mainnet.ts
+│   │
+│   ├── publisher/
+│   │   ├── build-pulse.ts
+│   │   ├── merkle.ts
+│   │   └── publish.ts
+│   │
+│   └── subscriber/
+│       └── events.ts
+│
+├── x402/
+│   ├── server.ts
+│   ├── routes.ts
+│   ├── discovery.ts
+│   └── client.ts
+│
+└── web/
+```
+
+[AlgoKit documentation](https://dev.algorand.co/algokit/algokit-intro/?utm_source=chatgpt.com)
+
+---
+
+# 9. x402 becomes the commercial API layer
+
+This is the part I would make excellent.
+
+The official current Algorand example uses:
+
+```text
+@x402/core
+@x402/avm
+@x402/hono
+@x402-avm/extensions
+hono
+```
+
+with `HTTPFacilitatorClient`, `ExactAvmScheme`, `paymentMiddleware`, and Bazaar discovery. ([Algorand Developer Portal][13])
+
+Install roughly:
+
+```bash
+pnpm add \
+  @x402/core \
+  @x402/avm \
+  @x402/hono \
+  @x402-avm/extensions \
+  hono \
+  @hono/node-server \
+  dotenv
+```
+
+For MainNet:
+
+```ts
+import {
+  ALGORAND_MAINNET_CAIP2,
+  USDC_MAINNET_ASA_ID,
+} from "@x402/avm";
+```
+
+Environment:
+
+```bash
+AVM_ADDRESS=<ONE_MAINNET_PAYTO_ADDRESS>
+FACILITATOR_URL=https://facilitator.goplausible.xyz
+```
+
+The official docs use that hosted facilitator URL. ([Algorand Developer Portal][14])
+
+---
+
+# 10. Your route factory
+
+I would centralize route payment configuration instead of repeating it.
+
+Conceptually:
+
+```ts
+function moltworkPayment(price: string) {
+  return {
+    accepts: [{
+      scheme: "exact",
+      price,
+      network: ALGORAND_MAINNET_CAIP2,
+      payTo: process.env.AVM_ADDRESS!,
+      extra: {
+        asset: USDC_MAINNET_ASA_ID,
+        tag: "x402-global-challenge",
+      },
+    }],
+    mimeType: "application/json",
+  };
+}
+```
+
+That challenge tag matters.
+
+GoPlausible says the tag is what attributes settlements into the `x402-global-challenge` source bucket. Payments without it may still settle and appear elsewhere but fail to contribute to the challenge view. Attribution occurs at settlement time. ([Algorand][15])
+
+---
+
+# 11. The exact endpoint suite I would launch
+
+The critical design rule is:
+
+> Every endpoint should represent a genuinely distinct atomic thing an agent would choose to buy.
+
+Don't split a single response into nonsense calls simply to generate transactions. The competition guidance explicitly describes Composite endpoints as independently useful actions. ([Algorand][2])
+
+I would have this initial catalog:
+
+| Endpoint                     | What an agent gets                               | Initial price |
+| ---------------------------- | ------------------------------------------------ | ------------: |
+| `GET /v1/pulse`              | compact current machine-work market state        |        $0.001 |
+| `GET /v1/delta`              | everything materially changed since cursor       |        $0.002 |
+| `GET /v1/opportunities`      | filtered current work opportunities              |        $0.003 |
+| `GET /v1/opportunities/:id`  | fully hydrated opportunity                       |        $0.005 |
+| `GET /v1/news`               | structured market/work intelligence events       |        $0.003 |
+| `GET /v1/demand/:capability` | demand, rewards, competition for a capability    |        $0.005 |
+| `GET /v1/markets/:id`        | normalized market intelligence                   |        $0.005 |
+| `POST /v1/rank`              | rank opportunities for a supplied worker profile |         $0.02 |
+| `POST /v1/ev`                | estimated execution economics / expected value   |         $0.02 |
+| `GET /v1/brief/:id`          | agent-ready opportunity briefing                 |        $0.025 |
+| `GET /v1/proof/:id`          | provenance + historical observation evidence     |        $0.005 |
+| `POST /v1/scout`             | richer personalized work shortlist               |         $0.10 |
+| `POST /v1/report`            | full market intelligence report                  |   $0.25–$0.50 |
+
+Prices are product hypotheses, not protocol requirements. Test them.
+
+The important thing is the ladder:
+
+```text
+frequent machine calls
+$0.001–$0.005
+
+analysis calls
+$0.01–$0.05
+
+high-value synthesized intelligence
+$0.10+
+```
+
+Because the judging explicitly includes **actual USDC volume**, an API consisting solely of $0.001 calls would require enormous legitimate traffic to generate meaningful payment volume. The better strategy is a legitimate mixture of high-frequency cheap primitives and more valuable derived intelligence. 
+
+---
+
+# 12. `/v1/pulse` — your first endpoint
+
+Make this first because it's tiny and immediately useful.
+
+Request:
+
+```http
+GET /v1/pulse
+```
+
+Paid response:
+
+```json
+{
+  "schema": "moltwork/pulse@1",
+  "generated_at": "2026-08-30T00:00:00Z",
+  "snapshot": {
+    "open_opportunities": 1284,
+    "open_reward_usd": 184392.18,
+    "new_opportunities_24h": 71,
+    "new_reward_usd_24h": 18401.11,
+    "paid_volume_usd_24h": 4621.10,
+    "median_reward_usd": 125,
+    "automation_ready_pct": 0.63
+  },
+  "sources": {
+    "healthy": 17,
+    "total": 19
+  },
+  "integrity": {
+    "snapshot_root": "sha256:...",
+    "algorand_app_id": 123456789,
+    "algorand_round": 0
+  }
+}
+```
+
+It should take milliseconds after payment because it's reading a materialized snapshot, not recomputing everything.
+
+---
+
+# 13. `/v1/delta` may become your highest-frequency endpoint
+
+This is extremely agent-native.
+
+Rather than agents repeatedly buying the whole market:
+
+```http
+GET /v1/delta?cursor=evt_019283
+```
+
+Response:
+
+```json
+{
+  "cursor": "evt_019422",
+  "changes": [
+    {
+      "type": "opportunity.created",
+      "id": "opp_x",
+      "market": "superteam",
+      "reward_usd": 750
+    },
+    {
+      "type": "reward.changed",
+      "id": "opp_y",
+      "from_usd": 250,
+      "to_usd": 400
+    },
+    {
+      "type": "opportunity.closed",
+      "id": "opp_z"
+    }
+  ]
+}
+```
+
+This gives an autonomous worker a reason to continuously use Moltwork.
+
+Not:
+
+> download 5MB JSON every ten minutes.
+
+Instead:
+
+> what changed since I last checked?
+
+That is a real paid primitive.
+
+---
+
+# 14. The news feed should **not** be generic AI news
+
+Call it something like:
+
+```text
+Machine Work Wire
+```
+
+or simply:
+
+```text
+/v1/news
+```
+
+But generate it from your actual event graph.
+
+Response objects:
+
+```json
+{
+  "event_id": "intel_...",
+  "type": "market.signal",
+  "importance": 0.83,
+  "headline": "Solidity bounty demand up 31% over 7 days",
+  "why_it_matters": "Reward growth is outpacing observed worker supply.",
+  "entities": ["capability:solidity", "market:..."],
+  "evidence": [
+    "metric:demand_solidity_7d",
+    "metric:supply_solidity_7d"
+  ],
+  "observed_at": "...",
+  "confidence": "derived"
+}
+```
+
+Also include external ecosystem events when relevant:
+
+```text
+new marketplace discovered
+new paid agent protocol
+market changed submission mechanism
+new x402 service category
+major bounty program opened
+Bittensor subnet economics changed
+new hackathon opened
+deadline moved
+reward pool changed
+```
+
+The key distinction is:
+
+> **news specifically actionable by economically autonomous agents.**
+
+That's something they may actually pay to poll.
+
+---
+
+# 15. `/v1/rank` is arguably the killer endpoint
+
+Input:
+
+```json
+{
+  "worker": {
+    "capabilities": [
+      "python",
+      "research",
+      "solidity"
+    ],
+    "max_cost_usd": 3,
+    "max_human_level": "H1",
+    "credentials": [
+      "github"
+    ]
+  },
+  "limit": 10
+}
+```
+
+Response:
+
+```json
+{
+  "ranked": [
+    {
+      "opportunity_id": "opp_123",
+      "reward_usd": 400,
+      "estimated_cost_usd": 1.84,
+      "p_finish": 0.91,
+      "p_accept": 0.42,
+      "expected_net_usd": 151.73,
+      "competition_index": 2.2,
+      "fit": 0.94,
+      "why": [
+        "verified Python history",
+        "low current competition",
+        "requirements fully satisfiable"
+      ]
+    }
+  ]
+}
+```
+
+Now agents have a direct reason to call Moltwork before doing work.
+
+This connects Oracle → WorkerKit exactly as we wanted.
+
+---
+
+# 16. `/v1/ev`
+
+This should use the economics primitives already being built in MW.
+
+Input:
+
+```json
+{
+  "opportunity_id": "opp_123",
+  "worker_id": "worker_xyz"
+}
+```
+
+Return:
+
+```text
+advertised reward
+estimated compute
+estimated API spend
+estimated fees
+estimated duration
+
+p_finish
+p_accept
+p_payment
+
+expected gross payout
+expected net
+
+confidence interval
+
+historical analogues
+```
+
+Later, every prediction gets compared against WorkerKit's real result.
+
+That's the data moat.
+
+---
+
+# 17. `/v1/proof` is where the Algorand contract becomes useful
+
+Request:
+
+```text
+GET /v1/proof/opp_123
+```
+
+Return:
+
+```json
+{
+  "entity": "opp_123",
+  "current_hash": "...",
+
+  "observations": 17,
+
+  "latest_snapshot": {
+    "epoch": 184,
+    "merkle_root": "...",
+    "leaf_hash": "...",
+    "leaf_index": 821,
+    "proof": [
+      "...",
+      "..."
+    ]
+  },
+
+  "algorand": {
+    "app_id": 123456,
+    "tx_id": "...",
+    "round": 58482933
+  },
+
+  "confidence": "source_verified"
+}
+```
+
+Then anyone can independently verify:
+
+```text
+event hash
+→ Merkle path
+→ snapshot root
+→ Algorand app commitment
+```
+
+That's a very good hackathon demo.
+
+---
+
+# 18. Free endpoints
+
+Don't paywall everything.
+
+Leave these public:
+
+```text
+GET /
+GET /health
+GET /v1/schema
+GET /v1/catalog
+GET /v1/sources/health
+GET /v1/methodology
+```
+
+And make the **dashboard mostly readable for free**.
+
+The paid product is machine access to high-frequency/detailed/derived intelligence.
+
+That's a much better acquisition funnel.
+
+---
+
+# 19. Bazaar discovery needs to be excellent
+
+x402 v2 includes automatic discovery so agents can find resources through Bazaar. The Algorand integration supports declaring input/output information and example responses in the discovery extension. ([GitHub][16])
+
+Each Moltwork endpoint needs a very concrete description.
+
+Bad:
+
+```text
+Moltwork data
+```
+
+Good:
+
+```text
+Rank currently open machine-work opportunities by
+estimated net value for a worker's capabilities and budget.
+```
+
+Bad:
+
+```text
+News
+```
+
+Good:
+
+```text
+Returns machine-readable changes in autonomous-work markets:
+new opportunities, reward changes, deadlines, market launches,
+and high-confidence demand signals.
+```
+
+The competition guide explicitly says the route description is what users and agents see in Bazaar, so describe the actual output. ([Algorand][2])
+
+---
+
+# 20. MainNet x402 gateway skeleton
+
+The architecture should look roughly like this:
+
+```ts
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+
+import {
+  paymentMiddleware,
+  x402ResourceServer,
+} from "@x402/hono";
+
+import {
+  HTTPFacilitatorClient,
+} from "@x402/core/server";
+
+import {
+  ExactAvmScheme,
+} from "@x402/avm/exact/server";
+
+import {
+  ALGORAND_MAINNET_CAIP2,
+  USDC_MAINNET_ASA_ID,
+} from "@x402/avm";
+
+import {
+  declareDiscoveryExtension,
+  bazaarResourceServerExtension,
+} from "@x402-avm/extensions";
+
+const facilitator = new HTTPFacilitatorClient({
+  url: process.env.FACILITATOR_URL!,
+});
+
+const resourceServer =
+  new x402ResourceServer(facilitator);
+
+resourceServer.register(
+  ALGORAND_MAINNET_CAIP2,
+  new ExactAvmScheme(),
+);
+
+resourceServer.registerExtension(
+  bazaarResourceServerExtension as any,
+);
+
+const paid = (
+  price: string,
+  description: string,
+  example: unknown,
+) => ({
+  accepts: [{
+    scheme: "exact",
+    price,
+    network: ALGORAND_MAINNET_CAIP2,
+    payTo: process.env.AVM_ADDRESS!,
+    extra: {
+      asset: USDC_MAINNET_ASA_ID,
+      tag: "x402-global-challenge",
+    },
+  }],
+  description,
+  mimeType: "application/json",
+  extensions: declareDiscoveryExtension({
+    output: { example },
+  }),
+});
+
+const routes = {
+  "GET /v1/pulse": paid(
+    "$0.001",
+    "Current machine-work market snapshot",
+    { open_opportunities: 1200 },
+  ),
+
+  "GET /v1/delta": paid(
+    "$0.002",
+    "Machine-work market changes since a supplied cursor",
+    { cursor: "evt_x", changes: [] },
+  ),
+
+  "GET /v1/news": paid(
+    "$0.003",
+    "Actionable machine-work market news and economic signals",
+    { events: [] },
+  ),
+
+  "POST /v1/rank": paid(
+    "$0.02",
+    "Rank open opportunities for a supplied autonomous worker profile",
+    { ranked: [] },
+  ),
+};
+
+const app = new Hono();
+
+app.use(
+  paymentMiddleware(routes, resourceServer),
+);
+
+app.get("/v1/pulse", async c =>
+  c.json(await oracle.pulse())
+);
+
+app.get("/v1/delta", async c =>
+  c.json(await oracle.delta(c.req.query("cursor")))
+);
+
+app.get("/v1/news", async c =>
+  c.json(await oracle.news())
+);
+
+app.post("/v1/rank", async c =>
+  c.json(await oracle.rank(await c.req.json()))
+);
+
+serve({
+  fetch: app.fetch,
+  port: 4021,
+});
+```
+
+This follows the current official resource-server pattern, switched to MainNet and expanded into a Composite product. ([Algorand Developer Portal][13])
+
+---
+
+# 21. Keep the Oracle backend Python
+
+I **would not rewrite your entire Oracle to Node just because x402's reference server is TypeScript**.
+
+Use:
+
+```text
+Python Oracle service
+localhost:8000
+       ↑
+internal HTTP/Unix interface
+       │
+TypeScript x402 Gateway
+public :443
+```
+
+So:
+
+```text
+GET /v1/pulse
+↓
+x402 auth/payment
+↓
+gateway requests internal:
+http://oracle:8000/internal/pulse
+↓
+JSON
+```
+
+That preserves everything you're building.
+
+Your public trust boundary becomes:
+
+```text
+Internet
+   ↓
+x402 gateway
+   ↓
+paid + authenticated request
+   ↓
+Oracle query service
+```
+
+Much cleaner.
+
+---
+
+# 22. Build the dashboard as a **MainNet terminal**
+
+This is how I would alter the DefiLlama-style design.
+
+Top header:
+
+```text
+MOLTWORK
+
+Machine Work Oracle
+
+● Algorand MainNet
+App 12345678
+USDC 31566704
+Last snapshot: 27s ago
+```
+
+Then:
+
+```text
+OPEN MACHINE-PAYABLE WORK
+
+$184,392
++8.2% 24h
+```
+
+Underneath:
+
+```text
+New Work 24h        $18.4K
+Paid Volume 24h      $4.6K
+Opportunities         1,284
+Median Reward          $125
+Verified Runs           418
+Sources              17 / 19
+```
+
+---
+
+# 23. Add an Algorand MainNet strip
+
+This is important for the submission.
+
+```text
+ALGORAND MAINNET
+
+x402 Settlements      1,831
+x402 Volume        $2,941.82 USDC
+Unique Payers           194
+Paid Resources           12
+
+Latest Oracle Round   58,481,292
+Latest Snapshot       3f98…19ad
+Oracle App ID         123456789
+
+[View TX] [Verify Root] [x402 Catalog]
+```
+
+Now nobody evaluating the site wonders where Algorand is.
+
+---
+
+# 24. Endpoint marketplace/table
+
+Put this directly on the dashboard.
+
+```text
+AGENT API
+
+Resource                    Price      Calls   Volume
+──────────────────────────────────────────────────────
+Market Pulse               $0.001      6,281    $6.28
+Market Delta               $0.002      4,121    $8.24
+Opportunity Search         $0.003      2,892    $8.68
+Machine Work News          $0.003      3,812   $11.44
+Capability Demand          $0.005      1,928    $9.64
+Opportunity Brief          $0.025        829   $20.73
+Economic Evaluation        $0.020        739   $14.78
+Worker Rank                $0.020        601   $12.02
+Scout                      $0.100        328   $32.80
+Market Report              $0.500         71   $35.50
+```
+
+Those numbers become real MainNet numbers, not fake demo stats.
+
+This page itself demonstrates agentic commerce.
+
+---
+
+# 25. Then your existing DefiLlama-style market table
+
+```text
+MARKET RANKINGS
+
+Market        Open Work   New 24h   Paid 7d   Median  Competition
+──────────────────────────────────────────────────────────────────
+Superteam       $82K        $9K       $12K      $500      4.2
+GitHub          $41K        $3K        $8K      $240      2.7
+BountyBook      $22K        $5K       $11K      $120      1.4
+...
+```
+
+And charts:
+
+```text
+Open Work USD
+Paid Volume
+Opportunity Creation
+Machine Work Settlement
+Capability Demand
+```
+
+---
+
+# 26. Make the on-chain/off-chain distinction visible
+
+Every metric should show evidence.
+
+For example:
+
+```text
+Paid Volume
+$4,621.22
+
+● Algorand verified
+```
+
+versus:
+
+```text
+Open Reward Pool
+$184,392
+
+● Source observed
+```
+
+versus:
+
+```text
+Expected Net Opportunity
+$31.82
+
+● Derived
+```
+
+Then hover:
+
+```text
+Algorand verified
+USDC ASA 31566704
+143 settlement transactions
+Rounds 58400120–58482192
+```
+
+This is exactly the Moltwork evidence hierarchy becoming UI.
+
+---
+
+# 27. Use AlgoKit Subscriber to create your own MainNet activity index
+
+Subscribe to:
+
+```text
+payTo USDC transfers
+OracleRegistry app calls
+OracleRegistry ARC-28 logs
+```
+
+AlgoKit Subscriber gives you:
+
+* tip subscriptions
+* historical catch-up
+* Indexer support
+* ARC-28 processing
+* persistent watermarks
+
+so it fits the current immutable-event architecture neatly. ([Algorand Developer Portal][9])
+
+Normalize those into the same Oracle event system:
+
+```text
+algorand.x402.payment.observed
+algorand.snapshot.committed
+algorand.oracle.pulse.published
+```
+
+Now the Oracle is even indexing **its own economic activity**.
+
+Nice recursion.
+
+---
+
+# 28. Add x402 transaction records to Oracle
+
+Create:
+
+```text
+X402Settlement {
+    tx_id
+
+    payer
+    pay_to
+
+    route
+    amount_usdc
+
+    algorand_round
+    settled_at
+
+    request_id
+    response_hash
+
+    facilitator
+}
+```
+
+Then:
+
+```text
+x402 call
+      ↓
+Moltwork API response
+      ↓
+Algorand settlement
+      ↓
+Oracle ingests settlement
+      ↓
+dashboard metrics
+```
+
+Do not necessarily expose full payer addresses prominently.
+
+The chain is public, but the UI can truncate them:
+
+```text
+NW2J...9QF4
+```
+
+---
+
+# 29. Paid-response commitments
+
+This is a very good optional feature.
+
+Every successful paid API response gets:
+
+```text
+PaidResponseReceipt {
+    request_id
+    route
+
+    query_hash
+    response_hash
+
+    oracle_snapshot_root
+
+    x402_payment_tx
+    generated_at
+}
+```
+
+Don't put every receipt directly on-chain.
+
+Batch them:
+
+```text
+5 minute window
+
+response_hash
+response_hash
+response_hash
+...
+
+→ Merkle root
+→ commit root to OracleRegistry
+```
+
+Now:
+
+> every paid piece of intelligence can later prove what dataset version produced it.
+
+That is genuinely sophisticated.
+
+---
+
+# 30. Eventually use Algorand State Proofs
+
+Not before registration.
+
+But afterward, this is a killer technical detail.
+
+Algorand State Proofs are network-produced cryptographic commitments to Algorand history and use quantum-safe Falcon signatures. They allow external verifiers to establish Algorand transaction history with reduced trust assumptions. ([Algorand Developer Portal][11])
+
+Eventually:
+
+```text
+Moltwork event
+→ Merkle proof
+→ Oracle snapshot root
+→ Algorand transaction
+→ Algorand State Proof
+```
+
+That's an impressive trust chain:
+
+```text
+source observation
+↓
+Moltwork canonical event
+↓
+cryptographic dataset commitment
+↓
+Algorand consensus
+↓
+State Proof
+```
+
+Excellent ETHOnline crossover later too.
+
+---
+
+# 31. WorkerKit ↔ Algorand Oracle integration
+
+Then make the feedback loop real.
+
+```text
+Moltwork Oracle
+      ↓
+paid /rank call
+      ↓
+opportunity
+      ↓
+WorkerKit
+      ↓
+real run
+      ↓
+actual cost
+      ↓
+verification
+      ↓
+submission
+      ↓
+outcome
+      ↓
+settlement
+      ↓
+Oracle
+```
+
+The Oracle starts learning:
+
+```text
+worker=agent_123
+
+research task
+predicted cost      $0.81
+actual cost         $0.93
+
+predicted p_accept  0.62
+actual              accepted
+
+predicted net       $18.22
+actual net          $24.07
+```
+
+Then the next `/rank` call becomes better.
+
+That gives the x402 endpoint a genuine long-term reason to exist.
+
+---
+
+# 32. Give agents an MCP wrapper
+
+The official x402 ecosystem already has agent tooling around paid requests, and GoPlausible's Algorand MCP exposes x402 resource discovery and paid HTTP-request operations. ([GitHub][17])
+
+Ship:
+
+```text
+@molwork/mcp
+```
+
+Tools:
+
+```text
+moltwork_pulse
+moltwork_changes
+moltwork_search_work
+moltwork_rank_work
+moltwork_get_brief
+moltwork_market_news
+moltwork_capability_demand
+moltwork_verify_data
+```
+
+Internally they hit your x402 endpoints.
+
+Then a Hermes/OpenClaw/etc. worker can literally:
+
+```text
+find me profitable Python work
+```
+
+and the MCP flow buys `/rank`.
+
+This is probably your best route to genuine transactions.
+
+---
+
+# 33. SDK too
+
+Something like:
+
+```ts
+const mw = new Moltwork({
+  signer: algorandSigner,
+});
+
+const opportunities = await mw.rank({
+  capabilities: ["python", "research"],
+  maxCostUsd: 2,
+});
+```
+
+Underneath:
+
+```text
+HTTP GET/POST
+→ 402
+→ Algorand USDC payment
+→ retry
+→ typed response
+```
+
+No account.
+
+No subscription.
+
+No API key.
+
+That's exactly the x402 story.
+
+---
+
+# 34. MainNet wallet setup
+
+For the competition merchant:
+
+```text
+MOLTWORK_PAYTO
+```
+
+Use one stable Algorand account.
+
+It needs:
+
+```text
+ALGO
+for minimum balance / operations
+
+USDC ASA opt-in
+asset 31566704
+```
+
+The challenge requires you to keep using the same `payTo` so activity is attributed to the merchant. ([Algorand][2])
+
+Do not use different unrelated domains with the same merchant account.
+
+I would keep everything under:
+
+```text
+moltwork.com
+```
+
+with:
+
+```text
+moltwork.com/
+moltwork.com/api/v1/...
+moltwork.com/docs
+```
+
+or one consistent root-domain deployment.
+
+---
+
+# 35. Don't chase leaderboard traffic with self-pay loops
+
+Very important.
+
+GoPlausible explicitly says localhost traffic, repetitive loops, self-payment patterns, pings/retry storms, etc. can be categorized as `DEV`, which does **not** help Global Challenge attribution. Settlements made before adding the challenge tag also aren't retroactively reclassified. ([Algorand][15])
+
+So don't build:
+
+```text
+cron:
+pay myself $1
+repeat
+```
+
+Instead make the product naturally high-use:
+
+```text
+cheap /delta
+cheap /news
+
+useful /search
+useful /demand
+
+high-value /rank
+high-value /scout
+high-value /report
+```
+
+Then put the SDK/MCP in front of actual agents.
+
+That's simultaneously better competition strategy and better product strategy.
+
+---
+
+# 36. The test matrix
+
+## Testnet qualification
+
+```text
+[ ] payTo has ALGO
+[ ] payTo opted into Testnet USDC 10458941
+
+[ ] normal GET returns HTTP 402
+
+[ ] PAYMENT-REQUIRED present
+[ ] network = ALGORAND_TESTNET_CAIP2
+
+[ ] paying client succeeds
+
+[ ] facilitator verifies
+[ ] transaction settles
+[ ] paid response returned
+
+[ ] settlement txId returned
+[ ] USDC received
+
+[ ] discovery extension present
+[ ] Bazaar resource appears
+```
+
+The official tutorial provides both client and resource-server reference implementations for precisely this flow. ([Algorand Developer Portal][14])
+
+---
+
+# 37. MainNet qualification
+
+Then switch exactly:
+
+```text
+ALGORAND_TESTNET_CAIP2
+→
+ALGORAND_MAINNET_CAIP2
+
+10458941
+→
+31566704
+```
+
+And:
+
+```text
+[ ] HTTPS deployment
+
+[ ] MainNet payTo
+[ ] MainNet USDC opt-in
+
+[ ] GoPlausible facilitator
+
+[ ] x402-global-challenge tag
+
+[ ] genuine paid call
+
+[ ] tx settles MainNet
+
+[ ] paid JSON returned
+
+[ ] USDC balance increases
+
+[ ] resource appears Bazaar
+
+[ ] merchant appears
+
+[ ] challenge source attribution confirmed
+
+[ ] registration submitted
+```
+
+That is the **P0 milestone**.
+
+---
+
+# 38. Then the two-week-quality implementation
+
+After you're registered, execute in this order:
+
+### P1 — tomorrow
+
+```text
+/pulse
+/delta
+/opportunities
+/news
+/demand
+
+MainNet live
+Bazaar complete
+
+dashboard basic
+```
+
+### P2
+
+```text
+OracleEvent proper history
+source health
+market metrics
+materialized timeseries
+
+/rank
+/ev
+/brief
+```
+
+### P3
+
+```text
+Algorand TypeScript project
+
+MoltworkOracleRegistry
+
+ARC-21 get/must_get
+boxes
+snapshot publisher
+```
+
+### P4
+
+```text
+ARC-28 events
+AlgoKit Subscriber
+on-chain metrics dashboard
+payment analytics
+```
+
+### P5
+
+```text
+Merkle snapshots
+/proof
+paid-response receipts
+```
+
+### P6
+
+```text
+WorkerKit integration
+prediction snapshots
+outcomes
+realized EV
+```
+
+### P7
+
+```text
+MCP
+SDK
+agent examples
+```
+
+### P8
+
+```text
+full DefiLlama-style dashboard
+
+market pages
+capability pages
+agent pages
+opportunity pages
+source pages
+proof explorer
+```
+
+---
+
+# 39. Your submission story then becomes much stronger
+
+Instead of:
+
+> “We made a bounty aggregator and put x402 on it.”
+
+You get:
+
+> **Moltwork is an open economic intelligence layer for autonomous labor.**
+>
+> It observes machine-payable work across fragmented markets and normalizes demand, competition, outcomes and settlement into a historical data layer.
+>
+> Autonomous agents buy exactly the intelligence they need using x402—market deltas, opportunity searches, demand signals, economic evaluations and personalized work rankings—settled in USDC on Algorand MainNet.
+>
+> Moltwork also exposes an Algorand-native ARC-21 Oracle and anchors cryptographic snapshots of its data to an Algorand application, providing a verifiable link from external market observations to MainNet.
+>
+> WorkerKit feeds execution costs and actual outcomes back into the Oracle, allowing Moltwork to learn which opportunities are actually economically viable for autonomous agents.
+
+That's a proper project.
+
+---
+
+# 40. And I would make the Algorand page essentially its live proof
+
+```text
+╭─────────────────────────────────────────────────────────────╮
+│ MOLTWORK                                      ● MAINNET     │
+│ Machine Work Oracle                                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│ OPEN MACHINE-PAYABLE WORK                                  │
+│ $184,392                             +8.2% 24H              │
+│                                                             │
+│ $18.4K new │ $4.6K paid │ 1,284 open │ $125 median         │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│                    MARKET CHART                             │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│ MARKET RANKINGS                                             │
+│ Superteam   GitHub   BountyBook   ...                       │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│ AGENT API — x402 / ALGORAND USDC                            │
+│                                                             │
+│ Market Pulse       $0.001   6,281 calls                     │
+│ Market Delta       $0.002   4,121 calls                     │
+│ Work Search        $0.003   2,892 calls                     │
+│ Machine Work Wire  $0.003   3,812 calls                     │
+│ Worker Rank        $0.020     601 calls                     │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│ ALGORAND MAINNET                                            │
+│                                                             │
+│ x402 volume       $2,941.82                                 │
+│ settlements       18,392                                    │
+│ unique payers        241                                    │
+│                                                             │
+│ Oracle App        123456789                                 │
+│ ARC-21            ✓                                         │
+│ Latest Round      58,481,292                                │
+│ Snapshot Root     3f82...91aa                              │
+│                                                             │
+│ [Verify] [Explorer] [API] [MCP]                             │
+╰─────────────────────────────────────────────────────────────╯
+```
+
+That is the direction.
+
+The especially strong combination is **DefiLlama for work + x402 as the query economy + ARC-21 as the native contract interface + WorkerKit producing real outcome data**. Algorand isn't bolted on there; it becomes the payment, publication and verification rail for the Oracle.
+
+For the next few hours, though, strip this down ruthlessly: **`/pulse` → Testnet payment → MainNet payment → Bazaar → challenge attribution → register.** Everything after that can be made excellent without risking the September 1 eligibility requirement. 
+
+I can also keep an eye on whether your Moltwork merchant is correctly attributed to the Global Challenge leaderboard once it goes live.
+
+[1]: https://dev.algorand.co/arc-standards/arc-0021/ "Round based datafeed oracles on Algorand | Algorand Developer Portal"
+[2]: https://algorand.co/blog/the-x402-global-challenge-is-live-how-to-build-submit-your-entry "The Global x402 Challenge is live! How to build & submit your entry"
+[3]: https://dev.algorand.co/concepts/protocol/protocol-parameters/?utm_source=chatgpt.com "Protocol Parameters | Algorand Developer Portal"
+[4]: https://dev.algorand.co/algokit/languages/typescript/lg-storage/?utm_source=chatgpt.com "Storage | Algorand Developer Portal"
+[5]: https://dev.algorand.co/algokit/languages/python/lg-arc28/?utm_source=chatgpt.com "ARC-28: Structured event logging | Algorand Developer Portal"
+[6]: https://dev.algorand.co/concepts/assets/overview/?utm_source=chatgpt.com "Algorand Standard Assets (ASAs) | Algorand Developer Portal"
+[7]: https://dev.algorand.co/arc-standards/arc-0004/?utm_source=chatgpt.com "Application Binary Interface (ABI) | Algorand Developer Portal"
+[8]: https://dev.algorand.co/concepts/smart-contracts/storage/box/?utm_source=chatgpt.com "Box Storage | Algorand Developer Portal"
+[9]: https://dev.algorand.co/docs/algokit-subscriber/typescript/latest/?utm_source=chatgpt.com "AlgoKit Subscriber TypeScript | Algorand Developer Portal"
+[10]: https://dev.algorand.co/concepts/transactions/atomic-txn-groups/?utm_source=chatgpt.com "Atomic Transaction Groups | Algorand Developer Portal"
+[11]: https://dev.algorand.co/concepts/protocol/state-proofs/?utm_source=chatgpt.com "State Proofs | Algorand Developer Portal"
+[12]: https://dev.algorand.co/algokit/languages/typescript/overview/?utm_source=chatgpt.com "Algorand TypeScript | Algorand Developer Portal"
+[13]: https://dev.algorand.co/resources/x402-on-algorand/ "x402 on Algorand | Algorand Developer Portal"
+[14]: https://dev.algorand.co/resources/x402-on-algorand/?utm_source=chatgpt.com "x402 on Algorand | Algorand Developer Portal"
+[15]: https://algorand.co/blog/is-your-x402-endpoint-showing-up-in-the-facilitator-leaderboard-how-to-troubleshoot-if-not?utm_source=chatgpt.com "Is your x402 endpoint showing up in the facilitator leaderboard? How to troubleshoot if not."
+[16]: https://github.com/x402-foundation/x402/blob/main/specs/x402-specification-v2.md?utm_source=chatgpt.com "x402/specs/x402-specification-v2.md at main · x402-foundation/x402 · GitHub"
+[17]: https://github.com/GoPlausible/algorand-mcp/blob/main/AGENTS.md?utm_source=chatgpt.com "algorand-mcp/AGENTS.md at main · GoPlausible/algorand-mcp · GitHub"

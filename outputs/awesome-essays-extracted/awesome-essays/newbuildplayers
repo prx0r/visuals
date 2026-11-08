@@ -1,0 +1,676 @@
+fter looking across the manuscript ecosystem, scholarly infrastructure, current AI labs, preservation standards, agent protocols, and the current Pāṭala repo, I think the strategy becomes much more precise.
+
+The winning Pāṭala is not the place that owns every manuscript, model, OCR system, viewer, paper index, renderer, or peer-review workflow.
+
+It is the layer that makes all of them interoperable around one question:
+
+    What exactly exists, what has actually been observed about it, what is currently justified, who says so, what remains unknown, and what interaction with reality would change that state?
+
+That is what almost nobody else is building end-to-end.
+
+And importantly, you're slightly past “we need an API.” The current repo already reports a 22-table Atlas/resolver/API and ~43 routes, but only about 254 resolved works against ~32k SOURCE objects. So the immediate bottleneck is coverage + canonical resolution + interoperability, not writing another backend.
+1. The ecosystem map: steal everything except the epistemic layer
+
+This is how I would divide the world.
+Layer	Established infrastructure	What Pāṭala should use it for	What Pāṭala must own
+National manuscript discovery	Gyan Bharatam / IGNCA	holdings, catalogues, future APIs, digitization	research demand, identity resolution, evidence relationships
+Indic works/people/manuscripts	PANDiT	authoritative candidate metadata	cross-source identity assertions + evidence
+Tantric/Śaiva corpus	Muktabodha, IFP	texts, transcripts, scans where permitted	passage-level semantic/translation/scholar state
+Machine-readable texts	GRETIL, SARIT, Sanskrit Library, Ambuda	texts + edition metadata	lineage, crosswalk, verification, transformations
+Sanskrit NLP	Vidyut, Sanskrit Heritage, ByT5 etc.	morphology, segmentation, candidate analysis	proof/evaluation history
+Manuscript imaging	IIIF	image delivery, canvases, regions	scholarly annotations/evidence links
+Critical text encoding	TEI	witness/apparatus interchange	canonical native epistemic objects
+Text retrieval	DTS / CTS compatibility	passage addressing/access	stable Pāṭala anchors
+Global scholarship	OpenAlex + Crossref	papers/books/authors/citations/DOIs	claim extraction + actual evidence relationship
+Researcher identity	ORCID	authenticated scholar identity	expertise + attestations + impact
+Institution identity	ROR	persistent institution identity	collection/access/authority relationships
+Generic peer review	OpenReview	patterns/interchange	atomic epistemic adjudication
+Heritage ontology	CIDOC CRM / CRMinf / CRMsci	semantic interoperability	compact native kernel
+Provenance	PROV-O / RO-Crate	export/packages	full native causal history
+Precise annotation	Web Annotation	span/image/time targeting	semantics of what annotation means
+AI dataset distribution	Hugging Face	model-facing releases	canonical dataset and rights
+Research dataset citation	DataCite / Zenodo	DOI/version releases	living canonical state
+Agent interoperability	MCP + ordinary APIs	agent access	state/actions/evaluators
+Media provenance	C2PA	content-generation history	whether the media's claims are justified
+Video/world generation	Genie/Veo/future systems	rendering	the world/meaning data supplied to them
+
+That boundary is the company.
+2. Gyan Bharatam is a reason not to build a manuscript repository
+
+This is probably the single largest strategic implication of current Indian infrastructure.
+
+Gyan Bharatam now explicitly targets more than one crore manuscripts, a national digital repository, AI-assisted transcription, provenance infrastructure, APIs to national/international archives, volunteer networks, educational modules and VR/AR experiences.
+
+Trying to compete with that by saying:
+
+    “Pāṭala will digitize India and host all its manuscript images”
+
+would be strategically stupid.
+
+Instead:
+
+Pāṭala becomes a demand and intelligence layer over the repository ecosystem.
+
+That makes you complementary.
+3. PANDiT is similarly not a competitor
+
+PANDiT explicitly describes itself as a curated database of premodern South Asian works, people, places, institutions, manuscripts and secondary sources. Its own data model is already built around structured Person, Work and Manuscript entities.
+
+So don't spend two years re-entering what PANDiT scholars already entered.
+
+Treat a PANDiT record like:
+
+Not:
+
+Then reconcile it against:
+
+Pāṭala's value is:
+
+    Why do we currently think these records identify the same thing?
+
+That is missing from most conventional catalogs.
+4. Muktabodha + IFP are especially strategically valuable
+
+Muktabodha reports more than 3,000 preserved texts and more than 570 searchable e-texts, with particularly strong holdings across Kashmir Śaivism, Śaiva traditions, Śrīvidyā, Śākta and related corpora; more than 380 searchable texts were edited from manuscripts under Mark Dyczkowski's supervision.
+
+The French Institute of Pondicherry describes an enormous manuscript collection with especially deep Śaiva-siddhānta holdings.
+
+Those are much more strategically interesting to you than indiscriminately ingesting another million Bhagavad-Gītā-derived pages.
+
+I would eventually approach organizations like these with:
+
+    “Keep your archive. Keep your rights. Keep your identifiers. We want to connect your resources into the live research graph, expose demand for your materials, send scholarly corrections back, and potentially route funded requests toward holdings whose digitization would resolve actual research problems.”
+
+That is a credible institutional offer.
+5. HMML gives us the right operating model for reality acquisition
+
+HMML does not simply fly in and seize manuscripts. It works through local holding institutions, provides equipment/training/support, and pays local technicians to create preservation images; copies remain with the holding library and are also preserved by HMML.
+
+The British Library's Endangered Archives Programme likewise already provides mature guidance for surveys, cataloguing, digitization, photography/scanning and preservation workflows.
+
+Therefore don't build a giant in-house digitization operation.
+
+Steal the operating pattern.
+
+Pāṭala adds something different:
+
+That's far more surgical.
+6. IIIF should own your manuscript pixels
+
+IIIF Presentation already models digitized cultural objects using Manifests, Canvases, Annotation Pages and Annotations, including images, text, audio/video and supplemental transcriptions/translations.
+
+Therefore:
+
+do not build a proprietary manuscript-image protocol.
+
+Build:
+
+Then Mirador or whatever viewer wins can render it.
+
+If viewers change, nothing important changes.
+7. TEI should own interchange for textual apparatus—not your database
+
+TEI's current critical-apparatus machinery already knows how to represent witnesses and variant readings.
+
+SARIT has already worked out Sanskrit-specific TEI conventions for printed editions, textual variation, cross-references, persons, works and other controlled vocabularies.
+
+So:
+
+Don't turn your entire internal database into XML.
+
+Don't reinvent textual apparatus either.
+8. I would modify our CTS plan
+
+This is an important finding from the search.
+
+The current Pāṭala frontier document says to add CTS URNs everywhere.
+
+I would soften that.
+
+Distributed Text Services was explicitly designed partly because CTS tied its API tightly to CTS URNs and that doesn't fit every textual tradition/citation structure. DTS permits arbitrary identifier schemes and gives standardized collection/navigation/document operations down to citable passages. Its current 1.0 specification is still at release-candidate status, so I would treat it as an adapter target rather than hardwire it into the kernel.
+
+Therefore:
+
+That is more future-proof.
+9. Do not build “OpenAlex but again” for papers
+
+OpenAlex currently exposes a huge connected research graph of works, authors, sources, institutions, topics, funders and related entities, with direct external-ID resolution for DOI, ORCID and ROR.
+
+Crossref exposes publisher-deposited DOI metadata including licenses, funding, ORCID/ROR identifiers, abstracts and post-publication updates.
+
+Use them.
+
+Pāṭala adds:
+
+That's an entirely different graph.
+10. Likewise ORCID and ROR should be upstream identity infrastructure
+
+ORCID already provides persistent researcher identities and recommends authenticated OAuth collection instead of guessing identities from names.
+
+ROR exists specifically as an open, community-curated persistent identifier registry for research organizations and is already integrated with Crossref, DataCite and ORCID.
+
+So:
+
+That immediately makes Pāṭala look like legitimate scholarly infrastructure rather than a private identity silo.
+11. Don't build generic peer-review software
+
+OpenReview already handles generic publication/review workflows, profiles, discussion, reviewer matching and permission-controlled objects.
+
+Your unit is different.
+
+Not:
+
+but:
+
+Each gets independently adjudicated.
+
+That's the innovation.
+12. CRMinf is almost absurdly close to parts of our future model
+
+CIDOC CRM is already the major event-centric interoperability model for cultural heritage.
+
+Its CRMinf extension explicitly models argumentation and inference, including beliefs, premises, conclusions, inference logic and belief adoption, with the goal of tracing knowledge dependencies back toward evidence.
+
+CRMsci extends the same family toward scientific observations and measurements.
+
+That tells me:
+
+    don't invent an enormous public ontology.
+
+Internally use the compact Pāṭala objects that actually make the software work.
+
+Externally maintain mappings:
+
+That's an excellent path toward eventually moving from manuscripts into empirical science without redesigning everything.
+13. How I would make the data architecture genuinely future-resistant
+
+I would define three things as different:
+
+Every important record gets an envelope roughly like:
+
+Then Postgres is merely one projection.
+
+Later:
+
+doesn't matter.
+
+Recompile from state/history.
+
+RO-Crate already exists specifically to package research objects with files, identifiers, provenance, people, software, funding and reuse information, and the specification is being evolved with backwards compatibility in mind.
+
+Released Pāṭala datasets/benchmarks can additionally get DataCite/Zenodo versions and DOIs rather than Pāṭala inventing dataset citation infrastructure. Zenodo distinguishes a DOI for a specific release from the DOI covering all versions.
+14. Now the media question: Crux is nowhere near enough
+
+Crux answers:
+
+    Where do competing arguments actually diverge?
+
+Excellent for research.
+
+A world model needs:
+
+    Who exists?
+
+    Where are they?
+
+    What objects exist?
+
+    What happened?
+
+    In what order?
+
+    What changed because it happened?
+
+    Which causal relation is asserted?
+
+    Which details are visually known?
+
+    Which are inferred?
+
+    Which are completely unknown?
+
+    What concept should the viewer understand?
+
+    Which misconception should be broken?
+
+    What can an interactive user do?
+
+    What happens if they do it?
+
+This needs a much richer derived representation.
+
+Research on dynamic scene graphs uses entities plus spatial, temporal and state relationships specifically because actionable worlds require more than object labels. Event-graph work similarly uses explicit events and causal/temporal structure for coherent narrative planning.
+
+I would therefore add two layers above the epistemic kernel, not pollute the kernel itself.
+15. Layer A: MeaningGraph
+
+This remains source-backed.
+ConceptFrame
+
+For svātantrya, this is vastly richer than:
+
+It gives every future tutor/model the semantic field.
+EventFrame
+
+This supports:
+
+EntityState
+
+Don't merely have:
+
+Have:
+
+Because an interactive world needs to know who was what when.
+ChronologyConstraint
+
+Historical dates are rarely exact.
+
+Store the constraint itself rather than hallucinating:
+
+    “In 995 CE…”
+
+DepictionAssertion
+
+This is very important.
+
+Then a future world generator knows:
+
+That is how Pāṭala-generated media avoids turning visual invention into fake history.
+16. Layer B: ExperienceIR
+
+This one is regenerable.
+
+It is not truth.
+
+It compiles verified state into things current/future media generators understand.
+LearningObjective
+
+CASE already standardizes exchange of learning competencies/framework relationships, while QTI exists for portable assessment items/results; Pāṭala can export to them without reducing the internal learner model to those standards.
+NarrativeUnit
+
+Now video generation isn't:
+
+    “Make a cool video about Śaivism.”
+
+It's:
+
+    “Create any experience causing conceptual transition X→Y without violating obligations A/B/C.”
+
+Much stronger.
+InteractionModel
+
+For games/worlds:
+
+This is the data Genie-like systems will actually benefit from.
+
+Genie 3 already generates real-time interactive worlds from text descriptions and explicitly supports environment/character descriptions and world events; that is a strong reason not to spend years building your own world renderer.
+17. Add one field everywhere: epistemic_mode
+
+I think this is a gem.
+
+Every media-relevant fact should distinguish:
+
+Then every output can display or internally respect those boundaries.
+
+This is basically extending the no-strengthening principle into generated reality.
+18. Add another: ProjectionContract
+
+Every generated artifact receives:
+
+Then:
+
+The renderer can change daily.
+
+The contract survives.
+19. This is also where Web Annotation matters
+
+Web Annotation already has a generic Body→Target model and selectors for exact text spans, positions, image regions and temporal media segments.
+
+Use that aggressively.
+
+Every meaningful Pāṭala statement should be capable of pointing to:
+
+That gives future multimodal models exact grounding.
+20. Your actual canonical semantic stack becomes much richer
+
+I would now think of the Pāṭala state as:
+
+Your current SOURCE → T1 → L0 → ... machinery is still useful.
+
+But it becomes one compiler into this state, rather than the ontology itself.
+21. How we expose it
+
+Pāṭala should have several projections over exactly the same truth.
+Public human API
+
+Epistemic API
+
+Killer endpoint
+
+returns:
+
+Agent interface
+
+MCP currently standardizes model-discoverable tools, so expose Pāṭala as an MCP server in addition to ordinary REST/OpenAPI rather than inventing a proprietary agent protocol.
+
+Example:
+
+22. Add a change feed
+
+This is important for your vision of agents knowing current live scholarly positions.
+
+An agent shouldn't continually reread Pāṭala.
+
+Give it:
+
+which might return:
+
+Now external agents can maintain synchronized epistemic state.
+
+That is much closer to infrastructure.
+23. AI companies should consume products, not become architectural dependencies
+
+Google's own trajectory is instructive.
+
+AlphaEvolve combines broad LLM generation with automated evaluators and selection, rather than treating one generated answer as the endpoint.
+
+Google's current science work similarly uses multi-agent hypothesis generation, debate/evaluation and scientist interaction.
+
+Meanwhile Genie attacks world generation and Gemini Robotics 2 attacks general physical action/planning.
+
+So Pāṭala should assume:
+
+and sell the complementary scarce things:
+
+24. The direct AI-lab product is clearer now
+
+Pāṭala Bench / Data.
+
+You can release:
+
+Each item contains:
+
+Not merely:
+
+Hugging Face is the obvious discovery/distribution surface for open/model-facing dataset releases and supports structured dataset cards, licensing metadata and gated datasets.
+
+Pāṭala remains the source of truth.
+
+HF is a distribution channel.
+25. The strongest “market lock” is not secrecy
+
+I would actively avoid trying to lock the market through:
+
+That guarantees institutions don't trust you.
+
+Instead establish five dependencies:
+Reference dependency
+
+People start using Pāṭala anchors because they're the easiest way to resolve Sanskrit entities across fragmented systems.
+Agent dependency
+
+AI systems use /bundle because reconstructing that state independently is expensive.
+Scholar dependency
+
+Scholars maintain translations, positions and adjudications because Pāṭala gives them visibility, attribution and money.
+Institutional dependency
+
+Archives see Pāṭala as a demand/funding channel instead of a scraper.
+Evidence-history dependency
+
+Nobody else has accumulated the longitudinal record of:
+
+That fifth one is the hardest to clone.
+26. Therefore I would make much of Atlas metadata free
+
+This is how OpenAlex and ROR became infrastructure: broad machine access and interoperable identifiers are the point of the product. OpenAlex exposes its global graph through API/data infrastructure, while ROR explicitly operates as CC0 open scholarly infrastructure.
+
+The monetizable things are higher up:
+
+Don't tollbooth the substrate you're trying to make canonical.
+27. Scholar economics fits this perfectly
+
+Have three categories of scholar-derived data.
+Published position
+
+Extracted from paper/book.
+
+Public factual linkage.
+Live attestation
+
+Scarce new event.
+Licensed contribution
+
+Explicit rights.
+
+Then money can flow differently.
+
+Don't pretend every time an agent reads an extracted claim a micro-royalty is obviously owed.
+
+But for licensed scholar-controlled corpora, enterprise usage/training rights can fund a contribution pool.
+
+For actual new review:
+
+    direct payment.
+
+For public authored claims:
+
+    attribution and impact.
+
+Much cleaner.
+28. The product roadmap from right now
+
+I would use dependency gates rather than arbitrary calendar dates.
+PĀṬALA 0.5 — Reference substrate
+
+Build now.
+
+Objective:
+
+    make Sanskrit addressable.
+
+Ship:
+
+Do not chase millions of raw records without resolution.
+
+Exit condition: an agent can take a Sanskrit work name and reliably obtain the canonical work, known alternative titles, authorship uncertainty, editions, available texts, translations, manuscripts, scholarship and provenance.
+
+This addresses the current repo's largest asymmetry: large source ingestion machinery sitting above a relatively small resolved Atlas.
+29. PĀṬALA 1 — Verified Translation Network
+
+First obvious product layer.
+
+Build:
+
+Products:
+
+Pāṭala Translate
+for scholars.
+
+Pāṭala Audit
+upload Sanskrit + translation and get structural/semantic proof.
+
+Pāṭala Bench
+for AI labs.
+
+This gets you actual useful proprietary state early.
+30. PĀṬALA 1.5 — Live Scholarship
+
+Build:
+
+Then execute the defining demo:
+
+    one real scholar answers one high-information question and the correction propagates.
+
+This is already named as the Scholar Attestation Vertical in the existing architecture, but our new vision gives it a much stronger economic role.
+31. PĀṬALA 2 — The demand engine
+
+Now release:
+
+Pāṭala Library
+
+Ask Pāṭala
+
+Pāṭala Tutor
+
+Open Questions
+
+These are not disconnected consumer apps.
+
+They generate:
+
+This is where user curiosity starts driving research prioritization.
+32. PĀṬALA 2.5 — Reality market
+
+Now there is enough structured uncertainty to build:
+
+Start tiny:
+
+Not:
+
+    “We're disrupting academic funding.”
+
+Prove the micro-market first.
+33. Institution product appears at exactly this stage
+
+Pāṭala Collections
+
+Institution sees:
+
+HMML's collaboration model demonstrates that preservation programs can successfully align holding institutions, local technicians and external support rather than centralizing ownership.
+
+Pāṭala adds the research-priority signal.
+34. PĀṬALA 3 — Active epistemic OS
+
+This is the system we've been describing.
+
+At this point Pāṭala is no longer fundamentally a Sanskrit website.
+
+Sanskrit is the domain in which the operating system was proven.
+35. The Experience Compiler can come late
+
+Not because media doesn't matter.
+
+Because the media frontier is moving too rapidly to justify building the deep renderer now.
+
+Google is already openly positioning Genie 3 toward generated interactive worlds, including educational historical environments.
+
+So now:
+
+Later:
+
+renders it.
+
+That's what future-proof media infrastructure actually means.
+36. Generated media should carry two different kinds of provenance
+
+This distinction is important.
+
+C2PA currently provides an industry standard for recording the provenance/history of digital media and has continued evolving through its 2.4 specification.
+
+So a Pāṭala video could carry:
+
+while Pāṭala itself supplies:
+
+C2PA answers:
+
+    Where did this media artifact come from?
+
+Pāṭala answers:
+
+    Which things depicted in it are actually warranted?
+
+Very different problems.
+37. Beyond Pāṭala 3
+
+Once the Sanskrit loop is working, expansion should follow similar epistemologies, not market size.
+First expansion
+
+Other historical philologies:
+
+Same artifact/evidence problem.
+Then
+
+Still largely documentary/observational.
+Then Pāṭala Science
+
+CRMsci already gives you an interoperability bridge toward scientific observation and measurement.
+
+Replace:
+
+with:
+
+The kernel survives.
+38. What I would stop spending serious effort on
+
+Given this vision, I would deliberately deprioritize:
+
+    building your own generic OCR/HTR model;
+
+    owning a bespoke manuscript image format/viewer;
+
+    building a generic bibliography database;
+
+    replacing PANDiT;
+
+    building a global researcher/institution ID system;
+
+    building a generic peer-review platform;
+
+    building a generic agent framework;
+
+    owning a Sanskrit foundation model;
+
+    building the definitive video engine;
+
+    building the definitive game engine;
+
+    building the definitive world simulator;
+
+    hand-authoring enormous numbers of lessons;
+
+    rebuilding every Sanskrit lexicon/parser;
+
+    encoding the entire system directly into RDF/CIDOC;
+
+    indiscriminately mirroring copyrighted/noncommercial corpora.
+
+GRETIL records, for example, can carry explicit non-commercial/share-alike licences, which is precisely why rights must attach to each source object rather than assuming “publicly reachable = commercially trainable.”
+39. What I would aggressively accumulate instead
+
+This is the actual strategic inventory:
+
+Every generation of better AI makes that pile more useful.
+
+That's the test.
+40. The flywheel I would try to establish before anyone else
+
+That is how I would interpret “get the market locked.”
+
+Not monopoly through closed software.
+
+Become the place where:
+
+    Sanskrit things resolve.
+
+Then:
+
+    Sanskrit meanings resolve.
+
+Then:
+
+    scholarly positions resolve.
+
+Then:
+
+    unanswered Sanskrit questions resolve.
+
+Then:
+
+    money gets routed to whatever reality is required to resolve them.
+
+And after that, the Sanskrit part of the sentence can gradually disappear.
+
+The hardest immediate work is therefore much less glamorous than the ultimate vision: turn Atlas from a few hundred resolved works into an actually useful public reference graph, with impeccable external-ID/rights/evidence handling, passage-level addressing, and one excellent agent bundle API.
+
+Everything we want later—translation, scholar economics, questions, bounties, tutoring, documentaries, worlds, scientific agents—gets dramatically easier once that substrate is real.

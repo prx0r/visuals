@@ -1,0 +1,115 @@
+ How to actually rank your Shopify store in ChatGPT (what worked for me)
+Strategy & Tactics
+
+ok so i've been messing with this for like 5-6 months now and figured id share what actually worked
+
+Google is so broken these days. I use chatgpt all the time to find deals and product recs.
+I dont even use it half the time when i shop. But sometimes i do. mostly tho i ask gpt bc it helps me cut through the noise when im looking for safety, quality & value. I still care about trust & reputation when i actually buy tho. sometimes thats shopify, sometimes not.
+
+How I figured this out: I would literally prompt chatgpt like "who has the best X" and then ask "why" like 3-4 times in a row. then id flip it and be like "ok i own Y business, how do i get you to recommend me over everyone else every time?"
+
+Did this for 4-5 months across different niches my business serves. it eventually tells you exactly how to do it.
+
+The AI pulls SO MUCH filler. like if someone calls themselves the "biggest and best" on their own site, chatgpt treats that as fact. so i built a bunch of pages explaining my services/products and what makes us better than competitors.
+
+Comparison charts. for some reason it REALLY likes comparison charts right now. i made one and didnt even link it anywhere on my site. you can prob only find it by going thru AI but whatever.
+
+I built pages, product pages, collection pages with copy specifically targeted at explaining things to AI. things that would be obvious to people but AI needs spelled out.
+
+You dont optimize for ChatGPT directly. you optimize for clarity and intent.
+
+Stores that show up in AI answers are super explicit about:
+
+]- who the product is for
+]- what problem it solves
+]- pricing
+]- comparisons
+]- FAQs
+
+AI pulls from clear, structured pages 100%.
+
+Technical stuff:
+
+theres no magic hack. its basically normal SEO things but for AI.
+
+If youre on shopify, use the knowledge base app from the winter edition (agentic commerce thing). update it with max info as FAQs.
+
+optimize product pages for easy LLM crawling. structured data markup. Q&A knowledge pairs. clear service descriptions.
+
+This is key - AI tools lean HEAVY on publicly crawlable signals. reviews, reddit mentions, blogs, niche forums, even quora style content.
+
+if your brand shows up consistently OUTSIDE your own site, AI is way more likely to surface it.
+
+i noticed my stuff started showing up more when i had more mentions scattered around the internet. not paid stuff. just real mentions.
+
+clean SEO, fast site, clear brand positioning. if a human can instantly understand who your product is for and why its different, AI usually can too.
+
+ARIA tags help too apparently (Accessible Rich Internet Applications). its for accessibility but AI uses that structure to understand your site better.
+
+its like SEO. takes work. but right now AI is assumed to be unbiased by users and its way easier to influence with time/effort instead of advertising. great for people like me who dont have huge ad budgets.
+
+think strong fundamentals + clear intent. not AI hacks.
+
+been working for me. took 4-5 months to really see it but now when i search my niche chatgpt actually mentions my store pretty consistently
+
+hope that helps someone
+
+
+he 10 Highest Alpha Insights for Your Intent
+1. Google literally built the fields you need
+related_product supports required_part, substitute, accessory. product_detail supports 100 technical specs. question_and_answer supports 30 Q&As. Google explicitly says these are for AI Mode. You fill them. Agents pick you.
+2. The feed is the product page now
+Google treats Merchant Center as a "deep product database." The old game was "optimize the PDP." The new game is "optimize the feed." Your feed IS your ranking.
+3. MPN is the killer for replacement parts
+Google specifically says brand + MPN identifies products without GTINs. Replacement parts often don't have GTINs. MPN is your edge. "Bosch 00631200" beats "pump-123.jpg" every time.
+4. Related_product is the compatibility graph (partially)
+Google's related_product supports required_part and substitute. But it only links products YOU sell. The dishwasher→pump edge lives in YOUR graph, your Q&A, your PDP. That's the moat.
+5. The engineers who matter are practitioners, not builders
+@AndrewLolk tests AI Max Shopping. @mikeryanretail tests AI Mode ads. @FeedArmy identified the 8 attributes. They're on Twitter, not GitHub. They have the empirical data.
+6. The star graph finds hidden infrastructure
+Multiple Shopify/Google engineers star the same repos: boundaryml/baml (agent programming), stanfordnlp/dspy (LLM ranking), universal-commerce-protocol/ucp (commerce protocol). That's where the infrastructure is converging.
+7. Probook proved the Supplier OS works
+2,542 jobs in month one, zero human intervention. 58,000 daily interactions. The free AI front desk → data flywheel is real. UK/European market is empty.
+8. Allaway Finland is the cleanest first campaign
+250,000 homes, 30 years of legacy, terrible consumer UX, small parcel goods, 30-40% margin. Build 50-100 SKUs insanely well. Not 5,000 mediocre ones.
+9. The non-English angle is real but nuanced
+Norwegian is fully supported for Merchant Center. AI Max title customization is English-only (temporarily). Build the feed manually in Norwegian. That's the moat while competitors wait for AI to do it.
+10. The moat is certainty, not discovery
+Agents can find products. They can't verify compatibility. They can't confirm stock. They can't guarantee fitment. Your graph provides certainty. That's what agents pay for.
+These 10 insights are the alpha. Everything else is noise.
+
+No. You need Merchant Center, not Shopify.
+The Stack (Without Shopify)
+Layer	What You Need	Cost
+Google Merchant Center	Product feed with conversational attributes	Free
+Feed Management	Tool to generate/optimize feed	Free-$50/mo
+Shopify Catalog	Optional — via Agentic Plan	Free (pay per transaction)
+Web Store	Simple PDP for humans	$0-30/mo
+The Alternatives
+Platform	Pros	Cons
+Shopify	Auto-enables Catalog, UCP built-in	Fees, dependency
+WooCommerce	Free, full control, good feed plugins	More setup
+Laravel + Feedify	Free, developer control, open source	Need dev skills
+Direct GMC feed	No platform needed	Manual feed management
+The Best Path for You
+Don't use Shopify. Use Google Merchant Center directly.
+1. Create Merchant Center account (free)
+2. Use Feedify (Laravel) or EasyFeedManager (WooCommerce)
+3. Fill conversational attributes (related_product, product_detail, Q&A)
+4. Submit feed to Merchant Center
+5. Products appear in AI Mode, Lens, Shopping
+Cost: $0-50/mo for feed tool. No Shopify fees.
+Why This Is Better
+Shopify	Direct GMC
+2.9% + $0.30 per transaction	No transaction fees
+Dependent on Shopify	You own the feed
+Auto-enables Catalog	Manual but full control
+Limited customization	Full attribute control
+The Feed Tools
+Tool	Price	Best For
+Feedify (Laravel)	Free	Developers
+EasyFeedManager (WooCommerce)	Free-$50/mo	WordPress users
+Feedmaster	Paid	Multi-channel
+Direct GMC feed	Free	Full control
+Bottom line: Build the feed. Submit to Merchant Center. Skip Shopify entirely.
+▣  Build · MiMo V2.5 · 16.8s

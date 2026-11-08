@@ -1,0 +1,1549 @@
+Yes. The product should become **the intelligence layer in front of the name.com API**:
+
+# DomainArena
+
+### Find the best domain that actually works — not the one an LLM says “sounds good.”
+
+The key agentic workflow is:
+
+```text
+"Find the best domain for an
+AI fact-checking API.
+
+Budget: <= $20 first year
+Renewal: <= $30/year
+Audience: developers + AI agents
+Prefer .com/.dev/.io
+Avoid premium domains."
+            │
+            ▼
+      DOMAINARENA
+            │
+    generate candidates
+            │
+            ▼
+     NAME.COM SEARCH
+            │
+      HARD CONSTRAINTS
+            │
+    $20 max purchase
+    $30 max renewal
+    no premium
+    allowed TLDs
+            │
+            ▼
+      EXPERIMENTAL ARENA
+            │
+ semantic understanding
+ pairwise preference
+ cross-model stability
+ TLD effects
+ brand elasticity
+ agent discoverability
+            │
+            ▼
+      PARETO FRONTIER
+            │
+            ▼
+      factprobe.dev
+            │
+      $14.99 / year
+            │
+            ▼
+       [ APPROVE ]
+            │
+            ▼
+ NAME.COM AVAILABILITY CHECK
+            │
+            ▼
+      NAME.COM REGISTER
+            │
+            ▼
+        NAME.COM DNS
+            │
+            ▼
+         RECEIPT
+```
+
+That is a substantially better agentic story than “agent can buy a domain.” name.com already supports the basic Search → Register → Manage workflow. What we're adding is the **reasoning and empirical optimization layer that determines what should be bought**. Their current API gives us live purchasability, purchase price, renewal price, premium status and purchase type, so these constraints can be first-class inputs to the algorithm. ([name.com Core API][1])
+
+And it maps extremely well to their hackathon criteria: deep API use, unexpected application, technical execution, real-world viability and an integration visible in the demo. ([DevNetwork Hackathon 2026][2])
+
+---
+
+# 1. Build a new repo: `domainarena`
+
+Do **not** turn any of the existing three repos into the hackathon product.
+
+Create:
+
+```text
+domainarena/
+├── apps/
+│   ├── web/
+│   └── api/
+│
+├── packages/
+│   ├── namecom/
+│   ├── intent/
+│   ├── generators/
+│   ├── constraints/
+│   ├── arena/
+│   ├── experiments/
+│   ├── optimizer/
+│   └── receipts/
+│
+├── fixtures/
+├── tests/
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── EXPERIMENTAL-PROTOCOL.md
+│   ├── NAMECOM-INTEGRATION.md
+│   └── DEMO-SCRIPT.md
+│
+└── README.md
+```
+
+I would make the new product **TypeScript-first**.
+
+Why:
+
+* two of the useful existing systems are JS/Worker-oriented;
+* name.com now has an official TypeScript SDK;
+* quickest path to web + API + tests;
+* don't introduce Rust/JS service boundaries just to preserve AgentSEOLab's implementation language.
+
+name.com's documentation currently lists official TypeScript, Go and PHP SDKs. ([name.com Core API][1])
+
+The **research methodology** from AgentSEOLab gets ported into TypeScript. The original Rust remains the research reference implementation.
+
+---
+
+# 2. Treat the existing repos as three libraries of proven ideas
+
+| Source              | Extract into DomainArena                                                                                             | Don't drag across                                         |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `domainnamechecker` | generation, verification receipts, normalization, semantic/name features, variant packs, MCP ideas                   | current UI, registrar affiliate flow                      |
+| `agentseolab`       | blinded experiments, AB/BA counterbalancing, model-family tracking, pairwise comparisons, evidence ledger discipline | every unfinished experiment                               |
+| `finalbuildsdomain` | purchase lifecycle, idempotency thinking, budgets, DNS lifecycle, validation                                         | Porkbun-specific workflow, arbitrary promotion thresholds |
+
+`domainnamechecker` already has authoritative domain-status handling, bulk search, an MCP interface, semantic generation/scoring and proof receipts.
+
+AgentSEOLab already gives us the crucial scientific primitives: immutable intent, blinded trials, pairwise comparisons, model-family provenance, structured outcomes and actual-action rather than self-reported-preference measurement.
+
+And `finalbuildsdomain` already embodies domain purchasing as a guarded lifecycle rather than an isolated API call.
+
+---
+
+# 3. Define the product contract before coding
+
+The primary request object should be approximately:
+
+```ts
+interface NamingRequest {
+  description: string
+
+  audience: Array<
+    "consumer" |
+    "business" |
+    "developer" |
+    "ai_agent"
+  >
+
+  constraints: {
+    maxPurchasePrice?: number
+    maxRenewalPrice?: number
+    premiumAllowed: boolean
+
+    tlds?: string[]
+
+    minLength?: number
+    maxLength?: number
+
+    hyphensAllowed?: boolean
+    numbersAllowed?: boolean
+  }
+
+  namingPreference: {
+    semanticPrecision: number
+    brandElasticity: number
+    memorability: number
+    agentDiscoverability: number
+  }
+}
+```
+
+So the agent request:
+
+> Find the best domain under $20.
+
+compiles to:
+
+```text
+maxPurchasePrice = 20
+```
+
+Not:
+
+```text
+cheap domains get a slightly better score
+```
+
+That's critical.
+
+## Hard constraints first
+
+Define:
+
+[
+F = {
+d:
+purchasable(d)
+\land purchasePrice(d)\le B
+\land renewalPrice(d)\le R
+\land TLD(d)\in T
+\land premium(d)\in P
+}
+]
+
+Only candidates in (F) reach expensive evaluation.
+
+That means if:
+
+```text
+amazingname.com    $4,000
+prettygood.dev     $14
+goodthing.io       $18
+weaker.xyz          $3
+```
+
+and the budget is $20:
+
+`amazingname.com` simply does not exist in the optimization problem.
+
+This is exactly where the name.com API becomes essential rather than decorative. Search exposes `purchasable`, `premium`, `purchasePrice`, `purchaseType` and `renewalPrice`. ([name.com Core API][3])
+
+---
+
+# 4. Separate purchase budget from renewal budget
+
+This is an important product feature.
+
+The UI should have:
+
+```text
+First-year budget       <= $20
+Renewal ceiling         <= $30 / year
+Premium domains         OFF
+```
+
+A $2 promotional domain renewing at $75 isn't necessarily a “$2 domain.”
+
+Eventually expose:
+
+```text
+1-year cost
+3-year expected cost
+5-year expected cost
+```
+
+But use name.com's live `purchasePrice` and `renewalPrice`, rather than the current approximate static pricing in FinalBuildsDomain.
+
+---
+
+# 5. Build `NameComClient` first
+
+This should be P0.
+
+DomainArena should have a dedicated provider interface:
+
+```ts
+interface Registrar {
+  search(...)
+  checkAvailability(...)
+  register(...)
+  getDomain(...)
+  createDnsRecord(...)
+  listDnsRecords(...)
+}
+```
+
+Implement:
+
+```text
+packages/namecom/
+├── client.ts
+├── types.ts
+├── search.ts
+├── availability.ts
+├── register.ts
+├── dns.ts
+└── sandbox.ts
+```
+
+The critical name.com path is:
+
+```text
+POST /core/v1/domains:search
+
+POST /core/v1/domains:checkAvailability
+
+POST /core/v1/domains
+
+GET /core/v1/domains/{domain}
+
+POST /core/v1/domains/{domain}/records
+```
+
+Their own production guide explicitly recommends Search → pre-purchase availability check → Create Domain → management/DNS. ([name.com Core API][1])
+
+## Important registration rule
+
+`Create Domain` must use an:
+
+```text
+X-Idempotency-Key
+```
+
+name.com guarantees repeated requests using the same key won't perform the purchase multiple times. ([name.com Core API][4])
+
+Reuse the idempotent-purchase philosophy you already built into FinalBuildsDomain.
+
+---
+
+# 6. Use their sandbox aggressively
+
+name.com's sandbox is unusually good for this hackathon.
+
+```text
+Sandbox:
+https://api.dev.name.com
+
+Production:
+https://api.name.com
+```
+
+The sandbox uses the same endpoint/JSON shapes and includes **$100,000 of test credit**, so registration, renewals and similar billable operations can be exercised without actual money. ([name.com Core API][5])
+
+That means the demo can genuinely show:
+
+```text
+search
+→ check
+→ registration
+→ DNS record creation
+```
+
+without spending money.
+
+One caveat: sandbox pricing and availability can differ from production, and sandbox DNS changes do **not** become publicly resolvable. ([name.com Core API][5])
+
+So label it clearly:
+
+> name.com sandbox registration
+
+And validate DNS through the name.com API:
+
+```text
+CREATE DNS
+→ LIST DNS
+→ record returned ✓
+```
+
+rather than pretending `dig` will resolve it.
+
+---
+
+# 7. Intent compiler
+
+This is one of the most important new modules.
+
+The raw user description should become an immutable structured intent before candidate generation.
+
+AgentSEOLab already has this idea with `SiteIntent`.
+
+For:
+
+> An API that verifies factual claims against reliable sources and returns evidence.
+
+Compile:
+
+```json
+{
+  "primary_job": "fact verification",
+  "objects": [
+    "claim",
+    "fact",
+    "evidence",
+    "source"
+  ],
+  "desired_associations": [
+    "trust",
+    "verification",
+    "research",
+    "precision"
+  ],
+  "undesired_associations": [
+    "social network",
+    "entertainment"
+  ],
+  "audiences": [
+    "developer",
+    "ai_agent"
+  ],
+  "brand_scope": {
+    "current_category": "fact verification",
+    "adjacent_categories": [
+      "research",
+      "citation",
+      "evidence infrastructure"
+    ]
+  }
+}
+```
+
+Then hash it:
+
+```text
+intent_hash = SHA256(canonical_json)
+```
+
+Every generated candidate and every trial references that hash.
+
+Otherwise the system quietly changes its understanding of the product midway through the experiment.
+
+---
+
+# 8. Candidate generation should be an ensemble
+
+Do not call one LLM 100 times.
+
+Your naming research already has the answer.
+
+Create independent generator families:
+
+```text
+G1 descriptive
+G2 action + object
+G3 suggestive compound
+G4 metaphor / object
+G5 animal/archetype
+G6 invented phonosemantic
+G7 morphological blend
+G8 contrarian
+G9 name.com suggestions
+```
+
+Your existing Naming Science work already proposes this kind of heterogeneous generator population rather than a single-model naming prompt.
+
+Important addition:
+
+## Make name.com's own Search API a generator
+
+For each strong root concept:
+
+```text
+fact
+proof
+source
+verify
+evidence
+trace
+```
+
+call:
+
+```text
+POST /core/v1/domains:search
+```
+
+with selected TLDs.
+
+name.com Search itself returns domain suggestions based on keywords and TLD filtering. ([name.com Core API][3])
+
+Therefore DomainArena's population comes from both:
+
+```text
+OUR GENERATORS
+       +
+NAME.COM SEARCH DISCOVERY
+```
+
+This deepens sponsor integration.
+
+---
+
+# 9. Generation 0 should be large; evaluation should not
+
+Something like:
+
+```text
+Generators                         9
+Raw SLD ideas                    150
+name.com domain variants         300+
+Deduplicated                     220
+Purchasable                      110
+Budget compliant                  61
+Deterministic screen              30
+Semantic arena                    15
+Full tournament                    6
+Finalists                          3
+```
+
+Don't send 220 candidates through seven models.
+
+Use **successive halving**.
+
+---
+
+# 10. Stage A — deterministic cheap screen
+
+Reuse the sensible parts of DomainNameChecker's naming features.
+
+Remove obviously bad candidates using things like:
+
+```text
+length
+hyphens
+digits
+repeated characters
+spelling difficulty
+word boundaries
+TLD
+obvious forbidden meanings
+```
+
+Don't call this the final “domain score.”
+
+It's just screening.
+
+For example:
+
+```text
+xqz-labs-992.dev
+```
+
+doesn't deserve $0.20 of model inference.
+
+---
+
+# 11. Stage B — Semantic Inversion
+
+This is the signature algorithm.
+
+Evaluator sees only:
+
+```text
+factmole.dev
+```
+
+Not the project brief.
+
+Instead of free-form interpretation alone, construct a blinded classification task.
+
+Example:
+
+```text
+Which functions would you most expect
+factmole.dev to provide?
+
+A. Fact verification
+B. Image generation
+C. Database hosting
+D. Research/search
+E. Payroll
+F. Evidence retrieval
+G. Email marketing
+H. Gaming
+```
+
+Choices are randomized.
+
+Target:
+
+```text
+A / D / F
+```
+
+Then:
+
+[
+SemanticTransmission(d)
+=======================
+
+P(\text{intended concepts selected}\mid d)
+]
+
+Do it across multiple evaluator families.
+
+This is far more defensible than:
+
+> GPT says 9.4/10.
+
+---
+
+# 12. Stage C — Pairwise tournament
+
+Now show the actual product description and two domain candidates:
+
+```text
+Product:
+"API that checks factual claims
+against primary sources."
+
+Which is the stronger domain?
+
+A: factmole.dev
+B: proofhound.dev
+```
+
+Run both:
+
+```text
+AB
+BA
+```
+
+to kill position bias.
+
+Use AgentSEOLab's pairwise raw-observation philosophy.
+
+Then fit a **Bradley–Terry** model:
+
+[
+P(i \succ j)
+============
+
+\frac{e^{\beta_i}}
+{e^{\beta_i}+e^{\beta_j}}
+]
+
+So instead of:
+
+```text
+FactMole 8.7
+ProofHound 8.3
+```
+
+we get:
+
+```text
+Estimated pairwise strength
+
+FactMole      1.31
+ProofHound    0.82
+SourceFox     0.41
+```
+
+with uncertainty.
+
+Much more meaningful.
+
+---
+
+# 13. Stage D — Model Stability
+
+Compute the outcomes separately by model family.
+
+Never pool first.
+
+For each domain:
+
+```text
+             Semantic   Pairwise
+
+Qwen           .86        .78
+Mistral        .82        .73
+Gemma          .84        .71
+Nemotron       .79        .76
+Model E        .87        .69
+```
+
+Then report:
+
+```text
+mean
+variance
+worst-family
+range
+```
+
+Define:
+
+[
+Stability(d)
+============
+
+1-\operatorname{NormStdDev}
+(\text{family outcome})
+]
+
+but keep the raw per-family results visible.
+
+The decision policy can penalize:
+
+```text
+high average + catastrophic worst model
+```
+
+because AgentSEOLab has already shown why family-level behavior matters.
+
+---
+
+# 14. Stage E — TLD lab
+
+Your existing TLD experiment slots directly into the product.
+
+For finalists where multiple TLDs are purchasable:
+
+```text
+factmole.com
+factmole.dev
+factmole.io
+```
+
+hold everything else constant.
+
+Then test selection.
+
+This gives:
+
+```text
+Task: developer fact-verification API
+
+.com    0.31
+.dev    0.45
+.io     0.24
+```
+
+Again, those are example outputs, not claimed results.
+
+This is especially valuable to name.com because the system can ultimately learn:
+
+[
+P(TLD\ selected
+\mid task,\ audience,\ evaluator)
+]
+
+rather than applying a dumb global:
+
+```text
+.com +10 points
+```
+
+---
+
+# 15. Don't create a fake master score
+
+The UI should show:
+
+```text
+FACTMOLE.DEV
+
+Semantic transmission      84%
+Pairwise win probability   73%
+Model stability            92%
+Worst-family result        79%
+Brand elasticity           71%
+Agent task recognition     88%
+
+NAME.COM
+Purchasable                 YES
+First year                  $14.99
+Renewal                     $14.99
+Premium                     NO
+```
+
+Then:
+
+> **Recommended under your constraints**
+
+rather than:
+
+> AI DOMAIN SCORE = 94.382
+
+Internally, though, the optimizer needs a policy.
+
+Use **Pareto dominance first**.
+
+Candidate A dominates B if it is no worse on every selected objective and strictly better on at least one.
+
+Only when multiple Pareto-optimal candidates remain should a policy choose.
+
+For example:
+
+[
+U =
+w_sS+
+w_pP+
+w_mM+
+w_eE+
+w_aA+
+w_cC
+]
+
+where weights are determined by the user's requested objective.
+
+For:
+
+> developer API optimized for agents
+
+use greater weight on semantic transmission, agent recognition and model stability.
+
+For:
+
+> consumer lifestyle brand
+
+increase memorability and elasticity.
+
+Explicitly label these policy weights as **decision policy**, not scientific truth.
+
+---
+
+# 16. EvoName comes after the first arena
+
+Now take the winners and mutate them.
+
+Example:
+
+```text
+GEN 0
+
+factmole
+proofhound
+sourcefox
+factprobe
+
+          ↓
+
+FACTMOLE wins
+FACTPROBE wins
+
+          ↓
+
+GEN 1
+
+factprobe
+facttrace
+proofmole
+sourcemole
+facttrail
+claimprobe
+```
+
+Every mutation goes immediately back through:
+
+```text
+name.com Search
+→ availability
+→ budget constraint
+```
+
+An evolved candidate that isn't actually purchasable is useless.
+
+Use mutations such as:
+
+```text
+semantic-neighbor replacement
+prefix/suffix removal
+compound recombination
+metaphor substitution
+phonetic simplification
+action/object swap
+TLD mutation
+contrarian mutation
+```
+
+Run maybe **three generations**, not twenty.
+
+This is a hackathon product, not a research cluster.
+
+---
+
+# 17. Preserve lineage
+
+Every domain should know where it came from:
+
+```json
+{
+  "candidate_id": "cand_...",
+  "domain": "factprobe.dev",
+
+  "generation": 2,
+
+  "parents": [
+    "factmole.dev",
+    "sourceprobe.dev"
+  ],
+
+  "mutation": "semantic_recombination",
+
+  "generator": "evolution",
+
+  "namecom": {
+    "purchasePrice": 14.99,
+    "renewalPrice": 14.99,
+    "premium": false
+  }
+}
+```
+
+Then the UI can render an evolutionary tree.
+
+This is one of the best visual-demo elements.
+
+---
+
+# 18. Make the product agent-native
+
+This is where your idea about agents becomes powerful.
+
+Expose:
+
+```text
+POST /v1/recommend
+POST /v1/compare
+POST /v1/explain
+POST /v1/register
+```
+
+And MCP:
+
+```text
+recommend_domain
+compare_domains
+explain_domain
+register_domain
+configure_domain
+```
+
+Example agent call:
+
+```json
+{
+  "intent": "MCP service for citation verification",
+  "max_purchase_price": 20,
+  "max_renewal_price": 30,
+  "premium_allowed": false,
+  "audience": [
+    "developer",
+    "ai_agent"
+  ]
+}
+```
+
+Response:
+
+```json
+{
+  "recommended": "factprobe.dev",
+  "purchase_price": 14.99,
+  "renewal_price": 14.99,
+
+  "evidence": {
+    "semantic_transmission": 0.86,
+    "model_stability": 0.93,
+    "pairwise_strength": 0.78
+  },
+
+  "decision_id": "decision_..."
+}
+```
+
+Now DomainArena becomes something coding agents themselves call.
+
+That's potentially very valuable to name.com:
+
+```text
+AI builder
+   ↓
+needs product name
+   ↓
+DomainArena
+   ↓
+name.com inventory
+   ↓
+best purchasable name
+   ↓
+name.com registration
+```
+
+DomainArena potentially becomes a **demand-generation funnel for their API**.
+
+---
+
+# 19. Separate recommendation and purchase
+
+Implement:
+
+```text
+recommend_domain()
+```
+
+as non-destructive.
+
+And:
+
+```text
+register_domain(decision_id, approval)
+```
+
+as destructive.
+
+Default UI:
+
+```text
+[ Register factprobe.dev for $14.99 ]
+```
+
+with explicit confirmation.
+
+For future autonomous workflows, support a pre-authorized policy:
+
+```json
+{
+  "autoPurchase": true,
+  "maxPurchasePrice": 20,
+  "maxRenewalPrice": 30,
+  "premiumAllowed": false
+}
+```
+
+But for the hackathon demo I would show the human confirmation.
+
+It's clearer and safer, and the interesting part is the selection engine anyway.
+
+---
+
+# 20. Registration receipt
+
+Before purchase:
+
+```text
+POST /domains:checkAvailability
+```
+
+because Search results may become stale before checkout. name.com explicitly recommends this. ([name.com Core API][1])
+
+Store:
+
+```json
+{
+  "domain": "factprobe.dev",
+  "checked_at": "...",
+  "purchase_price": 14.99,
+  "renewal_price": 14.99,
+  "purchase_type": "registration",
+
+  "decision_id": "...",
+  "intent_hash": "...",
+  "experiment_hash": "..."
+}
+```
+
+Then call Create Domain using the exact decision context and an idempotency key.
+
+Recommended defaults from name.com's current guide include:
+
+```text
+autorenewEnabled = true
+locked = true
+privacyEnabled = true
+```
+
+subject to TLD support. ([name.com Core API][1])
+
+---
+
+# 21. Use DNS as the experimental receipt
+
+After sandbox registration, create:
+
+```text
+_domainarena.factprobe.dev TXT
+```
+
+containing something like:
+
+```text
+decision=da_0182;intent=7ac...;version=1
+```
+
+Then fetch it back through name.com.
+
+UI:
+
+```text
+REGISTERED                  ✓
+WHOIS PRIVACY               ✓
+DOMAIN LOCK                 ✓
+DNS RECEIPT CREATED         ✓
+DECISION RECEIPT            da_0182
+```
+
+That's an elegant reason to use the DNS API instead of adding it just to score sponsor points.
+
+Their API supports DNS record creation and the official guide treats DNS management as part of the normal full domain lifecycle. ([name.com Core API][1])
+
+---
+
+# 22. Core database
+
+Don't block the hackathon on HydraDB.
+
+Use something simple and deterministic—D1/Postgres/SQLite—and maintain event objects compatible with the Hydra schema later.
+
+Tables:
+
+```text
+projects
+intents
+candidate_domains
+namecom_snapshots
+experiments
+trials
+pairwise_observations
+candidate_metrics
+decisions
+registrations
+dns_receipts
+```
+
+Important principle:
+
+**raw trial data is immutable.**
+
+A derived metric can be recalculated.
+
+The raw model decision cannot.
+
+That preserves AgentSEOLab's evidence discipline.
+
+---
+
+# 23. Experimental integrity requirements
+
+These are non-negotiable because they are the thing separating DomainArena from AI-naming sludge.
+
+```text
+Generator != primary judge
+
+Candidate ordering randomized
+
+AB and BA pairwise trials
+
+Fresh evaluator sessions
+
+Model family stored
+
+Model/version/provider stored
+
+Prompt hash stored
+
+Intent frozen before generation
+
+UNPARSEABLE != negative result
+
+Raw output retained
+
+Metrics generated from raw records
+
+No retrospective deletion of failed experiments
+
+No pooled "all models" result without family breakdown
+```
+
+These principles come directly from the strongest parts of AgentSEOLab.
+
+---
+
+# 24. The UI
+
+## Screen 1 — Describe
+
+```text
+WHAT ARE YOU BUILDING?
+
+┌─────────────────────────────────────┐
+│ API that verifies factual claims... │
+└─────────────────────────────────────┘
+
+Audience
+[Developers] [AI Agents]
+
+First-year budget
+[$20]
+
+Renewal ceiling
+[$30]
+
+TLDs
+[.com] [.dev] [.io] [.ai]
+
+Premium
+[OFF]
+
+Brand style
+Precise ─────●──────── Expandable
+
+             RUN ARENA
+```
+
+---
+
+## Screen 2 — Live funnel
+
+Make the name.com integration visible:
+
+```text
+GENERATED                      187
+
+NAME.COM SEARCH
+Purchasable                     83
+
+BUDGET <= $20
+Remaining                       41
+
+SEMANTIC INVERSION
+Remaining                       15
+
+PAIRWISE ARENA
+Remaining                        6
+
+ROBUSTNESS
+Finalists                        3
+```
+
+Judges should literally see:
+
+**name.com search reduced 187 ideas to 83 real domains.**
+
+---
+
+# 25. Final result should emphasize disagreement
+
+This is where the product looks different.
+
+```text
+                   Qwen  Mistral  Gemma  Nemo
+
+factprobe.dev       91      87      89     85
+truthfox.io         96      52      71     41
+factmole.dev        84      86      83     88
+```
+
+Then:
+
+```text
+truthfox.io
+highest peak score
+BUT unstable across models
+
+factprobe.dev
+high score everywhere
+
+→ RECOMMENDED
+```
+
+That's visually compelling and communicates the thesis immediately.
+
+---
+
+# 26. Exact MVP versus stretch scope
+
+### P0 — must work
+
+| Component                      | Required |
+| ------------------------------ | -------- |
+| Intent compiler                | ✓        |
+| Multiple naming generators     | ✓        |
+| name.com Search                | ✓        |
+| Budget/renewal/TLD constraints | ✓        |
+| Semantic inversion             | ✓        |
+| Multi-model evaluation         | ✓        |
+| Pairwise tournament            | ✓        |
+| Model stability                | ✓        |
+| Final recommendation           | ✓        |
+| Check Availability             | ✓        |
+| Sandbox registration           | ✓        |
+| DNS receipt                    | ✓        |
+| polished web demo              | ✓        |
+
+### P1 — strong differentiators
+
+| Feature                            | Priority |
+| ---------------------------------- | -------: |
+| EvoName generations                |     high |
+| TLD causal experiment              |     high |
+| Bradley–Terry confidence intervals |   medium |
+| MCP interface                      |     high |
+| evolutionary-tree visualization    |     high |
+| agent/human weighting              |   medium |
+
+### P2 — only after polish
+
+SerpApi collision/search analysis, human memory tests, trademark-screening signals, long-term availability history, HydraDB graph integration, full production domain-management dashboard.
+
+Do not let these delay the core.
+
+---
+
+# 27. Optional SerpApi extension
+
+There is a natural second sponsor path *after* name.com is done.
+
+For each finalist:
+
+```text
+factprobe
+factprobe.dev
+"fact probe"
+```
+
+search live web results and measure:
+
+```text
+brand collision
+search ambiguity
+dominant existing entity
+category contamination
+```
+
+That could make SerpApi genuinely useful rather than bolted on, and their current challenge rewards AI applications where live search data materially improves the experience. ([DevNetwork Hackathon 2026][6])
+
+But **do not build this until DomainArena works end-to-end**.
+
+---
+
+# 28. Ten-day execution order
+
+Given the current August 24 date and the September 3 submission deadline, I'd execute in this order. The official deadline is **September 3, 2026 at 10:00 AM PDT**. ([DevNetwork Hackathon 2026][7])
+
+| Day        | Deliverable                                                                      |
+| ---------- | -------------------------------------------------------------------------------- |
+| **Aug 24** | new repo, schemas, name.com sandbox auth, Search/Check/Create/DNS contract tests |
+| **Aug 25** | port candidate generators + intent compiler + hard constraint engine             |
+| **Aug 26** | semantic inversion runner + model-family adapter                                 |
+| **Aug 27** | pairwise AB/BA arena + Bradley–Terry + stability metrics                         |
+| **Aug 28** | complete recommendation pipeline; first reproducible end-to-end result           |
+| **Aug 29** | EvoName generations + lineage                                                    |
+| **Aug 30** | registration + DNS receipt + destructive-action safeguards                       |
+| **Aug 31** | polished UI, heatmaps, Pareto view, evolutionary tree                            |
+| **Sep 1**  | fixtures, edge cases, load/failure tests, README, architecture docs              |
+| **Sep 2**  | record 2–4 minute demo, submission copy, final regression                        |
+| **Sep 3**  | buffer only                                                                      |
+
+Do **not** spend September 2 implementing new research ideas.
+
+---
+
+# 29. Three deterministic demo fixtures
+
+Build these early.
+
+### Fixture A — budget constraint
+
+```text
+"Developer API for verifying claims"
+budget = $20
+```
+
+Show an excellent but expensive domain eliminated and a robust affordable one winning.
+
+### Fixture B — model disagreement
+
+One candidate is adored by one family but misunderstood by others.
+
+DomainArena chooses the stable candidate.
+
+This proves why the product exists.
+
+### Fixture C — TLD interaction
+
+Same SLD across two/three TLDs gives different evaluator selection behavior.
+
+Then register the experimental winner in name.com sandbox.
+
+Those three cases tell the entire story.
+
+---
+
+# 30. Edge cases the judges will notice
+
+Handle these cleanly:
+
+```text
+search API timeout
+domain becomes unavailable before purchase
+premium price
+renewal exceeds limit
+purchase price changed
+unsupported purchaseType
+duplicate purchase retry
+invalid domain
+no feasible domains under budget
+all candidates semantically poor
+one evaluator provider fails
+UNPARSEABLE model output
+model families radically disagree
+sandbox DNS not publicly resolving
+```
+
+Especially this:
+
+```text
+Search says available
+       ↓
+arena takes 30 sec
+       ↓
+someone else registers it
+       ↓
+Check Availability says unavailable
+```
+
+DomainArena should automatically:
+
+```text
+invalidate finalist
+→ promote next Pareto candidate
+→ rerun final availability
+```
+
+That shows excellent technical execution.
+
+---
+
+# 31. Definition of done
+
+The coding agent should not declare success until this exact command path works:
+
+```text
+1. User supplies product intent.
+
+2. User sets:
+   purchase <= $20
+   renewal <= $30
+   premium=false.
+
+3. System generates heterogeneous names.
+
+4. name.com returns real/test purchasable inventory
+   and prices.
+
+5. Constraint engine removes infeasible names.
+
+6. Semantic inversion evaluates remaining names.
+
+7. Multi-family pairwise arena ranks finalists.
+
+8. System exposes disagreement/stability.
+
+9. System recommends one domain with evidence.
+
+10. User approves.
+
+11. Domain is rechecked.
+
+12. Domain is registered through name.com sandbox.
+
+13. DNS TXT receipt is created.
+
+14. DNS record is fetched back from name.com.
+
+15. Final receipt displays:
+    intent hash
+    experiment ID
+    domain
+    price
+    model panel
+    evidence vector
+    registration status
+    DNS receipt.
+```
+
+If that works beautifully, stop adding features.
+
+---
+
+# 32. The README pitch
+
+I would put this almost verbatim at the top:
+
+> **DomainArena turns domain naming from vibes into an experiment.**
+>
+> AI naming tools generate a list and then ask another AI which one “sounds best.” DomainArena searches real purchasable inventory through name.com, filters it by constraints such as purchase and renewal budget, then runs blinded experiments across independent AI model families to measure semantic understanding, preference and robustness. The winning name can be registered and configured through name.com immediately.
+>
+> **For humans:** find a name that communicates what you actually built.
+>
+> **For agents:** request the best domain under a budget and receive a purchasable, evidence-backed answer instead of a hallucinated list.
+
+That gets the entire concept across quickly.
+
+---
+
+# 33. Why this could become genuinely valuable to name.com
+
+The long-term API isn't really:
+
+```text
+search domains
+```
+
+It's:
+
+```text
+recommend the best purchasable domain
+for this product under these constraints
+```
+
+And behind that endpoint sits:
+
+```text
+name.com inventory
++
+naming experiments
++
+model-family behavior
++
+actual registration decisions
++
+eventual downstream performance
+```
+
+Every time someone selects and registers a domain, DomainArena gets a stronger revealed-preference signal.
+
+Eventually:
+
+[
+P(\text{registration}\mid
+name,\ price,\ TLD,\ intent,\ audience)
+]
+
+and later:
+
+[
+P(\text{successful adoption}\mid
+name,\ TLD,\ intent,\ audience)
+]
+
+become learnable.
+
+That is why the system could drive demand **into name.com's API instead of competing with name.com**.
+
+They provide the market and transaction infrastructure.
+
+DomainArena provides the decision intelligence.
+
+That is the relationship I would make central in the sponsor pitch.
+
+One administrative issue: the current Devpost page states entrants must be **above the legal age of majority in their country of residence**, so prize eligibility should be confirmed directly against the rules before relying on the competition outcome; don't attempt to work around eligibility restrictions. ([DevNetwork Hackathon 2026][7])
+
+The current name.com challenge is almost tailored to this build: they explicitly favor deep multi-endpoint integration and unexpected applications rather than incremental domain-search tools. ([DevNetwork Hackathon 2026][2])
+
+[1]: https://docs.name.com/guides/quickstart "Reseller Quickstart - name.com Core API"
+[2]: https://api-cloud-ai-hackathon-2026.devpost.com/?ref_feature=challenge&ref_medium=discover&utm_source=chatgpt.com "DevNetwork [API + Cloud + AI] Hackathon 2026: Join the nation's largest challenge-driven API + Cloud + AI hackathon @ API World 2026! - Devpost"
+[3]: https://docs.name.com/api/v1/reference/domains/search "Search - name.com Core API"
+[4]: https://docs.name.com/api/v1/reference/domains/create-domain "Create Domain - name.com Core API"
+[5]: https://docs.name.com/guides/testing-environment "Testing Environment - name.com Core API"
+[6]: https://api-cloud-ai-hackathon-2026.devpost.com/?ref_content=in-person-hackathons&ref_feature=challenge&ref_medium=artificial-intelligence-channel&utm_source=chatgpt.com "DevNetwork [API + Cloud + AI] Hackathon 2026: Join the nation's largest challenge-driven API + Cloud + AI hackathon @ API World 2026! - Devpost"
+[7]: https://api-cloud-ai-hackathon-2026.devpost.com/?utm_source=chatgpt.com "DevNetwork [API + Cloud + AI] Hackathon 2026: Join the nation's largest challenge-driven API + Cloud + AI hackathon @ API World 2026! - Devpost"

@@ -1,0 +1,833 @@
+As of **16 August 2026**, Sanskrit MT evaluation is still fragmented. There is **not yet a GLUE/MMLU-style canonical “Sanskrit Translation Benchmark”** covering the linguistic history of Sanskrit. But there are now enough pieces to build one. The major change is **Mitrasaṃgraha (2026)**: it finally gives Sanskrit→English a genuinely diachronic benchmark spanning Vedic, Epic, Classical and Medieval material. ([arXiv][1])
+
+The landscape looks like this:
+
+| Resource                      | Pair                   | Main coverage                 | What it actually tests          |
+| ----------------------------- | ---------------------- | ----------------------------- | ------------------------------- |
+| **Mitrasaṃgraha**             | Sanskrit→English       | Vedic → Medieval, many genres | Best broad historical benchmark |
+| **Itihāsa**                   | Sanskrit→English       | Mahābhārata + Rāmāyaṇa        | Epic verse                      |
+| **Sāmayik**                   | English↔Sanskrit       | contemporary prose            | Modern Sanskrit                 |
+| **Samasāmayik**               | Hindi↔Sanskrit         | contemporary prose            | Modern Sanskrit                 |
+| **Santham**                   | Sanskrit↔Tamil         | prose/verse, anvaya           | Segmentation + reordering       |
+| **Rao–Gopinath probes**       | Sa↔En                  | linguistic phenomena          | Diagnostic grammar tests        |
+| **Chandomitra**               | English→Sanskrit       | anuṣṭubh                      | Semantics + metrical generation |
+| **SansTib**                   | Sanskrit↔Tibetan       | Buddhist                      | Buddhist parallelism/alignment  |
+| **MITRA**                     | Sa/Pāli/Tib/Ch→English | Buddhist + classical          | Classical multilingual MT       |
+| **FLORES/IN22/IndicGenBench** | multilingual           | contemporary translated text  | Generic Sanskrit ability        |
+| **Bhagavad Gītā studies**     | Sanskrit→English       | Gītā                          | narrow LLM/Google comparisons   |
+
+## 1. Mitrasaṃgraha — currently the most important Sanskrit benchmark
+
+**Nehrdich et al., 2026 — “Mitrasaṃgraha: A Comprehensive Classical Sanskrit Machine Translation Dataset”**
+
+Paper:
+`https://arxiv.org/abs/2601.07314`
+
+HTML:
+`https://arxiv.org/html/2601.07314`
+
+PDF:
+`https://arxiv.org/pdf/2601.07314`
+
+Dataset/code:
+`https://github.com/dharmamitra/mitrasamgraha-dataset`
+
+This is the thing to build on.
+
+It contains **391,548 Sanskrit-English bitext pairs**, plus **5,587 validation** and **5,552 manually post-corrected test pairs**, with metadata for work, period and genre. It deliberately spans more than three millennia rather than pretending Sanskrit is one homogeneous language. ([arXiv][1])
+
+Its contents are unusually valuable. Examples include:
+
+* **Vedic:** Ṛgveda 11,645 pairs, Kṛṣṇa Yajurveda 7,501, Śatapatha Brāhmaṇa 6,193, Sāmaveda 1,343, Śukla Yajurveda 1,776.
+* **Epic:** Mahābhārata 90,789 plus associated Epic-era works.
+* **Kāvya:** Raghuvaṃśa, Kumārasambhava, Meghadūta, Kāvyādarśa.
+* **Mīmāṃsā/Nyāya:** Tantravārttika 6,171 and Nyāyamañjarī 7,763.
+* **Buddhist philosophy:** Tattvasaṃgraha, Tattvasaṃgrahapañjikā, Madhyāntavibhāga materials, Triṃśikā, Viṃśatikā, Pañcaskandhaprakaraṇa.
+* **Ayurveda:** Suśrutasaṃhitā 10,233.
+* **Purāṇic:** Śiva, Skanda, Viṣṇu and other Purāṇas.
+* **Śaiva Tantra:** **Tantrāloka: 4,550 pairs**.
+* **Later scholastic:** Sarvadarśanasaṃgraha and other medieval works. ([arXiv][1])
+
+That last point matters: **Tantrāloka is already inside the strongest published Sanskrit MT benchmark.** But there is currently no separate benchmark specifically designed around Trika terminology, Abhinavagupta's argumentative prose, commentary boundaries, technical polysemy, etc. Mitrasaṃgraha merely treats it as one work/domain among many. ([arXiv][1])
+
+### Its most important finding is actually about evaluation
+
+They took **seven high-quality human translations of 100 Bhagavad-gītā verses** and compared them pairwise.
+
+Average human-vs-human scores were only:
+
+* BLEU: **25.2**
+* chrF: **44.0**
+
+In other words, even good humans look surprisingly “wrong” to lexical-overlap metrics because valid Sanskrit translations diverge dramatically in wording. ([arXiv][1])
+
+They then compared automatic metrics against expert judgments:
+
+**BLEURT and GEMBA/GEMBA*** correlated substantially better than BLEU/chrF. GEMBA* is particularly interesting because it evaluates the Sanskrit source against the candidate **without requiring a reference translation**. ([arXiv][1])
+
+That is probably the single most important empirical result for any Sanskrit translation-evaluation project right now.
+
+---
+
+# 2. Itihāsa — the classic Epic benchmark
+
+**Aralikatte et al., 2021 — “Itihasa: A large-scale corpus for Sanskrit to English translation”**
+
+ACL:
+
+`https://aclanthology.org/2021.wat-1.22/`
+
+PDF:
+
+`https://aclanthology.org/2021.wat-1.22.pdf`
+
+GitHub:
+
+`https://github.com/rahular/itihasa`
+
+It contains **93,000 Sanskrit śloka–English translation pairs** from the **Rāmāyaṇa and Mahābhārata** and benchmarks standard MT architectures on them. ([ACL Anthology][2])
+
+This was the major Sanskrit→English resource before Mitrasaṃgraha.
+
+It's still useful because it gives you a reasonably coherent test of:
+
+**Epic Sanskrit + śloka syntax + verse compression + freer word order.**
+
+But don't call performance on Itihāsa “Sanskrit translation performance.” It tells you very little about Śatapatha Brāhmaṇa, Navya-Nyāya, Buddhist scholastic Sanskrit or Abhinavagupta.
+
+---
+
+# 3. Sāmayik — contemporary English↔Sanskrit
+
+**Maheshwari et al.**
+
+arXiv:
+
+`https://arxiv.org/abs/2305.14004`
+
+PDF:
+
+`https://arxiv.org/pdf/2305.14004`
+
+ACL/LREC:
+
+`https://aclanthology.org/2024.lrec-main.1245/`
+
+GitHub:
+
+`https://github.com/ayushbits/saamayik`
+
+Around **53,000 English-Sanskrit sentence pairs**, explicitly intended to represent **contemporary Sanskrit prose** rather than classical verse. Sources include pedagogical materials, tutorials and modern spoken/written material. ([arXiv][3])
+
+They benchmark adaptations of several multilingual pretrained MT models.
+
+Very useful—but it measures almost the opposite distribution from Tantrāloka or the Ṛgveda.
+
+---
+
+# 4. Samasāmayik — Hindi↔Sanskrit, 2026
+
+**Karthika et al., 2026**
+
+Paper:
+
+`https://arxiv.org/abs/2603.24307`
+
+HTML:
+
+`https://arxiv.org/html/2603.24307`
+
+PDF:
+
+`https://arxiv.org/pdf/2603.24307`
+
+GitHub:
+
+`https://github.com/karthika95/samasaamayik`
+
+**92,196 Hindi-Sanskrit pairs**, including **90,016 training** examples and **1,839 test pairs**. Sources include Spoken Tutorials, Chandamama, Mann Ki Baat and instructional materials. Models benchmarked include ByT5, NLLB and IndicTrans-v2. ([arXiv][4])
+
+Again: excellent **modern Sanskrit**, not historical Sanskrit.
+
+---
+
+# 5. Santham — extremely interesting methodologically
+
+**“Santham: A Curated Sanskrit–Tamil Dataset with Anvaya and Segmentation for Building and Evaluating Machine Translation” — ISCLS 2026**
+
+Paper:
+
+`https://aclanthology.org/2026.iscls-1.5/`
+
+PDF:
+
+`https://aclanthology.org/2026.iscls-1.5.pdf`
+
+This is important because it stops treating Sanskrit translation as just `"input string → target string"`.
+
+It explicitly studies:
+
+**sandhi/word segmentation → anvaya/reordered representation → translation.**
+
+That is much closer to traditional Sanskrit reading methodology. ([ACL Anthology][5])
+
+For a Sanskrit-specific evaluation architecture, I would steal this idea aggressively. You can evaluate separately:
+
+> Can the model segment it?
+> Can it recover the syntactic/anvaya structure?
+> Can it identify the correct relations?
+> Can it translate the recovered structure?
+> Can it then produce readable idiomatic English?
+
+That tells you *where* an LLM failed.
+
+---
+
+# 6. Rao & Gopinath 2023 — the hidden gem
+
+**“A Sanskrit grammar-based approach to identify and analyse translation problems”**
+
+ACL:
+
+`https://aclanthology.org/2023.clasp-1.16/`
+
+PDF:
+
+`https://aclanthology.org/2023.clasp-1.16.pdf`
+
+This isn't a massive corpus. That's why it's more interesting.
+
+They construct a **small handcrafted diagnostic probe suite** aimed at linguistic phenomena expected to break Sanskrit↔English translation rather than throwing thousands of random sentences at a system. ([ACL Anthology][6])
+
+It includes roughly **98 Sanskrit→English and 31 English→Sanskrit cases** and probes things such as:
+
+* sandhi
+* samāsa
+* derivational morphology
+* number, including dual
+* gender
+* Sanskrit-specific constructions
+* grammatical divergences between Sanskrit and English
+
+This is basically **unit testing for MT**.
+
+A serious benchmark should combine **Mitrasaṃgraha-style corpus evaluation + Rao-style controlled diagnostics**.
+
+---
+
+# 7. Chandomitra — semantic fidelity under Sanskrit metrical constraints
+
+Paper:
+
+`https://arxiv.org/abs/2506.00815`
+
+PDF:
+
+`https://arxiv.org/pdf/2506.00815`
+
+ACL 2026:
+
+`https://aclanthology.org/2026.eacl-long.24/`
+
+Chandomitra asks models to produce **structured Sanskrit anuṣṭubh poetry from English**. It therefore separates aspects like syntactic/metre validity from semantic preservation and uses human judgments on roughly a thousand English-Sanskrit pairs to select semantic metrics. ([arXiv][7])
+
+Not a normal Sanskrit→English benchmark, but extremely useful for a **kāvya evaluation layer** because it demonstrates why you need independent dimensions for:
+
+**meaning / grammar / meter / poetic acceptability.**
+
+---
+
+# 8. SansTib — Buddhist Sanskrit deserves its own category
+
+**Sebastian Nehrdich, 2022**
+
+Paper:
+
+`https://aclanthology.org/2022.lrec-1.724/`
+
+PDF:
+
+`https://aclanthology.org/2022.lrec-1.724.pdf`
+
+GitHub:
+
+`https://github.com/sebastian-nehrdich/sanstib`
+
+It contains about **317,289 Sanskrit–Classical Tibetan sentence pairs** from Buddhist texts. It additionally contains three manually aligned gold datasets totalling **6,916 pairs**, enabling proper alignment/translation evaluation rather than relying entirely on automatically mined pairs. ([ACL Anthology][8])
+
+This matters enormously because **Buddhist Sanskrit should not simply be another random slice of “Classical Sanskrit.”**
+
+If you want model capability on Buddhist literature, evaluate that independently.
+
+---
+
+# 9. MITRA — Buddhist multilingual evaluation at much larger scale
+
+**Nehrdich & Keutzer, 2026**
+
+Paper:
+
+`https://arxiv.org/abs/2601.06400`
+
+HTML:
+
+`https://arxiv.org/html/2601.06400`
+
+PDF:
+
+`https://arxiv.org/pdf/2601.06400`
+
+Repository:
+
+`https://github.com/dharmamitra/mitra-parallel`
+
+Search corpus:
+
+`https://dharmanexus.org`
+
+MITRA has **1,742,786 parallel sentence pairs** involving Sanskrit, Tibetan and Buddhist Chinese, alongside MT and cross-lingual retrieval models. It benchmarks translation from Sanskrit, Pāli, Tibetan and Buddhist Chinese into English. ([arXiv][9])
+
+For Sanskrit evaluation it uses **5,552 Sanskrit-English pairs across several domains**, including Buddhist sūtra material as well as non-Buddhist Vedic/poetic material. Its MT evaluations use GEMBA with an LLM judge. ([arXiv][9])
+
+This and SansTib are the strongest current foundations for a **Buddhist Sanskrit-specific evaluation track**.
+
+---
+
+# 10. Generic multilingual Sanskrit benchmarks
+
+These are useful for evaluating language coverage, but **do not confuse them with historical Sanskrit benchmarks**.
+
+### IndicGenBench / FLORES-IN
+
+Paper:
+
+`https://arxiv.org/abs/2404.16816`
+
+GitHub:
+
+`https://github.com/google-research-datasets/indic-gen-bench`
+
+IndicGenBench evaluates generation over **29 Indic languages**, including translation through FLORES-IN, alongside summarization and QA. ([arXiv][10])
+
+### IndicTrans2 / IN22
+
+Paper:
+
+`https://arxiv.org/abs/2305.16307`
+
+GitHub:
+
+`https://github.com/AI4Bharat/IndicTrans2`
+
+IN22 was constructed as an n-way benchmark across India's 22 scheduled languages, with Wiki/Web/general and conversational subsets. ([arXiv][11])
+
+These answer:
+
+> “Can this multilingual model translate Sanskrit-like modern sentences?”
+
+They emphatically do **not** answer:
+
+> “Can this model translate a Śatapatha Brāhmaṇa ritual passage?”
+
+or
+
+> “Does it understand Utpaladeva's technical use of vimarśa?”
+
+---
+
+# 11. SAHAAYAK — huge training corpus, weaker as a benchmark
+
+Paper:
+
+`https://arxiv.org/abs/2307.00021`
+
+It contains approximately **1.5 million Sanskrit-Hindi pairs** spanning news, conversation, politics, history, sports and ancient Indian literature. ([arXiv][12])
+
+Excellent for training/data mining.
+
+I would **not** treat “1.5M pairs” as “1.5M benchmark items.” The critical benchmark property is a small, clean, independent and ideally human-verified held-out set.
+
+---
+
+# 12. Older Sanskrit→Hindi experimental benchmark
+
+**Kumar, Jha & Sahula 2020**
+
+`https://arxiv.org/abs/2006.08332`
+
+PDF:
+
+`https://arxiv.org/pdf/2006.08332`
+
+They constructed a **300-pair Sanskrit-Hindi test corpus** from Madhya Pradesh government/news material to test zero-shot MT via English. Evaluation used BLEU. ([arXiv][13])
+
+Historically useful, but methodologically primitive relative to 2026 work.
+
+---
+
+# 13. Bhagavad Gītā-specific LLM evaluations
+
+There are also narrowly scoped evaluations rather than reusable benchmarks.
+
+### Google Translate evaluation, 2023
+
+`https://arxiv.org/abs/2303.07201`
+
+They compare Google Sanskrit→English outputs to expert Bhagavad-gītā translations using BERT-derived semantic/sentiment analyses plus qualitative inspection. ([arXiv][14])
+
+### LLM + Google comparison, 2025
+
+`https://arxiv.org/abs/2503.21393`
+
+Compares GPT/Gemini/Google Translate with expert translations for Sanskrit Bhagavad-gītā alongside Hindi and Telugu literary texts. ([arXiv][15])
+
+Useful historical evaluations, but **sentiment preservation is nowhere near sufficient as a translation-fidelity metric for philosophical Sanskrit**.
+
+---
+
+# Now the really important part: how should Sanskrit MT actually be evaluated?
+
+The wider MT-evaluation literature has advanced well beyond BLEU.
+
+## The foundational metric stack
+
+| Method      | Idea                            | Sanskrit use                 |
+| ----------- | ------------------------------- | ---------------------------- |
+| BLEU        | word n-gram overlap             | legacy compatibility only    |
+| chrF/chrF++ | character n-grams               | useful secondary metric      |
+| BERTScore   | contextual embedding similarity | semantic similarity          |
+| BLEURT      | learned human-judgment metric   | **strong Sanskrit evidence** |
+| COMET       | source + hypothesis + reference | strong modern MT metric      |
+| xCOMET      | score + localized errors        | excellent audit layer        |
+| MetricX     | neural translation evaluator    | strong current baseline      |
+| GEMBA       | LLM-as-judge                    | **strong Sanskrit evidence** |
+| MQM         | expert error annotation         | human gold standard          |
+
+### BLEU
+
+Papineni et al.:
+
+`https://aclanthology.org/P02-1040/`
+
+### chrF
+
+`https://aclanthology.org/W15-3049/`
+
+### chrF++
+
+`https://aclanthology.org/W17-4770/`
+
+### SacreBLEU
+
+`https://aclanthology.org/W18-6319/`
+
+If you publish BLEU/chrF at all, use SacreBLEU so preprocessing and tokenization are reproducible.
+
+### BERTScore
+
+`https://arxiv.org/abs/1904.09675`
+
+### BLEURT
+
+`https://arxiv.org/abs/2004.04696`
+
+This matters particularly because Mitrasaṃgraha's Sanskrit-specific study found BLEURT much closer to expert judgments than BLEU/chrF. ([arXiv][1])
+
+### COMET
+
+`https://arxiv.org/abs/2009.09025`
+
+COMET learns prediction of human MT judgments using source, translation and reference rather than simple surface matching. ([arXiv][16])
+
+### xCOMET
+
+`https://arxiv.org/abs/2310.10482`
+
+Particularly valuable because it aims to produce **fine-grained error spans**, not merely one mysterious quality score.
+
+### GEMBA
+
+`https://arxiv.org/abs/2302.14520`
+
+And GEMBA-MQM:
+
+`https://arxiv.org/abs/2310.13988`
+
+This is directly relevant because Mitrasaṃgraha experimentally validates GEMBA/GEMBA* on Sanskrit expert judgments. ([arXiv][1])
+
+---
+
+# Three newer papers I'd absolutely steal methodology from
+
+These may actually be more important than generic MT work.
+
+## PaliBench 2026
+
+**“PaliBench: A Multi-Reference Blueprint for Classical Language Translation Evaluation”**
+
+`https://arxiv.org/abs/2605.16881`
+
+`https://arxiv.org/html/2605.16881`
+
+This is almost tailor-made as a blueprint for Sanskrit.
+
+It aligns **three independent scholarly translations** of Sutta Piṭaka material, producing **1,700 passages / 8,389 segments / ~345k tokens**. It explicitly addresses the central problem that classical texts admit multiple legitimate scholarly translations. ([arXiv][17])
+
+The workflow is excellent:
+
+**independent scholarly translations → LLM-assisted alignment → source verification → passage filtering → formulaic deduplication → multi-reference evaluation.**
+
+For Sanskrit, do this.
+
+Don't make one English translator “truth.”
+
+---
+
+## Pāli translation auditing follow-up
+
+`https://arxiv.org/abs/2606.01136`
+
+This goes beyond aggregate scores toward triaging suspicious translations and then applying calibrated human/model review. It explicitly frames ancient-language translation as a different reliability problem from modern-language MT. ([arXiv][18])
+
+---
+
+## Classical Chinese diagnostic benchmark — published eight days ago
+
+**Quinjica et al., 8 August 2026**
+
+`https://arxiv.org/abs/2608.08283`
+
+This is probably the freshest paper in the area.
+
+Instead of asking only:
+
+> Does MetricX correlate with humans overall?
+
+they construct **minimal-pair errors appropriate to a historical language**, then test whether metrics can:
+
+1. reject a deliberately corrupted translation;
+2. accept a legitimately different translation.
+
+All tested metrics have blind spots; **MetricX-24 performs best overall** in their experiments. ([arXiv][19])
+
+This is exactly what Sanskrit needs.
+
+For example:
+
+**correct**
+
+> “Knowledge arises from memory.”
+
+vs deliberately corrupted:
+
+> “Knowledge does **not** arise from memory.”
+
+A Sanskrit evaluation metric that gives these nearly identical scores has failed the benchmark.
+
+---
+
+# Ancient Greek gives another excellent model
+
+**Zainaldin et al., 2026 — Ancient Greek technical prose**
+
+`https://arxiv.org/abs/2602.24119`
+
+They translate **20 paragraph-sized Galen passages**, including material with published translations and previously untranslated technical material, using ChatGPT, Claude and Gemini, then compare **seven automatic metrics against reference-free expert MQM-style assessment**. ([arXiv][20])
+
+This is exactly the methodology needed for:
+
+* Ayurveda
+* Nyāya
+* Mīmāṃsā
+* grammar
+* astronomy
+* Kashmir Śaivism
+
+because technical terminology can be far more important than fluent English.
+
+---
+
+# Literary translation has its own evaluation problem
+
+For Sanskrit kāvya you shouldn't even assume MQM alone is sufficient.
+
+### LITEVAL
+
+`https://arxiv.org/abs/2410.18697`
+
+It contains multiple human translations plus outputs from nine MT systems. Its experiments find that ordinary MT metrics, and even standard MQM implementations, can behave poorly when the task is genuinely literary. ([arXiv][21])
+
+### TransProQA
+
+`https://arxiv.org/abs/2505.05423`
+
+A reference-free QA-oriented evaluator explicitly targeting things such as literary devices, cultural knowledge and authorial voice. ([arXiv][22])
+
+### MENT / RATE
+
+`https://arxiv.org/abs/2601.07338`
+
+Code:
+
+`https://github.com/BITHLP/RATE`
+
+MENT contains **7,530 human ratings** focused specifically on **non-literal translation**; RATE uses a multi-agent evaluator. The work finds significant weaknesses in both traditional metrics and naive LLM judges. ([arXiv][23])
+
+This is highly relevant to:
+
+**upamā, rūpaka, śleṣa, dhvani, double entendre and deliberately polyvalent tantric language.**
+
+---
+
+# The Sanskrit benchmark is currently missing the most important distinction
+
+The eventual benchmark should not have:
+
+> Sanskrit → English: 76.3
+
+It should look more like this:
+
+| Historical/technical stratum     | Current coverage                             | Dedicated benchmark?             |
+| -------------------------------- | -------------------------------------------- | -------------------------------- |
+| **Ṛgvedic/early Vedic**          | Mitrasaṃgraha                                | ❌                                |
+| **Yajurvedic ritual prose**      | Mitrasaṃgraha                                | ❌                                |
+| **Brāhmaṇa Sanskrit**            | Śatapatha in Mitrasaṃgraha                   | ❌                                |
+| **Early Upaniṣadic**             | partial                                      | ❌                                |
+| **Epic Sanskrit**                | Itihāsa + Mitrasaṃgraha                      | **Yes-ish**                      |
+| **Classical kāvya**              | Mitrasaṃgraha                                | ❌                                |
+| **Buddhist Sanskrit**            | Mitrasaṃgraha + SansTib/MITRA                | **Reasonably strong**            |
+| **Mādhyamika/Yogācāra**          | partial                                      | ❌ dedicated MT                   |
+| **Nyāya**                        | Mitrasaṃgraha                                | ❌                                |
+| **Mīmāṃsā**                      | Mitrasaṃgraha                                | ❌                                |
+| **Vedānta**                      | Mitrasaṃgraha                                | ❌                                |
+| **Sāṃkhya/Yoga**                 | partial                                      | ❌                                |
+| **Jain Sanskrit**                | very little standardized MT evaluation found | **major gap**                    |
+| **Purāṇic Sanskrit**             | large Mitrasaṃgraha component                | ❌                                |
+| **Śaiva/Śākta Tantra**           | Tantrāloka 4,550                             | **major gap**                    |
+| **Kashmir Śaiva scholasticism**  | essentially Tantrāloka slice                 | **major gap**                    |
+| **Ayurvedic/technical**          | Suśruta 10,233                               | ❌                                |
+| **Medieval scholastic Sanskrit** | Mitrasaṃgraha                                | ❌                                |
+| **Navya-Nyāya**                  | weak                                         | **major gap**                    |
+| **Contemporary Sanskrit**        | Sāmayik/Samasāmayik/IN22                     | **strongest dedicated coverage** |
+
+The “dedicated benchmark” judgments above are my synthesis of the published benchmark landscape I found, rather than claims made by one paper. Mitrasaṃgraha itself explicitly identifies previous coverage as narrow by period/domain, despite its major expansion of that coverage. ([arXiv][1])
+
+## I would also split **genre** independently from date
+
+Because:
+
+**Ṛgvedic hymn ≠ Śatapatha ritual prose**
+
+despite both being “Vedic.”
+
+And:
+
+**Kālidāsa poetry ≠ Buddhist śāstra ≠ Nyāya prose ≠ Abhinavagupta**
+
+despite all potentially landing somewhere within a broad Classical-period bucket.
+
+So your evaluation cube wants:
+
+**period × tradition × genre × linguistic phenomenon × translation objective.**
+
+---
+
+# What the serious Sanskrit benchmark should look like
+
+I'd combine the strongest ideas above into five layers.
+
+### Layer 1 — clean passage benchmark
+
+Not isolated random sentences only.
+
+Use 3–10 sentence/verse contextual passages with:
+
+* work
+* approximate date
+* tradition
+* genre
+* author
+* commentary/base-text status
+* translator
+* edition
+* preceding context
+* following context.
+
+Score models separately by every stratum.
+
+### Layer 2 — multi-reference scholarly translation
+
+Steal **PaliBench**.
+
+Where possible, give each source **3+ genuinely independent human translations**.
+
+Otherwise a model gets punished merely for disagreeing with one scholar's interpretive choices. PaliBench was explicitly designed around this problem. ([arXiv][17])
+
+### Layer 3 — Sanskrit linguistic unit tests
+
+Steal **Rao/Gopinath + Classical Chinese minimal-pair diagnostics**. ([ACL Anthology][6])
+
+I'd explicitly test:
+
+1. sandhi resolution
+2. samāsa segmentation
+3. samāsa semantic relation
+4. morphological analysis
+5. kāraka/semantic roles
+6. dual/plural distinction
+7. gender agreement
+8. pronoun/anaphora resolution
+9. negation
+10. negation scope
+11. modality
+12. imperative/optative
+13. tense/aspect
+14. Vedic verbal phenomena
+15. ellipsis
+16. long-distance dependency
+17. relative-correlative structures
+18. iti quotation scope
+19. prose versus verse word order
+20. commentary versus quoted root text.
+
+Then deliberately mutate **exactly one semantic feature** and test whether the evaluator catches it.
+
+### Layer 4 — philological error taxonomy
+
+MQM, but Sanskrit-specific:
+
+**CRITICAL**
+
+* negation reversed
+* agent/patient reversed
+* doctrinal claim reversed
+* source material omitted
+* hallucinated assertion.
+
+**MAJOR**
+
+* wrong compound interpretation
+* incorrect technical term
+* wrong antecedent
+* mistaken quotation/commentary boundary
+* wrong verbal mood
+* substantial interpretive addition.
+
+**MINOR**
+
+* register
+* stylistic awkwardness
+* unnecessary literalism
+* formatting/transliteration inconsistency.
+
+Then tradition-specific extensions.
+
+For **Trika**, for instance:
+
+* prakāśa
+* vimarśa
+* spanda
+* svātantrya
+* ābhāsa
+* parāmarśa
+* pratyabhijñā
+* śakti
+* saṃvid
+* aham
+
+should not simply be treated as dictionary lemmas. You want to know whether the model preserves the **technical sense in that author/work/context**.
+
+### Layer 5 — multiple scorers
+
+I would report:
+
+**SacreBLEU + chrF++**
+for comparability,
+
+then:
+
+**BLEURT + COMET + MetricX/xCOMET**
+
+then two LLM judges:
+
+**reference-based + reference-free**
+
+and finally:
+
+**human Sanskrit scholar MQM/ESA on a calibrated subset.**
+
+Most importantly, don't let the LLM judge become unquestioned truth. The newest Classical Chinese work demonstrates that even sophisticated metrics have language-specific blind spots. ([arXiv][19])
+
+---
+
+## The most valuable research opportunity
+
+There is now a reasonably good **general Sanskrit MT dataset**.
+
+What appears still largely nonexistent is a **philologically defensible Sanskrit translation benchmark** where the hierarchy is:
+
+> Sanskrit
+> → historical layer
+> → literary/technical register
+> → tradition
+> → school
+> → author
+> → work
+> → grammatical phenomenon
+> → technical concept.
+
+And then evaluation uses:
+
+> **multi-reference humans + controlled error probes + automated semantic metrics + blinded Sanskrit experts.**
+
+That would be substantially more scientifically useful than another 100k parallel-pair dump.
+
+In particular, **Śaiva/Tantric Sanskrit is almost absurdly under-benchmarked**: the strongest broad benchmark contains 4,550 Tantrāloka pairs, but I found no dedicated published benchmark designed to measure Trika/Tantric translation competence as its own linguistic-philosophical domain. ([arXiv][1])
+
+The combination I'd treat as the methodological foundation is:
+
+**Mitrasaṃgraha**
+`https://arxiv.org/abs/2601.07314`
+
+* **PaliBench**
+  `https://arxiv.org/abs/2605.16881`
+
+* **Rao/Gopinath grammar probes**
+  `https://aclanthology.org/2023.clasp-1.16/`
+
+* **Classical Chinese diagnostic metrics**
+  `https://arxiv.org/abs/2608.08283`
+
+* **Ancient Greek expert/MQM evaluation**
+  `https://arxiv.org/abs/2602.24119`
+
+* **LITEVAL for kāvya**
+  `https://arxiv.org/abs/2410.18697`
+
+* **xCOMET/MetricX/GEMBA for automated auditing**.
+
+That combination essentially gives you the design for a **first serious diachronic + tradition-aware Sanskrit LLM translation benchmark**, rather than merely another MT dataset.
+
+[1]: https://arxiv.org/html/2601.07314v1 "Mitrasaṃgraha: A Comprehensive Classical Sanskrit Machine Translation Dataset"
+[2]: https://aclanthology.org/2021.wat-1.22/?utm_source=chatgpt.com "A large-scale corpus for Sanskrit to English translation"
+[3]: https://arxiv.org/abs/2305.14004?utm_source=chatgpt.com "Sāmayik: A Benchmark and Dataset for English-Sanskrit Translation"
+[4]: https://arxiv.org/abs/2603.24307?utm_source=chatgpt.com "Samasāmayik: A Parallel Dataset for Hindi-Sanskrit Machine Translation"
+[5]: https://aclanthology.org/2026.iscls-1.5/?utm_source=chatgpt.com "Santham: A Curated Sanskrit–Tamil Dataset with Anvaya ..."
+[6]: https://aclanthology.org/2023.clasp-1.16v1.pdf?utm_source=chatgpt.com "A Sanskrit grammar-based approach to identify and ..."
+[7]: https://arxiv.org/pdf/2506.00815?utm_source=chatgpt.com "Chandomitra: Towards Generating Structured Sanskrit ..."
+[8]: https://aclanthology.org/2022.lrec-1.724/?utm_source=chatgpt.com "SansTib, a Sanskrit - Tibetan Parallel Corpus and Bilingual ..."
+[9]: https://arxiv.org/html/2601.06400v1?utm_source=chatgpt.com "MITRA: A Large-Scale Parallel Corpus and Multilingual ..."
+[10]: https://arxiv.org/abs/2404.16816?utm_source=chatgpt.com "IndicGenBench: A Multilingual Benchmark to Evaluate Generation Capabilities of LLMs on Indic Languages"
+[11]: https://arxiv.org/abs/2305.16307?utm_source=chatgpt.com "IndicTrans2: Towards High-Quality and Accessible Machine Translation Models for all 22 Scheduled Indian Languages"
+[12]: https://arxiv.org/abs/2307.00021?utm_source=chatgpt.com "SAHAAYAK 2023 -- the Multi Domain Bilingual Parallel Corpus of Sanskrit to Hindi for Machine Translation"
+[13]: https://arxiv.org/abs/2006.08332?utm_source=chatgpt.com "An Augmented Translation Technique for low Resource language pair: Sanskrit to Hindi translation"
+[14]: https://arxiv.org/abs/2303.07201?utm_source=chatgpt.com "An evaluation of Google Translate for Sanskrit to English translation via sentiment and semantic analysis"
+[15]: https://arxiv.org/abs/2503.21393?utm_source=chatgpt.com "An evaluation of LLMs and Google Translate for translation of selected Indian languages via sentiment and semantic analyses"
+[16]: https://arxiv.org/abs/2009.09025?utm_source=chatgpt.com "COMET: A Neural Framework for MT Evaluation"
+[17]: https://arxiv.org/html/2605.16881v1?utm_source=chatgpt.com "PaliBench: A Multi-Reference Blueprint for Classical ..."
+[18]: https://arxiv.org/pdf/2606.01136?utm_source=chatgpt.com "Auditing Pali-to-English LLM Translations with Multi- ..."
+[19]: https://arxiv.org/abs/2608.08283?utm_source=chatgpt.com "Do Evaluation Metrics Detect Errors in Classical Chinese to English Translations?"
+[20]: https://arxiv.org/pdf/2602.24119?utm_source=chatgpt.com "Zainaldin et al. 2026 1 Evaluating LLM-Based Translation ..."
+[21]: https://arxiv.org/abs/2410.18697?utm_source=chatgpt.com "How Good Are LLMs for Literary Translation, Really? Literary Translation Evaluation with Humans and LLMs"
+[22]: https://arxiv.org/abs/2505.05423?utm_source=chatgpt.com "TransProQA: an LLM-based literary Translation evaluation metric with Professional Question Answering"
+[23]: https://arxiv.org/abs/2601.07338?utm_source=chatgpt.com "Beyond Literal Mapping: Benchmarking and Improving Non-Literal Translation Evaluation"

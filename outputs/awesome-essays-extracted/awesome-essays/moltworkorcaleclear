@@ -1,0 +1,378 @@
+Exactly. That is probably the cleanest articulation of Moltwork so far:
+
+> **Moltwork = DefiLlama/Dune for economic work first, then an execution layer on top of that data, then a market for the reusable production system that emerges from execution.**
+
+The important thing is the ordering.
+
+```text
+1. OBSERVE
+   all economic work/demand
+
+2. NORMALIZE
+   make different markets queryable together
+
+3. ANALYZE
+   derive demand, competition, pricing, success signals
+
+4. EXECUTE
+   give an agent a Recipe for exploiting an opportunity
+
+5. RECORD
+   capture exactly how the work was produced
+
+6. EXTRACT
+   turn useful pieces of that process into Parts/Recipes/Services
+
+7. SELL / REUSE
+   other agents consume those productive inputs
+
+8. LEARN
+   observe downstream economic outcomes
+```
+
+That is a very strong flywheel.
+
+## The data product is the wedge
+
+The first reason anybody should install the Moltwork MCP is not:
+
+> “Come join our marketplace.”
+
+It is:
+
+> **“Ask one API where agents can make money right now.”**
+
+Something like:
+
+```text
+moltwork.search_opportunities(
+    capability="research",
+    min_reward=5,
+    max_competition=10
+)
+```
+
+or:
+
+```text
+moltwork.market_gap(
+    market="x402",
+    category="data",
+    window="30d"
+)
+```
+
+or:
+
+```text
+moltwork.trending_demand(
+    growth_min=0.20,
+    competition_max=5
+)
+```
+
+That is immediately useful to any autonomous worker, even if it never buys anything on Moltwork.
+
+This is exactly how you get distribution for the MCP.
+
+---
+
+## Then Recipes are just queries + execution knowledge
+
+This is the next really good abstraction.
+
+A Recipe doesn't need to be some mystical agent workflow.
+
+It can initially be:
+
+```yaml
+name: x402-undervalued-data-service
+
+inputs:
+  - oracle.services
+  - oracle.category_metrics
+  - oracle.pricing_history
+
+selection:
+  organic_buyers_30d: ">10"
+  buyer_growth_7d: ">20%"
+  service_count: "<8"
+  median_price: "<0.05"
+
+process:
+  - identify underserved request pattern
+  - inspect top 5 competitors
+  - build a differentiated endpoint
+  - test against benchmark
+  - publish to x402
+  - monitor usage
+
+output:
+  type: x402_service
+```
+
+So:
+
+```text
+NORMALIZED DATA
+      ↓
+   RECIPE
+      ↓
+WorkerKit
+      ↓
+ economic output
+```
+
+And because the inputs are canonical Moltwork data, Recipes become portable.
+
+---
+
+## Then the really valuable thing happens after the work
+
+Suppose the agent completes:
+
+```text
+"Produce a report on emerging x402 payment services"
+```
+
+The actual WorkRun might contain:
+
+```text
+sources
+├ Coinbase Bazaar
+├ x402watch
+└ 402radar
+
+process
+├ deduplicate providers
+├ classify categories
+├ filter suspected wash activity
+├ calculate buyer concentration
+├ rank growth
+└ produce report
+
+tools
+├ x402 normalizer
+├ wash-volume classifier
+├ citation validator
+└ report renderer
+```
+
+The **report** is only one economic output.
+
+The run may have created:
+
+```text
+Product
+→ x402 Market Report
+
+Part
+→ normalized x402 provider dataset
+
+Part
+→ category classifier
+
+Part
+→ wash-traffic scoring method
+
+Recipe
+→ how to find underserved x402 niches
+
+Service
+→ continuously updated market-gap endpoint
+
+WorkerConfig
+→ x402 market analyst
+```
+
+That's the wholesale economy.
+
+---
+
+## This is why recording the process matters so much
+
+Most agent systems only store:
+
+```text
+input
+output
+```
+
+Moltwork wants:
+
+```text
+WHY THIS JOB?
+WHAT DATA?
+WHAT PARTS?
+WHAT TOOLS?
+WHAT RECIPE?
+WHICH WORKER CONFIG?
+WHAT DID IT COST?
+WHAT WAS PRODUCED?
+WHERE WAS IT SUBMITTED?
+DID IT WIN/SELL?
+WHAT WAS REUSED LATER?
+```
+
+Then you can eventually answer genuinely valuable questions like:
+
+> Workers using `citation-verifier-v4` win research jobs 8.3% more often.
+
+or:
+
+> `x402-category-normalizer-v2` has been used in 3,821 downstream WorkRuns responsible for $14,320 of externally verified revenue.
+
+That is much stronger than:
+
+> “4.8 stars, 193 reviews.”
+
+---
+
+# The resulting stack becomes extremely coherent
+
+```text
+                    MOLTWORK
+
+                 ┌────────────┐
+                 │   ORACLE   │
+                 │ DefiLlama  │
+                 │ for work   │
+                 └─────┬──────┘
+                       │
+                  normalized
+                economic data
+                       │
+                       ▼
+                 ┌──────────┐
+                 │ RECIPES  │
+                 │ what to  │
+                 │ do       │
+                 └────┬─────┘
+                      │
+                      ▼
+                ┌───────────┐
+                │ WORKERKIT │
+                │ do it     │
+                └────┬──────┘
+                     │
+                  WorkRun
+                     │
+                     ▼
+                ┌───────────┐
+                │ WORKSHOP  │
+                │ extract   │
+                │ reusable  │
+                │ pieces    │
+                └────┬──────┘
+                     │
+          ┌──────────┼───────────┐
+          ▼          ▼           ▼
+        PARTS      RECIPES     SERVICES
+          │          │           │
+          └──────────┼───────────┘
+                     ▼
+              other workers
+                     │
+                     ▼
+              more WorkRuns
+                     │
+                     └──────→ Oracle
+```
+
+That loop is the company.
+
+## And it gives you three defensibility layers
+
+**Layer 1 — Data**
+
+Historical economic observations nobody else has accumulated:
+
+```text
+jobs
+prices
+buyer counts
+sales
+competition
+usage
+latency
+reviews
+settlements
+category trends
+```
+
+**Layer 2 — Execution evidence**
+
+Not just:
+
+> “Research jobs are available.”
+
+But:
+
+> “Workers with this configuration using this Recipe have historically earned X on this task family.”
+
+**Layer 3 — Production graph**
+
+Which Parts/Recipes/Services actually contribute to successful downstream outcomes.
+
+That third layer would be very difficult for a DefiLlama-style pure analytics competitor to reproduce.
+
+---
+
+## I would therefore make Oracle's API public/free early
+
+Probably aggressively so.
+
+Something like:
+
+```text
+GET /v1/markets
+GET /v1/opportunities
+GET /v1/services
+GET /v1/categories
+GET /v1/metrics
+GET /v1/trending
+GET /v1/gaps
+```
+
+MCP:
+
+```text
+find_work
+find_market_gap
+compare_markets
+get_service_metrics
+get_category_metrics
+get_recent_changes
+```
+
+Make the normalized basic data extremely easy to consume.
+
+Then commercial value can sit higher:
+
+```text
+raw data              FREE
+basic metrics          FREE
+MCP                    FREE
+
+deep historicals       maybe paid
+active probes          paid
+specialist datasets    paid
+Recipes                market
+Parts                  market
+WorkerConfigs          market
+execution              market
+```
+
+You don't need to monetize the first useful thing.
+
+You need agents to become dependent on asking Moltwork:
+
+> **“What should I work on?”**
+
+Once that happens, the rest of the stack has a natural distribution channel.
+
+And the cleanest north star for `/repute` now is probably:
+
+> **Build the best public dataset of autonomous economic activity on the internet.**
+
+Everything else can be derived from that. 

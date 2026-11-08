@@ -1,0 +1,462 @@
+Yes. The **theory → implementation → verified capability** loop is much more interesting than simply making GitGoblin scrape arXiv too.
+
+I’d keep **GitGoblin conceptually pure Git/code intelligence** and give research its own sensor. Current GitGoblin already ingests arXiv and OpenAlex, so you have working code to extract rather than starting again.
+
+### The split I’d use
+
+| Product                          | Primary question                                    |
+| -------------------------------- | --------------------------------------------------- |
+| **GitGoblin**                    | What is actually being built?                       |
+| **ResearchGoblin / PaperGoblin** | What new ideas/methods are emerging?                |
+| **QDW World**                    | How are those things related?                       |
+| **Forge**                        | Can this implementation become a usable capability? |
+| **Estate**                       | Should I use it for this task?                      |
+
+So the flow becomes:
+
+```text
+arXiv / OpenAlex / conferences
+              │
+              ▼
+       ResearchGoblin
+              │
+       TechniqueCandidate
+              │
+              ▼
+             QDW
+              │
+              ▼
+          GitGoblin
+  "find implementations of this"
+              │
+              ▼
+   ImplementationCandidate[]
+              │
+       evidence + confidence
+              │
+              ▼
+            Forge
+              │
+       build / benchmark
+              │
+              ▼
+          QDW Proof
+              │
+       promote / reject
+```
+
+That is extremely good.
+
+## GitGoblin should know code *deeply*
+
+Instead of making it another generalized news scanner, make it obsessive about the lifecycle of software:
+
+```text
+Repo
+├── commits
+├── PRs
+├── issues
+├── releases
+├── contributors
+├── dependencies
+├── package releases
+├── forks
+├── downstream dependents
+├── benchmarks
+├── CI health
+├── docs
+├── CITATION.cff
+├── referenced papers
+├── architecture changes
+└── capability changes
+```
+
+Then it can produce much richer signals than “repo is trending.”
+
+For example:
+
+```text
+CAPABILITY_INTRODUCED
+CAPABILITY_REMOVED
+ARCHITECTURE_CHANGED
+IMPLEMENTATION_CLAIMED
+PAPER_REFERENCED
+DEPENDENCY_ADOPTED
+BENCHMARK_IMPROVED
+MAINTAINER_ACTIVITY_CHANGED
+RELEASE_MOMENTUM_CHANGED
+DOWNSTREAM_ADOPTION_DETECTED
+PROJECT_ABANDONMENT_RISK
+FORK_BECOMING_CANONICAL
+COMPETING_IMPLEMENTATION_EMERGED
+```
+
+That fits the name **GitGoblin** much better.
+
+---
+
+# The killer function: `find_implementations()`
+
+This should eventually be one of GitGoblin's flagship API calls.
+
+Conceptually:
+
+```python
+gitgoblin.find_implementations(
+    technique={
+        "name": "contextual retrieval compression",
+        "paper_id": "arxiv:...",
+        "authors": [...],
+        "key_terms": [...],
+        "published_at": ...
+    }
+)
+```
+
+And return:
+
+```text
+ImplementationCandidate
+├── repository
+├── exact commit/release
+├── implementation_status
+├── relationship_type
+├── confidence
+├── evidence[]
+├── first_seen
+├── first_implementation_commit
+├── authorship_overlap
+├── citation evidence
+├── terminology overlap
+├── code evidence
+├── benchmark evidence
+└── maintenance state
+```
+
+Crucially, distinguish:
+
+```text
+OFFICIAL_IMPLEMENTATION
+AUTHOR_AFFILIATED
+EXPLICITLY_CITES
+CLAIMS_IMPLEMENTATION
+LIKELY_IMPLEMENTATION
+DERIVED_IMPLEMENTATION
+RELATED_TECHNIQUE
+UNVERIFIED_MATCH
+```
+
+Don't collapse semantic similarity into “implements.”
+
+---
+
+# How you actually link papers to code
+
+There are several evidence strengths.
+
+```text
+VERY STRONG
+paper explicitly links repo
+repo CITATION/README explicitly links paper
+same author/lab owns repo
+
+STRONG
+repo says "implementation of <paper>"
+paper DOI/arXiv ID in source/docs
+commit message explicitly references paper
+
+MEDIUM
+matching novel terminology
+matching algorithm/config names
+same benchmark + method
+release shortly after paper
+author identity overlap uncertain
+
+WEAK
+embedding / abstract similarity
+same general research topic
+```
+
+Then calculate something like:
+
+```text
+implementation_confidence =
+    explicit_reference
+  + authorship_overlap
+  + method_signature_match
+  + benchmark_overlap
+  + temporal_plausibility
+  + code_structure_evidence
+  - contradiction_penalties
+```
+
+And retain **every reason** rather than emitting an opaque score.
+
+This matters because static paper↔repo linking already exists in resources like Papers With Code, which explicitly models papers, code, datasets, methods and evaluation tables. ([Papers with Code][1]) The harder and more interesting problem is reliable traceability: prior empirical work found that repository↔paper links are incomplete and often one-directional, with many papers failing to link back to implementations. ([Papers with Code][2])
+
+Your version should therefore be **temporal + probabilistic + evidence-backed**, rather than another Papers With Code clone.
+
+---
+
+# ResearchGoblin should be correspondingly narrow
+
+I wouldn't call it `ArxivGoblin`, because arXiv is only one source.
+
+Something like:
+
+```text
+ResearchGoblin
+├── arXiv
+├── OpenAlex
+├── conference proceedings
+├── lab publication feeds
+├── author histories
+├── citations
+├── datasets
+├── benchmarks
+└── possibly research blogs
+```
+
+OpenAlex is useful specifically because its scholarly graph gives you structured works/authors/relationships rather than just an arXiv feed; its dataset is explicitly structured around scholarly entities and relations that can be queried or locally loaded. ([OpenAlex][3])
+
+Its ontology could be:
+
+```text
+Paper
+Technique
+Claim
+Result
+Benchmark
+Dataset
+Author
+Lab
+ResearchLine
+```
+
+And its useful signals:
+
+```text
+TECHNIQUE_EMERGED
+RESULT_REPLICATED
+RESULT_CONTRADICTED
+BENCHMARK_ADVANCED
+METHOD_CONVERGENCE
+RESEARCH_LINE_ACCELERATING
+NEW_CAPABILITY_CLAIMED
+CODE_NOT_FOUND
+```
+
+That last one is particularly useful.
+
+---
+
+# `CODE_NOT_FOUND` becomes an opportunity
+
+Imagine ResearchGoblin detects:
+
+```text
+Paper:
+new agent-memory technique
+
+Claim:
+30% lower context usage
+
+Independent papers:
+3
+
+Implementations:
+0
+```
+
+Then QDW sees:
+
+```text
+HIGH_RESEARCH_SIGNAL
++
+NO_PRODUCTION_IMPLEMENTATION
+=
+BUILD OPPORTUNITY
+```
+
+It could literally ask:
+
+```text
+ResearchGoblin
+     │
+new useful technique
+     │
+     ▼
+GitGoblin.find_implementations()
+     │
+     └── none credible
+             │
+             ▼
+       QDW Opportunity
+             │
+             ▼
+          Factory
+"implement paper as reusable library"
+             │
+             ▼
+         Repo2Bench
+             │
+             ▼
+        Verification
+             │
+             ▼
+          Forge
+```
+
+Now your system doesn't merely **discover software**.
+
+It can identify where theory has outrun implementation and autonomously build the missing bridge.
+
+That's a genuinely interesting QDW capability.
+
+---
+
+# And the opposite direction is equally useful
+
+GitGoblin may discover something **before academia describes it clearly**.
+
+```text
+GitGoblin
+ detects 7 unrelated agent frameworks
+ adopting similar checkpoint pattern
+             │
+             ▼
+Primitive:
+"transactional agent checkpointing"
+             │
+             ▼
+ResearchGoblin
+ search papers / methods
+             │
+       ┌─────┴─────┐
+       │           │
+ known theory    little theory
+       │           │
+       ▼           ▼
+ correlate     emerging practice
+```
+
+So you get both:
+
+```text
+THEORY → CODE
+```
+
+and:
+
+```text
+CODE → THEORY
+```
+
+That makes the combined intelligence graph much stronger.
+
+---
+
+# The object that joins everything should be `Technique`
+
+I wouldn't join paper directly to repo.
+
+Use:
+
+```text
+                    Technique
+                   /         \
+                  /           \
+             Paper             Repo
+               │                │
+             claims         implements
+               │                │
+               ▼                ▼
+            Result          Capability
+```
+
+For example:
+
+```text
+Technique:
+    speculative decoding
+
+Papers:
+    P1
+    P2
+    P3
+
+Implementations:
+    repo A @ commit X
+    repo B @ release Y
+
+Capabilities:
+    inference.latency.reduce
+
+Benchmarks:
+    benchmark B
+
+Evidence:
+    ...
+```
+
+Then a paper can be wrong without invalidating the technique identity, and one repo can implement several techniques.
+
+This is exactly the kind of identity/interpretation separation you already learned from Pāṭala.
+
+---
+
+# GitGoblin's most valuable features could then become
+
+Rather than expanding source breadth forever, I'd eventually aim for these ten things:
+
+1. **Find implementations of a paper/technique.**
+2. **Find what papers a repository actually implements.**
+3. **Detect new capabilities introduced by commits/releases.**
+4. **Detect convergent architecture across unrelated repositories.**
+5. **Track implementation genealogy** — who copied/derived/reimplemented what.
+6. **Measure real adoption**, especially package/dependency/downstream use rather than stars.
+7. **Find abandoned-but-good technology** with active successor forks.
+8. **Find the best-maintained implementation of a technique.**
+9. **Detect research→production lag** and missing implementations.
+10. **Watch an implementation and tell Forge when a new version deserves reevaluation.**
+
+That is a much sharper product than:
+
+> GitHub + arXiv + HN trend aggregator.
+
+---
+
+## And I would *not* split the code immediately
+
+There is a subtle distinction here.
+
+**Product boundary:** yes, separate them.
+
+```text
+GitGoblin     = code intelligence
+ResearchGoblin = research intelligence
+```
+
+**Repository/service boundary today:** not urgent.
+
+Your existing GitGoblin already has the arXiv/OpenAlex collectors.  I'd first refactor them behind a clean:
+
+```python
+ResearchProvider
+```
+
+contract and prove the theory→implementation loop.
+
+Once it works, extract that module into `researchgoblin` without changing the schemas.
+
+That avoids premature microservices while keeping the conceptual architecture clean.
+
+The eventual feature I'd be most excited about is essentially:
+
+> **“Here are the 20 most important agent papers from the last month, the exact repositories already implementing each idea, which implementations are credible, how quickly the idea crossed from research into software, which techniques still have no good implementation, and which implementation QDW has actually benchmarked and certified.”**
+
+That is substantially more useful than either an arXiv reader or GitHub Trending alone.
+
+[1]: https://paperswithcode.com/about?utm_source=chatgpt.com "About Papers With Code | Papers With Code"
+[2]: https://cs.paperswithcode.com/paper/github-repositories-with-links-to-academic?utm_source=chatgpt.com "GitHub Repositories with Links to Academic Papers: Public Access, Traceability, and Evolution | Papers With Code"
+[3]: https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database?utm_source=chatgpt.com "Load to a relational database | OpenAlex technical documentation"

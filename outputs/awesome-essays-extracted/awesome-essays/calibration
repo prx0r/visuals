@@ -1,0 +1,120 @@
+1. Profile Engine
+
+Stores stable user data.
+
+UserProfile {
+  birthChart
+  elementalMix
+  dominantPlanets
+  goals
+  values
+  recurringPatterns
+  preferredIntensity
+  responsePreferences
+}
+
+Purpose: know who the user is.
+
+2. Mythos Engine
+
+Turns profile data into symbolic language.
+
+Mythos {
+  coreArchetype
+  daimonicTask
+  elementalStrengths
+  elementalShadows
+  planetaryCouncil
+  currentChapter
+}
+
+Purpose: give the user a living symbolic self-map.
+
+3. Goal Engine
+
+Defines what the user claims to be serving.
+
+Goal {
+  id
+  name
+  type: "creative" | "spiritual" | "career" | "body" | "relationship"
+  whyItMatters
+  concreteCommitment
+  avoidedThreshold
+}
+
+Purpose: prevent vague self-analysis.
+
+4. Event Log Engine
+
+Tracks what actually happened.
+
+EventLog {
+  date
+  linkedGoalId
+  plannedAction
+  actualAction
+  completed
+  mood
+  notes
+  tags
+}
+
+Purpose: reality-check the myth.
+
+5. Pattern Engine
+
+Finds repeated contradictions.
+
+Pattern {
+  type: "avoidance" | "inflation" | "projection" | "discipline_gap" | "bypass"
+  evidence
+  frequency
+  linkedGoals
+  confidence
+}
+
+Purpose: detect the user’s real shadow from behavior.
+
+6. Shadow Engine
+
+Generates the uncomfortable question.
+
+ShadowPrompt {
+  mode: "mirror" | "saturn" | "daimon" | "socratic"
+  evidence
+  interpretation
+  question
+  integrationTask
+}
+
+Purpose: confront the gap between claimed values and actual behavior.
+
+Example:
+
+You say this project matters, but the last four logs show research replacing output. What feeling are you avoiding by not making the thing visible?
+
+7. Calibration Engine
+
+Learns what kind of response works.
+
+Calibration {
+  promptId
+  userRating
+  labels: ["useful", "too_harsh", "too_soft", "accurate", "made_me_act"]
+  selectedBestResponse
+}
+
+Purpose: personalize confrontation style.
+
+8. Response Mode Engine
+
+Chooses how to speak.
+
+ResponseMode {
+  name: "Mirror" | "Saturn" | "Daimon" | "Socratic" | "Ritual"
+  intensity: 1-5
+  styleRules
+}
+
+Purpose: same insight, different delivery.

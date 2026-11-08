@@ -1,0 +1,1648 @@
+Yes. Hermes makes this architecture cleaner because it gives us a ready-made **agent execution + skills + delegation + automation substrate** rather than forcing the Media OS to invent its own agent runtime. Hermes already has persistent skills, skill bundles, subagents, MCP, plugins, webhooks, cron, a local management dashboard and REST endpoints for managing parts of its configuration. ([Hermes Agent][1])
+
+The key architectural decision I would make is:
+
+> **Media OS owns truth, state, assets, pipelines, analytics and scheduling of production. Hermes owns intelligent work. Postiz owns social I/O.**
+
+That separation lets practically anything that can output an MP4 + manifest plug into the network.
+
+# The larger system
+
+```text
+                         MEDIA OS
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│ INGEST       CONTENT GRAPH        FACTORY        CONTROL UI  │
+│                                                              │
+│ MP4          brands               workflows      network     │
+│ audio        content              jobs           content     │
+│ images       variants             approvals      analytics   │
+│ JSON         assets               retries        agents      │
+│ YAML         experiments          schedules      skills      │
+│ URLs         provenance           events         costs       │
+│                                                              │
+└───────────┬──────────────────────────────────────────────────┘
+            │
+            │ jobs/tools/context
+            ↓
+┌──────────────────────────────┐
+│          HERMES              │
+│                              │
+│ Agents    Skills    Memory   │
+│ MCP       Plugins   Cron     │
+│ Delegates Webhooks  Tools    │
+└────────────┬─────────────────┘
+             │
+             │ approved publication
+             ↓
+┌──────────────────────────────┐
+│          POSTIZ              │
+│                              │
+│ OAuth / scheduling / publish │
+└────────────┬─────────────────┘
+             │
+       ┌─────┼──────┐
+       ↓     ↓      ↓
+      YT    TikTok   IG
+       │     │      │
+       └─────┼──────┘
+             ↓
+       ANALYTICS INGEST
+             │
+             ↓
+         MEDIA OS
+             │
+             ↓
+          HERMES
+       learns / reasons
+```
+
+And crucially, **Postiz and Hermes are replaceable adapters**.
+
+Your canonical objects don't live inside either of them.
+
+---
+
+# 1. Make MP4 + JSON the universal input contract
+
+This is the biggest unlock.
+
+Anything that creates media should be capable of handing us:
+
+```text
+video.mp4
+manifest.json
+```
+
+It doesn't matter whether that MP4 came from:
+
+* your rendering engine
+* LTX
+* Remotion
+* Blender
+* FFmpeg
+* another AI agent
+* a human editor
+* an uploaded stock video
+* some future video model
+
+The Media OS accepts it.
+
+I'd define a **Media Package**.
+
+```json
+{
+  "schema": "media.package/v1",
+
+  "content_id": "prehistoric-000042",
+  "brand": "prehistoric",
+
+  "asset": {
+    "type": "video",
+    "uri": "file:///output/raptor-42.mp4",
+    "sha256": "...",
+    "duration_seconds": 44.18,
+    "aspect_ratio": "9:16"
+  },
+
+  "content": {
+    "subject": "velociraptor",
+    "concept": "pack hunting",
+    "title": "The Raptor Hunt",
+    "language": "en"
+  },
+
+  "features": {
+    "hook": "misconception",
+    "structure": "hunt",
+    "opening": "immediate-reveal",
+    "setting": "night",
+    "mechanisms": [
+      "pov",
+      "size-comparison",
+      "swarm"
+    ]
+  },
+
+  "targets": [
+    "youtube_shorts",
+    "tiktok",
+    "instagram_reels"
+  ],
+
+  "publication": {
+    "mode": "review",
+    "earliest_at": null
+  },
+
+  "provenance": {
+    "producer": "render-agent",
+    "workflow_run": "run_9182",
+    "source_assets": [
+      "raptor-v4",
+      "forest-night-v2"
+    ]
+  }
+}
+```
+
+Now your infrastructure doesn't know or care how a film was created.
+
+It gets:
+
+> **media + structured meaning**
+
+That's what allows a huge ecosystem to form around it.
+
+---
+
+# 2. The actual ingest API
+
+I'd expose:
+
+```text
+POST /api/v1/ingest
+```
+
+supporting either:
+
+```text
+multipart/form-data
+
+video = file.mp4
+manifest = {...}
+```
+
+or:
+
+```json
+{
+  "asset_url": "https://...",
+  "manifest": {}
+}
+```
+
+For large files, preferable:
+
+```text
+POST /assets/upload-url
+       ↓
+signed object-store URL
+       ↓
+upload MP4 directly
+       ↓
+POST /ingest
+```
+
+So large media never needs to pass through your dashboard server.
+
+Flow:
+
+```text
+MP4 + manifest
+      │
+      ↓
+schema validation
+      │
+      ↓
+checksum
+      │
+      ↓
+ffprobe
+      │
+      ├── codec
+      ├── resolution
+      ├── fps
+      ├── duration
+      └── audio
+      │
+      ↓
+object storage
+      │
+      ↓
+canonical asset record
+      │
+      ↓
+asset.ingested event
+```
+
+Then the factory wakes up.
+
+---
+
+# 3. Every system can become a producer
+
+Your renderer might output:
+
+```text
+POST /ingest
+```
+
+But so could a script:
+
+```bash
+media ingest \
+    ./episode.mp4 \
+    --manifest ./episode.json
+```
+
+Or Hermes:
+
+```text
+media.ingest(...)
+```
+
+Or another MCP agent.
+
+Or GitHub Actions.
+
+Or a human dropping a file into:
+
+```text
+/inbox/prehistoric/
+```
+
+A watcher could turn that into an ingestion event.
+
+That's how you stop building one giant monolith and instead create a **media protocol**.
+
+---
+
+# 4. Events become the nervous system
+
+Everything important emits an event.
+
+```text
+asset.ingested
+
+content.created
+content.updated
+
+variant.created
+
+research.started
+research.completed
+
+script.started
+script.completed
+
+render.started
+render.completed
+render.failed
+
+qa.started
+qa.passed
+qa.failed
+
+publication.queued
+publication.started
+publication.succeeded
+publication.failed
+
+analytics.updated
+
+experiment.updated
+
+agent.started
+agent.completed
+agent.failed
+```
+
+Then:
+
+```text
+event
+ ↓
+Temporal workflow
+ ↓
+Hermes task if cognition required
+```
+
+This also gives your dashboard an incredibly good activity stream.
+
+```text
+08:52  prehistoric-042 ingested
+08:52  validation passed
+08:53  metadata agent started
+08:54  QA agent passed
+08:55  TikTok variant generated
+08:57  awaiting approval
+09:01  approved
+09:05  Postiz accepted publication
+09:07  TikTok published
+09:08  Instagram published
+09:09  YouTube published
+10:05  1h analytics snapshot queued
+```
+
+---
+
+# 5. Hermes should NOT own the canonical job queue
+
+This is one place I'd modify our earlier design.
+
+Hermes has a genuinely strong cron system. It supports one-shot and repeating jobs, skill attachment, script-backed jobs, isolated fresh sessions, run history and a gateway scheduler. ([Hermes Agent][2])
+
+But Postiz already brings Temporal into our deployment.
+
+I'd split responsibility like this:
+
+### Temporal
+
+Use for **production state**:
+
+```text
+publish this video at 09:00
+
+retry TikTok if publication fails
+
+collect this video's:
+T+1h
+T+6h
+T+24h
+T+7d
+metrics
+
+wait for human approval
+
+resume rendering after server restart
+```
+
+### Hermes cron
+
+Use for **autonomous cognitive routines**:
+
+```text
+Every morning:
+analyse yesterday's network performance.
+
+Every 6 hours:
+look for unusual analytics.
+
+Every night:
+review failed agent tasks.
+
+Every Monday:
+produce a network strategy report.
+
+Every 12 hours:
+search for new story ideas.
+
+Every day:
+review comments for emerging audience interests.
+```
+
+Hermes cron runs jobs in fresh agent sessions and can inject selected skills into those sessions; it can also execute script-only jobs when no model reasoning is needed. ([Hermes Agent][2])
+
+That's ideal.
+
+### Rule
+
+> **One scheduler owns each timer.**
+
+Never have both Temporal and Hermes cron responsible for publishing the same post.
+
+---
+
+# 6. Hermes becomes our workforce
+
+The Media OS should present jobs to Hermes through a small API/MCP surface.
+
+For example:
+
+```text
+media.get_job
+media.complete_job
+media.fail_job
+
+media.get_content
+media.update_content
+
+media.search_assets
+media.create_variant
+
+analytics.get_content
+analytics.compare
+analytics.query
+
+brand.get_context
+
+experiment.create
+experiment.evaluate
+```
+
+Hermes already supports MCP servers, automatically discovers their tools, and lets you filter which MCP tools a particular server exposes. ([Hermes Agent][3])
+
+So our Media OS should itself expose:
+
+```text
+media-os-mcp
+```
+
+Then Hermes simply connects to it.
+
+```yaml
+mcp_servers:
+  media:
+    command: ...
+```
+
+Conceptually:
+
+```text
+Hermes
+  │
+  └── MCP
+       │
+       ↓
+    Media OS
+```
+
+That is better than teaching Hermes Postgres schemas.
+
+---
+
+# 7. And make a Hermes Media OS plugin
+
+There's another layer that's even nicer.
+
+Hermes explicitly recommends **plugins** for custom integrations involving authentication, precise processing, binary data or streaming, while skills are more appropriate for procedural instructions built from existing tools. ([Hermes Agent][4])
+
+So I'd build:
+
+```text
+hermes-media-os/
+├── plugin.yaml
+├── __init__.py
+├── schemas.py
+├── tools.py
+└── skills/
+```
+
+And expose clean tools:
+
+```text
+media_claim_job
+media_get_content
+media_get_asset
+media_submit_artifact
+
+media_query_metrics
+media_create_experiment
+
+media_request_render
+media_request_publish
+```
+
+Hermes plugins can register tools, hooks, commands, CLI commands and bundled skills without modifying Hermes core. ([Hermes Agent][4])
+
+This is exactly what we want.
+
+---
+
+# 8. Skills become our procedural operating manuals
+
+This is another major advantage of Hermes.
+
+Hermes skills are compatible with the open agentskills.io format, live as reusable procedural knowledge, support external skill directories, can be combined into bundles, and installed skills are security-scanned. ([Hermes Agent][5])
+
+We create a repository:
+
+```text
+media-skills/
+│
+├── research/
+│   ├── prehistoric-research/
+│   ├── science-fact-check/
+│   └── source-verification/
+│
+├── writing/
+│   ├── shortform-hook/
+│   ├── documentary-script/
+│   └── youtube-title/
+│
+├── visual/
+│   ├── asset-planning/
+│   ├── render-brief/
+│   └── visual-qa/
+│
+├── publication/
+│   ├── youtube-publish/
+│   ├── tiktok-publish/
+│   └── instagram-publish/
+│
+├── analytics/
+│   ├── cohort-analysis/
+│   ├── anomaly-analysis/
+│   ├── postmortem/
+│   └── experiment-analysis/
+│
+└── strategy/
+    ├── idea-ranking/
+    ├── network-review/
+    └── content-roadmap/
+```
+
+And each one is versioned.
+
+```text
+shortform-hook
+v1
+v2
+v3
+```
+
+Then content can record:
+
+```text
+skill_used:
+shortform-hook@v3
+```
+
+---
+
+# 9. This makes skills experimentally measurable
+
+This is a huge idea.
+
+Normally a prompt/skill is just text.
+
+In our system, it becomes an **experimental variable**.
+
+Suppose:
+
+```text
+Hook Skill v3
+```
+
+creates 37 videos.
+
+And:
+
+```text
+Hook Skill v4
+```
+
+creates 42.
+
+Our dashboard can calculate:
+
+```text
+                   N      24h relative perf
+
+Hook v3           37           1.08×
+Hook v4           42           1.43×
+```
+
+Now we can actually say:
+
+> v4 appears substantially better.
+
+You can do that with:
+
+```text
+research skill
+script skill
+asset skill
+thumbnail skill
+title skill
+render style
+QA rubric
+```
+
+That creates a **self-optimising library of agent procedures**.
+
+---
+
+# 10. Hermes skill bundles map perfectly onto agent roles
+
+Hermes supports named **skill bundles**, which preload several skills together for a task. ([Hermes Agent][5])
+
+So we'd have:
+
+```text
+bundle: prehistoric-researcher
+
+skills:
+  - scientific-source-search
+  - prehistoric-factuality
+  - citation-extraction
+  - uncertainty-labeling
+```
+
+Another:
+
+```text
+bundle: shortform-director
+
+skills:
+  - story-structure
+  - shortform-hook
+  - visual-pacing
+  - asset-planning
+```
+
+Another:
+
+```text
+bundle: analytics-strategist
+
+skills:
+  - normalized-analytics
+  - cohort-analysis
+  - experiment-analysis
+  - recommendation-policy
+```
+
+The **agent is replaceable**.
+
+The procedural bundle is durable.
+
+---
+
+# 11. Don't create 50 permanent Hermes agents
+
+I'd make agents mostly **roles**, not long-running personas.
+
+For example:
+
+```text
+Agent Role
+──────────
+
+researcher
+story_writer
+critic
+asset_director
+renderer
+qa
+publisher
+analyst
+strategist
+community
+```
+
+When a job arrives:
+
+```text
+job
+ ↓
+select role
+ ↓
+select skill bundle
+ ↓
+select model
+ ↓
+start Hermes session
+```
+
+Hermes supports delegation into isolated child agents with separate conversations and terminal environments, including parallel delegation; model/provider overrides can be configured for delegated work. ([Hermes Agent][6])
+
+So one Research Director could do:
+
+```text
+                 Research Director
+                        │
+          ┌─────────────┼──────────────┐
+          ↓             ↓              ↓
+    fossil evidence   behaviour     environment
+          │             │              │
+          └─────────────┼──────────────┘
+                        ↓
+                    synthesis
+```
+
+Hermes is already designed for this pattern. ([Hermes Agent][6])
+
+---
+
+# 12. Agent registration
+
+I'd store:
+
+```text
+control_agent_role
+
+id
+slug
+name
+
+description
+
+default_model
+default_provider
+
+skill_bundle
+
+allowed_toolsets
+allowed_mcp_tools
+
+max_cost_usd
+timeout_seconds
+
+approval_policy
+
+enabled
+```
+
+Example:
+
+```json
+{
+  "slug": "analytics-strategist",
+
+  "model": "hermes-...",
+  "skill_bundle": "media-analytics",
+
+  "tools": [
+    "media.read",
+    "analytics.read",
+    "experiments.write"
+  ],
+
+  "forbidden": [
+    "publish",
+    "delete_asset"
+  ],
+
+  "max_cost_usd": 0.15
+}
+```
+
+---
+
+# 13. Hermes already gives us part of the management UI
+
+Hermes now has its own local browser dashboard. It exposes management UI and REST endpoints for configuration, environment keys, skills, toolsets, MCP and model configuration; it is normally bound to localhost because exposing it remotely can reveal sensitive configuration. ([Hermes Agent][7])
+
+So again:
+
+**don't rebuild all of that immediately.**
+
+Our Control panel can initially show:
+
+```text
+Hermes Agent
+────────────
+● running
+
+profile        media-prod
+model          ...
+skills         41
+cron jobs      9
+MCP servers    2
+
+[Open Hermes]
+```
+
+Eventually we selectively proxy useful management functions into Media OS.
+
+---
+
+# 14. But we can make our dashboard the master Skills UI
+
+Eventually:
+
+```text
+/control/skills
+```
+
+could show:
+
+```text
+SKILLS
+
+                           VERSION   RUNS    SCORE
+
+prehistoric-research       v4        182     0.96
+shortform-hook             v7        411     1.38×
+science-fact-check         v2        171     0.99
+visual-qa                  v5        203     0.94
+tiktok-caption             v3        122     1.09×
+```
+
+Click one:
+
+```text
+SHORTFORM HOOK v7
+
+Status             Production
+Author             strategy-agent
+Parent             v6
+Created            Aug 12
+
+Used               411 times
+Success            97.3%
+
+Median 24h RP      1.38×
+vs v6              +19%
+
+Cost/run           $0.0041
+
+BRANDS
+Prehistoric        +22%
+RoboBlades         +12%
+Ocean               +4%
+
+[Source]
+[History]
+[Experiments]
+[Rollback]
+```
+
+That is much more useful than merely displaying `SKILL.md`.
+
+---
+
+# 15. Skill evolution should be controlled
+
+Hermes can itself create/update/manage skills, and `/learn` can distill workflows into reusable skills. ([Hermes Agent][8])
+
+Fantastic capability.
+
+But in production I would NOT allow:
+
+```text
+agent changes production skill
+↓
+instantly everyone uses it
+```
+
+Instead:
+
+```text
+production skill v4
+       │
+agent proposes
+       ↓
+candidate v5
+       │
+       ↓
+tests/evals
+       │
+       ↓
+canary
+10% jobs
+       │
+       ↓
+performance comparison
+       │
+   ┌───┴───┐
+   ↓       ↓
+promote   reject
+```
+
+You now have CI/CD for intelligence.
+
+---
+
+# 16. Hermes Blueprints fit our recurring workflows
+
+Hermes can put a `blueprint:` in a skill, representing a suggested scheduled automation. Installing one does not silently schedule it; Hermes surfaces it for approval. ([Hermes Agent][9])
+
+That gives us portable modules like:
+
+```yaml
+name: network-morning-review
+
+blueprint:
+  schedule: "0 8 * * *"
+  prompt: >
+    Review the network's previous-day analytics.
+    Identify anomalies, winners and three actionable experiments.
+```
+
+Install the skill.
+
+The system can suggest:
+
+> Add morning network review?
+
+Excellent UX.
+
+---
+
+# 17. Input types should go far beyond MP4
+
+Eventually I'd define:
+
+```text
+Media OS Ingest Types
+```
+
+### Binary
+
+```text
+video/mp4
+video/webm
+
+audio/wav
+audio/mp3
+
+image/png
+image/jpeg
+```
+
+### Structured
+
+```text
+application/json
+application/yaml
+
+script
+storyboard
+research packet
+asset manifest
+render manifest
+experiment
+analytics import
+```
+
+### References
+
+```text
+URL
+R2 URI
+S3 URI
+Git commit
+GitHub artifact
+Postiz publication
+YouTube URL
+```
+
+Then normalize everything to:
+
+```text
+Artifact
+```
+
+---
+
+# 18. Artifact is the deeper primitive
+
+I'd actually generalize `asset` to:
+
+```text
+control_artifact
+```
+
+Schema:
+
+```text
+id
+
+kind
+mime_type
+
+uri
+hash
+
+content_id
+parent_artifact_id
+
+producer_type
+producer_id
+
+workflow_run_id
+agent_run_id
+
+metadata_json
+
+created_at
+```
+
+Kinds:
+
+```text
+research
+sources
+script
+storyboard
+image
+audio
+video
+thumbnail
+subtitle
+manifest
+render
+analytics
+report
+```
+
+Then a content item has a DAG:
+
+```text
+research.json
+      │
+      ↓
+script.json
+      │
+ ┌────┴────┐
+ ↓         ↓
+voice.wav images/
+  │         │
+  └────┬────┘
+       ↓
+ storyboard
+       ↓
+ render.mp4
+       ↓
+   qa.json
+       ↓
+final.mp4
+       ↓
+publications
+       ↓
+analytics
+```
+
+This provenance graph is incredibly valuable.
+
+---
+
+# 19. Every job also becomes canonical
+
+```text
+control_job
+
+id
+type
+
+content_id
+brand_id
+
+input_artifact_ids[]
+
+required_role
+required_skill_bundle
+
+priority
+
+state
+
+scheduled_at
+started_at
+finished_at
+
+attempts
+
+max_cost
+actual_cost
+
+output_artifact_ids[]
+
+error
+```
+
+Then Hermes is merely a worker that can claim:
+
+```text
+job_92291
+```
+
+---
+
+# 20. The job lifecycle
+
+```text
+QUEUED
+   ↓
+CLAIMED
+   ↓
+RUNNING
+   ↓
+  ┌──────────────┐
+  ↓              ↓
+WAITING        FAILED
+  ↓              │
+REVIEW            └→ RETRY
+  ↓
+APPROVED
+  ↓
+COMPLETE
+```
+
+We can see literally every task in the company.
+
+---
+
+# 21. Workflows become declarative
+
+Instead of hardcoded Python:
+
+```yaml
+workflow: short-video/v1
+
+trigger:
+  artifact: raw-video
+
+steps:
+
+  - id: inspect
+    type: deterministic
+    tool: media_inspect
+
+  - id: metadata
+    role: metadata-agent
+    skills:
+      - content-classification
+
+  - id: qa
+    role: visual-qa
+    skills:
+      - social-video-qa
+
+  - id: variants
+    type: render
+    targets:
+      - youtube_shorts
+      - tiktok
+      - instagram_reels
+
+  - id: approval
+    type: gate
+
+  - id: publish
+    provider: postiz
+
+  - id: analytics
+    workflow: analytics-cohort/v1
+```
+
+Now other creators/tools could ship workflow packs.
+
+---
+
+# 22. This becomes an ecosystem
+
+That's the part I think is genuinely exciting.
+
+People/tools don't need to understand our entire application.
+
+They just implement:
+
+```text
+INPUT
+↓
+artifact + manifest
+↓
+OUTPUT
+```
+
+Examples:
+
+```text
+LTX adapter
+Remotion adapter
+Blender adapter
+ElevenLabs adapter
+Whisper adapter
+stock-footage adapter
+research adapter
+thumbnail adapter
+subtitle adapter
+translation adapter
+```
+
+And agents can implement the same contract.
+
+---
+
+# 23. Package types
+
+Eventually your Media OS could have:
+
+```text
+Skill
+Workflow
+Agent Role
+Adapter
+Brand Pack
+Asset Pack
+Analytics Model
+Dashboard Panel
+```
+
+Imagine installing:
+
+```text
+prehistoric-channel-pack
+```
+
+which contains:
+
+```text
+brand template
+research skills
+render rules
+asset taxonomy
+analytics features
+workflow
+agent bundles
+```
+
+And suddenly you've instantiated another media channel.
+
+That gets directly back to the original idea of rapidly generating different verticals.
+
+---
+
+# 24. Channels become configurations
+
+This is the breakthrough:
+
+```text
+ENGINE
++
+BRAND PACK
++
+ASSET UNIVERSE
++
+SKILL SET
++
+PLATFORM CONNECTIONS
+=
+CHANNEL
+```
+
+So:
+
+```text
+Prehistoric
+RoboBlades
+Deep Ocean
+Space
+Ancient History
+```
+
+don't require five infrastructures.
+
+They are five parameterizations of one infrastructure.
+
+---
+
+# 25. Analytics feeds the skills layer
+
+Now close the loop:
+
+```text
+            Skill v4
+               │
+               ↓
+             Agent
+               │
+               ↓
+             Video
+               │
+               ↓
+          3 platforms
+               │
+               ↓
+           Analytics
+               │
+               ↓
+         Feature model
+               │
+               ↓
+        Skill evaluation
+               │
+               ↓
+      v5 candidate generated
+```
+
+We don't just optimize topics.
+
+We optimize the **procedures producing the topics**.
+
+---
+
+# 26. The Control Panel becomes much larger than social media
+
+I'd eventually organize it like this:
+
+```text
+CONTROL
+│
+├── Home
+│
+├── Network
+│   ├── Brands
+│   ├── Channels
+│   └── Accounts
+│
+├── Factory
+│   ├── Jobs
+│   ├── Workflows
+│   ├── Queue
+│   ├── Approvals
+│   └── Failures
+│
+├── Content
+│   ├── Ideas
+│   ├── Research
+│   ├── Scripts
+│   ├── Renders
+│   └── Publications
+│
+├── Assets
+│   ├── Library
+│   ├── Characters
+│   ├── Environments
+│   └── Provenance
+│
+├── Intelligence
+│   ├── Analytics
+│   ├── Experiments
+│   ├── Features
+│   ├── Forecasts
+│   └── Recommendations
+│
+├── Agents
+│   ├── Fleet
+│   ├── Runs
+│   ├── Costs
+│   ├── Logs
+│   └── Evaluations
+│
+├── Skills
+│   ├── Registry
+│   ├── Bundles
+│   ├── Versions
+│   ├── Evaluations
+│   └── Candidates
+│
+├── Automation
+│   ├── Workflows
+│   ├── Temporal
+│   ├── Hermes Cron
+│   └── Webhooks
+│
+├── Community
+│   ├── Comments
+│   ├── Inbox
+│   └── Insights
+│
+└── Infrastructure
+    ├── Providers
+    ├── Postiz
+    ├── Hermes
+    ├── Storage
+    └── Health
+```
+
+That genuinely is a **media-company operating system**.
+
+---
+
+# 27. How Hermes receives work
+
+I'd support three paths.
+
+### A. Direct job dispatch
+
+```text
+Media OS
+   ↓
+Hermes runner
+```
+
+For ordinary work.
+
+### B. Webhooks
+
+Hermes has an HTTP webhook adapter that validates inbound events and can turn webhook payloads into agent runs. ([Hermes Agent][10])
+
+Therefore:
+
+```text
+asset.ingested
+      ↓
+Hermes webhook
+      ↓
+metadata agent
+```
+
+can work immediately.
+
+### C. Cron
+
+```text
+8am
+ ↓
+Hermes
+ ↓
+network analyst
+```
+
+for autonomous routines.
+
+---
+
+# 28. Hermes delegation helps massively with burst workloads
+
+Suppose ten videos arrive.
+
+We don't want:
+
+```text
+one monster agent
+```
+
+processing them sequentially.
+
+Instead:
+
+```text
+Hermes Orchestrator
+       │
+ ┌─────┼─────┐
+ ↓     ↓     ↓
+V1    V2    V3
+ ↓     ↓     ↓
+...
+```
+
+Hermes supports parallel delegated subagents in isolated contexts, with a configurable concurrency setting rather than a conceptual single-worker limitation. ([Hermes Agent][6])
+
+That makes it a good burst worker system.
+
+But again:
+
+**Temporal owns the durable jobs.**
+
+If a Hermes process disappears, the job remains in Media OS and Temporal can retry it.
+
+---
+
+# 29. Costs become first-class
+
+For every:
+
+```text
+job
+agent run
+render
+image
+TTS
+```
+
+record:
+
+```text
+provider
+model
+tokens
+GPU seconds
+API calls
+cost
+```
+
+Then dashboard:
+
+```text
+CONTENT ECONOMICS
+
+                       COST       VIEWS      FOLLOWERS
+
+Raptor #42            $0.19       822k          +921
+T-Rex #81             $0.31       103k           +87
+RoboBlade E7          $1.81       1.2M        +2,114
+```
+
+Then:
+
+```text
+ROI per skill
+ROI per workflow
+ROI per renderer
+ROI per agent
+ROI per brand
+```
+
+becomes possible.
+
+---
+
+# 30. One more Hermes feature fits perfectly: observability plugin
+
+Current Hermes includes an observability/Langfuse plugin among its bundled plugins. ([Hermes Agent][11])
+
+So we don't need to invent every LLM trace ourselves.
+
+The UI can show:
+
+```text
+Agent run #1821
+
+status       success
+duration     18 sec
+cost         $0.008
+artifacts    3
+quality      0.96
+
+[Open trace]
+```
+
+while Langfuse handles deep inference tracing.
+
+---
+
+# The stack I would now settle on
+
+```text
+                    ┌────────────────────┐
+                    │    CONTROL UI      │
+                    │   Next.js/React    │
+                    └─────────┬──────────┘
+                              │
+                         Control API
+                              │
+         ┌────────────────────┼────────────────────┐
+         │                    │                    │
+         ↓                    ↓                    ↓
+     PostgreSQL             R2/MinIO            Temporal
+  canonical truth          artifacts           workflows
+         │                                         │
+         │                                         ↓
+         │                                      HERMES
+         │                                ┌────────┼────────┐
+         │                                │        │        │
+         │                              skills   agents    MCP
+         │                                │        │        │
+         │                                └────────┼────────┘
+         │                                         │
+         │                                         ↓
+         │                                      outputs
+         │                                         │
+         └────────────────────┬────────────────────┘
+                              ↓
+                            POSTIZ
+                              │
+                   ┌──────────┼──────────┐
+                   ↓          ↓          ↓
+                YouTube     TikTok   Instagram
+                   │          │          │
+                   └──────────┼──────────┘
+                              ↓
+                         analytics
+                              │
+                              ↓
+                          PostgreSQL
+                              │
+                              ↓
+                       analytics engine
+                              │
+                              ↓
+                           Hermes
+                              │
+                              ↓
+                         next decision
+```
+
+## The key boundaries
+
+**Postgres**
+= truth.
+
+**R2/MinIO**
+= artifact memory.
+
+**Temporal**
+= durable state/time/retries.
+
+**Hermes**
+= intelligence/workforce.
+
+**Hermes skills**
+= procedural memory.
+
+**Hermes cron**
+= recurring cognitive routines.
+
+**MCP/plugin**
+= Hermes ↔ Media OS bridge.
+
+**Postiz**
+= distribution/auth/social provider abstraction.
+
+**Langfuse**
+= agent observability.
+
+**Control UI**
+= your cockpit.
+
+And **MP4 + manifest** is the contract that lets the rest of the ecosystem attach itself.
+
+The most valuable part may ultimately not even be the dashboard. It may be the underlying **media execution protocol**: any model, renderer, editor or agent can submit a structured artifact; the system knows what it is, where it came from, what should happen to it, which agents/skills are permitted to touch it, when it should publish, and how its eventual performance feeds back into the system that produced it. That turns the project from “automated YouTube channels” into a reusable infrastructure layer for running autonomous media networks.
+
+[1]: https://hermes-agent.nousresearch.com/docs/?utm_source=chatgpt.com "Hermes Agent Documentation | Hermes Agent"
+[2]: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron?utm_source=chatgpt.com "Scheduled Tasks (Cron) | Hermes Agent"
+[3]: https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp?utm_source=chatgpt.com "MCP (Model Context Protocol) | Hermes Agent"
+[4]: https://hermes-agent.nousresearch.com/docs/user-guide/features/plugins?utm_source=chatgpt.com "Plugins | Hermes Agent"
+[5]: https://hermes-agent.nousresearch.com/docs/user-guide/features/skills?utm_source=chatgpt.com "Skills System | Hermes Agent"
+[6]: https://hermes-agent.nousresearch.com/docs/user-guide/features/delegation/?utm_source=chatgpt.com "Subagent Delegation | Hermes Agent"
+[7]: https://hermes-agent.nousresearch.com/docs/user-guide/features/web-dashboard?utm_source=chatgpt.com "Web Dashboard | Hermes Agent"
+[8]: https://hermes-agent.nousresearch.com/docs/reference/tools-reference/?utm_source=chatgpt.com "Built-in Tools Reference | Hermes Agent"
+[9]: https://hermes-agent.nousresearch.com/docs/developer-guide/creating-skills?utm_source=chatgpt.com "Creating Skills | Hermes Agent"
+[10]: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks/?utm_source=chatgpt.com "Webhooks | Hermes Agent"
+[11]: https://hermes-agent.nousresearch.com/docs/user-guide/features/built-in-plugins?utm_source=chatgpt.com "Built-in Plugins | Hermes Agent"

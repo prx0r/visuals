@@ -1,0 +1,201 @@
+Second product: Bittensor Reality API
+
+This might actually be a good niche.
+
+People looking at Bittensor see 100+ subnets and token/emission data, but the important questions are:
+
+Does it actually have a product?
+Can outsiders use it?
+Does it have an API?
+Is the API alive?
+How many miners are actually serving?
+Does it have external customers?
+Does it have external revenue?
+Is the repo active?
+What exactly can I buy from it?
+
+Your endpoint:
+
+GET /bittensor/subnets
+
+could normalize:
+
+SN64 Chutes
+
+
+economic:
+  emission_rank: ...
+  miners: ...
+  validators: ...
+  external_revenue_30d: ...
+
+
+product:
+  type: inference+GPU
+  outsider_usable: true
+  api: true
+
+
+observed:
+  endpoint_live: true
+  latency: ...
+  last_probe: ...
+
+
+classification:
+  REAL_PRODUCT
+
+versus:
+
+SN95 Actual
+
+
+miners: 0
+
+
+classification:
+  NO_CURRENT_SUPPLY
+
+The indexed SN95 page currently indeed shows zero miners despite the subnet continuing to exist as an entity.
+
+This would also give you an excellent discovery engine for emerging opportunities before they're widely noticed.
+
+Third: QDW Agent Arena Index
+
+This is more novel.
+
+Bittensor already has separate competitive ecosystems for:
+
+coding agents     → Ridges
+security agents   → Bitsec
+research agents   → Harnyx
+agent learning    → TrajectoryRL
+
+Rather than viewing these as tokens, GitGoblin/QDW could ingest their public repositories, scoring systems and winning mechanisms.
+
+Then maintain:
+
+task = code_security
+
+
+best known harness:
+  Bitsec agent architecture X
+
+
+task = deep_research
+
+
+best known harness:
+  Harnyx architecture Y
+
+
+task = SWE
+
+
+best known harness:
+  Ridges architecture Z
+
+QDW then routes:
+
+task
+ ↓
+best MODEL
++
+best AGENT HARNESS
++
+best COMPUTE PROVIDER
+
+That's more sophisticated than basically every current router we've discussed.
+
+And potentially you could publish the resulting Agent Harness Leaderboard/API separately.
+
+Fourth: defensive security product using Bitsec + QDW
+
+This one could connect nicely to your agenticaisecurity.org direction.
+
+Not a generic “AI security news site.”
+
+A narrow product:
+
+Submit your GitHub repo → multiple defensive security agents inspect it → QDW reproduces and verifies findings → only reproducible findings are reported.
+
+Pipeline:
+
+authorized repository
+    ↓
+static tools
+    ↓
+Bitsec-style AI security agents
+    ↓
+multiple independent reviewers
+    ↓
+QDW reproduction
+    ↓
+dedupe
+    ↓
+verified findings only
+
+The strong part is:
+
+No giant hallucinated vulnerability report.
+
+QDW only labels something VERIFIED if a safe, authorized reproduction/evidence check supports it.
+
+Bitsec's existing sandbox, inference-proxy and anti-cheat mechanisms are excellent donors for that architecture.
+
+This should stay strictly defensive/authorized, but as a product that's potentially much easier to charge for than generic AI infrastructure.
+
+There are also ways to bootstrap without spending much
+
+Two current programs are worth your attention.
+
+Nosana has an ongoing decentralized-AI builder/hackathon program with compute credits, explicitly intended to get developers building on its GPU network.
+
+Akash's ecosystem grants explicitly fund open-source tooling, infrastructure and interfaces around Akash. A Dell adapter/compute-comparison layer is much more aligned with that mandate than inventing another chatbot. Heurist's developer program also provides free development credits in the thousands-of-credits range for developers, which could provide another inference source for bootstrapping your probes and products.
+
+I would exploit those as builder resources, not speculate on their tokens.
+
+My ranking for you specifically
+Dell Live Compute API / Radar — smallest path from code you already have to something somebody can consume.
+Bittensor Reality API — extremely natural extension and a nice niche with little conceptual overhead.
+Apply Dell/QDW to Akash + Nosana developer programs — possible funding/compute without needing customers first.
+Verified repo-security API using Bitsec mechanisms — potentially higher-value customer, slightly more work.
+Agent Harness Index from Ridges/Bitsec/Harnyx — strategically excellent for QDW.
+Full Moltwork / external agent marketplace — cool later, but not where I'd spend scarce effort today.
+
+The larger architecture becomes:
+
+             GITGOBLIN
+       discovers new infrastructure
+                │
+                ▼
+              DELL
+     live resource intelligence
+                │
+   ┌────────────┼─────────────┐
+   ▼            ▼             ▼
+models       raw GPUs      agent markets
+   │            │             │
+Chutes       Lium          Virtuals
+engy         Akash         Olas
+Venice       Nosana        Ridges*
+AkashML      Fluence       Bitsec*
+...
+   └────────────┬─────────────┘
+                ▼
+               QDW
+
+
+ model × harness × provider × budget
+ × compute form × historic success
+                ↓
+       minimum expected cost
+       to VERIFIED outcome
+
+* Ridges/Bitsec are more naturally competitive mechanism/agent sources than ordinary service marketplaces today.
+
+That is where I think the projects you've been developing stop feeling like unrelated experiments: Dell discovers what computational resources actually exist and what they cost; GitGoblin discovers better production mechanisms; QDW decides how to turn those resources into finished products.
+
+If I were prioritizing around your immediate need for income, I would stop adding broad QDW features for a moment and package Dell's live decentralized/alternative compute intelligence as its own tiny public product. The underlying research you've already done is substantially more extensive than what most “cheap LLM finder” sites expose.
+
+I can also monitor Bittensor + decentralized compute for new usable APIs, free credits, grants, new subnets, and material price changes rather than you manually checking them

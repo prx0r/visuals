@@ -1,0 +1,24 @@
+visualizers/
+Qwen-MM-Plugins/
+references/
+skills/
+**/__pycache__/
+*.wav
+*.raw
+*.pyc
+.env
+NORTHSTAR.md
+standard_cards/standard_v*.mp4
+
+# secret-bearing diary/vendor files — local only, never publish
+outputs/awesome-essays-extracted/awesome-essays/cryptoletta
+outputs/awesome-essays-extracted/awesome-essays/handover bb
+outputs/awesome-essays-extracted/awesome-essays/key process
+outputs/awesome-essays-extracted/awesome-essays/drainer
+outputs/awesome-essays-extracted/awesome-essays/drainer3
+outputs/awesome-essays-extracted/awesome-essays/drainerr
+outputs/extracted/original-philosophy-archive/sanskritree/home/sanskritree/scripts/mbt_ocr_full.py
+outputs/extracted/original-philosophy-archive/sanskritree/home/sanskritree/scripts/mbt_ocr_pilot.py
+outputs/awesome-essays-extracted/awesome-essays/openrouter ox:1
+outputs/awesome-essays-extracted/awesome-essays/openrouter ox
+outputs/awesome-essays-extracted/awesome-essays/doctavian

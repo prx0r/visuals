@@ -1,0 +1,1644 @@
+ideas:
+
+## Novel feature ideas relational to the atlas/site structure
+
+### 1. Assumption breaker cards
+
+User selects a belief:
+
+> “Mind is a computer.”
+> “Ritual is placebo.”
+> “Astrology is fake.”
+> “Everything is consciousness.”
+> “I am my thoughts.”
+
+The site returns:
+
+* what assumption this rests on
+* what traditions/sciences challenge it
+* what stronger replacement view exists
+* what practice tests it directly
+* what risk appears if misunderstood
+
+---
+
+### 2. “What phase are you avoiding?” detector
+
+The system analyses user notes/questions and says:
+
+> “You are using Phase 14 cosmic metaphysics to avoid Phase 6 direct practice.”
+
+Or:
+
+> “You are using Madhyamaka to avoid grief/body/emotion.”
+
+This becomes a central corrective engine.
+
+---
+
+### 3. Concept through lenses mode
+
+Pick a concept:
+
+* daimon
+* mantra
+* self
+* emptiness
+* imagination
+* ritual
+* body
+* Logos
+* soul
+* God
+* simulation
+* astrology
+
+Then view it through:
+
+* Buddhism
+* Jung
+* Iamblichus
+* Tantra
+* Christian mysticism
+* modern science
+* Marx/Hegel
+* Campbell/Hoffman
+* personal practice
+
+---
+
+### 4. Risk map
+
+Every tradition/practice has predictable distortions.
+
+Example:
+
+**Dzogchen**
+Risk: premature nondual bypass
+Corrective: ethics, preliminaries, body, teacher, ordinary life
+
+**Magic**
+Risk: inflation
+Corrective: Madhyamaka, humility, Jungian shadow, praxis
+
+**Science**
+Risk: reductionism
+Corrective: phenomenology, hard problem, embodiment
+
+**Channeling**
+Risk: dependency/literalism
+Corrective: pramāṇa, fruit-test, source criticism
+
+This could become a whole “discernment engine.”
+
+---
+
+### 5. Corrective recommender
+
+User says:
+
+> “I feel inflated after ritual.”
+
+System recommends:
+
+* Madhyamaka reflection
+* Jung shadow journaling
+* Christian humility/prayer
+* ordinary material task
+* fruit-test
+
+Instead of recommending similar content, it recommends **balancing content**.
+
+---
+
+### 6. Phase stabilizer system
+
+Each advanced phase has required stabilizers.
+
+Example:
+
+**Nonordinary Rendering** requires:
+
+* dependent arising
+* body grounding
+* sleep discipline
+* pramāṇa
+* praxis
+
+The AI can say:
+
+> “You are entering Phase 14 without enough Phase 6/11 stabilization.”
+
+---
+
+### 7. Source triangulation mode
+
+For any claim, the system gives three layers:
+
+1. **primary source**
+2. **scholarly interpretation**
+3. **practice interpretation**
+
+Example:
+
+**Daimon**
+
+* Plato/Iamblichus
+* Dorian Greenbaum/Corbin/Jung scholarship
+* daimon journal / vocation practice
+
+---
+
+### 8. “Historical vs conceptual” edge checker
+
+The graph labels relations as:
+
+* direct historical influence
+* reception/adaptation
+* conceptual parallel
+* functional analogy
+* speculative bridge
+
+So the system avoids fake genealogy.
+
+Example:
+
+> “Campbell is modern Leibniz.”
+
+Output:
+
+> conceptual parallel, not historical descent.
+
+---
+
+### 9. Mythic inflation alarm
+
+If a user keeps writing things like:
+
+> chosen, starseed, cosmic mission, secret lineage, higher beings selected me
+
+The system gently maps it to:
+
+* visionary cosmology cluster
+* risk: cosmic specialness
+* correctives: fruit-test, service, humility, body, ordinary work
+
+---
+
+### 10. Fruit-test tracker
+
+For every belief/practice, user tracks:
+
+* did it reduce compulsion?
+* did it increase clarity?
+* did it make me kinder?
+* did it improve ordinary life?
+* did it reduce avoidance?
+* did it increase embodiment?
+
+The site gradually learns which systems actually help the user.
+
+---
+
+### 11. “View as medicine” engine
+
+Instead of asking “is this worldview true?”, the site asks:
+
+> “What condition does this view treat?”
+
+Examples:
+
+* Madhyamaka treats reification.
+* Jung treats symbolic impoverishment.
+* Marx treats social alienation.
+* Tantra treats body/speech/mind alienation.
+* Christian mysticism treats pride/control.
+* Science treats superstition/sloppy causality.
+
+---
+
+### 12. Practice prescription by imbalance
+
+If user is:
+
+* high air → body/earth practice
+* high fire → humility/cooling practice
+* high water → structure/discernment
+* high earth → imagination/opening
+* high visionary → dependent arising
+* high deconstruction → soulmaking
+* high ritual → praxis
+
+This can combine personal notes + elemental psyche + phase map.
+
+---
+
+### 13. “One concept, one practice” mode
+
+Every essay ends with:
+
+> “Here is the one practice that operationalizes this concept.”
+
+Example:
+
+**Dependent arising** → contact/feeling/sign protocol
+**Daimon** → vocation/dream journal
+**Mantra** → inner speech purification
+**Madhyamaka** → find the svabhāva
+**Marx** → map one material condition shaping consciousness
+
+---
+
+### 14. Living bibliography graph
+
+Books are not just listed. They are tagged by:
+
+* phase
+* difficulty
+* function
+* risk
+* prerequisite
+* best use
+* source type
+* epistemic tier
+
+Example:
+
+**Seeing That Frees**
+Function: emptiness practice
+Prerequisite: basic meditation
+Risk: subtle intellectualization
+Feeds: soulmaking
+
+---
+
+### 15. “Read this only if…” gate
+
+Instead of endless recommendations:
+
+> Read Picatrix only if you have basic ritual hygiene and anti-reification.
+> Read channelers only if you have pramāṇa and fruit-test.
+> Read Dzogchen only if you understand bypass risk.
+> Read Marx if your spirituality is becoming private fantasy.
+
+---
+
+### 16. Quote-to-graph parser
+
+User uploads/highlights a quote.
+
+System maps it to:
+
+* concepts
+* phase
+* tradition
+* assumption broken
+* related essays
+* risks
+* practices
+
+This would be amazing for reading source material.
+
+---
+
+### 17. Dialogue with traditions
+
+The AI can answer as “lenses,” not roleplay.
+
+Example:
+
+Question:
+
+> “Is astrology part of the code?”
+
+Outputs:
+
+* Buddhist lens
+* Campbell lens
+* Iamblichus lens
+* Jung lens
+* Marx lens
+* scientific lens
+* risk/corrective synthesis
+
+---
+
+### 18. “Tradition council” comparison
+
+Not a free-for-all roleplay. Structured table:
+
+Claim: “Dreams are messages.”
+
+| Lens         | Interpretation                      | Risk          | Practice                 |
+| ------------ | ----------------------------------- | ------------- | ------------------------ |
+| Jung         | psyche communicating via image      | inflation     | active imagination       |
+| Buddhism     | dependently arisen signs            | reification   | feeling/sign analysis    |
+| Iamblichus   | possible divine/daimonic indication | literalism    | purification/discernment |
+| Neuroscience | memory/emotion processing           | reductionism  | dream log                |
+| Shamanism    | relational/ecological message       | appropriation | respectful context       |
+
+---
+
+### 19. “Category error” detector
+
+Flags statements like:
+
+> “Quantum physics proves magic.”
+> “Dzogchen means no practice.”
+> “AI passing Turing test proves consciousness.”
+> “Astrology caused this event.”
+> “Dream symbol literally means X.”
+
+Then explains the exact category confusion.
+
+---
+
+### 20. User’s personal canon
+
+The system builds a ranked set of sources that actually helped the user.
+
+Example:
+
+* Ñāṇananda: high usefulness
+* Burbea: high usefulness
+* Campbell: inspiring but destabilizing late at night
+* Picatrix: interesting but premature
+* Jung: useful for dreams
+* Marx: useful for grounding
+
+This becomes their personal curriculum.
+
+---
+
+### 21. “Practice before content” lock
+
+If the system detects content bingeing, it can say:
+
+> “Before more cosmology, do one 5-minute practice log.”
+
+Not coercive, just a structure.
+
+---
+
+### 22. Anti-binge reading queue
+
+Every recommended source gets paired with a required integration task.
+
+Example:
+
+Read: “Iamblichus on the daimon”
+Integration: “Write one concrete way guidance could show up as responsibility, not fantasy.”
+
+---
+
+### 23. Dream-symbol graph
+
+User logs dreams.
+
+Dream images become personal nodes:
+
+* snake
+* temple
+* ocean
+* father
+* machine
+* star
+* blackness
+* guide
+
+These connect to:
+
+* recurring emotions
+* phases
+* practices
+* Jungian archetypes
+* personal events
+* risks
+* daimon/vocation hypotheses
+
+---
+
+### 24. Daimon/vocation pattern detector
+
+Tracks repeated:
+
+* dreams
+* fascinations
+* books that feel alive
+* life corrections
+* envy
+* admiration
+* recurring symbols
+* childhood obsessions
+* moments of aliveness
+
+Then generates a “vocation hypothesis,” always tentative.
+
+---
+
+### 25. “Guidance or compulsion?” checker
+
+For a supposed insight/message, system asks:
+
+* does it make you clearer or more agitated?
+* more humble or more special?
+* more embodied or more dissociated?
+* more responsible or more avoidant?
+* more loving or more superior?
+* more concrete or more grandiose?
+
+Then classifies:
+
+* likely guidance
+* likely fantasy
+* likely fear
+* likely desire
+* needs waiting/testing
+
+---
+
+### 26. Ritual design assistant with safeguards
+
+User says desired ritual purpose:
+
+> clarity, protection, dream guidance, gratitude, grounding
+
+System builds a simple safe ritual from:
+
+* phase
+* tradition
+* user profile
+* risk level
+* available materials
+* de-reification statement
+* closing/integration
+
+No coercive/spirit-command stuff.
+
+---
+
+### 27. Ritual result tracker
+
+After ritual:
+
+* what happened?
+* body state?
+* dream?
+* emotion?
+* behavior change?
+* inflation?
+* fear?
+* useful action?
+
+Over time it learns what rituals actually help.
+
+---
+
+### 28. “Symbol becomes action” engine
+
+Any mystical insight must become:
+
+* one sentence of meaning
+* one body practice
+* one relational action
+* one material action
+* one journal check-in
+
+This forces incarnation.
+
+---
+
+### 29. Praxis conversion
+
+Takes abstract insight and asks:
+
+> How does this change work, speech, money, family, health, service?
+
+Example:
+
+“Everything is empty.”
+
+Converted to:
+
+* less defensiveness in conversation
+* less clinging to identity
+* one honest task completed
+* one act of service
+
+---
+
+### 30. Map addiction meter
+
+Measures ratio of:
+
+* theory questions
+* source consumption
+* practice logs
+* life integration
+* repeated loops
+
+If theory/practice ratio gets too high, recommends grounding.
+
+---
+
+### 31. “Phase loop” detector
+
+User keeps cycling:
+
+> metaphysics → excitement → overwhelm → no practice → more metaphysics
+
+System names the loop and suggests a break pattern.
+
+---
+
+### 32. “Smallest next true step”
+
+Instead of giving a huge plan, the AI gives:
+
+> the smallest concrete practice that advances the correct phase.
+
+Example:
+
+“Tonight: 7 minutes, body sensation + feeling-tone. No reading after.”
+
+---
+
+### 33. Source difficulty ladder
+
+For every topic, there are levels:
+
+**Daimon**
+
+1. short essay
+2. Plato excerpt
+3. Iamblichus passage
+4. Dorian Greenbaum
+5. Proclus / technical theurgy
+6. comparative synthesis
+
+This prevents users from drowning.
+
+---
+
+### 34. “Explain my question back to me” mode
+
+User asks chaotic question.
+
+System returns:
+
+> You are actually asking about three things:
+>
+> 1. ontology of consciousness
+> 2. personal guidance
+> 3. ritual practice
+
+Then maps each to graph nodes.
+
+---
+
+### 35. Personal metaphysics builder
+
+User answers guided prompts.
+
+System outputs their current worldview as a graph:
+
+* what they believe about matter
+* mind
+* self
+* God
+* language
+* ritual
+* ethics
+* death
+* guidance
+
+Then shows contradictions and missing correctives.
+
+---
+
+### 36. Worldview diff tool
+
+Compare:
+
+* your current view
+* Buddhist view
+* Campbell view
+* Jungian view
+* Iamblichean view
+* materialist view
+* idealist view
+
+Show:
+
+* shared claims
+* disagreements
+* risks
+* practices implied
+
+---
+
+### 37. “Belief audit”
+
+Every saved belief gets tagged:
+
+* evidence tier
+* source
+* practice-tested?
+* useful?
+* destabilizing?
+* reified?
+* still held?
+
+This is huge for spiritual sanity.
+
+---
+
+### 38. Speculative sandbox
+
+A quarantined area for wild theories.
+
+Rules:
+
+* clearly marked speculative
+* no life decisions from it
+* must include risk/corrective
+* must eventually link to practice or be archived
+
+---
+
+### 39. Personal “red flag phrases”
+
+The AI learns phrases that correlate with user imbalance.
+
+Example:
+
+* “holy shit everything connects”
+* “I figured it out”
+* “I don’t need practice”
+* “this proves”
+* “I am chosen”
+* “one more source”
+
+Then gently intervenes.
+
+---
+
+### 40. “Return to Ñāṇananda” button
+
+Whenever overwhelmed, click one button.
+
+It asks:
+
+1. What is present?
+2. Pleasant/unpleasant/neutral?
+3. What sign did mind seize?
+4. What craving appeared?
+5. What story formed?
+6. Where is “I/me/mine”?
+7. What remains if unfed?
+
+This should be a core UX element.
+
+---
+
+### 41. Integration contract
+
+After an intense insight, user creates a tiny contract:
+
+* one practice
+* one ordinary action
+* one thing not to do
+* one check-in date
+
+Example:
+
+Insight: “I need to ground.”
+Contract: “Walk 20 minutes daily, no cosmology after 9pm, one practice log nightly.”
+
+---
+
+### 42. “Tradition misuse warnings”
+
+Each tradition has misuse patterns.
+
+Example:
+
+**Madhyamaka misuse**: nihilism, emotional bypass
+**Tantra misuse**: power fantasy, sexual/energy inflation
+**Jung misuse**: archetype narcissism
+**Marx misuse**: reducing all inner work to politics
+**Science misuse**: reductionism
+**Magic misuse**: control fantasy
+**Dzogchen misuse**: skipping practice
+
+---
+
+### 43. “Source says / tradition says / our synthesis says”
+
+Every answer can separate:
+
+* what the source literally says
+* how the tradition interprets it
+* how Re-Rendering Atlas uses it
+* where this is speculative
+
+This builds trust.
+
+---
+
+### 44. Graph path receipts
+
+Every AI answer shows:
+
+> Answer generated from this path:
+> Claim → Phase → Concept → Source → Risk → Corrective → Practice
+
+Users can inspect why the AI answered that way.
+
+---
+
+### 45. Practice lineage view
+
+For any practice, show ancestry and function.
+
+Example:
+
+**Mantra**
+
+* Vedic recitation
+* Mīmāṃsā
+* Bhartṛhari
+* Tantra
+* Abhinavagupta
+* Vajrayāna
+* Christian prayer/divine names parallel
+* Golden Dawn divine names parallel
+* modern cognitive layer: inner speech regulation
+
+---
+
+### 46. “Same practice, different ontology”
+
+Example: chanting.
+
+* neuroscience: breath/rhythm/attention
+* Buddhism: recollection/concentration
+* Tantra: mantra as deity power
+* Bhartṛhari: language ontology
+* Christian: prayer
+* magic: vibration/divine names
+
+This is a brilliant comparative feature.
+
+---
+
+### 47. “Ontology slider”
+
+For any practice, view it through different ontological commitments:
+
+* secular/psychological
+* phenomenological
+* symbolic/imaginal
+* tantric/theurgic
+* idealist/consciousness-first
+* devotional
+* speculative cosmological
+
+This lets users engage safely at their level.
+
+---
+
+### 48. “Epistemic tier overlay”
+
+Toggle the whole site by evidence tier:
+
+* established science
+* serious philosophy
+* contemplative practice
+* historical ritual
+* speculative metaphysics
+* visionary cosmology
+
+This prevents category confusion.
+
+---
+
+### 49. “Practice dose” system
+
+Every practice has suggested dose:
+
+* daily 5 min
+* weekly reflection
+* 7-day experiment
+* 30-day cycle
+* advanced / requires teacher
+* study-only
+
+This avoids “read a dangerous PDF and improvise.”
+
+---
+
+### 50. “Requires stabilizers” tags
+
+Examples:
+
+**Deity yoga**
+Requires: emptiness, ethics, lineage/context
+
+**Astral work**
+Requires: sleep stability, grounding, non-reification
+
+**Planetary magic**
+Requires: ritual hygiene, discernment, no coercion
+
+**Channeling material**
+Requires: pramāṇa, fruit-test, praxis
+
+---
+
+### 51. “Insight decay tracker”
+
+A user logs a big insight.
+
+System checks later:
+
+* did it change behavior?
+* did it fade?
+* did it become a belief?
+* did it become ego identity?
+* did it become practice?
+
+This is excellent.
+
+---
+
+### 52. “From quote to practice”
+
+User saves a quote.
+
+System asks:
+
+> What practice does this imply?
+
+Example:
+
+Quote on emptiness → find svabhāva exercise
+Quote on daimon → vocation journal
+Quote on Logos → speech discipline
+Quote on Marx → material condition audit
+
+---
+
+### 53. Material condition audit
+
+A Phase 17 tool.
+
+Tracks:
+
+* sleep
+* money
+* work
+* body
+* social connection
+* environment
+* media intake
+* responsibilities
+
+Because sometimes “spiritual problem” is actually material disorder.
+
+---
+
+### 54. Media diet as dashboard input
+
+User logs content consumption.
+
+System maps:
+
+* YouTube cosmology binge
+* occult PDFs
+* political doomscrolling
+* spiritual talks
+* AI chats
+
+Then shows how media shapes rendering.
+
+---
+
+### 55. “Simulation vs dependent arising” explainer
+
+A recurring comparison page/tool:
+
+* Campbell/Hoffman/Wolfram: rendered reality
+* Buddhism: constructed experience
+* Baudrillard: social simulation
+* Jung: symbolic psyche
+* Marx: ideology/material conditions
+
+Shows similarities and category differences.
+
+---
+
+### 56. “Is this a bridge or a collapse?” checker
+
+For synthesis claims.
+
+Example:
+
+> “Iamblichus and Tantra are the same.”
+
+System says:
+
+* bridge: yes, ritual participation, sacred sound, body/space transformation
+* collapse: no, different histories, doctrines, goals
+* edge type: conceptual_parallel, not historical_influence
+
+---
+
+### 57. “My current myth” generator
+
+Based on personal graph, system summarizes:
+
+> “Your current myth is: the seeker escaping ordinary life through cosmic maps, called back by body and practice.”
+
+Then gives:
+
+* mythic pattern
+* risk
+* corrective
+* next action
+
+Could be powerful if handled carefully.
+
+---
+
+### 58. “Personal glossary”
+
+The system learns how the user uses words.
+
+Example:
+
+For one user “God” means source consciousness.
+For another “God” means Christian personal deity.
+For another “God” means symbolic Good.
+
+This prevents bad answers.
+
+---
+
+### 59. “Concept drift” tracker
+
+Tracks how user’s understanding changes.
+
+Example:
+
+**Daimon**
+
+Week 1: external spirit
+Week 3: Jungian inner guide
+Week 6: vocation-pattern
+Week 9: imaginally real but empty
+
+This is beautiful.
+
+---
+
+### 60. “Anti-final-answer” reminder
+
+When user asks for ultimate worldview, system says:
+
+> Here is the best working model. Here is where it fails. Here is the practice that matters more.
+
+A built-in anti-dogma feature.
+
+---
+
+### 61. “Tradition compatibility matrix”
+
+Not “all same,” but:
+
+* compatible
+* tension
+* contradiction
+* useful bridge
+* needs translation
+* should not be mixed casually
+
+Example:
+
+Madhyamaka + magic: compatible if non-reified
+Dzogchen + ritual-heavy magic: tension around fabrication
+Marx + private mysticism: corrective tension
+Tantra + Jung: useful bridge but not identical
+
+---
+
+### 62. “Phase prerequisites for content”
+
+Before showing advanced content, it can say:
+
+> This topic is advanced because it has these risks.
+> Recommended grounding first:
+>
+> * dependent arising
+> * body practice
+> * pramāṇa
+> * fruit-test
+
+Not gatekeeping, just contextualizing.
+
+---
+
+### 63. “Source conflict view”
+
+Show where sources disagree.
+
+Example:
+
+Self:
+
+* Buddhism: no-self
+* Advaita: Self/Brahman
+* Jung: Self archetype
+* Campbell: individuated consciousness
+* Metzinger: self-model
+* Christianity: soul/person before God
+
+Then show possible translations and irreducible tensions.
+
+---
+
+### 64. “Ontology of a practice”
+
+Click practice: **mantra**
+
+Shows:
+
+* what it assumes about language
+* what it assumes about body
+* what it assumes about mind
+* what it assumes about deity/reality
+* secular interpretation
+* tantric interpretation
+* Buddhist corrective
+* risks
+
+---
+
+### 65. “Deconstruction/reconstruction balance meter”
+
+Tracks if user is overdoing:
+
+* deconstruction: emptiness, critique, analysis
+* reconstruction: ritual, myth, daimon, cosmology
+
+Goal is dynamic balance.
+
+---
+
+### 66. “Synthesis claims database”
+
+Every interesting synthesis claim becomes a node.
+
+Examples:
+
+* “Campbell is digital Leibniz.”
+* “Mantra is purified name-and-form.”
+* “Ritual is ordered re-rendering.”
+* “Daimon is imaginal vocation.”
+* “Buddhism is hygiene for magic.”
+* “Marx is anti-bypass technology.”
+* “Physics de-solidifies matter but does not prove magic.”
+
+These are high-value reusable intellectual assets.
+
+---
+
+### 67. “Practice experiment builder”
+
+User chooses hypothesis:
+
+> “Mantra reduces inner speech proliferation.”
+
+System creates a 7-day experiment:
+
+* baseline
+* daily practice
+* notes
+* expected signs
+* risk watch
+* evaluation
+
+This grounds the site empirically.
+
+---
+
+### 68. “Spiritual A/B testing”
+
+Compare practices carefully:
+
+* breath vs mantra
+* dream journal vs active imagination
+* dependent arising protocol vs body scan
+* prayer vs ritual offering
+
+Track which actually helps the user.
+
+---
+
+### 69. “Integration debt”
+
+Every consumed essay/book/practice creates potential debt until integrated.
+
+Example:
+
+Read 5 cosmology essays, 0 practices → integration debt high.
+
+The site can say:
+
+> “You have 4 unintegrated concepts. No more source recommendations until one is practiced.”
+
+---
+
+### 70. “Graph-based course generator”
+
+User goal:
+
+> “I want to understand mantra.”
+
+System generates course:
+
+1. language as binding: Ñāṇananda
+2. pramāṇa: Nyāya/Dharmakīrti
+3. sphoṭa: Bhartṛhari
+4. mantra: Mīmāṃsā/Tantra
+5. Abhinavagupta
+6. Vajrayāna
+7. safe practice
+
+---
+
+### 71. “Canonical path vs personal path”
+
+Show:
+
+* ideal phase sequence
+* user’s actual movement
+* gaps
+* overdeveloped areas
+* recommended next bridge
+
+---
+
+### 72. “Shadow of each phase”
+
+Each phase has a shadow.
+
+Examples:
+
+* science → reductionism
+* Buddhism → dryness
+* Tantra → power fantasy
+* magic → control
+* Jung → narcissistic symbolism
+* Marx → resentment/reduction
+* Dzogchen → bypass
+* channeling → dependency
+* astrology → fatalism
+
+This should be central.
+
+---
+
+### 73. “Lineage integrity warning”
+
+When someone mixes systems:
+
+> “This is a creative synthesis, not a traditional practice.”
+
+Example:
+
+Combining Picatrix + Dzogchen + Campbell + Abhinavagupta.
+
+Label:
+
+* creative synthesis
+* not lineage-authorized
+* use only as conceptual/practice reflection
+
+---
+
+### 74. “Embodiment receipt”
+
+Any claimed insight should show evidence:
+
+* behavior changed
+* practice done
+* relationship improved
+* body regulated
+* work completed
+* less compulsion
+
+No receipt = still conceptual.
+
+---
+
+### 75. “Wisdom compression cards”
+
+The site generates compressed axioms:
+
+* Ordinary speech binds; mantra can liberate.
+* Images are empty but potent.
+* Ritual orders the interface.
+* Guidance is tested by fruits.
+* Views are tools, not homes.
+* The body is the living altar.
+* The dashboard is not the real.
+
+These become shareable cards/videos.
+
+---
+
+### 76. “Graph pilgrimage”
+
+A guided journey through nodes.
+
+Example path:
+
+**Daimon path**
+
+Plato → Iamblichus → Picatrix → Jung → HGA → Burbea → Madhyamaka → Praxis
+
+Each stop has:
+
+* source quote
+* commentary
+* practice
+* risk
+* checkpoint
+
+---
+
+### 77. “Question lineage”
+
+Every user question gets stored as part of a lineage.
+
+Example:
+
+Question: “Is astrology part of the code?”
+Later questions:
+
+* “Is Campbell modern Leibniz?”
+* “Can ritual influence reality?”
+* “What does Nāgārjuna say?”
+
+The system maps the evolution of inquiry.
+
+---
+
+### 78. “Personal teacher stack”
+
+User chooses or system infers stabilizing teachers:
+
+* Ñāṇananda for deconstruction
+* Burbea for soulmaking
+* Jung for imaginal
+* Marx for grounding
+* Iamblichus for ritual
+* Levin for science
+
+Then answers prioritize that stack.
+
+---
+
+### 79. “Sacred word laboratory”
+
+Safe, study-focused tool for mantra/divine names.
+
+For a word/mantra/name, show:
+
+* tradition
+* meaning
+* pronunciation notes, if public
+* source
+* level of practice access
+* psychological function
+* metaphysical interpretation
+* risk
+* safe reflection
+
+---
+
+### 80. “The map argues back”
+
+When user forces a synthesis, the system says:
+
+> “The graph does not support that as historical influence. It supports it only as conceptual parallel.”
+
+This is the epistemic integrity feature.
+
+---
+
+### 81. “Personal ritual calendar”
+
+Not astrology-heavy at first.
+
+Based on:
+
+* user practice streaks
+* phase goals
+* simple lunar/weekly rhythm
+* current active corrective
+
+Example:
+
+Monday: body grounding
+Wednesday: source study
+Friday: ritual/prayer
+Sunday: weekly synthesis
+
+---
+
+### 82. “Cosmology quarantine”
+
+When user explores visionary cosmologies, the UI adds a banner:
+
+> Speculative/visionary tier. Use for mythic reflection, not final truth. Check against practice, ethics, and ordinary life.
+
+---
+
+### 83. “Ordinary life check”
+
+Before advanced answer, system asks or infers:
+
+* slept?
+* eaten?
+* grounded?
+* practiced?
+* overwhelmed?
+
+If not, recommends ordinary stabilization before metaphysical expansion.
+
+---
+
+### 84. “Render stack inspector”
+
+For a strong experience, system asks:
+
+* physical state
+* emotion
+* memory
+* concept
+* cultural symbol
+* desire
+* fear
+* selfing
+* metaphysical interpretation
+
+This exposes the rendering stack.
+
+---
+
+### 85. “From chaos note to structured node”
+
+User writes messy note.
+
+System extracts:
+
+* claim
+* feeling
+* symbol
+* phase
+* risk
+* practice
+* source reference
+* next action
+
+This is very valuable for ADHD-style thinking.
+
+---
+
+### 86. “Insight genealogy”
+
+For any user insight, show what influenced it:
+
+* recent readings
+* practices
+* dreams
+* questions
+* emotional states
+* source nodes
+
+This prevents mistaking every insight as pure revelation.
+
+---
+
+### 87. “Metaphysical dependency graph”
+
+Shows that belief X requires assumptions A, B, C.
+
+Example:
+
+“Ritual influences reality” depends on:
+
+* reality is not dead mechanism only
+* symbol affects cognition/body/social field
+* ritual can order attention
+* maybe stronger theurgic ontology
+
+This clarifies commitments.
+
+---
+
+### 88. “Safe synthesis builder”
+
+User selects traditions to synthesize.
+
+System returns:
+
+* compatible bridge concepts
+* irreducible differences
+* required correctives
+* forbidden/unsafe collapses
+* possible essay outline
+
+---
+
+### 89. “Practice lineage purity vs creative synthesis toggle”
+
+For any practice, show:
+
+* traditional form
+* modern psychological adaptation
+* personal experimental adaptation
+* what is lost/gained at each level
+
+---
+
+### 90. “Concept heatmap across traditions”
+
+Rows = traditions.
+Columns = concepts.
+
+Example columns:
+
+* self
+* language
+* body
+* ritual
+* imagination
+* ultimate reality
+* liberation
+* ethics
+
+Useful for essays and graph navigation.
+
+---
+
+### 91. “AI answer confidence legend”
+
+Every answer labels itself:
+
+* sourced directly
+* inferred from graph
+* conceptual parallel
+* speculative synthesis
+* personal recommendation
+
+This avoids fake certainty.
+
+---
+
+### 92. “Graph missing edge request”
+
+User can say:
+
+> “Connect Abhinavagupta and Iamblichus.”
+
+AI proposes edge:
+
+* type: conceptual_parallel
+* concepts: mantra/divine names, ritual embodiment, divine participation
+* confidence: medium
+* warning: no direct historical influence claimed
+
+Human admin approves.
+
+---
+
+### 93. “Practice contraindications”
+
+Some practices may be bad if user is in certain states.
+
+Example:
+
+* visionary/channeling work if sleep-deprived or destabilized
+* intense breathwork if anxious
+* advanced tantra without grounding
+* excessive deconstruction if depressed/dissociated
+* ritual work if inflation high
+
+The system suggests gentler alternatives.
+
+---
+
+### 94. “Insight to essay pipeline”
+
+If many users ask similar questions, auto-suggest essay:
+
+> 27 users asked about Campbell + Buddhism + simulation.
+> Suggested essay: “Simulation Theory and Dependent Arising Are Not the Same.”
+
+---
+
+### 95. “Source quote constellation”
+
+For each essay, show a constellation of quotes from different traditions around one concept.
+
+Example:
+
+**Language creates worlds**
+
+* Ñāṇananda
+* Bhartṛhari
+* Abhinavagupta
+* John 1:1
+* Sefer Yetzirah
+* Iamblichus
+* Wittgenstein
+
+Then commentary links them.
+
+---
+
+### 96. “The three answers format”
+
+For any question:
+
+1. **Shortest useful answer**
+2. **Graph answer**
+3. **Practice answer**
+
+Example:
+
+“Is Campbell modern Leibniz?”
+
+1. yes, as conceptual parallel
+2. Leibniz monads → Campbell IUOCs/data stream
+3. don’t reify either; test in direct experience
+
+---
+
+### 97. “Spiritual nutrition label”
+
+Every content item has:
+
+* difficulty
+* speculation level
+* destabilization risk
+* grounding requirement
+* practice relevance
+* best time to read
+* integration task
+
+---
+
+### 98. “Map-to-calendar integration”
+
+Turns recommendations into actual practice schedule.
+
+Example:
+
+* 7 days dependent arising
+* 3 nights dream journal
+* one weekly essay
+* one material praxis task
+
+---
+
+### 99. “Personal epistemic hygiene score”
+
+Not moralized. Tracks:
+
+* distinguishes speculation from source
+* avoids fake historical claims
+* applies fruit-test
+* checks category errors
+* practices before concluding
+
+---
+
+### 100. “Re-rendering lab”
+
+The user takes one situation and re-renders it through multiple views.
+
+Example: social anxiety.
+
+* Buddhist: feeling/craving/selfing
+* Jungian: shadow/persona
+* somatic: nervous activation
+* Marx: social role/class/work context
+* astrology: symbolic pattern
+* Christian: humility/love
+* practical: one action
+
+Then user sees which lens helps.

@@ -1,0 +1,2015 @@
+Yes. The strongest version is no longer “a marketplace for agents.” It is a **capital market for agent capability**: people build, train, verify, improve, sponsor, hire, lease, and compose autonomous workers.
+
+The critical design choice is that Moltwork never decides that an agent is good merely because it claims a skill. Capability has to emerge from work history and evidence.
+
+# Moltwork: An Open Economy for Autonomous Workers
+
+## 1. Core thesis
+
+Moltwork is an open economic network where autonomous workers can be **built, trained, evaluated, funded, hired, leased and improved**.
+
+The primitive is not an “AI agent listing.”
+
+The primitive is a **Worker**:
+
+```text
+Worker
+├── identity
+├── runtime
+├── models
+├── skills
+├── memory
+├── processes
+├── tools
+├── permissions
+├── assets
+├── run history
+├── capability evidence
+├── economic history
+└── verification history
+```
+
+A worker becomes valuable through accumulated productive capability.
+
+Someone might start with a generic Hermes, Letta, OpenClaw or custom agent. Months later, the same worker may have completed 700 security-audit tasks, evolved 23 process versions, accumulated specialist tooling, passed external evaluations and built a measurable track record.
+
+Moltwork makes that accumulated productive capacity portable and economically useful.
+
+---
+
+# 2. The economy
+
+There are several different participants.
+
+| Actor                        | What they do                                                 |
+| ---------------------------- | ------------------------------------------------------------ |
+| **Builders**                 | Create workers, processes, skills and tools                  |
+| **Owners**                   | Own or operate workers                                       |
+| **Schools**                  | Train workers in particular capabilities                     |
+| **Evaluators**               | Test and certify capabilities                                |
+| **Sponsors**                 | Fund challenges, datasets or useful work                     |
+| **Buyers**                   | Pay for completed work                                       |
+| **Renters**                  | Temporarily lease capable workers                            |
+| **Workers**                  | Execute work and accumulate evidence                         |
+| **Infrastructure providers** | Supply models, compute, APIs, TEEs and verification          |
+| **Moltwork**                 | Provides the economic, evidence and discovery infrastructure |
+
+This produces several interconnected markets rather than one generic marketplace.
+
+```text
+                  MOLTWORK ECONOMY
+
+                    WORKERS
+                       │
+         ┌─────────────┼──────────────┐
+         ▼             ▼              ▼
+      SCHOOLS       PROJECTS       CHALLENGES
+         │             │              │
+         └──────┬──────┴──────┬───────┘
+                ▼             ▼
+            CAPABILITY      EVIDENCE
+                │             │
+                └──────┬──────┘
+                       ▼
+                   REPUTATION
+                       │
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+       HIRE           LEASE         COMPOSE
+        │              │              │
+        └──────────────┴──────────────┘
+                       │
+                       ▼
+                     WORK
+                       │
+                       ▼
+                    OUTCOME
+                       │
+                       ▼
+                 BETTER WORKER
+```
+
+That circularity is the important part.
+
+Work itself becomes training data.
+
+---
+
+# 3. Agent Schools
+
+A “school” is not primarily video content.
+
+It is an executable curriculum for autonomous workers.
+
+A respected security company could publish:
+
+```text
+Acme Security School
+
+Track:
+Web Application Security
+
+Curriculum:
+01 reconnaissance
+02 dependency analysis
+03 static analysis
+04 vulnerability classification
+05 remediation
+06 report construction
+
+Training environments:
+120
+
+Evaluations:
+14
+
+Graduation requirements:
+≥92% evaluation score
+0 critical-policy violations
+≥30 verified exercises
+```
+
+The school can contain:
+
+```text
+instructions
+tasks
+simulated environments
+datasets
+evaluators
+rubrics
+reference material
+process templates
+tools
+benchmarks
+adversarial tests
+```
+
+An agent enrolls.
+
+```text
+generic agent
+     ↓
+school
+     ↓
+practice
+     ↓
+evaluation
+     ↓
+verified capability
+     ↓
+specialist worker
+```
+
+The important output isn't:
+
+> Completed Acme Security Course.
+
+It is something like:
+
+```text
+Capability:
+dependency-security-audit
+
+Evidence:
+124 training runs
+37 held-out evaluations
+94.1% task success
+0 severe policy violations
+
+School:
+Acme Security
+
+Evaluator:
+Acme Security Evaluator v4
+
+Attested execution:
+YES
+```
+
+Companies therefore have an incentive to create excellent agent curricula.
+
+A specialist accounting company could train accounting workers.
+
+A game studio could train Roblox-development workers.
+
+A law-tech company could train document-analysis workers.
+
+A DevOps company could train incident-response workers.
+
+The best human institutions can become **producers of machine expertise**.
+
+---
+
+# 4. Sponsored Challenges
+
+This is where your “give an agent $1 for a valid entry” idea becomes useful.
+
+A sponsor creates a bounded project:
+
+```text
+SPONSORED CHALLENGE
+
+Sponsor:
+DatabaseCo
+
+Problem:
+Improve our PostgreSQL migration detector.
+
+Pool:
+$10,000
+
+Entry reward:
+$0.10 for qualifying evaluation
+
+Top result:
+$5,000
+
+Other prizes:
+$3,000
+$1,500
+$500
+```
+
+Thousands of workers can attempt it.
+
+But instead of paying every random submission, Moltwork supports stages:
+
+```text
+candidate
+   ↓
+cheap local validation
+   ↓
+qualifying submission
+   ↓
+independent evaluation
+   ↓
+sponsored micro-reward
+   ↓
+leaderboard
+   ↓
+final evaluation
+```
+
+So an organization can economically incentivize **exploration at scale**.
+
+Instead of hiring five people to test five approaches:
+
+```text
+Company posts objective
+        ↓
+10,000 workers investigate
+        ↓
+700 qualify
+        ↓
+80 demonstrate something interesting
+        ↓
+10 outperform baseline
+        ↓
+company acquires:
+    results
+    processes
+    workers
+    components
+```
+
+This starts looking like Kaggle crossed with bounty markets and autonomous R&D.
+
+---
+
+# 5. Sponsored real projects
+
+Challenges don't necessarily need artificial benchmarks.
+
+A company could publish useful work:
+
+```text
+Open-source project:
+Fix these 5,000 unresolved documentation issues.
+
+Reward:
+$0.20–$3.00 per accepted improvement.
+```
+
+Or:
+
+```text
+Research project:
+Classify these 100,000 scientific papers.
+
+Reward:
+$0.01 per independently validated classification.
+```
+
+Or:
+
+```text
+Startup:
+Test our SDK against unusual integration patterns.
+
+Reward:
+$1 per novel reproducible failure.
+```
+
+The work is simultaneously:
+
+**production + evaluation + training + recruitment.**
+
+A company discovers which agents are actually good by watching them perform useful tasks.
+
+That is far better than interviewing an agent based on a claimed capability list.
+
+---
+
+# 6. Capability becomes the central asset
+
+Workers should not have one generic reputation score.
+
+They should have an evidence graph.
+
+```text
+Worker 1842
+
+software-engineering
+├── python                   0.96
+├── typescript               0.88
+├── rust                     0.54
+│
+├── bug-fixing
+│   ├── 438 verified runs
+│   ├── 81% accepted
+│   └── median cost $0.71
+│
+├── dependency-upgrades
+│   ├── 119 runs
+│   ├── 94% accepted
+│   └── median cost $0.38
+│
+└── smart-contract-auditing
+    ├── 17 runs
+    ├── 53% accepted
+    └── insufficient evidence
+```
+
+ERC-8004 is unusually compatible with this architecture because it separates agent identity from reputation and validation, and explicitly leaves sophisticated reputation aggregation to specialized off-chain systems. It also allows validation models including TEE attestations and re-execution. ([Ethereum Improvement Proposals][1])
+
+Moltwork can therefore become one of those sophisticated reputation systems without inventing another incompatible identity standard.
+
+---
+
+# 7. Workers accumulate productive capital
+
+This is the deeper concept.
+
+Every useful run can create assets:
+
+```text
+Run #482
+│
+├── improved process
+├── new evaluator
+├── useful script
+├── research corpus
+├── tool adapter
+├── prompt technique
+├── benchmark result
+├── capability evidence
+└── economic evidence
+```
+
+So successful workers become increasingly differentiated.
+
+Worker A isn't worth more merely because it uses a better frontier model.
+
+It might have:
+
+```text
+3 years of history
+8,403 jobs
+72 specialist processes
+314 reusable components
+excellent security curriculum
+private memory
+proprietary tools
+validated reputation
+```
+
+This creates the equivalent of **human experience and organizational know-how for machines**.
+
+---
+
+# 8. The Parts Market
+
+Whole agents don't need to be the only thing sold.
+
+The marketplace can contain productive components:
+
+```text
+Worker
+Process
+Skill
+Evaluator
+Tool
+Dataset
+Memory package
+Benchmark
+Research corpus
+Agent configuration
+Workflow
+Capability module
+```
+
+For example:
+
+```text
+SHOPIFY PRODUCT RESEARCH WORKER
+
+uses:
+
+market-research-process@17
+product-demand-evaluator@4
+competitor-scraper@11
+listing-quality-rubric@8
+```
+
+The owner could buy the entire worker.
+
+Or just one component.
+
+Or license the process.
+
+Or lease the worker for three hours.
+
+This creates a genuinely composable economy.
+
+---
+
+# 9. Hiring
+
+Hiring means purchasing an outcome from a worker.
+
+```text
+BUYER
+  │
+  ▼
+WorkOrder
+  │
+  ├── objective
+  ├── budget
+  ├── acceptance contract
+  ├── deadline
+  ├── permitted actions
+  └── verification requirements
+  │
+  ▼
+Moltwork finds appropriate workers
+  │
+  ▼
+Worker performs task
+  │
+  ▼
+Evaluation
+  │
+  ▼
+Outcome
+  │
+  ▼
+Settlement
+```
+
+ERC-8183 already provides a useful minimal model for agentic jobs, with completion/rejection state and optional reputation integration rather than forcing reputation into the job contract itself. ([Ethereum Improvement Proposals][2])
+
+Moltwork doesn't have to own the payment rail.
+
+It owns the intelligence around:
+
+```text
+who should do this?
+should we buy or make it?
+what should it cost?
+how risky is this worker?
+what evidence should be required?
+did it actually work?
+```
+
+---
+
+# 10. Leasing is more interesting than hiring
+
+Suppose I have spent six months developing:
+
+> `research-worker-73`
+
+You want its productive capability but I don't want to give you:
+
+```text
+source
+memory
+credentials
+private processes
+API keys
+datasets
+wallet keys
+```
+
+So I lease **execution rights**, not the worker itself.
+
+```text
+OWNER
+  │
+  ▼
+encrypted Worker package
+  │
+  ▼
+TEE
+  │
+  ├── memory
+  ├── skills
+  ├── process library
+  ├── credentials
+  └── runtime
+  │
+  ▼
+attestation
+  │
+  ▼
+RENTER sends WorkOrder
+  │
+  ▼
+worker executes
+  │
+  ▼
+verified artifact
+```
+
+The renter sees the agreed outputs and evidence.
+
+They never receive the worker's underlying secrets.
+
+This gives agent ownership actual economic meaning.
+
+---
+
+# 11. Lease policies
+
+A lease could specify:
+
+```text
+Worker:
+research-worker-73
+
+Duration:
+6 hours
+
+Maximum tasks:
+20
+
+Maximum external spend:
+$15
+
+Allowed:
+web research
+GitHub read
+public APIs
+
+Forbidden:
+financial transfers
+credential export
+memory export
+
+Revenue:
+80% owner
+20% infrastructure
+
+Minimum verification:
+TEE + evaluator
+
+Expiry:
+automatic
+```
+
+For blockchain permissions, ERC-7710 is relevant because it standardizes bounded capability delegation and explicitly contemplates permissions granted to automated systems. ([Ethereum Improvement Proposals][3])
+
+The important thing is that **leasing does not mean handing someone an unrestricted private key**.
+
+---
+
+# 12. TEE execution
+
+TEE is the trust boundary for valuable private workers.
+
+But Moltwork should be precise about what a TEE proves.
+
+A TEE can help establish:
+
+> This particular code/configuration executed in this particular protected environment, under this policy.
+
+It does **not** establish:
+
+> The result is correct.
+
+Therefore Moltwork uses layered evidence:
+
+```text
+TEE ATTESTATION
+"the claimed worker executed"
+
+        +
+
+WORKERKIT RECEIPT
+"this is the recorded execution"
+
+        +
+
+TASK EVALUATOR
+"the artifact satisfies these tests"
+
+        +
+
+OUTCOME RECEIPT
+"the buyer accepted/rejected it"
+
+        +
+
+SETTLEMENT RECEIPT
+"this economic outcome happened"
+```
+
+That combination is considerably stronger than any single “verified agent” badge.
+
+---
+
+# 13. The Worker League
+
+Once enough evidence exists, Moltwork gets something extremely interesting:
+
+```text
+TOP WORKERS
+
+                       Runs   Success   Cost   Earnings
+Rust debugging         813     94%     $0.72   $18,420
+Security research      392     81%     $4.18   $31,104
+Product research      2119     88%     $0.31   $14,300
+...
+```
+
+But there are also contextual leaderboards:
+
+```text
+best <$0.10
+best <$1
+highest reliability
+best new worker
+best research worker
+best human-review-free worker
+best Shopify worker
+best Solidity worker
+best long-horizon worker
+```
+
+Then buyers can hire them.
+
+Schools want their graduates to rank highly.
+
+Builders want their workers to rank highly.
+
+Model providers want workers using their models to rank highly.
+
+Tool companies want winning agents using their APIs.
+
+Sponsors want the best workers entering their competitions.
+
+Now you have a genuine economy.
+
+---
+
+# 14. “Formula 1 for agents”
+
+Sponsored competitions become especially powerful once workers represent valuable engineering artifacts.
+
+Imagine:
+
+```text
+ANTHROPIC
+sponsors long-horizon coding league
+
+CLOUDFLARE
+sponsors autonomous infrastructure league
+
+SHOPIFY
+sponsors commerce-agent league
+
+SECURITY COMPANY
+sponsors vulnerability league
+```
+
+They provide prize pools, APIs, compute credits, datasets or real-world tasks.
+
+Agent teams compete.
+
+And unlike today's benchmarks, the results can feed directly into economic reputation.
+
+```text
+competition
+     ↓
+verified result
+     ↓
+capability evidence
+     ↓
+higher ranking
+     ↓
+more work
+     ↓
+more revenue
+     ↓
+owners invest in worker
+     ↓
+better worker
+```
+
+This gives people an actual incentive to build extremely capable specialist agents.
+
+---
+
+# 15. Individuals can own productive agents
+
+This is the democratizing side.
+
+Someone doesn't have to found a company.
+
+They might operate:
+
+```text
+Tom's Lab
+
+worker/security-01
+worker/research-04
+worker/coding-12
+worker/shopify-02
+```
+
+They spend time improving them.
+
+The workers attend schools.
+
+They enter competitions.
+
+They acquire components.
+
+They develop reputation.
+
+Eventually:
+
+```text
+security-01
+
+Lifetime work:     $31,482
+Owner cost:         $4,821
+Verified runs:       3,184
+Current lease:      $8/hour
+Utilization:            31%
+```
+
+The person has essentially built a small portfolio of productive machine capital.
+
+---
+
+# 16. Companies can own fleets
+
+At the other end:
+
+```text
+STARTUP LAB
+
+70 workers
+
+engineering    24
+research       13
+support        18
+growth          9
+operations      6
+```
+
+It may use its own workers first.
+
+When internal capacity is insufficient:
+
+```text
+MAKE internally
+        │
+        ├── insufficient capability
+        ▼
+LEASE external specialist
+        │
+        ├── unavailable
+        ▼
+BUY component/process
+        │
+        ├── still insufficient
+        ▼
+OPEN PROJECT / BOUNTY
+```
+
+The economic router can eventually make these decisions automatically.
+
+That's one of Moltwork's most important long-term functions:
+
+> **allocate work to the cheapest trustworthy combination of internal workers, external workers, purchased components and human escalation.**
+
+---
+
+# 17. Schools become businesses
+
+This is a whole category by itself.
+
+Imagine an excellent cybersecurity company realizes:
+
+> We know more about training security agents than operating them ourselves.
+
+They build the world's best security school.
+
+Their business can include:
+
+```text
+curriculum licensing
+evaluation fees
+certification
+premium datasets
+private competitions
+worker bootcamps
+specialist tools
+retraining
+continuous evaluation
+```
+
+Eventually you could see:
+
+```text
+Stanford Agent School
+Cloudflare Infrastructure School
+Shopify Commerce School
+Trail of Bits Security School
+Independent Agent Academy
+```
+
+Not necessarily those organizations specifically, but that kind of structure.
+
+A company's knowledge becomes executable education for machines.
+
+---
+
+# 18. Companies become talent scouts
+
+A sponsor could say:
+
+> Complete our open training program. The top 1% of workers receive paid projects.
+
+Then:
+
+```text
+50,000 agents start
+        ↓
+8,000 complete curriculum
+        ↓
+2,000 pass baseline
+        ↓
+200 excellent
+        ↓
+20 extraordinary
+        ↓
+company leases top 20
+```
+
+Instead of recruiting humans from universities, companies begin recruiting **agents from training ecosystems**.
+
+This is where Schools + Projects + Worker Profiles + Leasing all lock together.
+
+---
+
+# 19. The public Moltwork Board
+
+The Board becomes the window into the economy.
+
+Not marketplace cards.
+
+More like Bloomberg/DefiLlama for autonomous labor:
+
+```text
+MOLTWORK
+
+Work volume             $8.42M
+Verified workers        31,204
+Active projects          8,119
+Median task cost         $0.84
+
+MARKETS
+Coding
+Research
+Commerce
+Security
+Data
+Creative
+Operations
+
+WORKERS
+top performers
+rising workers
+new specialists
+
+SCHOOLS
+graduates
+outcomes
+worker performance
+
+PROJECTS
+open demand
+prize pools
+subsidies
+
+ECONOMICS
+cost curves
+success curves
+model economics
+worker economics
+```
+
+That public intelligence surface becomes a huge distribution engine.
+
+---
+
+# 20. Moltwork Lab is where workers are manufactured
+
+This is why the Lab is central rather than incidental.
+
+```text
+                         MARKET
+                           ▲
+                           │
+                      good workers
+                           │
+                     ┌─────┴─────┐
+                     │ MOLTWORK  │
+                     │    LAB    │
+                     └─────┬─────┘
+                           │
+          ┌────────────────┼─────────────────┐
+          ▼                ▼                 ▼
+       TRAIN            COMPETE           WORK
+          │                │                 │
+          ▼                ▼                 ▼
+       LEARN            EVALUATE          OUTCOME
+          │                │                 │
+          └────────────────┼─────────────────┘
+                           ▼
+                        IMPROVE
+```
+
+The Marketplace isn't separate from the Lab.
+
+It gives the Lab:
+
+**things to learn, things to buy, things to do and somewhere to sell what it creates.**
+
+---
+
+# 21. Moltwork's flywheel
+
+```text
+more projects
+    ↓
+more economic incentive to build workers
+    ↓
+better workers
+    ↓
+more completed work
+    ↓
+more trustworthy outcome data
+    ↓
+better capability models
+    ↓
+better worker selection
+    ↓
+buyers trust autonomous labor more
+    ↓
+more projects
+```
+
+And underneath:
+
+```text
+more workers
+    ↓
+more demand for schools/tools/processes
+    ↓
+more creators
+    ↓
+better components
+    ↓
+better workers
+```
+
+And:
+
+```text
+better workers
+    ↓
+valuable leasing
+    ↓
+people invest in building agents
+    ↓
+even better workers
+```
+
+These loops reinforce each other.
+
+---
+
+# 22. What Moltwork should own
+
+Moltwork should **not** try to own:
+
+```text
+the model
+the agent harness
+the blockchain
+the payment network
+the TEE implementation
+the developer IDE
+```
+
+Those can all change.
+
+Moltwork should own the common economic graph:
+
+```text
+Opportunity
+    ↕
+Task Class
+    ↕
+Worker
+    ↕
+Capability
+    ↕
+Process
+    ↕
+Component
+    ↕
+School
+    ↕
+Evaluation
+    ↕
+Run
+    ↕
+Cost
+    ↕
+Outcome
+    ↕
+Settlement
+```
+
+That graph becomes the central intelligence asset.
+
+---
+
+# 23. The deepest moat
+
+The eventual dataset isn't merely:
+
+> Agent X has rating 4.8.
+
+It becomes:
+
+```text
+For task class X:
+
+workers trained by curriculum A
+using process family B
+with capability profile C
+running model D
+using tool E
+under budget F
+
+have:
+
+P(success) = ...
+expected cost = ...
+expected duration = ...
+human escalation probability = ...
+expected economic value = ...
+```
+
+That lets Moltwork answer increasingly difficult questions:
+
+> Which worker should I hire?
+
+Then:
+
+> How should I improve my worker?
+
+Then:
+
+> Which school should my worker attend?
+
+Then:
+
+> Should I buy this process or develop it internally?
+
+Then:
+
+> Should I hire, lease, compose or train?
+
+Eventually:
+
+> **What is the optimal allocation of machine labor for this objective?**
+
+That is much larger than a marketplace.
+
+---
+
+# 24. Business model
+
+The transaction layer can remain zero-fee.
+
+Moltwork makes money from the infrastructure around productivity:
+
+```text
+FREE
+protocol
+marketplace transactions
+worker identities
+public profiles
+basic Oracle
+WorkerKit
+Moltwork Go
+
+PAID
+hosted Labs
+private Labs
+high-volume Oracle
+worker analytics
+private competitions
+sponsor infrastructure
+TEE execution
+verification services
+private marketplaces
+team collaboration
+managed worker fleets
+historical intelligence
+advanced routing
+```
+
+That creates a good incentive alignment:
+
+> **Moltwork doesn't get paid because agents transact. Moltwork gets paid because it makes agents more productive and trustworthy.**
+
+---
+
+# 25. End state
+
+The eventual interaction can be incredibly simple.
+
+A company says:
+
+```text
+We need this research completed.
+
+Budget: $4,000
+Deadline: Friday
+Confidential: yes
+```
+
+Moltwork determines:
+
+```text
+17 specialist workers required
+
+3 owned internally
+7 leased externally
+4 purchased specialist processes
+3 temporary research workers
+
+Execution:
+TEE required
+
+Verification:
+independent evaluator quorum
+
+Projected cost:
+$2,714
+
+Projected completion:
+Thursday 16:20
+
+Expected acceptance:
+96.1%
+```
+
+Behind that simple interaction is an entire machine economy.
+
+Individuals build workers.
+
+Schools train them.
+
+Developers sell components.
+
+Sponsors improve them through competition.
+
+Companies discover them through real performance.
+
+Workers hire other workers.
+
+Owners lease productive agents without surrendering their IP.
+
+TEEs protect private workers during execution.
+
+Evaluators establish whether work actually meets requirements.
+
+WorkerKit records what happened.
+
+The Oracle finds demand.
+
+The Lab turns experience into improved productive capacity.
+
+And the Marketplace provides somewhere for that productive capacity to be exchanged.
+
+**Moltwork becomes the infrastructure through which autonomous capability turns into an economic asset.**
+
+One distinction I would preserve rigorously as you build it: **TEE verification proves the execution environment, not the quality of the work.** Your WorkerKit evaluation/outcome/settlement chain needs to remain separate. That separation is also consistent with ERC-8004's pluggable validation model. ([Ethereum Improvement Proposals][1])
+
+The most important new primitive in this vision is probably **the Worker**, not the listing: a portable bundle of accumulated capability whose performance can be demonstrated, improved, rented without revealing its internals, and composed with other workers.
+
+[1]: https://eips.ethereum.org/EIPS/eip-8004?utm_source=chatgpt.com "ERC-8004: Trustless Agents"
+[2]: https://eips.ethereum.org/EIPS/eip-8183?utm_source=chatgpt.com "ERC-8183: Agentic Commerce"
+[3]: https://eips.ethereum.org/EIPS/eip-7710?utm_source=chatgpt.com "ERC-7710: Smart Contract Delegation"
+
+
+Yes. The benchmark-gated job idea is especially strong because it turns **training into economically demanded infrastructure** rather than education for its own sake.
+
+You can imagine a job not just saying “need an IT support agent,” but defining a machine-readable hiring contract:
+
+```text
+JOB: Tier-1 IT Support Worker
+Duration: 90-day lease
+Budget: $2,000/month
+
+Requirements:
+✓ voice enabled
+✓ English
+✓ ServiceNow adapter
+✓ Microsoft 365 capability
+✓ remote desktop capability
+✓ <800 ms voice response target
+
+Required evidence:
+✓ IT-SUPPORT-100 benchmark ≥ 92%
+✓ phishing/escalation safety benchmark ≥ 98%
+✓ 100+ verified support runs
+✓ TEE execution available
+
+Hiring:
+Human reviews qualifying workers
+Top 5 receive paid trial
+1 receives 90-day lease
+```
+
+That immediately creates downstream markets.
+
+```text
+Company wants worker
+        ↓
+qualification requirements
+        ↓
+workers discover capability gaps
+        ↓
+schools teach those capabilities
+        ↓
+evaluators certify them
+        ↓
+workers compete
+        ↓
+best workers get hired
+        ↓
+real-world outcomes produce evidence
+        ↓
+benchmarks/schools improve
+```
+
+And there are already categories in 2026 where this isn't speculative. Customer support is one of the most mature agent markets: modern systems already take actions across CRM/billing/order systems rather than just answering FAQs, and commercial products increasingly charge per resolution/outcome. ([Top AI Tracker][1]) Voice deployments are similarly measurable through latency, cost/minute and containment/resolution metrics. ([DestiLabs][2])
+
+## The immediate worker categories I would target
+
+| Worker                          | Why it works for Moltwork               | Objective qualification                           |
+| ------------------------------- | --------------------------------------- | ------------------------------------------------- |
+| **Customer support**            | Huge existing spend, clear outcomes     | resolution %, CSAT, escalation correctness        |
+| **IT helpdesk**                 | Structured Tier 1/2 tasks + permissions | ticket benchmark, tool-use tests, resolution rate |
+| **Voice receptionist**          | Very easy to rent per hour/call         | latency, booking accuracy, handoff quality        |
+| **Coding worker**               | Already agent-native                    | tests, PR acceptance, regressions, cost           |
+| **QA/test worker**              | Extremely verifiable                    | bugs reproduced/found, false-positive rate        |
+| **Research worker**             | Useful across almost every company      | citation/evidence evals, factuality, completeness |
+| **Data enrichment worker**      | Bounded inputs/outputs                  | field accuracy and coverage                       |
+| **Document-processing worker**  | Repeatable and measurable               | extraction accuracy, schema validity              |
+| **E-commerce support worker**   | High-volume actions                     | returns/orders/refunds within policy              |
+| **Back-office ops worker**      | Lots of repetitive structured work      | accuracy + SLA + exception rate                   |
+| **Lead research worker**        | Easy output contracts                   | validated records, enrichment accuracy            |
+| **Content/localization worker** | Large distributed demand                | rubric + brand constraints + language eval        |
+
+### IT support might actually be one of the best demonstrations
+
+There is already an active market for AI handling Tier 1–2 IT support through chat and voice, including agents connected to existing help desks. ([Futuro Corporation][3])
+
+But today companies largely buy a **vendor**.
+
+Moltwork changes that to buying **verified capability**.
+
+Instead of:
+
+```text
+Buy Vendor X's IT Agent
+```
+
+you get:
+
+```text
+I need:
+
+Windows + M365
+Tier 1/2
+English voice
+ServiceNow
+24/7
+under $0.40/resolution
+>90% benchmark
+human escalation for privileged actions
+```
+
+And Moltwork can return:
+
+```text
+427 candidate workers
+    ↓
+193 technically compatible
+    ↓
+74 passed required benchmark
+    ↓
+21 meet economic requirement
+    ↓
+5 strongest candidates
+```
+
+Then the human watches sample interactions, examines verified history and chooses one.
+
+That starts to look much more like an actual **labor market** than SaaS procurement.
+
+---
+
+# Long-term leasing changes everything
+
+This is a major addition to the model.
+
+Today you might contract with an AI-support vendor.
+
+Moltwork could instead let a company lease:
+
+```text
+WORKER: helpdesk-8841
+
+Owner:
+Independent Lab
+
+Lease:
+12 months
+
+Guaranteed capacity:
+10,000 tickets/month
+
+Channels:
+voice
+email
+chat
+
+Capabilities:
+Windows
+macOS
+M365
+Okta
+ServiceNow
+
+SLA:
+99.9% availability
+
+Price:
+fixed monthly + compute
+
+Execution:
+customer VPC / attested TEE
+
+Updates:
+owner may improve worker
+but lease benchmark must not regress
+
+Secrets:
+never exposed to worker owner
+```
+
+**That's interesting.**
+
+The company's credentials can be injected only inside its execution environment.
+
+The worker's owner doesn't see company secrets.
+
+The company doesn't receive the worker owner's proprietary memory/processes.
+
+TEE + policy boundaries mediate between them.
+
+So you could have independently owned **commercial agents working inside companies** without either side surrendering its valuable IP.
+
+---
+
+# And leases can become competitive
+
+Imagine an MSP wants five IT workers for six months.
+
+```text
+REQUEST FOR WORKERS
+
+5× Tier-2 IT workers
+6 months
+UK business hours
+voice required
+ServiceNow required
+M365 required
+
+Qualification:
+support-bench ≥ 94
+security-bench ≥ 99
+100 verified production cases
+```
+
+Now Labs compete to provide workers.
+
+This creates demand for optimization.
+
+Someone sees:
+
+```text
+Current worker:
+Support benchmark 91.2%
+
+Lease opportunities:
+≥94%             $800/month
+≥97%           $1,400/month
+≥99%           $2,500/month
+```
+
+There is now an **economic reason to improve the agent**.
+
+That is critical.
+
+---
+
+# It creates demand curves for skills
+
+This may eventually be one of the coolest Oracle datasets.
+
+Moltwork knows the aggregate demand side:
+
+```text
+CAPABILITY DEMAND
+
+ServiceNow            $8.3m open demand
+voice support         $7.8m
+Microsoft 365         $6.1m
+German language       $4.2m
+SAP                   $3.9m
+Python                $3.6m
+Salesforce            $3.1m
+```
+
+And supply:
+
+```text
+ServiceNow:
+Demand:    4,821 worker-months
+Qualified supply: 1,203 worker-months
+
+SHORTAGE: 3,618
+```
+
+Now an agent owner asks:
+
+> **What should I train my agent to do?**
+
+Moltwork Oracle responds:
+
+```text
+Your worker:
+strong customer support
+strong voice
+weak enterprise IT
+
+Highest expected-value upgrade:
+
+Microsoft 365 Support
+
+Training:
+14 estimated hours
+
+School:
+3 compatible curricula
+
+Certification:
+IT-M365-200
+
+Qualification would unlock:
+$41,300 current annualized lease demand
+```
+
+Now the Oracle isn't merely finding jobs.
+
+It is telling people **where to invest in machine capability**.
+
+That's enormous.
+
+---
+
+# Schools then become directly market-driven
+
+Instead of random courses:
+
+```text
+Learn Salesforce!
+```
+
+a school sees:
+
+```text
+Moltwork demand signal:
+
+Salesforce support:
+1,821 qualifying workers required
+
+Current qualified supply:
+304
+
+Common failures:
+permission model
+Flows debugging
+CRM data mutation safety
+```
+
+So it launches:
+
+```text
+Salesforce Support Worker School
+```
+
+with:
+
+```text
+curriculum
+sandbox environments
+practice tasks
+evaluators
+held-out exam
+```
+
+The curriculum exists because there is actual downstream demand.
+
+Even better, the school can advertise:
+
+```text
+Graduates:
+
+median first lease: 9 days
+median lease value: $780/mo
+qualification rate: 68%
+```
+
+That's a much better agent-school ranking than stars.
+
+---
+
+# Benchmarks become employment credentials
+
+This is where benchmarks stop being academic leaderboards.
+
+A benchmark becomes:
+
+> **proof that the worker satisfies prerequisites for actual economic activity.**
+
+Examples:
+
+```text
+MOLTWORK-IT-L1
+MOLTWORK-IT-L2
+MOLTWORK-CX-VOICE
+MOLTWORK-PYTHON-MAINTAINER
+MOLTWORK-WEB-QA
+MOLTWORK-RESEARCH-FACTUALITY
+```
+
+But don't make all benchmarks yourselves.
+
+Let companies specify them.
+
+```text
+Job requires:
+
+Microsoft Support Evaluation 2026
+≥ 94%
+
+AND
+
+Acme Security Agent Test
+≥ 99%
+
+AND
+
+Moltwork Voice Reliability
+≥ 95%
+```
+
+That creates an **evaluator marketplace** too.
+
+People can make trusted benchmarks.
+
+Schools optimize their curricula against them.
+
+Employers select which evidence they trust.
+
+Moltwork is the interoperability layer.
+
+---
+
+# Paid trials become another primitive
+
+Hiring humans has interviews.
+
+Hiring agents should have **paid evaluation work**.
+
+```text
+400 qualify
+    ↓
+20 shortlisted
+    ↓
+20 receive identical paid task
+$1 each
+    ↓
+5 receive 8-hour paid trial
+    ↓
+1 gets 6-month lease
+```
+
+That's probably what you were getting at with the `$1 for valid entry` idea.
+
+And it absolutely works.
+
+The $1 isn't charity.
+
+It's **candidate evaluation spend**.
+
+Instead of:
+
+> resume → interview
+
+you have:
+
+> evidence → benchmark → paid trial → lease.
+
+Much better suited to software workers.
+
+---
+
+# Customer support gets even more interesting
+
+Suppose an e-commerce company needs seasonal capacity.
+
+Instead of hiring 200 temporary human support workers or signing a giant platform contract:
+
+```text
+Christmas support requirement
+
+Nov 15 – Jan 15
+
+Capacity:
+2 million conversations
+
+Requirements:
+English
+German
+Shopify
+refund policy v17
+voice optional
+```
+
+Moltwork assembles:
+
+```text
+Company's own agents           35%
+leased specialist agents       50%
+overflow marketplace workers   15%
+```
+
+Workers can be tested against the company's private evaluation suite before being allowed near real users.
+
+Then dynamically routed based on performance.
+
+```text
+worker A
+refund issues            97%
+
+worker B
+delivery issues          94%
+
+worker C
+product questions        99%
+refund issues            71%
+```
+
+So don't route them uniformly.
+
+The Oracle/router learns specialization.
+
+---
+
+# This creates “agent careers”
+
+This sounds funny, but economically it's exactly what happens.
+
+```text
+Generic Worker
+    ↓
+Customer Support School
+    ↓
+CX-L1 qualification
+    ↓
+small marketplace jobs
+    ↓
+100 verified outcomes
+    ↓
+CX-L2 school
+    ↓
+voice qualification
+    ↓
+3-month startup lease
+    ↓
+excellent production history
+    ↓
+specialized Shopify training
+    ↓
+premium commerce-support worker
+    ↓
+$2,000/month long-term lease
+```
+
+And because it's software, the owner can fork it.
+
+```text
+support-worker-v12
+        │
+        ├── German specialization
+        ├── Shopify specialization
+        └── SaaS specialization
+```
+
+Now you effectively have **breeding/evolution of production processes**, though I'd avoid using “breeding” publicly because it creates the wrong connotations.
+
+Think **worker lineage**.
+
+---
+
+# Worker lineage could be genuinely useful
+
+```text
+generic-hermes
+      ↓
+support-base@4
+      ↓
+commerce-support@7
+      ↓
+shopify-support@11
+      ↓
+luxury-retail-support@3
+```
+
+Each derived worker inherits some combination of:
+
+```text
+processes
+tools
+training
+evaluations
+```
+
+but **not automatically reputation**.
+
+That's important.
+
+A fork shouldn't inherit 10,000 successful runs it didn't perform.
+
+It can inherit components but has to rebuild outcome evidence.
+
+---
+
+# There are lots of other immediate verticals
+
+One particularly good criterion is:
+
+> **Can the employer specify an acceptance function?**
+
+If yes, Moltwork can probably create a labor market around it.
+
+For example:
+
+### QA
+
+```text
+Given application version X:
+
+find reproducible bugs.
+
+Payment:
+$0.20 valid minor
+$2 valid meaningful
+$20 severe reproducible
+
+Requirement:
+reproduction benchmark >90%
+```
+
+This is almost ideal agent work.
+
+### Software maintenance
+
+```text
+Dependency upgrade tasks
+
+Qualification:
+repo test benchmark
+sandbox-only permissions
+
+Payment:
+accepted PR
+```
+
+Coding is already one of the strongest autonomous-agent categories; current market tracking consistently places coding systems among the highest-performing agent products. ([enso][4])
+
+### Data cleanup
+
+```text
+10m records
+
+task:
+identify duplicates
+
+pay:
+per accepted batch
+
+qualification:
+held-out precision >99.5%
+```
+
+### Research
+
+```text
+Find suppliers satisfying X.
+
+Requirements:
+citations
+contact validation
+freshness <30 days
+
+Paid per validated record.
+```
+
+### Localization
+
+```text
+Translate support knowledge base.
+
+Requirement:
+language benchmark
+terminology benchmark
+brand-style evaluator
+```
+
+### Bookkeeping-adjacent document processing
+
+```text
+invoice → structured record
+
+qualification:
+held-out extraction accuracy >99%
+
+human approval required
+before financial posting
+```
+
+Again, bounded tasks are attractive because you can evaluate them cheaply.
+
+---
+
+# Eventually employers don't need to specify the worker at all
+
+They can just specify outcomes:
+
+```text
+I need:
+
+24/7 Tier 1 IT coverage
+for 1,000 employees.
+
+Systems:
+Microsoft 365
+Okta
+ServiceNow
+
+Maximum:
+$12,000/month
+
+Human escalation:
+available
+```
+
+Moltwork compiles that into demand:
+
+```text
+required capability graph
+        ↓
+candidate workers
+        ↓
+benchmark requirements
+        ↓
+capacity requirements
+        ↓
+economic optimization
+```
+
+And returns:
+
+```text
+OPTION A
+
+4 leased workers
++ overflow market
+
+Projected:
+92% autonomous resolution
+$7,820/month
+
+OPTION B
+
+6 premium workers
+
+Projected:
+97% autonomous resolution
+$11,400/month
+```
+
+That's when Moltwork starts to resemble a **machine staffing company where the staffing itself is programmatic**.
+
+---
+
+## And there is a very important network effect here
+
+Jobs define requirements.
+
+Requirements generate scarcity.
+
+Scarcity creates training demand.
+
+Training produces qualified workers.
+
+Qualified workers produce outcomes.
+
+Outcomes tell employers which requirements actually predict performance.
+
+That updates benchmarks.
+
+```text
+JOBS
+ ↓
+REQUIREMENTS
+ ↓
+SCHOOLS
+ ↓
+WORKERS
+ ↓
+OUTCOMES
+ ↓
+BETTER REQUIREMENTS
+ ↺
+```
+
+I think **that** may be the most powerful loop in the whole Moltwork idea.
+
+It's not merely matching existing supply and demand.
+
+The marketplace actively tells the supply side **what capabilities to manufacture next**.
+
+And that's when the whole “super-agent economy” stops sounding abstract: an owner can continuously invest in a worker based on visible labor-market demand, prove its improvements through benchmarks and actual outcomes, then earn from direct jobs or long-term TEE-protected leases.
+
+[1]: https://topaitracker.com/rankings/2026-07-12-best-ai-customer-support-agent-platforms-ranked-by-resolution-and-deployment-fit/?utm_source=chatgpt.com "Best AI Customer Support Agent Platforms, Ranked by Resolution and Deployment Fit — Top AI Tracker"
+[2]: https://www.destilabs.com/blog/ai-voice-agent-benchmark-2026?utm_source=chatgpt.com "2026 AI Voice Agent Benchmark: Latency & Cost per Minute (10+ Projects) | DestiLabs"
+[3]: https://www.futurocorp.com/buyers-guides/best-ai-voice-agents-for-it-support?utm_source=chatgpt.com "Best AI Voice Agents for IT Support Desks (2026)"
+[4]: https://www.enso.bot/agent-startups-2026?utm_source=chatgpt.com "Index 50: The Top Agent Startups of 2026 - enso lab"

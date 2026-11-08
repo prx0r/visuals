@@ -1,0 +1,85 @@
+The key product decision changed after the deeper research: DomainArena should not primarily answer “which domain do humans like?” Arena.ai itself has moved agent evaluation beyond preference votes toward confirmed task success, tool behavior, cost, recovery and causal real-world outcomes.
+
+DomainArena should make the same transition for domain names.
+
+For a machine-facing API or MCP tool, the hierarchy can genuinely become roughly:
+
+semantic understanding → agent selection → successful invocation → task success → stability across model families → reuse → economics
+
+Human aesthetics may be a tiny component. For a consumer brand, that changes: human recall, pronunciation, spelling, trust and brand elasticity become major objectives again. So the system in the pack has audience-conditioned policies, rather than one universal “domain quality score.”
+
+That also makes the name.com story considerably stronger. name.com already has the rails for agents to search, register, manage domains and DNS, and their current developer strategy explicitly focuses on domain experiences that convert. Railway is already doing 1,700+ registrations/month through embedded name.com purchasing, so another autonomous-domain buyer isn't novel.
+
+The missing piece is:
+
+Given this product, this audience and this budget, which domain from name.com's actual inventory should the agent buy?
+
+And name.com's API provides exactly the variables needed to make that optimization real: purchasability, premium status, purchase price, renewal price and purchase type. Search results are explicitly unordered, which is another reason there's room for an intelligent ranking layer on top.
+
+The ZIP has 28 files / ~70 KB of implementation guidance and scaffolding, including:
+
+full product thesis and research conclusions;
+exact in-place transition from agentseolab;
+transparent hackathon-lineage/tagging strategy;
+architecture and directory structure;
+name.com Search → CheckAvailability → pricing → registration → DNS design;
+hard first-year/renewal budget constraints;
+Semantic Inversion specification;
+pairwise Arena + Bradley–Terry design;
+executable agent-selection experiments;
+model-stability/worst-family methodology;
+TLD causal experiments;
+human-vs-agent audience policies;
+agentic SEO funnel;
+EvoName evolutionary naming;
+REST + MCP API design;
+database/event schemas;
+detailed UI screens;
+implementation tickets;
+test matrix and failure injection;
+exact build order;
+hackathon pitch;
+2–4 minute demo script;
+source/lineage templates;
+Python scaffolds for models, constraints, policies and name.com integration.
+
+I also explicitly built the pack around the strongest thing already present in AgentSEOLab: it treats agent actions and controlled outcomes as evidence, not just what models claim they prefer. Its canonical rules already require frozen intent, AB/BA controls, fresh sessions, model provenance and family-level replication. That becomes DomainArena's methodological moat rather than being thrown away during the product pivot.
+
+The central architecture in the pack is therefore:
+
+PRODUCT INTENT
+      ↓
+WHO MUST UNDERSTAND IT?
+human / developer / agent / mixed
+      ↓
+NAME GENERATOR POPULATION
+      ↓
+NAME.COM REAL INVENTORY
+      ↓
+HARD BUDGET / RENEWAL / TLD CONSTRAINTS
+      ↓
+SEMANTIC INVERSION
+      ↓
+CONTROLLED AGENT SELECTION
+      ↓
+ACTUAL INVOCATION + TASK SUCCESS
+      ↓
+MODEL-FAMILY STABILITY
+      ↓
+OPTIONAL HUMAN MEMORY / TRUST TESTS
+      ↓
+PARETO FRONTIER
+      ↓
+BEST DOMAIN FOR THIS ADOPTION PATH
+      ↓
+NAME.COM RECHECK
+      ↓
+APPROVE
+      ↓
+REGISTER + DNS RECEIPT
+
+That, I think, is the actual killer version: Arena.ai for internet identity, where “winning” means a domain causes the right actors to understand and successfully use the product—not merely that somebody thinks it sounds cool.
+
+And it gives name.com something strategically useful: a potential recommend_domain(intent, audience, constraints) intelligence layer that could sit in front of their API for AI builders and partners, while naturally driving every successful recommendation into name.com registration. Their hackathon rubric explicitly rewards central, multi-endpoint, unexpected API applications, which this fits extremely closely.
+
+I can also monitor the name.com challenge/API pages through submission and flag any material rule, endpoint, or sponsor-direction changes.

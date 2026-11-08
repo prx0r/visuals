@@ -1,0 +1,348 @@
+For **QRL specifically**, the annoying answer is: they **do not publish fixed payout bands**. Their current page says valid in-scope reports can receive a cash bounty, but the amount is discretionary and depends on severity, impact, PoC quality, etc. They also require proof of identity for payment. ([QRL][1])
+
+So I would treat QRL as a **high-value learning/reputation target**, not the place to maximize immediate bounty income.
+
+The much more interesting discovery is that there are adjacent programs where the exact skills transfer and payouts are explicit.
+
+| Target               | Relevant skills                                     |                     Max / payout | ID?                                        |
+| -------------------- | --------------------------------------------------- | -------------------------------: | ------------------------------------------ |
+| **QoreChain**        | ML-DSA-87, PQ signatures, consensus, wallets, EVM   | $5k critical + season pool share | page doesn’t state KYC; verify before work |
+| **Threshold / tBTC** | threshold crypto, bridges, key/signing logic        |                        **$150k** | **No KYC**                                 |
+| **Raydium**          | Rust, Solana programs, accounting/state transitions |                        **$505k** | **No KYC**                                 |
+| **Ethereum**         | consensus, clients, compiler, cryptography          |                          **$1M** | KYC                                        |
+| **Stacks / sBTC**    | Bitcoin bridge, consensus, Rust/Clarity             |                        **$250k** | KYC                                        |
+| **Cosmos**           | consensus, IBC, cryptography, Go/Rust               |                         **$50k** | KYC                                        |
+
+### The closest thing to what you want is actually QoreChain
+
+This one is extremely on-theme and **active right now**.
+
+Its current bounty explicitly puts **post-quantum implementation bugs and side channels** at high priority. In scope are:
+
+* ML-DSA-87 signing
+* PQ key registration
+* consensus/block production
+* staking/slashing
+* wallet code
+* EVM execution
+* state transitions
+* RPC/API
+* later bridge/CosmWasm/SVM components.
+
+Rewards are currently:
+
+**Critical $5,000 USDT**
+**High $2,000**
+**Medium $750**
+**Low $250**
+**Insight/hardening $100**
+
+Plus every valid researcher gets a share of a **10,125,000 QOR season pool** distributed when this season closes in February 2027. ([QoreChain][2])
+
+More importantly, they've basically handed you a target list:
+
+> forgery or bypass of ML-DSA-87
+> predictable/recoverable signing keys
+> consensus splits
+> unauthorized minting
+> incorrect state transitions
+> validator privilege escalation
+> wallet signing errors
+> PQ side channels.
+
+That is almost exactly the curriculum we were just designing.
+
+I would absolutely put **QoreChain + QRL side-by-side in one local fuzzing framework**.
+
+---
+
+## Threshold is probably your best money target while you have no ID
+
+This is the one that jumped out.
+
+Threshold's bounty currently has:
+
+**Critical: $10k–$150k**
+**High: $10k**
+**Medium: $2k**
+
+And it explicitly says:
+
+> **No KYC information is required for payout processing.**
+
+([Immunefi][3])
+
+Threshold isn't post-quantum, but technically it's very relevant because it deals with:
+
+* threshold cryptography
+* distributed signing
+* Bitcoin custody
+* cross-chain bridging
+* validator/operator sets
+* key rotation
+* cryptographic authorization.
+
+These are the same mental muscles.
+
+A flaw in distributed signing/key management is exactly the sort of thing you want to become good at before PQ systems get huge.
+
+And they've already paid roughly **$693k** in bounties. ([Immunefi][3])
+
+### I would put this very high on your list.
+
+---
+
+# Raydium: less quantum, much bigger money
+
+Raydium currently pays:
+
+**Critical: $50k–$505k**
+**High: $5k–$40k**
+**Medium: $5k**
+
+And crucially:
+
+> **No KYC required for payout.**
+
+They've already paid about **$3.4M** in bounties. ([Immunefi][4])
+
+It's Solana/Rust smart-contract security rather than PQ cryptography.
+
+But bugs around:
+
+* integer/accounting invariants
+* authorization
+* PDAs
+* state transitions
+* token ownership
+* CPI
+* malformed inputs
+
+are excellent general blockchain-security training.
+
+If your immediate objective is:
+
+> **“become a crypto-security engineer and potentially earn money without ID”**
+
+then I'd hunt:
+
+### Threshold + Raydium
+
+while using:
+
+### QRL + QoreChain
+
+as your quantum specialization.
+
+---
+
+# Ethereum is where the enormous ceiling is
+
+Ethereum currently advertises:
+
+# **up to $1,000,000**
+
+for protocol/client/compiler bugs. ([ethereum.org][5])
+
+This is much closer to QRL than some random DeFi bounty because the scope includes fundamental infrastructure.
+
+Think:
+
+```text
+geth
+consensus clients
+EVM
+state transitions
+networking
+compiler
+protocol rules
+cryptography
+```
+
+But they require proof of identity to actually receive the ETH/DAI reward. You can submit anonymously and earn leaderboard points, but not the money. ([ethereum.org][5])
+
+That doesn't make it useless.
+
+A real Ethereum protocol bug on your public track record would be worth vastly more than a random $500 web bounty.
+
+---
+
+# Cosmos is another extremely good training ground
+
+The current Cosmos bounty specifically says it wants vulnerabilities in:
+
+* distributed systems
+* cryptography
+* consensus
+* interoperability
+* validators
+
+rather than XSS/web-app bugs.
+
+Critical is **$50k**, high **$12.5k**, medium **$2.5k**, low **$1k**. ([Immunefi][6])
+
+It requires KYC unfortunately.
+
+But QoreChain itself uses Cosmos SDK concepts, so the knowledge transfer is enormous.
+
+---
+
+# There are also genuine PQ-specific security competitions
+
+I found a particularly relevant recent example: **Quantus** ran an Immunefi audit competition last month specifically around a quantum-resistant L1 using:
+
+* ML-DSA-65/87
+* Rust
+* Substrate
+* Poseidon2
+* Plonky2
+* PQ wallet code.
+
+The pool was **$20,000**. That particular competition has ended and is currently being evaluated, so don't submit to it now—but it's exactly the sort of event Feedify should monitor for you. ([Immunefi][7])
+
+This tells me there is already a tiny emerging category of:
+
+> **post-quantum blockchain security competitions.**
+
+That's early enough to potentially specialize before everyone notices it.
+
+---
+
+## Another important target: Open Quantum Safe
+
+`liboqs` is one of the canonical open-source libraries for experimenting with post-quantum crypto.
+
+It implements algorithms around the NIST ecosystem and is used heavily for PQ experimentation/integration.
+
+There is **no bounty**. They explicitly say so. ([Open Quantum Safe][8])
+
+But finding something real there would be huge reputationally.
+
+Think:
+
+> QRL bounty = money/track record
+> QoreChain = PQ bounty
+> OQS = cryptographic credibility
+> Ethereum = protocol credibility
+> Immunefi = serious money.
+
+That's an excellent ladder.
+
+---
+
+# What can you realistically earn?
+
+Don't model it like a salary.
+
+Bug bounty income is extremely power-law distributed.
+
+Most time spent finds nothing.
+
+Then occasionally:
+
+```text
+small bug       → $100–$2k
+solid medium    → $2k–$10k
+serious high    → $10k–$50k+
+critical        → $50k–$1m+
+```
+
+Immunefi says it has now paid more than **$125M** in bounties, with notable individual rewards including $2.2M for a Polygon bug, $2M for an Optimism bug, and the record $10M Wormhole bounty. ([Immunefi][9])
+
+But those are extreme tails, not expected weekly income.
+
+Your advantage is potentially different:
+
+### use agents to dramatically lower the cost per target reviewed.
+
+Not:
+
+> “Astra, find me bugs.”
+
+That produces exactly the AI-slop problem bounty programs are complaining about.
+
+Instead:
+
+```text
+target repo
+   ↓
+agent builds architecture map
+   ↓
+extract invariants
+   ↓
+read previous audits
+   ↓
+read known issues
+   ↓
+construct attack hypotheses
+   ↓
+generate fuzz/property tests
+   ↓
+run locally
+   ↓
+cluster crashes/divergences
+   ↓
+human + model investigate only anomalies
+   ↓
+working PoC
+```
+
+That's much more powerful.
+
+Interesting confirmation: Nym literally said in July that it was changing its bounty approach because generic AI-generated reports had become overwhelming, while moving toward formal verification and continuous AI security analysis. ([Nym][10])
+
+So the edge isn't **using AI**.
+
+Everyone can do that.
+
+The edge is building a genuinely good **AI-native vulnerability research laboratory**.
+
+---
+
+# I think your niche should be narrower than “bug bounty”
+
+I'd explicitly become:
+
+## **Post-Quantum / Distributed Cryptography Security**
+
+Then your target graph becomes:
+
+```text
+                PQ SECURITY
+                    │
+       ┌────────────┼─────────────┐
+       │            │             │
+ signatures    consensus       wallets
+ ML-DSA        validator       key mgmt
+ XMSS          slashing        hardware
+ ML-KEM        fork choice     signing
+       │            │             │
+       └────────────┼─────────────┘
+                    │
+                 bridges
+                    │
+               agent custody
+```
+
+Projects:
+
+**QRL → QoreChain → Quantus → Ethereum PQ → OQS**
+
+Adjacent money targets:
+
+**Threshold → Raydium → Cosmos → Ethereum → Stacks/sBTC**
+
+And given your lack of ID right now, the standout immediate payable programs are **Threshold ($150k max, explicitly no KYC)** and **Raydium ($505k max, explicitly no KYC)**. ([Immunefi][3])
+
+I think this is substantially better aligned with what you want than ordinary HackerOne web hacking. You're simultaneously building a skillset that becomes dramatically more valuable if either **AGI-driven offensive security** or **Q-Day probability** jumps.
+
+[1]: https://www.theqrl.org/bug-bounty/?utm_source=chatgpt.com "QRL Bug Bounty Program"
+[2]: https://www.qorechain.io/security?utm_source=chatgpt.com "QoreChain | Quantum-Safe AI-Native Interchain Infrastructure Blockchain"
+[3]: https://immunefi.com/bug-bounty/thresholdnetwork/information/?utm_source=chatgpt.com "Threshold Network Bug Bounties | Immunefi"
+[4]: https://immunefi.com/bug-bounty/raydium/information/ "Raydium Bug Bounties | Immunefi"
+[5]: https://ethereum.org/bug-bounty/?utm_source=chatgpt.com "Ethereum Bug Bounty Program | ⁦ethereum.org⁩"
+[6]: https://immunefi.com/bug-bounty/cosmos/resources/?utm_source=chatgpt.com "Cosmos Bug Bounties | Immunefi"
+[7]: https://immunefi.com/audit-competition/audit-comp-quantus/scope/?utm_source=chatgpt.com "Audit Comp | Quantus Bug Bounties | Immunefi"
+[8]: https://openquantumsafe.org/liboqs/security.html?utm_source=chatgpt.com "Security policy | Open Quantum Safe"
+[9]: https://immunefi.com/bug-bounty-program/?utm_source=chatgpt.com "Bug Bounty Program | Immunefi"
+[10]: https://nym.com/hi/blog/bug-bounty-ai-age?utm_source=chatgpt.com "From AI slop to formal verification | Nym"

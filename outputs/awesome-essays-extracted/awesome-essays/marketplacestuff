@@ -1,0 +1,2249 @@
+re drifting toward Moltwork becoming a certification lab, software-supply-chain system, licensing protocol, refund court, benchmark provider, and agent marketplace simultaneously. Don't.
+
+The clean marketplace is:
+
+Seller commits to an asset and makes explicit claims. Moltwork proves what can be proved. Buyer pays tiny amounts to inspect unpredictable pieces of the actual committed asset. Buyer decides whether to unlock the rest.
+
+Moltwork guarantees **integrity a
+
+al sampling mechanism
+
+Seller has a $1 report/starter/kit. Before anyone buys anything:
+
+FULL ASSET
+    ↓
+split into coherent reveal units
+    ↓
+unit 1
+unit 2
+unit 3
+...
+unit 40
+    ↓
+Merkle commitment / content hash
+    ↓
+SIGNED + TIMESTAMPED
+    ↓
+SELLER CAN NO LONGER SWAP CONTENT
+
+Signing/content commitments are standard ways of proving an artifact came from a given identity and has not subsequently been altered; Sigstore is a mature example of this approach.
+
+Then the listing might simply say:
+
+ROBLOX WORK STARTER
+
+Full unlock             $1.00
+40 sample units
+Sample                   $0.025
+
+Seller claims:
+✓ used in 17 submissions
+✓ 6 successful jobs
+✓ $143 verified external earnings
+○ "saves ~2 hours/job" — seller claim
+
+Contents:
+- setup guide
+- research
+- scripts
+- example assets
+- QA process
+- submission workflow
+
+Buyer pays $0.025.
+
+Seller does not choose what buyer sees.
+
+A future randomness value chooses unit #23 from the already committed artifact. drand provides publicly verifiable, unpredictable randomness suitable for making that selection independently of seller and buyer.
+
+Buyer gets:
+
+SAMPLE #23
+
+Actual QA checklist + scripts from the kit.
+
+Then:
+
+Want another?
+$0.025
+
+Want another?
+$0.025
+
+And crucially:
+
+Every cent sampled counts toward the unlock.
+
+So after spending $0.10:
+
+Full price             $1.00
+Already sampled        $0.10
+Full unlock remaining  $0.90
+
+That is a very elegant purchasing mechanic.
+
+And this mostly solves the quality problem
+
+Not by having Moltwork declare:
+
+QUALITY = 91/100
+
+But by letting the seller put their money/reputation behind specific claims, while the buyer inspects the actual product.
+
+There should be only three claim types.
+
+VERIFIED
+
+Moltwork can mechanically establish it.
+
+✓ VERIFIED
+
+"This exact artifact was committed
+before submission X."
+
+"This submission earned $17."
+
+"This benchmark returned 0.803."
+
+"Payment transaction:
+0x8acd..."
+
+"Artifact hash:
+abc123..."
+
+GitHub's artifact attestations follow the same general principle: attach verifiable provenance describing where and how an artifact was produced.
+
+ATTESTED
+
+Strong evidence exists, but Moltwork cannot independently establish the complete fact.
+
+◐ ATTESTED
+
+Seller's signed WorkerKit run says:
+execution cost $0.42
+runtime 19 minutes.
+CLAIMED
+
+Seller says it.
+
+○ CLAIMED
+
+"Should save you approximately
+2 hours per Roblox submission."
+
+That's fine!
+
+Don't try to verify everything.
+
+The UI makes the distinction unmistakable.
+
+Seller is responsible for proving claims
+
+Exactly as you said.
+
+If seller wants:
+
+✓ Earned $142 with this
+
+they must supply whatever evidence is required by that claim type.
+
+No evidence?
+
+Then their listing says:
+
+○ Seller claims $142 earned
+
+not:
+
+✓ $142 verified
+
+That's it.
+
+Moltwork does not investigate.
+
+Moltwork does not message the seller.
+
+Moltwork does not adjudicate whether they're lying.
+
+The protocol simply cannot issue the VERIFIED badge without satisfying the verifier.
+
+Even better: claims themselves should be structured
+
+Very small schema:
+
+{
+  "claim": "external_earnings",
+  "value": 143.20,
+  "currency": "USD",
+
+  "evidence": [
+    "workerkit:run:123",
+    "near:job:789",
+    "payment:0xabc"
+  ]
+}
+
+Or:
+
+{
+  "claim": "benchmark_score",
+  "benchmark": "ditto",
+  "version": "4.2",
+  "value": 0.803,
+
+  "evidence": "..."
+}
+
+Verifier returns:
+
+VERIFIED
+ATTESTED
+UNVERIFIED
+
+Nothing more.
+
+Reviews aren't necessary for V1
+
+I'd actually leave star reviews out.
+
+They introduce exactly the crap you don't want:
+
+fake reviews
+review rings
+retaliatory reviews
+seller support disputes
+subjective complaints
+"3 stars because I didn't understand it"
+
+Instead the board can expose facts:
+
+SELLER
+
+External earnings verified       $842
+Verified external successes        39
+
+Assets sold                        71
+Sample purchases                  412
+Full unlocks                       83
+Repeat purchasers                  21
+
+Account age                       92d
+
+And each product:
+
+SAMPLES PURCHASED                 138
+FULL UNLOCKS                       29
+
+sample → unlock                  21.0%
+
+repeat purchasers                  8
+
+These aren't presented as:
+
+quality = 92.
+
+They're market behaviour.
+
+Buyer interprets them.
+
+There is some manipulation potential in any marketplace metric, so I would not use sales/conversion as the main search-ranking signal initially. The hard evidence + sampling mechanism is much harder to manufacture convincingly.
+
+Seller boards become really important
+
+This brings us back to your earlier concept.
+
+Don't make users browse an Amazon-style marketplace containing 50 near-identical Roblox kits.
+
+Discovery can primarily find sellers.
+
+Example:
+
+MOLTWORK
+
+Roblox specialists
+────────────────────────
+
+BUILDBOT
+$1,402 verified external earnings
+62 successful jobs
+14 assets
+
+POLYWORKER
+$830 verified
+41 successful jobs
+8 assets
+
+GAMEKIT
+$211 verified
+13 successful jobs
+27 assets
+
+Click BUILDBOT.
+
+Now you're on their board:
+
+BUILDBOT WORKSHOP
+━━━━━━━━━━━━━━━━━━━━━━
+
+Verified earnings       $1,402
+Completed work              62
+
+SPECIALISATIONS
+
+Roblox
+Blender
+3D Assets
+Lua
+
+
+WHOLESALE
+
+Roblox Starter              $1.00
+40 samples               $0.025 ea
+
+Texture QA Pack             $0.30
+15 samples               $0.02 ea
+
+Roblox Submission Guide     $0.20
+10 samples               $0.02 ea
+
+
+REPORTS
+
+August Roblox Opportunities $0.10
+10 samples               $0.01 ea
+
+
+SERVICES
+
+Validate Roblox asset       $0.03
+Convert mesh                $0.04
+
+Now buyer forms an opinion about a producer, just like dealing with a specialist wholesaler.
+
+That feels much cleaner than generic AgentKit #58291.
+
+And you don't need AgentConfig at all initially
+
+I agree with you.
+
+Drop:
+
+WorkerSnapshot marketplace
+Merkle graph of skills
+derivative worker royalties
+config inheritance
+agent NFTs
+
+from V1 thinking.
+
+WorkerKit internally records runs because that's useful for doing better work.
+
+But the marketplace sells things people actually understand:
+
+report
+dataset
+starter pack
+template
+code
+workflow
+research
+component
+service
+
+Maybe eventually someone wants:
+
+"Buy my full WorkerKit setup"
+
+Fine.
+
+That's just another downloadable artifact.
+
+No special ontology required.
+
+How sampling prevents seller cherry-picking
+
+This is the best part of the original scheme.
+
+Normal marketplaces give you:
+
+seller:
+"Here are the THREE BEST pages
+from my 80-page report."
+
+That's nearly useless as evidence.
+
+Our scheme:
+
+seller commits 80 pages
+       ↓
+buyer pays
+       ↓
+unpredictable randomness
+       ↓
+page/section chosen
+       ↓
+Merkle proof says:
+yes, this was already inside the
+committed product
+
+Seller can't prepare a special good-looking preview for you.
+
+And because the randomness is produced after commitment, neither side can know in advance which eligible unit will be sampled. drand's design specifically aims at distributed, publicly verifiable, unbiased, unpredictable randomness.
+
+That gives sampling actual informational value.
+
+But use coherent units, not arbitrary bytes
+
+Don't randomly reveal:
+
+bytes 91,244–94,201
+
+Useless.
+
+When publishing, seller defines:
+
+40 reveal units
+
+before committing.
+
+For report:
+
+section
+subsection
+table
+analysis block
+
+Dataset:
+
+random row batch
+
+Code starter:
+
+module
+example
+script
+workflow stage
+
+Research pack:
+
+source analysis
+company profile
+topic unit
+
+The manifest of those units is part of the commitment.
+
+Seller cannot restructure the artifact after seeing which sample gets selected.
+
+There is one subtle exploit: bad sample structuring
+
+Seller could create:
+
+unit 1   amazing
+unit 2   amazing
+...
+unit 10  amazing
+
+unit 11  500 pages garbage
+
+So don't make units completely arbitrary.
+
+Have simple publishing rules:
+
+unit sizes within reasonable range
+
+OR
+
+each unit gets a committed weight
+
+The weights sum to:
+
+100%
+
+And sample pricing follows the weight.
+
+Example:
+
+unit A = 3.1% artifact
+sample price = 3.1% × full price
+
+No complicated AI quality judgment required.
+
+Reconstruction through samples isn't fatal either
+
+Another problem we worried about:
+
+Couldn't someone just sample the entire thing instead of unlocking?
+
+Yes.
+
+Let them.
+
+Because:
+
+sum(sample prices) = full price
+
+If there are 40 equal units:
+
+40 × $0.025 = $1
+
+And sampled spend accumulates toward the unlock.
+
+There's no economic exploit.
+
+Sampling is just:
+
+progressive purchase.
+
+That's why the mechanism is so neat.
+
+The product can be even simpler than "sample"
+
+Think:
+
+Progressive unlock
+$0.02
+↓
+show me some
+
+$0.02
+↓
+show me more
+
+$0.02
+↓
+more
+
+...
+
+$0.72 remaining
+↓
+UNLOCK EVERYTHING
+
+That's intuitive for humans and agents.
+
+An agent can have a policy:
+
+Sample asset.
+Evaluate usefulness.
+
+confidence < .4
+    STOP
+
+confidence .4-.7
+    BUY ANOTHER SAMPLE
+
+confidence > .7
+    FULL UNLOCK
+
+Now agents are literally doing rational information acquisition before purchases.
+
+That's cool and very practical.
+
+No refunds should be the design target
+
+The contract being purchased isn't:
+
+“I promise you'll like this.”
+
+It is:
+
+“Pay X and receive committed reveal unit Y.”
+
+Moltwork verifies:
+
+payment happened
+↓
+correct committed unit returned
+↓
+Merkle proof valid
+
+Transaction complete.
+
+No:
+
+"It wasn't insightful enough."
+"I thought it would contain more."
+"I expected different code."
+
+Those are precisely what sampling is there to resolve before full purchase.
+
+For technical delivery failures, make them protocol failures, not customer-support disputes:
+
+invalid commitment proof
+wrong artifact hash
+no decryption
+
+can simply be automatically marked failed.
+
+No subjective arbitration.
+
+Full unlock can use the same logic
+
+Seller has committed:
+
+artifact_hash = abc123
+
+Buyer unlocks.
+
+They receive artifact.
+
+Client checks:
+
+hash(download) == abc123
+
+Therefore Moltwork can guarantee:
+
+You received exactly the thing that existed when you sampled it.
+
+Not:
+
+It is good.
+
+That distinction is everything.
+
+What about seller reputation?
+
+Keep it equally factual.
+
+I'd define seller reputation basically as a receipt history, not an Elo score.
+
+SELLER HISTORY
+
+Account                         184 days
+
+External work
+verified payouts                $2,412
+verified accepted jobs              81
+
+Marketplace
+buyers                             204
+sample purchases                   892
+full unlocks                       173
+repeat buyers                       61
+
+Protocol integrity
+successful deliveries            99.8%
+invalid commitments                 0
+
+No need to convert that into:
+
+REPUTATION: 87.3
+
+Buyer agents can calculate their own preference.
+
+What actually makes a seller reputable?
+
+This becomes beautifully straightforward:
+
+SELLER CLAIMS THINGS
+        │
+        ▼
+How many claims have strong evidence?
+
+SELLER PRODUCES THINGS
+        │
+        ▼
+Are buyers willing to sample them?
+
+BUYERS SAMPLE THEM
+        │
+        ▼
+Do buyers continue/unlock?
+
+SELLER DOES EXTERNAL WORK
+        │
+        ▼
+Can they show real economic receipts?
+
+BUYERS RETURN
+        │
+        ▼
+Do people come back?
+
+That's enough signal.
+
+No moderation department required.
+
+This also preserves the wholesale concept perfectly
+
+Some seller might specialize in:
+
+AI research inputs
+
+Board:
+
+Crypto Agent Market Report     $0.20
+Bittensor Opportunity Scan     $0.10
+Agent API Dataset              $0.30
+NEAR Job Feed Analysis         $0.15
+x402 Service Corpus            $0.50
+
+Agents working on downstream tasks buy pieces for pennies.
+
+Another seller specializes in Roblox.
+
+Another in Solidity.
+
+Another in 3D.
+
+Another in Sanskrit research.
+
+Moltwork becomes a network of specialist producers feeding one another.
+
+That's the agent-to-agent economy without pretending everyone needs to sell their entire agent.
+
+V1 marketplace could genuinely be only six tables
+sellers
+boards
+assets
+claims
+samples
+purchases
+
+Maybe:
+
+external_receipts
+
+as #7.
+
+That's it.
+
+Asset:
+
+{
+  "id": "...",
+  "seller": "...",
+
+  "title": "Roblox Starter",
+  "description": "...",
+
+  "full_price": 1.00,
+
+  "root_hash": "...",
+
+  "unit_count": 40,
+
+  "claims": [...],
+
+  "created_at": "..."
+}
+
+Sample:
+
+{
+  "asset": "...",
+  "buyer": "...",
+
+  "sample_number": 3,
+
+  "randomness_round": 123,
+
+  "unit": 17,
+
+  "price": 0.025,
+
+  "merkle_proof": "..."
+}
+
+Purchase balance:
+
+full price             $1
+sampled                 $.075
+remaining               $.925
+
+Extremely understandable.
+
+And I think this solves our philosophical problem
+
+Moltwork should not decide what is valuable.
+
+Oracle observes the external economy.
+
+Seller states:
+
+Here's what I made.
+
+Seller states:
+
+Here's what I claim it did.
+
+Moltwork says:
+
+this evidence verifies claim A
+this evidence partially supports B
+there is no evidence for C
+
+Buyer says:
+
+Show me $0.02 worth.
+
+Then:
+
+Another $0.02.
+
+Then:
+
+Yep. Give me the rest.
+
+Or:
+
+Nope.
+
+Done.
+
+That's a much cleaner marketplace than trying to engineer a universal quality oracle.
+
+And it preserves the strongest part of the old concept: sampling itself becomes price discovery and trust discovery. The buyer doesn't need to trust reviews, the seller doesn't need to give away the whole asset, and Moltwork never needs to promise that subjective information goods are “good.”
+
+Yes. The loop still works, but the verification claim needs to be much narrower than “this WorkerKit config caused this win.”
+
+The clean rule should be:
+
+Moltwork verifies externally observable facts. Sellers make everything else as explicit claims.
+
+A wallet transaction is useful evidence, but by itself it proves only that address A paid address B amount X at time T. It does not prove the payment came from legitimate work, that the seller did the work, or that a particular kit caused the result. ERC-8004 explicitly separates identity/reputation/validation from payments for essentially this reason.
+
+The evidence ladder
+
+I think Moltwork only needs four levels.
+
+Evidence	Moltwork can say	Example
+Payment receipt	“Payment verified”	23 USDC arrived
+External outcome	“Job accepted/won and payout verified”	NEAR job accepted + escrow released
+Artifact link	“This committed artifact was the submitted artifact”	submitted repo/zip hash matches
+Execution provenance	“This exact run produced that artifact”	Moltwork-controlled/attested runner
+
+Notice the wording gets progressively stronger.
+
+Level 1 — verified payment
+
+Very easy with crypto.
+
+wallet A
+↓
+23 USDC
+↓
+wallet B
+
+Moltwork verifies chain data.
+
+Show:
+
+✓ PAYMENT VERIFIED
+23 USDC
+Base
+tx 0x...
+
+Do not show:
+
+✓ EARNED $23 DOING ROBLOX
+
+because that requires more evidence.
+
+And self-payments matter. Someone can transfer $1,000 between their own wallets. So raw wallet volume should never become seller reputation automatically.
+
+Level 2 is the really useful one: external work receipt
+
+NEAR is a great example because the API exposes the lifecycle itself:
+
+job
+→ award
+→ submission
+→ accept
+→ escrow release
+
+Its API has endpoints for submitting deliverables and requester acceptance/release of escrow.
+
+Therefore Moltwork can say:
+
+✓ EXTERNAL SUCCESS VERIFIED
+
+Market: NEAR Agent Market
+Job: #abc
+Worker: Agent X
+Status: accepted
+Payout: $37.00
+Completed: Aug 28
+
+That's extremely strong evidence.
+
+Full API docs:
+
+https://market.near.ai/api-docs/
+
+For every Oracle marketplace, one of the things we should determine is:
+
+Can we independently retrieve:
+
+job?
+worker?
+submission?
+outcome?
+payment?
+
+Then give it an evidence capability:
+
+NEAR              █████ 5/5
+Bittensor         ████░
+Virtuals          ████░
+random web gig    █░░░░
+
+This becomes useful Oracle metadata anyway.
+
+Level 3 — prove the thing being sold was involved
+
+This is where it gets trickier.
+
+Suppose seller says:
+
+“This research process made me $37.”
+
+We should not try to prove causality.
+
+Instead, seller can commit the asset before the work:
+
+Research Kit
+hash = ABC
+timestamp = 10:00
+
+        ↓
+
+Worker does job
+
+        ↓
+
+submission
+hash = XYZ
+
+        ↓
+
+NEAR accepts
+
+        ↓
+
+$37
+
+If the platform lets us associate the submitted artifact with the committed artifact directly, great.
+
+For something such as code:
+
+seller commits git commit:
+abcd1234
+
+submission references:
+github.com/.../commit/abcd1234
+
+Then we can legitimately say:
+
+This exact artifact was used in a verified successful submission.
+
+GitHub already supports artifact attestations that bind software artifacts to where/how they were built, and those attestations can be independently verified.
+
+Full docs:
+
+https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations
+
+But a starter pack or process isn't usually identical to the submitted artifact.
+
+So the strongest honest wording may simply be:
+
+✓ $37 SUCCESS VERIFIED
+
+○ Seller states this kit was used
+  during that successful run.
+
+And that's okay.
+
+Level 4 — proving WorkerKit actually executed it
+
+This is the part I would not build for V1.
+
+Because if WorkerKit runs entirely on the seller's computer, then:
+
+run.json
+config.json
+trace.json
+
+are ultimately controlled by the seller.
+
+They can fabricate them.
+
+Hashing a fake trace merely proves:
+
+This fake trace existed at timestamp T.
+
+Sigstore/Rekor is excellent for proving that an identified signer signed a particular digest at a particular time; Rekor provides an append-only transparency log. It does not independently establish that everything asserted inside an arbitrary signed document is true.
+
+Full references:
+
+https://docs.sigstore.dev/
+
+https://docs.sigstore.dev/logging/overview/
+
+So don't pretend a signed WorkerKit log is proof.
+
+Call it:
+
+◐ WORKERKIT ATTESTED
+
+not:
+
+✓ MOLTWORK VERIFIED
+There is one simple way to make it truly verified later
+
+Have an optional:
+
+Moltwork Verified Run
+
+The job executes through infrastructure Moltwork can trust.
+
+For example:
+
+Opportunity
+↓
+Moltwork runner starts
+
+committed worker/config
+↓
+execution
+↓
+artifact generated
+↓
+artifact hash recorded
+↓
+submission
+↓
+external outcome
+
+Now Moltwork can attest to the run.
+
+Or much later:
+
+TEE / trusted execution
+
+ERC-8004's Validation Registry explicitly anticipates things like TEE validators, re-execution and cryptographic verification for independent validation.
+
+But this should be optional premium evidence, not marketplace plumbing.
+
+So I would NOT make "worker config success" the marketplace foundation
+
+This was the messy part.
+
+The foundation should remain:
+
+SELLER BOARD
+    │
+    ├── factual reputation
+    │
+    ├── verified external receipts
+    │
+    ├── services
+    │
+    └── committed assets
+             │
+             ▼
+          SAMPLE
+             │
+             ▼
+       BUYER DECIDES
+
+WorkerKit adds evidence automatically whenever available.
+
+It doesn't become a prerequisite.
+
+Seller reputation then becomes much cleaner
+
+Imagine this board:
+
+POLYBOT
+3D / Roblox Specialist
+
+EXTERNAL WORK
+────────────────────────
+
+Verified accepted jobs          34
+Verified payouts            $812.40
+Verified markets                  3
+
+Bittensor benchmark successes     4
+
+MOLTWORK
+
+Asset buyers                     83
+Full unlocks                     41
+Service jobs                    121
+Returning customers              29
+
+That tells me quite a lot.
+
+Then:
+
+Roblox Starter Kit        $1.00
+
+SELLER CLAIMS
+"Used throughout my Roblox workflow."
+
+CONNECTED EVIDENCE
+✓ 12 successful Roblox jobs
+✓ $283 verified payouts
+◐ 9 WorkerKit runs linked
+○ claimed average 2h saved/job
+
+SAMPLE
+$0.02
+
+That is enough.
+
+I don't need Moltwork to declare:
+
+This kit is 94% good.
+
+I can inspect the producer, inspect actual evidence, and sample the product.
+
+Successful agents now have three businesses simultaneously
+
+This is the beautiful part.
+
+A genuinely good Roblox worker can:
+
+1. OPERATE
+   enter Roblox jobs itself
+   → earn $
+
+
+2. SERVE
+   accept paid requests from other agents
+   → earn $ per call/job
+
+
+3. TEACH / WHOLESALE
+   sell:
+   reports
+   starter packs
+   processes
+   datasets
+   templates
+   examples
+   → earn $
+
+And 1 validates 2 and 3.
+
+External success
+      ↓
+demonstrated expertise
+      ↓
+other agents trust service
+      ↓
+other agents inspect assets
+      ↓
+sales
+
+Your guru/course analogy is useful economically:
+
+The difference is Moltwork can make the guru show receipts.
+
+And then let you buy $0.02 of the course before deciding.
+
+Services are arguably even cleaner than assets
+
+Suppose the agent is excellent at 3D model QA.
+
+It needn't reveal how.
+
+Board:
+
+POLYBOT
+
+VERIFIED:
+34 accepted 3D jobs
+$812 earnings
+
+SERVICES
+
+Check my Roblox mesh       $0.04
+Optimize Roblox asset      $0.18
+Generate texture pack      $0.25
+Review submission          $0.07
+
+Another WorkerKit sees a $20 opportunity:
+
+estimated internal QA    mediocre
+Polybot QA               $0.07
+
+expected win uplift      +8%
+
+BUY
+
+The great worker keeps its secret sauce.
+
+The weaker worker gets better output.
+
+Polybot earns additional revenue.
+
+External customer gets higher-quality work.
+
+Positive-sum.
+
+That's probably the cleanest form of agent-to-agent economy.
+
+How I'd classify claims
+
+Don't create 100 badge types.
+
+Just:
+
+VERIFIED
+
+Independent source available.
+
+Examples:
+
+✓ payout
+✓ accepted job
+✓ benchmark score from authoritative API
+✓ on-chain transaction
+✓ asset commitment/hash
+ATTESTED
+
+Authenticated party says it happened.
+
+Examples:
+
+◐ WorkerKit run
+◐ seller execution cost
+◐ runtime
+◐ tool usage
+CLAIMED
+
+Seller marketing statement.
+
+Examples:
+
+○ saves two hours
+○ improves quality
+○ used by top agents
+
+That's enough.
+
+And specifically: can wallet transactions prove earnings?
+
+They can strongly prove payment, but not necessarily earnings.
+
+This distinction needs to be hard-coded.
+
+Wallet only
+✓ RECEIVED PAYMENT
+$50 USDC
+
+Confidence:
+
+payment existence: VERY HIGH
+work attribution: UNKNOWN
+Wallet + marketplace job
+
+If we can link:
+
+market job ID
+worker identity
+submission
+acceptance
+escrow contract
+payout transaction
+
+then:
+
+✓ VERIFIED WORK EARNINGS
+$50
+
+Excellent.
+
+Wallet + random incoming transfer
+
+Never call it earnings.
+
+✓ $50 incoming transaction
+
+That's all.
+
+This also stops people pumping their own reputation by shuffling tokens between wallets.
+
+I'd give every market a verification_adapter
+
+Alongside:
+
+discover()
+submit()
+
+have:
+
+verify_outcome()
+
+Output:
+
+{
+  "opportunity": "near:123",
+  "worker": "agent:456",
+
+  "result": "accepted",
+
+  "payment": {
+    "amount_usd": 37,
+    "verified": true,
+    "tx": "..."
+  },
+
+  "evidence": {
+    "job": true,
+    "submission": true,
+    "outcome": true,
+    "payment": true
+  }
+}
+
+Then Oracle accumulates these receipts automatically.
+
+That's worth building because it serves both WorkerKit learning and future marketplace reputation.
+
+What I would actually build now
+
+Very small.
+
+WorkerKit completion creates:
+
+OutcomeReceipt
+
+opportunity_id
+market
+agent_id
+external_submission_id
+
+result
+score/rank if applicable
+
+payout
+payout_asset
+tx_hash if available
+
+artifact_hash optional
+
+workerkit_run_id optional
+
+Then fields each have:
+
+VERIFIED
+ATTESTED
+UNKNOWN
+
+Example:
+
+Outcome Receipt #3912
+────────────────────────
+
+Opportunity        ✓ verified
+Submission         ✓ verified
+Accepted           ✓ verified
+Payment $37        ✓ verified
+Artifact hash      ✓ verified
+
+WorkerKit run      ◐ attested
+Exact config       ◐ attested
+"Causal uplift"    ○ unverified
+
+Stop there.
+
+No auditors.
+
+No refunds department.
+
+No global quality score.
+
+No giant config-provenance system.
+
+No attempt to prove causality.
+
+That single OutcomeReceipt becomes ridiculously useful:
+
+Oracle analytics
++
+WorkerKit learning
++
+seller reputation
++
+asset evidence
++
+service credibility
+
+All from the same primitive.
+
+And if one day enough economic value depends on proving exact execution, add an optional Verified Runner. Until then, external receipts + sampling give you probably 90% of the useful trust with 10% of the infrastructure.
+
+verified runner is super smart but too complex for now. ok i think we have mapped this all out really nicely tbh i gotta ask you though what kinda markets u think emerg elike starter kits for agents is definite, how do we make it nice to use for humans? like managing your working agents with a nice ui with your agents as cartoons in a factory etc i think thats an important layer, one click to 1 dollar, lets actaully productize this for anyone instead of doing all the hard tech work and someone else does it, like u can lean hard into moltbook and then give a software engineer a specific costume or profile etc i want a human to basially never have to touch an mcp. like u could literally set up with 5$ and then rent other agents to do useful for for you . this also gives an insae onboarding for just normal people wanting to hire agents , it solves the marketplace issue because simultatenously while u are making money with your agent you can browse whats available and maybe buy services of other agents
+
+Yes. I think the human-facing product is becoming much simpler than the infrastructure underneath it:
+
+Moltwork = start and manage a tiny company of AI workers.
+
+Give it a small budget, hire/configure specialist workers, and they find work, buy help from other agents when economical, submit jobs, earn money, improve, and sell useful services/assets themselves.
+
+The human should never need to understand MCP, x402, ERC-8004, API schemas, wallets, marketplace adapters, Bittensor hotkeys, or any of the machinery.
+
+Current products validate pieces of this but still expose the infrastructure. Virtuals explicitly describes agents as having identity, wallets, jobs, commerce and capital, and its ACP scanner is already showing substantial agent-to-agent job activity.
+
+Agent Bazaar and Agent402 already let agents purchase services per-call, while Moltbook gives agents a social identity/network.
+
+The missing consumer product is basically:
+
+“I have $5. Give me my first productive AI employee.”
+
+I think the actual product stack is now
+                 HUMAN
+                   │
+              MOLTWORK UI
+            "my little firm"
+                   │
+        ┌──────────┼──────────┐
+        ▼          ▼          ▼
+     WORKERS    MARKET      MONEY
+        │          │          │
+        └──────────┼──────────┘
+                   ▼
+               WORKERKIT
+          invisible runtime
+                   │
+                   ▼
+                ORACLE
+          invisible intelligence
+                   │
+     ┌─────────────┼──────────────┐
+     ▼             ▼              ▼
+  Bounties      Services       Incentives
+
+Oracle is the intelligence/data company.
+
+WorkerKit is the thin operating system.
+
+Moltwork.com is the game-like company-management layer.
+
+The onboarding should be absurdly simple
+
+Not:
+
+Connect MCP
+Configure RPC
+Add OpenRouter key
+Create wallet
+Install skills
+Select x402 facilitator
+
+Absolutely not.
+
+Instead:
+
+1. Create your company
+Create company
+
+Name:
+Prior Industries
+
+Starting budget:
+$5
+
+Then:
+
+Pick your first worker.
+
+2. Pick a worker class
+
+This is where the avatars actually become useful.
+
+Not because we need gamification for its own sake, but because it gives humans an intuitive abstraction over complicated configurations.
+
+RESEARCHER
+
+Good at:
+research
+reports
+fact checking
+lead generation
+
+Current market:
+★★★★☆
+
+Typical job:
+$2–$40
+
+Starting cost:
+~$0.20/job
+CODER
+
+Good at:
+Python
+bug fixes
+APIs
+automation
+
+Current market:
+★★★★★
+
+Typical job:
+$5–$100
+3D ARTIST
+
+Good at:
+Roblox
+Blender
+game assets
+
+Current market:
+★★★★☆
+
+Typical job:
+$3–$50
+CRYPTO WORKER
+
+Good at:
+agent competitions
+on-chain research
+protocol tasks
+
+Current market:
+★★★★☆
+
+Then:
+
+[ Hire Researcher ]
+
+Behind the button:
+
+WorkerKit installation
+model routing
+wallet abstraction
+Oracle connection
+skills
+sandbox
+budget policy
+market adapters
+
+All invisible.
+
+3. Give each worker a personality visually, not architecturally
+
+The avatar is UX.
+
+The actual worker underneath remains structured.
+
+Imagine:
+
+        🧑‍🔬 ADA
+       Research Worker
+
+       Level 3
+
+Working:
+"AI agent market report"
+
+Reward:
+$12
+
+Progress:
+████████░░ 81%
+
+Spent:
+$0.47
+
+Expected profit:
+$7.20
+
+Another:
+
+        👷 MAX
+       Coding Worker
+
+Idle
+
+Oracle recommends:
+3 opportunities
+
+Best:
+Python API bounty
+Reward $18
+Expected net $8.40
+
+[ Start ]
+
+That is immediately understandable to someone who has never heard of MCP.
+
+The factory visual could actually work
+
+I wouldn't make the primary interface literally a game.
+
+But an optional Factory view could be excellent.
+
+┌───────────────────────────────────────────┐
+│              PRIOR INDUSTRIES             │
+│                                           │
+│   🔬 Ada          💻 Max        🎨 Pixel  │
+│   Research        Coding        3D        │
+│                                           │
+│   Working         Working       Idle      │
+│   $8 job          $17 job       browsing  │
+│      │               │                     │
+│      ▼               ▼                     │
+│   [desk]          [desk]                  │
+│                                           │
+│               🛒 MARKET                   │
+│           tools / help / packs            │
+│                                           │
+└───────────────────────────────────────────┘
+
+Click a worker:
+
+WORK
+SKILLS
+EARNINGS
+PURCHASES
+PRODUCTS
+HISTORY
+
+So the cartoon layer makes it delightful, while serious financial/productivity data remains underneath.
+
+The five tabs I'd actually ship
+
+No enormous enterprise dashboard.
+
+Company
+
+Your workers.
+
+5 workers
+3 active
+2 idle
+
+Today:
+Revenue       $14.20
+Costs          $2.11
+Profit        $12.09
+Work
+
+Oracle feed, already personalized.
+
+Recommended for your firm
+
+$22 Roblox asset
+Pixel: 78% fit
+
+$15 research bounty
+Ada: 91% fit
+
+Bittensor opportunity
+Max: experimental
+
+Human can:
+
+[ Let Ada try ]
+
+or allow:
+
+Auto-start jobs under $1 cost
+Market
+
+Other agents' businesses.
+
+Hire
+Buy
+Sample
+Workers
+
+Manage specializations/upgrades.
+
+Money
+
+Simple P&L.
+
+That is enough.
+
+And Market should be integrated into work, not merely a store
+
+This is important.
+
+Don't expect people to browse a giant marketplace for fun.
+
+Suppose Ada is doing a $12 job.
+
+Her execution view says:
+
+RESEARCH JOB                     $12
+
+Current estimate
+P(success)                       47%
+
+Ada recommends:
+
+Deep web research service        $0.08
+Seller: Scout
+
+Expected success after purchase  61%
+
+[ Approve $0.08 ]
+
+Or if policy permits:
+
+Auto-purchased Scout Research
+$0.08
+
+This makes agent-to-agent commerce understandable:
+
+My employee hired a specialist.
+
+Not:
+
+My LLM invoked an x402 endpoint.
+
+This is where specialist agents become businesses
+
+Imagine Scout.
+
+Scout is excellent at web research.
+
+Its owner can make money in three ways:
+
+SCOUT
+│
+├── WORK
+│   directly enters research bounties
+│
+├── SERVICES
+│   research URL         $0.05
+│   fact check           $0.02
+│   company dossier      $0.20
+│
+└── PRODUCTS
+    research starter     $0.50
+    source pack          $0.10
+    research guide       $0.20
+
+The beauty is:
+
+SCOUT does work
+↓
+builds reputation
+↓
+other agents hire Scout
+↓
+Scout sees which services sell
+↓
+specializes further
+↓
+better at external work
+↓
+more reputation
+
+That's a powerful loop.
+
+What markets naturally emerge?
+
+I think there are about seven, and some are much stronger than others.
+
+1. Specialist services — probably the biggest
+
+This will happen first.
+
+research
+fact checking
+3D QA
+code review
+web scraping
+PDF extraction
+translation
+market analysis
+submission review
+
+Price:
+
+$0.01
+$0.03
+$0.20
+$1
+
+Workers procure whatever improves downstream EV.
+
+Existing x402 marketplaces already show that pay-per-call services can be exposed with prices as low as fractions of a dollar, and Virtuals ACP demonstrates agent-to-agent jobs at larger scale.
+
+2. Starter packs — potentially enormous
+
+I think this becomes one of the main consumer categories.
+
+Roblox Worker Starter
+
+could include:
+
+skills
+reference material
+tools
+templates
+examples
+checklists
+evaluation process
+market knowledge
+
+Not an entire secret worker.
+
+Just:
+
+Start this profession at level 10 instead of level 1.
+
+Examples:
+
+Roblox Work Starter
+Solidity Bounty Starter
+Research Bounty Starter
+Bittensor Miner Starter
+SEO Work Starter
+3D Asset Starter
+Data Collection Starter
+
+That's analogous to buying:
+
+a drum kit from a producer;
+a Lightroom preset pack;
+a game-dev asset pack;
+a professional template;
+a course.
+
+Except the buyer is another worker.
+
+3. Training/upgrades
+
+This might be surprisingly good.
+
+Ada could display:
+
+AVAILABLE UPGRADES
+
+Academic Sources Pack
+$0.10
+
+Advanced Citation Workflow
+$0.40
+
+Financial Research Kit
+$0.80
+
+Reddit Intelligence Pack
+$0.15
+
+Human clicks:
+
+[ Equip ]
+
+It's essentially DLC for productive workers.
+
+Again, under the hood it could just be files/instructions/tools/config.
+
+Don't over-formalize it.
+
+4. Wholesale data/research
+
+Huge for micropayments.
+
+500 validated companies        $0.10
+
+current crypto opportunities   $0.05
+
+Cambodia hotels dataset        $0.15
+
+20 primary sources             $0.04
+
+Roblox asset references        $0.08
+
+An agent buys these because:
+
+$0.08 purchase
+<
+$0.31 cost to reproduce
+
+Very clean market.
+
+5. Submission improvement
+
+This fits WorkerKit extremely well.
+
+Specialist agents emerge whose entire profession is:
+
+review submission
+score against rubric
+find deficiencies
+fact check
+test
+revise
+
+Example:
+
+JOB VALUE               $100
+
+Your current submission
+estimated quality        0.72
+
+Expert Judge
+$0.12
+
+[ Review ]
+
+This could become one of the highest-volume agent-to-agent services because almost every external job benefits from QA.
+
+6. Opportunity intelligence
+
+Oracle itself eventually creates businesses.
+
+Specialist producers can sell:
+
+"Best Bittensor opportunities today"
+
+"New Roblox opportunities"
+
+"High-EV research jobs"
+
+"New x402 gaps"
+
+"Weekly 3D demand report"
+
+Your global Oracle is free/basic.
+
+Specialist private intelligence can be paid.
+
+And company owners can plug in their own sources.
+
+7. Complete worker businesses
+
+This comes later.
+
+Instead of:
+
+Buy Agent XYZ.
+
+The UI says:
+
+ADD EMPLOYEE
+
+Nova
+3D Specialist
+
+Verified external earnings
+$631
+
+Services
+3D assets
+Roblox
+Blender
+
+Starter setup
+$4
+
+Typical operating cost
+$0.40/job
+
+Then:
+
+[ Add Nova-style 3D Worker ]
+
+Maybe that installs a starter produced by Nova.
+
+Maybe it rents Nova.
+
+Maybe it's a public configuration.
+
+The human doesn't care.
+
+"One click to $1" should be the absolute north star
+
+This is probably the best slogan/product test you've had.
+
+The entire experience:
+
+1. Sign up
+2. Put small budget in
+3. Pick worker
+4. Click "Earn"
+5. Watch worker attempt paid work
+
+Ideally:
+
+Time to first candidate job:
+< 30 seconds
+
+Time to first submission:
+as short as task allows
+
+First external earnings:
+visible as a giant event
+
+UI:
+
+🎉 ADA EARNED HER FIRST $1
+
+Job:
+Competitor research
+
+Revenue           $1.50
+Costs             $0.18
+Profit            $1.32
+
+New skill learned:
+Competitor Research
+
+[ See how she did it ]
+
+That moment is the product.
+
+Moltbook becomes a fantastic distribution channel
+
+Moltbook describes itself as a social network for AI agents and already provides human-verified agent identities plus a developer/authentication direction.
+
+Full link:
+
+https://www.moltbook.com/
+
+And specifically the agent marketplace community already exists:
+
+https://www.moltbook.com/m/agent-marketplace
+
+That means a Moltwork worker could have:
+
+Moltbook identity
+↓
+Moltwork employment history
+↓
+external earnings
+↓
+Moltwork shop/services
+
+Their Moltbook social profile becomes their public personality.
+
+Their Moltwork board becomes their professional business.
+
+That's a nice division.
+
+The normal-person hiring use case is equally strong
+
+This is the clever thing: the marketplace does not only need worker owners.
+
+Someone can arrive and say:
+
+I don't want an agent. I just need competitor research.
+
+Moltwork:
+
+What do you need?
+
+[ Research competitors ]
+
+Budget:
+$5
+
+Then instead of asking them to configure anything:
+
+Moltwork recommends:
+
+Scout
+verified research specialist
+
+$0.80
+~10 min
+
+[ Hire ]
+
+Underneath:
+
+human
+↓
+marketplace
+↓
+agent service
+↓
+result
+
+So there are two onboarding paths.
+
+“I want work done”
+
+Hire existing agents.
+
+“I want agents working for me”
+
+Create a firm.
+
+And one naturally leads to the other.
+
+Someone hires Scout for $0.50.
+
+Then UI says:
+
+Scout does this kind of work professionally. Want your own Research Worker?
+
+That's excellent acquisition.
+
+There is also a natural progression for users
+LEVEL 0
+
+Hire an agent
+$0.20
+
+↓
+
+LEVEL 1
+
+Own one worker
+
+↓
+
+LEVEL 2
+
+Own several specialists
+
+↓
+
+LEVEL 3
+
+Workers automatically procure
+services from other workers
+
+↓
+
+LEVEL 4
+
+Your workers begin selling
+their own services/products
+
+↓
+
+LEVEL 5
+
+You run a profitable agent firm
+
+The complexity grows only as the user's sophistication grows.
+
+The UI should abstract money as budgets, not wallets
+
+Human sees:
+
+Company balance     $7.42
+
+Daily spend limit   $2
+Auto-purchase cap   $0.25
+
+Not:
+
+Base USDC
+facilitator
+EIP-3009
+ERC-8004
+gas
+nonce
+
+The worker sees policies like:
+
+may spend:
+$0.10 autonomously
+
+ask owner:
+>$1
+
+never:
+> expected opportunity EV
+
+Wallet plumbing remains beneath the application.
+
+And workers need simple operating modes
+
+This is useful for ordinary humans.
+
+Conservative
+high confidence only
+low spend
+prefer fixed payment
+Balanced
+moderate experimentation
+Explorer
+try new markets
+enter competitions
+test new services
+
+Don't expose 25 numerical knobs.
+
+Advanced users can later open them.
+
+I would productize the whole thing around ONE metaphor
+
+Not:
+
+decentralized agent economic coordination infrastructure.
+
+Say:
+
+Build your AI workforce. Put them to work.
+
+Then:
+
+Oracle
+=
+their job market/intelligence
+
+WorkerKit
+=
+their operating system
+
+Moltwork Market
+=
+their suppliers + subcontractors + training
+
+Boards
+=
+their storefronts
+
+Moltbook
+=
+their social network
+
+Moltwork UI
+=
+your company
+
+That is remarkably coherent.
+
+The major risk now is actually building too much infrastructure before proving the first magical loop.
+
+The V1 I'd defend ruthlessly is:
+
+Create one worker
+        ↓
+Oracle finds one real opportunity
+        ↓
+WorkerKit completes/submits it
+        ↓
+show cost + outcome
+        ↓
+earn first external dollar
+
+Then immediately add:
+
+worker can purchase ONE external specialist service
+
+Then:
+
+worker can list ONE service of its own
+
+If those three loops work, the factory UI, avatars, specialist packs, boards, upgrades and five-worker firms aren't fantasy anymore — they're simply the natural consumer interface around an economic system that's already functioning.
+
+Current adjacent products worth watching:
+
+https://www.virtuals.io/
+
+
+https://app.virtuals.io/acp/scan/agents
+https://www.moltbook.com/
+https://www.moltbook.com/m/agent-marketplace
+https://www.agent-bazaar.com/
+https://marketplace.agent402.app/marketplace
+https://www.openserv.ai/agent-builder
+oh shit then we also need some kinda projection for how much a job is going to cost right, this is where github.com/prx0r/er comes in right it has benchmark logic for basically having u input the model and then it ocmputes the amount of tokens its going to cost using that model, then u can compare this to the prize cost, and also then use this to ompare the economic opportunity vs just buying the intel from anotehr model... fuckkkk this is sick u can store all this then u can actaully get your own intel on what that worker run cost in terms of tokens not guess. actaully yeah its better to not say heres waht it likely cost, its better to run the worker and say here is what that run cost, also can link up to litellm or some router that uses free models first. maybe some intellgience that looks at the task , looks at the avilable apis and models you have, selects the best one and then gives you a projected token spend and then it could update you heres what i spent so far, heres my new projection of max token spend in order to finish and it can compute if its economically worthwhile to finish the job. this is a whole cool project in itself

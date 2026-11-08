@@ -1,0 +1,193 @@
+{
+  "audio": "/home/box/louis_night_act1.wav",
+  "windows": [
+    {
+      "t_start": 0.0,
+      "t_end": 6.0,
+      "wps": 3.57,
+      "p_laugh": 0.224,
+      "moment": 6.0
+    },
+    {
+      "t_start": 6.0,
+      "t_end": 12.0,
+      "wps": 3.73,
+      "p_laugh": 0.156,
+      "moment": 12.0
+    },
+    {
+      "t_start": 12.0,
+      "t_end": 18.0,
+      "wps": 2.99,
+      "p_laugh": 0.143,
+      "moment": 18.0
+    },
+    {
+      "t_start": 18.0,
+      "t_end": 24.0,
+      "wps": 3.44,
+      "p_laugh": 0.13,
+      "moment": 24.0
+    },
+    {
+      "t_start": 24.0,
+      "t_end": 30.0,
+      "wps": 5.5,
+      "p_laugh": 0.09,
+      "moment": 30.0
+    },
+    {
+      "t_start": 30.0,
+      "t_end": 36.0,
+      "wps": 4.35,
+      "p_laugh": 0.406,
+      "moment": 36.0
+    },
+    {
+      "t_start": 36.0,
+      "t_end": 42.0,
+      "wps": 3.5,
+      "p_laugh": 0.258,
+      "moment": 42.0
+    },
+    {
+      "t_start": 42.0,
+      "t_end": 48.0,
+      "wps": 3.43,
+      "p_laugh": 0.306,
+      "moment": 48.0
+    },
+    {
+      "t_start": 48.0,
+      "t_end": 54.0,
+      "wps": 3.89,
+      "p_laugh": 0.243,
+      "moment": 54.0
+    },
+    {
+      "t_start": 54.0,
+      "t_end": 60.0,
+      "wps": 3.0,
+      "p_laugh": 0.419,
+      "moment": 60.0
+    },
+    {
+      "t_start": 60.0,
+      "t_end": 66.0,
+      "wps": 2.22,
+      "p_laugh": 0.374,
+      "moment": 66.0
+    },
+    {
+      "t_start": 66.0,
+      "t_end": 72.0,
+      "wps": 3.11,
+      "p_laugh": 0.412,
+      "moment": 72.0
+    },
+    {
+      "t_start": 72.0,
+      "t_end": 78.0,
+      "wps": 4.33,
+      "p_laugh": 0.188,
+      "moment": 78.0
+    },
+    {
+      "t_start": 78.0,
+      "t_end": 84.0,
+      "wps": 2.89,
+      "p_laugh": 0.366,
+      "moment": 84.0
+    },
+    {
+      "t_start": 84.0,
+      "t_end": 90.0,
+      "wps": 41.81,
+      "p_laugh": 0.501,
+      "moment": 90.0
+    },
+    {
+      "t_start": 90.0,
+      "t_end": 94.64,
+      "wps": 3.66,
+      "p_laugh": 0.363,
+      "moment": 94.64
+    }
+  ],
+  "fired": [
+    {
+      "t_start": 30.0,
+      "t_end": 36.0,
+      "wps": 4.35,
+      "p_laugh": 0.406,
+      "moment": 36.0,
+      "kind": "chuckle",
+      "ms": 36000
+    },
+    {
+      "t_start": 42.0,
+      "t_end": 48.0,
+      "wps": 3.43,
+      "p_laugh": 0.306,
+      "moment": 48.0,
+      "kind": "chuckle",
+      "ms": 48000
+    },
+    {
+      "t_start": 54.0,
+      "t_end": 60.0,
+      "wps": 3.0,
+      "p_laugh": 0.419,
+      "moment": 60.0,
+      "kind": "chuckle",
+      "ms": 60000
+    },
+    {
+      "t_start": 60.0,
+      "t_end": 66.0,
+      "wps": 2.22,
+      "p_laugh": 0.374,
+      "moment": 66.0,
+      "kind": "chuckle",
+      "ms": 66000
+    },
+    {
+      "t_start": 66.0,
+      "t_end": 72.0,
+      "wps": 3.11,
+      "p_laugh": 0.412,
+      "moment": 72.0,
+      "kind": "chuckle",
+      "ms": 72000
+    },
+    {
+      "t_start": 78.0,
+      "t_end": 84.0,
+      "wps": 2.89,
+      "p_laugh": 0.366,
+      "moment": 84.0,
+      "kind": "chuckle",
+      "ms": 84000
+    },
+    {
+      "t_start": 84.0,
+      "t_end": 90.0,
+      "wps": 41.81,
+      "p_laugh": 0.501,
+      "moment": 90.0,
+      "kind": "crowd",
+      "ms": 90000
+    },
+    {
+      "t_start": 90.0,
+      "t_end": 94.64,
+      "wps": 3.66,
+      "p_laugh": 0.363,
+      "moment": 94.64,
+      "kind": "chuckle",
+      "ms": 94640
+    }
+  ],
+  "threshold": 0.45,
+  "out": "/home/box/louis_SIMULATED_AUDIENCE.wav"
+}

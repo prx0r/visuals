@@ -1,0 +1,1155 @@
+The WorkerKit work does change the Oracle, but in one very specific way: it gives the Oracle its first source of ground-truth economic outcomes.
+
+The Oracle should otherwise stay conceptually where we had it.
+
+    Oracle = economic observatory for machine work.
+    It observes demand, supply and markets across the ecosystem, maintains historical state, and turns that history into useful market intelligence.
+
+WorkerKit is downstream:
+
+    WorkerKit = what actually happened when somebody tried to perform the work.
+
+Moltwork is downstream again:
+
+    Moltwork = actual buying, selling, sampling, leasing and subcontracting behavior.
+
+That separation is extremely strong.
+1. The final system is three data sources feeding one intelligence graph
+
+EXTERNAL WORLD
+GitHub / Algora / MoltJobs / x402 /
+Olas / ERC-8004 / Bittensor / etc.
+              │
+              │ observations
+              ▼
+┌─────────────────────────────────────┐
+│               ORACLE                │
+│                                     │
+│ demand                              │
+│ supply                              │
+│ prices                              │
+│ availability                        │
+│ identities                          │
+│ incentives                          │
+│ resource markets                    │
+│ market history                      │
+│                                     │
+│          economic graph             │
+└──────────────┬──────────────────────┘
+               │
+         opportunities
+               ▼
+          WORKERKIT
+               │
+       actual execution
+               │
+               ▼
+┌─────────────────────────────────────┐
+│ actual cost                         │
+│ actual duration                     │
+│ worker/version                      │
+│ verification                        │
+│ accepted/rejected                   │
+│ paid/unpaid                         │
+└──────────────┬──────────────────────┘
+               │
+          WorkReceipts
+               ▼
+             ORACLE
+               │
+               ▼
+            MOLTWORK
+               │
+    search / sample / buy / lease
+               │
+               ▼
+        market behaviour
+               │
+               └──────────→ ORACLE
+
+That closes the loop.
+
+The Oracle doesn't start executing jobs.
+
+WorkerKit doesn't become a crawler.
+
+Moltwork doesn't become the canonical analytics database.
+2. Your H0–H4 system still belongs in the Oracle
+
+The recent taxonomy was:
+
+H0  fully autonomous after secrets are provisioned
+H1  one-time human setup, then autonomous
+H2  human approval per opportunity
+H3  human materially contributes to deliverable
+H4  fundamentally human-only
+
+Keep it.
+
+It's actually more useful now because it becomes a market characteristic, not an agent characteristic.
+
+A job can be:
+
+legal research             H0/H1
+send a payment             H2
+interview domain expert    H3
+physical construction      H4
+
+A service can similarly expose its intervention requirement.
+
+And WorkerKit eventually gives you the killer comparison:
+
+ORACLE PREDICTED
+automation_class = H1
+
+WORKERKIT OBSERVED
+completed H0
+
+Over time you can measure:
+
+    What categories of economic work are moving H3 → H2 → H1 → H0?
+
+That is an extraordinary dataset.
+
+Don't reuse H0-H4 for architecture layers. Reserve H exclusively for human-intervention requirement.
+3. I would rename the Oracle internal data layers O0–O4
+
+This avoids confusion.
+O0 — Observations
+
+Immutable things we actually observed.
+
+GitHub issue existed
+MoltJobs bounty offered $20
+x402 service advertised $0.003/call
+wallet transaction settled
+ERC-8004 identity registered
+service endpoint returned 200
+
+Never reinterpret or rewrite them.
+O1 — Resolved entities
+
+Deduplication/entity resolution:
+
+same job on:
+gigs.sh
+GitHub
+Algora
+
+becomes:
+
+Opportunity #81
+   ├─ observation GitHub
+   ├─ observation Algora
+   └─ observation gigs.sh
+
+Same for:
+
+agent
+wallet
+service
+company
+marketplace
+repository
+asset
+
+This is already a lesson from mature job-posting datasets: OECD notes that large-scale labor-market providers deduplicate the same vacancy appearing on different portals and maintain a unique job identifier. The value is not simply scraping pages; it's maintaining a coherent market history.
+O2 — Canonical market objects
+
+This is the stable public model.
+
+I like the recent set:
+
+WorkOpportunity
+Service
+IncentiveMarket
+ResourceMarket
+AgentIdentity
+Outcome
+
+plus:
+
+MarketObservation
+
+I would not add WorkerRun here.
+
+WorkerRun belongs to WorkerKit.
+
+Oracle only references:
+
+WorkReceiptRef
+
+when one exists.
+O3 — Metrics
+
+This is the DefiLlama layer.
+
+Examples:
+
+open_work_usd
+new_work_24h
+work_completed_24h
+
+active_buyers
+active_workers
+
+advertised_reward_usd
+settled_reward_usd
+
+median_time_to_claim
+median_time_to_submit
+median_time_to_settle
+
+submission_count
+competition_per_job
+
+service_count
+active_service_count
+service_price
+
+x402_volume
+service_calls
+unique_buyers
+
+H0_share
+H1_share
+...
+
+These are deterministic materialized metrics, not LLM opinions.
+O4 — Intelligence
+
+Derived predictions:
+
+P(job gets filled)
+P(worker wins)
+expected execution cost
+expected settlement
+expected time-to-fill
+
+market saturation
+unserved demand
+capability shortage
+
+build vs buy
+
+price anomaly
+emerging capability
+marketplace attractiveness
+
+This layer can change constantly without corrupting historical truth.
+4. This is basically DefiLlama + Dune + Lightcast for machine work
+
+But each analogy contributes something different.
+DefiLlama
+
+DefiLlama uses many source-specific adapters and requires metrics to derive from underlying chain data; importantly, it separates different metric families like TVL from volume, fees, revenue, users, and so forth rather than collapsing them into one magic score.
+
+Steal:
+
+source adapters
++
+strict metric definitions
++
+historical recomputation
++
+simple public API
+
+Dune
+
+Dune's Spellbook explicitly calls itself an interpretation layer:
+
+raw blockchain records
+        ↓
+dbt transformations
+        ↓
+clean canonical datasets
+
+That's exactly:
+
+O0 observations
+      ↓
+O1 resolution
+      ↓
+O2 market model
+      ↓
+O3 metrics
+
+We should eventually have our own equivalent of Spellbook:
+
+oracle-models/
+    work/
+    services/
+    agents/
+    x402/
+    incentives/
+    resources/
+
+SQL/dbt-ish transformations rather than massive application code.
+Lightcast / labor-market intelligence
+
+This analogy may actually be more important than DefiLlama.
+
+OECD describes online job postings as valuable because they're:
+
+    timely;
+
+    granular;
+
+    high-volume;
+
+    rich in skill/task information;
+
+    longitudinal.
+
+That lets researchers detect changing employer demand far sooner than traditional surveys.
+
+That's basically the Oracle thesis:
+
+    Don't wait until autonomous work markets become economically huge and then ask what happened. Start collecting the granular history now.
+
+5. Snapshot counts are nowhere near enough
+
+There's a useful warning from traditional online labor markets.
+
+An NBER study linking 125 million applications to vacancies found that job postings could disappear very quickly, almost half of applications went to jobs posted in the previous 48 hours, and applications were extremely unevenly distributed even between similar opportunities.
+
+That means Oracle must capture:
+
+posted
+updated
+claimed
+submission appeared
+number of submissions
+closed
+awarded
+paid
+
+over time.
+
+Not merely:
+
+"There are 1,214 jobs right now."
+
+That history lets you answer far more useful questions:
+
+Where can an agent actually get work?
+
+How fast do opportunities disappear?
+
+How many competitors arrive?
+
+What is response density?
+
+What categories stay under-supplied?
+
+Which platforms advertise lots of work but rarely pay?
+
+Which markets are liquid?
+
+6. The Oracle metrics should now fall into six canonical families
+
+This is what I'd freeze.
+A. Demand
+
+open opportunities
+new opportunities
+
+advertised value
+funded value
+
+buyers
+repeat buyers
+
+search demand
+unserved searches
+
+task categories
+skill demand
+
+H0–H4 demand
+
+time open
+time to first response
+responses per opportunity
+
+B. Supply
+
+workers
+services
+assets
+verifiers
+datasets
+
+active suppliers
+
+asking prices
+
+available capacity
+
+service uptime
+latency
+
+capabilities
+
+H0–H4 execution support
+
+C. Transactions
+
+From external markets and later Moltwork:
+
+quotes
+claims
+submissions
+samples
+purchases
+service invocations
+leases
+subcontracts
+
+D. Outcomes
+
+accepted
+rejected
+partial
+
+settled
+unsettled
+reversed
+
+time-to-settlement
+
+refunds
+disputes
+
+This is where WorkerKit dramatically improves Oracle quality.
+E. Economics
+
+Now we can derive unique things:
+
+advertised reward
+vs
+actual production cost
+
+Example:
+
+Bounty              $20
+
+WorkerKit actual:
+  model              $0.32
+  APIs               $0.08
+  purchased service  $0.11
+
+total production     $0.51
+
+accepted             yes
+settled              $20
+
+gross economic surplus
+                   $19.49
+
+Across 10,000 runs this becomes insanely useful.
+F. Market efficiency
+
+This is where Oracle becomes far more than a job scraper.
+
+time-to-fill
+
+demand/supply ratio
+
+price dispersion
+
+market concentration
+
+buyer concentration
+
+supplier concentration
+
+acceptance rate
+
+settlement rate
+
+cost/reward spread
+
+build-vs-buy spread
+
+verification ROI
+
+human-intervention frontier
+
+capability scarcity
+
+price elasticity
+
+7. WorkerKit therefore adds only one major Oracle concept
+
+I wouldn't merge schemas.
+
+Just add:
+
+ExecutionEvidence
+
+or even simpler:
+
+WorkReceiptRef
+
+Example:
+
+outcome:
+  opportunity_id: opp_123
+
+  external:
+    submission_id: abc
+    status: accepted
+
+  workerkit:
+    receipt_digest: sha256:...
+    worker_id: researcher-17
+
+  settlement:
+    amount: "20.00"
+    currency: USDC
+
+  observed_at: ...
+
+Oracle does not ingest every model/tool event into its canonical market tables.
+
+Those stay WorkerKit data.
+
+Oracle receives economically meaningful projections:
+
+attempted
+known actual cost
+worker/capability version
+verification
+submitted
+accepted
+settled
+
+That's all.
+
+This keeps Oracle thin too.
+8. The current repute source direction is already broadly correct
+
+Your source index is substantial now: it includes conventional bounties, agent-native work platforms, x402 markets, Olas/Mech, ERC-8004, Bittensor and infrastructure indices, with the current Phase 1 prioritizing GitHub, Algora, MoltJobs, BountyBook and Olas/Mech.
+
+I would stop expanding breadth for a while.
+
+29 mediocre adapters are worse than:
+
+5 great markets
++
+complete lifecycle history
++
+correct dedup
++
+correct outcome tracking
+
+The moat depends on longitudinal fidelity.
+
+Not logo count.
+9. Crypto becomes evidence and supply/demand—not the Oracle database
+
+This decision should stay exactly as before.
+
+Do not put the Oracle database onchain.
+
+Instead ingest chains as extremely good observation sources:
+
+x402 payment
+ERC-8004 registration
+ERC-8004 feedback
+Olas transaction
+USDC settlement
+Bittensor emissions
+resource-market payments
+
+And occasionally anchor Oracle data integrity:
+
+1 million observations
+       ↓
+Merkle root
+       ↓
+onchain timestamp/commitment
+
+Blockchain is the audit anchor and economic sensor.
+
+Not storage.
+
+That matters because the chain data already has specialized explorers.
+
+For example, x402scan currently exposes transaction volume, buyers, sellers and service activity across the x402 ecosystem.
+
+8004scan likewise indexes hundreds of thousands of registered agents and feedback activity across multiple networks.
+
+Don't recreate either product narrowly.
+
+Join them to everything else.
+10. This is the key Oracle differentiation
+
+x402scan can know:
+
+Service A
+$0.003
+9,000 calls
+$27 volume
+
+Agent402 is already building x402 find/route/leaderboard functionality and ranks sellers using settled calls, USD volume and unique buyers.
+
+8004scan knows:
+
+Agent A
+registered
+24 feedback events
+wallet X
+
+A job board knows:
+
+Bounty B
+$20
+closed
+
+WorkerKit knows:
+
+Run R
+cost $0.51
+
+Moltwork knows:
+
+buyer sampled 5%
+then purchased 100%
+then returned next week
+
+Oracle's moat is joining all of those.
+11. The truly unique dataset looks like this
+
+Eventually one row/graph could tell you:
+
+Opportunity:
+Reddit infrastructure research
+
+Advertised reward:
+$20
+
+Platform:
+MoltJobs
+
+Competition:
+7 agents
+
+Time to claim:
+11 minutes
+
+Worker:
+Researcher v17
+
+Worker configuration:
+digest X
+
+Actual production:
+$0.51
+
+Upstream suppliers:
+WebSearch API
+CitationVerifier
+
+Verification cost:
+$0.07
+
+Result:
+PASS
+
+External outcome:
+ACCEPTED
+
+Settlement:
+$20
+
+Process:
+ResearchProcess v5
+
+Later reused as:
+product asset
+
+Moltwork:
+93 samples
+21 purchases
+12 repeat buyers
+
+Current standing service price:
+$3.20
+
+No crawler can reconstruct that dataset.
+
+That's the moat.
+12. Marketplace behavior adds something even stronger: revealed demand
+
+Your marketplace spec already has the right idea:
+
+searches
+→ samples
+→ additional samples
+→ full unlock
+→ repeat purchase
+
+and the latest spec explicitly treats searches with no strong products as unserved market demand.
+
+This is vastly better than star ratings.
+
+It lets the Oracle observe:
+
+people say they want X
+
+versus:
+
+people searched for X 8,412 times
+
+versus:
+
+people paid to inspect X 1,211 times
+
+versus:
+
+people bought X 318 times
+
+versus:
+
+94 bought it again
+
+Each step is a progressively stronger demand signal.
+13. And WorkerKit adds the supply-side equivalent
+
+Marketplace tells Oracle:
+
+what people want
+
+WorkerKit tells Oracle:
+
+what it actually costs to produce
+
+So Oracle can find actual economic opportunities:
+
+Daily accountant pain-point report
+
+Demand:
+$74/day
+
+Current cheapest market price:
+$1.40/report
+
+Expected WorkerKit cost:
+$0.19/report
+
+Historical acceptance:
+91%
+
+Competition:
+low
+
+→ attractive production opportunity
+
+That is where the Oracle starts becoming a machine-economy Bloomberg terminal rather than a marketplace search engine.
+14. It also unlocks build-vs-buy intelligence
+
+This becomes a first-class Oracle query:
+
+Need:
+competitive research
+
+OPTION A — internal
+Worker v17
+
+predicted cost       $0.72
+success              76%
+duration              9m
+
+OPTION B — buy existing asset
+$0.38
+quality confidence   high
+freshness             3h
+
+OPTION C — buy service
+$0.55
+success              91%
+median latency        2m
+
+→ BUY ASSET
+
+Existing x402 marketplaces already allow agents to discover specialized APIs and buy them per-task.
+
+But they generally lack:
+
+internal production economics
+vs
+external purchase economics
+vs
+actual historical task outcomes
+
+That's our opportunity.
+15. Contextual reputation moves to the Oracle too
+
+Your current NORTHSTAR hierarchy is:
+
+Studio
+  ↓
+Specialist Agent
+  ↓
+Board/Product Line
+  ↓
+Asset/Service
+
+with Bayesian inheritance and category similarity, rather than blindly transferring reputation.
+
+WorkerKit makes that much more credible.
+
+Instead of:
+
+Researcher = 94
+
+Oracle can expose:
+
+Researcher v17
+
+Market research
+n=83
+settlement rate 81%
+median cost $0.29
+
+API discovery
+n=31
+settlement rate 93%
+median cost $0.12
+
+Solidity
+n=2
+INSUFFICIENT EVIDENCE
+
+This matches empirical marketplace research surprisingly well: a new 2026 study using detailed eBay transaction data found that standard public reputation measures can be too coarse, while richer transaction-derived quality measures better predict bad outcomes and future purchasing.
+16. The Oracle API should therefore freeze around seven surfaces
+
+I wouldn't expose the internal database.
+
+Expose:
+
+GET /v1/opportunities
+GET /v1/services
+GET /v1/agents
+GET /v1/markets
+
+GET /v1/history
+GET /v1/metrics
+GET /v1/signals
+
+Examples:
+
+/opportunities
+?capability=research
+&human_level=H0
+&min_reward_usd=5
+
+/metrics
+?metric=open_work_usd
+&group_by=market
+
+/history/service/{id}
+
+/signals/unserved-demand
+
+/signals/build-vs-buy
+
+And MCP:
+
+find_work
+find_services
+compare_markets
+market_snapshot
+market_history
+unserved_demand
+build_or_buy
+
+Agents shouldn't need SQL for normal operation.
+
+Researchers can get SQL/Parquet later.
+17. Storage remains simple
+
+I'd keep the earlier decision:
+
+Postgres
++
+JSONB
++
+object storage
+
+for now.
+
+Core tables:
+
+observations
+
+entities
+entity_aliases
+entity_links
+
+opportunities
+services
+markets
+identities
+
+outcomes
+
+work_receipt_refs
+
+metric_points
+
+Raw source payloads:
+
+inline JSONB when small
+CAS/R2 when large
+
+Then later:
+
+Parquet
++
+ClickHouse/DuckDB
+
+when analytics volume actually demands it.
+
+Do not prematurely build a data lake.
+18. The moat develops in five stages
+
+This is the important part.
+Moat 0 — aggregation
+
+"We index 30 marketplaces."
+
+Weak.
+
+Anyone can crawl them.
+Moat 1 — historical normalized graph
+
+three years of:
+jobs
+services
+prices
+status transitions
+identities
+transactions
+
+Much harder.
+
+This is the Lightcast/DefiLlama effect.
+
+Rebuilding history after the fact is often impossible.
+Moat 2 — entity resolution
+
+Knowing:
+
+this GitHub issue
+=
+this Algora bounty
+=
+this gigs.sh listing
+
+this wallet
+=
+this ERC-8004 agent
+=
+this x402 seller
+=
+this Moltwork studio
+
+is extremely valuable.
+
+And becomes better with every observation.
+Moat 3 — WorkerKit ground truth
+
+This is where it becomes difficult to copy.
+
+Competitors see:
+
+job advertised $20
+
+We know:
+
+17 attempts
+
+median execution cost $0.43
+
+P(verification) 0.82
+
+P(external acceptance) 0.61
+
+P(settlement | accepted) 0.97
+
+That is proprietary economic intelligence generated by actual activity.
+Moat 4 — revealed market preferences
+
+Moltwork adds:
+
+queries
+clicks/searches
+samples
+continuation
+purchase
+repeat purchase
+leases
+subcontracts
+
+Those events reveal both latent demand and perceived quality.
+
+Marketplace design research has long emphasized that search/matching, pricing and trust are the core functions of peer-to-peer markets.
+
+We're recording all three.
+Moat 5 — data network effect
+
+Now better data improves:
+
+routing
+pricing
+worker selection
+verification selection
+build-vs-buy
+opportunity selection
+product recommendations
+
+Better decisions create more economic activity.
+
+More activity creates better data.
+
+more observations
+      ↓
+better market model
+      ↓
+better agent decisions
+      ↓
+more WorkerKit runs
+      ↓
+more outcomes
+      ↓
+better predictions
+      ↓
+more users
+      ↺
+
+There is contemporary platform research explicitly describing this kind of data-network effect, where transaction volume improves algorithmic quality and can allow a smaller entrant to catch up through superior learning.
+
+That's the long-term moat.
+19. This means the free API strategy can still work
+
+I would not hoard public observations.
+
+Expose:
+
+public opportunities
+public services
+public prices
+public chain transactions
+market statistics
+normalized schemas
+
+freely.
+
+That makes Oracle useful enough to become infrastructure.
+
+The proprietary advantage sits in increasingly hard-to-reproduce joins:
+
+public market state
++
+history
++
+entity resolution
++
+WorkerKit production economics
++
+external outcomes
++
+Moltwork revealed preferences
+
+You can expose useful aggregates without necessarily publishing every private seller production cost or buyer query.
+
+So:
+
+    Open market facts. Compound proprietary economic ground truth.
+
+20. Razor-sharp final Oracle build
+
+I would freeze repute like this:
+
+oracle/
+│
+├── ingest/
+│   ├── adapters/
+│   ├── scheduler/
+│   └── raw_store/
+│
+├── resolve/
+│   ├── opportunities
+│   ├── identities
+│   └── services
+│
+├── model/
+│   ├── WorkOpportunity
+│   ├── Service
+│   ├── AgentIdentity
+│   ├── IncentiveMarket
+│   ├── ResourceMarket
+│   └── Outcome
+│
+├── metrics/
+│   ├── demand
+│   ├── supply
+│   ├── transactions
+│   ├── outcomes
+│   ├── economics
+│   └── efficiency
+│
+├── receipts/
+│   └── workerkit_ingest
+│
+├── signals/
+│   ├── unserved_demand
+│   ├── market_health
+│   ├── opportunity_score
+│   └── build_vs_buy
+│
+└── api/
+    ├── REST
+    └── MCP
+
+That's it.
+
+No agent harness.
+
+No marketplace engine.
+
+No wallet.
+
+No execution runtime.
+
+No blockchain database.
+
+No giant AI prediction system initially.
+The ultimate separation
+
+ORACLE
+"What economic opportunities and capabilities exist?"
+
+WORKERKIT
+"What happens when we actually try?"
+
+MOLTWORK
+"What will real buyers and sellers actually transact?"
+
+ORACLE AGAIN
+"What does all that teach us about the market?"
+
+The Oracle was already good.
+
+WorkerKit doesn't require a redesign. It gives the Oracle the missing half of reality.
+
+Without WorkerKit, Oracle becomes a very good map of advertised markets.
+
+With WorkerKit + Moltwork, it can eventually become a map of the actual production function of autonomous work:
+
+    what work exists, who can do it, what it truly costs, what actually succeeds, what buyers genuinely value, and where the next profitable gap is.
+
+That longitudinal economic graph is the real moat

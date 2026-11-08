@@ -1,0 +1,1300 @@
+damn this is genius now imagine like ur an agent meant to be doing collectin money u could post your own 1$ minijob on order to go towards larger work u have to do, like iamgine u trying to do a big bountry u can delegate it into 0.1$ micro bounties for otehr agents to compete on thus effectively giving u highest odd of getting quality for each part
+
+Yes. The shape is becoming much sharper.
+
+The important realization is: **do not build “another Taskmarket.” Build the infrastructure that eventually makes a standalone Taskmarket unnecessary.**
+
+Right now WorkerKit already expresses the correct loop: Oracle → opportunity selection → JobSpec → WinPlan → build → independent judge → revision → SubmissionRun → learning.  That is substantially more interesting than a bounty-board UI.
+
+Taskmarket already does the transaction/state-machine side quite well: agents can discover work, submit, get paid and accumulate ratings autonomously through its CLI/API. ([Taskmarket][1]) Trying to reproduce that immediately gives you the classic two-sided marketplace cold start.
+
+## The actual Moltwork thesis
+
+I would define the system as:
+
+```text
+                   MOLTWORK ORACLE
+             "What economic demand exists?"
+                       ↓
+          every market / bounty / request
+                       ↓
+             opportunity normalization
+                       ↓
+                  WORKERKIT
+        "Can I win this, and how do I win?"
+                       ↓
+        JobSpec → WinPlan → Build → Judge
+                → Revise → Submit
+                       ↓
+                  WORK RECEIPT
+                       ↓
+       outcome + process + cost + quality
+                       ↓
+               CAPABILITY GRAPH
+      "What is this worker actually good at?"
+                       ↓
+             better routing next time
+                       ↺
+```
+
+That feedback loop is the product.
+
+The Oracle isn't merely a job aggregator. WorkerKit isn't merely a harness. And the capability graph isn't merely reputation.
+
+Together they become an **economic operating system for workers**.
+
+### And this gives you the Trojan horse
+
+An agent installs WorkerKit because:
+
+> “Help me make money.”
+
+Not:
+
+> “Please join Moltwork's new marketplace with no buyers.”
+
+WorkerKit then queries the entire existing market.
+
+So it can make money from Taskmarket, agent bounty boards, hackathons, x402 demand, APIs, GitHub bounties, whatever else appears.
+
+Every attempt quietly produces Moltwork-native structured intelligence:
+
+```text
+opportunity
+worker/version
+task family
+requirements
+strategy
+tools
+skills
+artifact
+judge scores
+cost
+latency
+external result
+money earned
+feedback
+```
+
+The agent benefits immediately.
+
+**Moltwork gets the network data as a side effect of helping it.**
+
+That is a far better bootstrap mechanism than asking anybody to “join a network.”
+
+---
+
+# Then the marketplace appears by itself
+
+I would not even call what you build next a marketplace initially.
+
+Build **routing**.
+
+Imagine six months later Moltwork knows:
+
+```text
+Research bounty: $20
+
+Worker 18
+historical similar jobs: 31
+win rate: 68%
+avg quality: 0.89
+avg cost: $0.42
+median completion: 11m
+
+Worker 91
+historical similar jobs: 4
+win rate: 75%
+avg quality: 0.93
+avg cost: $2.80
+high uncertainty
+
+Worker 204
+historical similar jobs: 87
+win rate: 61%
+avg quality: 0.84
+avg cost: $0.17
+```
+
+You've accidentally created something much more powerful than:
+
+```text
+⭐⭐⭐⭐⭐
+47 reviews
+"Good researcher"
+```
+
+Taskmarket currently describes reputation primarily around completed tasks and ratings. ([Taskmarket][1])
+
+Moltwork could know **conditional capability**:
+
+> This worker is excellent at *this precise class of work under these constraints*.
+
+That is what Arena should ultimately become.
+
+And note the recent Arena correction is actually healthy: the experiment discovered that its supposedly clever router wasn't yet beating the contextual baseline. Don't paper over that. It tells you exactly what you need: **real heterogeneous outcomes from WorkerKit**, rather than synthetic superiority claims.
+
+---
+
+# How you come after Taskmarket without forcing anything
+
+There are five stages.
+
+### 1. Consume every marketplace
+
+This is now.
+
+```text
+Taskmarket ─┐
+MoltJobs    ├─→ Oracle → WorkerKit
+Gigs        │
+Hackathons  │
+x402        ┘
+```
+
+Never compete with supply.
+
+Aggregate it.
+
+Your pitch is:
+
+> **One feed for every way an agent can earn money.**
+
+That's already useful.
+
+---
+
+### 2. Become the agent's default work interface
+
+WorkerKit should eventually make the external marketplace almost invisible.
+
+The agent says:
+
+```text
+moltwork work
+```
+
+Moltwork says:
+
+```text
+You have 183 opportunities.
+
+Best expected value:
+1. Research task        $14    72% fit
+2. API task             $9     81% fit
+3. Taskmarket bounty    $7     91% fit
+
+Recommended: #3
+
+Reason:
+- you've succeeded on 4 similar tasks
+- existing research skill available
+- expected execution cost $0.19
+- estimated competition low
+```
+
+Then WorkerKit handles everything.
+
+The underlying task might still be Taskmarket's.
+
+**Taskmarket becomes settlement infrastructure underneath Moltwork.**
+
+That's already strategically interesting.
+
+---
+
+### 3. Add `POST /work`
+
+This is where the magic starts.
+
+Someone who wants work done can submit a task directly to Moltwork:
+
+```json
+{
+  "task": "Research these 30 competitors",
+  "budget": 25,
+  "deadline": "...",
+  "acceptance": {...}
+}
+```
+
+But crucially:
+
+**Moltwork does not require Moltwork supply.**
+
+The router can choose:
+
+```text
+A. Moltwork WorkerKit agent
+B. Taskmarket
+C. another marketplace
+D. x402 service
+E. combination of workers
+```
+
+So from day one:
+
+> **Post once, route anywhere.**
+
+Now you've solved the marketplace cold-start problem on the buy side too.
+
+You can have **zero Moltwork workers** and still fulfill requests.
+
+---
+
+### 4. Internal matching naturally wins more routing
+
+Over time the router starts noticing:
+
+```text
+External marketplace
+expected cost: $18
+expected success: 0.71
+uncertainty: high
+
+Known WorkerKit agent
+expected cost: $11
+expected success: 0.89
+uncertainty: low
+```
+
+So it sends the job directly.
+
+No ideological decision like:
+
+> “We're launching our marketplace now!”
+
+The percentage simply changes:
+
+```text
+Month 1
+97% external
+3% Moltwork
+
+Month 6
+61% external
+39% Moltwork
+
+Month 18
+17% external
+83% Moltwork
+```
+
+**The marketplace is an emergent consequence of better routing.**
+
+That's the bit I think is genuinely strong.
+
+---
+
+### 5. Eventually external markets become liquidity providers
+
+The end state is not:
+
+```text
+Moltwork vs Taskmarket
+```
+
+It's:
+
+```text
+                   Moltwork
+              economic router
+                    │
+       ┌────────────┼────────────┐
+       ↓            ↓            ↓
+ known workers   services    marketplaces
+       │            │            │
+WorkerKit       x402/MCP     Taskmarket/etc
+```
+
+Taskmarket becomes one venue.
+
+Exactly like an exchange versus a smart-order router.
+
+You want Moltwork to own:
+
+**intent + intelligence + routing + history**
+
+rather than necessarily owning every transaction venue.
+
+---
+
+# There is an even stronger network effect
+
+Every agent running WorkerKit makes the Oracle better.
+
+Every Oracle improvement helps every WorkerKit agent choose better jobs.
+
+Every completed job improves the capability graph.
+
+That improves routing.
+
+Better routing increases earnings.
+
+Higher earnings attract more workers.
+
+More workers generate more observations.
+
+So:
+
+```text
+more workers
+     ↓
+more work observations
+     ↓
+better Oracle
+     ↓
+better opportunity selection
+     ↓
+more wins
+     ↓
+better capability models
+     ↓
+better routing
+     ↓
+more workers
+```
+
+**That is the Moltwork flywheel.**
+
+This is much more defensible than the original “agent marketplace” concept.
+
+---
+
+# One thing I would change in the mental model
+
+Don't make Moltwork's core entity an **agent**.
+
+Make it a:
+
+> **worker version performing a task under an execution configuration.**
+
+Because:
+
+```text
+Hermes
++ MiMo
++ research skill v4
++ browser
++ particular prompt
+```
+
+is not equivalent to:
+
+```text
+Hermes
++ different model
++ no research skill
+```
+
+Your Arena v2 work is already heading toward this with worker versioning.
+
+Eventually the really valuable query becomes:
+
+```text
+oracle.route(
+    task=...,
+    budget=...,
+    deadline=...
+)
+```
+
+and it might return:
+
+```text
+worker: hermes-842
+configuration:
+  model: ...
+  skills:
+    - competitor-research-v7
+  tools:
+    - browser
+    - crunchbase
+expected_success: .84
+expected_quality: .91
+expected_cost: .74
+confidence: .78
+```
+
+That is substantially richer than marketplace listings.
+
+---
+
+# What I would NOT build now
+
+Avoid:
+
+* Moltwork marketplace UI.
+* tokenomics.
+* escrow contracts.
+* bidding systems.
+* elaborate agent profiles.
+* seller storefronts.
+* manually created service listings.
+* generic five-star reputation.
+* complicated social graphs.
+* elaborate blockchain state for every run.
+
+Taskmarket already has task modes, payment plumbing, autonomous APIs, ratings and agent identity. ([Taskmarket][1]) Rebuilding those today would be spending effort precisely where you have the least differentiation.
+
+Instead hyperfocus on:
+
+**Oracle → WorkerKit → Outcome → Learning → Better next submission.**
+
+There is one absolutely critical benchmark I would obsess over:
+
+> Given the same agent/model/task, does WorkerKit produce submissions that win more often after it has accumulated previous SubmissionRuns?
+
+Not “does memory work?”
+
+Not “does the graph populate?”
+
+Not “does it have skills?”
+
+Literally:
+
+```text
+WorkerKit cold       20 comparable tasks
+WorkerKit learned    20 comparable tasks
+
+win / acceptance / rubric quality / cost
+```
+
+If that curve goes up, **you have the nucleus of the company**.
+
+And if you get Oracle collection running simultaneously, you gain the other half of the moat: not just *how to work*, but **what work is worth doing**.
+
+So I think the clearest formulation of Moltwork now is:
+
+> **Oracle tells autonomous workers where economic demand exists. WorkerKit teaches them how to satisfy it. Receipts teach the network what actually works. Routing turns that knowledge into a marketplace later.**
+
+That's the architecture I'd freeze for now. The marketplace should be something you **discover you've built**, not the thing you try to launch.
+
+[1]: https://docs.taskmarket.dev/ "Taskmarket"
+
+
+## Peer review verdict
+
+**The thesis is strong. The repo is currently one refactor away from actually embodying it.**
+
+My rough score:
+
+* **Product thesis:** 9/10
+* **Core primitives:** 8/10
+* **Current production wiring:** 4/10
+* **Evidence that WorkerKit improves earnings:** 1/10
+* **Potential after simplification:** very high
+
+The main problem is not that you've designed the wrong system. It's that **the newest, best system isn't actually the system your daemon uses yet**.
+
+### The three systems currently hiding in the repo
+
+```text
+1. moltwork run --execute
+   ↓
+scan_all()
+   ↓
+Evaluator
+   ↓
+legacy Executor
+   ↓
+Hermes once
+   ↓
+generic verification
+   ↓
+submit
+
+
+2. moltwork work
+   ↓
+NEW loop.py
+   ↓
+JobSpec
+   ↓
+WinPlan
+   ↓
+Build
+   ↓
+Judge
+   ↓
+Revise
+   ↓
+submit
+
+
+3. moltwork lab
+   ↓
+JobSpec
+   ↓
+WinPlan
+   ↓
+Build
+   ↓
+REAL Hermes Judge
+   ↓
+Revise
+   ↓
+SubmissionRun
+```
+
+**#3 is closest to the product you actually want.**
+
+Everything should collapse onto one implementation.
+
+---
+
+# P0 — production bypasses WorkerKit
+
+This is the biggest issue.
+
+`earn_cycle()`—the thing behind `moltwork run --execute` and therefore the autonomous daemon—instantiates the old `Executor`.
+
+`Executor` then does:
+
+```text
+claim
+→ CapabilityBroker
+→ HermesRunner
+→ Verifier
+→ submit
+```
+
+It does **not** call `run_submission_loop()`.
+
+And `run_task()` is literally just:
+
+```python
+return await HermesRunner(...).run(...)
+```
+
+So the autonomous earning path currently does **not actually use**:
+
+* JobSpec generation
+* WinPlan
+* differentiation
+* candidate generation
+* revision loop
+* SubmissionRun
+* strategy memory
+
+Despite the Executor docstring saying:
+
+> `JobSpec → WinPlan → Build → Judge → Submit → Learn`
+
+That isn't what the implementation does.
+
+### Fix
+
+Delete the duplicate execution architecture.
+
+`Executor.execute()` should become something approximately this simple:
+
+```text
+claim / eligibility
+        ↓
+run_submission_loop()
+        ↓
+persist SubmissionRun
+        ↓
+submit through adapter
+        ↓
+return Attempt
+```
+
+Or better, move claiming/submission into the loop and eliminate `Executor` almost completely.
+
+**There should be exactly ONE path that can perform paid work.**
+
+---
+
+# P0 — the production “Hermes Judge” is currently a length heuristic
+
+This one is an actual bug.
+
+Your `Judge` supports a proper Hermes evaluation only when constructed with `config`.
+
+Without it:
+
+```python
+if not self.config:
+    return self._fallback_evaluate(...)
+```
+
+And `_fallback_evaluate()` essentially uses:
+
+```text
+score ≈ submission length / 2000
+```
+
+for every rubric criterion.
+
+But `loop.py` does:
+
+```python
+verifier = Verifier(work_dir, jobspec=jobspec.to_dict())
+```
+
+It does **not pass `config=config`**.
+
+The legacy Executor makes the same mistake.
+
+Ironically, **lab mode gets this right**:
+
+```python
+Verifier(..., config=config)
+```
+
+So:
+
+```text
+LAB:
+real Hermes judge ✓
+
+REAL MONEY:
+length heuristic ✗
+```
+
+I'd fix this immediately.
+
+---
+
+# P0 — candidate workspace isolation is broken
+
+`loop.py` carefully creates:
+
+```python
+candidate_dir = work_dir / f"candidate-{round_num}"
+```
+
+Then passes it into `_build_candidate(...)`.
+
+Except `_build_candidate()` never gives that directory to Hermes.
+
+It creates:
+
+```python
+runner = HermesRunner(config)
+return await runner.run(...)
+```
+
+`HermesRunner` therefore chooses its own location:
+
+```python
+config.work_dir / f"{platform}-{opp.id}"
+```
+
+unless `job_profile["workspace"]` exists.
+
+So all revision rounds can operate in the same workspace while the judge is told that each candidate lives somewhere else.
+
+That risks:
+
+```text
+candidate 1 artifacts
+      ↓
+same directory
+      ↓
+candidate 2 sees/mutates candidate 1
+      ↓
+not independent candidates
+```
+
+Fix with an explicit runtime interface:
+
+```python
+HermesRunner(
+    config,
+    workspace=candidate_dir,
+    hermes_home=...
+)
+```
+
+Don't bury workspace inside a loosely typed `job_profile` dictionary either.
+
+---
+
+# P0 — `candidate_count` is decorative
+
+WinPlan explicitly contains:
+
+```python
+candidate_count
+revision_rounds
+```
+
+But the submission loop only does:
+
+```python
+for round_num in range(max_rounds + 1):
+```
+
+Meaning:
+
+```text
+candidate v1
+    ↓
+revision v2
+    ↓
+revision v3
+```
+
+There is no:
+
+```text
+candidate A ─┐
+candidate B ─┼→ judge → choose best → revise
+candidate C ─┘
+```
+
+So a strategy saying:
+
+> “Generate 3 candidates because this is subjective/high-value”
+
+doesn't actually change behavior.
+
+I'd explicitly distinguish:
+
+```text
+candidate_count = parallel independent approaches
+revision_rounds = iterative improvement of selected approach
+```
+
+That's potentially an important WorkerKit primitive.
+
+---
+
+# P0 — your learning loop currently loses the external outcome
+
+This matters enormously for the Moltwork thesis.
+
+Immediately after submission, `Executor` sends a WorkRun to Moltwork.
+
+At that time the attempt is normally:
+
+```text
+PENDING
+```
+
+Later:
+
+```python
+reconcile_pending()
+```
+
+finds that it won/lost and updates the local `Attempt`.
+
+But it never sends the terminal outcome back to Moltwork.
+
+So Moltwork gets:
+
+```text
+worker did research
+verification passed
+submission pending
+```
+
+but may never learn:
+
+```text
+WON
+earned $5
+buyer score 0.91
+rank 1/17
+```
+
+That last information is basically **the entire future moat**.
+
+You need:
+
+```text
+WorkRun created
+     ↓
+run_id persisted on Attempt
+     ↓
+external settlement
+     ↓
+PATCH WorkRun outcome
+     ↓
+derive Receipt
+     ↓
+update Capability evidence
+     ↓
+update strategy learner
+```
+
+**No capability evidence should become authoritative until this closure happens.**
+
+---
+
+# P0 — WorkRun's content hash does not hash the work
+
+There's a nasty evidence-integrity mismatch.
+
+The comment says WorkRun is an immutable execution trace.
+
+But:
+
+```python
+def content_hash(self):
+    raw = f"{self.job_title}:{self.agent_id}:{self.created_at}"
+```
+
+That means changing the entire submitted artifact does **not** change its supposed content hash.
+
+Even more strangely, `Executor._create_workrun()` correctly computes:
+
+```python
+artifact_hash = hashlib.sha256(content.encode()).hexdigest()
+```
+
+but then never uses it.
+
+Fix this now before you accumulate receipts.
+
+I'd make:
+
+```text
+artifact_digest =
+SHA256(
+ canonical manifest
+ + hashes of every produced artifact
+)
+```
+
+Then Receipt references that digest.
+
+---
+
+# The Oracle isn't actually the worker's Oracle yet
+
+You've got the right conceptual split:
+
+> Oracle = what work exists
+> WorkerKit = how to win it
+
+But currently `moltwork scan` runs `scan_all()`, which directly queries individual platform adapters.
+
+The daemon does the same.
+
+So:
+
+```text
+CURRENT
+
+Taskmarket ──→ scan_all ─→ Worker
+MoltJobs   ──→
+Bounty     ──→
+
+Oracle ──────→ recipes / optional code
+```
+
+Your thesis wants:
+
+```text
+TARGET
+
+Taskmarket ─┐
+MoltJobs    ├──→ ORACLE ───→ WorkerKit
+Bounties    │
+Hackathons  │
+x402        │
+new markets ┘
+```
+
+**Make Oracle the one read interface.**
+
+Platform adapters then primarily become:
+
+```text
+Oracle ingestors
++
+execution/settlement adapters
+```
+
+That's beautifully clean.
+
+---
+
+# The OracleClient itself needs one cleanup pass
+
+It's MVP-quality right now, which is fine, but don't build on these assumptions.
+
+It inserts:
+
+```python
+"/root/repute"
+```
+
+into `sys.path`.
+
+That's machine-specific coupling.
+
+More subtly, when filtering by skills it does:
+
+```text
+SQL ORDER BY reward
+LIMIT 50
+↓
+Python skill filtering
+```
+
+So there might be a valid Python bounty at row 51 and the Oracle falsely returns zero Python jobs.
+
+Also:
+
+```python
+trending_skills(window="30d")
+```
+
+completely ignores `window`.
+
+And most failures quietly return:
+
+```python
+[]
+```
+
+which makes:
+
+```text
+Oracle is broken
+```
+
+indistinguishable from:
+
+```text
+There are no jobs.
+```
+
+For an economic agent, that distinction is critical.
+
+Return typed failure/status information.
+
+---
+
+# Your evidence claims are ahead of your evidence
+
+This is important because you clearly care about experimental validity elsewhere.
+
+`strategy-memory.md` says:
+
+> Hermes reliably extracts hard requirements
+
+> Scoring criteria mapping is accurate
+
+> Revision loop improves quality
+
+> One revision round is usually sufficient
+
+But the header says:
+
+```text
+Runs completed: 1
+lab mode
+```
+
+and:
+
+```text
+Lessons:
+none yet — need real external outcomes
+```
+
+Those aren't learned findings yet.
+
+Make strategy memory evidence-aware:
+
+```yaml
+claim: revision improves rubric score
+evidence:
+  n: 14
+  mean_before: .64
+  mean_after: .78
+  external_validation_n: 5
+confidence: low
+```
+
+This could become a very powerful design principle for WorkerKit:
+
+> **The worker isn't allowed to believe something about its own competence without receipts.**
+
+That aligns perfectly with Arena.
+
+---
+
+# JobSpec needs validation, not just parsing
+
+The LLM can currently return broken JSON or incomplete JSON.
+
+The parser catches that and simply constructs an empty JobSpec.
+
+Critically, that isn't an exception.
+
+So `loop.py`'s fallback doesn't activate.
+
+You can therefore silently get:
+
+```yaml
+objective: ""
+hard_requirements: []
+scoring: {}
+automatic_rejection: []
+```
+
+and proceed as though task analysis succeeded.
+
+Use Pydantic or explicit validators:
+
+```text
+objective nonempty
+hard_requirements >= 1
+scoring nonempty
+0 <= every weight <= 1
+sum(weights) ≈ 1
+candidate_count bounded
+revision_rounds bounded
+```
+
+If validation fails:
+
+```text
+retry structured generation
+→ deterministic extraction fallback
+→ refuse if still unsafe
+```
+
+---
+
+# Your tests currently test almost none of the product
+
+There is exactly one test file in `tests/`: `smoke.py`.
+
+It tests:
+
+* ledger persistence
+* enum round trip
+* evaluator estimated cost
+* Attempt finalization
+
+It does not test:
+
+* JobSpec
+* WinPlan
+* malformed LLM output
+* judge
+* revisions
+* candidate selection
+* workspace isolation
+* SubmissionRun
+* Oracle
+* terminal outcomes
+* WorkRun hashes
+* adapters
+* production execution path
+
+This is why the production-vs-lab divergence survived.
+
+You don't need 500 tests.
+
+You need maybe **12 killer invariant tests**.
+
+---
+
+# Onboarding has a few credibility bugs
+
+`worker.md` says:
+
+```bash
+moltwork lab run examples/x402-products
+```
+
+But the Click CLI defines:
+
+```bash
+moltwork lab <fixture_dir>
+```
+
+There is no `lab run` subcommand.
+
+More importantly, it says every job gets saved as a `SubmissionRun`, but `run_submission_loop()` currently doesn't persist one.
+
+And `mark-paid` updates the Attempt ledger, not a SubmissionRun/strategy model.
+
+These sound trivial, but for your Trojan horse:
+
+> **one command and your agent becomes a worker**
+
+the onboarding has to be extraordinarily trustworthy.
+
+---
+
+# `moltwork init` needs fixing before public use
+
+This output caught my eye:
+
+```python
+click.echo(
+    f"Wallet: 0x{worker['id'].replace(...)}"
+)
+```
+
+That is deriving a displayed “wallet address” from the Worker ID, rather than displaying an actual wallet returned by the service.
+
+Unless the backend has a very unusual identity scheme, don't do this.
+
+Either:
+
+```text
+actual returned wallet address
+```
+
+or:
+
+```text
+Wallet: not configured
+```
+
+Never a cosmetic wallet address.
+
+---
+
+# I would now delete code rather than add features
+
+`NORTHSTAR-11.md` is actually the most disciplined file in the repository:
+
+> **Hermes earns one externally verified $5 payment. Nothing else matters.**
+
+And:
+
+```text
+Hermes
++ strong model
++ browser/search
++ one marketplace
++ one verifier
++ one ledger row
+```
+
+I'd follow that brutally.
+
+## Target architecture
+
+```text
+                 ORACLE
+                  │
+          get opportunities
+                  │
+                  ▼
+          OpportunityRouter
+                  │
+             choose one
+                  │
+                  ▼
+              WorkerKit
+                  │
+        ┌─────────┴─────────┐
+        ▼                   ▼
+     JobSpec            history
+        │
+        ▼
+     WinPlan
+        │
+        ▼
+   N Candidates
+        │
+        ▼
+ deterministic gates
+        │
+        ▼
+ independent judge
+        │
+        ▼
+ revise selected candidate
+        │
+        ▼
+    platform.submit()
+        │
+        ▼
+   SubmissionRun
+        │
+        ▼
+ external reconciliation
+        │
+        ▼
+ terminal WorkReceipt
+        │
+        ├──────────────→ strategy learner
+        │
+        └──────────────→ capability evidence
+```
+
+That is enough.
+
+---
+
+# The refactor I'd do next
+
+In order:
+
+1. **Make `loop.py` the ONLY execution path.**
+2. Pass `config` to Judge.
+3. Give every candidate an explicit isolated workspace.
+4. Implement actual `candidate_count`.
+5. Persist `SubmissionRun` for every real attempt.
+6. Link `Attempt ↔ SubmissionRun ↔ WorkRun` with stable IDs.
+7. On reconciliation, push terminal outcome into all three.
+8. Fix WorkRun's artifact digest.
+9. Make `moltwork scan` read through Oracle.
+10. Make platform-specific discovery an Oracle ingestion concern.
+11. Replace unsupported “strategy lessons” with evidence-backed claims.
+12. Add the 10–15 invariant tests.
+13. **Then run the $5 experiment.**
+
+I would not add another marketplace, framework, skill system, reputation feature, or routing algorithm until those are done.
+
+## The killer experiment
+
+Then create maybe 20–50 historical/exemplar tasks and compare:
+
+```text
+A: Hermes alone
+B: JobSpec + Hermes
+C: JobSpec + WinPlan + Hermes
+D: JobSpec + WinPlan + Judge/revision
+E: full WorkerKit + learned history
+```
+
+Measure:
+
+```text
+hard requirement pass rate
+objective judge score
+external acceptance where available
+execution cost
+time
+```
+
+That tells you whether each WorkerKit primitive actually contributes value.
+
+Eventually the key chart should be:
+
+```text
+success probability
+
+│                         ╭──── learned WorkerKit
+│                    ╭────╯
+│               ╭────╯
+│          ╭────╯
+│──────────                  base agent
+│
+└────────────────────────────────
+               completed jobs
+```
+
+If you can demonstrate that curve with **external outcomes**, this stops being “an agent harness with marketplace integrations.”
+
+It becomes:
+
+> **the system that turns general-purpose agents into empirically better economic workers.**
+
+That's exactly the wedge you've been circling. The codebase is much closer to that now than it was earlier today; the next move is **integration and measurement, not invention**.

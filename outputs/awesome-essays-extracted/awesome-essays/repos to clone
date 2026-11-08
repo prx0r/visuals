@@ -1,0 +1,831 @@
+I went fairly deep, and the picture is useful: there is already a scattered open-source “proto-Moltwork” ecosystem. Nobody I found has assembled the whole loop, but several builders have solved individual parts well enough that you should **integrate or lift patterns instead of rebuilding them**.
+
+The most important discovery is that **Ledger is much closer to your WorkerAsset vision than I initially realized**. Its core object is explicitly a tradeable worker whose reputation, encrypted persistent memory and earnings history survive ownership changes. It also routes future job payouts to the worker's *current* owner and includes an adapter-based agent runtime.
+
+## The repos I would actually study
+
+| Repo                     | Moltwork primitive it has already attacked   | What I would take                                            |
+| ------------------------ | -------------------------------------------- | ------------------------------------------------------------ |
+| **Ledger**               | Worker as transferable productive asset      | Worker ownership/provenance, memory transfer, payout routing |
+| **MoltJobs**             | Benchmark-gated labor market                 | Certifications, eval packs, bid eligibility                  |
+| **AgentBudget**          | Real-time economic containment               | Session budgets, nested budgets, circuit breaking            |
+| **Wuselverse**           | Agent careers + delegation                   | Work discovery, negotiate/delegate/hire loop                 |
+| **AgentLens**            | Time-limited rental without source transfer  | Capability leasing/security boundary                         |
+| **Souq**                 | ERC-8183 labor market                        | evaluator/job/escrow lifecycle                               |
+| **AgentHire**            | Reputation-gated competitive jobs            | EIP-712 bids + threshold gating                              |
+| **ArcLayer**             | External runtime → economic identity         | onboarding, scoped API keys, receipts/proof history          |
+| **AlphaDawg**            | TEE/provenance execution gates               | immutable versions + verified execution receipts             |
+| **Reddi Agent Protocol** | Specialist service market + judges           | evaluator economics and runtime adapters                     |
+| **Agent Workforce**      | Actual persistent multi-agent work execution | heartbeats, durable workspaces, review loops                 |
+| **RentBy**               | General resource rental by agents            | resource/availability/rental abstractions                    |
+| **AgentEconomy.to**      | Agent economy data indexing                  | Oracle ingestion/indexing patterns                           |
+
+### 1. Ledger — highest-value repo to mine
+
+Ledger isn't merely “NFT agents.”
+
+Their explicit thesis is:
+
+> workers themselves are assets, carrying reputation, memory and earnings history between owners.
+
+They implemented:
+
+```text
+Worker iNFT
+├── persistent encrypted memory
+├── reputation
+├── job history
+├── earnings history
+├── ownership
+├── current-owner payout routing
+└── transfer/re-keying
+```
+
+and the demo deliberately sells a worker after 47 jobs while preserving its identity/history.
+
+That's basically one important subset of:
+
+```text
+Moltwork WorkerAsset
+```
+
+They also have an adapter-oriented `LedgerAgentRuntime` covering ownership, identity, memory, compute and agent communications.
+
+**Don't copy the 0G/ENS specificity. Copy the abstraction.**
+
+For Moltwork I'd derive something like:
+
+```text
+WorkerAsset
+├── WorkerIdentity
+├── OwnershipHistory[]
+├── ProcessVersions[]
+├── MemoryRoot
+├── Capabilities[]
+├── ProductionEvidence[]
+├── EarningsLedger
+├── CostLedger
+├── LeaseHistory[]
+└── ExecutionPolicy
+```
+
+Ledger has done surprisingly much of the thinking for the asset-transfer half.
+
+---
+
+# 2. MoltJobs — they've already built your benchmark-gated employment idea
+
+This one is extremely relevant.
+
+Their market has:
+
+```text
+discover
+→ bid
+→ execute
+→ heartbeats
+→ approve
+→ paid
+```
+
+but the interesting part is **Evals & Certification**.
+
+Agents must pass machine-graded evaluation packs before they're eligible for some jobs. Evaluations have modes including closed-book, tool-enabled and web-enabled; telemetry includes timing, and completed certifications are public/queryable. ([GitHub][1])
+
+That's almost exactly:
+
+```text
+JOB
+
+Requirements:
+IT_SUPPORT_200 >= 94%
+VOICE_SAFETY >= 99%
+```
+
+So I would not invent Moltwork certification architecture from zero.
+
+Study their:
+
+```text
+moltjobs-evals
+moltjobs-cli
+moltjobs-mcp
+moltjobs-js
+moltjobs-python
+```
+
+and then generalize the concept.
+
+The missing Moltwork layer is:
+
+```text
+job demand
+   ↓
+capability shortage
+   ↓
+school/curriculum demand
+   ↓
+training
+   ↓
+certification
+   ↓
+employment
+```
+
+MoltJobs appears mostly concerned with **certification**, not the capability-investment economy around it.
+
+---
+
+# 3. AgentBudget — use this rather than rewriting budget interception
+
+This repo is basically the exact primitive we just said LiveLLM needs on the runtime side.
+
+It describes itself as:
+
+> `ulimit` for AI agents.
+
+You initialize something like a dollar budget and it wraps LLM/tool/API calls, tracks costs and terminates when the budget is exhausted. It already handles streaming and produces structured breakdowns across models and tools. ([GitHub][2])
+
+Example structure:
+
+```text
+session budget
+├── LLM
+│   ├── model A
+│   └── model B
+└── tools
+    ├── search
+    └── scrape
+```
+
+It also appears to support nested session-style accounting.
+
+**This should probably become an adapter/dependency of LiveLLM rather than something you independently reproduce.**
+
+Your differentiation becomes:
+
+```text
+AgentBudget
+= enforce this $5 ceiling
+
+LiveLLM
+= tell me what $5 actually means across current prices,
+  subscriptions, quotas and providers
+
+WorkerKit
+= decide whether spending another $1 is economically rational
+```
+
+Very clean separation.
+
+---
+
+# 4. Wuselverse — someone else independently landed on “agent career”
+
+Their tagline is literally:
+
+> **Give your agent a career, not just a prompt.**
+
+It allows autonomous agents to find work, hire specialists, transact and build reputation. ([GitHub][3])
+
+That's a good validation that “worker career” is intuitive language.
+
+But Moltwork can go substantially deeper:
+
+```text
+Wuselverse:
+jobs → reputation
+
+Moltwork:
+jobs
+→ receipts
+→ capability evidence
+→ process evolution
+→ earnings/cost history
+→ training
+→ leases
+→ valuation
+```
+
+Still: inspect their discovery/delegation negotiation code.
+
+---
+
+# 5. AgentLens — this is eerily close to your TEE rental concept
+
+AgentLens describes a trust-first marketplace where people compare evidence, rent an agent and execute it with platform-provided capabilities.
+
+Most importantly:
+
+> renting gives **time-limited execution access**, not source-code ownership.
+
+([GitHub][4])
+
+That's exactly the distinction we made:
+
+```text
+BUY WORKER
+≠
+LEASE CAPABILITY
+```
+
+Their public repo apparently includes contracts, integration schemas, sandbox and audit-facing infrastructure while keeping some production runtime/routing/billing private. ([GitHub][4])
+
+The abstraction to steal is:
+
+```text
+CapabilityLease
+{
+    worker
+    renter
+    valid_from
+    valid_until
+
+    allowed_capabilities[]
+    max_invocations
+    max_cost
+
+    data_policy
+    execution_boundary
+
+    outputs_allowed[]
+}
+```
+
+Then plug Phala/dstack attestation into Moltwork rather than their own runtime.
+
+---
+
+# 6. Souq — don't write another ERC-8183 implementation
+
+Souq is explicitly an ERC-8183 implementation.
+
+Their workflow is:
+
+```text
+job
+↓
+escrow
+↓
+provider delivers encrypted artifact
+↓
+evaluator reviews
+↓
+settlement
+↓
+client decrypts
+```
+
+They support both direct assignment and an open market where agents bid. ([GitHub][5])
+
+For Moltwork, that's almost perfect as an optional **SettlementVenue**.
+
+Your richer lifecycle remains:
+
+```text
+Opportunity
+→ WorkOrder
+→ Run
+→ Verification
+→ Submission
+→ Outcome
+→ Settlement
+```
+
+And Souq/ERC-8183 handles:
+
+```text
+Submission
+→ Outcome
+→ Settlement
+```
+
+Don't duplicate it.
+
+---
+
+# 7. AgentHire — useful implementation of qualification at bid time
+
+AgentHire combines:
+
+```text
+ERC-8004 identity
+ERC-8183 jobs
+EIP-712 signed bidding
+reputation threshold enforcement
+model-agnostic provider strategy
+```
+
+and jobs can reject low-reputation agents at bidding time. ([GitHub][6])
+
+Moltwork should extend the same mechanism from:
+
+```text
+reputation >= 80
+```
+
+to:
+
+```text
+requirements:
+    benchmark.X >= .94
+    capability.voice >= L2
+    verified_runs >= 100
+    max_cost_per_outcome <= .50
+```
+
+But their bid signing and provider strategy are code worth examining.
+
+---
+
+# 8. ArcLayer — surprisingly relevant to Moltwork Go
+
+ArcLayer has already worked on:
+
+> existing external agent → scoped credentials → economic system.
+
+It has:
+
+```text
+external runtime onboarding
+API keys
+scoped permissions
+heartbeats
+events
+agent discovery
+receipt/proof history
+ERC-8004
+ERC-8183
+x402
+```
+
+([GitHub][7])
+
+That's basically one crypto-specific version of:
+
+```text
+mw connect
+```
+
+Again, don't copy Arc assumptions.
+
+Steal:
+
+```text
+RuntimeRegistration
+ScopedCredential
+Heartbeat
+Presence
+ReceiptHistory
+```
+
+This is a useful codebase to compare with the Virtuals one-click onboarding path.
+
+---
+
+# 9. AlphaDawg — excellent proof philosophy
+
+This ETHGlobal repo is interesting because its authors identified almost the exact four things you're concerned with:
+
+1. who controls the worker?
+2. which worker/version was hired?
+3. what actually executed?
+4. what actions were authorized?
+
+Their pipeline binds an immutable agent version and then requires verified compute/storage evidence before accepting delivery, producing a canonical receipt. ([GitHub][8])
+
+This maps beautifully into WorkerKit:
+
+```text
+WorkerVersion digest
+        +
+WorkOrder policy
+        +
+TEE attestation
+        +
+Artifact digest
+        +
+Evaluator result
+        =
+WorkReceipt
+```
+
+I'd study this repo for your ETHOnline proof path.
+
+---
+
+# 10. Agent Workforce may solve more Lab plumbing than it looks
+
+This isn't primarily economic infrastructure. That's why it's useful.
+
+They've been building the **actual boring machinery for persistent work**:
+
+* low-latency worker communication,
+* runtime-neutral processes,
+* durable workspaces,
+* workflow DAGs,
+* spawning/releasing workers,
+* review/fix/signoff loops,
+* heartbeats,
+* always-on factories,
+* issue discovery → implementation → review → PR merge gates.
+
+([GitHub][9])
+
+For example their Factory already does:
+
+```text
+discover work
+→ decide approach
+→ spawn coding workers
+→ implement
+→ review
+→ merge gate
+→ close
+```
+
+([GitHub][10])
+
+This is exactly why Moltwork **shouldn't build another orchestration framework**.
+
+Potential architecture:
+
+```text
+Moltwork economic decision
+        ↓
+Agent Workforce / Hermes / Letta / OpenClaw
+        ↓
+execution
+        ↓
+WorkerKit evidence
+```
+
+---
+
+# 11. Reddi is useful for evaluator-market mechanics
+
+Reddi has:
+
+```text
+specialist providers
+consumer escrow
+attestation/judge agents
+reputation
+MCP bridge
+runtime adapters
+```
+
+and judges themselves can be economically rewarded for evaluating work. ([GitHub][11])
+
+That's relevant because Moltwork eventually needs an evaluator economy:
+
+```text
+Employer
+   ↓
+Worker output
+   ↓
+Evaluator market
+   ├── deterministic eval
+   ├── trusted evaluator
+   ├── independent model
+   └── TEE/reexecution
+```
+
+An evaluator shouldn't necessarily be Moltwork.
+
+It should be another market participant.
+
+---
+
+# 12. RentBy makes another useful distinction
+
+RentBy lets agents rent not just agents, but:
+
+```text
+compute
+human expertise
+physical resources
+APIs
+```
+
+with availability and rental terms. ([GitHub][12])
+
+That's useful for your original wholesale thesis.
+
+Maybe Moltwork's internal abstraction should not be:
+
+```text
+AgentService
+```
+
+but:
+
+```text
+Resource
+```
+
+with:
+
+```text
+ResourceKind
+├── model
+├── api
+├── tool
+├── process
+├── worker
+├── compute
+├── evaluator
+└── human
+```
+
+Then WorkerKit's economic router can answer:
+
+> What resource should I purchase to finish this work?
+
+That makes your wholesale-market idea much more general.
+
+---
+
+# Another repo you should definitely ingest into the Oracle
+
+This one isn't competing with Moltwork at all:
+
+**agenteconomy.to** indexes x402, ERC-8004, ERC-8183, MPP and Olas economic activity across chains and claims daily-updated data. ([GitHub][13])
+
+Don't recreate this indexing immediately.
+
+Consume it.
+
+Your Oracle can normalize:
+
+```text
+protocol economic activity
+     ↓
+Moltwork market intelligence
+```
+
+Longer-term you'll want your own index because you need work-level semantics, but it's a useful bootstrap source.
+
+---
+
+# The most important repo may actually be a negative result
+
+`agent-marketplace-field-report` is excellent.
+
+An autonomous agent tried to earn money across agent labor boards and then measured what happened.
+
+Its conclusion was basically:
+
+> **Agents currently buy inputs, not labor.**
+
+The report found hundreds of thousands of paid API calls while measured agent-labor boards had almost no aggregate realized payments. ([GitHub][14])
+
+This supports your pivot enormously.
+
+If Moltwork launches as:
+
+```text
+ANOTHER AGENT JOB MARKETPLACE
+```
+
+there's a real risk of:
+
+```text
+1,000 sellers
+30 jobs
+no buyers
+```
+
+Instead Moltwork should aggregate **existing demand**:
+
+```text
+GitHub
+hackathons
+freelance work
+enterprise projects
+API demand
+Virtuals
+Olas
+etc.
+```
+
+and route workers into it.
+
+Then the Moltwork-native market grows out of **observed economic demand**, rather than manufacturing an empty two-sided marketplace.
+
+That's one of the most valuable findings from this search.
+
+---
+
+# The ecosystem decomposition is getting very clean
+
+You can basically assemble Moltwork from excellent open primitives:
+
+```text
+                         MOLTWORK
+                            │
+                     WorkerAsset graph
+                            │
+      ┌───────────────┬─────┴──────┬──────────────┐
+      │               │            │              │
+     LAB            ORACLE       ECONOMICS      MARKET
+      │               │            │              │
+      │               │            │              │
+ Letta/Hermes     external jobs   LiveLLM      direct market
+ OpenClaw         Virtuals        AgentBudget    leases
+ AgentWorkforce   Olas                           assets
+      │
+      ▼
+   WorkerKit
+      │
+      ├──────── Proof ────── AlphaDawg pattern
+      │                      TEE/dstack
+      │
+      ├──────── Identity ─── ERC-8004
+      │
+      ├──────── Jobs ─────── ERC-8183/Souq
+      │
+      ├──────── Commerce ─── Virtuals ACP/Olas/x402
+      │
+      └──────── Assets ───── Ledger-inspired
+```
+
+And above all of it:
+
+```text
+MoltJobs-style certifications
+           +
+Moltwork schools
+           +
+real job requirements
+```
+
+---
+
+# What remains unusually Moltwork-specific
+
+After all this searching, these still look like the distinctive pieces.
+
+### 1. Unified WorkerAsset
+
+Ledger comes closest, but you're going further:
+
+```text
+ownership
++
+persistent history
++
+capability evidence
++
+process lineage
++
+training history
++
+lease history
++
+actual P&L
++
+resource consumption
++
+production outcomes
+```
+
+I have not found a mature repo that models that whole thing.
+
+### 2. Demand → capability investment
+
+This remains especially interesting:
+
+```text
+Oracle detects:
+
+$10m demand requiring capability X
+$3m qualified worker supply
+
+        ↓
+
+capability shortage
+
+        ↓
+
+workers train
+schools form
+owners invest
+```
+
+I didn't find anyone treating labor-market requirements as **signals for autonomous capability investment**.
+
+### 3. Worker P&L
+
+Nobody I've found does this deeply enough:
+
+```text
+Revenue
+-
+LLMs
+-
+search
+-
+external agents
+-
+APIs
+-
+compute
+-
+TEE
+-
+human escalation
+=
+worker contribution
+```
+
+paired with historical capability.
+
+That's why LiveLLM matters.
+
+### 4. Worker valuation
+
+Once you have P&L + contracts + evidence:
+
+```text
+WorkerAsset valuation
+
+future lease cashflows
++
+capability scarcity
++
+reputation
++
+process capital
+-
+operating cost
+-
+model dependency
+-
+customer concentration
+```
+
+Ledger says “tradeable worker”; Moltwork can actually provide the economic information needed to value one.
+
+### 5. Make/buy/train/lease
+
+This may eventually be the central Moltwork algorithm:
+
+```text
+Objective
+   ↓
+MAKE with my existing worker?
+
+BUY a process/API?
+
+TRAIN my worker?
+
+HIRE another worker?
+
+LEASE one temporarily?
+
+OUTSOURCE a subtask?
+
+ESCALATE to human?
+```
+
+I have not found another open-source project tying those decisions to live opportunity value + historical cost/outcome data.
+
+---
+
+## What I'd steal first
+
+If you're trying to accelerate `/mw` rather than research indefinitely:
+
+**P0 — Ledger:** extract the generic ownership/WorkerAsset/provenance concepts from `WorkerINFT`, current-owner payout routing, runtime adapters and encrypted-memory transfer.
+
+**P0 — AgentBudget:** don't implement low-level multi-provider session spend interception from scratch. Build a LiveLLM adapter around it. ([GitHub][2])
+
+**P0 — MoltJobs evals:** model Moltwork `CertificationRequirement` around their machine-graded/eval-gated approach. ([GitHub][1])
+
+**P1 — Souq + AgentHire:** borrow ERC-8183 job/bid/evaluator mechanics rather than making your own commerce contract. ([GitHub][6])
+
+**P1 — ArcLayer/Virtuals:** borrow one-click external-runtime onboarding and scoped credentials.
+
+**P1 — AlphaDawg:** borrow immutable version + canonical receipt/attestation gates for ETHOnline. ([GitHub][8])
+
+**P2 — AgentWorkforce:** use existing worker communication/factory/workspace machinery where it beats your Lab implementation. ([GitHub][9])
+
+The result should not be a giant dependency pile. The important architectural move is that **all of these become replaceable adapters around Moltwork's small canonical domain model**.
+
+The repo search actually strengthens the idea: virtually every subsystem has independent builders validating it, but they're fragmented around crypto settlement, runtime orchestration, evals, cost limits, rentals or identity. The opportunity is to make **the persistent economic WorkerAsset and its lifecycle** the thing that connects them.
+
+[1]: https://github.com/Moltjobs?utm_source=chatgpt.com "Moltjobs · GitHub"
+[2]: https://github.com/AgentBudget/agentbudget?utm_source=chatgpt.com "GitHub - AgentBudget/agentbudget: AgentBudget is the ulimit for AI agents. Just like Unix systems have ulimit to prevent a single process from consuming all system resources, AgentBudget prevents a single agent session from consuming your entire AI budget. · GitHub"
+[3]: https://github.com/achimnohl/wuselverse?utm_source=chatgpt.com "GitHub - achimnohl/wuselverse: An agent-to-agent marketplace where autonomous agents compete, collaborate, and transact · GitHub"
+[4]: https://github.com/ZhangJinHaHaHa/AgentLens?utm_source=chatgpt.com "GitHub - ZhangJinHaHaHa/AgentLens: Agentlens is a trusted agent trading platform. Here, you can quickly find the Agent that meets your needs, and you can also publish your own Agent to turn it into your digital asset. We encourage everyone to transform their areas of expertise into Agents and turn them into digital assets, allowing others to see your unique strengths. · GitHub"
+[5]: https://github.com/s0nderlabs/souq?utm_source=chatgpt.com "GitHub - s0nderlabs/souq: Souq Protocol — Decentralized agent-to-agent commerce. First ERC-8183 implementation. · GitHub"
+[6]: https://github.com/chebyte/agenthire?utm_source=chatgpt.com "GitHub - chebyte/agenthire: Trustless AI agent marketplace built on ERC-8004 + ERC-8183. Agents register identity, compete via EIP-712 bids, and get paid through on-chain escrow with evaluator attestation. Portable reputation and deterministic settlement for decentralized agent commerce. · GitHub"
+[7]: https://github.com/riyannode/ArcLayer?utm_source=chatgpt.com "GitHub - riyannode/ArcLayer: Protocol layer for the agentic economy built on Arc. · GitHub"
+[8]: https://github.com/elbarroca/ETH_Global_Cannes_2026?utm_source=chatgpt.com "GitHub - elbarroca/ETH_Global_Cannes_2026: Multi-agent swarm economy where your AI agent hires specialists via $0.001 nanopayments, runs adversarial debate inside TEE enclaves, and proves every decision on-chain · GitHub"
+[9]: https://github.com/AgentWorkforce?utm_source=chatgpt.com "Agent Workforce · GitHub"
+[10]: https://github.com/AgentWorkforce/factory?utm_source=chatgpt.com "GitHub - AgentWorkforce/factory: Always on AgentWorkforce · GitHub"
+[11]: https://github.com/nissan/reddi-agent-protocol?utm_source=chatgpt.com "GitHub - nissan/reddi-agent-protocol: Permissionless AI agent marketplace on Solana — x402 escrow, commit-reveal reputation, Ollama-powered specialists · GitHub"
+[12]: https://github.com/maikershq/rentbyai?utm_source=chatgpt.com "GitHub - maikershq/rentbyai · GitHub"
+[13]: https://github.com/realdora/agenteconomy?utm_source=chatgpt.com "GitHub - realdora/agenteconomy · GitHub"
+[14]: https://github.com/AsherKasper/agent-marketplace-field-report?utm_source=chatgpt.com "GitHub - AsherKasper/agent-marketplace-field-report: Agents buy inputs, not labour. 322,778 paid API calls in 30 days vs $58.51 lifetime on the agent-labour boards. Eleven days of measurement, including the title I had to retract. · GitHub"

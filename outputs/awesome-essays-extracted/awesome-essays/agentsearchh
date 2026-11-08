@@ -1,0 +1,2976 @@
+Yes. This is a very plausible micro-product, and the infrastructure is much simpler than the paid tools make it look.
+
+The key insight is that **name generation and domain checking should be separated**. You do not want an LLM generating 500 complete names token-by-token. Have the AI generate perhaps 30–80 semantic building blocks and naming strategies, then a deterministic engine expands those into 500–5,000 candidates. The availability engine filters them down to the handful of genuinely available `.com`s.
+
+### What already exists
+
+The market is fragmented enough that there is still a useful product gap:
+
+| Tool                       | Situation                                                                                                                                                                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Nametastic                 | AI generation, but uses credits; current free plan is tiny compared with unlimited searching. ([Nametastic][1])                                                                                                                      |
+| Namilio                    | Free generator, but **1,000-name bulk checking and its availability API are Premium at $9.99/month**. ([Namilio][2])                                                                                                                 |
+| Dotsweep                   | Excellent availability infrastructure: free, keyless, CORS-enabled, registry-aware and batch-capable. ([dotsweep][3])                                                                                                                |
+| NameSilo                   | Proper registrar API; incredibly useful here because **one request can check up to 200 domains**. ([NameSilo][4])                                                                                                                    |
+| Namecheap                  | Proper availability API; **50 domains/request**, but production API access requires 20 domains, $50 balance, or $50 historical spend. ([Namecheap][5])                                                                               |
+| Open-source `domain-check` | There are already mature RDAP engines you can self-host rather than reinventing protocol handling. One Go project supports bulk checking/caching; another Rust project covers 1,200+ TLDs and exposes a library + MCP. ([GitHub][6]) |
+
+RDAP is now the definitive ICANN mechanism for gTLD registration information, and IANA publishes the bootstrap database mapping TLDs to their authoritative RDAP servers. ([ICANN][7])
+
+The one thing I **wouldn't** do is build a public high-volume service that blindly hammers Verisign/PIR RDAP directly. Registries can throttle automated querying and their terms restrict high-volume automated processes. Abstract the checker behind providers and use registrar APIs/caching for production. ([ICANN][8])
+
+## The product I'd build
+
+Something brutally simple:
+
+> **Describe what you're naming → choose `.com` → generate 1,000 ideas → only show the available ones.**
+
+The homepage shouldn't make users learn "credits," "deep search," or anything else.
+
+For example:
+
+**Describe it**
+
+`news/blog tracking autonomous AI agents`
+
+**Words I like**
+
+`agent, spy, watch, pulse, radar, news`
+
+**Preferences**
+
+`☑ .com`
+`☐ .org`
+`☐ .ai`
+
+`Maximum 14 characters`
+
+`No hyphens`
+`No weird spellings`
+
+**[Find 1,000 names]**
+
+Then results start streaming:
+
+`Agent____.com — taken`
+
+`Agent____.com — taken`
+
+`Agent____.com — AVAILABLE`
+
+…and the UI automatically hides taken domains unless the user asks to see them.
+
+That is materially nicer than most existing tools.
+
+### Stack
+
+I would use **React + TypeScript + Cloudflare Workers Static Assets**, rather than maintaining a conventional VPS. Cloudflare now recommends Workers Static Assets for new full-stack Worker apps; static requests are free, and the Workers free tier currently permits 100,000 dynamic requests/day. ([Cloudflare Docs][9])
+
+For AI, **Workers AI** currently includes **10,000 neurons/day free**, with models such as GLM-4.7-Flash still available on the free plan. ([Cloudflare Docs][10])
+
+For persistence, D1's free tier currently includes 5 million rows read/day, 100,000 rows written/day and 5 GB total storage. ([Cloudflare Docs][11])
+
+For abuse prevention, Turnstile's normal production plan is free with unlimited verification challenges. ([Cloudflare Docs][12])
+
+And there is an obvious monetization mechanism without charging users: send an available domain's **Buy** button through a registrar affiliate link. Namecheap currently advertises **20% commission on qualifying first domain registrations/transfers by new customers**, and explicitly supports deep-linking directly to a domain's search result. ([Namecheap][13])
+
+So the economics can genuinely be:
+
+**user pays $0 → your compute cost approaches $0 → registrar pays you when somebody buys.**
+
+The moat isn't the availability checker. The moat is **ridiculous search volume + much better generation + ranking only genuinely useful available names**.
+
+Below is the build prompt I'd give a capable coding agent.
+
+# Mission
+
+Build a production-quality web application whose core promise is:
+
+**Describe what you need to name and receive hundreds or thousands of high-quality domain ideas, with unavailable domains automatically eliminated.**
+
+The product must be dramatically simpler and more generous than existing AI domain-name generators.
+
+The defining user experience is:
+
+**idea → massive name generation → deterministic availability filtering → ranked available domains**
+
+A user should be able to enter something such as:
+
+> AI agent industry news site. I like names such as AgentSpy, AgentWatch, AgentNews, AgentPulse, AgentRadar. I strongly prefer .com, short domains, normal English spelling and a serious but memorable brand.
+
+The system should intelligently create at least 500 candidates, availability-check them, and progressively reveal the best genuinely available `.com` domains.
+
+Do not require signup for the core workflow.
+
+Do not introduce credits.
+
+Do not hide bulk checking behind a paywall.
+
+Do not pretend DNS failure means a domain is available.
+
+Do not mark availability as certain unless the underlying provider has authoritative confidence.
+
+---
+
+# Product principles
+
+The application should feel more like a search engine than an AI chatbot.
+
+The user should not need to repeatedly ask:
+
+* give me more
+* check these
+* try another 50
+* which ones are available?
+
+The application does all of this automatically.
+
+Optimize for:
+
+1. huge candidate volume;
+2. low inference cost;
+3. reliable availability results;
+4. immediate progressive feedback;
+5. excellent brand-name ranking;
+6. zero or near-zero operating cost;
+7. no-account usage;
+8. transparent confidence;
+9. easy purchase once a domain is found;
+10. provider independence.
+
+The application's central differentiator is:
+
+> **We search hundreds or thousands of ideas instead of showing you twenty names and asking for money.**
+
+---
+
+# Required technical research before implementation
+
+Before writing production code, inspect the current official documentation for:
+
+* ICANN RDAP
+* IANA RDAP DNS bootstrap registry
+* Dotsweep availability API
+* NameSilo API and `checkRegisterAvailability`
+* Namecheap `domains.check`
+* Cloudflare Workers
+* Cloudflare Workers Static Assets
+* Cloudflare Workers AI
+* Cloudflare D1
+* Cloudflare Turnstile
+
+Also inspect these open-source implementations for architecture and reusable ideas:
+
+* `jedarden/domain-check`
+* `saidutt46/domain-check`
+
+Do not blindly copy either application.
+
+Study particularly:
+
+* IANA RDAP bootstrap discovery
+* DNS prefiltering
+* per-registry rate limiting
+* caching policies
+* IDN/Punycode normalization
+* unknown/error states
+* SSRF protection
+* concurrency controls
+* streaming bulk results
+
+Record important external constraints in `docs/RESEARCH.md`.
+
+---
+
+# Architecture
+
+Use a provider-adapter architecture.
+
+Do NOT couple application logic directly to one availability API.
+
+Conceptually:
+
+```text
+                        ┌──────────────────────┐
+                        │     React client     │
+                        └──────────┬───────────┘
+                                   │
+                      generate/search request
+                                   │
+                         ┌─────────▼─────────┐
+                         │ Cloudflare Worker │
+                         └─────────┬─────────┘
+                                   │
+             ┌─────────────────────┴─────────────────────┐
+             │                                           │
+     ┌───────▼────────┐                         ┌────────▼────────┐
+     │ Naming engine  │                         │ Search/session  │
+     │                │                         │ orchestration   │
+     └───────┬────────┘                         └────────┬────────┘
+             │                                           │
+       seed concepts                              candidate batches
+             │                                           │
+     ┌───────▼────────┐                         ┌────────▼────────┐
+     │ deterministic  │                         │ availability    │
+     │ expansion      │                         │ provider layer  │
+     └───────┬────────┘                         └────────┬────────┘
+             │                                           │
+       500-5000 names                   ┌────────────────┼───────────────┐
+             │                          │                │               │
+             └─────────────────────────►│ Dotsweep      │ NameSilo      │
+                                        │ adapter        │ adapter       │
+                                        └────────────────┼───────────────┘
+                                                         │
+                                                optional RDAP fallback
+```
+
+Define an interface similar to:
+
+```ts
+interface AvailabilityProvider {
+  id: string;
+
+  maxBatchSize: number;
+
+  check(
+    domains: string[],
+    context?: CheckContext
+  ): Promise<AvailabilityResult[]>;
+}
+```
+
+And:
+
+```ts
+type AvailabilityStatus =
+  | "available"
+  | "taken"
+  | "unknown"
+  | "invalid"
+  | "reserved";
+
+type Confidence =
+  | "certain"
+  | "estimated"
+  | "unknown";
+
+interface AvailabilityResult {
+  domain: string;
+  status: AvailabilityStatus;
+  confidence: Confidence;
+
+  provider: string;
+  source?: "rdap" | "registrar" | "dns" | "whois" | "cache";
+
+  registrationPrice?: number;
+  renewalPrice?: number;
+  currency?: string;
+
+  premium?: boolean;
+
+  checkedAt: string;
+
+  error?: string;
+}
+```
+
+Never turn `unknown` into `available`.
+
+Never turn a timeout into `available`.
+
+Never infer authoritative availability solely from:
+
+* NXDOMAIN;
+* no A record;
+* no NS record;
+* blank WHOIS output;
+* HTTP failure.
+
+---
+
+# Availability-provider strategy
+
+## Provider 1 — Dotsweep
+
+Implement a Dotsweep adapter first because its public interface is convenient for prototyping.
+
+Capabilities to support:
+
+* batch domain checks;
+* status;
+* confidence;
+* source;
+* pricing where supplied;
+* premium/reserved information where supplied;
+* graceful rate-limit handling.
+
+Use conservative batches according to the currently documented API limit.
+
+Respect its rate limits.
+
+Do not assume its availability forever.
+
+External provider failures must not break the application.
+
+Treat it as a replaceable adapter.
+
+Before a public commercial launch, verify current API usage terms.
+
+---
+
+# Provider 2 — NameSilo
+
+Implement an optional NameSilo backend.
+
+Its registrar API should be treated as the preferred high-volume production option when credentials are configured.
+
+Use its bulk availability endpoint.
+
+The current documentation indicates batches of up to 200 domains, but verify this before implementation.
+
+Environment configuration:
+
+```text
+NAMESILO_API_KEY=
+ENABLE_NAMESILO=false
+```
+
+Never expose the key to browsers.
+
+NameSilo calls must originate from the Worker/server.
+
+Normalize the response into `AvailabilityResult`.
+
+Use three batches rather than 500 individual network requests when checking 500 names.
+
+---
+
+# Provider 3 — Namecheap
+
+Implement a Namecheap adapter behind a feature flag.
+
+Its availability API currently accepts multiple names per request.
+
+Verify the exact current maximum.
+
+Environment variables:
+
+```text
+NAMECHEAP_API_KEY=
+NAMECHEAP_API_USER=
+NAMECHEAP_USERNAME=
+NAMECHEAP_CLIENT_IP=
+ENABLE_NAMECHEAP=false
+```
+
+Never ship these values to the frontend.
+
+Normalize premium pricing and availability.
+
+---
+
+# Provider 4 — self-hosted RDAP
+
+Create an optional native RDAP provider, but do NOT make unrestricted registry querying the default production path.
+
+Use:
+
+* the IANA RDAP DNS bootstrap data;
+* authoritative RDAP servers;
+* strict per-registry concurrency;
+* rate-limit awareness;
+* short timeouts;
+* retries with jitter;
+* caches.
+
+Study the existing Go and Rust `domain-check` projects before implementing this layer.
+
+If one can safely be incorporated as an independent service under its current license, prefer using a hardened implementation rather than inventing another weak WHOIS parser.
+
+A registry response must map roughly as:
+
+```text
+authoritative successful domain record -> taken
+
+authoritative "object/domain does not exist" response
+    -> potentially available
+
+429
+    -> unknown
+
+timeout
+    -> unknown
+
+5xx
+    -> unknown
+
+ambiguous response
+    -> unknown
+```
+
+Never tell the user a domain can definitely be purchased until a registrar-level availability check confirms it.
+
+The UI may distinguish:
+
+```text
+AVAILABLE — registrar confirmed
+LIKELY AVAILABLE — registry evidence
+UNKNOWN — couldn't confirm
+TAKEN
+```
+
+For the primary UX, only show `AVAILABLE` results by default.
+
+---
+
+# Cache strategy
+
+Availability changes at different rates depending on status.
+
+Implement configurable TTLs.
+
+Suggested initial values:
+
+```text
+available:
+    3-5 minutes
+
+taken:
+    1-6 hours
+
+unknown:
+    30-60 seconds
+
+pricing:
+    1-6 hours
+```
+
+Do not permanently cache availability.
+
+Cache normalized results using:
+
+```text
+domain:<normalized-domain>
+```
+
+Prefer Cloudflare Cache where practical and D1 only when historical persistence is useful.
+
+Deduplicate simultaneous requests.
+
+If 20 users ask for `agentspy.com`, the backend should not perform 20 identical authoritative calls.
+
+---
+
+# AI naming architecture
+
+This is extremely important.
+
+DO NOT ask the model:
+
+> Generate 1,000 domain names.
+
+That wastes tokens and generally produces repetitive garbage.
+
+Instead use a two-stage system.
+
+## Stage 1 — semantic decomposition
+
+Send one structured request to the language model.
+
+Input:
+
+```json
+{
+  "description": "...",
+  "liked_names": [],
+  "disliked_names": [],
+  "required_words": [],
+  "optional_words": [],
+  "extensions": [".com"],
+  "max_length": 14,
+  "allow_numbers": false,
+  "allow_hyphens": false,
+  "tone": ["credible", "modern", "memorable"]
+}
+```
+
+Ask the model to output structured naming material rather than final domains.
+
+Example schema:
+
+```ts
+interface NamingAtoms {
+  coreConcepts: string[];
+  relatedNouns: string[];
+  relatedVerbs: string[];
+  industryTerms: string[];
+  metaphors: string[];
+  shortSynonyms: string[];
+  prefixes: string[];
+  suffixes: string[];
+  greekLatinRoots: string[];
+  compressedForms: string[];
+  phoneticFragments: string[];
+  tonalDirections: string[];
+  avoid: string[];
+}
+```
+
+For the AgentWatch example it might discover semantic regions such as:
+
+```text
+agent
+watch
+spy
+eye
+scope
+scan
+radar
+pulse
+signal
+wire
+beat
+brief
+report
+news
+desk
+feed
+now
+track
+trace
+peek
+sentry
+beacon
+lens
+observe
+intel
+index
+map
+grid
+loop
+```
+
+The important thing is semantic diversity.
+
+---
+
+# Stage 2 — deterministic expansion
+
+Create a TypeScript naming engine that expands the atoms into hundreds or thousands of candidates locally without additional LLM calls.
+
+Implement multiple generators.
+
+## A. Direct compounds
+
+```text
+agent + pulse
+agent + scan
+agent + wire
+```
+
+## B. Reverse compounds
+
+```text
+pulse + agent
+watch + agent
+```
+
+## C. Prefix constructions
+
+```text
+get + signal
+try + radar
+open + scope
+```
+
+Only use these if appropriate.
+
+## D. Suffix constructions
+
+```text
+scope + hub
+watch + lab
+agent + base
+```
+
+## E. Portmanteau generation
+
+Create overlap-aware merging.
+
+Examples:
+
+```text
+radar + agent
+agent + intel
+signal + agent
+```
+
+Do not merely concatenate everything.
+
+Implement overlap detection:
+
+```text
+alpha + halo
+-> alphalo
+```
+
+Search for suffix-prefix overlaps of 1-4 letters.
+
+## F. Controlled vowel deletion
+
+Optional.
+
+Only permit when resulting name remains obvious and pronounceable.
+
+Bad:
+
+```text
+agntwchr
+```
+
+Potentially acceptable:
+
+```text
+tumblr-style transformations
+```
+
+Use sparingly.
+
+## G. Phonetic/invented names
+
+Generate pronounceable constructions based upon permitted phonetic fragments.
+
+Rules:
+
+* 2-4 syllables preferred;
+* alternate consonant/vowel groups;
+* no impossible consonant clusters;
+* avoid names that require explanation to spell;
+* no random `x`, `z`, `q` spam.
+
+## H. Semantic metaphor names
+
+Allow domains whose meaning conveys the product without literally containing the keyword.
+
+For agent-news monitoring:
+
+```text
+lookout
+sentry
+beacon
+pulse
+wire
+scope
+signal
+radar
+```
+
+Combine those concepts intelligently.
+
+## I. Numeric variants
+
+Only when enabled by the user.
+
+Support:
+
+```text
+11
+24
+24x7
+247
+360
+365
+77
+101
+```
+
+Numbers should be deliberate rather than random.
+
+---
+
+# Candidate count
+
+The target candidate pool should be configurable:
+
+```text
+Quick:
+100
+
+Normal:
+500
+
+Deep:
+1,000
+
+Exhaustive:
+5,000
+```
+
+Normal should be the default.
+
+The system must be able to expand one LLM response into at least 1,000 unique candidates without making additional generation calls.
+
+---
+
+# Normalization
+
+Before checking availability:
+
+* lowercase;
+* strip spaces;
+* Unicode normalize;
+* convert IDNs correctly;
+* remove illegal characters;
+* enforce DNS label constraints;
+* deduplicate;
+* deduplicate case-insensitively;
+* deduplicate candidates with identical normalized forms.
+
+Reject impossible names before hitting availability APIs.
+
+---
+
+# Candidate scoring
+
+Every candidate receives a deterministic score before availability lookup.
+
+Represent the score as:
+
+```ts
+interface NameScore {
+  total: number;
+
+  length: number;
+  pronounceability: number;
+  memorability: number;
+  semanticFit: number;
+  spellingClarity: number;
+  brandability: number;
+  cleanliness: number;
+
+  penalties: {
+    hyphen: number;
+    number: number;
+    repeatedLetters: number;
+    awkwardCluster: number;
+    excessiveLength: number;
+    ambiguity: number;
+  };
+}
+```
+
+The initial scoring engine must work without an LLM.
+
+Suggested factors:
+
+### Length
+
+Strong preference:
+
+```text
+6-12 characters
+```
+
+Still acceptable:
+
+```text
+13-15
+```
+
+Penalty:
+
+```text
+16+
+```
+
+Allow user customization.
+
+### Words
+
+Prefer:
+
+* one recognizable word;
+* two clear short words;
+* elegant blends.
+
+Penalize:
+
+* three-word compounds;
+* meaningless suffix spam;
+* gratuitous `AI`;
+* gratuitous `ly`;
+* gratuitous `ify`;
+* difficult spelling.
+
+### Pronounceability
+
+Create heuristics for:
+
+* vowels present;
+* maximum consonant-run length;
+* common English digraphs;
+* common onset/coda patterns;
+* repeated characters;
+* syllable approximation.
+
+### Visual clarity
+
+Penalize confusing sequences:
+
+```text
+lll
+iii
+rn/m ambiguity when severe
+0/O
+1/l
+```
+
+### Spoken clarity
+
+Estimate whether someone hearing the name could reasonably type it.
+
+### Semantic fit
+
+Initially derive this from whether concepts and generated atoms are connected to the user's prompt.
+
+Later optionally add an embedding similarity score.
+
+---
+
+# Availability-first reranking
+
+The key insight is:
+
+The best taken domain is useless.
+
+Therefore availability is part of ranking, not something displayed afterward.
+
+Pipeline:
+
+```text
+generate
+↓
+normalize
+↓
+cheap deterministic scoring
+↓
+remove bottom 30-50%
+↓
+availability check
+↓
+discard taken
+↓
+rerank available set
+↓
+optional AI reranker on top 20-50
+```
+
+Do not spend expensive AI evaluation on taken names.
+
+---
+
+# Optional final AI judge
+
+Once availability filtering has reduced 500 names to perhaps 15-70 viable domains, send only those finalists to an LLM.
+
+Ask it to rank them according to:
+
+* memorability;
+* semantic fit;
+* professional credibility;
+* spelling;
+* spoken clarity;
+* potential ambiguity;
+* extensibility;
+* avoiding dated startup naming clichés.
+
+Use structured JSON.
+
+The AI judge should never override factual availability.
+
+---
+
+# Search UX
+
+The landing page should contain one dominant textarea.
+
+Placeholder:
+
+> Describe what you're building and names you like…
+
+Underneath:
+
+```text
+Extensions:
+[✓] .com
+[ ] .org
+[ ] .io
+[ ] .ai
+[ ] .dev
+[ + Add ]
+
+Search depth:
+○ 100
+● 500
+○ 1,000
+○ 5,000
+```
+
+Advanced settings collapsed by default:
+
+```text
+Must contain
+Avoid words
+Maximum characters
+Allow numbers
+Allow hyphens
+Real words only
+Invented names allowed
+Include plural forms
+Include prefixes
+Include suffixes
+```
+
+Primary action:
+
+**Find available domains**
+
+Do not write:
+
+**Generate using AI**
+
+The user cares about the outcome, not the implementation.
+
+---
+
+# Progressive results
+
+Do not block until all 500 checks finish.
+
+Stream progress.
+
+Example UI:
+
+```text
+Searching 500 ideas...
+
+Generated                500
+Checked                   210
+Taken                     194
+Available                  12
+Unknown                     4
+
+████████████░░░░░ 42%
+```
+
+Available domains should appear immediately as they are discovered.
+
+Do not show 400 red "taken" cards by default.
+
+Default tabs:
+
+```text
+Available 12
+Favorites 3
+All 500
+```
+
+---
+
+# Domain card
+
+Each available result should show:
+
+```text
+agentexample.com
+
+92 / 100
+
+Available ✓
+
+$11.XX first year
+$XX.XX renewal
+
+Short
+Easy to spell
+Strong match for monitoring/news
+
+♡ Save
+
+[Buy]
+```
+
+If pricing isn't known:
+
+```text
+Registration price: check registrar
+```
+
+Never manufacture pricing.
+
+---
+
+# Confidence
+
+Make confidence visible but unobtrusive.
+
+Possible badges:
+
+```text
+Registrar confirmed
+Registry confirmed
+Estimated
+Unknown
+```
+
+Only use a green `Available` state for confirmed results.
+
+---
+
+# Favorites
+
+Favorites should work locally without an account.
+
+Use localStorage initially.
+
+Persist:
+
+* domain;
+* score;
+* notes;
+* timestamp;
+* originating search.
+
+Provide:
+
+```text
+Copy list
+Export CSV
+Export JSON
+```
+
+No signup wall.
+
+---
+
+# Search history
+
+Store recent searches client-side first.
+
+D1 can later support cross-device history for authenticated users.
+
+Do not require an account for MVP.
+
+---
+
+# Sharing
+
+Allow creation of a shareable shortlist.
+
+Example:
+
+```text
+/share/<random-id>
+```
+
+A shared shortlist contains only domains intentionally selected by the user.
+
+Do NOT publicly expose a user's entire private candidate search.
+
+---
+
+# Privacy
+
+Domain searches may reveal unreleased product names.
+
+Treat them as sensitive product ideas.
+
+Do not log raw candidate domain strings unnecessarily.
+
+Application logs should contain:
+
+* request ID;
+* provider;
+* result counts;
+* durations;
+* status codes;
+* error class.
+
+Avoid:
+
+* full private naming prompt;
+* entire candidate corpus;
+* favorite names.
+
+If analytics are added, collect aggregate metrics rather than private search contents.
+
+Explain this clearly in the privacy page.
+
+---
+
+# Abuse protection
+
+Bulk checks are susceptible to automated abuse.
+
+Implement:
+
+* Cloudflare Turnstile where appropriate;
+* per-IP rate limits;
+* per-session limits;
+* maximum candidate counts;
+* provider backoff;
+* global concurrency protection.
+
+Normal anonymous allowance could be generous:
+
+```text
+500-name searches freely
+```
+
+but do not allow one bot to run millions continuously.
+
+The goal is a legitimately useful free service, not an unrestricted domain-enumeration proxy.
+
+---
+
+# Rate-limiting architecture
+
+Do not create 500 simultaneous outbound requests.
+
+Implement a queue.
+
+Concept:
+
+```ts
+class BatchScheduler {
+  maxConcurrentBatches: number;
+  delayBetweenBatchesMs: number;
+  retries: number;
+}
+```
+
+Respect individual provider limits.
+
+If a provider emits `429`:
+
+1. stop new requests to that provider;
+2. honor `Retry-After` if supplied;
+3. exponentially back off;
+4. mark unresolved names `unknown` if necessary;
+5. optionally fail over to another configured provider.
+
+Never interpret `429` as availability.
+
+---
+
+# Provider health
+
+Track:
+
+```text
+success rate
+p50 latency
+p95 latency
+429 rate
+unknown rate
+last successful request
+```
+
+Automatically downgrade an unhealthy provider.
+
+Implement a simple provider circuit breaker.
+
+States:
+
+```text
+CLOSED
+OPEN
+HALF_OPEN
+```
+
+---
+
+# Costs
+
+Architect for essentially zero cost at small scale.
+
+Prefer:
+
+* static frontend assets;
+* deterministic local name expansion;
+* one small AI generation call per search;
+* optional one small AI reranking call;
+* client-side state;
+* availability batching;
+* aggressive safe caching.
+
+Do not run 500 LLM prompts because a user searches 500 domains.
+
+The desired relationship should be approximately:
+
+```text
+1 search
+=
+1 initial LLM call
++
+local generation
++
+a few bulk availability calls
++
+0 or 1 final ranking call
+```
+
+---
+
+# Cloudflare implementation
+
+Use a current supported Cloudflare full-stack architecture.
+
+Suggested project shape:
+
+```text
+/
+├── src/
+│   ├── client/
+│   │   ├── App.tsx
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── stores/
+│   │   └── styles/
+│   │
+│   ├── worker/
+│   │   ├── index.ts
+│   │   ├── routes/
+│   │   │   ├── generate.ts
+│   │   │   ├── check.ts
+│   │   │   ├── search.ts
+│   │   │   └── health.ts
+│   │   └── middleware/
+│   │
+│   ├── naming/
+│   │   ├── atoms.ts
+│   │   ├── expand.ts
+│   │   ├── compound.ts
+│   │   ├── portmanteau.ts
+│   │   ├── phonetics.ts
+│   │   ├── normalize.ts
+│   │   ├── score.ts
+│   │   └── dedupe.ts
+│   │
+│   ├── availability/
+│   │   ├── types.ts
+│   │   ├── scheduler.ts
+│   │   ├── cache.ts
+│   │   ├── registry.ts
+│   │   └── providers/
+│   │       ├── dotsweep.ts
+│   │       ├── namesilo.ts
+│   │       ├── namecheap.ts
+│   │       └── rdap.ts
+│   │
+│   └── shared/
+│
+├── migrations/
+│
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── RESEARCH.md
+│   ├── PROVIDERS.md
+│   ├── PRIVACY.md
+│   └── OPERATIONS.md
+│
+├── wrangler.jsonc
+├── package.json
+└── README.md
+```
+
+Use strict TypeScript.
+
+Avoid `any`.
+
+---
+
+# API design
+
+## POST `/api/generate`
+
+Input:
+
+```json
+{
+  "description": "AI agent news monitoring website",
+  "likedNames": [
+    "AgentSpy",
+    "AgentWatch",
+    "AgentNews"
+  ],
+  "tlds": ["com"],
+  "count": 500,
+  "settings": {
+    "maxLength": 14,
+    "numbers": false,
+    "hyphens": false,
+    "invented": true
+  }
+}
+```
+
+Output:
+
+```json
+{
+  "searchId": "...",
+  "candidates": [
+    {
+      "name": "agentscope",
+      "domain": "agentscope.com",
+      "score": 88
+    }
+  ]
+}
+```
+
+---
+
+# POST `/api/check`
+
+Accept a bounded number of domains.
+
+Return normalized results.
+
+Do not permit arbitrary massive batches that bypass search limits.
+
+---
+
+# POST `/api/search`
+
+Optionally create one orchestration endpoint.
+
+It may stream NDJSON or Server-Sent Events.
+
+Suggested events:
+
+```text
+generation.started
+generation.completed
+check.progress
+domain.available
+domain.unknown
+search.completed
+```
+
+Example:
+
+```json
+{
+  "type": "domain.available",
+  "data": {
+    "domain": "example.com",
+    "score": 91
+  }
+}
+```
+
+This allows the frontend to display discoveries immediately.
+
+---
+
+# Database schema
+
+Keep the database minimal.
+
+Possible tables:
+
+```sql
+CREATE TABLE search_stats (
+  id TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  candidate_count INTEGER NOT NULL,
+  available_count INTEGER,
+  taken_count INTEGER,
+  unknown_count INTEGER,
+  duration_ms INTEGER
+);
+```
+
+Availability cache:
+
+```sql
+CREATE TABLE domain_cache (
+  domain TEXT PRIMARY KEY,
+  status TEXT NOT NULL,
+  confidence TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  price_registration REAL,
+  price_renewal REAL,
+  currency TEXT,
+  checked_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL
+);
+```
+
+Do not store private prompts in analytics by default.
+
+---
+
+# AI model abstraction
+
+Do not tie the naming engine directly to Workers AI.
+
+Define:
+
+```ts
+interface NamingModel {
+  generateAtoms(
+    input: NamingRequest
+  ): Promise<NamingAtoms>;
+
+  rerank?(
+    input: RerankRequest
+  ): Promise<RerankResult>;
+}
+```
+
+Implement:
+
+```text
+WorkersAIModel
+```
+
+Allow future adapters:
+
+```text
+OpenRouterModel
+OpenAIModel
+AnthropicModel
+LocalModel
+```
+
+---
+
+# AI output validation
+
+Never trust raw model output.
+
+Use schema validation.
+
+Use Zod or equivalent.
+
+If the model produces malformed output:
+
+1. attempt safe JSON extraction;
+2. retry once with constrained instructions;
+3. fall back to deterministic seed dictionaries.
+
+The application must remain functional if AI inference is unavailable.
+
+---
+
+# No-AI fallback
+
+This is important.
+
+Ship curated semantic dictionaries.
+
+Examples:
+
+```text
+news
+watch
+monitoring
+software
+finance
+security
+AI
+developer tools
+gaming
+health
+education
+commerce
+```
+
+If AI is down, a user can still enter keywords and receive combinations.
+
+The application's core availability checker must not depend on AI.
+
+---
+
+# Search-quality tests
+
+Create fixed fixtures.
+
+Example:
+
+```json
+{
+  "description": "news site tracking AI agents",
+  "likedNames": [
+    "AgentSpy",
+    "AgentWatch",
+    "AgentNews"
+  ]
+}
+```
+
+Assert that the generated corpus contains meaningful semantic diversity.
+
+It should include concepts relating to:
+
+```text
+watching
+news
+signals
+monitoring
+observation
+journalism
+tracking
+intelligence
+real-time information
+```
+
+It should NOT mostly consist of:
+
+```text
+AgentAI
+Agently
+Agentify
+AgentHubAI
+AgentProAI
+AgentGeniusAI
+```
+
+Create quantitative generation tests:
+
+```text
+unique ratio > 0.95
+duplicate ratio < 0.05
+invalid-domain ratio < 0.01
+median length within desired range
+```
+
+---
+
+# Availability correctness tests
+
+Create unit fixtures for:
+
+```text
+available
+taken
+premium
+reserved
+unknown
+timeout
+429
+500
+malformed upstream response
+```
+
+Invariant:
+
+```text
+network failure NEVER becomes available
+```
+
+Invariant:
+
+```text
+unknown NEVER becomes available
+```
+
+Invariant:
+
+```text
+DNS NXDOMAIN alone NEVER becomes certain availability
+```
+
+These invariants require tests.
+
+---
+
+# Integration tests
+
+Against live providers, use a tiny number of known fixture domains.
+
+Test one obviously registered domain.
+
+Test one intentionally controlled test case where practical.
+
+Do not create tests that continuously query hundreds of live registry names.
+
+Mock bulk responses for large test suites.
+
+---
+
+# E2E tests
+
+Use Playwright.
+
+Test:
+
+1. landing page loads;
+2. user enters description;
+3. selects `.com`;
+4. requests 100-name search;
+5. progress appears;
+6. results stream;
+7. available filter works;
+8. favorite works;
+9. CSV export works;
+10. retry-unknown works;
+11. provider outage does not crash UI;
+12. mobile layout works.
+
+---
+
+# Ranking validation
+
+Create an offline benchmark file:
+
+```text
+tests/fixtures/naming-benchmark.json
+```
+
+Include 20-50 naming scenarios.
+
+Each scenario contains:
+
+```json
+{
+  "description": "...",
+  "goodPatterns": [],
+  "badPatterns": [],
+  "constraints": {}
+}
+```
+
+Use it to compare changes to the scoring algorithm.
+
+Do not accept changes that dramatically increase junk generation merely because they increase candidate count.
+
+---
+
+# Performance targets
+
+500-name search:
+
+* page remains responsive;
+* candidate generation appears near-instant once model atoms return;
+* results stream progressively;
+* availability requests respect providers;
+* no browser lock-up.
+
+Support searching 5,000 candidates without rendering 5,000 DOM cards simultaneously.
+
+Use virtualization for large lists.
+
+---
+
+# Mobile UX
+
+Must be fully usable on mobile.
+
+Domain results should be thumb-friendly.
+
+Keep key information above the fold:
+
+```text
+domain
+availability
+score
+price
+favorite
+buy
+```
+
+Advanced metadata can expand.
+
+---
+
+# Visual design
+
+Avoid generic "AI SaaS purple gradient" styling.
+
+The product should resemble:
+
+* a serious search utility;
+* a domain research terminal;
+* a clean developer tool.
+
+Think:
+
+```text
+fast
+dense
+trustworthy
+slightly technical
+minimal
+```
+
+Use typography and spacing rather than decorative graphics.
+
+Availability green should be reserved specifically for genuine available results.
+
+Unknown should be neutral/orange, never green.
+
+---
+
+# SEO
+
+Create useful indexable pages later:
+
+```text
+/ai-domain-generator
+/bulk-domain-checker
+/com-domain-generator
+/startup-name-generator
+/domain-name-generator
+```
+
+Do NOT create hundreds of near-duplicate spam pages.
+
+Each landing page must represent an actual tool configuration or useful guide.
+
+---
+
+# Purchase monetization
+
+Keep the search free.
+
+Monetize through registrar referrals.
+
+Implement an affiliate URL adapter:
+
+```ts
+interface RegistrarPurchaseProvider {
+  id: string;
+
+  createBuyUrl(
+    domain: string
+  ): string;
+}
+```
+
+Do not hardcode registrar URLs throughout components.
+
+Initial providers might include:
+
+```text
+Namecheap
+NameSilo
+Porkbun
+```
+
+Only use affiliate IDs when configured.
+
+Clearly disclose affiliate relationships.
+
+Never change an availability result based on which registrar pays more.
+
+Ranking must remain independent of affiliate commission.
+
+---
+
+# Registrar comparison
+
+Eventually, if multiple registrar pricing sources are available, show:
+
+```text
+Registrar     Register    Renewal
+A             $X          $Y
+B             $X          $Y
+C             $X          $Y
+```
+
+Do not optimize solely for teaser first-year price.
+
+Renewal cost matters.
+
+---
+
+# Future features
+
+Design extension points for, but do not let these delay the MVP:
+
+* social-handle availability;
+* GitHub org availability;
+* package-name availability;
+* npm package availability;
+* trademark-warning search;
+* domain expiration monitoring;
+* aftermarket pricing;
+* historical registration data;
+* saved projects;
+* collaborative shortlists;
+* public API;
+* MCP server;
+* browser extension;
+* CLI;
+* IDE integration;
+* agent tool;
+* autonomous "find and register the best brand" workflow.
+
+---
+
+# MCP
+
+The architecture should make an MCP server straightforward later.
+
+Possible tools:
+
+```text
+generate_domain_names
+check_domains
+search_available_domains
+rank_domains
+get_domain_price
+```
+
+Example future agent interaction:
+
+> Find me the best 20 available `.com` domains for an AI-agent news publication. Search at least 1,000 candidates and only return registrar-confirmed available domains.
+
+The web product and MCP should eventually use the same core libraries.
+
+---
+
+# CLI
+
+Structure the core naming and availability libraries so a later CLI can do:
+
+```text
+domainhunter search \
+  --description "agent news site" \
+  --tld com \
+  --count 1000 \
+  --available-only
+```
+
+Do not put domain logic inside React components.
+
+---
+
+# Observability
+
+Record aggregate operational metrics:
+
+```text
+generation latency
+candidate count
+availability latency
+provider success rate
+provider unknown rate
+provider 429 rate
+available-domain yield
+AI failures
+search completion rate
+```
+
+Do not log private unreleased domain ideas by default.
+
+---
+
+# Error states
+
+Errors must be understandable.
+
+Bad:
+
+> Internal server error.
+
+Better:
+
+> The `.com` registry checker is temporarily rate-limited. 412 names were checked successfully and 88 remain unconfirmed.
+
+Provide:
+
+**Retry remaining 88**
+
+Never discard completed work when one provider fails.
+
+---
+
+# Search continuation
+
+If a 500-name search finds nothing good, provide:
+
+**Search 500 more**
+
+This should preserve previous candidates and generate a new non-overlapping batch.
+
+Pass a compact representation of previous naming strategies into the generator so it explores new semantic territory.
+
+Do not simply repeat the same names.
+
+---
+
+# Diversity algorithm
+
+Maintain buckets by naming strategy.
+
+Example:
+
+```text
+literal compounds            20%
+metaphorical compounds       20%
+short conventional names     15%
+portmanteaus                 15%
+invented pronounceable       15%
+reverse compounds             5%
+prefix/suffix                 5%
+experimental                  5%
+```
+
+Make these configurable.
+
+Prevent one strategy from dominating.
+
+---
+
+# Novelty checks
+
+Within one search session, calculate similarity.
+
+Use:
+
+* normalized Levenshtein distance;
+* Jaro-Winkler if useful;
+* shared prefix/suffix detection.
+
+If the results are:
+
+```text
+AgentWatch
+AgentWatcher
+AgentWatching
+AgentWatchers
+AgentWatchHQ
+```
+
+treat that as poor diversity.
+
+Cluster near-duplicates and retain only the highest-scoring representative unless the user asks for variants.
+
+---
+
+# Security
+
+Implement:
+
+* strict input validation;
+* no arbitrary server-side URL fetching;
+* no user-controlled RDAP base URLs;
+* SSRF protections;
+* output escaping;
+* CSP;
+* secure headers;
+* safe CORS configuration;
+* environment-secret isolation.
+
+Availability-provider endpoints must be hardcoded/configured by trusted configuration.
+
+---
+
+# Source attribution
+
+Create `docs/RESEARCH.md`.
+
+For every important architectural fact record:
+
+```text
+claim
+source
+date checked
+implementation consequence
+```
+
+Examples:
+
+```text
+NameSilo availability maximum batch size
+Dotsweep batch size
+Dotsweep rate limit
+Namecheap availability batch limit
+Workers Free request allowance
+Workers AI free allocation
+```
+
+This protects the project against silently outdated assumptions.
+
+---
+
+# Provider contract tests
+
+Every provider adapter must pass the same suite:
+
+```ts
+describeProviderContract(provider)
+```
+
+Test:
+
+```text
+normalizes uppercase domains
+handles invalid names
+preserves unknown state
+does not claim timeout availability
+returns provider ID
+supports partial batch failures
+does not reorder results incorrectly
+does not drop candidate names
+```
+
+This makes provider replacement straightforward.
+
+---
+
+# Required development passes
+
+Do not stop at "it works."
+
+Perform several explicit passes.
+
+## Pass 1 — architecture
+
+Confirm boundaries between:
+
+```text
+UI
+naming
+AI
+availability
+providers
+storage
+affiliate links
+```
+
+Reject circular dependencies.
+
+## Pass 2 — correctness
+
+Audit availability logic.
+
+Specifically search for any path where:
+
+```text
+error -> available
+timeout -> available
+404 from wrong server -> available
+DNS failure -> available
+```
+
+These are critical bugs.
+
+## Pass 3 — generation quality
+
+Run the naming benchmark.
+
+Inspect actual outputs.
+
+Remove repetitive startup-name clichés.
+
+## Pass 4 — cost
+
+Trace one 500-name search.
+
+Count:
+
+```text
+AI calls
+availability API calls
+database operations
+Worker requests
+```
+
+Reduce unnecessary calls.
+
+## Pass 5 — failure simulation
+
+Simulate:
+
+```text
+Dotsweep down
+NameSilo down
+Workers AI down
+429
+network timeout
+invalid AI JSON
+D1 unavailable
+```
+
+The product must degrade gracefully.
+
+## Pass 6 — UX
+
+Use the product as if finding a real domain.
+
+The first useful available result should be easy to notice.
+
+Taken-domain noise should not overwhelm the page.
+
+## Pass 7 — security
+
+Audit:
+
+```text
+secrets
+SSRF
+rate limiting
+CORS
+XSS
+log leakage
+private search data
+```
+
+## Pass 8 — final test
+
+Run:
+
+```text
+typecheck
+lint
+unit tests
+integration tests
+E2E tests
+production build
+```
+
+All must pass.
+
+---
+
+# Definition of done
+
+The MVP is finished only when the following scenario works end-to-end:
+
+User enters:
+
+> AI agent ecosystem news and monitoring publication. Names I like: AgentSpy, AgentWatch, AgentNews, AgentPulse and AgentRadar. Prefer a serious short `.com`. No hyphens or ugly misspellings.
+
+The application:
+
+1. converts this into semantic naming atoms;
+2. deterministically creates at least 500 unique valid candidates;
+3. scores the candidates;
+4. checks `.com` availability in bounded batches;
+5. streams progress;
+6. never labels uncertain domains as certainly available;
+7. filters out taken names;
+8. ranks available names;
+9. lets the user favorite candidates;
+10. lets the user export results;
+11. provides a registrar purchase link;
+12. works without signup;
+13. does not require payment or credits.
+
+---
+
+# Deliverables
+
+Produce:
+
+* complete source code;
+* production configuration;
+* `.env.example`;
+* D1 migrations if used;
+* unit tests;
+* integration tests;
+* Playwright tests;
+* README;
+* architecture documentation;
+* provider documentation;
+* research/source documentation;
+* privacy documentation;
+* deployment instructions.
+
+Do not leave central functionality as TODOs.
+
+Mocks are acceptable only in tests.
+
+The real application must perform real availability checks through at least one configured provider.
+
+---
+
+# Final evaluation
+
+After implementation, run a real demonstration search around:
+
+```text
+agent news
+agent monitoring
+agent intelligence
+agent ecosystem
+```
+
+Search at least 500 `.com` candidates.
+
+Output an internal evaluation report containing:
+
+```text
+candidates generated
+valid candidates
+duplicates removed
+availability checks attempted
+available
+taken
+unknown
+average latency
+provider errors
+top 20 available names
+```
+
+Manually inspect the top twenty.
+
+If they are largely ugly, repetitive or meaningless, the project is not complete.
+
+Improve generation/ranking and rerun.
+
+The success criterion is not:
+
+> The code generated 500 strings.
+
+The success criterion is:
+
+> The system explored enough naming space to uncover genuinely useful domains a human probably would not have found manually.
+
+There is also a very good shortcut for the checker core: rather than implementing RDAP from scratch initially, the open-source Rust `domain-check` project already provides IANA discovery, RDAP/WHOIS handling, bulk concurrency, pattern generation, CLI and MCP capabilities, under MIT/Apache licensing according to its repository. ([GitHub][14])
+
+My preferred progression would be **Dotsweep adapter for the first working build → NameSilo for production bulk availability → optional self-hosted RDAP engine as redundancy**. NameSilo's 200-domain batches are especially compelling for this product. ([NameSilo][4])
+
+And Cloudflare is unusually well suited to keeping the thing free: static assets are free, Workers provides a substantial free request allowance, Workers AI has a daily free inference allocation, D1 has a large free database allowance, and Turnstile is free for ordinary production usage. ([Cloudflare Docs][15])
+
+This is less a "domain checker startup" than a **brute-force brand discovery engine**. That framing is much more interesting.
+
+I can also keep tabs on competing AI domain tools and flag meaningful pricing or feature changes.
+
+[1]: https://nametastic.com/pricing?utm_source=chatgpt.com "Pricing - Simple, Transparent Plans | Nametastic"
+[2]: https://namilio.com/pricing?utm_source=chatgpt.com "Pricing — Free & Premium Plans | Namilio"
+[3]: https://dotsweep.com/docs/check?utm_source=chatgpt.com "Domain availability API — GET /check/{domain} | dotsweep"
+[4]: https://www.namesilo.com/blog/en/automation/building-a-domain-search-tool-with-a-registrar-api "Building a Domain Search Tool with Registrar API | NameSilo | Namesilo Blog"
+[5]: https://www.namecheap.com/support/api/methods/domains/check/?utm_source=chatgpt.com "Namecheap.com - API Documentation - namecheap.domains.check"
+[6]: https://github.com/jedarden/domain-check?utm_source=chatgpt.com "GitHub - jedarden/domain-check: Authoritative domain availability checker — web UI + API, powered by RDAP · GitHub"
+[7]: https://www.icann.org/en/announcements/details/icann-update-launching-rdap-sunsetting-whois-27-01-2025-en?utm_source=chatgpt.com "ICANN Update: Launching RDAP; Sunsetting WHOIS"
+[8]: https://www.icann.org/resources/pages/domain-name-registration-data-2023-11-02-en?utm_source=chatgpt.com "Using Domain Name Registration Data - ICANN"
+[9]: https://developers.cloudflare.com/workers/static-assets/?utm_source=chatgpt.com "Static Assets · Cloudflare Workers docs"
+[10]: https://developers.cloudflare.com/workers-ai/platform/pricing/?utm_source=chatgpt.com "Pricing · Cloudflare Workers AI docs"
+[11]: https://developers.cloudflare.com/d1/platform/pricing/?utm_source=chatgpt.com "Pricing · Cloudflare D1 docs"
+[12]: https://developers.cloudflare.com/turnstile/plans/?utm_source=chatgpt.com "Cloudflare Turnstile plans · Cloudflare Turnstile docs"
+[13]: https://www.namecheap.com/support/knowledgebase/article.aspx/9933/55/what-are-the-namecheap-commission-rates/?utm_source=chatgpt.com "What are the Namecheap commission rates? - Affiliates - Namecheap.com"
+[14]: https://github.com/saidutt46/domain-check?utm_source=chatgpt.com "GitHub - saidutt46/domain-check: Fast, universal domain availability checker - 1,200+ TLDs, pattern generation, RDAP with WHOIS fallback. CLI + Rust library + MCP server for AI agents. · GitHub"
+[15]: https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/?utm_source=chatgpt.com "Billing and Limitations · Cloudflare Workers docs"
+
+
+If the goal is **maximum end-to-end speed**, I would not standardize everything on Rust. I would standardize on an architecture where Rust is used only where it actually wins.
+
+For this domain tool specifically, the fastest version is probably:
+
+**static edge frontend + ultra-thin TypeScript edge gateway + parallel/batched upstream calls + optional Rust core/service for genuinely CPU-heavy work.**
+
+The reason is simple: checking 500 domains is overwhelmingly an **I/O problem**, not a CPU problem. Saving 200 microseconds by writing the router in Rust is irrelevant if the registrar takes 80–400 ms to answer.
+
+## The hierarchy that matters
+
+For real-world web performance, optimize in roughly this order:
+
+**network topology → number of round trips → parallelism → caching → payload size → database placement → runtime → programming language**
+
+People often optimize that list backwards.
+
+A Rust server 150 ms away loses badly to JavaScript running 5 ms away.
+
+Cloudflare Workers normally execute close to the requester, and Cloudflare can now explicitly or automatically place Worker execution close to upstream APIs/databases when that produces a faster overall request. Their current placement system even supports targeting an API hostname or cloud region. ([Cloudflare Docs][1])
+
+---
+
+# For the domain product: fastest architecture
+
+I'd change the architecture from the previous prompt slightly.
+
+```text
+                    USER / AGENT
+                         │
+                         ▼
+              Cloudflare global edge
+              static HTML/CSS/tiny JS
+                         │
+               ┌─────────┴─────────┐
+               │                   │
+        Browser naming        Edge API gateway
+        engine                TypeScript
+               │                   │
+               │             normalization/cache
+               │                   │
+               └───── candidates ──┤
+                                   │
+                       ┌───────────┼───────────┐
+                       ▼           ▼           ▼
+                    NameSilo    Dotsweep     RDAP
+                    batch API   batches      fallback
+                       │
+                       └──────┬───────────────┘
+                              │
+                       streamed results
+                              ▼
+                         USER / AGENT
+```
+
+## 1. The website itself should almost be static
+
+Don't SSR the interactive application on every request.
+
+Serve:
+
+* HTML
+* CSS
+* SVG
+* small JS bundle
+
+directly from Cloudflare's static network.
+
+Cloudflare Static Assets are automatically distributed/cached close to users, and matching static files don't even need to invoke Worker code. ([Cloudflare Docs][2])
+
+For a utility like this, **less framework is genuinely faster**.
+
+I'd consider:
+
+**Preact + Vite**, or even vanilla TypeScript for the first version.
+
+React isn't going to make the site meaningfully slow if built properly, but there is also no reason to ship a large component framework for a search box and result list.
+
+---
+
+# 2. Start searching before the AI finishes
+
+This is the biggest performance improvement I'd make.
+
+Don't do:
+
+```text
+LLM
+wait
+↓
+generate 1000
+↓
+check 1000
+wait
+↓
+display
+```
+
+Do this:
+
+```text
+User presses Search
+      │
+      ├───────────────► AI semantic expansion
+      │
+      │
+      └──► immediate deterministic generation
+                    │
+                    ▼
+              availability check
+                    │
+                    ▼
+               RESULTS APPEAR
+                    │
+AI returns ◄────────┘
+      │
+new semantic candidates
+      │
+      ▼
+more checks
+```
+
+For:
+
+> AI agent news website
+> likes AgentSpy, AgentWatch, AgentNews
+
+you already know enough to immediately generate:
+
+```text
+agent + watch
+agent + radar
+agent + pulse
+agent + wire
+agent + beat
+agent + lens
+...
+```
+
+You can have the first 100–300 availability checks underway **while the LLM is still thinking**.
+
+Then the model returns stranger semantic concepts and creates search wave #2.
+
+This is how I would design nearly all AI-backed interactive products:
+
+> **Never put an LLM in the critical path unless it absolutely has to be there.**
+
+---
+
+# 3. Batch everything
+
+This matters enormously more than Rust.
+
+Bad:
+
+```text
+500 domains
+=
+500 HTTPS requests
+```
+
+Better:
+
+```text
+500 domains
+=
+3 × ~167-domain requests
+```
+
+or whatever the provider permits.
+
+And run independent providers/batches concurrently when appropriate:
+
+```text
+batch A ──────────────┐
+batch B ──────────────┼── results
+batch C ──────────────┘
+```
+
+If each upstream takes 250 ms:
+
+Sequential:
+
+```text
+250 + 250 + 250
+≈ 750 ms
+```
+
+Parallel:
+
+```text
+max(250, 250, 250)
+≈ 250 ms
+```
+
+Language choice can't recover that 500 ms.
+
+---
+
+# 4. Stream answers instead of waiting
+
+For humans:
+
+**SSE** is excellent.
+
+For agents:
+
+I would support **NDJSON streaming**.
+
+For example:
+
+```http
+POST /v1/domains/search
+Accept: application/x-ndjson
+```
+
+And immediately stream:
+
+```json
+{"type":"search","generated":500}
+{"type":"available","domain":"agentfoo.com","score":91}
+{"type":"available","domain":"agentbar.com","score":88}
+{"type":"progress","checked":200,"total":500}
+{"type":"available","domain":"agentbaz.com","score":86}
+{"type":"complete","checked":500,"available":17}
+```
+
+An agent doesn't need to wait for the entire operation.
+
+**Time-to-first-useful-result** becomes your main performance metric.
+
+I'd measure:
+
+```text
+TTFB    time to first byte
+TTFA    time to first available domain
+TT10    time to first 10 available domains
+TTDone  complete search duration
+```
+
+TTFA is far more important here than requests-per-second.
+
+---
+
+# So should the backend be Rust?
+
+### If we're talking raw server throughput: yes, Rust is one of the best choices.
+
+Current TechEmpower results still have Rust implementations heavily represented at the top. In Round 23, Rust implementations including `may-minihttp`, `ntex`, `xitca-web`, and Axum occupied several of the highest positions on multiple workloads; an Axum PostgreSQL test was over **1.1 million responses/sec** in one benchmark. ([TechEmpower][3])
+
+But I would **not** choose exotic benchmark-winning frameworks.
+
+For production Rust:
+
+> **Rust + Tokio + Axum + Hyper**
+
+is what I would standardize on.
+
+Something like:
+
+```text
+Rust
+Tokio
+Axum
+Hyper
+Serde
+reqwest/hyper client
+tracing
+tower
+```
+
+You sacrifice a few benchmark points versus very specialized frameworks but get a much nicer ecosystem.
+
+---
+
+# But Rust on Cloudflare is different
+
+Cloudflare does support Rust directly, but it compiles to **WebAssembly**, and accesses many platform APIs through `wasm-bindgen`/JavaScript interoperability. ([Cloudflare Docs][4])
+
+Cloudflare also explicitly notes two important facts:
+
+* Wasm Workers are generally **larger than equivalent JavaScript Workers**
+* larger Worker binaries can increase startup time
+
+And Workers Wasm currently doesn't provide threads. ([Cloudflare Docs][5])
+
+Therefore I would **not rewrite a tiny Cloudflare edge API in Rust for speed**.
+
+For a Worker whose job is basically:
+
+```text
+parse request
+validate
+cache lookup
+fetch upstream
+stream response
+```
+
+I'd use **TypeScript**.
+
+V8 is extremely fast at precisely this kind of workload, and Cloudflare's isolate architecture has extremely low startup overhead. Cloudflare says isolates can start around two orders of magnitude faster than conventional Node processes/VM-style approaches. ([Cloudflare Docs][6])
+
+So:
+
+**Edge orchestration → TypeScript**
+
+**serious compute → Rust**
+
+That's the distinction.
+
+---
+
+# Where Rust would make sense in this app
+
+Imagine you eventually build an advanced domain engine doing:
+
+* 5 million name combinations
+* phonetic scoring
+* edit-distance clustering
+* Unicode processing
+* embeddings
+* huge dictionaries
+* trademark corpus comparisons
+* vector search
+* statistical linguistic ranking
+
+Then you have a good Rust workload.
+
+You could make:
+
+```text
+domain-core/
+```
+
+a Rust crate containing:
+
+```text
+normalizer
+generator
+phonetics
+scorer
+deduper
+clusterer
+ranker
+```
+
+Compile it two ways:
+
+```text
+native Rust server
+        +
+WASM browser library
+```
+
+Then the **same naming engine runs client-side**.
+
+That's quite elegant.
+
+But for 500–5,000 strings, plain TypeScript will already be essentially instantaneous on modern hardware.
+
+---
+
+# And there's an even faster architecture
+
+For the domain app, you can eliminate a server round trip for a surprising amount of the application.
+
+Do this **in the browser**:
+
+```text
+prompt parsing
+basic semantic dictionary lookup
+candidate generation
+normalization
+deduplication
+phonetic scoring
+pre-ranking
+filtering
+```
+
+Then send only:
+
+```text
+top 500 normalized domains
+```
+
+to the API.
+
+So:
+
+```text
+browser CPU
+    │
+    │ 500 candidates
+    ▼
+availability API
+```
+
+instead of:
+
+```text
+browser
+    │
+    ▼
+server
+    │ generate
+    │ normalize
+    │ rank
+    ▼
+availability API
+```
+
+Browser compute is free, geographically perfect, and has effectively **zero network latency**.
+
+---
+
+# My general "extremely fast products" stack
+
+If you want to develop lots of these products, I'd establish a house architecture.
+
+| Layer                    | Default                                 |
+| ------------------------ | --------------------------------------- |
+| Static site              | Cloudflare Workers Static Assets        |
+| Browser UI               | Preact / lightweight React / vanilla TS |
+| Styling                  | CSS                                     |
+| Edge gateway             | TypeScript Worker                       |
+| Edge routing framework   | none or Hono                            |
+| CPU-heavy backend        | Rust + Axum                             |
+| Alternative fast backend | Go                                      |
+| Streaming human UX       | SSE                                     |
+| Streaming agent API      | NDJSON                                  |
+| Data format              | JSON initially                          |
+| Internal high-volume RPC | Protobuf/gRPC only when justified       |
+| Cache                    | edge cache + in-process/cache layer     |
+| SQL                      | PostgreSQL                              |
+| Global/read-heavy data   | cached materialized data                |
+| blobs                    | R2/S3                                   |
+| AI                       | behind model abstraction                |
+| expensive processing     | queues/jobs                             |
+| observability            | OpenTelemetry-compatible tracing        |
+
+Cloudflare itself now recommends Workers Static Assets for new static/full-stack Workers projects rather than the older Workers Sites architecture. ([Cloudflare Docs][7])
+
+---
+
+# Rust vs Go vs TypeScript
+
+I'd think about them this way:
+
+|                        |      Rust |        Go | TS/Worker |
+| ---------------------- | --------: | --------: | --------: |
+| Raw CPU                | **10/10** |      8/10 |    6–8/10 |
+| Raw HTTP throughput    | **10/10** |      9/10 |    7–9/10 |
+| Memory efficiency      | **10/10** |      8/10 |      7/10 |
+| Latency predictability | **10/10** |      8/10 |      8/10 |
+| Development speed      |      6/10 |  **9/10** | **10/10** |
+| Edge ecosystem         |      7/10 |      5/10 | **10/10** |
+| Browser shared code    |      WASM |      WASM | **10/10** |
+| Agent API service      | **10/10** | **10/10** |      9/10 |
+| Heavy compute          | **10/10** |      8/10 |      6/10 |
+| I/O microservice       |      9/10 | **10/10** | **10/10** |
+
+For a **traditional central API**, Go is arguably the killer compromise.
+
+For a **maximum-performance core**, Rust.
+
+For a **globally distributed web product**, TypeScript Workers often win overall because geography and startup behavior outweigh raw instruction throughput.
+
+---
+
+# What I would NOT use if raw speed is the priority
+
+I wouldn't default new utility products to:
+
+```text
+Next.js SSR everything
++
+large React hydration
++
+serverless function
++
+ORM
++
+remote DB
++
+LLM
++
+three internal APIs
+```
+
+for every click.
+
+That architecture can accidentally create:
+
+```text
+browser → edge
+edge → app server
+app → auth
+app → DB
+app → LLM
+app → other API
+app → DB again
+server renders HTML
+browser downloads React
+browser hydrates React
+```
+
+A tiny application suddenly involves a pile of latency.
+
+Instead:
+
+```text
+cached static page
++
+tiny browser app
++
+one API call
++
+parallel upstream work
++
+streaming result
+```
+
+That's the architecture I'd want across your small tools.
+
+---
+
+# Also: minimize internal microservices
+
+Another common mistake.
+
+Don't turn:
+
+```text
+generator
+scorer
+checker
+ranker
+```
+
+into four HTTP services just because they're conceptual modules.
+
+Initially:
+
+```text
+one process
+four libraries
+```
+
+is faster.
+
+A function call is nanoseconds-ish territory.
+
+A network service call might be milliseconds and introduces:
+
+* serialization
+* sockets
+* TLS/network
+* queues
+* retries
+* deployment complexity
+
+Split services only when you need independent scaling/failure boundaries.
+
+---
+
+# API design for agents
+
+I think this is particularly important for the kind of products you're making.
+
+Every useful product should expose three surfaces over the **same core**:
+
+```text
+Human web interface
+REST/streaming API
+MCP/tool wrapper
+```
+
+Not:
+
+```text
+website business logic
+API business logic
+MCP business logic
+```
+
+separately.
+
+Architecture:
+
+```text
+             core engine
+            /     |      \
+           /      |       \
+        Web     HTTP API    MCP
+```
+
+Agents should not scrape your webpage.
+
+They should get:
+
+```text
+GET  /v1/...
+POST /v1/...
+```
+
+with:
+
+* stable schemas
+* low nesting
+* small responses
+* pagination/cursors
+* batch endpoints
+* streaming when useful
+* idempotency where writes occur
+* explicit errors
+* timestamps
+* confidence/provenance
+* machine-readable limits
+
+---
+
+# For agents, JSON is probably still correct
+
+You could chase MessagePack/Protobuf.
+
+I wouldn't yet.
+
+For most external agent APIs:
+
+**JSON + HTTP is the performance/compatibility optimum.**
+
+The bottleneck generally isn't parsing 3 KB of JSON.
+
+And an agent/tool ecosystem understands JSON universally.
+
+For huge internal traffic, then use:
+
+```text
+Protobuf
+gRPC
+FlatBuffers
+Arrow
+```
+
+where justified.
+
+---
+
+# Fast responses matter more than complete responses
+
+A pattern I'd make standard across your apps is:
+
+```text
+POST operation
+
+0ms       request accepted
+20ms      cheap cached/deterministic result
+100ms     primary external result
+300ms     secondary enrichment
+1000ms    AI enrichment
+```
+
+Stream each stage.
+
+Rather than:
+
+```text
+POST
+...
+...
+...
+1000ms
+giant final JSON
+```
+
+This applies to:
+
+* domain discovery
+* LLM deals
+* model routing
+* crypto/compute intelligence
+* GitHub intelligence
+* security scanners
+* research systems
+
+Anything aggregating many sources should be **incremental by default**.
+
+---
+
+# The most important rule
+
+If you want a house philosophy for all these products, I'd use:
+
+> **Static-first, local-first, cache-first, batch-first, parallel-first, stream-first. Rust where CPU actually matters.**
+
+Then separately:
+
+> **Never spend a network round trip doing something that can safely be done in the client or current process.**
+
+That will have a much bigger effect on perceived and measured performance than simply declaring **"all backend code must be Rust."**
+
+For the domain tool specifically, I'd build **v1 with TypeScript on Cloudflare**, instrument every stage down to TTFA, and only move a component to Rust when profiling demonstrates it is materially consuming the latency budget. Rust is absolutely the language I'd choose for a reusable high-performance **core engine**, but not automatically for the edge glue. ([Cloudflare Docs][4])
+
+[1]: https://developers.cloudflare.com/workers/reference/how-workers-works/?utm_source=chatgpt.com "How Workers works · Cloudflare Workers docs"
+[2]: https://developers.cloudflare.com/workers/static-assets/?utm_source=chatgpt.com "Static Assets · Cloudflare Workers docs"
+[3]: https://www.techempower.com/benchmarks/?utm_source=chatgpt.com "Round 23 results - TechEmpower Framework Benchmarks"
+[4]: https://developers.cloudflare.com/workers/languages/rust/?utm_source=chatgpt.com "Cloudflare Workers — Rust language support · Cloudflare Workers docs"
+[5]: https://developers.cloudflare.com/workers/runtime-apis/webassembly/?utm_source=chatgpt.com "WebAssembly (Wasm) · Cloudflare Workers docs"
+[6]: https://developers.cloudflare.com/learning-paths/workers/concepts/workers-concepts/?utm_source=chatgpt.com "Cloudflare Workers · Cloudflare Learning Paths"
+[7]: https://developers.cloudflare.com/workers/best-practices/workers-best-practices/?utm_source=chatgpt.com "Workers Best Practices · Cloudflare Workers docs"

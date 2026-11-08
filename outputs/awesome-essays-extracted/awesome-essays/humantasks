@@ -1,0 +1,56 @@
+Human Tasks — x402fun Pre-September 1
+Deadline: September 1, 2026 11:45 PM EST
+What I Can Do Autonomously
+- Write/modify server code (server.ts)
+- Add x402-global-challenge tag to all routes
+- Add Bazaar discovery to all routes
+- Set up Hono + x402-avm + GoPlausible integration
+- Create health check endpoint
+- Git operations (commit, push)
+- Run local tests
+- Write documentation
+What You Need To Do Manually
+1. Algorand Testnet Validation (DO FIRST)
+- Switch .env to testnet mnemonic
+- Start server: npx tsx server.ts
+- Test: curl http://localhost:4021/v1/work — should return 402 with payment requirements
+- Make a test payment on testnet using Algorand TestNet faucet for test USDC
+2. Deploy to Public HTTPS
+- Must be: HTTPS, public, same root domain for all 3 endpoints
+- Options: Caddy reverse proxy, Cloudflare tunnel, or VPS with nginx
+- Suggested: https://x402.egoic.ai/v1/work
+3. Fund Wallet on Mainnet
+- Wallet: GIB67LXK2UFPFOWOPZRIW3P64HTYOGJA7357ZPAS57DQC7SZXII4ZXYA7M
+- Need: ALGO for gas + USDC ASA 31566704 for payments
+- Minimum: ~1 ALGO + $5 USDC for testing
+4. Make ONE Real Mainnet Paid Call
+- After deployment, call from a different machine/wallet
+- curl https://x402.egoic.ai/v1/work
+- Pay the $0.005 via x402
+- Verify: response received, USDC arrived at payTo
+- One successful payment triggers Bazaar indexing
+5. Verify Bazaar Indexing
+curl -s "https://facilitator.goplausible.xyz/discovery/resources?includeTestnets=true&limit=1000" \
+  | jq '.items[] | select(.resourceUrl | contains("x402.egoic.ai"))'
+
+curl -s "https://facilitator.goplausible.xyz/discovery/merchants?includeTestnets=true&limit=500" \
+  | jq '.items[] | select(.addresses.avm == "GIB67LXK2UFPFOWOPZRIW3P64HTYOGJA7357ZPAS57DQC7SZXII4ZXYA7M")'
+6. Verify Challenge Attribution
+curl -s "https://facilitator.goplausible.xyz/data/leaderboards?cat=merchants&limit=200&range=all&env=mainnet&src=x402-global-challenge" \
+  | jq '.items[] | select(.address=="GIB67LXK2UFPFOWOPZRIW3P64HTYOGJA7357ZPAS57DQC7SZXII4ZXYA7M") | {rank,settles,volume}'
+7. DO NOT Before Sept 1
+- Do NOT generate fake volume (GoPlausible detects it)
+- Do NOT pay yourself repeatedly
+- Do NOT add unnecessary endpoints
+- Do NOT rewrite the oracle (it works)
+- Do NOT touch WorkerKit execution
+Timeline
+Date	Action	Owner
+Aug 29	Server code updated	Autonomous
+Aug 30	Testnet validation	Human
+Aug 31	Deploy to HTTPS	Human
+Aug 31	Fund wallet	Human
+Aug 31	Make one real payment	Human
+Aug 31	Verify Bazaar	Human
+Sep 1	Verify attribution	Human
+Sep 1	11:45 PM EST — registration closes	Human

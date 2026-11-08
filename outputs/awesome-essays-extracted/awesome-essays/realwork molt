@@ -1,0 +1,668 @@
+Yes. The web search found something important: **WorkerKit is not unique because it is an agent harness.** That layer is rapidly commoditizing. The strongest moat is the layer you are adding **around** arbitrary harnesses:
+
+> **economic run → exact costs → durable trajectory → verification → external outcome → learning → reusable process → portable reputation.**
+
+And there is a lot of excellent open-source infrastructure you should reuse instead of rebuilding.
+
+## 1. Biggest find: Pydantic AI Harness
+
+This is the closest project I've found to the generic runtime half of WorkerKit.
+
+Pydantic released an official **Pydantic AI Harness** in 2026 specifically for long-running autonomous work. It has 50+ composable capabilities: filesystem, shell, planning, subagents, skills, memory, context management, browser, guardrails, persistent runs, durable execution, and even **cross-window USD/token spend limits**.
+
+Even better: it is **MIT licensed**, so code reuse/modification is explicitly permitted subject to the license notice.
+
+Its `spend/` package isn't toy code either. It has separate implementations for budgets, storage, Redis, snapshots, composition, capability integration and exceptions.
+
+### I would raid this heavily
+
+| Pydantic Harness       | WorkerKit use                             |
+| ---------------------- | ----------------------------------------- |
+| `SpendLimits`          | runtime spend ceilings                    |
+| `StepPersistence`      | pause/resume/fork WorkerRuns              |
+| `Skills`               | skill/process loading                     |
+| `Memory`               | Worker memory adapter                     |
+| `Planning`             | live process plan                         |
+| `SubAgents`            | delegated work                            |
+| `ToolOutputLimits`     | avoid context explosions                  |
+| compaction             | long-running worker stability             |
+| shell/filesystem       | standardized execution capabilities       |
+| guardrails             | pre-commit validation                     |
+| browser capabilities   | marketplace/web jobs                      |
+| capability composition | framework-neutral Worker capability model |
+
+This is such a strong overlap that I would **stop implementing generic harness mechanics from scratch** wherever their implementation fits.
+
+But don't make WorkerKit = Pydantic AI.
+
+Have:
+
+```text
+                     WORKERKIT
+
+         economic + evidence runtime API
+                       │
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+ Pydantic AI       Hermes       LangGraph
+   adapter         adapter        adapter
+        │
+        └──────────────┬──────────────┘
+                       ▼
+                  WorkerRun
+                       │
+              economics / proof /
+               outcomes / learning
+```
+
+Then Pydantic Harness itself could be the **reference WorkerKit adapter**.
+
+---
+
+# 2. Their StepPersistence design strongly validates what you're doing
+
+Pydantic Harness now supports snapshotting a run and:
+
+```text
+continue_run()
+fork_run()
+```
+
+and stores an append-only event log. ([GitHub][1])
+
+The especially interesting bit: one of their current design issues explicitly says **tau/Pi and Hermes independently converged on an append-only typed-entry log with `parent_id`, where context is replayed from root→leaf and fork/undo/rewind are new events rather than mutations.** ([GitHub][2])
+
+That is almost exactly what WorkerKit should use:
+
+```text
+Run
+│
+├── Event 001
+├── Event 002
+├── Event 003
+│
+├── Event 004 FAILED
+│
+└── Event 005 RETRY
+      │
+      ├── branch A
+      │
+      └── branch B
+```
+
+But WorkerKit adds:
+
+```text
+cost
+economic state
+artifact hashes
+verification
+submission
+outcome
+reward
+```
+
+to those events.
+
+That is a very good convergence signal.
+
+---
+
+# 3. PydanticAI + DBOS/Temporal: don't build durability yourself
+
+Pydantic AI now officially supports:
+
+```text
+Temporal
+DBOS
+Prefect
+Restate
+```
+
+for durable agent execution. ([Pydantic][3])
+
+DBOS is particularly attractive for an MVP because it checkpoints workflows directly into SQLite/Postgres and automatically resumes from completed steps after crashes. ([Pydantic][4])
+
+So instead of WorkerKit implementing:
+
+```text
+crash recovery
+distributed queue
+step retry
+checkpoint engine
+resume semantics
+```
+
+it can define:
+
+```python
+ExecutionBackend
+
+LocalBackend
+DBOSBackend
+TemporalBackend
+DstackBackend
+```
+
+### One thing WorkerKit should NOT delegate
+
+**Economics.**
+
+Pydantic's own Temporal documentation points out a subtle accounting problem: delegated-agent usage can disappear from parent usage when activity results replay, and cached/replayed durable steps can make usage accounting behave differently. ([Pydantic][5])
+
+That is almost a textbook reason for your separate QDW-style:
+
+```text
+CostEvent ledger
+```
+
+to exist.
+
+So:
+
+```text
+DBOS/Temporal = did this step execute durably?
+
+WorkerKit ledger = what did this run actually economically consume?
+```
+
+Keep those separate.
+
+---
+
+# 4. OpenInference should become WorkerKit's telemetry vocabulary
+
+Do not invent:
+
+```text
+workerkit.event.llm
+workerkit.event.tool
+workerkit.event.evaluator
+...
+```
+
+for concepts that already have a standard.
+
+OpenInference extends OpenTelemetry with standardized span kinds:
+
+```text
+AGENT
+LLM
+TOOL
+EVALUATOR
+GUARDRAIL
+PROMPT
+RETRIEVER
+RERANKER
+```
+
+and model names, invocation parameters, token counts, input/output messages, signatures and other GenAI fields. ([GitHub][6])
+
+It's Apache-2.0 licensed and designed to work with any OTEL collector. ([GitHub][7])
+
+I'd make:
+
+```text
+WorkerRun economic/event model
+              │
+              └── exports OpenInference/OTEL
+```
+
+rather than making OTEL your canonical database.
+
+Because WorkerKit has fields OTEL doesn't naturally represent:
+
+```text
+expected_reward
+expected_cost
+actual_cost
+external_work_id
+submission_id
+outcome
+settlement
+P(success)
+economic decision
+```
+
+---
+
+# 5. Phoenix / Langfuse: steal their improvement loop, not their runtime
+
+Phoenix already does:
+
+```text
+trace
+→ evaluate
+→ dataset
+→ experiment
+→ compare prompt/model versions
+→ replay
+```
+
+and supports PydanticAI, LangGraph, CrewAI, OpenAI Agents, Claude Agent SDK, DSPy, LiteLLM, etc. ([GitHub][8])
+
+Langfuse has converged on essentially the same full loop:
+
+```text
+production traces
+→ scores
+→ dataset
+→ experiment
+→ new version
+→ production
+```
+
+([Langfuse][9])
+
+This should strongly influence WorkerKit's **winning-process improvement loop**.
+
+But your loop becomes:
+
+```text
+completed economic run
+        ↓
+external outcome
+        ↓
+WIN / LOSS / PARTIAL
+        ↓
+trajectory + config + economics
+        ↓
+experiment variants
+        ↓
+re-run/evaluate
+        ↓
+candidate Worker/process vNext
+```
+
+They optimize:
+
+> quality / latency / model performance.
+
+WorkerKit optimizes:
+
+> **probability of economically successful work per dollar/time.**
+
+That's the important difference.
+
+---
+
+# 6. Inspect AI is a huge donor for your verifier/evaluation layer
+
+This one is especially relevant to your current WorkerKit tests.
+
+The UK AI Security Institute's **Inspect** framework can execute:
+
+* arbitrary external agents;
+* Claude Code/Codex/Gemini CLI;
+* third-party agent frameworks;
+* MCP tools;
+* isolated Docker/Kubernetes/Modal/etc. environments;
+* scorers;
+* model graders;
+* transcripts;
+* retry/resumption;
+* time/token/message/**cost limits**. ([Inspect][10])
+
+It's MIT licensed. ([GitHub][11])
+
+Its abstraction is superb:
+
+```text
+Task
++
+Solver
++
+Scorer
+```
+
+WorkerKit's analogue:
+
+```text
+WorkOpportunity
++
+Worker
++
+Verifier
++
+ExternalOutcome
+```
+
+I would seriously consider making **Inspect an optional WorkerKit evaluation backend**.
+
+For example:
+
+```text
+winning Reddit report
+        ↓
+freeze WorkOpportunity fixture
+        ↓
+run Worker v1 20×
+run Worker v2 20×
+run Worker v3 20×
+        ↓
+Inspect scorers
+        ↓
+quality
+constraint compliance
+artifact validity
+        ↓
+WorkerKit economics
+        ↓
+cost / time / expected return
+```
+
+This is almost exactly what you were trying to create manually in Repute/Get-Me-Money.
+
+---
+
+# 7. SWE-agent has the missing “trajectory becomes process” precedent
+
+SWE-agent stores each execution as a JSON trajectory of:
+
+```text
+thought
+action
+observation
+```
+
+plus the exact `config.yaml` needed to repeat that run. ([GitHub][12])
+
+More importantly, trajectories can be converted into **demonstrations** for subsequent agents. ([GitHub][12])
+
+That's directly relevant to:
+
+```text
+WorkerRun
+     ↓
+won $20 bounty
+     ↓
+extract successful trajectory
+     ↓
+generalise
+     ↓
+Skill / Recipe / WorkerProcess
+     ↓
+test
+     ↓
+Worker vNext
+```
+
+Their trajectory viewer concepts are also worth borrowing for your dashboard.
+
+---
+
+# 8. Letta Agent File is extremely relevant to Moltwork leasing
+
+This one maps directly to the thing we discussed about selling entire agent configurations.
+
+Letta's `.af` open format serializes:
+
+```text
+model config
+system prompt
+message history
+memory blocks
+tool rules
+tools + source/schema
+environment configuration
+```
+
+so agents can be versioned, archived and transferred. ([GitHub][13])
+
+It's Apache-2.0. ([GitHub][14])
+
+And importantly, exported secrets are nulled rather than shipped with the agent. ([GitHub][14])
+
+You don't necessarily adopt `.af` as Moltwork's canonical format, because WorkerKit needs additional things:
+
+```text
+skills
+process
+verification policy
+economic policy
+routing policy
+proof requirements
+lineage
+historical performance
+```
+
+But I'd support:
+
+```text
+workerkit import agent.af
+workerkit export agent.af
+```
+
+and define:
+
+```text
+WorkerManifest
+        │
+        ├── AgentFile-compatible config
+        ├── Skills
+        ├── EconomicPolicy
+        ├── VerificationPolicy
+        └── Provenance
+```
+
+That means you're compatible with an emerging portable-agent format instead of creating another island.
+
+---
+
+# 9. A2A should inform your external Worker API
+
+A2A already standardizes the basic long-running unit as:
+
+```text
+Task
+  id
+  contextId
+  status
+  artifacts[]
+  history[]
+  metadata
+```
+
+with streaming `TaskStatusUpdateEvent` and `TaskArtifactUpdateEvent`; final results belong in **Artifacts**, not random messages. ([A2A Protocol][15])
+
+That's almost exactly the public interface your leased Worker wants.
+
+Therefore:
+
+```text
+Moltwork Worker
+    ├── MCP tools
+    ├── A2A AgentCard / Task API
+    └── x402 payment endpoint
+```
+
+while WorkerKit internally maintains the richer:
+
+```text
+WorkerRun
+```
+
+A2A is transport/interoperability.
+
+WorkerRun is economics/provenance.
+
+Don't conflate them.
+
+---
+
+# 10. Agent payment projects have some useful spending primitives
+
+There are already several x402/MCP projects implementing the boring but necessary mechanics around agent spending.
+
+For example AgentPay MCP has:
+
+```text
+per-transaction caps
+daily budgets
+allowlists
+human approval
+x402 pay/retry
+session TTL
+onchain audit trails
+```
+
+([GitHub][16])
+
+AgenticPay has an MIT-licensed SDK/facilitator/MCP bridge architecture for priced tools and automated USDC x402 settlement. ([GitHub][17])
+
+WorkerKit shouldn't become yet another wallet implementation.
+
+Define:
+
+```text
+PaymentProvider
+
+X402Provider
+AgentPayProvider
+CoinbaseProvider
+AlgorandProvider
+HederaProvider
+```
+
+and have WorkerKit's economic policy decide:
+
+```text
+BUY?
+DON'T BUY?
+max price?
+```
+
+The payment provider just executes it.
+
+---
+
+# So the architecture becomes much simpler
+
+```text
+                           ORACLE
+                 opportunities + market data
+                              │
+                              ▼
+                       WorkOpportunity
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────┐
+│                       WORKERKIT                         │
+│                                                         │
+│ QDW economics                                           │
+│   reward / cost / P(success) / routing                  │
+│                                                         │
+│ WorkerRun                                               │
+│   event log / artifacts / CostEvents / outcomes         │
+│                                                         │
+│ CommitGate                                              │
+│   submit / pay / publish controls                       │
+│                                                         │
+│ proof                                                   │
+│   in-toto / Sigstore / dstack / optional DeepProve      │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+             FRAMEWORK ADAPTERS
+                           │
+       ┌───────────────────┼─────────────────────┐
+       ▼                   ▼                     ▼
+   Hermes            PydanticAI              LangGraph
+       │                   │                     │
+       └───────────────────┼─────────────────────┘
+                           │
+                    capabilities
+                           │
+          Pydantic Harness / MCP / A2A
+                           │
+                           ▼
+                       execution
+                           │
+                           ▼
+                      submission
+                           │
+                           ▼
+                  External Outcome
+                           │
+                           ▼
+                learning / experiments
+                           │
+                   Inspect / Phoenix
+                           │
+                           ▼
+                   Worker vNext
+```
+
+## What I'd change in the dev plan immediately
+
+The biggest change is **don't keep building WorkerKit sideways into a complete agent framework**.
+
+Use the ecosystem for that.
+
+| Concern                  | Use/adapt                                  |
+| ------------------------ | ------------------------------------------ |
+| agent capabilities       | **Pydantic AI Harness**                    |
+| durable execution        | **DBOS initially**, Temporal adapter later |
+| run checkpoint/fork      | Pydantic `StepPersistence` concepts        |
+| trace schema             | **OpenInference + OTEL**                   |
+| evaluation               | **Inspect AI**                             |
+| experiment UI            | Phoenix/Langfuse-compatible telemetry      |
+| portable agent           | **Letta Agent File** compatibility         |
+| agent-to-agent transport | **A2A**                                    |
+| tools                    | **MCP**                                    |
+| payments                 | **x402 adapters**                          |
+| economic routing         | **QDW — yours**                            |
+| exact CostEvents         | **QDW — yours**                            |
+| work/outcome schema      | **WorkerKit — yours**                      |
+| verified WorkReceipt     | **WorkerKit/Moltwork — yours**             |
+| process→skill learning   | **WorkerKit — yours**                      |
+| market intelligence      | **Oracle — yours**                         |
+
+And this changes how I think about the moat.
+
+**Generic agent runtime is not the moat.** Pydantic's harness alone demonstrates how fast that layer is becoming excellent and commoditized.
+
+The difficult-to-copy flywheel is:
+
+```text
+Oracle sees work
+      ↓
+WorkerKit attempts it
+      ↓
+records exact process + economics
+      ↓
+external result arrives
+      ↓
+which approach actually won?
+      ↓
+process improves
+      ↓
+Worker develops empirical capability
+      ↓
+verified history accumulates
+      ↓
+better routing / reputation / reusable assets
+      ↓
+more work
+```
+
+That dataset gets better **only by doing real work**.
+
+That's the bit I would protect and hyperfocus on now.
+
+[1]: https://github.com/pydantic/pydantic-ai-harness/blob/main/README.md?utm_source=chatgpt.com "pydantic-ai-harness/README.md at main · pydantic/pydantic-ai-harness · GitHub"
+[2]: https://github.com/pydantic/pydantic-ai-harness/issues/321?utm_source=chatgpt.com "Evolve StepPersistence into a branchable, event-sourced session tree · Issue #321 · pydantic/pydantic-ai-harness · GitHub"
+[3]: https://pydantic.dev/docs/ai/capabilities/durable_execution/overview/?utm_source=chatgpt.com "Durable Execution | Pydantic Docs"
+[4]: https://pydantic.dev/docs/ai/capabilities/durable_execution/dbos/?utm_source=chatgpt.com "Durable Execution with DBOS | Pydantic Docs"
+[5]: https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/?utm_source=chatgpt.com "Durable Execution with Temporal | Pydantic Docs"
+[6]: https://github.com/Arize-ai/openinference/blob/main/spec/semantic_conventions.md?utm_source=chatgpt.com "openinference/spec/semantic_conventions.md at main · Arize-ai/openinference · GitHub"
+[7]: https://github.com/Arize-ai/openinference?utm_source=chatgpt.com "GitHub - Arize-ai/openinference: OpenTelemetry Instrumentation for AI Observability · GitHub"
+[8]: https://github.com/Arize-ai/phoenix?utm_source=chatgpt.com "GitHub - Arize-ai/phoenix: AI Observability & Evaluation · GitHub"
+[9]: https://langfuse.com/?utm_source=chatgpt.com "Langfuse"
+[10]: https://inspect.aisi.org.uk/?utm_source=chatgpt.com "Inspect"
+[11]: https://github.com/UKGovernmentBEIS/inspect_ai?utm_source=chatgpt.com "GitHub - UKGovernmentBEIS/inspect_ai: Inspect: A framework for large language model evaluations · GitHub"
+[12]: https://github.com/SWE-agent/SWE-agent/blob/main/docs/usage/trajectories.md?utm_source=chatgpt.com "SWE-agent/docs/usage/trajectories.md at main · SWE-agent/SWE-agent · GitHub"
+[13]: https://github.com/letta-ai/agent-file/blob/main/README.md?utm_source=chatgpt.com "agent-file/README.md at main · letta-ai/agent-file · GitHub"
+[14]: https://github.com/letta-ai/agent-file?utm_source=chatgpt.com "GitHub - letta-ai/agent-file: Agent File (.af): An open file format for serializing stateful AI agents with persistent memory and behavior. Share, checkpoint, and version control agents across compatible frameworks. · GitHub"
+[15]: https://a2a-protocol.org/dev/specification/?utm_source=chatgpt.com "Overview - A2A Protocol"
+[16]: https://github.com/up2itnow0822/agentpay-mcp?utm_source=chatgpt.com "GitHub - up2itnow0822/agentpay-mcp: Non-custodial x402 MCP payment layer for AI agents — the open-source alternative to Vercel x402-mcp · GitHub"
+[17]: https://github.com/krystiangw/agenticpay?utm_source=chatgpt.com "GitHub - krystiangw/agenticpay: MCP-native pay-per-tool-call micropayments for AI agents (Solana + USDC + x402) · GitHub"

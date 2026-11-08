@@ -1,0 +1,1551 @@
+Yes. The right abstraction is now clear:
+
+> **Every Moltwork opportunity should be represented as an economic contract plus an execution protocol.**
+
+That lets the same WorkerKit reason about a $20 NEAR bounty, a Bittensor subnet, an x402 service gap, an FLock model competition, or an Olas Mech.
+
+There is also an important correction: **Bankr, Phala, Akash etc. are usually not opportunities themselves.** They are execution/cost rails. OpenServ Ideaboard is demand evidence but not necessarily guaranteed payment. The Oracle should preserve those distinctions.
+
+## 1. Standard lifecycle for *anything*
+
+Every adapter should implement this conceptual interface:
+
+```python
+class OpportunityAdapter:
+    async def discover() -> list[OpportunityRef]: ...
+    async def hydrate(id) -> OpportunitySpec: ...
+
+    async def preflight(id, worker) -> FeasibilityReport: ...
+
+    async def enter(id, strategy) -> EntryReceipt: ...
+    async def submit(id, artifact) -> SubmissionReceipt: ...
+
+    async def status(id) -> OpportunityState: ...
+    async def outcome(id) -> Outcome: ...
+    async def settlement(id) -> PaymentRecord: ...
+```
+
+Not every platform uses every function.
+
+For an x402 service:
+
+```text
+enter()  = publish service
+submit() = deploy endpoint
+outcome() = requests/revenue
+```
+
+For Ditto:
+
+```text
+enter()  = register miner
+submit() = upload artifact
+outcome() = validator score/emissions
+```
+
+For NEAR:
+
+```text
+enter()  = bid
+submit() = deliver
+outcome() = accepted/rejected/payment
+```
+
+That is how we stop hard-coding marketplace assumptions.
+
+---
+
+# 2. Bittensor / Ditto SN118
+
+### Classification
+
+```text
+type = benchmark_competition
+reward_model = recurring_rank_emission
+```
+
+This is one of the best Moltwork opportunities because **the scoring function is reproducible locally**.
+
+Official miner guide:
+
+[https://github.com/ditto-assistant/ditto-subnet/blob/main/docs/MINER.md](https://github.com/ditto-assistant/ditto-subnet/blob/main/docs/MINER.md?utm_source=chatgpt.com)
+
+Starter kit:
+
+[https://github.com/ditto-assistant/dittobench-starter-kit](https://github.com/ditto-assistant/dittobench-starter-kit?utm_source=chatgpt.com)
+
+Subnet repo:
+
+[https://github.com/ditto-assistant/ditto-subnet](https://github.com/ditto-assistant/ditto-subnet?utm_source=chatgpt.com)
+
+Bittensor SDK docs:
+
+[https://docs.learnbittensor.org/python-api/html/index.html](https://docs.learnbittensor.org/python-api/html/index.html?utm_source=chatgpt.com)
+
+Taostats API docs:
+
+[https://docs.taostats.io/reference/get-metagraph-1](https://docs.taostats.io/reference/get-metagraph-1?utm_source=chatgpt.com)
+
+Subnet emission API:
+
+[https://api.taostats.io/api/dtao/subnet_emission/v1](https://docs.taostats.io/reference/get-subnet-emission?utm_source=chatgpt.com)
+
+### Oracle data
+
+For every subnet, ingest:
+
+```text
+netuid
+name
+repo
+description
+miner count
+validator count
+available slots
+registration/burn cost
+current emission
+miner incentive distribution
+daily miner reward estimates
+best miner
+score distribution
+hotkeys
+registration ages
+miner churn
+benchmark version
+submission fee
+submission cooldown
+hardware requirements
+```
+
+For Ditto specifically:
+
+```text
+benchmark_version
+best_score
+median_score
+our_local_score
+our_live_score
+
+evaluation_fee_tao
+submission_count
+submission_status
+
+memory_score
+tool_score
+
+artifact_hash
+```
+
+Taostats' metagraph already exposes incentive, emission, rank, daily reward, registration block, stake and other neuron information. ([Taostats Documentation][1])
+
+### How WorkerKit submits
+
+Local loop:
+
+```text
+modify harness
+↓
+cargo run -- mem-eval --k 10
+↓
+cargo run -- evaluate
+↓
+cargo run -- practice --n 20
+↓
+cargo run -- submit
+```
+
+That produces the tarball.
+
+Then:
+
+```text
+ditto verify --path artifact.tgz
+```
+
+Then the actual submission:
+
+```text
+ditto --network finney upload \
+  --path artifact.tgz \
+  --name worker-name \
+  --coldkey ... \
+  --hotkey ...
+```
+
+The current starter guide states a `0.04 TAO` evaluation fee, but the **CLI displays the live fee before payment**, so Moltwork must query/use that value rather than hard-code it. ([GitHub][2])
+
+### Human required?
+
+**After wallet provisioning: essentially no.**
+
+Practical classification:
+
+```text
+operator_touch = H1
+
+H0 = zero human
+H1 = one-time provisioning
+H2 = approval per entry
+H3 = manual task execution
+```
+
+Ditto = H1 because you need:
+
+```text
+coldkey
+hotkey
+TAO
+SN118 registration
+```
+
+But submissions themselves can be automated.
+
+### Economics
+
+This is not:
+
+```text
+P(win) × one prize
+```
+
+Instead:
+
+```text
+expected_daily_reward
+    =
+predicted_emission_share
+×
+subnet_daily_miner_emission_usd
+```
+
+Then:
+
+```text
+EV_7d
+=
+7 × expected_daily_reward
+-
+registration_cost
+-
+evaluation_fees
+-
+inference_cost
+-
+compute_cost
+-
+development_iteration_cost
+```
+
+The killer signal is:
+
+```text
+score_gap = predicted_live_score - incumbent_score
+```
+
+If WorkerKit can reproduce the benchmark, you can empirically estimate whether another iteration is worth paying for.
+
+---
+
+# 3. NEAR Agent Market
+
+This is the most straightforward **actual work feed**.
+
+API docs:
+
+[https://market.near.ai/api-docs/](https://market.near.ai/api-docs/?utm_source=chatgpt.com)
+
+Machine-readable OpenAPI:
+
+[https://market.near.ai/openapi.json](https://market.near.ai/openapi.json?utm_source=chatgpt.com)
+
+The API exposes jobs, bids, assignments, submissions, competitions, services, messaging, disputes, wallet operations, payment channels and webhooks. ([Market Near][3])
+
+### Oracle discovery
+
+```http
+GET /v1/jobs
+GET /v1/jobs/{id}
+GET /v1/jobs/{id}/bids
+GET /v1/jobs/{id}/entries
+GET /v1/agents/{id}
+GET /v1/services
+```
+
+Record:
+
+```text
+job_id
+title
+description
+tags/category
+budget
+currency
+
+created_at
+deadline
+
+job_type
+slots
+competition?
+
+bid_count
+bid_amounts
+bidder reputations
+bid ETAs
+
+entry_count
+
+creator
+creator reputation
+creator historical jobs
+creator historical payouts
+
+status
+transactions
+disputes
+
+accepted worker
+final payout
+```
+
+This is exceptionally useful because the public market exposes historical transaction and dispute information on individual jobs, giving Moltwork actual outcome evidence rather than just listings. ([Market Near][4])
+
+### Submission lifecycle
+
+```text
+GET /v1/jobs
+       ↓
+score candidate
+       ↓
+POST /v1/jobs/{id}/bids
+       ↓
+wait for award
+       ↓
+execute
+       ↓
+POST /v1/jobs/{id}/submit
+       ↓
+requester:
+    accept
+    request changes
+    dispute
+       ↓
+escrow released
+```
+
+There are also explicit competitions:
+
+```text
+POST /v1/jobs/{id}/entries
+```
+
+with:
+
+```text
+GET /v1/jobs/{id}/entries
+POST /v1/jobs/{id}/resolve
+```
+
+([Market Near][3])
+
+### Human required?
+
+Potentially **H0** once agent credentials/payment configuration exist.
+
+They explicitly expose an API-oriented agent lifecycle. A past competition even required agents to demonstrate automated discovery → bidding → execution → submission. ([Market Near][5])
+
+### Economics
+
+For normal job:
+
+```text
+P(award)
+×
+P(accept | awarded)
+×
+net_payout
+
+-
+execution_cost
+-
+bid_cost
+-
+expected_rework_cost
+```
+
+So:
+
+```text
+P(get_paid)
+=
+P(award) × P(accepted|award)
+```
+
+Those probabilities should eventually become **agent-specific**.
+
+Example inputs:
+
+```text
+similar jobs attempted: 24
+awards: 10
+accepted: 8
+
+P(award) ≈ 10/24
+P(accept|award) ≈ 8/10
+```
+
+Much better than an LLM guessing "85% fit."
+
+---
+
+# 4. Virtuals ACP
+
+This is slightly different.
+
+It's closer to:
+
+> **Upwork where both buyer and provider are autonomous programs.**
+
+Current CLI:
+
+[https://github.com/Virtual-Protocol/acp-cli](https://github.com/Virtual-Protocol/acp-cli?utm_source=chatgpt.com)
+
+Node SDK v2:
+
+[https://github.com/Virtual-Protocol/acp-node-v2](https://github.com/Virtual-Protocol/acp-node-v2?utm_source=chatgpt.com)
+
+Python SDK:
+
+[https://github.com/Virtual-Protocol/acp-python](https://github.com/Virtual-Protocol/acp-python?utm_source=chatgpt.com)
+
+### Very important advantage
+
+Every CLI command supports:
+
+```text
+--json
+```
+
+and events can be streamed as NDJSON. ([GitHub][6])
+
+So we can integrate it cleanly even without depending on undocumented REST internals.
+
+### Oracle ingest
+
+From:
+
+```text
+acp browse ... --json
+```
+
+collect:
+
+```text
+agent
+wallet
+online status
+offerings[]
+
+offering.name
+offering.price
+offering.SLA
+requirements_schema
+deliverable_schema
+
+successful_job_count
+success_rate
+unique_buyer_count
+minutes_since_online
+
+subscriptions
+resources
+```
+
+The SDK explicitly supports sorting discovery by:
+
+```text
+SUCCESSFUL_JOB_COUNT
+SUCCESS_RATE
+UNIQUE_BUYER_COUNT
+MINS_FROM_LAST_ONLINE
+```
+
+([GitHub][7])
+
+That's exactly the data we want.
+
+### Provider lifecycle
+
+Provider publishes:
+
+```text
+Offering
+ ├ price
+ ├ SLA
+ ├ requirement schema
+ └ deliverable schema
+```
+
+Buyer creates job:
+
+```text
+open
+ ↓
+budget_set
+ ↓
+funded
+ ↓
+submitted
+ ↓
+completed / rejected
+```
+
+([GitHub][6])
+
+Provider can submit programmatically:
+
+```text
+acp provider submit \
+  --job-id 42 \
+  --deliverable "https://..."
+```
+
+or SDK:
+
+```python
+await session.submit(deliverable)
+```
+
+### Human required?
+
+**H1 currently.**
+
+The new CLI has an initial authentication/setup flow and signer provisioning. Once that exists, jobs can be received, budgeted, executed and submitted autonomously. ([GitHub][6])
+
+### Economics
+
+This is a service business rather than a bounty lottery.
+
+Calculate:
+
+```text
+gross_margin_per_job
+=
+price
+-
+compute
+-
+API costs
+-
+chain cost
+-
+expected failure/rework
+```
+
+Then:
+
+```text
+expected_30d_profit
+=
+expected_jobs_30d
+×
+gross_margin
+```
+
+Demand can be estimated from:
+
+```text
+successful_job_count
+unique_buyer_count
+recency
+online availability
+number of competing offerings
+price distribution
+```
+
+This is **excellent market intelligence**.
+
+---
+
+# 5. Olas Mech Marketplace
+
+This is even more service-oriented.
+
+Client:
+
+[https://github.com/valory-xyz/mech-client](https://github.com/valory-xyz/mech-client?utm_source=chatgpt.com)
+
+Provider/server:
+
+[https://github.com/valory-xyz/mech-server](https://github.com/valory-xyz/mech-server?utm_source=chatgpt.com)
+
+Docs:
+
+[https://stack.olas.network/mech-client/](https://stack.olas.network/mech-client/?utm_source=chatgpt.com)
+
+Tool template:
+
+[https://github.com/valory-xyz/mech-tool-template](https://github.com/valory-xyz/mech-tool-template?utm_source=chatgpt.com)
+
+### Oracle demand data
+
+`mechx mech list` already orders marketplace Mechs by deliveries. The subgraph can expose delivery data. ([stack.olas.network][8])
+
+Ingest:
+
+```text
+mech/service ID
+address
+chain
+
+tool[]
+tool description
+input schema
+output schema
+
+payment model
+price
+
+requests
+deliveries
+delivery_rate
+
+buyers
+repeat buyers
+
+revenue
+revenue / request
+
+last request
+last delivery
+```
+
+### How an agent becomes a seller
+
+Current tooling is much cleaner than old Olas:
+
+```text
+pip install mech-server
+
+mech setup -c base
+```
+
+then:
+
+```text
+mech add-tool moltwork research \
+   -d "Perform structured research"
+```
+
+Implement:
+
+```python
+def run(**kwargs):
+    ...
+```
+
+Then:
+
+```text
+mech prepare-metadata -c base
+mech update-metadata -c base
+mech run -c base
+```
+
+The current `mech-server` explicitly supports creating, deploying and managing paid Mechs this way. ([GitHub][9])
+
+### Human required?
+
+**H1.**
+
+Initial:
+
+```text
+wallet
+funding
+RPC
+service registration
+possibly staking depending deployment
+```
+
+After that:
+
+```text
+request arrives
+→ execute automatically
+→ deliver result
+→ payment
+```
+
+### Economics
+
+This one is simple:
+
+```text
+margin_per_request
+=
+price_per_request
+-
+model/API cost
+-
+compute
+-
+amortized infrastructure
+```
+
+then:
+
+```text
+profit_30d
+=
+forecast_requests_30d × margin
+```
+
+The Oracle can find:
+
+```text
+high request volume
++
+high prices
++
+few tools
++
+weak incumbent quality
+```
+
+and tell WorkerKit:
+
+> Build an Olas Mech here.
+
+---
+
+# 6. OpenServ Ideaboard
+
+API base:
+
+[https://api.launch.openserv.ai](https://api.launch.openserv.ai?utm_source=chatgpt.com)
+
+Agent-readable API skill:
+
+[https://github.com/openserv-labs/skills/blob/main/skills/openserv-ideaboard-api/SKILL.md](https://github.com/openserv-labs/skills/blob/main/skills/openserv-ideaboard-api/SKILL.md?utm_source=chatgpt.com)
+
+OpenServ agent SDK:
+
+[https://github.com/openserv-labs/skills/blob/main/skills/openserv-agent-sdk/reference.md](https://github.com/openserv-labs/skills/blob/main/skills/openserv-agent-sdk/reference.md?utm_source=chatgpt.com)
+
+### Read API
+
+No key:
+
+```http
+GET /ideas
+GET /ideas/:id
+GET /ideas/agents
+GET /ideas/top-agents
+```
+
+Record:
+
+```text
+title
+description
+tags
+
+upvote_count
+pickup_count
+shipped_count
+
+submitted_at
+
+pickups:
+  wallet
+  picked_up_at
+  shipped_at
+
+comments
+existing x402 endpoints
+```
+
+### Authentication
+
+One-time SIWE flow:
+
+```http
+POST /auth/nonce
+POST /auth/nonce/verify
+```
+
+returns:
+
+```text
+OPENSERV_API_KEY
+```
+
+([GitHub][10])
+
+### Execution
+
+```http
+POST /ideas/{id}/pickup
+```
+
+Worker builds service.
+
+Then:
+
+```http
+POST /ideas/{id}/ship
+```
+
+with:
+
+```text
+x402 URL
+demo
+repository
+description
+```
+
+([GitHub][10])
+
+### Human required?
+
+**H0/H1.**
+
+A programmatic wallet can perform SIWE and store the resulting key, so technically the whole thing can be autonomous once wallet custody exists.
+
+### Critical economic distinction
+
+There usually isn't:
+
+```text
+prize = $50
+```
+
+So don't score it as a bounty.
+
+It is:
+
+```text
+market_demand_signal
+```
+
+with:
+
+```text
+expected_value
+=
+forecast_calls
+×
+x402_margin
+```
+
+Signals:
+
+```text
+upvotes
+pickups
+shipments
+time_since_post
+existing competitors
+subsequent usage of existing shipments
+```
+
+An idea with:
+
+```text
+20 upvotes
+8 pickups
+0 shipments
+```
+
+could be very interesting.
+
+---
+
+# 7. Bankr x402 Cloud
+
+Docs:
+
+[https://docs.bankr.bot/x402-cloud/overview/](https://docs.bankr.bot/x402-cloud/overview/?utm_source=chatgpt.com)
+
+Quickstart:
+
+[https://docs.bankr.bot/x402-cloud/quick-start/](https://docs.bankr.bot/x402-cloud/quick-start/?utm_source=chatgpt.com)
+
+This is **not an opportunity source**.
+
+It's an:
+
+```text
+ExecutionRail
+```
+
+### WorkerKit use
+
+When Oracle finds:
+
+```text
+high demand capability
++
+low x402 supply
+```
+
+Factory can:
+
+```text
+bankr x402 init
+bankr x402 add <service>
+...
+bankr x402 deploy
+```
+
+Bankr supplies:
+
+```text
+hosting
+payments
+discovery
+logs
+revenue accounting
+secret handling
+```
+
+and payments settle on Base. ([docs.bankr.bot][11])
+
+### Economics
+
+Bankr becomes a **cost model**:
+
+```text
+price_request
+API_cost_request
+compute_cost_request
+Bankr fee
+```
+
+Therefore:
+
+```text
+unit_margin
+```
+
+And Oracle observes:
+
+```text
+calls
+revenue
+repeat users
+failures
+```
+
+where accessible.
+
+### Human required?
+
+H1 for authentication/provisioning.
+
+After that, deployment and service operation are automatable.
+
+---
+
+# 8. Phala Cloud
+
+Repo:
+
+[https://github.com/Phala-Network/phala-cloud](https://github.com/Phala-Network/phala-cloud?utm_source=chatgpt.com)
+
+Docs:
+
+[https://docs.phala.com/](https://docs.phala.com/?utm_source=chatgpt.com)
+
+OpenAPI source:
+
+[https://github.com/Phala-Network/phala-docs/blob/main/openapi.json](https://github.com/Phala-Network/phala-docs?utm_source=chatgpt.com)
+
+Again:
+
+> **Phala isn't normally the opportunity. It's infrastructure used to execute an opportunity.**
+
+It exposes:
+
+```text
+CLI
+TypeScript SDK
+Python SDK
+Go SDK
+instance types
+nodes
+CVMs
+attestations
+deployment APIs
+```
+
+([GitHub][12])
+
+### Agent deployment
+
+```text
+phala login
+
+phala deploy \
+  -n worker \
+  -c docker-compose.yml \
+  -e .env \
+  --wait
+```
+
+Then:
+
+```text
+phala cvms attestation --json
+```
+
+for verifiable execution. ([GitHub][12])
+
+### Why Moltwork needs the data
+
+For each opportunity estimate:
+
+```text
+required RAM
+CPU
+GPU
+TEE required?
+expected runtime
+```
+
+Then query infrastructure prices.
+
+So:
+
+```text
+execution_cost(opportunity)
+```
+
+becomes real rather than guessed.
+
+Phala's current agent deployment docs give examples such as a light CPU TEE at about `$0.058/hour`, while GPU TEE instances are dramatically more expensive. Those values should always be fetched live, not hard-coded. ([GitHub][13])
+
+---
+
+# 9. Allora
+
+Python SDK:
+
+[https://github.com/allora-network/allora-sdk-py](https://github.com/allora-network/allora-sdk-py?utm_source=chatgpt.com)
+
+Forge Builder Kit:
+
+[https://github.com/allora-network/allora-forge-builder-kit](https://github.com/allora-network/allora-forge-builder-kit?utm_source=chatgpt.com)
+
+Allora is another:
+
+```text
+continuous_incentive_market
+```
+
+Workers submit ML inferences into topics. Quality is later evaluated against ground truth, and workers receive rewards based on performance. ([GitHub][14])
+
+### Oracle ingest
+
+```text
+topic_id
+task description
+
+epoch_length
+submission_window
+ground_truth_lag
+
+worker count
+
+worker historical losses
+rankings
+reward distribution
+
+required data
+required compute
+
+our backtest score
+incumbent distribution
+```
+
+### Submission
+
+Their new Python SDK abstracts most of it:
+
+```python
+worker = AlloraWorker.inferer(
+    topic_id=...,
+    run=my_model
+)
+
+async for result in worker.run():
+    ...
+```
+
+The worker manages recurring submissions to open windows. ([GitHub][15])
+
+### Human required?
+
+H1 for mainnet credential/funding provisioning.
+
+Then continuous H0 operation.
+
+### Economics
+
+Same principle as Ditto:
+
+```text
+predicted_relative_performance
+→ predicted_reward_share
+```
+
+Then:
+
+```text
+EV_7d =
+expected_rewards_7d
+-
+compute
+-
+data
+-
+gas
+-
+development
+```
+
+But confidence should be lower when the live scoring distribution can't be accurately reproduced locally.
+
+---
+
+# 10. FLock AI Arena
+
+Training node docs:
+
+[https://docs.flock.io/flock-products/ai-arena/quickstart/training-node-guide](https://docs.flock.io/flock-products/ai-arena/quickstart/training-node-guide?utm_source=chatgpt.com)
+
+Reward mechanics:
+
+[https://docs.flock.io/flock-tokenomics/network-participation/ai-arena/training-node](https://docs.flock.io/flock-tokenomics/network-participation/ai-arena/training-node?utm_source=chatgpt.com)
+
+FLock is another competition market, but currently **less autonomy-friendly**.
+
+The official flow includes:
+
+```text
+choose task
+stake
+train/fine-tune
+submit
+validators evaluate
+rank
+reward
+claim
+```
+
+Training nodes' rewards depend on task stake, participant/delegated stake and relative submission rank. ([docs.flock.io][16])
+
+### Submission automation
+
+Once enrolled, their quickstart exposes:
+
+```text
+TASK_ID
+FLOCK_API_KEY
+HF_TOKEN
+...
+python full_automation.py
+```
+
+([docs.flock.io][17])
+
+### Human intervention?
+
+Currently **H2-ish**, because the official documented workflow still uses the web UI/wallet for staking and claiming.
+
+Therefore I'd rank it below Ditto for WorkerKit automation even if nominal prizes look attractive.
+
+And **this is exactly why human-intervention cost needs to be first-class data.**
+
+---
+
+# Universal `OpportunitySpec`
+
+I would make this the central Moltwork schema:
+
+```json
+{
+  "id": "...",
+  "source": "...",
+
+  "kind": "bounty|competition|service|emission|resource",
+
+  "requirements": {
+    "capabilities": [],
+    "deliverables": [],
+    "hardware": {},
+    "credentials": [],
+    "evaluation": {}
+  },
+
+  "economics": {
+    "reward_model": "fixed|winner_take_all|ranked|proportional|per_call|emission",
+
+    "reward_asset": "...",
+    "reward_nominal": null,
+    "reward_pool_usd": null,
+
+    "entry_fee_usd": 0,
+    "gas_estimate_usd": 0,
+    "capital_required_usd": 0,
+    "capital_at_risk_usd": 0,
+    "capital_lock_hours": 0
+  },
+
+  "competition": {
+    "entries": null,
+    "active_workers": null,
+    "slots": null,
+    "incumbent_score": null,
+    "score_distribution": null
+  },
+
+  "execution": {
+    "estimated_compute_usd": null,
+    "estimated_api_usd": null,
+    "estimated_wall_hours": null,
+    "estimated_human_minutes": null,
+
+    "automation_level": "H0",
+    "submission_method": "rest|cli|sdk|onchain|service"
+  },
+
+  "prediction": {
+    "p_entry": null,
+    "p_award": null,
+    "p_accept": null,
+
+    "expected_payout_usd": null,
+    "expected_net_usd": null,
+
+    "confidence": null
+  },
+
+  "lifecycle": {
+    "discover": {},
+    "enter": {},
+    "submit": {},
+    "status": {},
+    "settlement": {}
+  },
+
+  "raw": {}
+}
+```
+
+And keep the raw response forever.
+
+---
+
+# How to calculate “prize vs effort”
+
+Do **not** use:
+
+```text
+prize / estimated_hours
+```
+
+It ignores probability and costs.
+
+Use:
+
+```text
+Expected Gross Payout
+=
+Σ P(outcome_i) × payout_i
+```
+
+Then:
+
+```text
+Expected Net Value
+=
+expected_gross_payout
+-
+entry_fee
+-
+gas
+-
+compute
+-
+API_cost
+-
+infrastructure
+-
+expected_rework_cost
+-
+capital_risk_cost
+-
+human_intervention_cost
+```
+
+For one-off bounty:
+
+```text
+EV =
+P(award)
+× P(accept | award)
+× payout
+-
+costs
+```
+
+For competition:
+
+```text
+EV =
+Σ P(rank=r) × prize(r)
+-
+costs
+```
+
+For emissions:
+
+```text
+EV_7d =
+Σ predicted_reward_share(day)
+× reward_pool(day)
+-
+7d_costs
+```
+
+For x402/service:
+
+```text
+EV_30d =
+predicted_calls_30d
+× (price - variable_cost)
+-
+fixed_deployment_cost
+```
+
+---
+
+# Add **learning value**
+
+This matters enormously for WorkerKit.
+
+A $5 job might create a reusable skill that wins 100 future jobs.
+
+So separately calculate:
+
+```text
+strategic_value
+```
+
+from:
+
+```text
+skill_reusability
+market_demand_for_skill
+benchmark_reusability
+new credential/reputation earned
+service/product produced
+new market opened
+```
+
+But **never mix this into payout and pretend it's money**.
+
+Show:
+
+```text
+Expected cash EV       $8.20
+Strategic value        HIGH
+```
+
+rather than:
+
+```text
+Total opportunity value = $73
+```
+
+which would become fake precision.
+
+---
+
+# Human intervention should have its own taxonomy
+
+I'd implement:
+
+| Level  | Meaning                                               |
+| ------ | ----------------------------------------------------- |
+| **H0** | Fully autonomous after secrets are provisioned        |
+| **H1** | One-time human setup; thereafter autonomous           |
+| **H2** | Human approval required per opportunity               |
+| **H3** | Human contributes materially to producing deliverable |
+| **H4** | Fundamentally human-only                              |
+
+Then hard-filter:
+
+```text
+moltwork scan --max-human H1
+```
+
+This is a really useful feature.
+
+---
+
+# The ranking should return a vector, not one number
+
+Example:
+
+```text
+NEAR Python bounty
+
+Expected payout            $31.20
+Expected execution cost     $1.84
+Expected net EV            $18.74
+Wall time                    2.1h
+Human time                   0 min
+Capital required             $0
+P(get paid)                  0.60
+Time to first payout         ~8h
+Autonomy                     H0
+Confidence                   0.72
+Skill reuse                  HIGH
+```
+
+Ditto:
+
+```text
+Ditto SN118 improvement
+
+Expected 7d payout          $???
+Evaluation fee               $???
+Compute                      $8.10
+Human time                   0 min
+Capital required             TAO registration + fees
+Current local score          X
+Incumbent score              Y
+Gap                           -2.1%
+Autonomy                     H1
+Confidence                   0.81
+Recurring upside             HIGH
+```
+
+OpenServ idea:
+
+```text
+PDF verification service
+
+Guaranteed payout            $0
+Observed demand              HIGH
+Existing pickups              8
+Existing shipped              0
+Estimated deploy cost        $0.40
+Expected 30d x402 revenue    $7-$38
+Autonomy                     H0
+Confidence                   LOW
+Reusable asset               YES
+```
+
+**These should not be collapsed into the same primitive number.**
+
+---
+
+# And this gives WorkerKit the full decision loop
+
+```text
+                 ORACLE
+                    │
+          discover everything
+                    │
+                    ▼
+             OpportunitySpec
+                    │
+        ┌───────────┼─────────────┐
+        │           │             │
+        ▼           ▼             ▼
+     feasible?     EV?        strategic?
+        │           │             │
+        └───────────┼─────────────┘
+                    ▼
+                 SELECT
+                    │
+                    ▼
+                PREFLIGHT
+         reproduce benchmark/
+         inspect job requirements
+                    │
+                    ▼
+             BUILD VARIANTS
+           A / B / C / maybe D
+                    │
+                    ▼
+                 JUDGE
+                    │
+            fail ───┴── pass
+             │            │
+          improve         submit
+             │            │
+             └─────┐      │
+                   ▼      ▼
+                  OUTCOME
+                     │
+          ┌──────────┼─────────┐
+          ▼          ▼         ▼
+        payout     score     feedback
+          │          │         │
+          └──────────┼─────────┘
+                     ▼
+                 EXPERIENCE
+                     │
+                     ▼
+        update P(win), costs,
+        recipes and capability
+              performance
+```
+
+**This is the thing I'd build next.**
+
+Not another set of bespoke integrations where NEAR has `NearJob`, Ditto has `SubnetOpportunity`, etc.
+
+Build:
+
+```text
+OpportunitySpec
+ExecutionProtocol
+Outcome
+```
+
+and make **NEAR + Ditto the first two reference adapters** because they represent opposite ends of the universe:
+
+```text
+NEAR
+fixed-price human/agent job market
+
+Ditto
+continuous machine-scored incentive market
+```
+
+If the abstraction handles both of those cleanly, Virtuals, Olas, OpenServ, FLock and future markets become much easier to plug in.
+
+[1]: https://docs.taostats.io/docs/metagraph?utm_source=chatgpt.com "Metagraph key"
+[2]: https://github.com/ditto-assistant/dittobench-starter-kit?utm_source=chatgpt.com "GitHub - ditto-assistant/dittobench-starter-kit: Official DittoBench miner starter kit for Bittensor subnet 118 — baseline harness, offline practice runner, scorer, and submission flow. · GitHub"
+[3]: https://market.near.ai/api-docs/?utm_source=chatgpt.com "Swagger UI"
+[4]: https://market.near.ai/jobs/a7849e2a-4d09-49ab-ac1a-e91c327153df?utm_source=chatgpt.com "Task 41: API - Marketplace Job Feed - Agent Market"
+[5]: https://market.near.ai/jobs/64eb189a-280d-4f4e-9941-ee7db1dfccad?utm_source=chatgpt.com "[COMPETITION] Build the Most Useful Agent for market.near.ai - 100 NEAR Prizes! - Agent Market"
+[6]: https://github.com/Virtual-Protocol/acp-cli?utm_source=chatgpt.com "GitHub - Virtual-Protocol/acp-cli · GitHub"
+[7]: https://github.com/Virtual-Protocol/acp-node-v2?utm_source=chatgpt.com "GitHub - Virtual-Protocol/acp-node-v2 · GitHub"
+[8]: https://stack.olas.network/mech-client/manual-testing-guide/?utm_source=chatgpt.com "Manual Testing Guide - Olas Stack Developer Documentation"
+[9]: https://github.com/valory-xyz/mech-server?utm_source=chatgpt.com "GitHub - valory-xyz/mech-server: A CLI to create, deploy and manage Mechs — AI agents that execute tasks on-chain for payment — on the Olas Marketplace. · GitHub"
+[10]: https://github.com/openserv-labs/skills/blob/main/skills/openserv-ideaboard-api/SKILL.md?utm_source=chatgpt.com "skills/skills/openserv-ideaboard-api/SKILL.md at main · openserv-labs/skills · GitHub"
+[11]: https://docs.bankr.bot/x402-cloud/overview/?utm_source=chatgpt.com "x402 Cloud | Bankr Documentation"
+[12]: https://github.com/Phala-Network/phala-cloud?utm_source=chatgpt.com "GitHub - Phala-Network/phala-cloud: Confidential Computing native cloud platform. · GitHub"
+[13]: https://github.com/Phala-Network/phala-cloud/blob/main/skills/usecase/agent-deploy.md?utm_source=chatgpt.com "phala-cloud/skills/usecase/agent-deploy.md at main · Phala-Network/phala-cloud · GitHub"
+[14]: https://github.com/allora-network/allora-chain?utm_source=chatgpt.com "GitHub - allora-network/allora-chain: node of the decentralized oracle network, bridging present and future computation · GitHub"
+[15]: https://github.com/allora-network/allora-sdk-py?utm_source=chatgpt.com "GitHub - allora-network/allora-sdk-py: SDK for interacting with the Allora Network in Python. · GitHub"
+[16]: https://docs.flock.io/flock-tokenomics/network-participation/ai-arena/training-node?utm_source=chatgpt.com "Training Node | FLock"
+[17]: https://docs.flock.io/flock-products/ai-arena/quickstart/training-node-guide?utm_source=chatgpt.com "Training Node Guide | FLock"

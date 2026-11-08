@@ -1,0 +1,2100 @@
+great now do huge deepdive on data sources we can ingest for this, where to see chinese parts etc any other stuff with api access? unitree? any github projects make a lot of this easy for us? how to make this distinct from robots and powproducts? its almost becoming liek this little collective proucts robots parts repairs .. im really really liking this we can then basically fuckkk yeah tahts it the model bsaically becomes home labs, solar ev battery, compute (think n100)  robots, lights perhaps, audio and then the wiring up of all these, maintenance, potentially later custom builds, imagine like we already have insane ai modelling of like arrow 2 quiver u could easly liek create custom instatioations of all this espeially 3d print.. endgame stuff could be like custom robots and lights and speakers etc but basically we just want to focus on data imagining this future
+
+Yes — **the data garden is the product**. The vibe-coding robot app is just one downstream customer.
+
+The right framing is:
+
+> **POW becomes the canonical machine-readable graph of real-world buildability.**
+
+A robotics startup should be able to ask POW:
+
+> “What is the cheapest, available, manufacturable way to implement this function right now?”
+
+and get an answer grounded in actual Chinese parts, current stock, package availability, alternates, fabrication constraints, historical pricing, and supplier reliability.
+
+There are competitors, but I don’t see a free system that gives the full thing you’re describing.
+
+Octopart/Nexar are strong at global electronic-component search, distributor pricing and availability. LCSC/EasyEDA are already extremely useful for Chinese parts and design assets; EasyEDA advertises 600k+ directly searchable components, and current APIs/community tooling expose part specs, stock, pricing, symbols, footprints and datasheets. JLCPCB now has official component, PCB and 3D-printing APIs too. ([JLCPCB][1])
+
+But those systems mostly answer:
+
+> **“Find me part X.”**
+
+POW should answer:
+
+> **“I need function X. What are every viable ways to instantiate it, what do they cost, and what downstream machine designs do they enable?”**
+
+That distinction is enormous.
+
+The garden I would build is closer to this:
+
+```text
+POW PART GRAPH
+
+FUNCTION
+├── brushless motor control
+├── 24V → 5V conversion
+├── 6-axis IMU
+├── CAN networking
+├── depth sensing
+├── edge inference
+└── force sensing
+
+IMPLEMENTATION
+├── IC
+├── module
+├── dev board
+├── assembled PCB
+├── custom PCB architecture
+└── mechanical subsystem
+
+PART
+├── manufacturer
+├── exact MPN
+├── aliases
+├── package
+├── pinout
+├── electrical limits
+├── protocols
+├── dimensions
+├── thermal properties
+└── datasheet
+
+MARKET
+├── LCSC
+├── Taobao
+├── 1688
+├── Alibaba
+├── DigiKey
+├── Mouser
+├── Arrow
+└── others
+
+TIME SERIES
+├── price
+├── inventory
+├── MOQ
+├── lead time
+├── seller count
+└── EOL / lifecycle
+
+RELATIONSHIPS
+├── equivalent_to
+├── partial_substitute
+├── pin_compatible
+├── firmware_compatible
+├── mechanically_compatible
+├── often_used_with
+└── replaces
+
+MANUFACTURING
+├── JLC basic/extended
+├── assembly availability
+├── footprint
+├── stencil
+├── placement constraints
+├── PCB layer needs
+├── thermal requirements
+└── fabrication process
+
+OBSERVED USE
+├── GitHub projects
+├── open-hardware designs
+├── robot BOMs
+├── repair manuals
+├── commercial products
+└── teardown evidence
+```
+
+That last section is where POW starts becoming much harder to replace.
+
+A datasheet tells you that a chip *can* do something.
+
+Thousands of real designs tell you:
+
+> **people actually use this particular chip with this motor, this voltage regulator and this encoder and it works.**
+
+So the graph should distinguish:
+
+```text
+theoretically_compatible
+observed_together
+verified_reference_design
+observed_in_commercial_product
+field_failure_rate
+```
+
+That is much more valuable to an AI designing hardware.
+
+## The Chinese-part layer is especially interesting
+
+LCSC already gives a very strong seed dataset. Current public/community tooling can retrieve things like MPN, manufacturer, package, stock, quantity-price breaks, specs, datasheets and EasyEDA symbol/footprint data. ([GitHub][2])
+
+So Checkpoint 1 does **not** need some huge AI project.
+
+Just harvest this continuously.
+
+For every component:
+
+```text
+2026-09-22
+C2040
+100nF capacitor
+stock: 4,328,211
+price@100: $0.0018
+
+2026-09-23
+stock: 4,201,993
+price@100: $0.0018
+
+...
+```
+
+Do that for years.
+
+Suddenly you own something LCSC's current page doesn't give users:
+
+> **history.**
+
+Then POW can detect:
+
+```text
+QMI8658 IMU
+price ↓ 47% in 18 months
+stock ↑ 620%
+design appearances ↑ 210%
+```
+
+That is potentially a signal that this sensing primitive is rapidly commoditizing.
+
+Or:
+
+```text
+robot joint controller IC
+stock ↓ 70%
+prices ↑ 35%
+appearances in new Chinese designs ↑ 400%
+```
+
+Now you have a physical bottleneck signal.
+
+That's right back to the POW thesis.
+
+## But I would go far beyond ICs
+
+The garden becomes much more defensible if the object isn't “electronic component.”
+
+Make the universal primitive:
+
+> **physical capability component**
+
+So it can contain:
+
+```text
+Electronic
+STM32
+ESP32
+motor driver
+MOSFET
+camera
+LiDAR
+
+Module
+servo
+motor controller
+BMS
+GNSS module
+
+Mechanical
+NEMA17
+harmonic drive
+bearing
+linear rail
+gearbox
+wheel
+coupler
+
+Structural
+aluminium extrusion
+carbon tube
+3D-print filament
+sheet stock
+
+Connection
+JST
+XT60
+M8
+M12
+CAN cable
+bearing interface
+
+Fabrication
+PCB
+CNC
+FDM
+SLS
+laser cutting
+casting
+
+Eventually biology
+fungal substrate
+electrode interface
+biosensor
+living actuator
+```
+
+Then `powrobots` becomes a **composition graph over this garden**.
+
+That's much cleaner than having `powrobots` independently maintain random parts.
+
+## The key derived dataset: substitutions
+
+This may be the highest-value layer.
+
+Nobody building robots wants an index of 9 million parts.
+
+They want:
+
+> “I need a 24V 10A dual-channel motor controller.”
+
+POW gives:
+
+```text
+Option A
+commercial module
+£38
+ships UK tomorrow
+
+Option B
+Chinese module
+£11
+7-day delivery
+
+Option C
+custom PCB
+BOM £4.82
+assembly £2.10
+MOQ 5
+
+Option D
+higher-current design
+£7.40
+requires firmware change
+```
+
+And then:
+
+```text
+SUBSTITUTION CONFIDENCE
+
+A → B   96%
+drop-in electrical substitute
+
+A → C   89%
+same function, connector change
+
+A → D   71%
+requires firmware + mounting change
+```
+
+That's the dataset I'd want an AI robotics company paying for.
+
+Because AI can generate the design.
+
+**The difficult bit is knowing whether its proposed design corresponds to the messy state of the real supply chain today.**
+
+## Another valuable graph: interfaces
+
+For robotics especially, I would aggressively model interface compatibility:
+
+```text
+electrical
+5V
+12V
+24V
+48V
+
+protocol
+CAN
+CAN-FD
+RS485
+EtherCAT
+SPI
+I2C
+UART
+USB
+
+mechanical
+shaft diameter
+bolt pattern
+mount spacing
+connector geometry
+gear interface
+
+software
+ROS driver
+Linux driver
+Arduino library
+STM32 HAL
+ESP-IDF
+vendor SDK
+```
+
+Then POW can traverse:
+
+> **camera → interface → compute module → software driver → physical connector**
+
+instead of just matching keywords.
+
+That is what lets a future coding agent reliably assemble hardware.
+
+## And robot BOM ingestion could be huge
+
+I would scrape/ingest every legally reusable BOM and open design we can find.
+
+For example:
+
+```text
+Open-source robot A
+├── motor: X
+├── driver: Y
+├── MCU: Z
+├── bearing: Q
+└── battery: R
+
+Robot B
+├── motor: X
+├── driver: Y2
+├── MCU: Z
+...
+```
+
+After 100,000 designs, you can derive:
+
+```text
+P(component B | component A)
+
+common architecture patterns
+
+component centrality
+
+frequent substitutions
+
+reliability signals
+
+cost/frontier architectures
+```
+
+Then POW knows things like:
+
+> Of open mobile robots in this weight class using this motor family, 63% use controller family X.
+
+That is vastly better context for an AI than a datasheet search.
+
+## Teardowns could make the commercial data much more valuable
+
+Imagine ingesting public teardowns for:
+
+* Unitree;
+* drones;
+* robot vacuums;
+* industrial arms;
+* EV chargers;
+* solar inverters;
+* miners;
+* power stations;
+* consumer robots.
+
+Then map:
+
+```text
+PRODUCT
+↓ contains
+SUBSYSTEM
+↓ contains
+BOARD
+↓ contains
+PART
+↓ manufactured_by
+COMPANY
+```
+
+Now POW can answer:
+
+> “Which Chinese motor-controller vendors are appearing inside increasingly successful robots?”
+
+or:
+
+> “What parts are common across £5k robots but now purchasable individually for £20?”
+
+That's both **product intelligence and investment intelligence**.
+
+## Historical BOM snapshots are unusually valuable
+
+Take a robot today:
+
+```text
+2026 BOM
+£940
+```
+
+Keep recomputing the exact same architecture against live component markets.
+
+```text
+2027 equivalent BOM
+£680
+
+2028
+£430
+
+2029
+£270
+```
+
+Now POW literally measures:
+
+> **the declining reproduction cost of physical intelligence.**
+
+That is an incredible time series.
+
+You could create indexes like:
+
+```text
+POW HUMANOID INDEX
+POW MOBILE ROBOT INDEX
+POW DRONE INDEX
+POW ROBOT ARM INDEX
+POW EDGE AI INDEX
+POW MINER INDEX
+```
+
+Not stock indexes.
+
+**Cost-to-build indexes.**
+
+That's exactly the kind of data garden that becomes better simply because you started collecting it earlier.
+
+## China should probably be its own ingestion universe
+
+I wouldn't merely add LCSC to `powproducts`.
+
+I'd treat the Chinese manufacturing graph seriously:
+
+```text
+POW CHINA
+
+LCSC
+components
+
+JLCPCB
+fabrication + assembly
+
+EasyEDA
+symbols + footprints + designs
+
+1688
+modules / motors / mechanical parts
+
+Taobao
+retail/prosumer hardware
+
+Alibaba
+manufacturers / export pricing
+
+manufacturer websites
+datasheets / SKUs
+
+GitHub / Gitee
+firmware + designs
+
+Chinese robotics vendors
+complete machines
+```
+
+1688 is especially conceptually important because once you move past PCB components into:
+
+* motors;
+* gearboxes;
+* rails;
+* machined pieces;
+* actuators;
+* cameras;
+* robot joints;
+* grippers;
+
+you need the **factory/module ecosystem**, not only component distributors.
+
+There will be practical access/licensing/API issues for some sources, so I would keep raw provenance and terms per connector rather than treating everything as freely redistributable.
+
+## Competitors: use them rather than trying to clone them
+
+I wouldn't try to beat Octopart at Octopart.
+
+Use it as one source.
+
+Octopart/Nexar already provide broad distributor/component data and APIs. ([Nexar Support][3])
+
+Likewise, don't beat EasyEDA at footprint libraries.
+
+Use EasyEDA data where permitted. It already bridges component search to usable EDA libraries, while open-source utilities exist for moving EasyEDA components into KiCad workflows. ([npm][4])
+
+And don't become JLCPCB.
+
+Their APIs already expose component lookup, real-time inventory/pricing, PCB workflows and 3D-printing workflows. ([JLCPCB][1])
+
+POW sits **above all of them**:
+
+```text
+Octopart ─┐
+LCSC ─────┤
+EasyEDA ──┤
+JLCPCB ───┤
+1688 ─────┤
+GitHub ───┤
+teardowns ┤
+datasheets│
+prices ───┤
+BOMs ─────┘
+          ↓
+       POW GRAPH
+          ↓
+function
+compatibility
+substitution
+history
+cost frontier
+architecture patterns
+manufacturability
+```
+
+That bottom layer is the value.
+
+## Then a robotics agent gets one primitive
+
+Something like:
+
+```text
+resolve_capability({
+  function: "BLDC actuator",
+  torque_nm: 8,
+  voltage: 48,
+  budget_usd: 60,
+  quantity: 100,
+  region: "China",
+  priorities: [
+    "cost",
+    "availability",
+    "repairability"
+  ]
+})
+```
+
+POW returns:
+
+```text
+architecture_1:
+  motor: ...
+  encoder: ...
+  driver: ...
+  gearbox: ...
+  supplier: ...
+  landed_cost: ...
+  stock: ...
+  provenance: ...
+  confidence: ...
+
+architecture_2:
+  ...
+
+risks:
+  ...
+
+known_designs_using_similar_stack:
+  ...
+```
+
+That's what I'd want us aiming for.
+
+Not a pretty app.
+
+**An MCP/API where an AI engineering agent can say “instantiate this physical function” and POW gives it grounded reality.**
+
+And because you've been collecting it historically, the agent can also ask:
+
+> “Is this architecture becoming cheaper?”
+
+> “Is this component supply getting tighter?”
+
+> “What new Chinese substitute appeared this month?”
+
+> “Which robot primitives are rapidly commoditizing?”
+
+That is where POW stops being a parts search engine and becomes **infrastructure for machine-building intelligence**.
+
+I think `powparts` deserves to be one of the major L1 gardens alongside your UK, stocks, products and robots work. Its initial checkpoint should be brutally boring: **collect the raw catalogues, snapshots, datasheets, library assets, BOMs and provenance correctly.** The extraordinary stuff comes from L2 after a year of history exists.
+
+[1]: https://jlcpcb.com/help/article/jlcpcb-online-api-available-now?utm_source=chatgpt.com "JLCPCB Online API Access Application"
+[2]: https://github.com/eggfly/easyeda-agent-skills/blob/main/spec/api-reference.md?utm_source=chatgpt.com "easyeda-agent-skills/spec/api-reference.md at main · eggfly/easyeda-agent-skills · GitHub"
+[3]: https://support.nexar.com/support/solutions/articles/101000541169-differences-between-octopart-com-and-nexar-api-data?utm_source=chatgpt.com "Octopart and Nexar API: Unified Data for a Better, Consistent Experience :"
+[4]: https://www.npmjs.com/package/%40jlcpcb/core?utm_source=chatgpt.com "@jlcpcb/core - npm"
+
+
+mmm i think thats a much better appraoch tbh especially at first we basically take robot x then breakdown all its parts and use them as seed, then from each of them track replacements. that nicely focuses us and ties into repair. can do the same with github custom designs as well ooh this could be super cool because we can then either learn how robots are made from the parts and create new designs or we can see which parts are maybe undervalued and use them combining them into consumer goods.. i think there genuienly will be instead of training models for people having custom robots even small ones ithink cameras and sensors get valuable also like speakers mini components high quality which ones have moat which ones are industry standard / most compatible etc damn this would be so perfect i just dont know how u could assemble it well .. i mean the cad is insane rn i guess u just find 3d printing or chinese supplier.. like models like jev basially make interacting with reality seamless its only a matter of time before people are creating custom robots + ai models any chinese services taht do something liek this?
+
+Exactly. **Do not build a museum of one million parts.** If LCSC already answers “what is C12345 and what does it cost right now?”, copying that catalogue gives us storage bills, parser maintenance, and almost no moat.
+
+The data-garden question should always be:
+
+> **What will we wish we had observed in 2026 that cannot be reconstructed in 2029?**
+
+That changes `powparts` completely.
+
+### The moat is not the catalogue
+
+Think of the available APIs as the **current-state oracle**. POW should preserve the things those APIs erase.
+
+The valuable layers are:
+
+```text
+CURRENT CATALOGUE
+LCSC / JLC / Mouser / DigiKey / etc.
+        │
+        │ query when needed
+        ▼
+      POW
+        │
+        ├── HISTORY
+        ├── RELATIONSHIPS
+        ├── REAL-WORLD USE
+        ├── SUBSTITUTIONS
+        ├── FAILURE / REPAIR
+        ├── MANUFACTURING COST
+        └── DERIVED BENCHMARKS
+```
+
+So I would **not** start by normalizing every field for every component.
+
+Instead, create a very lightweight identity registry:
+
+```text
+part_id
+manufacturer
+mpn
+source_ids
+category
+first_seen
+last_seen
+```
+
+That may contain millions of records cheaply.
+
+Everything expensive is collected selectively.
+
+---
+
+## 1. History is garden-worthy
+
+Today's API can tell us:
+
+> QMI8658C costs $0.74 today.
+
+It probably cannot reliably tell us:
+
+```text
+Sep 2026   $0.74   182k stock
+Dec 2026   $0.63   311k
+Jun 2027   $0.48   780k
+Dec 2027   $0.31   1.4m
+```
+
+That historical curve becomes valuable.
+
+But we don't need hourly snapshots of 8 million capacitors.
+
+Create **observation tiers**.
+
+```text
+TIER 0 — identity only
+millions of catalogue entities
+refresh rarely
+
+TIER 1 — monthly
+interesting technology categories
+
+TIER 2 — daily
+strategic components / active BOMs
+
+TIER 3 — hourly/event-driven
+identified bottlenecks or anomalies
+```
+
+A generic 10k resistor probably stays Tier 0 forever.
+
+A new cheap robot actuator controller might jump immediately to Tier 2.
+
+This makes the garden manageable.
+
+---
+
+## 2. Collect the frontier, not the entire universe
+
+We care about particular physical capabilities.
+
+Your current frontier could be:
+
+```text
+robotics
+├── actuators
+├── motors
+├── motor controllers
+├── encoders
+├── gearboxes
+├── cameras
+├── LiDAR
+├── force/torque
+├── IMUs
+└── edge compute
+
+compute
+├── N100-class boxes
+├── SBCs
+├── NPUs
+├── GPUs
+├── networking
+└── storage
+
+energy
+├── cells
+├── BMS
+├── inverters
+├── DC/DC
+├── EVSE
+├── solar
+└── power semiconductors
+
+fabrication
+├── PCB/PCBA
+├── 3D printing
+├── CNC
+├── sheet metal
+└── connectors/standards
+```
+
+Maybe that's 10,000–100,000 meaningful entities rather than millions.
+
+And even within those categories, POW discovers what deserves promotion.
+
+---
+
+# 3. The **relationships** are probably more valuable than the parts
+
+LCSC already knows:
+
+```text
+DRV8323
+```
+
+What POW wants to know is:
+
+```text
+DRV8323
+    commonly_used_with → STM32G4
+    commonly_used_with → 48V BLDC motors
+    appears_in → open robot project A
+    appears_in → controller B
+    substitute_for → part C
+    requires → external MOSFET stage
+    failure_association → gate-driver fault
+```
+
+Nobody gives us that complete graph in an API.
+
+And these edges can compound indefinitely.
+
+This should probably be the core architecture:
+
+```text
+ENTITY
+EDGE
+OBSERVATION
+EVIDENCE
+```
+
+rather than 300 lovingly normalized tables.
+
+For example:
+
+```json
+{
+  "subject": "part:DRV8323",
+  "predicate": "observed_with",
+  "object": "part:STM32G431",
+  "context": "48V_BLDC_CONTROLLER",
+  "evidence": "github:repo/commit/file",
+  "observed_at": "...",
+  "confidence": 1.0
+}
+```
+
+Simple.
+
+---
+
+# 4. BOM history is extremely garden-worthy
+
+This might be much higher priority than catalogues.
+
+If we find a robot/open hardware project today:
+
+```text
+2026 design:
+motor X
+controller Y
+LiDAR Z
+compute A
+battery B
+```
+
+save the BOM.
+
+When v2 appears:
+
+```text
+2027:
+motor X2
+controller Y
+LiDAR Z2
+compute C
+battery B
+```
+
+Now we know **how engineering architectures evolve**.
+
+That cannot easily be reconstructed years later because repos change, releases disappear, links die and products get revised.
+
+So archive:
+
+```text
+project
+version
+timestamp
+BOM
+CAD references
+firmware dependency
+source commit
+```
+
+Very high-value garden.
+
+---
+
+# 5. Exact product teardowns are massively valuable
+
+This is probably even better.
+
+Suppose we identify:
+
+```text
+Unitree robot
+EcoFlow battery
+Deye inverter
+EV charger
+Beelink N100 box
+ASIC miner
+robot vacuum
+```
+
+and gradually determine their contents.
+
+Then save evidence such as:
+
+```text
+PRODUCT
+    ↓ contains
+
+board
+motor
+gearbox
+MCU
+sensor
+power semiconductor
+battery cell
+connector
+```
+
+A future AI can ask:
+
+> What actually works in commercially shipped products?
+
+That's fundamentally different from catalogue search.
+
+I would prioritize **observed deployed architectures** very heavily.
+
+---
+
+# 6. Substitution needs to be cultivated
+
+This is another thing distributors only partially solve.
+
+Mouser might say:
+
+> suggested replacement: B.
+
+POW can eventually say:
+
+```text
+A → B
+
+function               compatible
+voltage                compatible
+current                superior
+pinout                 incompatible
+footprint              incompatible
+firmware               minor changes
+observed replacement   17 projects
+repair reports         4 successful
+
+confidence             0.91
+```
+
+This graph becomes insanely valuable to:
+
+* robotics design agents;
+* repair agents;
+* procurement systems;
+* manufacturers;
+* custom-build systems.
+
+And it becomes better through accumulated evidence.
+
+**That's garden data.**
+
+---
+
+# 7. Manufacturing quotes are one of the best things to plant
+
+This is where the benchmark idea gets really interesting.
+
+Don't just save JLC's published pricing.
+
+Create stable reference jobs.
+
+For example:
+
+```text
+PCB-A
+100×100 mm
+4 layer
+standard stack
+10 units
+
+PCB-B
+complex motor controller
+6 layer
+2oz copper
+100 units
+
+PRINT-A
+100 cm³ PA12 SLS
+
+PRINT-B
+250 cm³ aluminium SLM
+
+CNC-A
+6061 bracket
+known geometry
+```
+
+Quote the exact same artifacts repeatedly.
+
+Then:
+
+```text
+2026-09    £42
+2026-12    £38
+2027-06    £29
+...
+```
+
+Now we measure **the price of manufacturing capability itself**.
+
+That is extremely difficult to reconstruct historically.
+
+I would absolutely plant those benchmarks.
+
+---
+
+# 8. Build stable reference BOMs
+
+Same concept.
+
+Freeze canonical machines:
+
+```text
+POW-ROVER-1
+basic autonomous rover
+
+POW-ARM-1
+5-axis desktop arm
+
+POW-HOMELAB-1
+local AI/compute node
+
+POW-SOLAR-1
+5kW solar + battery setup
+
+POW-EVSE-1
+7kW home charger
+
+POW-MINER-CPU-1
+CPU compute/mining rig
+
+POW-SMARTROOM-1
+lighting + audio + sensors
+```
+
+Then reprice the exact designs continuously.
+
+You get:
+
+```text
+POW Rover Cost Index
+POW Robot Arm Cost Index
+POW Edge Compute Index
+POW Battery Index
+POW Solar Index
+```
+
+And because you own the reference architecture, you can also calculate **equivalent capability substitution**:
+
+> Same rover capability cost £620 in 2026 and £287 in 2028.
+
+That is much more meaningful than component-price indices.
+
+---
+
+# 9. Collect *new appearances*
+
+This is a fantastic event stream.
+
+Instead of checking everything constantly, ask:
+
+> **What appeared that wasn't there yesterday?**
+
+New:
+
+* LCSC components;
+* JLC Basic parts;
+* boards;
+* SBCs;
+* motors;
+* modules;
+* robot projects;
+* GitHub BOMs;
+* OSHWA projects;
+* Unitree SDK/model releases;
+* EV integrations;
+* ESPHome devices;
+* Zigbee devices;
+* manufacturers;
+* fabrication processes.
+
+Store first-seen timestamps.
+
+Now you get something like:
+
+```text
+2026-11-04
+first observed:
+$14 2D LiDAR module
+
+2026-11-19
+first observed:
+new Chinese NPU board <$30
+
+2027-01-08
+first observed:
+integrated 48V servo controller <$8
+```
+
+That's fantastic Seesaw data.
+
+---
+
+# 10. Track threshold crossings
+
+We don't necessarily care about every movement.
+
+We care when economics change qualitatively.
+
+Examples:
+
+```text
+LiDAR < $20
+NPU > 10 TOPS and < $30
+robot joint < $50
+LiFePO4 < $X/kWh
+N100 box < £70
+48V servo < £25
+SLS PA12 < £X/cm³
+```
+
+POW can maintain thresholds.
+
+When one crosses:
+
+```text
+CAPABILITY EVENT
+
+2D LiDAR
+crossed $20 threshold
+2027-03-12
+
+implications:
+low-cost mobile autonomy
+```
+
+Those moments are much more valuable than 10 billion rows of prices.
+
+---
+
+# 11. Observe **adoption**, not merely availability
+
+Suppose a new Chinese MCU appears.
+
+Price alone doesn't tell us much.
+
+But over six months:
+
+```text
+GitHub projects using it:
+3 → 14 → 88 → 420
+
+LCSC stock:
+20k → 300k → 1.8m
+
+unit price:
+$1.80 → $1.15
+
+new boards:
+2 → 31
+```
+
+That's a powerful diffusion signal.
+
+So for strategic parts, calculate:
+
+```text
+availability
+price
+inventory
+project_mentions
+BOM_occurrences
+new_product_occurrences
+firmware_support
+GitHub activity
+```
+
+Now POW observes **technology adoption curves**.
+
+That's highly garden-worthy.
+
+---
+
+# 12. Failures are another irreversible dataset
+
+Repair information accumulates over time and disappears into:
+
+* forum posts;
+* repair videos;
+* GitHub issues;
+* service manuals;
+* Reddit;
+* seller feedback;
+* technician notes.
+
+Normalize simply:
+
+```text
+product
+component
+symptom
+diagnosis
+repair
+outcome
+source
+date
+```
+
+Eventually:
+
+```text
+Deye inverter X
+→ MOSFET family Y
+→ overrepresented failure
+
+Unitree actuator Z
+→ bearing X
+→ recurring wear after ...
+```
+
+Again: a distributor API cannot answer that.
+
+---
+
+# So what should we *not* collect?
+
+This is equally important.
+
+I wouldn't waste storage/API budget repeatedly storing:
+
+* commodity resistor prices;
+* every capacitor;
+* static datasheet facts every day;
+* descriptions already permanently available upstream;
+* massive duplicate CAD libraries;
+* current inventory where there is no likely historical value;
+* everything “just in case.”
+
+Keep source identifiers and retrieve those things on demand.
+
+The mental model should be:
+
+> **Pointers are cheap. Observations are precious.**
+
+---
+
+# A simple garden-value equation
+
+Before adding any collector, score it mentally on four dimensions:
+
+```text
+G = D × T × R × C
+```
+
+where:
+
+**D — Disappears**
+Will this information disappear/change?
+
+**T — Time compounds**
+Does observing it repeatedly create something new?
+
+**R — Relational value**
+Does it create useful edges between entities?
+
+**C — Consequence**
+Does knowing it affect building, buying, repairing or investing decisions?
+
+Examples:
+
+```text
+LCSC part description
+D low
+T low
+R low
+C medium
+→ query API instead
+
+LCSC price history for robot actuators
+D high
+T high
+R medium
+C high
+→ collect
+
+Open robot BOM at a specific Git commit
+D medium/high
+T high
+R extremely high
+C high
+→ collect
+
+JLC quote for fixed reference design
+D high
+T extremely high
+R high
+C high
+→ collect
+
+Datasheet PDF
+D low
+T zero
+R medium
+C high
+→ index/pointer, archive selectively
+```
+
+This prevents us becoming data hoarders.
+
+---
+
+# Organisation doesn't actually need to be terrifying
+
+I would deliberately make L1 stupidly simple.
+
+Four primitives:
+
+```text
+entities
+observations
+edges
+artifacts
+```
+
+### Entity
+
+```text
+id
+type
+canonical_name
+external_ids
+first_seen
+last_seen
+```
+
+### Observation
+
+```text
+entity_id
+metric
+value
+unit
+observed_at
+source
+raw_ref
+```
+
+For example:
+
+```text
+motor_X
+price
+18.72
+USD
+2026-09-22
+lcsc
+...
+```
+
+### Edge
+
+```text
+subject
+predicate
+object
+observed_at
+evidence
+confidence
+```
+
+### Artifact
+
+```text
+owner_entity
+type
+url/hash
+version
+license
+observed_at
+```
+
+BOM, CAD, firmware, datasheet, image, etc.
+
+That's sufficient for an enormous amount of L1.
+
+**Do not attempt to solve the universal ontology now.**
+
+---
+
+# Then maintain a `watch universe`
+
+This is how I'd practically run it:
+
+```text
+UNIVERSE
+3,000,000 known entities
+
+        ↓ filters
+
+RELEVANT
+100,000 physical-tech entities
+
+        ↓ scoring
+
+WATCHED
+10,000 interesting entities
+monthly
+
+        ↓
+
+HOT
+1,000 frontier entities
+daily
+
+        ↓
+
+ACTIVE
+100 bottlenecks / current BOMs
+hourly or event-driven
+```
+
+And entities move automatically between tiers.
+
+For instance:
+
+```text
+part suddenly appears in 10 robot BOMs
+→ promote
+
+inventory falls 80%
+→ promote
+
+price drops through threshold
+→ promote
+
+nothing interesting for 18 months
+→ demote
+```
+
+Now it scales.
+
+---
+
+# The really insane datasets come later almost for free
+
+Once this exists, we derive things like:
+
+### Physical Moore's Law
+
+```text
+$ / TOPS
+$ / Nm actuator
+$ / kWh storage
+$ / LiDAR point/sec
+$ / robot payload kg
+$ / manufacturing cm³
+```
+
+### Reproduction cost
+
+> How much would it cost today to reproduce a 2026 robot?
+
+### China substitution ratio
+
+> What percentage of a Western BOM now has viable Chinese substitutes?
+
+### Robot commodity frontier
+
+> Cheapest currently purchasable stack satisfying a fixed autonomous-mobile-robot capability.
+
+### Repairability index
+
+> Expected service cost / useful life across architectures.
+
+### Supply concentration
+
+> Which physical capabilities depend on one/few manufacturers?
+
+### Architecture convergence
+
+> Are new robot builders increasingly using the same motors, controllers or protocols?
+
+### Capability diffusion
+
+> How long after a technology appears in expensive equipment does it reach cheap commodity modules?
+
+These datasets **cannot simply be queried from JLC tomorrow**.
+
+That's the moat.
+
+---
+
+## I think this slightly changes the mission of `powparts`
+
+Not:
+
+> **Collect parts.**
+
+Instead:
+
+> **Observe the changing cost, availability, composition and substitutability of physical capabilities.**
+
+That is a much tighter mandate.
+
+`powparts` can know millions of identities, but it should **cultivate history only where time creates value**.
+
+And if I had to choose the first five gardens inside it, I'd start with:
+
+1. **Reference BOM cost indexes** — robots, edge compute, batteries, solar, EVSE.
+2. **Frontier component time series** — actuators, sensors, compute, batteries, power electronics.
+3. **Open-hardware BOM history** — especially robotics/energy.
+4. **Manufacturing benchmark quotes** — PCB/PCBA/3DP/CNC.
+5. **Observed composition + substitution graph** — what actually works with what.
+
+Those five give us much more defensible information than downloading eight million catalogue rows.
+
+The rule for the entire POW project could almost be:
+
+> **Don't store what can be queried later. Store what only exists because we were watching.**
+
+
+
+
+
+
+
+Yes. The stronger starting point is **machine-first, then explode downward into parts**.
+
+Take a real robot or open-source build, freeze that exact version, decompose it, then follow every component sideways into replacements, substitutes, newer revisions, cheaper Chinese equivalents, failures, and observed alternatives. That gives `powparts` a reason to exist from day one instead of becoming a giant undifferentiated catalogue. ([UnitreeRobotics][1])
+
+The graph becomes:
+
+```text
+ROBOT / DEVICE
+   ↓ contains
+SUBSYSTEM
+   ↓ contains
+PART
+   ↓
+├─ cheaper substitute
+├─ drop-in substitute
+├─ Chinese equivalent
+├─ higher-performance substitute
+├─ repair replacement
+└─ newer revision
+```
+
+Then you repeat that with GitHub hardware designs, commercial teardowns, homelab boxes, speakers, lights, EV chargers, inverters, miners, cameras, sensors. Eventually you learn **the design grammar of physical machines** from observed reality rather than trying to invent an ontology upfront.
+
+That has two very different outputs. One is obvious: future robot-design systems query POW because they need grounded components and compatibility. The second is potentially more interesting commercially: POW notices that a component or subsystem has become unusually cheap relative to what it enables and identifies **new consumer products you can now economically construct**.
+
+For example:
+
+```text
+2026:
+depth camera       £65
+edge compute       £90
+2-axis mechanism   £45
+motor control      £22
+printed housing    £28
+
+total              £250
+```
+
+Two years later:
+
+```text
+depth camera       £18
+edge compute       £32
+2-axis mechanism   £19
+motor control      £7
+printed housing    £9
+
+total              £85
+```
+
+Now suddenly a £149 autonomous camera product, desktop robot, tracking speaker, inspection device or weird home object becomes viable. **POW should detect that transition.**
+
+That is what I mean by learning the physical capability frontier.
+
+## There already are Chinese companies doing surprisingly close pieces of the final assembly problem
+
+There is not yet one obvious “prompt → arbitrary finished robot delivered” commodity service that solves everything. But China already has nearly every intermediate primitive.
+
+A particularly relevant example is **Fdata**. It explicitly offers custom robot OEM/ODM: give them a product definition and target price, and they say they can handle industrial design, electronics, mechanics, functional prototypes, verification, mass production and delivery. They advertise 20 assembly lines and 11 SMT lines. ([Fdata Robot][2])
+
+That is remarkably close to the eventual endpoint:
+
+```text
+requirements
+→ engineering
+→ prototype
+→ validation
+→ manufacture
+→ delivery
+```
+
+What's missing is a generalized machine intelligence layer **before** that factory interaction.
+
+Another Shenzhen company I found, **Jiejia / one-stop-mfg**, is almost comically aligned with your thesis at the PCB/system level. It advertises one-stop design and manufacturing specifically for robot wheel-leg drive boards, robot power boards, dexterous-hand PCBAs and linear-joint controllers. Its service includes design, component procurement, DFX review, PCB prototyping, SMT/THT, testing, certification support, aging/coating and failure analysis. ([One Stop MFG][3])
+
+So someone can already say:
+
+> “Here is the controller we need.”
+
+and have a Shenzhen company turn that into working assembled electronics.
+
+There are also firms doing **box-build/system integration**, where they don't stop at the PCB. POE, for example, advertises PCB fabrication, sourcing, PCBA, testing, enclosure-level assembly and final packaging, including work in robotics and IoT. 
+
+On the mechanical side, Shenzhen contract manufacturers already accept STEP files and produce one-offs or low-volume parts via CNC, 3D printing, sheet metal, casting and injection molding. E-Make, for example, advertises 1–100 unit production, 2–7 day prototype lead times and one-stop machining/casting/sheet-metal/molding. ([E-make][4])
+
+So the current ecosystem is approximately:
+
+```text
+POW / DESIGN AGENT
+        ↓
+
+electronics design ──→ PCBA house
+mechanical CAD ──────→ CNC / 3DP house
+commodity parts ─────→ Shenzhen suppliers
+robot platform ──────→ ODM robot factory
+
+        ↓
+
+system assembly
+        ↓
+test
+        ↓
+ship
+```
+
+You don't need a magical factory. **The factories already exist. The routing layer is missing.**
+
+## Unitree itself is already edging toward customization
+
+Unitree now explicitly advertises custom robot services, including industrial design for legged robots, motion-program customization, algorithm optimization, remote diagnostics and “integrated hardware-software co-design consultation.” ([UnitreeRobotics][1])
+
+And their newer R1-D is intentionally presented as a development platform with open programming interfaces, RGB/depth interfaces and end-effector interfaces that can take different actuators. ([UnitreeRobotics][5])
+
+That is another signal of where things are moving:
+
+> **robot as fixed product**
+>
+> becomes
+>
+> **robot as configurable platform**
+
+POW sits underneath the next step:
+
+> **machine assembled from configurable primitives.**
+
+## I especially agree about cameras/sensors
+
+They're likely to become disproportionately important because software intelligence gets cheap while physical observation remains constrained by sensors.
+
+A useful way to model future robots is:
+
+```text
+INTELLIGENCE
+cheap / commodity
+
+        ↓
+
+scarcity migrates toward
+
+SENSING
+ACTUATION
+POWER
+MECHANICAL INTERFACES
+RELIABILITY
+```
+
+So I'd heavily prioritize:
+
+* RGB cameras;
+* global-shutter cameras;
+* depth cameras;
+* thermal cameras;
+* event cameras;
+* microphones;
+* microphone arrays;
+* IMUs;
+* LiDAR;
+* radar;
+* force sensors;
+* torque sensors;
+* tactile sensors;
+* encoders;
+* load cells;
+* proximity/ToF.
+
+And for each one, POW should learn something far richer than price:
+
+```text
+sensor
+├── actual resolution
+├── frame/sample rate
+├── latency
+├── interface
+├── Linux support
+├── ROS support
+├── physical dimensions
+├── lens/FOV
+├── power
+├── environment limits
+├── calibration requirements
+├── observed robots
+├── observed failures
+├── compatible compute
+├── replacements
+├── Chinese alternatives
+└── price history
+```
+
+A $12 camera with excellent Linux/ROS support can be far more useful than a technically superior $8 camera with terrible drivers.
+
+So **compatibility itself becomes an economic attribute**.
+
+## “Industry standard” should probably be something POW measures
+
+Rather than manually saying:
+
+> this is industry standard.
+
+Derive it.
+
+For every component:
+
+```text
+adoption_score =
+  deployed_product_count
++ open_BOM_count
++ GitHub_project_count
++ software_driver_support
++ supplier_count
++ replacement_availability
++ documentation_quality
+```
+
+You then get:
+
+```text
+COMPONENT A
+
+price                    $18
+performance              74
+compatibility            96
+ecosystem                94
+availability             91
+observed designs         8,482
+```
+
+versus:
+
+```text
+COMPONENT B
+
+price                    $11
+performance              82
+compatibility            41
+ecosystem                26
+availability             67
+observed designs         93
+```
+
+An autonomous designer may correctly pick A despite it costing more.
+
+That's another way POW adds value beyond Alibaba search.
+
+## Speakers are actually a great example
+
+A speaker is almost the perfect small physical-computing object:
+
+```text
+amplifier
+DAC
+DSP
+microphones
+speaker driver
+enclosure
+power
+Wi-Fi/Bluetooth
+compute
+```
+
+With good enough data, an AI could eventually say:
+
+> “I want a high-quality spatial speaker for this particular room, with local speech inference.”
+
+POW determines:
+
+```text
+drivers
+amplifier
+DSP
+mic array
+compute
+enclosure volume
+port geometry
+power supply
+```
+
+The enclosure gets generated parametrically and printed/CNC'd.
+
+That is far easier than a humanoid.
+
+So I think the physical-AI transition might actually begin through lots of little objects:
+
+> cameras that move
+> speakers that perceive
+> lights that sense
+> desks that actuate
+> plant systems
+> small inspection robots
+> tracking cameras
+> smart displays
+> little arms
+> home lab appliances
+
+rather than everybody immediately ordering humanoids.
+
+And every one uses the same POW graph.
+
+## Assembly is the problem — but also another dataset
+
+Don't solve it abstractly.
+
+**Observe how existing machines are assembled.**
+
+For each seed robot, add:
+
+```text
+ASSEMBLY
+
+part A
+   fastened_to part B
+   4 × M4×12
+
+part B
+   connected_to controller C
+   JST-XH-4
+
+motor
+   coupled_to gearbox
+   keyed 8mm shaft
+
+PCB
+   mounted_to chassis
+   4 × M3 standoff
+```
+
+Suddenly the graph isn't merely `contains`.
+
+It's:
+
+```text
+contains
+mounted_to
+bolted_to
+wired_to
+soldered_to
+coupled_to
+powered_by
+communicates_with
+```
+
+That is **assembly knowledge**.
+
+An AI can learn a huge amount merely from enough actual designs.
+
+CAD gives geometry.
+
+BOM gives identity.
+
+Firmware gives behavior.
+
+Assembly edges connect them.
+
+That combination is powerful.
+
+## And custom hardware doesn't need to start with full custom engineering
+
+There are three increasingly difficult levels:
+
+```text
+LEVEL 1 — COMPOSE
+off-the-shelf modules
+
+LEVEL 2 — ADAPT
+custom enclosure / brackets / wiring / small PCB
+
+LEVEL 3 — INTEGRATE
+custom PCBA + custom mechanical design
+```
+
+The future vibe-coded hardware system should **prefer Level 1 whenever possible**.
+
+Example:
+
+> tracking camera
+
+could initially be:
+
+```text
+N100 / Pi
+USB camera
+commodity pan/tilt module
+USB-C PSU
+3D printed enclosure
+```
+
+No new PCB.
+
+Once 500 people build it, POW discovers:
+
+> These five modules recur constantly.
+
+Then it collapses them into:
+
+```text
+custom board
+custom enclosure
+```
+
+That's how hardware startups already evolve, except POW could automate the detection.
+
+## This gives you an excellent startup-discovery mechanism
+
+Suppose the graph observes 50 open designs containing:
+
+```text
+Pi / N100
++
+4-mic array
++
+Class-D amp
++
+camera
++
+servo
+```
+
+And those designs all have some ugly collection of breakout boards.
+
+POW could infer:
+
+> There is probably demand for an integrated **AI room-node board** containing these primitives.
+
+Then we investigate the market.
+
+Similarly:
+
+```text
+robot designs:
+80% need
+CAN + encoder + motor driver + current sensing
+```
+
+That's a candidate board.
+
+Or:
+
+```text
+home energy designs:
+battery + inverter + Modbus + CT meter + local compute
+```
+
+Another reusable appliance.
+
+This is exactly the PiEEG pattern you noticed:
+
+> recurrent useful physical configuration → standardized board → tiny company.
+
+## I think the seed strategy is now extremely clear
+
+Don't say:
+
+> ingest robotics.
+
+Say:
+
+> **choose 25 canonical machines and understand them completely.**
+
+For example:
+
+```text
+5 robots
+5 home/edge compute systems
+5 energy systems
+5 repairable consumer devices
+5 open hardware projects
+```
+
+For every one:
+
+```text
+product
+↓
+subsystems
+↓
+parts
+↓
+interfaces
+↓
+software
+↓
+CAD
+↓
+assembly
+↓
+suppliers
+↓
+replacements
+↓
+failures
+```
+
+Then recursively expand only where a real edge leads us.
+
+So:
+
+```text
+Unitree actuator
+    ↓
+
+motor
+bearing
+encoder
+controller
+
+    ↓
+
+alternatives for each
+
+    ↓
+
+robots/products using those alternatives
+```
+
+The graph **grows organically from physically meaningful seeds** instead of us trying to catalogue planet Earth.
+
+That is exactly what the data-garden thesis needs.
+
+Eventually, when some future robotics startup sends its AI:
+
+```text
+"I need a compact 8 Nm joint,
+48V,
+CAN,
+under $60."
+```
+
+POW doesn't need to know every component ever manufactured.
+
+It needs to know the small but extremely rich region of the graph around:
+
+**robot joints → actual deployed architectures → parts → alternatives → failures → suppliers → cost → manufacturing.**
+
+And that can be much more valuable than a 10-million-SKU API.
+
+The Chinese manufacturing ecosystem already demonstrates that **design → prototype → assembly → finished machine** is commercially available today; what's fragmented is the knowledge required to reliably choose and connect the right services and components. That's precisely the layer worth planting now. ([One Stop MFG][3])
+
+[1]: https://shop.unitree.com/pages/uni?utm_source=chatgpt.com "Uni – UnitreeRobotics"
+[2]: https://www.fdatabot.com/?utm_source=chatgpt.com "Mobile Robot & AMR Manufacturer in China | Fdata"
+[3]: https://www.one-stop-mfg.com/?utm_source=chatgpt.com "捷嘉智造PCBA一站式服务，提供PCBA打样、PCBA加工、PCBA代工代料服务-捷嘉智造工业互联网（深圳）有限公司"
+[4]: https://e-make.co/?utm_source=chatgpt.com "Rapid Prototyping, CNC Machining & 3D Printing | E-Make"
+[5]: https://shop.unitree.com/zh-ca/products/unitree-r1-d?utm_source=chatgpt.com "Unitree R1-D – UnitreeRobotics"
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1942 @@
+This is the right scientific framing. The object BEAR should model is not “a coin” or even “an influencer.” It is a **latent market regime and information-diffusion process**.
+
+# BEAR META SCIENCE
+
+## 1. What a crypto “meta” actually is
+
+A useful operational definition is:
+
+> A **meta** is a temporary coordination regime in which a coherent narrative causes attention, capital, product activity and social behaviour to become mutually reinforcing across a related group of assets.
+
+That makes it different from simple hype.
+
+A narrative becomes a meta when:
+
+```text
+IDEA / CATALYST
+      ↓
+INFORMED DISCOVERY
+      ↓
+INDEPENDENT VALIDATION
+      ↓
+CAPITAL FOLLOWS
+      ↓
+ATTENTION FOLLOWS
+      ↓
+PRICE VALIDATES ATTENTION
+      ↓
+MORE PEOPLE ADOPT THE NARRATIVE
+      ↓
+MORE CAPITAL ENTERS
+      ↓
+REFLEXIVE META
+```
+
+Eventually:
+
+```text
+NOVELTY FALLS
+      ↓
+EVERYONE KNOWS
+      ↓
+MARGINAL SOURCE QUALITY FALLS
+      ↓
+EARLY MONEY DISTRIBUTES
+      ↓
+MORE ATTENTION PRODUCES LESS PRICE RESPONSE
+      ↓
+META DECAYS
+```
+
+There is actual empirical support for distinguishing **novel information** from mere attention. A recent study using millions of crypto news items finds that greater coverage breadth tends to predict *lower* subsequent returns, while genuinely novel coverage predicts *higher* subsequent returns. Twitter research likewise finds that abnormal investor ticker attention has short-horizon predictive value, while increasing mass attention contributes to herd-like synchronization. ([SSRN][1])
+
+Research on narrative attention additionally finds feedback in both directions: narrative prevalence can precede returns in related cryptocurrencies, while price moves themselves feed narrative prevalence. That's almost precisely the reflexive mechanism we are trying to model. ([ScienceDirect][2])
+
+So:
+
+```text
+MENTIONS ↑
+```
+
+is **not necessarily bullish**.
+
+Potentially:
+
+```text
+NOVEL informed mentions ↑
++
+independent sources ↑
++
+capital confirmation ↑
+```
+
+is bullish.
+
+While:
+
+```text
+raw mentions ↑↑↑
+novelty ↓
+copying ↑
+smart-money selling ↑
+```
+
+may mean the meta is dying.
+
+---
+
+# 2. Model META as a hidden state
+
+I would add this state machine to BEAR:
+
+```text
+M0 DORMANT
+   No coordinated narrative.
+
+M1 SEED
+   Catalyst or novel idea appears.
+
+M2 INFORMED DISCOVERY
+   Small/high-quality sources begin noticing it.
+
+M3 INDEPENDENT VALIDATION
+   Multiple unrelated informed clusters converge.
+
+M4 REFLEXIVE ACCELERATION
+   Attention + capital + price reinforce each other.
+
+M5 AMPLIFICATION
+   Major KOLs / mainstream CT arrive.
+
+M6 SATURATION
+   Narrative becomes common knowledge.
+
+M7 DISTRIBUTION / DECAY
+   Early participants sell; marginal attention stops working.
+
+M8 REVIVAL
+   New catalyst creates another wave.
+```
+
+Do **not** hardcode that a meme meta lasts three days or an AI meta lasts three months.
+
+Use a **Hidden Semi-Markov Model**, not just an HMM, because duration itself is informative:
+
+```text
+P(meta_state_t | everything known ≤ t)
+```
+
+with learned state-duration distributions.
+
+Approximate priors might eventually show:
+
+```text
+micro-meme burst       hours → days
+chain meme meta         days → weeks
+sector narrative        weeks → months
+macro crypto regime     months
+```
+
+but BEAR should discover those distributions.
+
+---
+
+# 3. Four scientific models fit together
+
+### HSMM — what state are we in?
+
+Answers:
+
+```text
+P(MEME_ACCELERATION) = ?
+P(SATURATION) = ?
+```
+
+### Hawkes process — how is information spreading?
+
+Crypto narratives are self-exciting.
+
+One event causes more events:
+
+```text
+Yeon
+ ↓
+three trenches accounts
+ ↓
+Unipcs
+ ↓
+Ansem
+ ↓
+20,000 CT accounts
+```
+
+A multivariate Hawkes model lets us estimate:
+
+```text
+source_i → source_j influence
+```
+
+and the reproduction/branching rate of the narrative.
+
+Hawkes-process research is explicitly used for separating endogenous from exogenous event generation and for learning information-diffusion structure. ([DOI.org][3])
+
+### Change-point detection — when did something actually change?
+
+Detect discontinuities in:
+
+```text
+attention
+wallet flows
+DEX volume
+holder growth
+narrative breadth
+cross-asset returns
+```
+
+instead of manually declaring:
+
+> meme season started Tuesday.
+
+### Survival analysis — how likely is this meta to die?
+
+Estimate:
+
+```text
+hazard(meta ends in next 24h | state)
+```
+
+Social presence itself appears relevant to crypto survival: research has found declining/high-quality social attention associated with changes in cryptocurrency failure hazard. ([AIS eLibrary][4])
+
+---
+
+# 4. The actual META feature vector
+
+For every narrative `N` at timestamp `t`, calculate four major groups.
+
+## SOCIAL / INFORMATION
+
+```text
+weighted_mentions
+novel_mentions
+unique_sources
+high_skill_sources
+independent_source_clusters
+
+mention_velocity
+mention_acceleration
+cascade_depth
+cascade_branching_ratio
+
+source_entropy
+community_entropy
+
+copy_ratio
+semantic_duplicate_ratio
+
+average_source_reputation
+
+first_scout_timestamp
+first_medium_KOL_timestamp
+first_major_KOL_timestamp
+
+attention_concentration
+attention_breadth
+```
+
+The killer derived feature may be:
+
+```text
+NOVELTY / BREADTH
+```
+
+High novelty + growing breadth:
+
+```text
+healthy discovery
+```
+
+Huge breadth + zero novelty:
+
+```text
+possibly saturated
+```
+
+---
+
+# 5. Source hierarchy matters enormously
+
+The same post carries different information depending on where the narrative already sits.
+
+Create learned roles:
+
+```text
+ORIGINATOR
+SCOUT
+SPECIALIST
+VALIDATOR
+EXECUTOR
+INTERPRETER
+AMPLIFIER
+PRIMARY_SOURCE
+DATA_SOURCE
+EXIT/DISTRIBUTION_SENSOR
+```
+
+Then construct:
+
+```text
+tiny informed scout
+        ↓
+independent specialist
+        ↓
+wallet confirmation
+        ↓
+medium KOL
+        ↓
+Ansem
+        ↓
+mainstream CT
+```
+
+What matters isn't merely:
+
+```text
+ANSEM MENTIONED PONS
+```
+
+It's:
+
+```text
+WHEN DID ANSEM ARRIVE
+RELATIVE TO THE INFORMATION CASCADE?
+```
+
+---
+
+# 6. The Ansem experiment
+
+Do not assume:
+
+> Ansem mention = bullish.
+
+Make it a formal event study.
+
+For every first mention by `@blknoiz06`, record:
+
+```text
+token age
+market cap
+liquidity
+
+return:
+    prior 15m
+    prior 1h
+    prior 4h
+    prior 24h
+
+number of previous mentions
+number of high-quality scouts already mentioning
+
+semantic novelty before Ansem
+mention breadth before Ansem
+
+smart-wallet net flow
+holder growth
+DEX volume
+funding/OI if applicable
+
+parent crypto regime
+meme regime
+
+originator selling?
+```
+
+Then measure from the exact post timestamp:
+
+```text
+return_5m
+return_15m
+return_1h
+return_4h
+return_24h
+return_3d
+
+MFE
+MAE
+
+new-holder growth
+volume acceleration
+social acceleration
+```
+
+The hypothesis might be:
+
+```text
+Ansem @ M2/M3:
+    extremely powerful amplifier
+
+Ansem @ M4:
+    useful confirmation
+
+Ansem @ M5/M6:
+    little edge
+
+Ansem @ M6 + originators selling:
+    possible distribution signal
+```
+
+But **BEAR determines which is true**.
+
+His present feed is useful precisely because he remains heavily associated with Solana ecosystem/narrative propagation; for example recent posts explicitly frame Solana's next cycle around real applications and businesses beyond the previous memecoin phase. ([TwStalker][5])
+
+---
+
+# 7. Generalize this to EVERY influential source
+
+For each pair of sources:
+
+```text
+SOURCE A first mentions narrative
+             ↓  Δt
+SOURCE B first mentions narrative
+             ↓
+price/capital response
+```
+
+Build a learned matrix:
+
+```text
+           Yeon   Seva   Unipcs   Ansem   Mainstream
+
+Yeon        —      +9h    +22h     +31h      +3d
+Seva       ...      —     +14h     +20h      +2d
+...
+```
+
+Then derive:
+
+```text
+median_lead_time
+conditional_lead_time
+source_transition_probability
+```
+
+Eventually BEAR knows:
+
+> When these three obscure accounts converge, Ansem historically arrives ~18 hours later.
+
+That is vastly more interesting than sentiment.
+
+---
+
+# 8. Non-obvious early-meta signals
+
+A genuinely early meta may look like:
+
+```text
+price ↑ modestly
+mentions ↑ modestly
+NOVELTY ↑↑
+high-quality scouts ↑
+independent communities ↑
+wallet accumulation ↑
+holder growth ↑
+```
+
+The obvious public metrics haven't exploded yet.
+
+Other potentially excellent early signals:
+
+```text
+wallet activity leads X activity
+
+high-quality X sources lead wallet activity
+
+multiple unrelated source communities converge
+
+builder accounts begin interacting with the concept
+
+ecosystem product usage moves before token chatter
+
+cross-chain analogues begin appearing
+
+several tokens representing the same concept start outperforming
+
+one asset starts becoming the canonical representation
+
+successful-launch percentage inside the theme increases
+
+new entrants survive longer instead of instantly dying
+
+price impact per unit of attention remains high
+```
+
+That last one is interesting.
+
+Define:
+
+```text
+ATTENTION_ELASTICITY
+=
+forward return
+/
+incremental weighted attention
+```
+
+Early meta:
+
+```text
+one good post → huge response
+```
+
+Saturated meta:
+
+```text
+100 giant accounts post → price barely moves
+```
+
+---
+
+# 9. Extremely useful late-meta warning signs
+
+I'd explicitly measure:
+
+```text
+novelty ↓
+breadth ↑↑
+
+semantic duplicate ratio ↑
+
+large-account share ↑
+small-informed-source share ↓
+
+smart-wallet inflow → outflow
+
+originator wallets begin taking profit
+
+holder growth slows
+while Twitter activity continues accelerating
+
+price response / mention falls
+
+volume remains high
+but unique buyers plateau
+
+leader captures nearly all narrative capital
+
+secondary assets stop participating
+
+new launches increasingly fail
+
+funding/OI becomes extreme
+
+spot flow fails to confirm perp leverage
+
+bundled/insider ownership increases
+
+liquidity depth stops growing
+
+major exchange/listing catalyst produces weak response
+```
+
+The classic saturation configuration could therefore be:
+
+```text
+ATTENTION ↑↑↑
+NOVELTY ↓
+SMART FLOW ↓
+BREADTH ↓
+PRICE ELASTICITY ↓
+```
+
+That's much more useful than RSI 80.
+
+---
+
+# 10. Wallets: yes, use them — but don't make them the brain
+
+Your instinct about X is largely right.
+
+X is unusually useful because it gives us:
+
+```text
+WHY
+WHAT THESIS
+WHAT META
+WHEN SOMEONE REALIZED IT
+WHAT THEY EXPECT
+WHAT WOULD INVALIDATE IT
+```
+
+A blockchain cannot tell us that.
+
+Wallets tell us:
+
+```text
+WHAT CAPITAL ACTUALLY DID
+```
+
+The ideal architecture is therefore:
+
+```text
+                  X
+        semantic intelligence
+                 │
+                 ▼
+              CLAIM
+                 │
+        ┌────────┴────────┐
+        ▼                 ▼
+     MARKET             WALLET
+   validation       action validation
+        │                 │
+        └────────┬────────┘
+                 ▼
+               GRAPH
+```
+
+Wallets should **validate/refute** social intelligence.
+
+---
+
+# 11. Why wallet-only systems are noisy
+
+A wallet sending tokens doesn't necessarily mean:
+
+```text
+SELL
+```
+
+It might mean:
+
+```text
+LP
+collateral
+OTC
+custody change
+market making
+hedge
+cross-wallet transfer
+bridge
+staking
+```
+
+Likewise today's "great wallets" create survivor bias if we retrospectively analyze only wallets that are now rich.
+
+So use:
+
+```text
+known trader wallet
++
+explicit action
++
+behavioral history
+```
+
+where possible.
+
+Unknown wallets become prospective cohorts.
+
+---
+
+# 12. Words-vs-wallet could be one of BEAR's strongest primitives
+
+For identities we can confidently link:
+
+```text
+POST_TIME
+WALLET_ACTION_TIME
+
+wallet_before_post
+wallet_after_post
+
+direction_agreement
+size_change
+holding_duration
+
+entry_market_cap
+exit_market_cap
+
+realized_return
+```
+
+Then:
+
+```text
+SKIN_IN_GAME
+WORDS_WALLET_ALIGNMENT
+FRONTRUN_LEAD_TIME
+POST_AFTER_BUY_DELAY
+SELL_WHILE_BULLPOSTING
+```
+
+Imagine BEAR learns:
+
+```text
+Trader X:
+public bullish calls = mediocre
+
+BUT
+
+bullish post +
+wallet added within previous 60m
+= extremely strong
+```
+
+That's a real learned primitive.
+
+---
+
+# 13. The parent of everything: REGIME
+
+I agree this should sit at the root.
+
+```text
+GLOBAL_MACRO
+      │
+      ▼
+BTC REGIME
+      │
+      ├── ALT REGIME
+      │
+      ├── MEME REGIME
+      │
+      ├── DEFI REGIME
+      │
+      └── AI / TAO / ECOSYSTEM REGIMES
+```
+
+A particular alpha can invert across regimes.
+
+Example:
+
+```text
+small meme scout call
+
+MEME HOT:
+   valuable
+
+MEME DEAD:
+   irrelevant
+
+BTC CRASH:
+   potentially dangerous even if scout is right eventually
+```
+
+So every source reputation needs:
+
+```text
+source
+× primitive
+× asset/sector
+× regime
+× horizon
+```
+
+Not a universal `0.82 trader score`.
+
+---
+
+# 14. Your three regime accounts are good and importantly different
+
+### `@chrono_chartist`
+
+This is a **TACTICAL_REGIME / TURNING_POINT / LEVEL** source.
+
+Recent posts contain explicit Bitcoin price targets/levels and bearish-divergence observations rather than vague macro prose. That makes him exceptionally easy to backtest objectively. ([TwStalker][6])
+
+Run the protocol.
+
+### `@spacepixel`
+
+Much more interesting for:
+
+```text
+CYCLE_REGIME
+META_DISCOVERY
+SECTOR_ROTATION
+```
+
+rather than four-hour trading.
+
+He has made explicit cycle-timing claims and currently frames crypto cycles around a small number of dominant metas, arguing that major metas tend to begin grassroots before institutional capital arrives. ([TwStalker][7])
+
+Run the protocol.
+
+### `@0xaporia`
+
+Strong candidate for:
+
+```text
+TREND_REGIME
+SYSTEMATIC_PROCESS
+RISK
+```
+
+Current/historical posts emphasize trend-following, falsifiability, clean data, OOS validation and avoiding unnecessary prediction. That is exactly the kind of source whose claims we can quantitatively reconstruct. ([TwStalker][8])
+
+Run the protocol.
+
+Those three are complementary, not redundant.
+
+---
+
+# 15. Canonical source roles
+
+For every primitive family I want approximately five independent epistemic roles:
+
+| Role            | Function                                |
+| --------------- | --------------------------------------- |
+| **Primary**     | Knows because they build/run the thing  |
+| **Scout**       | Sees it unusually early                 |
+| **Interpreter** | Understands what it means               |
+| **Executor**    | Commits capital / reads flow            |
+| **Amplifier**   | Tells us when broader attention arrives |
+
+We don't necessarily need one account to perform all five.
+
+---
+
+# 16. RECON PANEL 1 — GLOBAL/BTC REGIME
+
+These are the five I would extract first:
+
+| Source               | Primitive                             |
+| -------------------- | ------------------------------------- |
+| **@chrono_chartist** | tactical turning points / levels      |
+| **@spacepixel**      | cycle + meta timing                   |
+| **@0xaporia**        | trend regime                          |
+| **@*Checkmatey***    | on-chain Bitcoin regime               |
+| **@TechDev_52**      | business-cycle / alt-cycle hypotheses |
+
+_Checkmate is currently publishing a quantified Bitcoin regime-change framework around price/on-chain conditions rather than generic bullishness. ([TwStalker][9])
+
+TechDev currently has specific, falsifiable business-cycle and alt-dominance theses. That makes it worth testing even if BEAR ultimately finds no edge. ([TwStalker][10])
+
+**Coverage:**
+
+```text
+cycle
+trend
+onchain
+turning points
+alt rotation
+```
+
+---
+
+# 17. RECON PANEL 2 — GLOBAL LIQUIDITY / MACRO
+
+| Source               | What to mine                              |
+| -------------------- | ----------------------------------------- |
+| **@crossbordercap**  | global liquidity / capital flows          |
+| **@LynAldenContact** | monetary/fiscal structure                 |
+| **@AndreasSteno**    | macro nowcasting                          |
+| **@NoelleInMadrid**  | crypto-specific macro transmission        |
+| **@jameslavish**     | rates/Treasury/BTC liquidity transmission |
+
+CrossBorder Capital explicitly specializes in global liquidity and capital-flow measurement, which is the correct upstream primitive rather than generic economic commentary. ([TwStalker][11])
+
+Noelle Acheson's entire current publication is explicitly about the intersection of crypto and macro. ([TwStalker][12])
+
+**Primitive family:**
+
+```text
+GLOBAL_LIQUIDITY
+USD_LIQUIDITY
+RISK_LIQUIDITY
+RATE_REGIME
+FISCAL_REGIME
+CRYPTO_MACRO_TRANSMISSION
+```
+
+---
+
+# 18. RECON PANEL 3 — TACTICAL DISCRETIONARY TRADING
+
+Keep your existing work here:
+
+| Source               | Primary mining target            |
+| -------------------- | -------------------------------- |
+| **@Trader_XO**       | structural price map             |
+| **@astronomer_zero** | directional/level calls          |
+| **@Timeless_Crypto** | conviction + chart shorts        |
+| **@lBattleRhino**    | directional setups               |
+| **@CryptoBheem**     | BTC directional/systematic views |
+
+These should remain separate from regime analysts.
+
+A person can be excellent at:
+
+```text
+BTC is in a bull regime
+```
+
+and terrible at:
+
+```text
+buy 83,420 now.
+```
+
+Different primitives.
+
+---
+
+# 19. RECON PANEL 4 — DERIVATIVES / ORDER FLOW
+
+This panel is extremely strong.
+
+| Source           | Primitive                            |
+| ---------------- | ------------------------------------ |
+| **@52kskew**     | CVD / aggressive flow / OI           |
+| **@exitpumpBTC** | order book / passive liquidity       |
+| **@Husslin_**    | perp/spot/MM positioning             |
+| **@ByzGeneral**  | funding/OI/liquidations              |
+| **@0xLoris**     | market-maker positions / Hyperliquid |
+
+52kSkew and exitpump routinely publish specific order-flow interpretations rather than broad sentiment. ([TwStalker][13])
+
+Husslin's analyses explicitly combine perp premium, OI, market-maker behaviour and large Hyperliquid trader positioning. ([TwStalker][14])
+
+ByzGeneral is useful for funding/liquidation/OI state. ([TwStalker][15])
+
+**Coverage:**
+
+```text
+ORDERFLOW
+CVD
+OI
+FUNDING
+LIQUIDATIONS
+ORDERBOOK
+MM_POSITIONING
+```
+
+This becomes the bridge between:
+
+```text
+REGIME
+```
+
+and actual execution.
+
+---
+
+# 20. RECON PANEL 5 — ONCHAIN SMART MONEY
+
+| Source           | Primitive                                         |
+| ---------------- | ------------------------------------------------- |
+| **@EmberCN**     | labeled whale/exchange flows                      |
+| **@ai_9684xtpa** | whale + Binance + Hyperliquid intelligence        |
+| **@OnchainLens** | address-level movements                           |
+| **@lookonchain** | whale/trader discovery                            |
+| **@bubblemaps**  | wallet clusters / bundling / hidden concentration |
+
+EmberCN routinely publishes address-level deposits, transfers and Hyperliquid positions. ([TwStalker][16])
+
+OnchainLens and Lookonchain provide another independent stream of concrete wallet events. ([TwStalker][17])
+
+Bubblemaps supplies a different primitive entirely: identifying coordinated ownership and bundled wallets. Current examples include tracing a Robinhood trader across wallets and identifying tokens with 60–80% bundled ownership. ([TwStalker][18])
+
+This is an excellent five because they do **not all measure the same thing**.
+
+---
+
+# 21. RECON PANEL 6 — MEME ORIGINATORS / EARLY SCOUTS
+
+These are not "proven best traders."
+
+They are the **highest-information-value candidates to test**:
+
+| Source                            | Hypothesis                                |
+| --------------------------------- | ----------------------------------------- |
+| **@yeon__**                       | extremely early ecosystem/meta scout      |
+| **@SevaFTW**                      | micro-cap discovery + position management |
+| **@kenjidgn**                     | Robinhood/trench thesis discovery         |
+| **@0xnobi**                       | PONS/Robinhood specialist                 |
+| **@PhilOnChain / @Wolves_Techml** | obscure early-discovery candidates        |
+
+Yeon's archived behaviour includes active reassessment of Robinhood-chain narratives and moving between theses as fundamentals changed. ([TwStalker][19])
+
+Kenji is currently deeply focused on Robinhood-chain infrastructure and smaller ecosystem bets rather than broad-market engagement farming. ([TwStalker][20])
+
+Nobi remains heavily specialized in PONS/Robinhood activity and posts chain-level transaction/economic observations around that ecosystem. ([TwStalker][21])
+
+The protocol now needs to determine whether the historical "caught X at $Y market cap" claims actually survive complete-corpus reconstruction.
+
+---
+
+# 22. RECON PANEL 7 — ATTENTION AMPLIFIERS
+
+This deserves to be a separate primitive.
+
+| Source                 | Role                                   |
+| ---------------------- | -------------------------------------- |
+| **@blknoiz06 / Ansem** | major crypto/meme attention transition |
+| **@theunipcs**         | high-conviction meme amplification     |
+| **@Overdose_AI**       | cross-chain meta amplifier             |
+| **@inversebrah**       | memetic/cultural diffusion             |
+| **@spacepixel**        | narrative/cycle propagation            |
+
+Unipcs currently gives highly explicit public-position and meta-rotation theses, including Robinhood/BNB-style ecosystem rotation. ([TwStalker][22])
+
+Ansem's role should not be assumed to be "best scout." He is valuable as an enormous **attention state transition**.
+
+This gives us:
+
+```text
+AMPLIFIER_FIRST_MENTION
+AMPLIFIER_COUNT
+AMPLIFIER_VELOCITY
+AMPLIFIER_STAGE
+```
+
+---
+
+# 23. RECON PANEL 8 — HYPERLIQUID
+
+This absolutely deserves its own subgraph.
+
+| Source              | Role                                    |
+| ------------------- | --------------------------------------- |
+| **@chameleon_jeff** | primary ecosystem source                |
+| **@_stevenhl**      | ecosystem/fundamental analyst           |
+| **@HyperliquidR**   | institutional-style HIP/market research |
+| **@0xBroze**        | HyperEVM / DeFi specialist              |
+| **@NMTD8**          | hardcore HYPE adoption/meta observer    |
+
+NMTD is currently almost entirely Hyperliquid-specific and focuses on user growth, liquidity-network effects and adoption. ([TwStalker][23])
+
+HyperliquidR and 0xBroze specialize much more narrowly in ecosystem economics/HIP structures than generic CT. ([TwStalker][24])
+
+Jeff is a **primary source**, not a trader-reputation source; that's why he belongs.
+
+**Hyperliquid primitives:**
+
+```text
+HYPE_VALUE_CAPTURE
+HIP3_GROWTH
+HIP4_GROWTH
+HYPEREVM_USAGE
+USDH
+BUYBACK
+OPEN_INTEREST
+WHALE_POSITION
+LIQUIDITY_SHARE
+CEX_MARKET_SHARE
+FRONTEND_ADOPTION
+```
+
+---
+
+# 24. RECON PANEL 9 — TAO / BITTENSOR
+
+I strongly agree that TAO cannot just sit inside "AI coins."
+
+It deserves an entire native graph.
+
+My first five:
+
+| Source               | Why                                 |
+| -------------------- | ----------------------------------- |
+| **@SubnetStats**     | subnet holder/rotation intelligence |
+| **@taodotbot**       | TAO/subnet flow                     |
+| **@taostats**        | canonical onchain/subnet data       |
+| **@WeAreSubConnect** | external-revenue/subnet economics   |
+| **@SiamKidd**        | investor/subnet-team diligence      |
+
+Then second wave:
+
+```text
+@tseutseutao
+@taodaily_io
+@bittensor_alert
+```
+
+TAO's graph is radically richer than ordinary token analysis.
+
+Taostats currently exposes per-subnet:
+
+```text
+price
+volume
+market cap
+chain buys
+emission
+liquidity
+root proportion
+incentive burn
+registration
+deregistration
+```
+
+and historical data. ([docs.taostats.io][25])
+
+### Native TAO primitives
+
+```text
+SUBNET_NET_FLOW
+SUBNET_CHAIN_BUYS
+
+ALPHA_PRICE
+ALPHA_LIQUIDITY
+
+EMISSION_SHARE
+EMISSION_CHANGE
+
+ROOT_WEIGHT
+VALIDATOR_SUPPORT
+
+OWNER_BEHAVIOUR
+
+EXTERNAL_REVENUE
+PRODUCT_USAGE
+
+SUBNET_REGISTRATION
+DEREGISTRATION_RISK
+
+INCENTIVE_BURN
+ALPHA_DILUTION
+
+TAO → ALPHA ROTATION
+ALPHA → TAO ROTATION
+
+SUBNET_CATEGORY_ROTATION
+AI_PRODUCT_ADOPTION
+```
+
+The graph becomes:
+
+```text
+TAO
+ │
+ ├── SN64 Chutes
+ ├── SN51 Lium
+ ├── SN4 Targon
+ └── ...
+       │
+       ├── owner
+       ├── validators
+       ├── miners
+       ├── product
+       ├── revenue
+       ├── alpha token
+       ├── emissions
+       └── holders
+```
+
+This could become a strategy in its own right.
+
+---
+
+# 25. RECON PANEL 10 — SOLANA ECOSYSTEM
+
+| Source           | Primitive                    |
+| ---------------- | ---------------------------- |
+| **@mert**        | infrastructure/adoption      |
+| **@rajgokal**    | ecosystem/business direction |
+| **@weremeow**    | liquidity/product direction  |
+| **@blknoiz06**   | consumer/meta attention      |
+| **@SolanaFloor** | ecosystem event aggregation  |
+
+Raj's current feed is particularly useful because it simultaneously surfaces tokenized assets, technical throughput, ecosystem governance and the emerging "Solana businesses/apps" narrative. ([TwStalker][5])
+
+The interesting meta isn't:
+
+```text
+SOL bullish
+```
+
+It's:
+
+```text
+Solana meme casino
+        ↓
+Solana consumer/business ecosystem
+        ↓
+tokenized assets / trading
+        ↓
+apps producing real cash flow
+```
+
+Ansem is already explicitly articulating this transition. ([TwStalker][5])
+
+BEAR should test whether app activity actually confirms it.
+
+---
+
+# 26. RECON PANEL 11 — BASE / TOKENIZED STOCK / RWA META
+
+| Source           | Role                                |
+| ---------------- | ----------------------------------- |
+| **@jessepollak** | primary Base direction              |
+| **@0xJeff**      | cross-chain/meta interpreter        |
+| **@Overdose_AI** | ecosystem/meta trader               |
+| **@Oxxbid**      | market/trading discovery            |
+| **@DefiIgnas**   | fundamentals/cross-chain comparison |
+
+Jesse's current feed is directly interacting with Base trading products and tokenized-stock liquidity infrastructure. ([TwStalker][26])
+
+Ignas is currently explicitly testing the economics of tokenized-stock/RWA migrations across chains and whether activity actually produces value for the underlying ecosystem. ([TwStalker][27])
+
+That's a beautiful example of:
+
+```text
+NARRATIVE CLAIM
+      ↓
+PROTOCOL USAGE
+      ↓
+FEES
+      ↓
+TOKEN VALUE CAPTURE
+```
+
+rather than merely tracking mentions.
+
+---
+
+# 27. RECON PANEL 12 — AI AGENTS / x402 / AUTONOMOUS ECONOMY
+
+| Source           | Primitive                                         |
+| ---------------- | ------------------------------------------------- |
+| **@0xJeff**      | agent/x402 meta research                          |
+| **@ethermage**   | Virtuals architecture                             |
+| **@virtuals_io** | primary ecosystem                                 |
+| **@aixbt_agent** | machine-generated market-intelligence propagation |
+| **@bankrbot**    | actual autonomous transaction infrastructure      |
+
+This should track:
+
+```text
+AGENT_WALLET_GROWTH
+X402_USAGE
+AGENT_REVENUE
+AUTONOMOUS_TRANSACTIONS
+AGENT_TOKEN_CREATION
+AGENT-TO-AGENT PAYMENTS
+PROTOCOL ADOPTION
+ATTENTION
+```
+
+rather than simply:
+
+```text
+AI token sentiment
+```
+
+---
+
+# 28. RECON PANEL 13 — TOKENOMICS / DEATH
+
+These five cover structurally different failure modes:
+
+| Source             | Primitive                              |
+| ------------------ | -------------------------------------- |
+| **@DefiSquared**   | value capture / structural valuation   |
+| **@Tokenomist_ai** | unlocks / emissions / supply           |
+| **@bubblemaps**    | bundled supply / insiders              |
+| **@TokenTerminal** | fees/revenue/economic usage            |
+| **@EmberCN**       | actual insider/whale/exchange movement |
+
+This is an exceptionally complementary group.
+
+Tokenomist currently publishes explicit schedules including supply percentages and material changes to vesting calendars. ([TwStalker][28])
+
+DefiSquared's current/historical work explicitly asks whether token holders actually receive protocol economics and compares revenues/buybacks/emissions to valuation. ([TwStalker][29])
+
+Bubblemaps catches a completely different failure mode: hidden concentration and wallet coordination. ([TwStalker][18])
+
+Together:
+
+```text
+TOKENOMIC DESIGN
++
+FUTURE SUPPLY
++
+CURRENT ECONOMICS
++
+HIDDEN OWNERSHIP
++
+ACTUAL HOLDER MOVEMENTS
+```
+
+That's basically the death-token stack.
+
+---
+
+# 29. Add a SECURITY primitive family too
+
+I would also ingest:
+
+```text
+@zachxbt
+@samczsun
+@tayvano_
+@PeckShieldAlert
+@CertiKAlert
+```
+
+for:
+
+```text
+EXPLOIT
+TEAM_COMPROMISE
+PHISHING
+INSIDER
+MONEY_LAUNDERING
+KEY_COMPROMISE
+PROTOCOL_INCIDENT
+```
+
+Security events can flip any other signal instantly, so this should be a graph-level veto/input rather than another strategy.
+
+---
+
+# 30. Don't make five accounts equal votes
+
+Absolutely no:
+
+```text
+3 bullish
+2 bearish
+=> bullish
+```
+
+Instead each observation eventually receives an empirically learned conditional weight:
+
+```text
+source skill
+× primitive skill
+× asset/sector skill
+× regime skill
+× horizon skill
+× specificity
+× novelty
+× independence
+× calibration
+```
+
+Example:
+
+```text
+spacepixel:
+META_DISCOVERY × cycle = strong
+BTC_4H_DIRECTION = unknown
+
+52kskew:
+ORDERFLOW × BTC_1H = strong
+MEME_DISCOVERY = irrelevant
+
+Yeon:
+ROBINHOOD_META_DISCOVERY = potentially strong
+GLOBAL_MACRO = irrelevant
+```
+
+That prevents authority bleed.
+
+---
+
+# 31. Independence is as important as reputation
+
+Suppose:
+
+```text
+A posts thesis
+B retweets A
+C rewrites A
+D quotes C
+E repeats D
+```
+
+That's **one information source**.
+
+Not five.
+
+Graph community detection + semantic similarity should estimate:
+
+```text
+INDEPENDENT_EVIDENCE_COUNT
+```
+
+A much stronger signal is:
+
+```text
+Chinese onchain researcher
++
+small Robinhood trench trader
++
+Hyperliquid whale
++
+Base researcher
+```
+
+independently arriving at the same conclusion.
+
+That's genuine convergence.
+
+---
+
+# 32. META score should not be a hand-crafted score forever
+
+At first record every observable.
+
+Then learn:
+
+```text
+P(meta enters acceleration within h)
+P(meta survives next h)
+P(meta generates positive basket alpha)
+P(meta is saturated)
+```
+
+Possible model hierarchy:
+
+```text
+logistic / Cox baseline
+        ↓
+gradient boosting
+        ↓
+HSMM latent state
+        ↓
+temporal graph model
+```
+
+Simple models first.
+
+The important output becomes:
+
+```text
+ROBINHOOD_STOCK_META
+
+Current state:
+M3 INDEPENDENT VALIDATION
+
+P(acceleration within 24h): 0.68
+P(decay within 24h):        0.11
+
+Evidence:
++ 4 independent skilled sources
++ wallet accumulation
++ holder growth
++ chain activity acceleration
++ high narrative novelty
+
+Against:
+- BTC regime neutral
+- liquidity still shallow
+```
+
+That is a real quantitative research product.
+
+---
+
+# 33. Build narrative baskets, not merely token outcomes
+
+For every discovered meta create its contemporaneous basket.
+
+Example:
+
+```text
+CAT_META(t)
+
+tokens known at t:
+CashCat
+BaseCat
+Hajimi
+...
+```
+
+Then measure:
+
+```text
+basket return
+median return
+breadth
+leader return
+leader share
+dispersion
+survival rate
+volume
+holders
+```
+
+This prevents us from incorrectly declaring:
+
+> cat meta worked
+
+because one token did 100x while 97 went to zero.
+
+The whole population matters.
+
+---
+
+# 34. A key metric: META BREADTH
+
+```text
+breadth_1h =
+% narrative tokens positive
+
+breadth_24h =
+% outperforming chain benchmark
+
+strong_breadth =
+% above liquidity-adjusted momentum threshold
+```
+
+Healthy:
+
+```text
+leader ↑
+median token ↑
+new launches succeeding
+```
+
+Fragile:
+
+```text
+leader ↑↑↑
+everything else ↓
+```
+
+That second case is probably not a meta anymore.
+
+It's one token.
+
+---
+
+# 35. Another key metric: CAPITAL / ATTENTION divergence
+
+Calculate:
+
+```text
+CAPITAL_SCORE
+--------------
+smart-wallet flow
+DEX net buying
+holder growth
+liquidity growth
+spot volume
+
+
+ATTENTION_SCORE
+---------------
+weighted X activity
+unique sources
+search activity
+KOL arrival
+```
+
+Then:
+
+```text
+capital ↑ attention flat
+    = potential early phase
+
+capital ↑ attention ↑
+    = confirmation
+
+capital flat attention ↑↑
+    = possible hype
+
+capital ↓ attention ↑↑
+    = distribution candidate
+```
+
+This is potentially one of BEAR's most important meta factors.
+
+---
+
+# 36. Scientifically test whether wallets help
+
+Don't assume they do.
+
+Run the exact ablation:
+
+```text
+MODEL A
+X only
+
+MODEL B
+wallet only
+
+MODEL C
+market/onchain only
+
+MODEL D
+X + wallet
+
+MODEL E
+X + wallet + market
+
+MODEL F
+everything + parent regime
+```
+
+Same train/test periods.
+
+Same labels.
+
+Then compare genuinely OOS:
+
+```text
+log loss
+Brier
+PR-AUC
+return
+Sharpe
+drawdown
+calibration
+```
+
+My prior is:
+
+```text
+X = best for discovering WHAT IS HAPPENING
+wallets = best for confirming MONEY BELIEVES IT
+market data = best for confirming IT IS ACTUALLY WORKING
+```
+
+But test it.
+
+---
+
+# 37. Exact graph schema
+
+You do **not** need Neo4j yet.
+
+Keep Parquet/DuckDB and represent graph edges explicitly:
+
+```text
+nodes.parquet
+
+node_id
+node_type
+effective_at
+known_at
+attributes
+```
+
+and:
+
+```text
+edges.parquet
+
+src
+dst
+edge_type
+
+effective_at
+known_at
+
+weight
+confidence
+
+source_event_id
+```
+
+Examples:
+
+```text
+Yeon
+  ──DISCOVERS──▶ Robinhood_Meta
+
+Tweet123
+  ──MENTIONS──▶ CASHCAT
+
+WalletABC
+  ──BUYS──▶ CASHCAT
+
+Yeon
+  ──LINKED_WALLET──▶ WalletABC
+
+CASHCAT
+  ──INSTANCE_OF──▶ Cat_Meta
+
+Cat_Meta
+  ──ACTIVE_ON──▶ Robinhood
+
+Ansem
+  ──AMPLIFIES──▶ Cat_Meta
+```
+
+DuckDB first.
+
+NetworkX/igraph for analysis.
+
+Graph database later if it becomes operationally useful.
+
+---
+
+# 38. Most important derived graph variables
+
+I want BEAR eventually emitting:
+
+```text
+source_lead_time
+originator_score
+
+information_novelty
+information_independence
+
+cascade_velocity
+cascade_depth
+branching_ratio
+
+informed_source_count
+
+source_transition_rate
+community_transition_rate
+
+smart_wallet_confirmation
+
+attention_capital_divergence
+
+amplifier_arrival_stage
+
+originator_exit_rate
+
+meta_breadth
+meta_dispersion
+meta_survival
+
+attention_elasticity
+
+narrative_saturation
+
+parent_regime_probability
+```
+
+Those are actual potentially novel factors.
+
+---
+
+# 39. Our source architecture now looks like this
+
+```text
+                         MACRO
+                           │
+        liquidity / cycle / rates / BTC regime
+                           │
+                           ▼
+                    CRYPTO REGIME
+                           │
+         ┌─────────────────┼──────────────────┐
+         ▼                 ▼                  ▼
+       ALTS               MEMES             DEFI
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+          SOLANA      ROBINHOOD       BASE
+              │            │            │
+              └────────────┼────────────┘
+                           ▼
+                         META
+                           │
+                narrative discovery
+                           │
+                    informed scouts
+                           │
+                       wallets
+                           │
+                      amplifiers
+                           │
+                           ▼
+                        ASSETS
+
+
+Parallel specialist graphs:
+
+HYPERLIQUID
+TAO / BITTENSOR
+AI AGENTS
+TOKENOMICS / DEATH
+SECURITY
+ONCHAIN FLOW
+DERIVATIVES
+```
+
+And all of those can feed each other.
+
+---
+
+# 40. The really exciting emergent query
+
+Eventually BEAR can ask:
+
+```text
+Find all observations right now where:
+
+parent regime is permissive
+AND
+
+an emerging narrative is in M2/M3
+AND
+
+>= 2 independently-good scouts have discovered it
+AND
+
+smart capital confirms
+AND
+
+attention breadth is accelerating
+AND
+
+major amplifiers have NOT arrived
+AND
+
+novelty remains high
+AND
+
+liquidity is adequate
+```
+
+That is basically:
+
+> **find emerging metas before they become obvious.**
+
+And separately:
+
+```text
+Find active metas where:
+
+major amplifiers have arrived
+AND
+
+novelty is collapsing
+AND
+
+attention is still accelerating
+AND
+
+wallet originators are selling
+AND
+
+breadth is deteriorating
+```
+
+which is:
+
+> **find metas approaching distribution.**
+
+That's a substantially more interesting system than individual influencer copying.
+
+---
+
+# 41. The extraction queue I would lock now
+
+I would now freeze a broad **research universe**, not decide who is good:
+
+**Regime:** chrono_chartist, spacepixel, 0xaporia, *Checkmatey*, TechDev_52
+**Macro:** crossbordercap, LynAldenContact, AndreasSteno, NoelleInMadrid, jameslavish
+**Tactical:** Trader_XO, astronomer_zero, Timeless_Crypto, lBattleRhino, CryptoBheem
+**Flow:** 52kskew, exitpumpBTC, Husslin_, ByzGeneral, 0xLoris
+**Onchain:** EmberCN, ai_9684xtpa, OnchainLens, lookonchain, bubblemaps
+**Meme scouts:** yeon__, SevaFTW, kenjidgn, 0xnobi, PhilOnChain/Wolves_Techml
+**Amplifiers:** blknoiz06, theunipcs, Overdose_AI, inversebrah, spacepixel
+**Hyperliquid:** chameleon_jeff, *stevenhl, HyperliquidR, 0xBroze, NMTD8
+**TAO:** SubnetStats, taodotbot, taostats, WeAreSubConnect, SiamKidd
+**Solana:** mert, rajgokal, weremeow, blknoiz06, SolanaFloor
+**Base/RWA:** jessepollak, 0xJeff, Overdose_AI, Oxxbid, DefiIgnas
+**Agents:** 0xJeff, ethermage, virtuals_io, aixbt_agent, bankrbot
+**Death:** DefiSquared, Tokenomist_ai, bubblemaps, TokenTerminal, EmberCN
+**Security:** zachxbt, samczsun, tayvano*, PeckShieldAlert, CertiKAlert
+
+That is roughly **60 unique sources after overlap**, which is completely tractable with the GetXAPI economics you've got.
+
+And crucially:
+
+> **None gets labelled “good” yet.**
+
+They are candidate sensors.
+
+The protocol learns what each sensor measures and whether it has predictive information.
+
+---
+
+# 42. The scientific standard
+
+The progression should now be:
+
+```text
+SOURCE DISCOVERY
+      ↓
+LOSSLESS CORPUS
+      ↓
+PRICE-BLIND ALPHA DISCOVERY
+      ↓
+MINING SPEC
+      ↓
+EXTRACTION QA
+      ↓
+TEMPORAL GRAPH
+      ↓
+MARKET/WALLET JOIN
+      ↓
+SOURCE LEAD-LAG
+      ↓
+META STATE MODEL
+      ↓
+OOS EVALUATION
+      ↓
+PROSPECTIVE MONITORING
+```
+
+The thing I'd actively resist is immediately asking:
+
+> Which of these accounts has the highest historical win rate?
+
+First answer:
+
+> **What information does each actually provide?**
+
+Then:
+
+> **Where in the information cascade does it usually appear?**
+
+Then:
+
+> **Does that information add predictive value beyond everything BEAR already knew at that timestamp?**
+
+That last test is the real standard.
+
+Ansem may be individually predictive, or he may contribute zero incremental information once the system already knows that Yeon + Seva + wallet flow + holder acceleration have fired.
+
+If so, that is itself a major discovery.
+
+The question becomes **incremental information gain**, not influencer celebrity.
+
+And that should become the organizing principle of the entire BEAR graph.
+
+The highest-value implementation next is therefore not more hand-picked signal rules. It is to add `meta`, `source_role`, `primitive`, `narrative`, and temporal graph edges to the protocol, then run this ~60-source corpus through the same lossless extraction process. After that, the first major research experiment should be **X-only vs wallet-only vs X+wallet for detecting meta onset**, followed by the Ansem/large-KOL stage-transition study.
+
+Because this source universe changes continuously, I can also monitor for newly emerging high-signal specialists—especially tiny accounts that repeatedly precede the established scouts—and surface candidates for the protocol.
+
+[1]: https://papers.ssrn.com/sol3/Delivery.cfm/6805101.pdf?abstractid=6805101&mirid=1&type=2&utm_source=chatgpt.com "Media Coverage and the Cross-Section of Cryptocurrency Returns by Ba Chu, Ilias Tsiakas :: SSRN"
+[2]: https://www.sciencedirect.com/science/article/pii/S1544612323005469 "https://www.sciencedirect.com/science/article/pii/S1544612323005469"
+[3]: https://doi.org/10.1007/s10463-026-00976-x "https://doi.org/10.1007/s10463-026-00976-x"
+[4]: https://aisel.aisnet.org/pacis2023/115/ "https://aisel.aisnet.org/pacis2023/115/"
+[5]: https://www.twstalker.com/rajgokal "https://www.twstalker.com/rajgokal"
+[6]: https://mobile.twstalker.com/chrono_chartist "https://mobile.twstalker.com/chrono_chartist"
+[7]: https://twstalker.com/spacepixel "https://twstalker.com/spacepixel"
+[8]: https://site.twstalker.com/0xaporia "https://site.twstalker.com/0xaporia"
+[9]: https://site.twstalker.com/_Checkmatey_ "https://site.twstalker.com/_Checkmatey_"
+[10]: https://www6.twstalker.com/TechDev_52 "https://www6.twstalker.com/TechDev_52"
+[11]: https://twstalker.com/crossbordercap "https://twstalker.com/crossbordercap"
+[12]: https://w.twstalker.com/NoelleInMadrid "https://w.twstalker.com/NoelleInMadrid"
+[13]: https://site.twstalker.com/exitpumpBTC "https://site.twstalker.com/exitpumpBTC"
+[14]: https://site.twstalker.com/Husslin_ "https://site.twstalker.com/Husslin_"
+[15]: https://twstalker.com/ByzGeneral "https://twstalker.com/ByzGeneral"
+[16]: https://ww.twstalker.com/EmberCN "https://ww.twstalker.com/EmberCN"
+[17]: https://twstalker.com/OnchainLens "https://twstalker.com/OnchainLens"
+[18]: https://www.twstalker.com/bubblemaps?utm_source=chatgpt.com "Bubblemaps @bubblemaps - Twitter Profile | TwStalker"
+[19]: https://site.twstalker.com/yeonwoo1102/status/2077977255738052839 "https://site.twstalker.com/yeonwoo1102/status/2077977255738052839"
+[20]: https://site.twstalker.com/kenjidgn "https://site.twstalker.com/kenjidgn"
+[21]: https://site.twstalker.com/0xnobi "https://site.twstalker.com/0xnobi"
+[22]: https://site.twstalker.com/theunipcs "https://site.twstalker.com/theunipcs"
+[23]: https://www.twstalker.com/NMTD8 "https://www.twstalker.com/NMTD8"
+[24]: https://mobile.twstalker.com/0xBroze "https://mobile.twstalker.com/0xBroze"
+[25]: https://docs.taostats.io/docs/subnet "https://docs.taostats.io/docs/subnet"
+[26]: https://w.twstalker.com/jessepollak "https://w.twstalker.com/jessepollak"
+[27]: https://site.twstalker.com/DefiIgnas "https://site.twstalker.com/DefiIgnas"
+[28]: https://mobile.twstalker.com/Tokenomist_ai?utm_source=chatgpt.com "Tokenomist @Tokenomist_ai - Twitter Profile | TwStalker"
+[29]: https://twstalker.com/DefiSquared?utm_source=chatgpt.com "DeFi^2 @DefiSquared - Twitter Profile | TwStalker"

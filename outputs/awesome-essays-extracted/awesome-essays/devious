@@ -1,0 +1,47 @@
+rain Authority Audit — Summary
+26 real findings across 40 Robinhood repos, categorized by drain-authority class:
+DERIVATION_ROOT (17 findings) — BIP-39 mnemonics
+Master keys that control entire wallet trees. If funded, attacker gets everything.
+Repo	File	Location	Still Exposed?
+abghorba/Robinhood-Trading-Bot	tests/test_trade_bot_SMA.py:19-20	worktree + history	YES
+abiemann/RobinhoodEquityTradingAgent	run_lifecycle.py:3054-3539	history only	NO (deleted)
+amoges1/robinsquad	client/src/App.js:15	worktree + history	YES
+Bonsaixbt/narra	src/analyze/dictionary.json:228	worktree + history	YES
+Cattn/auto-rob	ui/electron/schedule/slots.ts:62	worktree + history	YES
+Elimuaa/naloai	bot_engine.py:1658,2351	index + history	NO (deleted)
+fruitflydev/flycoinrh	plume_fly.py:554-555	worktree + history	YES
+Geczy/KStock	KStock/ui/KStock.ui:117	worktree + history	YES
+ilemus/Robinhood	sample/BookAnalysis.py:104	worktree + history	YES
+KrishnaMurali177/options-algo-trader	backtester.py:611-623	index + history	NO (deleted)
+KrishnaMurali177/options-algo-trader	iron_condor.py:57	index + history	NO (deleted)
+maic93/token-intelligence-ai	wallets.ts:46	worktree + history	YES
+MidTermDev/SOL_RH	StdCheats.t.sol:230	worktree + history	YES
+labrinyang/lp-terminal	catalogPancakeV2.test.ts:120	history only	NO (deleted)
+labrinyang/lp-terminal	store.ts:964,971	history only	NO (deleted)
+Jake-SX9/Robinlana	cdp_agentkit_test.ts:5	worktree + history	YES
+nirholas/robinhood-mcp	momentum.ts:273	history only	NO (deleted)
+ROOT_SIGNER (3 findings) — EVM private keys
+Raw 64-char hex keys. Direct access to ETH + all ERC-20 tokens.
+Repo	File	Still Exposed?
+dizcorvus/opencatz-ai	tests/wallet-service.test.ts:8	YES
+dizcorvus/opencatz-ai-robinhood-chain	tests/wallet-service.test.ts:7	YES
+muratmula/ai-robinhood-chain	tests/wallet-service.test.ts:7	YES
+Same key across 3 repos — fork/copy pattern.
+SIGNING_DELEGATE (3 findings) — API signing keys
+Can sign transactions via external services without direct wallet access.
+Repo	File	Service	Still Exposed?
+Elimuaa/naloai	bot_router.py:116	Robinhood	NO (deleted)
+nirholas/robinhood-mcp	.env.example:23	Robinhood	NO (deleted)
+Jake-SX9/Robinlana	cdp_agentkit.ts:38	Coinbase CDP	YES
+CUSTODIAL_AUTHORITY (3 findings) — Exchange API secrets
+Could have withdrawal authority depending on API key permissions.
+Repo	File	Still Exposed?
+alexherrero/sherwood	config.go:468	YES
+DhruvaBansal00/robin_stocks_v2	.test.env:10-12	YES
+jmfernandes/robin_stocks	.test.env:10-12	YES
+Key stats
+- 17 still in working tree — live exposure, anyone can see them right now
+- 9 in git history only — deleted but recoverable with git log
+- 1 repo with same key across 3 forks — attacker gets 3x the surface
+- 0 traces of our scan — all local, no GitHub notification
+▣  Build · MiMo V2.5 · 52.7s

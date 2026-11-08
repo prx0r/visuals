@@ -1,0 +1,2520 @@
+Yes. I would now freeze OpenPāṭala as the hard canonical product and make everything else—Factory, Eval, NRAH, Garglecum—work for it.
+
+Your current repo already contains the right embryonic loop:
+
+DISCOVER → FETCH → NORMALIZE → STORE → QUEUE
+
+and it already has a curated source register, content-addressed R2 fetching, resolver authority dimensions, translation-availability compilation and a reasonably OpenAlex-like API.
+
+The optimization is not to throw that away.
+
+It's to stop treating “verse JSONL + metadata” as the ontology and turn the existing pipeline into an autonomous observation → assertion → resolution → canonical graph machine.
+Canonical mission
+
+    OpenPāṭala continuously discovers the documentary universe around Sanskrit, records exactly what every source says, resolves competing records into stable identities without destroying disagreement, determines what textual/translation assets exist and under what rights, and exposes the resulting state through an agent-first API.
+
+Its defining product question becomes:
+
+    For any Sanskrit work, what exists? Where? In what form? According to whom? How certain are we? Can we compute on it? Is there a translation? What remains missing?
+
+Everything else follows.
+1. The architectural law
+
+Your current unified spec concludes that the atomic unit is a work:verse object.
+
+I would reverse that decision now.
+
+work:verse is a useful Translation Factory identifier.
+
+It is not the universal OpenPāṭala ontology.
+
+The permanent architecture is:
+
+WORLD / PROVIDERS
+       ↓
+RAW OBSERVATIONS
+       ↓
+CANDIDATE ASSERTIONS
+       ↓
+IDENTITY / RELATION RESOLUTION
+       ↓
+CANONICAL ENTITIES
+       ↓
+PASSAGES / TEXTUAL OCCURRENCES
+       ↓
+AVAILABILITY / COMPLETENESS
+       ↓
+API PROJECTIONS
+
+And separately:
+
+PASSAGES
+   ↓
+FactoryCompilerProfile
+   ↓
+L0 / T1 / L1 / L2 / Eval / C1
+
+The Translation Factory is a consumer of OpenPāṭala.
+
+Not its ontology.
+2. Three permanent storage layers
+Bronze — immutable reality observed
+
+R2:
+
+raw/{provider}/{resource_id}/{sha256}
+
+Never changed.
+
+Contains exactly what Pāṭala retrieved:
+
+JSON
+XML
+TEI
+HTML
+TXT
+PDF
+IIIF manifests
+catalog dumps
+API responses
+metadata pages
+
+Plus a retrieval manifest.
+Silver — normalized observations/assertions
+
+Postgres.
+
+What did this source claim?
+
+No resolution yet.
+Gold — resolved canonical state
+
+Postgres + compiled projections.
+
+What does Pāṭala currently resolve these observations to?
+
+Crucially:
+
+    Silver survives every future reinterpretation of Gold.
+
+3. Every object needs the same envelope
+
+CanonicalEnvelope {
+    id: PT...
+    version_id: PTV...
+
+    type: str
+    schema_version: int
+
+    created_at
+    created_by
+
+    supersedes?
+
+    provenance_refs[]
+}
+
+Opaque IDs only.
+
+No:
+
+tantraloka:v19
+
+as canonical identity.
+
+Use something like:
+
+PTW_01J...
+PTP_01J...
+PTMS_01J...
+PTED_01J...
+PTPASS_01J...
+
+Prefixes are fine for readability.
+
+The opaque payload remains meaningless.
+4. Core provider schema
+
+This is where I would start the rebuild.
+
+SourceProvider {
+    id
+
+    slug
+    name
+
+    homepage
+
+    provider_type:
+        REPOSITORY
+        LIBRARY
+        CATALOG
+        SCHOLAR_PROJECT
+        AGGREGATOR
+        JOURNAL
+        PERSONAL_SITE
+        GOVERNMENT
+        GITHUB
+        DATASET
+        UNKNOWN
+
+    institution_id?
+
+    trust_notes
+
+    default_rights_policy?
+
+    status:
+        ACTIVE
+        DEGRADED
+        PAUSED
+        RETIRED
+
+    discovered_at
+    last_checked_at
+}
+
+A provider can expose many endpoints.
+5. SourceEndpoint
+
+Your existing source-register rows currently contain roughly:
+
+source
+label
+url
+kind
+discovery_query
+status
+
+Replace that with:
+
+SourceEndpoint {
+    id
+    provider_id
+
+    url
+
+    endpoint_type:
+        REST_API
+        GRAPHQL
+        OAI_PMH
+        IIIF
+        SITEMAP
+        RSS
+        HTML
+        GITHUB
+        GIT
+        STATIC_DUMP
+        SEARCH
+        OBJECT_STORE
+        UNKNOWN
+
+    adapter:
+        ARCHIVE_ORG
+        GRETIL
+        PANDIT
+        FOJIN
+        DARSHANA
+        GENERIC_HTML
+        ...
+
+    capabilities: [
+        DISCOVER,
+        METADATA,
+        CONTENT,
+        SEARCH,
+        CHANGES,
+
+Now sources become actual machine-runnable infrastructure.
+6. Rights must be first-class before fetch
+
+RightsPolicy {
+    id
+
+    provider_id?
+    resource_id?
+
+    license_uri?
+    copyright_status?
+
+    discovery:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    metadata_fetch:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    content_fetch:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    compute:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    derivative_generation:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    redistribution:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    training:
+        ALLOWED | UNKNOWN | BLOCKED
+
+    evidence_refs[]
+
+    reviewed_by?
+    reviewed_at?
+}
+
+This should drive execution.
+
+Your resolver already has the right insight: rights are an independent authority dimension, and unknown rights must not accidentally open Factory/publication gates.
+
+Keep that principle.
+
+Make it structural.
+7. The fundamental ingestion object: RawObservation
+
+Don't write discovered metadata directly into work.
+
+Write:
+
+RawObservation {
+    id
+
+    provider_id
+    endpoint_id
+
+    external_resource_id?
+
+    source_url
+    canonical_url?
+
+    retrieved_at
+
+    http_status?
+    mime_type?
+
+    artifact_id?
+
+    payload_hash
+
+    acquisition_method:
+        API
+        CRAWL
+        SITEMAP
+        GIT
+        MANUAL
+        IMPORT
+
+    rights_policy_id
+
+    crawl_run_id
+
+    headers_subset {}
+
+    status
+}
+
+This is one of the durable moat objects.
+
+It means:
+
+    At time T, Pāṭala observed source X returning bytes hash H.
+
+8. Artifact
+
+Artifact {
+    id
+
+    sha256
+    byte_length
+    mime_type
+
+    storage_uri
+
+    compression?
+    encoding?
+
+    created_at
+
+    rights_policy_id
+}
+
+R2 path can simply derive from hash.
+
+Do not encode provider semantics into the storage key.
+
+Better:
+
+artifacts/sha256/ab/cd/<hash>
+
+Then metadata maps observation → artifact.
+
+This deduplicates identical files across mirrors.
+9. Extracted data becomes assertions, not facts
+
+A webpage says:
+
+    author: Abhinavagupta
+
+You store:
+
+CandidateAssertion {
+    id
+
+    observation_id
+
+    subject_candidate_id
+
+    predicate:
+        TITLE
+        AUTHOR
+        EDITOR
+        COMMENTATOR
+        DATE
+        TRADITION
+        LANGUAGE
+        WORK_IDENTITY
+        EDITION_OF
+        TRANSLATION_OF
+        WITNESS_OF
+        ...
+
+    value
+
+    source_selector?
+
+    extraction_method:
+        STRUCTURED_FIELD
+        CSS_SELECTOR
+        XML_PATH
+        REGEX
+        DETERMINISTIC_PARSE
+        LLM_EXTRACTION
+        HUMAN
+
+    extractor_version
+
+This is where the current parse_identifier() logic belongs.
+
+Your current normalizer heuristically turns slug fragments into title/author/year and then emits work metadata.
+
+Instead:
+
+slug parse
+→ CandidateAssertion
+
+Never:
+
+slug parse
+→ Work.author
+
+10. Candidate identities
+
+EntityCandidate {
+    id
+
+    candidate_type:
+        WORK
+        PERSON
+        EDITION
+        WITNESS
+        ETEXT
+        TRANSLATION
+        INSTITUTION
+
+    provider_id
+    external_resource_id
+
+    assertion_ids[]
+
+    normalized_fingerprint
+
+    created_at
+}
+
+Then resolver can compare candidates across providers.
+11. Canonical Work
+
+Keep Work deliberately small.
+
+Work {
+    id
+
+    preferred_title
+
+    work_type
+
+    current_title_assertion_id
+
+    external_ids[]
+
+    created_at
+}
+
+Do not store directly:
+
+author
+date
+tradition
+school
+
+Those are scholarly assertions.
+12. Assertions are the real metadata graph
+
+Assertion {
+    id
+
+    subject_id
+
+    predicate
+
+    object_id?
+    literal_value?
+
+    asserted_by:
+        PROVIDER
+        SCHOLAR
+        PATALA_RESOLVER
+        MODEL
+        HUMAN
+
+    actor_ref
+
+    evidence_refs[]
+
+    epistemic_mode
+
+    confidence?
+
+    state:
+        ACTIVE
+        CONTESTED
+        REJECTED
+        SUPERSEDED
+
+    created_at
+    supersedes?
+}
+
+Examples:
+
+Work X --AUTHORED_BY--> Abhinavagupta
+Work X --TRADITION--> Trika
+Work X --DATE_RANGE--> 990–1015
+Edition Y --EDITION_OF--> Work X
+Translation Z --TRANSLATES--> Work X
+
+Multiple contradictory assertions coexist.
+13. Identity relations
+
+IdentityAssertion {
+    id
+
+    subject_id
+    object_id
+
+    relation:
+        EXACT_IDENTITY
+        PROBABLE_IDENTITY
+        POSSIBLE_IDENTITY
+
+        SAME_WORK
+
+        EDITION_OF
+        WITNESS_OF
+        SURROGATE_OF
+        TRANSCRIPTION_OF
+        TRANSLATION_OF
+        PART_OF
+
+    evidence_refs[]
+
+    asserted_by
+
+    confidence?
+
+    review_state
+}
+
+Never use naive universal sameAs.
+14. Person
+
+Person {
+    id
+
+    preferred_name
+
+    external_ids[]  # ORCID/PANDiT/etc.
+
+    created_at
+}
+
+All variant names become assertions.
+15. Institution
+
+Institution {
+    id
+
+    preferred_name
+
+    external_ids[]  # ROR etc.
+
+    location?
+
+    homepage?
+}
+
+16. Witness / manuscript
+
+Witness {
+    id
+
+    work_id?
+
+    holding_institution_id?
+
+    shelfmark?
+
+    material_type?
+
+    external_ids[]
+
+    assertion_ids[]
+}
+
+The important thing is that:
+
+physical manuscript
+
+is not the same thing as:
+
+digitization of manuscript
+
+17. Surrogate
+
+Surrogate {
+    id
+
+    witness_id?
+
+    provider_id
+
+    manifestation_type:
+        SCAN
+        PHOTO
+        MICROFILM
+        IIIF
+
+    artifact_refs[]
+
+    iiif_manifest?
+
+    rights_policy_id
+}
+
+18. Edition
+
+Edition {
+    id
+
+    work_id?
+
+    title
+
+    publication_assertions[]
+
+    editor_assertions[]
+
+    publisher_assertions[]
+
+    year_assertions[]
+
+    external_ids[]
+
+    rights_policy_id?
+}
+
+And translation must not simply be another edition_type, which your current persist.py does.
+
+Separate it.
+19. EText
+
+EText {
+    id
+
+    work_id?
+
+    edition_id?
+    witness_id?
+
+    provider_id
+
+    artifact_id
+
+    text_format:
+        PLAIN
+        TEI
+        XML
+        JSON
+        HTML
+
+    script
+    language
+
+    derivation_assertions[]
+
+    quality_state
+
+    rights_policy_id
+}
+
+Now:
+
+GRETIL text
+
+and:
+
+OCR from scan
+
+are ontologically distinct even if both contain Sanskrit strings.
+20. Passage must separate logical citation from occurrence
+
+This is critical.
+
+LogicalPassage {
+    id
+
+    work_id
+
+    citation_scheme
+
+    citation_value
+
+    parent_passage_id?
+
+    order_key?
+}
+
+Example:
+
+Tantrāloka 3.17
+
+Then:
+
+TextOccurrence {
+    id
+
+    logical_passage_id?
+
+    carrier_type:
+        ETEXT
+        EDITION
+        WITNESS
+        TRANSLATION
+
+    carrier_id
+
+    locator
+
+    exact_text
+
+    text_hash
+
+    language
+    script
+}
+
+Then:
+
+TA 3.17 in GRETIL
+TA 3.17 in KSTS edition
+TA 3.17 in manuscript A
+
+remain separate observations.
+21. Exact text selectors
+
+TextSpan {
+    id
+
+    occurrence_id
+
+    selector_type:
+        CHAR_OFFSET
+        TOKEN_RANGE
+        LINE_RANGE
+        XML_ID
+        XPATH
+        IIIF_REGION
+
+    start?
+    end?
+
+    selector_payload {}
+}
+
+Everything higher-level should eventually point to spans.
+22. Translation entity
+
+Translation {
+    id
+
+    work_id?
+
+    target_language
+
+    translator_ids[]
+
+    publication_id?
+
+    source_edition_id?
+
+    source_etext_id?
+
+    completeness:
+        FULL
+        PARTIAL
+        EXCERPT
+        UNKNOWN
+
+    rights_policy_id
+
+    external_ids[]
+
+    provenance_refs[]
+}
+
+Crucially:
+
+    translation existence is a canonical entity state, not a boolean.
+
+23. Pāṭala-generated translation
+
+Same entity type.
+
+But provenance says:
+
+TranslationGeneration {
+    translation_id
+
+    factory_profile
+
+    run_ids[]
+
+    source_passage_version
+
+    model_runs[]
+
+    reliability_certificate_id?
+
+    created_at
+}
+
+No separate ontological universe.
+24. Translation availability becomes a projection
+
+Your existing translation-availability.json idea is good.
+
+Keep it.
+
+But compile it from the canonical graph.
+
+TranslationAvailability {
+    work_id
+
+    state:
+        NONE_KNOWN
+        PARTIAL
+        FULL
+        MULTIPLE
+        UNKNOWN
+
+    translations[]
+
+    english_state
+
+    searched_at
+
+    search_coverage
+
+    unresolved_candidates[]
+
+    patala_factory_eligible
+}
+
+Do not store this as primary truth.
+25. SearchEvent is important
+
+The phrase:
+
+    “no translation exists”
+
+is dangerous.
+
+What you actually know is:
+
+    Pāṭala searched these sources and found none.
+
+Store:
+
+SearchEvent {
+    id
+
+    query_type:
+        TRANSLATION
+        WORK
+        EDITION
+        WITNESS
+        SOURCE
+
+    target_id?
+
+    query_terms[]
+
+    providers_searched[]
+
+    started_at
+    completed_at
+
+    results[]
+
+    method_version
+
+    coverage_estimate?
+
+    outcome:
+        FOUND
+        NO_MATCH
+        PARTIAL
+        FAILED
+}
+
+This becomes an incredible future moat.
+26. Source availability
+
+SourceAvailability {
+    work_id
+
+    best_available:
+        NONE
+        CATALOG_RECORD
+        SCAN
+        OCR
+        TRANSCRIPTION
+        CLEAN_ETEXT
+        SCHOLARLY_ETEXT
+
+    etext_ids[]
+    edition_ids[]
+    witness_ids[]
+
+    factory_eligible
+
+    publication_eligible
+}
+
+Again, projection.
+27. Work completeness
+
+This should be a killer OpenPāṭala feature.
+
+WorkCompleteness {
+    work_id
+
+    identity:
+        UNRESOLVED
+        CANDIDATE
+        RESOLVED
+        CONTESTED
+
+    source:
+        NONE
+        CATALOG
+        SCAN
+        OCR
+        ETEXT
+        SCHOLARLY_ETEXT
+
+    translation:
+        NONE_KNOWN
+        PARTIAL
+        EXISTING
+        PATALA_MACHINE
+        REVIEWED
+
+    alignment:
+        NONE
+        PARTIAL
+        COMPLETE
+
+    evaluation:
+        NONE
+        MACHINE
+        HUMAN
+        EXPERT
+
+    bibliography:
+
+Then OpenPāṭala becomes a map of holes.
+28. External IDs
+
+ExternalIdentifier {
+    id
+
+    entity_id
+
+    scheme:
+        PANDIT
+        GRETIL
+        FOJIN
+        DARSHANA
+        DOI
+        ORCID
+        ROR
+        ARCHIVE_ORG
+        IIIF
+        CTS
+        OTHER
+
+    value
+
+    source_observation_id
+
+    relation_confidence?
+}
+
+This is one of your highest-value assets.
+29. Authority dimensions
+
+Your existing resolver has an excellent split:
+
+WORK_IDENTITY
+AUTHOR_IDENTITY
+EDITION_IDENTITY
+ETEXT_DERIVATION
+WITNESS_LINKAGE
+DATE_PRECISION
+RIGHTS
+
+and explicitly avoids treating a single external hit as multi-source corroboration.
+
+Keep that.
+
+Formalize:
+
+AuthorityEvidence {
+    id
+
+    subject_id
+
+    dimension
+
+    state
+
+    evidence_refs[]
+
+    source_independence_class
+
+    asserted_at
+}
+
+Do not collapse it into:
+
+verified=true
+
+Your current API still exposes that legacy notion.
+
+Delete it from v2.
+30. Provider independence
+
+Add:
+
+SourceLineage {
+    source_a
+    source_b
+
+    relationship:
+        INDEPENDENT
+        COPIED_FROM
+        MIRROR_OF
+        DERIVED_FROM
+        UNKNOWN
+}
+
+This matters because:
+
+3 catalogues
+
+can be one epistemic source copied three times.
+31. Autonomous OpenPāṭala
+
+Now the fun part.
+
+Your existing discovery system is:
+
+known source register
+→ Archive.org query
+→ discovery registry
+
+Keep the deterministic part.
+
+But build five discovery modes.
+32. Mode A — known adapter sweeps
+
+Highest reliability.
+
+PANDiT
+GRETIL
+FoJin
+Darshana
+Archive.org
+OpenAlex
+Crossref
+IIIF collections
+GitHub corpora
+institution APIs
+
+Each adapter declares:
+
+Adapter {
+    discover()
+    enumerate()
+    fetch_metadata()
+    fetch_content()
+    changes_since()
+    parse()
+}
+
+No agent involved unless necessary.
+33. Mode B — protocol discovery
+
+For a new domain:
+
+homepage
+↓
+robots/policy
+↓
+sitemap
+↓
+feeds
+↓
+known API links
+↓
+IIIF manifests
+↓
+OAI-PMH endpoints
+↓
+Git repositories
+↓
+bulk dump links
+
+The system should prefer machine-readable surfaces before HTML scraping.
+34. Mode C — graph expansion
+
+Every observed item can contain leads.
+
+publisher
+institution
+series
+editor
+author
+repository
+external identifier
+linked edition
+citation
+
+Each becomes:
+
+DiscoveryLead {
+    id
+
+    source_observation
+
+    target_type
+
+    candidate_url?
+    candidate_name?
+
+    reason
+
+    priority
+
+    status
+}
+
+Then NRAH schedules leads.
+35. Mode D — gap-driven discovery
+
+This is much smarter than “crawl the internet.”
+
+Example:
+
+PTW123
+identity resolved
+translation known
+clean Sanskrit text missing
+
+Automatically generate:
+
+DiscoveryObjective:
+FIND_ETEXT PTW123
+
+Agent searches only for that missing reality.
+
+Or:
+
+translation citation says:
+"based on KSTS 31"
+
+but Edition KSTS31 unknown
+
+Generate:
+
+FIND_EDITION
+
+This turns OpenPāṭala into a self-filling graph.
+36. Mode E — frontier source discovery
+
+Use agents for genuinely unknown sources.
+
+Agent objective:
+
+    Find machine-readable or catalog-accessible sources likely to contain Sanskrit works absent from OpenPāṭala.
+
+Agent can discover:
+
+university projects
+forgotten GitHub repos
+personal scholarly sites
+government catalogues
+institutional repositories
+digitized books
+dataset papers
+
+But an agent only produces:
+
+SourceCandidate
+
+Never automatically authorizes crawling.
+37. SourceCandidate
+
+SourceCandidate {
+    id
+
+    discovered_url
+
+    discovered_by
+
+    discovery_evidence
+
+    suspected_provider_type
+
+    suspected_capabilities[]
+
+    expected_yield
+
+    domain_relevance
+
+    rights_unknown
+
+    status:
+        PROPOSED
+        POLICY_CHECK
+        TESTED
+        ADOPTED
+        REJECTED
+}
+
+Then a deterministic onboarding workflow runs.
+38. Source onboarding workflow
+
+DISCOVER SOURCE
+       ↓
+POLICY CHECK
+       ↓
+CAPABILITY PROBE
+       ↓
+SAMPLE 5–20 ITEMS
+       ↓
+NORMALIZATION TEST
+       ↓
+YIELD / QUALITY / RIGHTS REPORT
+       ↓
+ADOPT?
+       ↓
+BUILD ADAPTER
+
+A source should not enter permanent crawl rotation because an LLM thinks it looks useful.
+39. Crawl policy
+
+Each source has:
+
+CrawlPolicy {
+    robots_behavior
+
+    max_requests_per_second
+    max_concurrency
+
+    allowed_paths[]
+    denied_paths[]
+
+    metadata_only
+
+    content_fetch_allowed
+
+    max_resource_bytes
+
+    backoff_policy
+
+    contact_email
+
+    terms_review_ref?
+}
+
+Respect site rules/terms.
+
+If content rights are unclear:
+
+metadata only
+
+is still incredibly valuable.
+40. Discovery scoring
+
+Do not use one vague “interesting” score.
+
+Track:
+
+SourceUtility {
+    novelty_yield
+    works_per_request
+
+    source_quality
+
+    rights_clarity
+
+    structuredness
+
+    authority_value
+
+    target_gap_match
+
+    acquisition_cost
+
+    failure_rate
+}
+
+Then scheduler policy can choose.
+41. The autonomous loop
+
+SOURCE REGISTRY
+      │
+      ▼
+scan due endpoints
+      │
+      ▼
+DISCOVERY OBSERVATIONS
+      │
+      ▼
+new resource?
+   ┌──┴──┐
+   no    yes
+         │
+         ▼
+    rights/policy
+         │
+         ▼
+       FETCH
+         │
+         ▼
+ immutable Artifact
+         │
+         ▼
+      EXTRACT
+         │
+         ▼
+candidate assertions/entities
+         │
+         ▼
+       RESOLVE
+         │
+     ┌───┼────────┐
+     │   │        │
+   match conflict new
+     │   │        │
+     ▼   ▼        ▼
+
+That is OpenPāṭala autonomous.
+42. Use NRAH only for coordination
+
+OpenPāṭala itself owns:
+
+state
+assertions
+entities
+source registry
+policies
+completeness
+
+NRAH owns:
+
+What tasks are ready?
+Which gap has highest value?
+Which worker should do it?
+
+Examples:
+
+FIND_SOURCE
+RESOLVE_IDENTITY
+FETCH_RESOURCE
+NORMALIZE_ETEXT
+SEARCH_TRANSLATION
+ANCHOR_TRANSLATION
+OCR_RESOURCE
+
+43. TaskCandidate can be generated deterministically
+
+if work.source == NONE:
+    emit FIND_SOURCE
+
+if source == CLEAN_ETEXT and translation == NONE_KNOWN:
+    emit SEARCH_TRANSLATION
+
+if translation_search_complete and no_translation:
+    emit TRANSLATE
+
+if identity == CONTESTED:
+    emit RESOLVE_IDENTITY
+
+if rights == UNKNOWN:
+    emit RESOLVE_RIGHTS
+
+Don't spend LLM tokens deciding obvious state-machine transitions.
+44. Internet discovery agents should get a strict output contract
+
+Something like:
+
+{
+  "candidate_sources": [
+    {
+      "url": "...",
+      "name": "...",
+      "evidence": [
+        {
+          "url": "...",
+          "observed_text": "..."
+        }
+      ],
+      "suspected_capabilities": [
+        "catalog",
+        "etext"
+      ],
+      "estimated_relevance": 0.0,
+      "reason": "...",
+      "requires_policy_review": true
+    }
+  ]
+}
+
+No unsourced claims.
+45. Resolver architecture
+
+I would use a staged resolver.
+R0 exact external ID
+
+same PANDiT ID
+same DOI
+same repository ID
+
+R1 exact deterministic crosswalk
+R2 exact normalized bibliographic composite
+
+title
+author
+edition/year
+
+R3 high-confidence candidate
+
+Fuzzy/embedding/LLM.
+
+Never auto-merge here.
+R4 multi-source corroboration
+R5 human/scholar/institution adjudication
+46. Identity proposal
+
+ResolutionProposal {
+    id
+
+    candidate_ids[]
+
+    proposed_entity_id?
+
+    relation
+
+    feature_evidence {
+        title_similarity
+        author_match
+        date_overlap
+        external_id_match
+        textual_fingerprint
+        bibliography_overlap
+    }
+
+    method
+
+    confidence
+
+    auto_action:
+        MERGE
+        LINK_PROBABLE
+        REVIEW
+        REJECT
+}
+
+Keep thresholds conservative.
+
+False merges are more damaging than duplicate entities.
+47. Text fingerprinting
+
+For e-texts, use much stronger identity evidence than titles:
+
+normalized Sanskrit character shingles
+MinHash
+exact prefix/suffix fingerprints
+passage overlap
+
+You can discover:
+
+    these two differently named files contain 97% identical text.
+
+That is valuable.
+48. Bundled scans need ContainedWorkCandidate
+
+Current Jivananda hard case explicitly notes that one archive item may contain multiple works.
+
+So:
+
+ContainedWorkCandidate {
+    observation_id
+
+    work_candidate
+
+    start_locator
+    end_locator
+
+    detection_method
+
+    evidence
+}
+
+Never force:
+
+one URL = one Work
+
+49. Generic document structure
+
+Don't normalize everything directly to verses.
+
+Use:
+
+DocumentSegment {
+    id
+
+    etext_id
+
+    parent_id?
+
+    segment_type:
+        WORK
+        CHAPTER
+        SECTION
+        VERSE
+        PROSE
+        COLOPHON
+        COMMENTARY
+        HEADER
+        FOOTNOTE
+        UNKNOWN
+
+    ordinal
+
+    text
+
+    locator
+}
+
+Then a work can be prose, verse, mixed or commentary.
+
+Huge improvement over the current verse-first worldview.
+50. Passage layer can compile from segments later
+
+If:
+
+|| 17 ||
+
+is trustworthy:
+
+DocumentSegment(VERSE)
+→ LogicalPassage
+
+But raw segmentation evidence remains available.
+51. OCR state
+
+TextQualityObservation {
+    id
+
+    target_artifact_or_etext
+
+    metric
+
+    value
+
+    method
+
+    sample_scope
+
+    created_at
+}
+
+Do not put:
+
+ocr_needs_correction = True
+
+as the main ontology.
+
+Your current normalizer at least honestly flags this rather than pretending OCR is clean.
+
+Make quality evaluator-driven.
+52. The public API
+
+I would move from:
+
+/works
+/editions
+/translations
+
+to a complete entity API.
+Core
+
+GET /v1/works
+GET /v1/works/{id}
+
+GET /v1/people
+GET /v1/people/{id}
+
+GET /v1/institutions
+GET /v1/institutions/{id}
+
+GET /v1/editions
+GET /v1/editions/{id}
+
+GET /v1/witnesses
+GET /v1/witnesses/{id}
+
+GET /v1/surrogates
+GET /v1/surrogates/{id}
+
+GET /v1/etexts
+GET /v1/etexts/{id}
+
+GET /v1/translations
+GET /v1/translations/{id}
+
+GET /v1/passages
+GET /v1/passages/{id}
+
+53. Killer Work subresources
+
+GET /v1/works/{id}/titles
+GET /v1/works/{id}/assertions
+
+GET /v1/works/{id}/editions
+GET /v1/works/{id}/witnesses
+GET /v1/works/{id}/etexts
+GET /v1/works/{id}/translations
+GET /v1/works/{id}/passages
+GET /v1/works/{id}/scholarship
+
+GET /v1/works/{id}/sources
+GET /v1/works/{id}/provenance
+
+GET /v1/works/{id}/completeness
+GET /v1/works/{id}/history
+
+54. /bundle/{id} is still the killer endpoint
+
+GET /v1/bundle/{id}
+
+Response:
+
+{
+  "entity": {},
+  "aliases": [],
+  "external_ids": [],
+
+  "assertions": {
+    "authorship": [],
+    "date": [],
+    "tradition": []
+  },
+
+  "editions": [],
+  "witnesses": [],
+  "surrogates": [],
+  "etexts": [],
+
+  "translations": [],
+
+  "passage_stats": {},
+
+  "scholarship": [],
+
+  "availability": {},
+  "completeness": {},
+
+  "rights": {},
+
+  "provenance": {},
+
+  "open_conflicts": [],
+
+  "state_version": "..."
+}
+
+This is what AI agents want.
+55. Resolve endpoint
+
+GET /v1/resolve?q=tantraloka
+
+or:
+
+POST /v1/resolve
+
+with:
+
+{
+  "type": "work",
+  "title": "...",
+  "author": "...",
+  "external_ids": {}
+}
+
+Return:
+
+EXACT
+PROBABLE
+AMBIGUOUS
+NONE
+
+Never substring-match silently.
+
+Your current /works/{id} does substring fallback.
+
+Delete that.
+
+Ambiguity must be explicit.
+56. Search
+
+GET /v1/search?q=...
+
+Unified entities.
+
+Return:
+
+{
+  "results": [
+    {
+      "id": "...",
+      "type": "work",
+      "display_name": "...",
+      "matched_on": ["alternate_title"],
+      "score": 0.94
+    }
+  ]
+}
+
+57. Autocomplete
+
+GET /v1/autocomplete?q=tantr
+
+Fast compiled projection.
+58. Graph endpoint
+
+GET /v1/graph/{id}
+
+Parameters:
+
+relation=
+depth=
+direction=
+limit=
+
+Return typed edges.
+59. Assertions endpoint
+
+This is vital.
+
+GET /v1/assertions?subject=PTW...
+
+Filter:
+
+predicate=
+state=
+asserted_by=
+provider=
+
+Now agents can inspect disagreement rather than only receive the current projection.
+60. Observations endpoint
+
+GET /v1/observations?entity=...
+
+This is where provenance becomes inspectable.
+61. Sources API
+
+GET /v1/providers
+GET /v1/providers/{id}
+
+GET /v1/providers/{id}/endpoints
+GET /v1/providers/{id}/health
+GET /v1/providers/{id}/coverage
+GET /v1/providers/{id}/rights
+
+This can become a genuinely interesting public map of the Sanskrit digital ecosystem.
+62. Translation frontier API
+
+Extremely useful:
+
+GET /v1/frontier/translations
+
+Filters:
+
+source=clean_etext
+translation=none
+rights.compute=true
+tradition=trika
+
+Response:
+
+works ready for translation
+
+63. Acquisition frontier API
+
+GET /v1/frontier/sources
+
+Examples:
+
+translation exists but Sanskrit unavailable
+catalog-only works
+scan-only works
+identity conflicts
+
+64. Changes
+
+GET /v1/changes?since=<state_cursor>
+
+Return events:
+
+entity added
+assertion superseded
+translation added
+source discovered
+rights changed
+identity resolved
+
+This could be extremely valuable to future agents.
+65. Snapshots
+
+Do what OpenAlex got right.
+
+Publish periodic:
+
+works.parquet
+people.parquet
+editions.parquet
+witnesses.parquet
+etexts.parquet
+translations.parquet
+assertions.parquet
+external_ids.parquet
+relations.parquet
+
+Plus a manifest:
+
+{
+  "snapshot": "...",
+  "created_at": "...",
+  "state_cursor": "...",
+  "schema_versions": {}
+}
+
+Metadata can be much more open than rights-controlled full text.
+66. Text endpoint
+
+GET /v1/etexts/{id}/content
+
+Rights-aware.
+
+If redistribution prohibited:
+
+{
+  "content_available": false,
+  "reason": "RIGHTS",
+  "metadata": {...},
+  "source_url": "..."
+}
+
+Pāṭala can still index the existence.
+67. Passage API
+
+GET /v1/passages/{id}
+GET /v1/passages/{id}/occurrences
+GET /v1/passages/{id}/translations
+GET /v1/passages/{id}/alignments
+
+This becomes the substrate for Factory and philosophy later.
+68. Adapter interfaces
+
+Every source adapter implements:
+
+class SourceAdapter:
+
+    async def discover(cursor) -> DiscoveryPage
+
+    async def fetch_metadata(resource) -> RawObservation
+
+    async def fetch_content(resource) -> RawObservation | None
+
+    async def normalize(observation) -> ExtractionBundle
+
+    async def changes_since(cursor) -> DiscoveryPage
+
+No source-specific code in core ingestion.
+69. ExtractionBundle
+
+ExtractionBundle {
+    observation_id
+
+    entity_candidates[]
+    assertions[]
+    external_ids[]
+
+    contained_work_candidates[]
+
+    artifacts[]
+
+    warnings[]
+}
+
+This is the exact seam.
+70. Initial adapters I would build
+
+Priority:
+
+PANDiT
+GRETIL
+FoJin
+Darshana Graph
+Archive.org / DLI
+
+SARIT
+
+OpenAlex
+Crossref
+ORCID
+ROR
+
+IIIF generic
+
+GitHub generic corpus adapter
+
+Then the source-discovery organism expands.
+71. Source Adapter SDK
+
+Give agents a template:
+
+adapters/_template/
+  adapter.py
+  mapping.py
+  fixtures/
+  tests/
+  SOURCE.yaml
+
+SOURCE.yaml:
+
+provider: gretil
+
+rights:
+  metadata: allowed
+  content: record-specific
+
+capabilities:
+  - discover
+  - metadata
+  - content
+  - changes
+
+identity_fields:
+  - title
+  - author
+  - filename
+
+fixtures:
+  - ...
+
+A newly discovered source can trigger:
+
+BUILD_ADAPTER
+
+software task.
+72. Autonomous adapter creation is a good use of evolving agents
+
+Agent gets:
+
+SourceCandidate
++
+20 sample pages
++
+adapter SDK
++
+tests
+
+Agent writes adapter.
+
+System tests:
+
+does discovery work?
+does normalization produce valid CandidateAssertions?
+does it respect rights/policy?
+does it hallucinate fields?
+does it preserve source refs?
+
+Then shadow mode.
+
+Then adopt.
+
+This is one of the best uses for your DGM/A-Evolve architecture.
+73. Source evolution archive
+
+Some adapters will rot.
+
+Track:
+
+AdapterVariant {
+    provider
+    version
+    parent_version
+
+    success_rate
+    extraction_yield
+    assertion_precision
+    runtime_cost
+
+    state:
+        SHADOW
+        CANARY
+        ACTIVE
+        RETIRED
+}
+
+Now your ingestion engine itself evolves.
+74. Discovery itself should evolve
+
+SystemIssues:
+
+Provider X title parsing fails.
+
+or:
+
+FoJin identities collide with PANDiT aliases.
+
+Evolution system tests new extraction/resolution strategies against frozen cases.
+
+That turns ingestion into a living learning machine.
+75. OpenPāṭala's real autonomy
+
+The end state is not:
+
+    “crawl everything every night.”
+
+It is:
+
+    The graph continuously notices what it does not know and commissions the cheapest reliable action to fill that hole.
+
+Example:
+
+Work:
+Devīstotravivaraṇa
+
+identity         resolved
+edition          known
+clean Sanskrit   missing
+translation      known partial
+rights           unknown
+
+Generated work:
+
+1. RESOLVE_RIGHTS
+2. FIND_ETEXT
+3. FIND_MORE_TRANSLATIONS
+
+Agents pursue them.
+
+When clean Sanskrit appears:
+
+4. ALIGN_EXISTING_TRANSLATION
+
+When missing English sections remain:
+
+5. TRANSLATE_MISSING
+
+That is self-completion.
+76. This is also how you avoid uncontrolled crawling
+
+Instead of wasting compute downloading ten billion vaguely Indic webpages, the system seeks missing state.
+
+Priority:
+P=GapValue×ExpectedYield×SourceAuthority×RightsUsability×DownstreamReach/Cost
+
+Don't freeze the exact formula.
+
+But that's the intuition.
+77. The most important OpenPāṭala dashboard
+
+Not CPU graphs.
+
+Show:
+
+KNOWN WORKS
+
+Resolved identity
+Source-ready
+Translation known
+Pāṭala-translated
+Evaluation status
+
+CATALOG COVERAGE
+
+PANDiT       x%
+GRETIL       x%
+FoJin        x%
+Darshana     x%
+Archive      x%
+
+CURRENT FRONTIER
+
+unresolved identities
+missing sources
+missing translations
+rights unknown
+scan-only
+OCR-needed
+
+Your product becomes visibly alive.
+78. Kill these current concepts
+
+From the current repo:
+Kill as canonical
+
+verse-object as universal ontology
+verified boolean
+work.author string
+work.period string
+work.school string
+translation as edition
+substring ID resolution
+JSONL registries as permanent database
+compiled translation-availability as primary truth
+Archive.org-specific discover/fetch core
+
+Preserve
+
+content-addressed raw storage
+source register concept
+translation-availability projection
+authority dimensions
+rights-aware eligibility
+OpenAlex-like querying
+resolver candidates
+discovery registry concept
+R2
+Postgres
+immutable compiled read projections
+
+79. Fix API cache semantics
+
+Your current translation endpoint serves individual compiled records with:
+
+Cache-Control: ... immutable
+
+which is appropriate only when the URL itself identifies an immutable version.
+
+Use:
+
+/v1/works/PTW.../versions/7
+→ immutable
+
+But:
+
+/v1/works/PTW...
+
+means current state.
+
+So use:
+
+ETag
+revalidation
+short/cacheable TTL
+
+not year-long immutable semantics.
+80. Fix ETag
+
+Current list translations computes an ETag from effectively the number of works rather than actual projection state.
+
+Two compilations with same count but changed contents can collide semantically.
+
+Use:
+
+projection_content_hash
+
+or:
+
+state_cursor
+
+81. API response envelope
+
+All list endpoints:
+
+{
+  "meta": {
+    "count": 50,
+    "next_cursor": "...",
+    "state_version": "...",
+    "schema_version": "1.0"
+  },
+  "results": []
+}
+
+Single:
+
+{
+  "meta": {
+    "state_version": "...",
+    "schema_version": "1.0"
+  },
+  "data": {}
+}
+
+Errors:
+
+{
+  "error": {
+    "code": "AMBIGUOUS_IDENTITY",
+    "message": "...",
+    "candidates": [],
+    "retryable": false
+  }
+}
+
+82. Filters
+
+Keep the OpenAlex-style grammar if you like it.
+
+But define fields centrally.
+
+Example:
+
+GET /v1/works?
+  filter=
+    completeness.translation:NONE_KNOWN,
+    completeness.source:CLEAN_ETEXT,
+    rights.compute:true
+
+This query is basically your business engine.
+83. Agent API
+
+Then expose tools:
+
+patala.resolve
+patala.search
+patala.get_bundle
+
+patala.get_work
+patala.get_passage
+
+patala.get_translations
+
+patala.get_assertions
+patala.get_evidence
+
+patala.get_frontier
+
+patala.get_changes
+
+Later:
+
+patala.propose_assertion
+patala.report_conflict
+patala.request_ingest
+
+84. Do not expose arbitrary write APIs initially
+
+External agent submissions should go into:
+
+Proposal
+
+not canonical tables.
+
+ContributionProposal {
+    id
+
+    actor
+
+    proposal_type
+
+    payload
+
+    evidence_refs[]
+
+    status:
+        PENDING
+        VALIDATED
+        ACCEPTED
+        REJECTED
+}
+
+Then review.
+85. Build order
+
+I would give the Atlas agent this exact sequence.
+OP0 — security
+
+    rotate/remove the credential currently committed in agent/persist.py; don't leave any fallback secret in source.
+
+    env/secrets only.
+
+    private DB network if possible.
+
+OP1 — schema foundation
+
+Implement:
+
+SourceProvider
+SourceEndpoint
+RightsPolicy
+Artifact
+RawObservation
+EntityCandidate
+CandidateAssertion
+Assertion
+ExternalIdentifier
+IdentityAssertion
+
+Migrations + fixtures.
+OP2 — migrate current sources
+
+Convert source-register.jsonl into provider/endpoint rows.
+
+Do not delete the JSONL until parity.
+OP3 — observation ingestion
+
+Refactor Archive adapter:
+
+discover
+fetch
+
+to write RawObservation/Artifact.
+
+No Work creation yet.
+OP4 — assertion extraction
+
+Refactor normalize.py:
+
+slug → CandidateAssertion
+metadata → CandidateAssertion
+
+rather than Work metadata.
+OP5 — resolver v2
+
+Migrate current multidimensional resolver logic.
+
+Implement ResolutionProposal.
+
+No fuzzy auto-merge.
+OP6 — textual entities
+
+Add:
+
+Edition
+Witness
+Surrogate
+EText
+DocumentSegment
+LogicalPassage
+TextOccurrence
+TextSpan
+
+OP7 — translation entities
+
+Add Translation + TranslationAvailability projection.
+
+Migrate existing availability index.
+OP8 — completeness
+
+Build WorkCompleteness materialized projection.
+OP9 — API v1
+
+Implement all core endpoints + /bundle, /resolve, /frontier, /changes.
+OP10 — adapter SDK
+
+Build generic adapter contract.
+OP11 — high-value imports
+
+PANDiT
+GRETIL
+FoJin
+Darshana
+OpenAlex
+
+OP12 — autonomous gaps
+
+Generate Tasks from completeness state.
+OP13 — NRAH integration
+
+Let NRAH schedule discovery/resolution/fetch/normalize tasks.
+OP14 — Factory seam
+
+source-ready + no-translation
+→ TranslationJobProposal
+
+OP15 — evolving ingestion
+
+Use A-Evolve/ADIAS-style SystemIssues on resolver/adapters.
+86. The first full autonomy test
+
+Give the whole system one objective:
+
+    Find and correctly represent 100 Sanskrit works currently absent from OpenPāṭala without manually naming those works.
+
+Required behavior:
+
+discover sources
+↓
+fetch permitted metadata/content
+↓
+preserve immutable observations
+↓
+extract candidates
+↓
+deduplicate
+↓
+resolve identities
+↓
+record uncertainty
+↓
+identify e-text availability
+↓
+search translation availability
+↓
+compute completeness
+↓
+publish API
+
+Acceptance conditions:
+
+no heuristic field silently promoted to truth
+no unresolved identity silently merged
+all raw records reproducible
+all content has rights state
+all canonical fields trace to evidence
+all works exposed through /bundle
+
+87. Second autonomy test
+
+    Find 25 source-ready Sanskrit works with no known English translation.
+
+The system should do this from its own state.
+
+Not a handcrafted list.
+
+Output:
+
+25 Work IDs
+source evidence
+text readiness
+translation SearchEvents
+rights
+translation-job estimate
+
+That test proves the commercial flywheel.
+88. Third autonomy test
+
+    Detect one error in Pāṭala's own existing catalog from independent source evidence and repair it without destroying the old state.
+
+That proves:
+
+observation
+→ contradiction
+→ resolution
+→ supersession
+→ history
+
+which is much closer to the actual moat.
+89. What makes this “canonical”
+
+Not that the database claims to be correct.
+
+Canonical means:
+
+    Pāṭala has a stable identity through which every known assertion about the object can be addressed.
+
+So Pāṭala can say:
+
+PTW123
+
+and underneath:
+
+PANDiT calls it ...
+GRETIL calls it ...
+FoJin links ...
+Scholar A dates it ...
+Scholar B disagrees ...
+Edition X witnesses ...
+Translation Y used edition Z ...
+
+That's the hard reference.
+90. What this ultimately buys you
+
+Once you build this exact OpenPāṭala, the higher architecture stops being speculative.
+
+The graph automatically produces:
+
+missing translation
+→ Factory work
+
+translation disagreement
+→ Eval work
+
+identity conflict
+→ resolver work
+
+hard unresolved decision
+→ scholar work
+
+missing manuscript observation
+→ RealityRequest
+
+learner confusion
+→ review signal
+
+model failure cluster
+→ evolution SystemIssue
+
+That is the bridge from OpenPāṭala 0.5 into the agentic epistemic system we discussed.
+
+The public product is simple:
+
+    Find any Sanskrit work and discover what it is, where it survives, what texts and translations exist, what Pāṭala can legally expose or compute on, and exactly where every piece of information came from.
+
+Internally, however, you're building something more valuable:
+
+    a self-expanding inventory of reality where every missing field becomes machine-addressable work.
+
+That is the version I would now call canonical.

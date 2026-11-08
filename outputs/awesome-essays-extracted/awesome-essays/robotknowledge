@@ -1,0 +1,423 @@
+Yes. The deeper I look, the more I think **robot parts + physical robotics economics should be one of POW’s flagship gardens**.
+
+The strongest version is not “track robotics companies.” It is:
+
+> **Track the physical cost and availability of building, importing, operating and repairing robots — beginning in China and ending in the UK.**
+
+That gives POW a natural connection to equities, UK jobs, trade, repair, materials, compute and actual bottlenecks.
+
+### The geographic scope is clearer now
+
+Do **China + UK deeply**, not “the whole world” superficially.
+
+China is already 54% of global industrial-robot installations in the latest comparable IFR data: 295,000 installations during 2024. Chinese manufacturers also crossed 50% domestic market share. ([IFR International Federation of Robotics][1])
+
+And Chinese production is accelerating dramatically. China's National Bureau of Statistics reports **773,074 industrial robots produced in 2025, +28% YoY**. January–July 2026 production reached **635,056, +28.5% YoY**. ([National Bureau of Statistics][2])
+
+Meanwhile the UK installed only **2,500 industrial robots in 2024**, down from the unusual 3,800-unit 2023 tax-incentive spike. ([IFR International Federation of Robotics][1])
+
+That's fantastic for our purposes:
+
+```text
+CHINA
+production
+component pricing
+OEM pricing
+suppliers
+robot BOMs
+domestic substitution
+exports
+capacity
+listed component companies
+        ↓
+transport / FX / tariffs / distributors
+        ↓
+UK landed price
+UK inventory
+UK integrators
+UK deployments
+UK jobs
+UK repairs
+UK used market
+        ↓
+UK listed-company effects
+```
+
+You effectively get a **robotics transmission mechanism**.
+
+---
+
+## I found a ridiculous UK dataset we should ingest immediately
+
+HMRC's **UK Trade Info API is completely open and doesn't even require authentication**.
+
+It exposes commodities, monthly imports, exports, countries, ports **and individual traders**. 
+
+For HS `847950` — industrial robots — the public trader search currently finds **497 businesses trading the category during 2026**, including ABB Robotics UK, Applied Automation and individual manufacturers/end users. ([UK Trade Info][3])
+
+This means we can reconstruct:
+
+```text
+who imports robots
+what months they import
+their postcode
+commodity
+source country
+value
+mass / supplementary quantity where available
+```
+
+Then:
+
+```text
+HMRC trader
+    ↓
+Companies House
+    ↓
+facility/location
+    ↓
+sector
+    ↓
+company accounts
+    ↓
+jobs
+    ↓
+procurement
+    ↓
+robot deployment evidence
+```
+
+That is far better than merely estimating UK adoption from IFR.
+
+And HMRC has **bulk imports/exports and trader files going back to 2016**, plus current monthly replacements and an API. 
+
+I'd make this one of POWRobots' crown-jewel datasets.
+
+---
+
+# Historical data is actually excellent
+
+| Data                       | History / resolution                                                          | Why it matters                                                                                                      |
+| -------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **IFR World Robotics**     | Installations + operational stock **1993–2025**, country/application/industry | Ground-truth robot adoption baseline; premium data currently €2,500 ([IFR International Federation of Robotics][4]) |
+| **HMRC UK Trade Info**     | Detailed monthly UK data; trader files since 2016                             | Actual UK robot/component importers and exporters                                                                   |
+| **UN Comtrade**            | Long global trade history                                                     | China→UK and supplier-country flows; official Python package exists ([GitHub][5])                                   |
+| **China NBS**              | Monthly industrial/service robot production                                   | Direct upstream cycle signal; official government data ([National Bureau of Statistics][6])                         |
+| **MIR Databank**           | Quarterly China robotics/automation data                                      | Supplier, product and downstream-industry sales data ([MIR Industry][7])                                            |
+| **Company filings**        | Years of A-share/HK filings                                                   | shipments, capacity, revenue, product mix, margins, capex                                                           |
+| **ROS/GitHub**             | Git history + robot descriptions                                              | machine-readable robot family/model ontology                                                                        |
+| **Component distributors** | Start snapshots now                                                           | price/inventory/lead-time history that becomes proprietary                                                          |
+| **Used markets**           | Start snapshots now                                                           | installed-base/repair/depreciation signals                                                                          |
+
+IFR is probably worth buying eventually because their query database gives us 30+ years of installations and operational stock. But we don't need it to begin.
+
+---
+
+# The open-source robot data is much better than I realised
+
+There is now a GitHub organisation called `robot-descriptions` whose purpose is explicitly to build a massive open collection of robot descriptions. Its Python package gives access to **190+ robot descriptions** across frameworks. ([GitHub][8])
+
+There is also a research dataset containing URDF bundles and manufacturer/type metadata. ([GitHub][9])
+
+Then we have manufacturer/ecosystem repos.
+
+FANUC itself publishes its ROS2 descriptions and meshes by robot family. ([GitHub][10])
+
+ROS-Industrial has large ABB and FANUC repositories. ([GitHub][11])
+
+The KUKA descriptions are particularly useful: links, joints, inertial properties, velocity/effort limits, robot family, payload/reach naming and control interfaces are explicitly encoded. ([GitHub][12])
+
+We can therefore bootstrap a **Robot Knowledge Graph** almost for free:
+
+```text
+manufacturer
+ → family
+ → model
+ → payload
+ → reach
+ → axes
+ → links
+ → joints
+ → controller
+ → application
+ → accessories
+ → compatible equipment
+```
+
+Then gradually attach the real physical parts.
+
+---
+
+# Parts are where POW could become genuinely differentiated
+
+There are already enormous generic parts businesses, but nobody I found has the combination we're contemplating.
+
+Nexar/Octopart has **70+ million electronic parts**, with distributor stock, prices, lifecycle and lead-time information updated daily. ([Nexar Support][13])
+
+Its higher-end supply-chain data even contains **weekly and monthly historical global inventory**, estimated days of supply and availability-window metrics. ([Nexar Support][14])
+
+Findchips also provides real-time inventory/pricing and already exposes price/inventory trends. ([Findchips][15])
+
+So we should **use those**, not try to recreate Octopart.
+
+But electronics are only part of robots.
+
+The really attractive garden is:
+
+```text
+precision gearbox
+servo motor
+servo drive
+encoder
+bearing
+linear motion
+force/torque sensor
+camera
+LiDAR
+safety scanner
+controller
+PLC
+industrial PC
+CPU/GPU
+DRAM
+SSD
+power electronics
+connectors
+cabling
+gripper / EOAT
+battery
+```
+
+Generic electronics databases become one input into this robot-specific graph.
+
+---
+
+## China gives us a direct price layer too
+
+LCSC has an official API that returns component details and supports prices denominated in **CNY**, as well as USD/EUR/HKD. ([LCSC Electronics][16])
+
+Farnell/element14 has a proper REST API giving UK regional pricing, stock, status and lead time; their catalogue is over **1.3 million products**. ([element14 Partner Network][17])
+
+That immediately creates:
+
+```text
+same MPN
+
+LCSC China CNY
+       ↓
+FX
+       ↓
+theoretical landed cost
+       ↓
+Farnell UK GBP
+       ↓
+UK markup / scarcity premium
+```
+
+That **China→UK spread history** sounds like a very POW-native dataset.
+
+For mechanical components where exact MPN matching is harder, I'd additionally snapshot Made-in-China, Alibaba/1688 where permitted, OEM catalogues and specialist distributors. Made-in-China already exposes quoted price ranges, MOQ, suppliers and manufacturing categories publicly. ([Made-in-China][18])
+
+Alibaba has an Open Platform, although its APIs are more seller/partner-oriented than a general-purpose market-data feed, so I wouldn't make our architecture depend on it. ([OpenAPI][19])
+
+---
+
+# RBTX is especially interesting
+
+This might be the single coolest existing source I found for POWRobots.
+
+**RBTX by igus** is basically an online robotics-component marketplace.
+
+It includes:
+
+```text
+robots
+end effectors
+vision
+control systems
+pneumatics
+software
+services
+accessories
+```
+
+and its UK site exposes actual GBP pricing. For example, it currently lists robot cells, axes, profiles and complete solutions with explicit prices. ([RBTX][20])
+
+There are **350+ products from 80+ partners** on the UK offering, while the broader platform claims hundreds of application templates. ([igus UK][21])
+
+Even better, they operate China pricing too. Their Chinese marketplace currently shows things such as Fairino, DOBOT and igus robot arms priced directly in yuan. ([RBTX][22])
+
+So we can potentially construct:
+
+```text
+DOBOT / Fairino / igus model
+China price
+EU price
+UK price
+payload
+reach
+configuration
+accessory stack
+integration price
+```
+
+and preserve changes.
+
+**That is almost exactly the experiment we want.**
+
+---
+
+# Who are we competing with?
+
+The market is fragmented, which is good.
+
+| Existing player       | Their strength                                                    | Missing from their product                           |
+| --------------------- | ----------------------------------------------------------------- | ---------------------------------------------------- |
+| **IFR**               | Canonical global adoption statistics                              | Product/parts pricing, stocks, real-time bottlenecks |
+| **MIR Databank**      | Excellent China industrial-market intelligence                    | UK downstream/repair/parts graph                     |
+| **Interact Analysis** | Serious industrial robotics and components research               | Open longitudinal part-level market state            |
+| **HowToRobot**        | 20,000+ global robotics/automation suppliers ([How to Robot][23]) | Physical bottleneck/investment history               |
+| **RBTX**              | Priced robots/components + compatibility                          | Macro supply-chain/equity intelligence               |
+| **Octopart/Nexar**    | Electronics supply-chain data                                     | Robot-specific BOM/use/repair mapping                |
+| **Findchips**         | Electronics prices/inventory                                      | Robotics context                                     |
+| **GGII**              | Deep China robotics research                                      | UK physical-market graph                             |
+| **MIR**               | China manufacturer/industry quarterly sales                       | granular daily parts/landed spreads                  |
+
+Interact Analysis is particularly validating. Their industrial-robot-components work explicitly tracks **motors, drives, precision gearboxes, controllers, teach pendants, sensors, end effectors and machine vision**, and estimated this component market above $10.5bn as far back as 2021. ([Interact Analysis][24])
+
+So we're not imagining that components matter.
+
+The opening is:
+
+> **Nobody appears to own the public-facing longitudinal graph connecting specific robot architectures and component families to China production/pricing, international trade, UK prices/inventory, UK adoption, repair capacity and listed-company exposure.**
+
+That's the product.
+
+---
+
+# And yes: Chinese robotics stocks make this much better
+
+We shouldn't only have a `company → robotics` tag.
+
+We can map equities **to the exact layer they supply**.
+
+| Company                 | Ticker                  | POW node                                                       |
+| ----------------------- | ----------------------- | -------------------------------------------------------------- |
+| Estun Automation        | `002747.SZ` / `2715.HK` | Robots + motion control / servo                                |
+| SIASUN                  | `300024.SZ`             | Industrial robots / automation ([Shenzhen Stock Exchange][25]) |
+| EFORT                   | `688165.SH`             | Industrial robots + automation systems ([SSE][26])             |
+| Leader Harmonious Drive | `688017.SH`             | **Harmonic reducers** ([Shanghai Stock Exchange][27])          |
+| Shuanghuan Driveline    | `002472.SZ`             | Precision/RV reducers ([Sina Finance][28])                     |
+| DOBOT                   | `2432.HK`               | Cobots / embodied robots ([HKEX News][29])                     |
+| UBTECH                  | `9880.HK`               | Humanoids / embodied robotics ([HKEX News][30])                |
+
+Estun is especially interesting structurally: MIR says it ranked **#1 in China industrial-robot shipments in 2025 across domestic and foreign brands**. ([HKEX News][31])
+
+And the localisation story is measurable. Estun cites Chinese-brand industrial robot share going from **under 29% in 2020 to 55% in 2025**. ([Estun][32])
+
+That creates a beautiful POW question:
+
+```text
+Chinese component localisation
+        ↓
+gearbox / servo / controller cost ↓
+        ↓
+Chinese robot ASP ↓
+        ↓
+robot adoption ↑
+        ↓
+exports ↑
+        ↓
+UK landed robot price ↓
+        ↓
+labour-vs-robot ROI threshold crossed
+        ↓
+UK adoption ↑
+        ↓
+integrator / repair / technician bottleneck ↑
+```
+
+We can measure virtually every arrow.
+
+---
+
+# I would now narrow POWRobots aggressively
+
+My first production system would have exactly **seven gardens**:
+
+1. **Robot catalogue/BOM graph** — ROS, OEM specs, manuals, compatibility.
+2. **China Factory** — NBS production, MIR/GGII public releases, corporate filings, China prices, LCSC/RBTX/marketplaces.
+3. **Global Flow** — UN Comtrade and HS-code graph.
+4. **UK Landing** — HMRC trade/traders + UK distributor prices/inventory.
+5. **UK Adoption** — tenders, grants, integrators, deployments, Companies House.
+6. **UK Aftermarket** — used robots, replacement parts, repairs, technician demand and apprenticeships.
+7. **Equity Graph** — China + UK + Japan/Germany suppliers mapped to each component/constraint.
+
+Everything gets snapshots.
+
+The canonical objects I'd aim to publish eventually are **POW Robot Cost Index**, **POW Robot Parts Index**, **China→UK Robotics Spread**, **UK Robotics Adoption Pulse**, **Robot Repair Pressure**, **Component Constraint Monitor**, and **robot/model BOM pages**.
+
+That last one could become surprisingly valuable commercially. Imagine searching:
+
+> `FANUC CRX-10iA`
+
+and getting not just specs, but:
+
+```text
+new UK price history
+China/global equivalents
+used price curve
+controller
+known parts
+component categories
+compatible grippers
+service providers
+UK import activity
+replacement-part prices
+repair availability
+training
+manufacturer financial exposure
+```
+
+That's closer to **Bloomberg + PCPartPicker + Octopart for robotics** than another market-research report.
+
+And importantly, it exactly follows the Data Garden principle: other people can query RBTX or HMRC in 2029; they won't have our **daily resolved robot/component/UK market state from 2026 onward**. 
+
+The next `powrobots` coding push should therefore shift from the broad specification I gave you to a much harder **parts-first China→UK architecture**. That is where I think the unique asset is.
+
+[1]: https://ifr.org/worldrobotics/report-2025?utm_source=chatgpt.com "International Federation of Robotics"
+[2]: https://www.stats.gov.cn/english/PressRelease/202602/t20260228_1962661.html?utm_source=chatgpt.com "STATISTICAL COMMUNIQUÉ OF THE PEOPLE'S REPUBLIC OF CHINA ON THE 2025 NATIONAL ECONOMIC AND SOCIAL DEVELOPMENT"
+[3]: https://www.uktradeinfo.com/search/traders/?commodities=847950&display=table&q=&utm_source=chatgpt.com "Search traders"
+[4]: https://ifr.org/worldrobotics/2021/?utm_source=chatgpt.com "International Federation of Robotics"
+[5]: https://github.com/uncomtrade/comtradeapicall?utm_source=chatgpt.com "GitHub - uncomtrade/comtradeapicall: Python libraries to call UN Comtrade APIs · GitHub"
+[6]: https://www.stats.gov.cn/english/PressRelease/202606/t20260617_1963964.html?utm_source=chatgpt.com "Industrial Production Operation in May 2026"
+[7]: https://www.mir-industry.ca/Service/Index?utm_source=chatgpt.com "MIR | Services - MIR Databank, Market Research & Consulting"
+[8]: https://github.com/robot-descriptions?utm_source=chatgpt.com "Robot Descriptions · GitHub"
+[9]: https://github.com/Daniella1/urdf_files_dataset?utm_source=chatgpt.com "GitHub - Daniella1/urdf_files_dataset · GitHub"
+[10]: https://github.com/FANUC-CORPORATION/fanuc_description?utm_source=chatgpt.com "GitHub - FANUC-CORPORATION/fanuc_description: This repository contains description files and meshes for FANUC robot arms. · GitHub"
+[11]: https://github.com/ros-industrial/abb?utm_source=chatgpt.com "GitHub - ros-industrial/abb: ROS-Industrial ABB support (http://wiki.ros.org/abb) · GitHub"
+[12]: https://github.com/kroshu/kuka_robot_descriptions?utm_source=chatgpt.com "GitHub - kroshu/kuka_robot_descriptions: Repository containing models of KUKA robots · GitHub"
+[13]: https://support.nexar.com/support/solutions/articles/101000450648-introduction-to-the-nexar-api?utm_source=chatgpt.com "Introduction to the Nexar API :"
+[14]: https://support.nexar.com/support/solutions/articles/101000486017?utm_source=chatgpt.com "How to query part-level SCR data in the Nexar API :"
+[15]: https://www.findchips.com/learn-more?utm_source=chatgpt.com "Learn More About Findchips"
+[16]: https://www.lcsc.com/docs/openapi/index.html?utm_source=chatgpt.com "LCSC API Instruction"
+[17]: https://partner.element14.com/docs/Product_Search_API_REST__Description?utm_source=chatgpt.com "element14, Farnell, Newark API - Product Search API (REST) - Description"
+[18]: https://www.made-in-china.com/price/industrial-component-price.html?utm_source=chatgpt.com "industrial component Price - Buy Cheap industrial component At Low Price On Made-in-China.com"
+[19]: https://openapi.alibaba.com/doc/doc.htm?utm_source=chatgpt.com "Getting Started - Alibaba.com"
+[20]: https://rbtx.co.uk/en-GB/partners/rbtx?utm_source=chatgpt.com "RBTX by igus"
+[21]: https://www.igus.co.uk/automation/robot-accessories?utm_source=chatgpt.com "Robot accessories from leading manufacturers | igus UK"
+[22]: https://rbtx.igus.cn/en-GB?C=CH&L=it&utm_source=chatgpt.com "Simple and inexpensive automation - Robotics Marketplace"
+[23]: https://howtorobot.com/directory-supplier?utm_source=chatgpt.com "Supplier Directory | HowToRobot"
+[24]: https://interactanalysis.com/components-in-industrial-robot-market-worth-more-than-18bn-by-2027/?utm_source=chatgpt.com "Industrial Robot Components to Exceed $18bn"
+[25]: https://disc.static.szse.cn/disc/disk03/finalpage/2026-04-24/ea8585b7-4a69-4c60-85b9-aca5f8b49119.PDF?utm_source=chatgpt.com "SIASUN 新松
+
+沈阳新松机器人自动化股份有限公司  
+2025年年度报告  
+Annual R"
+[26]: https://static.sse.com.cn/stock/disclosure/announcement/c/202606/688165_20260617_3YC3.pdf?utm_source=chatgpt.com "证券代码：688165"
+[27]: https://star.sse.com.cn/star/en/marketdata/snapshot/c/5545073.shtml?utm_source=chatgpt.com "688017 | SHANGHAI STOCK EXCHANGE"
+[28]: https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12172151&stockid=002472&utm_source=chatgpt.com "双环传动(002472)_公司公告_双环传动：2025年年度报告新浪财经_新浪网"
+[29]: https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&lang=EN&market=SEHK&stockId=1000243257&utm_source=chatgpt.com "Listed Company Information Title Search"
+[30]: https://www.hkexnews.hk/listedco/listconews/sehk/2026/0414/2026041401168.pdf?utm_source=chatgpt.com "Annual Report 2025  UBTECH ROBOTICS CORP LTD  3"
+[31]: https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042403271.pdf?utm_source=chatgpt.com "About Estun"
+[32]: https://www.estun.com/market/716.html?utm_source=chatgpt.com "连续登顶，埃斯顿获2025年中国工业机器人市场第一 - 市场活动 - 埃斯顿"

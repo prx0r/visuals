@@ -1,0 +1,2464 @@
+Xsession: X session started for box at Mon  2 Nov 09:18:12 +07 2026
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+dbus-update-activation-environment: setting DISPLAY=:0
+dbus-update-activation-environment: setting XAUTHORITY=/home/box/.Xauthority
+localuser:box being added to access control list
+dbus-update-activation-environment: setting XDG_DATA_DIRS=/usr/share/xfce4:/usr/local/share/:/usr/share/
+dbus-update-activation-environment: setting QT_ACCESSIBILITY=1
+/usr/bin/x-session-manager: X server already running on display :0
+** Message: 09:18:13.698: Failed to fetch _NET_NUMBER_OF_DESKTOPS; assuming 1
+** Message: 09:18:13.701: Failed to get _NET_WORKAREA; using full screen dimensions
+** Message: 09:18:13.709: Failed to fetch _NET_CURRENT_DESKTOP; assuming 0
+** Message: 09:18:13.711: Failed to fetch _NET_CURRENT_DESKTOP; assuming 0
+/usr/bin/iceauth:  creating new authority file /run/user/1000/ICEauthority
+xfce4-session-Message: 09:18:13.741: SSH authentication agent is already running
+gpg-agent: a gpg-agent is already running - not starting a new one
+** Message: 09:18:14.253: Failed to fetch _NET_CURRENT_DESKTOP; assuming 0
+basic: Setting gid to: 1001
+
+(xfce4-session:1466): xfce4-session-WARNING **: 09:18:15.899: Unable to launch "start-pulseaudio-x11" (specified by autostart/pulseaudio.desktop): Failed to execute child process “start-pulseaudio-x11” (No such file or directory)
+{"tm": "2026-11-02 09:18:15.937", "lvl": "info", "mod": "basic", "msg": "=== Started ==="}
+{"tm": "2026-11-02 09:18:15.940", "lvl": "info", "mod": "basic", "msg": "App version: \"v2.22.10\""}
+{"tm": "2026-11-02 09:18:15.940", "lvl": "info", "mod": "basic", "msg": "Platform: \"xcb\""}
+{"tm": "2026-11-02 09:18:15.940", "lvl": "info", "mod": "basic", "msg": "OS Version: \"Linux #1 SMP PREEMPT_RT Debian 6.12.105-1 (2026-08-24)\""}
+{"tm": "2026-11-02 09:18:15.940", "lvl": "info", "mod": "basic", "msg": "Distribution: \"Debian GNU/Linux 13 (trixie)\""}
+{"tm": "2026-11-02 09:18:15.940", "lvl": "info", "mod": "basic", "msg": "CPU architecture: \"x86_64\""}
+{"tm": "2026-11-02 09:18:15.940", "lvl": "info", "mod": "basic", "msg": "UI languages: QList(\"en-Latn-GB\", \"en-GB\", \"en-Latn-US\", \"en-US\", \"en-Latn\", \"en\")"}
+{"tm": "2026-11-02 09:18:15.973", "lvl": "debug", "mod": "basic", "msg": "No extra config found"}
+{"tm": "2026-11-02 09:18:15.973", "lvl": "debug", "mod": "basic", "msg": "DpiScaleManager::constructor -> DPI: 96 ; scale: 1 ; devicePixelRatio: 1"}
+{"tm": "2026-11-02 09:18:16.072", "lvl": "debug", "mod": "basic", "msg": "GUI pid:  1632"}
+{"tm": "2026-11-02 09:18:16.081", "lvl": "info", "mod": "basic", "msg": "GUI settings {\"appSkin\":0,\"appSkinDesc\":\"Alpha\",\"backgroundSettings\":{\"aspectRatioMode\":1,\"connectedBackgroundType\":1,\"disconnectedBackgroundType\":1},\"isAutoConnect\":false,\"isAutoSecureNetworks\":true,\"isDockedToTray\":false,\"isHideFromDock\":false,\"isLaunchOnStartup\":true,\"isMinimizeAndCloseToTray\":false,\"isShowLocationHealth\":false,\"isShowNotifications\":false,\"isStartMinimized\":false,\"multiDesktopBehaviour\":0,\"orderLocation\":0,\"orderLocationDesc\":\"Geography\",\"shareProxyGateway\":{\"isEnabled\":false,\"port\":0,\"proxySharingMode\":0,\"proxySharingModeDesc\":\"HTTP\",\"whileConnected\":false},\"shareSecureHotspot\":{\"isEnabled\":false,\"passwordDesc\":\"empty\",\"ssidDesc\":\"empty\"},\"soundSettings\":{\"connectedSoundType\":0,\"disconnectedSoundType\":0},\"splitTunneling\":{\"apps\":[],\"networkRoutes\":[],\"settings\":{\"active\":false,\"mode\":0,\"modeDesc\":\"Exclude\"}},\"trayIconColour\":0,\"trayIconColourDesc\":\"White\",\"version\":7}"}
+
+(polkit-mate-authentication-agent-1:1638): GLib-CRITICAL **: 09:18:16.152: g_variant_new_string: assertion 'string != NULL' failed
+
+(polkit-mate-authentication-agent-1:1638): polkit-mate-1-WARNING **: 09:18:16.155: Failed to register client: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SessionManager was not provided by any .service files
+blueman-applet 09.18.17 WARNING  PluginManager:153 __load_plugin: Not loading PPPSupport because its conflict has higher priority
+blueman-applet 09.18.17 WARNING  PluginManager:153 __load_plugin: Not loading DhcpClient because its conflict has higher priority
+{"tm": "2026-11-02 09:18:18.167", "lvl": "debug", "mod": "basic", "msg": "Backend::init()"}
+{"tm": "2026-11-02 09:18:18.167", "lvl": "info", "mod": "basic", "msg": "Engine settings {\"amneziawgPreset\":\"A - No Junk Russia Primary\",\"connectedDnsInfo\":{\"controldApiKey\":\"\",\"hostnames\":[],\"isSplitDns\":false,\"type\":0,\"upStream1\":\"\",\"upStream2\":\"\"},\"connectionSettings\":{\"isAutomatic\":true,\"port\":443,\"protocol\":5,\"protocolDesc\":\"WireGuard\"},\"decoyTrafficSettings\":{\"isEnabled\":false,\"volume\":0},\"dnsManagerDesc\":\"Auto\",\"dnsPolicy\":2,\"dnsPolicyDesc\":\"Cloudflare\",\"firewallSettings\":{\"mode\":1,\"modeDesc\":\"Auto\",\"when\":0,\"whenDesc\":\"Before Connection\"},\"isAllowLanTraffic\":false,\"isAntiCensorship\":false,\"isIgnoreSslErrors\":false,\"isKeepAliveEnabled\":false,\"isTerminateSockets\":true,\"language\":\"en\",\"macAddrSpoofing\":{\"isAutoRotate\":false,\"isEnabled\":false,\"macAddress\":\"\",\"networkInterfaces\":[{\"friendlyName\":\"\",\"networkOrSsid\":\"\"},{\"friendlyName\":\"Wi-Fi\",\"networkOrSsid\":\"Sun & Roots Lodge 1\"}],\"selectedNetworkInterface\":{\"friendlyName\":\"\",\"networkOrSsid\":\"\"}},\"networkPreferredProtocols\":{},\"packetSize\":{\"isAutomatic\":true,\"mtu\":-1},\"protocolTweaksMethod\":0,\"protocolTweaksMethodDesc\":\"Auto\",\"proxySettings\":{\"address\":\"\",\"option\":0,\"optionDesc\":\"None\",\"port\":0},\"serverRoutingMethod\":0,\"serverRoutingMethodDesc\":\"Auto\",\"tapAdapter\":2,\"updateChannel\":0,\"updateChannelDesc\":\"Release\",\"version\":10}"}
+/opt/windscribe/windscribeopenvpn: /lib/x86_64-linux-gnu/libnl-genl-3.so.200: no version information available (required by /opt/windscribe/windscribeopenvpn)
+/opt/windscribe/windscribeopenvpn: /lib/x86_64-linux-gnu/libnl-3.so.200: no version information available (required by /opt/windscribe/windscribeopenvpn)
+{"tm": "2026-11-02 09:18:18.205", "lvl": "info", "mod": "wsnet", "msg": "wsnet version: v2.22.10-0-g8dcabaa"}
+{"tm": "2026-11-02 09:18:18.206", "lvl": "info", "mod": "wsnet", "msg": "c-ares version: 1.34.5"}
+{"tm": "2026-11-02 09:18:18.209", "lvl": "info", "mod": "wsnet", "msg": "DNS servers in channel: 117.120.24.1:53,117.120.24.2:53"}
+{"tm": "2026-11-02 09:18:18.254", "lvl": "info", "mod": "wsnet", "msg": "openssl version: 3.6.1"}
+{"tm": "2026-11-02 09:18:18.254", "lvl": "info", "mod": "wsnet", "msg": "curl version: 8.19.0"}
+{"tm": "2026-11-02 09:18:18.256", "lvl": "info", "mod": "wsnet", "msg": "Base platform: linux"}
+{"tm": "2026-11-02 09:18:18.256", "lvl": "info", "mod": "wsnet", "msg": "Platform name: linux_deb_x64"}
+{"tm": "2026-11-02 09:18:18.256", "lvl": "info", "mod": "wsnet", "msg": "Use staging domains: false"}
+{"tm": "2026-11-02 09:18:18.256", "lvl": "info", "mod": "wsnet", "msg": "App version: 2.22.10"}
+{"tm": "2026-11-02 09:18:18.256", "lvl": "info", "mod": "wsnet", "msg": "OpenVpn version: 2.6.17"}
+{"tm": "2026-11-02 09:18:18.256", "lvl": "info", "mod": "wsnet", "msg": "Language: en"}
+{"tm": "2026-11-02 09:18:18.258", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI settings settled sucessfully"}
+{"tm": "2026-11-02 09:18:18.265", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI_impl::ServerAPI_impl, use a failover from settings"}
+{"tm": "2026-11-02 09:18:18.269", "lvl": "debug", "mod": "basic", "msg": "setWindowPosFromPersistent() - screen \"eDP-1\" - geometry QRect(0,0 1366x768) - virtualGeometry QRect(0,0 1366x768) - logicalDotsPerInch 96 - devicePixelRatio 1"}
+{"tm": "2026-11-02 09:18:18.269", "lvl": "debug", "mod": "basic", "msg": "setWindowPosFromPersistent() - restored app geometry: QRect(446,100 350x279)"}
+{"tm": "2026-11-02 09:18:18.272", "lvl": "info", "mod": "basic", "msg": "connected to helper socket"}
+{"tm": "2026-11-02 09:18:18.280", "lvl": "debug", "mod": "basic", "msg": "Windscribe helper connected ok"}
+{"tm": "2026-11-02 09:18:18.285", "lvl": "info", "mod": "basic", "msg": "Helper version \"Linux helper\""}
+{"tm": "2026-11-02 09:18:18.419", "lvl": "warning", "mod": "qt.qpa.theme.gnome", "msg": "dbus reply error: [ \"org.freedesktop.DBus.Error.AccessDenied\" ] \"Portal operation not allowed: Unable to open /proc/1632/root\""}
+{"tm": "2026-11-02 09:18:18.469", "lvl": "debug", "mod": "basic", "msg": "DpiScaleManager::setMainWindow -> no DPI or pixel ratio changes"}
+{"tm": "2026-11-02 09:18:19.029", "lvl": "warning", "mod": "qt.qpa.services", "msg": "Failed to register with host portal QDBusError(\"org.freedesktop.portal.Error.Failed\", \"Could not register app ID: Unable to open /proc/1632/root\")"}
+{"tm": "2026-11-02 09:18:19.135", "lvl": "info", "mod": "basic", "msg": "Changed DNS servers for DnsResolver to: QList(\"1.1.1.1\", \"1.0.0.1\")"}
+{"tm": "2026-11-02 09:18:19.136", "lvl": "info", "mod": "wsnet", "msg": "Set dns servers by client: 1.1.1.1,1.0.0.1"}
+{"tm": "2026-11-02 09:18:19.295", "lvl": "info", "mod": "basic", "msg": "Turning boot firewall off for non-always-on mode"}
+{"tm": "2026-11-02 09:18:19.304", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI_impl::setIgnoreSslErrors, false"}
+{"tm": "2026-11-02 09:18:19.304", "lvl": "info", "mod": "wsnet", "msg": "BridgeAPI_impl::setIgnoreSslErrors, false"}
+{"tm": "2026-11-02 09:18:19.304", "lvl": "info", "mod": "wsnet", "msg": "ServerAPI_impl::setApiResolutionsSettings, default behavior, no overridden domains"}
+{"tm": "2026-11-02 09:18:19.305", "lvl": "debug", "mod": "best_location", "msg": "Best location loaded from settings:  \"231Hong Kong - Victoria\""}
+{"tm": "2026-11-02 09:18:19.364", "lvl": "debug", "mod": "basic", "msg": "ImageResourcesSvg::run() - all SVGs loaded"}
+{"tm": "2026-11-02 09:18:20.000", "lvl": "info", "mod": "basic", "msg": "Firewall state from last app start: false launched on startup: true"}
+{"tm": "2026-11-02 09:18:20.036", "lvl": "info", "mod": "firewall_controller", "msg": "firewall off"}
+{"tm": "2026-11-02 09:18:20.036", "lvl": "debug", "mod": "cli_ipc", "msg": "IPC server for CLI started"}
+{"tm": "2026-11-02 09:18:20.052", "lvl": "info", "mod": "basic", "msg": "Turning boot firewall off for non-always-on mode"}
+{"tm": "2026-11-02 09:18:20.099", "lvl": "debug", "mod": "basic", "msg": "Use all API resources from the previous run"}
+{"tm": "2026-11-02 09:18:20.135", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+{"tm": "2026-11-02 09:18:20.194", "lvl": "info", "mod": "wsnet", "msg": "Trying: dyn: dns"}
+{"tm": "2026-11-02 09:18:20.194", "lvl": "info", "mod": "wsnet", "msg": "DNS servers in channel are changed: 1.1.1.1:53,1.0.0.1:53"}
+{"tm": "2026-11-02 09:18:20.205", "lvl": "debug", "mod": "basic", "msg": "Engine::onHostIPsChanged, ips count: 2"}
+{"tm": "2026-11-02 09:18:20.205", "lvl": "debug", "mod": "basic", "msg": "Return to WhitelistIpsCallback in wsnet"}
+{"tm": "2026-11-02 09:18:20.277", "lvl": "info", "mod": "basic", "msg": "Network Changed:  Index:  2 , Network/SSID:  \"Sun & Roots Lodge 1\" , MAC:  \"7C:D1:C3:DF:7A:ED\"  friendly:  \"Sun & Roots Lodge 1\""}
+{"tm": "2026-11-02 09:18:20.339", "lvl": "info", "mod": "wsnet", "msg": "  Trying 40ff44d9e619b17524bf3763204f9cbb:443...\n"}
+{"tm": "2026-11-02 09:18:20.351", "lvl": "debug", "mod": "basic", "msg": "Engine::onHostIPsChanged, ips count: 5"}
+{"tm": "2026-11-02 09:18:20.351", "lvl": "debug", "mod": "basic", "msg": "Return to WhitelistIpsCallback in wsnet"}
+{"tm": "2026-11-02 09:18:21.258", "lvl": "info", "mod": "wsnet", "msg": "  Trying e9e936abcebe42848bad2491ed04eb6f:443...\n"}
+{"tm": "2026-11-02 09:18:21.297", "lvl": "debug", "mod": "basic", "msg": "All API resources have been updated"}
+{"tm": "2026-11-02 09:18:21.343", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+{"tm": "2026-11-02 09:18:21.755", "lvl": "debug", "mod": "basic", "msg": "Received Check Update Answer"}
+{"tm": "2026-11-02 09:18:21.755", "lvl": "debug", "mod": "basic", "msg": "Installer URL:  \"https://deploy.totallyacdn.com/desktop-apps/2.24.12/windscribe_2.24.12_amd64.deb\""}
+{"tm": "2026-11-02 09:18:21.755", "lvl": "debug", "mod": "basic", "msg": "Installer Hash:  \"9a27a51ede9cb24f5ffbc830db890c380700f328248b94351bd48e9811dbf2f4\""}
+{"tm": "2026-11-02 09:18:21.756", "lvl": "info", "mod": "basic", "msg": "Update available"}
+{"tm": "2026-11-02 09:18:21.890", "lvl": "info", "mod": "wsnet", "msg": "InventoryParser::parseServers: loaded 62 servers, revision 14075"}
+{"tm": "2026-11-02 09:18:21.967", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+{"tm": "2026-11-02 09:18:22.082", "lvl": "debug", "mod": "basic", "msg": "Servers locations changed"}
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/blueman/plugins/applet/TransferService.py", line 235, in _on_dbus_name_appeared
+    self._manager = Manager()
+                    ~~~~~~~^^
+  File "/usr/lib/python3/dist-packages/blueman/gobject.py", line 11, in __call__
+    cls._instance = super().__call__(*args, **kwargs)
+                    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/blueman/bluez/obex/Manager.py", line 29, in __init__
+    self._object_manager = Gio.DBusObjectManagerClient.new_for_bus_sync(
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        Gio.BusType.SESSION, Gio.DBusObjectManagerClientFlags.NONE,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.__bus_name, '/', None, None, None)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gi.repository.GLib.GError: g-io-error-quark: Timeout was reached (24)
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 09:19:19.078: Unable to replace properties on 0: Error getting properties for ID
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+{"tm": "2026-11-02 09:19:43.206", "lvl": "debug", "mod": "basic", "msg": "Backend::cleanup()"}
+{"tm": "2026-11-02 09:19:43.206", "lvl": "info", "mod": "basic", "msg": "Firewall on next startup:  false"}
+{"tm": "2026-11-02 09:19:43.206", "lvl": "debug", "mod": "basic", "msg": "Cleanup started"}
+{"tm": "2026-11-02 09:19:43.281", "lvl": "info", "mod": "wsnet", "msg": "wsnet cleanup"}
+{"tm": "2026-11-02 09:19:43.281", "lvl": "info", "mod": "wsnet", "msg": "wsnet io_context_.stop"}
+{"tm": "2026-11-02 09:19:43.281", "lvl": "info", "mod": "wsnet", "msg": "wsnet thread_.join"}
+{"tm": "2026-11-02 09:19:43.281", "lvl": "info", "mod": "wsnet", "msg": "PingManager destructor started"}
+{"tm": "2026-11-02 09:19:43.281", "lvl": "info", "mod": "wsnet", "msg": "PingManager destructor finished"}
+{"tm": "2026-11-02 09:19:43.281", "lvl": "info", "mod": "wsnet", "msg": "CurlNetworkManager destructor started"}
+{"tm": "2026-11-02 09:19:43.282", "lvl": "info", "mod": "wsnet", "msg": "CurlNetworkManager destructor finished"}
+{"tm": "2026-11-02 09:19:43.282", "lvl": "info", "mod": "wsnet", "msg": "DnsResolver_cares destructor started"}
+{"tm": "2026-11-02 09:19:43.282", "lvl": "info", "mod": "wsnet", "msg": "DnsResolver_cares destructor finished"}
+{"tm": "2026-11-02 09:19:43.282", "lvl": "info", "mod": "basic", "msg": "Cleanup, connection manager no need disconnect"}
+{"tm": "2026-11-02 09:19:43.360", "lvl": "info", "mod": "basic", "msg": "close main window"}
+{"tm": "2026-11-02 09:19:43.404", "lvl": "info", "mod": "basic", "msg": "stunnel stopped"}
+{"tm": "2026-11-02 09:19:43.429", "lvl": "info", "mod": "basic", "msg": "wstunnel stopped"}
+{"tm": "2026-11-02 09:19:43.568", "lvl": "info", "mod": "basic", "msg": "Cleanup finished"}
+{"tm": "2026-11-02 09:19:43.569", "lvl": "info", "mod": "basic", "msg": "Backend Cleanup Finished"}
+{"tm": "2026-11-02 09:19:43.612", "lvl": "debug", "mod": "basic", "msg": "Engine destructor finished"}
+{"tm": "2026-11-02 09:19:43.618", "lvl": "debug", "mod": "cli_ipc", "msg": "IPC server for CLI stopped"}
+{"tm": "2026-11-02 09:19:43.618", "lvl": "debug", "mod": "basic", "msg": "Cleaning up current sound data"}
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+[0.827] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[1.090] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+[13.961] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[13.964] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[14.202] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[14.202] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.202] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.202] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.202] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.413] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[14.414] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[14.414] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[14.414] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[14.414] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[35.052] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[35.052] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.307] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[35.307] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.307] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.307] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.307] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.307] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.311] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.311] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.311] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.311] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.311] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.311] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[35.555] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[35.555] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[35.555] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[35.555] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[11.841] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[11.841] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.191] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[12.191] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.191] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.191] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.191] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.195] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.195] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.195] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.198] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.198] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.204] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[12.204] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.072] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.072] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.134] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.134] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.134] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.134] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.138] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.138] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.138] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.138] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.142] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.142] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.142] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.142] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.173] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.173] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.173] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.173] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[0000556ab20c5520] main libvlc: Running vlc with the default interface. Use 'cvlc' to use vlc without interface.
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+[00007fab24c1e110] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+[h264 @ 0x7fab257d9e80] get_buffer() failed
+[h264 @ 0x7fab257d9e80] thread_get_buffer() failed
+[h264 @ 0x7fab257d9e80] decode_slice_header error
+[h264 @ 0x7fab257d9e80] no frame!
+[h264 @ 0x7fab25646b00] get_buffer() failed
+[h264 @ 0x7fab25646b00] thread_get_buffer() failed
+[h264 @ 0x7fab25646b00] decode_slice_header error
+[h264 @ 0x7fab25646b00] no frame!
+[h264 @ 0x7fab257d9e80] get_buffer() failed
+[h264 @ 0x7fab257d9e80] thread_get_buffer() failed
+[h264 @ 0x7fab257d9e80] decode_slice_header error
+[h264 @ 0x7fab257d9e80] no frame!
+[h264 @ 0x7fab25646b00] get_buffer() failed
+[h264 @ 0x7fab25646b00] thread_get_buffer() failed
+[h264 @ 0x7fab25646b00] decode_slice_header error
+[h264 @ 0x7fab25646b00] no frame!
+[h264 @ 0x7fab258a3840] get_buffer() failed
+[h264 @ 0x7fab258a3840] thread_get_buffer() failed
+[h264 @ 0x7fab258a3840] decode_slice_header error
+[h264 @ 0x7fab258a3840] no frame!
+[h264 @ 0x7fab25646b00] get_buffer() failed
+[h264 @ 0x7fab25646b00] thread_get_buffer() failed
+[h264 @ 0x7fab25646b00] decode_slice_header error
+[h264 @ 0x7fab25646b00] no frame!
+[h264 @ 0x7fab257d9e80] get_buffer() failed
+[h264 @ 0x7fab257d9e80] thread_get_buffer() failed
+[h264 @ 0x7fab257d9e80] decode_slice_header error
+[h264 @ 0x7fab257d9e80] no frame!
+[00007fab24c1e110] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007fab24c1e110] main decoder error: Could not convert timestamp 1589417999 for FFmpeg
+[h264 @ 0x7fab257104c0] get_buffer() failed
+[h264 @ 0x7fab257104c0] thread_get_buffer() failed
+[h264 @ 0x7fab257104c0] decode_slice_header error
+[h264 @ 0x7fab257104c0] no frame!
+[00007fab24c1e110] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007fab24c1e110] main decoder error: Could not convert timestamp 1042126172 for FFmpeg
+[h264 @ 0x7fab24c4e380] get_buffer() failed
+[h264 @ 0x7fab24c4e380] thread_get_buffer() failed
+[h264 @ 0x7fab24c4e380] decode_slice_header error
+[h264 @ 0x7fab24c4e380] no frame!
+[h264 @ 0x7fab25646b00] get_buffer() failed
+[h264 @ 0x7fab25646b00] thread_get_buffer() failed
+[h264 @ 0x7fab25646b00] decode_slice_header error
+[h264 @ 0x7fab25646b00] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 09:34:10.253: Unable to replace properties on 0: Error getting properties for ID
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+Created TensorFlow Lite XNNPACK delegate for CPU.
+[6343:6376:1102/093425.246991:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[6343:6376:1102/093448.566876:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+Opening in existing browser session.
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+Created TensorFlow Lite XNNPACK delegate for CPU.
+[8599:8632:1102/095443.690179:ERROR:google_apis/gcm/engine/registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
+[8739.713] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[9171.288] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[2387:2387:1102/134823.902951:ERROR:interface_endpoint_client.cc(707)] Message 5 rejected by interface blink.mojom.WidgetHost
+Ignoring invalid item in FilePickerController::accepted(QStringList): 
+[20784:1:1102/135200.184692:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/135202.242074:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/135203.132991:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+Ignoring invalid item in FilePickerController::accepted(QStringList): 
+qt.text.font.db: OpenType support missing for "Unifont", script 17
+qt.text.font.db: OpenType support missing for "Unifont-JP", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Sans", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Sans", script 17
+qt.text.font.db: OpenType support missing for "URW Gothic", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Sans Narrow", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei", script 17
+qt.text.font.db: OpenType support missing for "Loma", script 17
+qt.text.font.db: OpenType support missing for "IPAGothic", script 17
+qt.text.font.db: OpenType support missing for "FreeSans", script 17
+qt.text.font.db: OpenType support missing for "FreeSerif", script 17
+qt.text.font.db: OpenType support missing for "FreeMono", script 17
+qt.text.font.db: OpenType support missing for "IPAPGothic", script 17
+qt.text.font.db: OpenType support missing for "Quicksand", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Math TeX Gyre", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Sans Mono", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Serif", script 17
+qt.text.font.db: OpenType support missing for "Liberation Mono", script 17
+qt.text.font.db: OpenType support missing for "Liberation Sans", script 17
+qt.text.font.db: OpenType support missing for "Liberation Serif", script 17
+qt.text.font.db: OpenType support missing for "Noto Sans Mono", script 17
+qt.text.font.db: OpenType support missing for "D050000L", script 17
+qt.text.font.db: OpenType support missing for "Standard Symbols PS", script 17
+qt.text.font.db: OpenType support missing for "C059", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Mono PS", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Roman", script 17
+qt.text.font.db: OpenType support missing for "P052", script 17
+qt.text.font.db: OpenType support missing for "Noto Mono", script 17
+qt.text.font.db: OpenType support missing for "Droid Sans Fallback", script 17
+qt.text.font.db: OpenType support missing for "Unifont Sample", script 17
+qt.text.font.db: OpenType support missing for "Courier 10 Pitch", script 17
+qt.text.font.db: OpenType support missing for "Bitstream Charter", script 17
+qt.text.font.db: OpenType support missing for "Unifont CSUR", script 17
+qt.text.font.db: OpenType support missing for "Unifont Upper", script 17
+qt.text.font.db: OpenType support missing for "Liberation Sans Narrow", script 17
+qt.text.font.db: OpenType support missing for "Quicksand Medium", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei Mono", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei Sharp", script 17
+qt.text.font.db: OpenType support missing for "Quicksand Light", script 17
+qt.text.font.db: OpenType support missing for "URW Bookman", script 17
+qt.text.font.db: OpenType support missing for "Z003", script 17
+qt.text.font.db: OpenType support missing for "Noto Color Emoji", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+[21192.843] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[22284.564] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[25487.271] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[25826.714] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[29039.170] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+flameshot: info: Capture saved to clipboard.
+[20784:1:1102/173055.901047:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.012369:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.055774:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.096831:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.138350:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.180417:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.225802:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.267690:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.308816:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.352654:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.395938:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.442734:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.486750:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.540156:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.585628:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.627057:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.668205:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.715225:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.756217:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.797714:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.844357:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.888058:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.931436:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173056.975016:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.019063:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.075055:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.132015:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.175316:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.221255:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.264982:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.306640:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.348713:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.389668:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.431942:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.472888:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.519653:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.562014:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.607303:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.652251:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.696316:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.740179:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.784286:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.827991:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.878205:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.931441:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173057.974702:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.017361:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.064420:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.108913:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.150914:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.194049:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.236059:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.282102:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.326585:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.372109:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.415471:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.457841:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.504338:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.548945:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.598816:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.647728:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.694251:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.761695:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.803059:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.844900:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.889636:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.935269:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173058.976646:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.025068:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.069872:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.111357:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.156189:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.198292:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.247873:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.288958:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.333317:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.374857:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.416033:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.460087:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.504964:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.546990:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.588853:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.630217:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.679295:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.723951:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.769337:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.811742:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.852318:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.897143:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.938634:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173059.985947:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.031134:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.079141:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.125441:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.169058:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.226022:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.292692:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.339336:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.387262:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.428936:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.517656:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.818902:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.911819:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173100.957152:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.003400:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.050748:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.098969:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.143676:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.187164:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.231769:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.275685:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.319690:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.361521:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.406142:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.447563:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.488430:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.530622:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.575412:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.620337:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.661883:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.707901:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.755437:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.799704:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.849571:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.898133:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173101.944464:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.029704:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.132029:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.171589:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.215233:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.306575:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.349927:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.395364:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.439047:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.482627:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.525128:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.569031:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.612516:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.658491:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.701464:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.742591:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.789489:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.836869:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.878923:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.924866:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173102.971028:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.012189:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.056474:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.099988:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.143990:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.187372:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.232057:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.274833:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.316226:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.359225:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.411083:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.459860:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.505927:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.551309:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.596175:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.639043:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.692083:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.735920:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.783237:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.829067:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.873748:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/173103.917062:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+Fontconfig error: Cannot load default config file: No such file: (null)
+QPainter::begin: Paint device returned engine == 0, type: 2
+QPainter::setRenderHint: Painter must be active to set rendering hints
+QPainter::setCompositionMode: Painter not active
+QPainter::translate: Painter not active
+QPainter::setPen: Painter not active
+QPainter::setBrush: Painter not active
+QPainter::setBrush: Painter not active
+flameshot: info: Capture saved to clipboard.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 18:21:11.434: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 18:21:13.612: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 18:21:13.720: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 18:29:59.656: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 18:29:59.730: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 18:30:10.024: Unable to replace properties on 0: Error getting properties for ID
+[33100.600] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[20784:1:1102/183544.017109:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/183547.022755:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[20784:1:1102/183550.504899:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+[2387:2415:1102/191751.175015:ERROR:gles2_cmd_decoder.cc(5185)] Error: 3 for Command kBlitFramebufferCHROMIUM
+[2387:2415:1102/191752.386022:ERROR:gles2_cmd_decoder.cc(5185)] Error: 3 for Command kBlitFramebufferCHROMIUM
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:48:11.491: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:48:14.371: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:48:14.475: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:57:37.266: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:57:37.369: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:57:47.738: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:21:52.226: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:21:54.532: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:21:54.626: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 08:21:08.359: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 08:21:08.435: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 08:21:18.571: Unable to replace properties on 0: Error getting properties for ID
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+[1.184] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[16.924] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[16.924] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.157] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[17.157] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.158] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.158] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.158] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.158] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.161] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.161] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.161] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.161] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.170] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.170] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[17.380] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[17.380] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[17.380] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[17.380] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[15.549] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[15.551] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.854] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[15.854] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.854] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.854] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.854] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.854] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.854] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.855] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.856] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.856] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.869] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.150] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[0.883] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[10.569] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.569] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.386] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[11.386] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.386] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.386] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.392] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.392] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.392] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.392] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.392] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.392] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.396] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.596] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[15.498] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[15.498] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[15.498] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[15.498] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[5396.890] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+js: Error with Permissions-Policy header: Unrecognized feature: 'ch-ua-form-factors'.
+js: Document-Policy HTTP header: Unrecognized document policy feature name include-js-call-stacks-in-crash-reports.
+js: Error with Permissions-Policy header: Unrecognized feature: 'ch-ua-form-factors'.
+js: Failed to create WebGPU Context Provider
+[Info   ] <main> Starting Shotcut version 25.03.31 
+[Info   ] <main> Linux version "13" 
+[Info   ] <main> number of logical cores = 4 
+[Info   ] <main> locale = QLocale(English, Latin, United Kingdom) 
+[Info   ] <main> install dir = "/usr/bin" 
+[Info   ] <ShotcutSettings::log> language "en_GB" 
+[Info   ] <ShotcutSettings::log> deinterlacer "onefield" 
+[Info   ] <ShotcutSettings::log> external monitor "" 
+[Info   ] <ShotcutSettings::log> GPU processing false 
+[Info   ] <ShotcutSettings::log> interpolation "bilinear" 
+[Info   ] <ShotcutSettings::log> video mode "" 
+[Info   ] <ShotcutSettings::log> realtime true 
+[Info   ] <ShotcutSettings::log> audio channels 2 
+[Info   ] <ShotcutSettings::log> audio driver "pulseaudio" 
+[Debug  ] <MainWindow::changeTheme> begin 
+[Debug  ] <MainWindow::changeTheme> end 
+[Debug  ] <MainWindow::MainWindow> begin 
+[Info   ] <MainWindow::MainWindow> device pixel ratio = 1 
+[Debug  ] <Mlt::Controller::Controller> begin 
+[Info   ] <MLT> No LADSPA plugins were found! Check your LADSPA_PATH environment variable.
+[Info   ] <MLT> No VST2 plugins were found! Check your VST_PATH environment variable.
+[Info   ] <MLT> mlt_repository_init: skip plugin /usr/lib/x86_64-linux-gnu/mlt-7/libmltqt.so
+[Info   ] <MLT> mlt_repository_init: skip plugin /usr/lib/x86_64-linux-gnu/mlt-7/libmltglaxnimate.so
+[Info   ] <Mlt::Controller::resetLocale> decimal point . 
+[Debug  ] <Mlt::Controller::Controller> end 
+[Debug  ] <Mlt::VideoWidget::VideoWidget> begin 
+[Debug  ] <Mlt::VideoWidget::VideoWidget> end 
+[Debug  ] <MainWindow::setupSettingsMenu> begin 
+libDeckLinkAPI.so: cannot open shared object file: No such file or directory
+[Warning] <MLT> [consumer 0x55a48cbe3cb0] The DeckLink drivers not installed.
+[Debug  ] <MainWindow::setupSettingsMenu> end 
+[Debug  ] <MainWindow::readPlayerSettings> begin 
+[Debug  ] <MainWindow::setAudioChannels> 2 
+[Debug  ] <Mlt::Controller::setAudioChannels> 2 
+[Debug  ] <MainWindow::setPreviewScale> 0 
+[Debug  ] <Mlt::Controller::setPreviewScale> 720 x 576 
+[Debug  ] <MainWindow::readPlayerSettings> end 
+[Debug  ] <MainWindow::configureVideoWidget> begin 
+[Debug  ] <MainWindow::setProfile> "" 
+[Debug  ] <Mlt::Controller::setProfile> setting to profile "Automatic" 
+[Debug  ] <MainWindow::setAudioChannels> 2 
+[Debug  ] <Mlt::Controller::setAudioChannels> 2 
+[Debug  ] <MainWindow::configureVideoWidget> end 
+[Debug  ] <ScopeController::ScopeController> begin 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <AudioLoudnessScopeWidget::AudioLoudnessScopeWidget> begin 
+[Debug  ] <AudioLoudnessScopeWidget::AudioLoudnessScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <AudioLoudnessScopeWidget::resetQview> begin isSceneGraphInitialized false 
+[Debug  ] <AudioLoudnessScopeWidget::resetQview> begin isSceneGraphInitialized false 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <AudioPeakMeterScopeWidget::AudioPeakMeterScopeWidget> begin 
+[Debug  ] <AudioPeakMeterScopeWidget::AudioPeakMeterScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <AudioSpectrumScopeWidget::AudioSpectrumScopeWidget> begin 
+[Debug  ] <AudioSpectrumScopeWidget::AudioSpectrumScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <AudioSurroundScopeWidget::AudioSurroundScopeWidget> begin 
+[Debug  ] <AudioSurroundScopeWidget::AudioSurroundScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <AudioVectorScopeWidget::AudioVectorScopeWidget> begin 
+[Debug  ] <AudioVectorScopeWidget::AudioVectorScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <AudioWaveformScopeWidget::AudioWaveformScopeWidget> begin 
+[Debug  ] <AudioWaveformScopeWidget::AudioWaveformScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <VideoHistogramScopeWidget::VideoHistogramScopeWidget> begin 
+[Debug  ] <VideoHistogramScopeWidget::VideoHistogramScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <VideoRgbParadeScopeWidget::VideoRgbParadeScopeWidget> begin 
+[Debug  ] <VideoRgbParadeScopeWidget::VideoRgbParadeScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <VideoRgbWaveformScopeWidget::VideoRgbWaveformScopeWidget> begin 
+[Debug  ] <VideoRgbWaveformScopeWidget::VideoRgbWaveformScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <VideoVectorScopeWidget::VideoVectorScopeWidget> begin 
+[Debug  ] <VideoVectorScopeWidget::profileChanged> 709 
+[Debug  ] <VideoVectorScopeWidget::VideoVectorScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <VideoWaveformScopeWidget::VideoWaveformScopeWidget> begin 
+[Debug  ] <VideoWaveformScopeWidget::VideoWaveformScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeWidget::ScopeWidget> begin true 
+[Debug  ] <ScopeWidget::ScopeWidget> end 
+[Debug  ] <VideoZoomWidget::VideoZoomWidget> begin 
+[Debug  ] <VideoZoomWidget::VideoZoomWidget> end 
+[Debug  ] <VideoZoomScopeWidget::VideoZoomScopeWidget> begin 
+[Debug  ] <VideoZoomScopeWidget::VideoZoomScopeWidget> end 
+[Debug  ] <ScopeDock::ScopeDock> begin 
+[Debug  ] <ScopeDock::ScopeDock> end 
+[Debug  ] <ScopeController::ScopeController> end 
+[Debug  ] <RecentDock::RecentDock> begin 
+[Debug  ] <RecentDock::RecentDock> end 
+[Debug  ] <PlaylistDock::PlaylistDock> begin 
+[Debug  ] <PlaylistProxyModel::setSmartBin> 0 
+[Debug  ] <PlaylistDock::PlaylistDock> end 
+[Debug  ] <FilesDock::FilesDock> begin 
+[Debug  ] <FilesDock::FilesDock> end 
+[Debug  ] <TimelineDock::TimelineDock> begin 
+[Debug  ] <TimelineDock::TimelineDock> end 
+[Debug  ] <FiltersDock::FiltersDock> begin 
+[Debug  ] <FiltersDock::FiltersDock> end 
+[Debug  ] <MarkersDock::MarkersDock> begin 
+[Debug  ] <MarkersDock::MarkersDock> end 
+[Debug  ] <KeyframesDock::KeyframesDock> begin 
+[Debug  ] <KeyframesDock::KeyframesDock> end 
+[Debug  ] <KeyframesDock::load> begin true false 
+[Debug  ] <EncodeDock::EncodeDock> begin 
+---
+formats:
+  - a64
+  - ac3
+  - ac4
+  - adts
+  - adx
+  - aea
+  - aiff
+  - alp
+  - amr
+  - amv
+  - apm
+  - apng
+  - aptx
+  - aptx_hd
+  - argo_asf
+  - argo_cvg
+  - asf
+  - ass
+  - ast
+  - asf_stream
+  - au
+  - avi
+  - avif
+  - avm2
+  - avs2
+  - avs3
+  - bit
+  - caf
+  - cavsvideo
+  - codec2
+  - codec2raw
+  - crc
+  - dash
+  - data
+  - daud
+  - dfpwm
+  - dirac
+  - dnxhd
+  - dts
+  - dv
+  - eac3
+  - evc
+  - f4v
+  - ffmetadata
+  - fifo
+  - filmstrip
+  - fits
+  - flac
+  - flv
+  - framecrc
+  - framehash
+  - framemd5
+  - g722
+  - g723_1
+  - g726
+  - g726le
+  - gif
+  - gsm
+  - gxf
+  - h261
+  - h263
+  - h264
+  - hash
+  - hds
+  - hevc
+  - hls
+  - iamf
+  - ico
+  - ilbc
+  - image2
+  - image2pipe
+  - ipod
+  - ircam
+  - ismv
+  - ivf
+  - jacosub
+  - kvag
+  - latm
+  - lc3
+  - lrc
+  - m4v
+  - md5
+  - matroska
+  - matroska
+  - microdvd
+  - mjpeg
+  - mlp
+  - mmf
+  - mov
+  - mp2
+  - mp3
+  - mp4
+  - mpeg
+  - vcd
+  - mpeg1video
+  - dvd
+  - svcd
+  - mpeg2video
+  - vob
+  - mpegts
+  - mpjpeg
+  - mxf
+  - mxf_d10
+  - mxf_opatom
+  - null
+  - nut
+  - obu
+  - oga
+  - ogg
+  - ogv
+  - oma
+  - opus
+  - alaw
+  - mulaw
+  - vidc
+  - f64be
+  - f64le
+  - f32be
+  - f32le
+  - s32be
+  - s32le
+  - s24be
+  - s24le
+  - s16be
+  - s16le
+  - s8
+  - u32be
+  - u32le
+  - u24be
+  - u24le
+  - u16be
+  - u16le
+  - u8
+  - psp
+  - rawvideo
+  - rcwt
+  - rm
+  - roq
+  - rso
+  - rtp
+  - rtp_mpegts
+  - rtsp
+  - sap
+  - sbc
+  - scc
+  - film_cpk
+  - segment
+  - stream_segment,ssegment
+  - smjpeg
+  - smoothstreaming
+  - sox
+  - spx
+  - spdif
+  - srt
+  - streamhash
+  - sup
+  - swf
+  - tee
+  - 3g2
+  - 3gp
+  - mkvtimestamp_v2
+  - truehd
+  - tta
+  - ttml
+  - uncodedframecrc
+  - vc1
+  - vc1test
+  - voc
+  - vvc
+  - w64
+  - wav
+  - webm
+  - webm_dash_manifest
+  - webm_chunk
+  - webp
+  - webvtt
+  - wsaud
+  - wtv
+  - wv
+  - yuv4mpegpipe
+  - chromaprint
+  - alsa
+  - caca
+  - fbdev
+  - opengl
+  - oss
+  - pulse
+  - sdl,sdl2
+  - video4linux2,v4l2
+  - xv
+...
+---
+audio_codecs:
+  - comfortnoise
+  - s302m
+  - aac
+  - ac3
+  - ac3_fixed
+  - alac
+  - aptx
+  - aptx_hd
+  - dca
+  - dfpwm
+  - eac3
+  - flac
+  - g723_1
+  - mlp
+  - mp2
+  - mp2fixed
+  - nellymoser
+  - opus
+  - real_144
+  - sbc
+  - sonic
+  - sonicls
+  - truehd
+  - tta
+  - vorbis
+  - wavpack
+  - wmav1
+  - wmav2
+  - pcm_alaw
+  - pcm_bluray
+  - pcm_dvd
+  - pcm_f32be
+  - pcm_f32le
+  - pcm_f64be
+  - pcm_f64le
+  - pcm_mulaw
+  - pcm_s8
+  - pcm_s8_planar
+  - pcm_s16be
+  - pcm_s16be_planar
+  - pcm_s16le
+  - pcm_s16le_planar
+  - pcm_s24be
+  - pcm_s24daud
+  - pcm_s24le
+  - pcm_s24le_planar
+  - pcm_s32be
+  - pcm_s32le
+  - pcm_s32le_planar
+  - pcm_s64be
+  - pcm_s64le
+  - pcm_u8
+  - pcm_u16be
+  - pcm_u16le
+  - pcm_u24be
+  - pcm_u24le
+  - pcm_u32be
+  - pcm_u32le
+  - pcm_vidc
+  - roq_dpcm
+  - adpcm_adx
+  - adpcm_argo
+  - g722
+  - g726
+  - g726le
+  - adpcm_ima_amv
+  - adpcm_ima_alp
+  - adpcm_ima_apm
+  - adpcm_ima_qt
+  - adpcm_ima_ssi
+  - adpcm_ima_wav
+  - adpcm_ima_ws
+  - adpcm_ms
+  - adpcm_swf
+  - adpcm_yamaha
+  - libcodec2
+  - libgsm
+  - libgsm_ms
+  - libmp3lame
+  - libopus
+  - libshine
+  - libspeex
+  - libtwolame
+  - libvorbis
+  - anull
+...
+---
+video_codecs:
+  - a64multi
+  - a64multi5
+  - alias_pix
+  - amv
+  - apng
+  - asv1
+  - asv2
+  - avrp
+  - avui
+  - bitpacked
+  - bmp
+  - cfhd
+  - cinepak
+  - cljr
+  - dnxhd
+  - dpx
+  - dvvideo
+  - dxv
+  - exr
+  - ffv1
+  - ffvhuff
+  - fits
+  - flashsv
+  - flashsv2
+  - flv
+  - gif
+  - h261
+  - h263
+  - h263p
+  - hap
+  - huffyuv
+  - jpeg2000
+  - jpegls
+  - ljpeg
+  - magicyuv
+  - mjpeg
+  - mpeg1video
+  - mpeg2video
+  - mpeg4
+  - msmpeg4v2
+  - msmpeg4
+  - msrle
+  - msvideo1
+  - pam
+  - pbm
+  - pcx
+  - pfm
+  - pgm
+  - pgmyuv
+  - phm
+  - png
+  - ppm
+  - prores
+  - prores_aw
+  - prores_ks
+  - qoi
+  - qtrle
+  - r10k
+  - r210
+  - rawvideo
+  - roqvideo
+  - rpza
+  - rv10
+  - rv20
+  - sgi
+  - smc
+  - snow
+  - speedhq
+  - sunrast
+  - svq1
+  - targa
+  - tiff
+  - utvideo
+  - v210
+  - v308
+  - v408
+  - v410
+  - vbn
+  - vc2
+  - wbmp
+  - wrapped_avframe
+  - wmv1
+  - wmv2
+  - xbm
+  - xface
+  - xwd
+  - y41p
+  - yuv4
+  - zlib
+  - zmbv
+  - hdr
+  - libaom-av1
+  - libjxl
+  - libopenjpeg
+  - librav1e
+  - libsvtav1
+  - libtheora
+  - libvpx
+  - libvpx-vp9
+  - libwebp_anim
+  - libwebp
+  - libx264
+  - libx264rgb
+  - libx265
+  - libxvid
+  - h263_v4l2m2m
+  - av1_nvenc
+  - av1_qsv
+  - av1_vaapi
+  - h264_nvenc
+  - h264_qsv
+  - h264_v4l2m2m
+  - h264_vaapi
+  - h264_vulkan
+  - hevc_nvenc
+  - hevc_qsv
+  - hevc_v4l2m2m
+  - hevc_vaapi
+  - hevc_vulkan
+  - mjpeg_qsv
+  - mjpeg_vaapi
+  - mpeg2_qsv
+  - mpeg2_vaapi
+  - mpeg4_v4l2m2m
+  - vp8_v4l2m2m
+  - vp8_vaapi
+  - vp9_vaapi
+  - vp9_qsv
+  - vnull
+...
+[Debug  ] <EncodeDock::EncodeDock> end 
+[Debug  ] <JobsDock::JobsDock> begin 
+[Debug  ] <JobsDock::JobsDock> end 
+[Debug  ] <NotesDock::NotesDock> begin 
+[Debug  ] <NotesDock::NotesDock> end 
+[Debug  ] <SubtitlesDock::SubtitlesDock> begin 
+[Debug  ] <SubtitlesDock::SubtitlesDock> end 
+[Debug  ] <MainWindow::readWindowSettings> begin 
+[Debug  ] <AudioLoudnessScopeWidget::resetQview> begin isSceneGraphInitialized false 
+[Debug  ] <MainWindow::readWindowSettings> end 
+[Debug  ] <MainWindow::MainWindow> end 
+[Debug  ] <FiltersDock::load> begin isVisible true qview.status QQuickWidget::Null 
+[Debug  ] <KeyframesDock::load> begin false false 
+[Debug  ] <OpenGLVideoWidget::initialize> begin 
+[Info   ] <OpenGLVideoWidget::initialize> OpenGL vendor "Intel" 
+[Info   ] <OpenGLVideoWidget::initialize> OpenGL renderer "Mesa Intel(R) HD Graphics 4000 (IVB GT2)" 
+[Info   ] <OpenGLVideoWidget::initialize> OpenGL threaded? true 
+[Info   ] <OpenGLVideoWidget::initialize> OpenGL ES? false 
+[Info   ] <OpenGLVideoWidget::initialize> OpenGL maximum texture size = 16384 
+[Info   ] <OpenGLVideoWidget::initialize> OpenGL maximum viewport size = 16384 x 16384 
+[Debug  ] <OpenGLVideoWidget::initialize> end 
+[Debug  ] <Mlt::VideoWidget::initialize> begin 
+[Debug  ] <Mlt::VideoWidget::initialize> end 
+[Warning] <> file:///usr/share/shotcut/qml/views/timeline/timeline.qml:451:17: Unable to assign [undefined] to bool
+[Debug  ] <NewProjectFolder::showEvent> m_profile "" action.data "" 
+[Info   ] <Util::isMemoryLow> available RAM =  1259084 KB 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "alpha_adjust" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Alpha Channel: Adjust" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "alpha_view" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Alpha Channel: View" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "ambisonic_decoder" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "ambisonic_encoder" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_adeclick" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Declick Audio" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_autofade" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Track Auto Fade Audio" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_balance" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Balance" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_bandpass" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_basstreble" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_channelcopy" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Copy Channel" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_compressor" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_delay" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_eq15band" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_eq3band" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_eqparametric" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_expander" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_fadein" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fade In Audio" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_fadeout" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fade Out Audio" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_gain" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Gain / Volume" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_highpass" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_invert" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_limiter" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_lowpass" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_matrix_ms" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_mono" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Downmix" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_mute" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mute" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_noisegate" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_normalize_1p" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Normalise: One Pass" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_normalize_2p" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Normalise: Two Pass" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_notch" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_pan" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Pan" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_pitch" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Pitch" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_reverb" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_seam" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Track Seam" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_stereoenhance" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Stereo Enhancer" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audio_swapchannels" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Swap Channels" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "audiolevelgraph" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Audio Level Visualisation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_eq_cap" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_eq_mask" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_eq_to_rect" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_eq_to_stereo" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_eq_wrap" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_hemi_to_eq" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_rect_to_eq" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_stabilize_360" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bigsh0t_transform_360" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blend_mode" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blend Mode" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "bluescreen0r" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Chroma Key: Simple" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur" "meta_box_blur.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Box" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur" "meta_boxblur.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Box" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur_exponential" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Exponential" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur_gaussian" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Gaussian" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur_gaussian" "meta_av.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Gaussian" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "blur_lowpass" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Low Pass" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "brightness" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Brightness" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "brightness" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Brightness" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "choppy" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Choppy" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "chromahold" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Chroma Hold" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "color" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Colour Grading" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "color" "meta_frei0r_coloradj.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Colour Grading" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "color" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Colour Grading" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "contrast" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Contrast" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "contrast" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Contrast" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "corners" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Corner Pin" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "crop" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Crop: Source" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "crop" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Crop: Source" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "crop_circle" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Crop: Circle" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "crop_rectangle" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Crop: Rectangle" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "dance" "meta_dance.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Audio Dance Visualisation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "deband" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Deband" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "distort" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Distort" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "dither" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Dither" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "dropshadow" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Drop Shadow" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "dust" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Old Film: Dust" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "dynamictext" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Text: Simple" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "elastic_scale" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Elastic Scale" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "fadein_brightness" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fade In Video" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "fadein_movit" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fade In Video" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "fadeout_brightness" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fade Out Video" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "fadeout_movit" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fade Out Video" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "fisheye" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Fisheye" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "flip" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Flip" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "flip" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Flip" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "fspp" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Reduce Noise: Quantisation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "glitch" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Glitch" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "glow" "meta_frei0r.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Glow" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "glow" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Glow" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "gpsgraphic" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "GPS Graphic" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "gpstext" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "GPS Text" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "gradient" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Gradient" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "gradientmap" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Gradient Map" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "grain" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Old Film: Grain" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "grid" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Grid" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "halftone" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Halftone" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "hqdn3d" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Reduce Noise: HQDN3D" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "hslprimaries" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "HSL Primaries" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "hslrange" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "HSL Range" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "hue_lightness_saturation" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Hue/Lightness/Saturation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "invert" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Invert Colours" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "keyspillm0pup" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Key Spill: Advanced" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "lenscorrection" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Lens Correction" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "levels" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Levels" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "lightshow" "meta_lightshow.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Audio Light Visualisation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "lines" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Old Film: Scratches" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "lut3d" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "LUT (3D)" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mask" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mask" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mask_alphaspot" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mask: Simple Shape" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mask_apply" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mask: Apply" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mask_chromakey" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mask: Chroma Key" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mask_glaxnimate" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mask: Draw (Glaxnimate)" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mask_shape" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mask: From File" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mirror" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mirror" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mirror" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mirror" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "mosaic" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Mosaic" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "movit_diffusion" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Diffusion" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "nervous" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Nervous" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "noise_fast" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Noise: Fast" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "noise_keyframes" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Noise: Keyframes" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "nosync" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "No Sync" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "oldfilm" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Old Film: Projector" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "opacity" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Opacity" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "opacity" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Opacity" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "pillar_echo" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Blur: Pad" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "posterize" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Posterise" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "reflect" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Reflect" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "reframe" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Reframe" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "rgbsplit0r" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "RGB Shift" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "richtext" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Text: Rich" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "rotate" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Rotate and Scale" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "saturation" "meta_frei0r.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Saturation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "saturation" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Saturation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "scanlines" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Scan Lines" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "select0r" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Chroma Key: Advanced" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "sepia" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Sepia Tone" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "sharpen" "meta_frei0r.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Sharpen" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "sharpen" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Sharpen" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "size_position" "meta_affine.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Size, Position & Rotate" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "size_position" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Size & Position" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "sketch" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Sketch" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "smartblur" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Reduce Noise: Smart Blur" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "spectrum" "meta_spectrum.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Audio Spectrum Visualisation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "speed" "meta_forward.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added link "Speed: Forward Only" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "speed" "meta_forward_reverse.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added link "Speed: Forward & Reverse" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "spillsuppress" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Key Spill: Simple" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "spot_remover" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Spot Remover" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "stabilize" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Stabilise" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "subtitle" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Subtitle Burn In" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "tcolor" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Old Film: Technocolor" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "threshold" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Threshold" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "time_remap" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added link "Time Remap" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "timer" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Timer" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "tracker" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Motion Tracker" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "trails" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Trails" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "unpremultiply" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Unpremultiply Alpha" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "vaguedenoiser" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Reduce Noise: Wavelet" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "vertigo" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Vertigo" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "vibrance" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Vibrance" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "video_autofade" "meta.qml" 
+[Debug  ] <QmlMetadata::isMltVersion> MLT version: "2" Shotcut minimumVersion: "2" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Track Auto Fade Video" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "vignette" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Vignette" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "vignette" "meta_oldfilm.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Vignette" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "wave" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Wave" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "waveform" "meta.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "Audio Waveform Visualisation" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "white" "meta_frei0r.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "White Balance" 
+[Debug  ] <FilterController::loadFilterMetadata> reading filter metadata "white" "meta_movit.qml" 
+[Debug  ] <FilterController::loadFilterMetadata> added filter "White Balance" 
+[Debug  ] <AudioLoudnessScopeWidget::resetQview> begin isSceneGraphInitialized false 
+[Debug  ] <FiltersDock::load> begin isVisible true qview.status QQuickWidget::Ready 
+[Debug  ] <MainWindow::open> "/tmp/falkon-kppvKE/granny_probe_b2.wav" 
+[wav @ 0x55a48e281f00] parser not found for codec pcm_s16le, packets or times may be invalid.
+[wav @ 0x55a48f3c5380] parser not found for codec pcm_s16le, packets or times may be invalid.
+[Debug  ] <MLT> [producer avformat] audio: total_streams 1 max_stream 0 total_channels 1 max_channels 1
+[AVIOContext @ 0x55a48eabc100] Statistics: 434254 bytes read, 2 seeks
+[AVIOContext @ 0x55a48d4a9680] Statistics: 434254 bytes read, 1 seeks
+[wav @ 0x55a48f3c5380] parser not found for codec pcm_s16le, packets or times may be invalid.
+[wav @ 0x55a48e281f00] parser not found for codec pcm_s16le, packets or times may be invalid.
+[AVIOContext @ 0x55a48d4a9680] Statistics: 434254 bytes read, 2 seeks
+[Debug  ] <Mlt::Controller::setPreviewScale> 1920 x 1080 
+[Debug  ] <MainWindow::setAudioChannels> 2 
+[Debug  ] <Mlt::Controller::setAudioChannels> 2 
+[Debug  ] <VideoVectorScopeWidget::profileChanged> 709 
+[Info   ] <MainWindow::open> "/tmp/falkon-kppvKE/granny_probe_b2.wav" 
+[Debug  ] <AudioLoudnessScopeWidget::resetQview> begin isSceneGraphInitialized false 
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [consumer sdl2_audio] Audio Opened: driver=pulseaudio channels=2 frequency=48000
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Debug  ] <MainWindow::closeEvent> begin 
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Info   ] <MLT> [link swresample] 1(mono) s16 44100Hz -> 2(stereo) s16 48000Hz
+[Debug  ] <MainWindow::closeEvent> end 
+[130834:1:1103/123802.225244:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[130834:1:1103/123806.711476:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[130834:1:1103/123808.659799:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+js: Unrecognized feature: 'payment'.
+js: [AuthRouter] auth error {
+  "error": "login_required",
+  "error_description": "User interaction is required"
+}
+[h264 @ 0x7fab257d9e80] get_buffer() failed
+[h264 @ 0x7fab257d9e80] thread_get_buffer() failed
+[h264 @ 0x7fab257d9e80] decode_slice_header error
+[h264 @ 0x7fab257d9e80] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 13:04:20.488: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 13:04:20.701: Unable to replace properties on 0: Error getting properties for ID
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+qt.text.font.db: OpenType support missing for "Unifont", script 17
+qt.text.font.db: OpenType support missing for "Unifont-JP", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Sans", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Sans", script 17
+qt.text.font.db: OpenType support missing for "URW Gothic", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Sans Narrow", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei", script 17
+qt.text.font.db: OpenType support missing for "Loma", script 17
+qt.text.font.db: OpenType support missing for "IPAGothic", script 17
+qt.text.font.db: OpenType support missing for "FreeSans", script 17
+qt.text.font.db: OpenType support missing for "FreeSerif", script 17
+qt.text.font.db: OpenType support missing for "FreeMono", script 17
+qt.text.font.db: OpenType support missing for "IPAPGothic", script 17
+qt.text.font.db: OpenType support missing for "Quicksand", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Math TeX Gyre", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Sans Mono", script 17
+qt.text.font.db: OpenType support missing for "DejaVu Serif", script 17
+qt.text.font.db: OpenType support missing for "Liberation Mono", script 17
+qt.text.font.db: OpenType support missing for "Liberation Sans", script 17
+qt.text.font.db: OpenType support missing for "Liberation Serif", script 17
+qt.text.font.db: OpenType support missing for "Noto Sans Mono", script 17
+qt.text.font.db: OpenType support missing for "D050000L", script 17
+qt.text.font.db: OpenType support missing for "Standard Symbols PS", script 17
+qt.text.font.db: OpenType support missing for "C059", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Mono PS", script 17
+qt.text.font.db: OpenType support missing for "Nimbus Roman", script 17
+qt.text.font.db: OpenType support missing for "P052", script 17
+qt.text.font.db: OpenType support missing for "Noto Mono", script 17
+qt.text.font.db: OpenType support missing for "Droid Sans Fallback", script 17
+qt.text.font.db: OpenType support missing for "Unifont Sample", script 17
+qt.text.font.db: OpenType support missing for "Courier 10 Pitch", script 17
+qt.text.font.db: OpenType support missing for "Bitstream Charter", script 17
+qt.text.font.db: OpenType support missing for "Unifont CSUR", script 17
+qt.text.font.db: OpenType support missing for "Unifont Upper", script 17
+qt.text.font.db: OpenType support missing for "Liberation Sans Narrow", script 17
+qt.text.font.db: OpenType support missing for "Quicksand Medium", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei Mono", script 17
+qt.text.font.db: OpenType support missing for "WenQuanYi Zen Hei Sharp", script 17
+qt.text.font.db: OpenType support missing for "Quicksand Light", script 17
+qt.text.font.db: OpenType support missing for "URW Bookman", script 17
+qt.text.font.db: OpenType support missing for "Z003", script 17
+qt.text.font.db: OpenType support missing for "Noto Color Emoji", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+qt.text.font.db: OpenType support missing for "", script 17
+[31004.609] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:54:20.438: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:54:23.013: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:54:23.215: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:54:42.855: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 19:54:53.218: Unable to replace properties on 0: Error getting properties for ID
+[38745.932] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[38751.188] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:10:04.259: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:10:06.562: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:10:06.760: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:14:33.293: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 20:14:43.731: Unable to replace properties on 0: Error getting properties for ID
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+[151866:1:1103/202811.864940:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/202814.776974:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/202847.175485:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/202848.651586:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/202850.508972:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203427.252723:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203428.611697:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203430.131350:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203536.257879:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203539.613083:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203540.560689:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203752.125796:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203754.726912:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/203756.118228:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[40532.055] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[151866:1:1103/204004.230045:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204006.717536:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204007.571083:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204156.270429:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204206.460238:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204215.844555:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204340.819323:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204353.576542:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/204357.182500:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+[151866:1:1103/205238.204784:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205241.569393:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205242.800826:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205351.551198:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205354.544719:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205357.630691:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205632.237617:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205633.343121:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205633.973099:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205756.226924:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205806.074335:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+[151866:1:1103/205807.237367:ERROR:video_frame_yuv_converter.cc(137)] Check failed: raster_context_provider->ContextCapabilities() .supports_yuv_to_rgb_conversion. 
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:02:45.508: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:02:48.280: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:02:48.373: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:02:48.476: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:11:10.620: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:11:10.725: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:11:20.855: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:22:36.261: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:22:39.070: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:22:39.169: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 22:22:39.272: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 08:31:17.196: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 08:31:17.895: Unable to replace properties on 0: Error getting properties for ID
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 08:31:27.539: Unable to replace properties on 0: Error getting properties for ID
+[0.901] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[16.347] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[16.347] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[16.667] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[16.667] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.667] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.686] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.686] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.686] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.686] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.686] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.987] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.987] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.987] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[16.987] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.156] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.156] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.364] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.372] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.398] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.398] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[10.568] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.568] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.568] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[10.568] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[0.899] [glfw error 65544]: Notify: Failed to get server capabilities error: [org.freedesktop.DBus.Error.NoReply] Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+ignoreboth or ignorespace present in bash HISTCONTROL setting, showing running command will not be robust
+[11.478] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[11.478] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.704] [PARSE ERROR] CSI code m has 2 > 1 parameters
+[11.704] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.704] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.704] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.704] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.708] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.708] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.708] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.922] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.922] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.922] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.922] [PARSE ERROR] Unsupported screen mode:  2027 (private)
+[11.923] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[11.923] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[11.923] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+[11.923] [PARSE ERROR] Ignoring OSC 13,14,15,16 and 18 used for pointer and Textronic colors by XTerm
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+[5275.188] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[5485.342] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[5957.583] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[14025.894] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[19828.296] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[22985.981] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Unknown or unsupported skia image format
+[24162.719] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[24104.053] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[24112.710] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[24459.319] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[24474.706] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Fontconfig error: Cannot load default config file: No such file: (null)
+[199222:199307:1104/154532.727354:ERROR:cert_verify_proc_builtin.cc(874)] CertVerifyProcBuiltin for tashan.ru failed:
+----- Certificate i=0 (CN=parking,O=Internet Widgits Pty Ltd,ST=Some-State,C=AU) -----
+ERROR: No matching issuer found
+
+
+[199222:199262:1104/154533.037881:ERROR:ssl_client_socket_impl.cc(970)] handshake failed; returned -1, SSL error code 1, net_error -202
+[199222:199262:1104/154533.038061:ERROR:ssl_client_socket_impl.cc(970)] handshake failed; returned -1, SSL error code 1, net_error -202
+[199222:199242:1104/154541.592752:ERROR:cert_verify_proc_builtin.cc(874)] CertVerifyProcBuiltin for zlibrary3.ru failed:
+----- Certificate i=1 (CN=ca,OU=Jiasule business department,O=Beijing Knownsec Information Technology Co.\, Ltd,L=Beijing,ST=CN,C=CN) -----
+ERROR: No matching issuer found
+
+
+[199222:199245:1104/154541.673746:ERROR:cert_verify_proc_builtin.cc(874)] CertVerifyProcBuiltin for zlibrary7.ru failed:
+----- Certificate i=1 (CN=ca,OU=Jiasule business department,O=Beijing Knownsec Information Technology Co.\, Ltd,L=Beijing,ST=CN,C=CN) -----
+ERROR: No matching issuer found
+
+
+[199222:199242:1104/154541.674580:ERROR:cert_verify_proc_builtin.cc(874)] CertVerifyProcBuiltin for zlibraryf.ru failed:
+----- Certificate i=1 (CN=ca,OU=Jiasule business department,O=Beijing Knownsec Information Technology Co.\, Ltd,L=Beijing,ST=CN,C=CN) -----
+ERROR: No matching issuer found
+
+
+[199222:199246:1104/154541.676001:ERROR:cert_verify_proc_builtin.cc(874)] CertVerifyProcBuiltin for zlibraryu.ru failed:
+----- Certificate i=1 (CN=ca,OU=Jiasule business department,O=Beijing Knownsec Information Technology Co.\, Ltd,L=Beijing,ST=CN,C=CN) -----
+ERROR: No matching issuer found
+
+
+[199222:199262:1104/154541.687102:ERROR:ssl_client_socket_impl.cc(970)] handshake failed; returned -1, SSL error code 1, net_error -202
+[199222:199262:1104/154541.995051:ERROR:ssl_client_socket_impl.cc(970)] handshake failed; returned -1, SSL error code 1, net_error -202
+[199222:199262:1104/154541.996662:ERROR:ssl_client_socket_impl.cc(970)] handshake failed; returned -1, SSL error code 1, net_error -202
+[199222:199262:1104/154541.998240:ERROR:ssl_client_socket_impl.cc(970)] handshake failed; returned -1, SSL error code 1, net_error -202
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:13:08.243: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:13:12.931: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:13:12.999: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:13:13.059: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:20:54.353: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:20:54.458: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:20:54.550: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:21:04.655: Unable to replace properties on 0: Error getting properties for ID
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+Could not connect to wayland display, exiting.
+Failed to start adjustment method wayland.
+Trying next method...
+Using method `randr'.
+[0000564270952520] main libvlc: Running vlc with the default interface. Use 'cvlc' to use vlc without interface.
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+[00007f5e54c10ca0] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+[h264 @ 0x7f5e550d3240] get_buffer() failed
+[h264 @ 0x7f5e550d3240] thread_get_buffer() failed
+[h264 @ 0x7f5e550d3240] decode_slice_header error
+[h264 @ 0x7f5e550d3240] no frame!
+[h264 @ 0x7f5e550d3240] get_buffer() failed
+[h264 @ 0x7f5e550d3240] thread_get_buffer() failed
+[h264 @ 0x7f5e550d3240] decode_slice_header error
+[h264 @ 0x7f5e550d3240] no frame!
+[h264 @ 0x7f5e551c8d40] get_buffer() failed
+[h264 @ 0x7f5e551c8d40] thread_get_buffer() failed
+[h264 @ 0x7f5e551c8d40] decode_slice_header error
+[h264 @ 0x7f5e551c8d40] no frame!
+[h264 @ 0x7f5e551c8d40] get_buffer() failed
+[h264 @ 0x7f5e551c8d40] thread_get_buffer() failed
+[h264 @ 0x7f5e551c8d40] decode_slice_header error
+[h264 @ 0x7f5e551c8d40] no frame!
+[h264 @ 0x7f5e55292700] get_buffer() failed
+[h264 @ 0x7f5e55292700] thread_get_buffer() failed
+[h264 @ 0x7f5e55292700] decode_slice_header error
+[h264 @ 0x7f5e55292700] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:35:31.413: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f5e550d3240] get_buffer() failed
+[h264 @ 0x7f5e550d3240] thread_get_buffer() failed
+[h264 @ 0x7f5e550d3240] decode_slice_header error
+[h264 @ 0x7f5e550d3240] no frame!
+[00007f5e554f5a80] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:35:38.302: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f5e54c36e00] get_buffer() failed
+[h264 @ 0x7f5e54c36e00] thread_get_buffer() failed
+[h264 @ 0x7f5e54c36e00] decode_slice_header error
+[h264 @ 0x7f5e54c36e00] no frame!
+[h264 @ 0x7f5e554eed40] get_buffer() failed
+[h264 @ 0x7f5e554eed40] thread_get_buffer() failed
+[h264 @ 0x7f5e554eed40] decode_slice_header error
+[h264 @ 0x7f5e554eed40] no frame!
+[h264 @ 0x7f5e5519c180] get_buffer() failed
+[h264 @ 0x7f5e5519c180] thread_get_buffer() failed
+[h264 @ 0x7f5e5519c180] decode_slice_header error
+[h264 @ 0x7f5e5519c180] no frame!
+[h264 @ 0x7f5e554eed40] get_buffer() failed
+[h264 @ 0x7f5e554eed40] thread_get_buffer() failed
+[h264 @ 0x7f5e554eed40] decode_slice_header error
+[h264 @ 0x7f5e554eed40] no frame!
+[h264 @ 0x7f5e554eed40] get_buffer() failed
+[h264 @ 0x7f5e554eed40] thread_get_buffer() failed
+[h264 @ 0x7f5e554eed40] decode_slice_header error
+[h264 @ 0x7f5e554eed40] no frame!
+[h264 @ 0x7f5e55358480] get_buffer() failed
+[h264 @ 0x7f5e55358480] thread_get_buffer() failed
+[h264 @ 0x7f5e55358480] decode_slice_header error
+[h264 @ 0x7f5e55358480] no frame!
+[h264 @ 0x7f5e54c36e00] get_buffer() failed
+[h264 @ 0x7f5e54c36e00] thread_get_buffer() failed
+[h264 @ 0x7f5e54c36e00] decode_slice_header error
+[h264 @ 0x7f5e54c36e00] no frame!
+[00007f5e554f5a80] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007f5e554f5a80] main decoder error: Could not convert timestamp 169181231797 for FFmpeg
+[h264 @ 0x7f5e55358480] get_buffer() failed
+[h264 @ 0x7f5e55358480] thread_get_buffer() failed
+[h264 @ 0x7f5e55358480] decode_slice_header error
+[h264 @ 0x7f5e55358480] no frame!
+[00007f5e554f5a80] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007f5e554f5a80] main decoder error: Could not convert timestamp 168899311547 for FFmpeg
+[h264 @ 0x7f5e5519c180] get_buffer() failed
+[h264 @ 0x7f5e5519c180] thread_get_buffer() failed
+[h264 @ 0x7f5e5519c180] decode_slice_header error
+[h264 @ 0x7f5e5519c180] no frame!
+[h264 @ 0x7f5e54c0a880] get_buffer() failed
+[h264 @ 0x7f5e54c0a880] thread_get_buffer() failed
+[h264 @ 0x7f5e54c0a880] decode_slice_header error
+[h264 @ 0x7f5e54c0a880] no frame!
+[h264 @ 0x7f5e54c36e00] get_buffer() failed
+[h264 @ 0x7f5e54c36e00] thread_get_buffer() failed
+[h264 @ 0x7f5e54c36e00] decode_slice_header error
+[h264 @ 0x7f5e54c36e00] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:36:28.639: Group Properties error: GDBus.Error:org.freedesktop.DBus.Error.UnknownObject: No such object path '/MenuBar'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:36:28.640: Unable to replace properties on 0: GDBus.Error:org.freedesktop.DBus.Error.UnknownObject: No such object path '/MenuBar'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:36:28.640: Group Properties error: GDBus.Error:org.freedesktop.DBus.Error.UnknownObject: No such object path '/MenuBar'
+[0000561c6e79d520] main libvlc: Running vlc with the default interface. Use 'cvlc' to use vlc without interface.
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+[00007f3744c12f60] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+[h264 @ 0x7f37453565c0] get_buffer() failed
+[h264 @ 0x7f37453565c0] thread_get_buffer() failed
+[h264 @ 0x7f37453565c0] decode_slice_header error
+[h264 @ 0x7f37453565c0] no frame!
+[h264 @ 0x7f374541ff80] get_buffer() failed
+[h264 @ 0x7f374541ff80] thread_get_buffer() failed
+[h264 @ 0x7f374541ff80] decode_slice_header error
+[h264 @ 0x7f374541ff80] no frame!
+[h264 @ 0x7f37453565c0] get_buffer() failed
+[h264 @ 0x7f37453565c0] thread_get_buffer() failed
+[h264 @ 0x7f37453565c0] decode_slice_header error
+[h264 @ 0x7f37453565c0] no frame!
+[h264 @ 0x7f37450cd740] get_buffer() failed
+[h264 @ 0x7f37450cd740] thread_get_buffer() failed
+[h264 @ 0x7f37450cd740] decode_slice_header error
+[h264 @ 0x7f37450cd740] no frame!
+[h264 @ 0x7f37451c3240] get_buffer() failed
+[h264 @ 0x7f37451c3240] thread_get_buffer() failed
+[h264 @ 0x7f37451c3240] decode_slice_header error
+[h264 @ 0x7f37451c3240] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:36:52.331: Group Properties error: GDBus.Error:org.freedesktop.DBus.Error.UnknownObject: No such object path '/MenuBar'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:36:52.331: Unable to replace properties on 0: GDBus.Error:org.freedesktop.DBus.Error.UnknownObject: No such object path '/MenuBar'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:36:52.331: Group Properties error: GDBus.Error:org.freedesktop.DBus.Error.UnknownObject: No such object path '/MenuBar'
+[000056478bf03520] main libvlc: Running vlc with the default interface. Use 'cvlc' to use vlc without interface.
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+[00007feee8c0fbf0] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[h264 @ 0x7feee935b940] get_buffer() failed
+[h264 @ 0x7feee935b940] thread_get_buffer() failed
+[h264 @ 0x7feee935b940] decode_slice_header error
+[h264 @ 0x7feee935b940] no frame!
+[h264 @ 0x7feee935b940] get_buffer() failed
+[h264 @ 0x7feee935b940] thread_get_buffer() failed
+[h264 @ 0x7feee935b940] decode_slice_header error
+[h264 @ 0x7feee935b940] no frame!
+[h264 @ 0x7feee9425300] get_buffer() failed
+[h264 @ 0x7feee9425300] thread_get_buffer() failed
+[h264 @ 0x7feee9425300] decode_slice_header error
+[h264 @ 0x7feee9425300] no frame!
+[h264 @ 0x7feee91c85c0] get_buffer() failed
+[h264 @ 0x7feee91c85c0] thread_get_buffer() failed
+[h264 @ 0x7feee91c85c0] decode_slice_header error
+[h264 @ 0x7feee91c85c0] no frame!
+[h264 @ 0x7feee91c85c0] get_buffer() failed
+[h264 @ 0x7feee91c85c0] thread_get_buffer() failed
+[h264 @ 0x7feee91c85c0] decode_slice_header error
+[h264 @ 0x7feee91c85c0] no frame!
+[h264 @ 0x7feee91c85c0] get_buffer() failed
+[h264 @ 0x7feee91c85c0] thread_get_buffer() failed
+[h264 @ 0x7feee91c85c0] decode_slice_header error
+[h264 @ 0x7feee91c85c0] no frame!
+[h264 @ 0x7feee9425300] get_buffer() failed
+[h264 @ 0x7feee9425300] thread_get_buffer() failed
+[h264 @ 0x7feee9425300] decode_slice_header error
+[h264 @ 0x7feee9425300] no frame!
+[00007feee8c0fbf0] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0fbf0] main decoder error: Could not convert timestamp 169201414437 for FFmpeg
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[h264 @ 0x7feee935b940] get_buffer() failed
+[h264 @ 0x7feee935b940] thread_get_buffer() failed
+[h264 @ 0x7feee935b940] decode_slice_header error
+[h264 @ 0x7feee935b940] no frame!
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[h264 @ 0x7feee935b940] get_buffer() failed
+[h264 @ 0x7feee935b940] thread_get_buffer() failed
+[h264 @ 0x7feee935b940] decode_slice_header error
+[h264 @ 0x7feee935b940] no frame!
+[h264 @ 0x7feee9291f80] get_buffer() failed
+[h264 @ 0x7feee9291f80] thread_get_buffer() failed
+[h264 @ 0x7feee9291f80] decode_slice_header error
+[h264 @ 0x7feee9291f80] no frame!
+[h264 @ 0x7feee9425300] get_buffer() failed
+[h264 @ 0x7feee9425300] thread_get_buffer() failed
+[h264 @ 0x7feee9425300] decode_slice_header error
+[h264 @ 0x7feee9425300] no frame!
+[h264 @ 0x7feee91c85c0] get_buffer() failed
+[h264 @ 0x7feee91c85c0] thread_get_buffer() failed
+[h264 @ 0x7feee91c85c0] decode_slice_header error
+[h264 @ 0x7feee91c85c0] no frame!
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[00007feee8c0fbf0] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0fbf0] main decoder error: Could not convert timestamp 168986368338 for FFmpeg
+[h264 @ 0x7feee91c85c0] get_buffer() failed
+[h264 @ 0x7feee91c85c0] thread_get_buffer() failed
+[h264 @ 0x7feee91c85c0] decode_slice_header error
+[h264 @ 0x7feee91c85c0] no frame!
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+[h264 @ 0x7feee8c1ed00] get_buffer() failed
+[h264 @ 0x7feee8c1ed00] thread_get_buffer() failed
+[h264 @ 0x7feee8c1ed00] decode_slice_header error
+[h264 @ 0x7feee8c1ed00] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:39:40.318: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7feee9291f80] get_buffer() failed
+[h264 @ 0x7feee9291f80] thread_get_buffer() failed
+[h264 @ 0x7feee9291f80] decode_slice_header error
+[h264 @ 0x7feee9291f80] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:39:44.628: Unable to replace properties on 0: Error getting properties for ID
+[00007feee8c0e730] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:39:44.936: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7feee94ee780] get_buffer() failed
+[h264 @ 0x7feee94ee780] thread_get_buffer() failed
+[h264 @ 0x7feee94ee780] decode_slice_header error
+[h264 @ 0x7feee94ee780] no frame!
+[h264 @ 0x7feee94ee780] get_buffer() failed
+[h264 @ 0x7feee94ee780] thread_get_buffer() failed
+[h264 @ 0x7feee94ee780] decode_slice_header error
+[h264 @ 0x7feee94ee780] no frame!
+[h264 @ 0x7feee94ee780] get_buffer() failed
+[h264 @ 0x7feee94ee780] thread_get_buffer() failed
+[h264 @ 0x7feee94ee780] decode_slice_header error
+[h264 @ 0x7feee94ee780] no frame!
+[h264 @ 0x7feee94ee780] get_buffer() failed
+[h264 @ 0x7feee94ee780] thread_get_buffer() failed
+[h264 @ 0x7feee94ee780] decode_slice_header error
+[h264 @ 0x7feee94ee780] no frame!
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[00007feee8c0e730] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0e730] main decoder error: Could not convert timestamp 169096972515 for FFmpeg
+[h264 @ 0x7feee9422d80] get_buffer() failed
+[h264 @ 0x7feee9422d80] thread_get_buffer() failed
+[h264 @ 0x7feee9422d80] decode_slice_header error
+[h264 @ 0x7feee9422d80] no frame!
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[00007feee8c0e730] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0e730] main decoder error: Could not convert timestamp 169114881547 for FFmpeg
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[00007feee8c0e730] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0e730] main decoder error: Could not convert timestamp 169112549433 for FFmpeg
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[00007feee8c0e730] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0e730] main decoder error: Could not convert timestamp 169115372086 for FFmpeg
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[00007feee8c0e730] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0e730] main decoder error: Could not convert timestamp 169121739364 for FFmpeg
+[h264 @ 0x7feee951e740] get_buffer() failed
+[h264 @ 0x7feee951e740] thread_get_buffer() failed
+[h264 @ 0x7feee951e740] decode_slice_header error
+[h264 @ 0x7feee951e740] no frame!
+[h264 @ 0x7feee951e740] get_buffer() failed
+[h264 @ 0x7feee951e740] thread_get_buffer() failed
+[h264 @ 0x7feee951e740] decode_slice_header error
+[h264 @ 0x7feee951e740] no frame!
+[h264 @ 0x7feee951e740] get_buffer() failed
+[h264 @ 0x7feee951e740] thread_get_buffer() failed
+[h264 @ 0x7feee951e740] decode_slice_header error
+[h264 @ 0x7feee951e740] no frame!
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[00007feee8c0e730] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007feee8c0e730] main decoder error: Could not convert timestamp 169557701005 for FFmpeg
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[h264 @ 0x7feee954e940] get_buffer() failed
+[h264 @ 0x7feee954e940] thread_get_buffer() failed
+[h264 @ 0x7feee954e940] decode_slice_header error
+[h264 @ 0x7feee954e940] no frame!
+[h264 @ 0x7feee951e740] get_buffer() failed
+[h264 @ 0x7feee951e740] thread_get_buffer() failed
+[h264 @ 0x7feee951e740] decode_slice_header error
+[h264 @ 0x7feee951e740] no frame!
+[h264 @ 0x7feee94f4440] get_buffer() failed
+[h264 @ 0x7feee94f4440] thread_get_buffer() failed
+[h264 @ 0x7feee94f4440] decode_slice_header error
+[h264 @ 0x7feee94f4440] no frame!
+[h264 @ 0x7feee94ee780] get_buffer() failed
+[h264 @ 0x7feee94ee780] thread_get_buffer() failed
+[h264 @ 0x7feee94ee780] decode_slice_header error
+[h264 @ 0x7feee94ee780] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:44:22.685: Unable to replace properties on 0: Error getting properties for ID
+[000056308be6c520] main libvlc: Running vlc with the default interface. Use 'cvlc' to use vlc without interface.
+libva info: VA-API version 1.22.0
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva error: /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so init failed
+libva info: va_openDriver() returns 1
+libva info: Trying to open /usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so
+libva info: Found init function __vaDriverInit_1_22
+libva info: va_openDriver() returns 0
+[00007f77acc13140] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+[h264 @ 0x7f77ad292140] get_buffer() failed
+[h264 @ 0x7f77ad292140] thread_get_buffer() failed
+[h264 @ 0x7f77ad292140] decode_slice_header error
+[h264 @ 0x7f77ad292140] no frame!
+[h264 @ 0x7f77ad1c8780] get_buffer() failed
+[h264 @ 0x7f77ad1c8780] thread_get_buffer() failed
+[h264 @ 0x7f77ad1c8780] decode_slice_header error
+[h264 @ 0x7f77ad1c8780] no frame!
+[h264 @ 0x7f77ad1c8780] get_buffer() failed
+[h264 @ 0x7f77ad1c8780] thread_get_buffer() failed
+[h264 @ 0x7f77ad1c8780] decode_slice_header error
+[h264 @ 0x7f77ad1c8780] no frame!
+[h264 @ 0x7f77ad1c8780] get_buffer() failed
+[h264 @ 0x7f77ad1c8780] thread_get_buffer() failed
+[h264 @ 0x7f77ad1c8780] decode_slice_header error
+[h264 @ 0x7f77ad1c8780] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:44:35.658: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f77ad35bb00] get_buffer() failed
+[h264 @ 0x7f77ad35bb00] thread_get_buffer() failed
+[h264 @ 0x7f77ad35bb00] decode_slice_header error
+[h264 @ 0x7f77ad35bb00] no frame!
+[00007f77acc11010] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:44:47.054: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GTK-WARNING **: 17:44:47.056: Children but no menu, someone's been naughty with their 'children-display' property: 'submenu'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GTK-WARNING **: 17:44:47.057: Children but no menu, someone's been naughty with their 'children-display' property: 'submenu'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GTK-WARNING **: 17:44:47.057: Children but no menu, someone's been naughty with their 'children-display' property: 'submenu'
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:44:47.131: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f77ad35a300] get_buffer() failed
+[h264 @ 0x7f77ad35a300] thread_get_buffer() failed
+[h264 @ 0x7f77ad35a300] decode_slice_header error
+[h264 @ 0x7f77ad35a300] no frame!
+[h264 @ 0x7f77acc0bf80] get_buffer() failed
+[h264 @ 0x7f77acc0bf80] thread_get_buffer() failed
+[h264 @ 0x7f77acc0bf80] decode_slice_header error
+[h264 @ 0x7f77acc0bf80] no frame!
+[h264 @ 0x7f77ad544b00] get_buffer() failed
+[h264 @ 0x7f77ad544b00] thread_get_buffer() failed
+[h264 @ 0x7f77ad544b00] decode_slice_header error
+[h264 @ 0x7f77ad544b00] no frame!
+[h264 @ 0x7f77acc0bf80] get_buffer() failed
+[h264 @ 0x7f77acc0bf80] thread_get_buffer() failed
+[h264 @ 0x7f77acc0bf80] decode_slice_header error
+[h264 @ 0x7f77acc0bf80] no frame!
+[h264 @ 0x7f77acc0bf80] get_buffer() failed
+[h264 @ 0x7f77acc0bf80] thread_get_buffer() failed
+[h264 @ 0x7f77acc0bf80] decode_slice_header error
+[h264 @ 0x7f77acc0bf80] no frame!
+[h264 @ 0x7f77ad4ec800] get_buffer() failed
+[h264 @ 0x7f77ad4ec800] thread_get_buffer() failed
+[h264 @ 0x7f77ad4ec800] decode_slice_header error
+[h264 @ 0x7f77ad4ec800] no frame!
+[h264 @ 0x7f77ad1c6740] get_buffer() failed
+[h264 @ 0x7f77ad1c6740] thread_get_buffer() failed
+[h264 @ 0x7f77ad1c6740] decode_slice_header error
+[h264 @ 0x7f77ad1c6740] no frame!
+[h264 @ 0x7f77ad1c6740] get_buffer() failed
+[h264 @ 0x7f77ad1c6740] thread_get_buffer() failed
+[h264 @ 0x7f77ad1c6740] decode_slice_header error
+[h264 @ 0x7f77ad1c6740] no frame!
+[h264 @ 0x7f77acc0bf80] get_buffer() failed
+[h264 @ 0x7f77acc0bf80] thread_get_buffer() failed
+[h264 @ 0x7f77acc0bf80] decode_slice_header error
+[h264 @ 0x7f77acc0bf80] no frame!
+[00007f77acc11010] main decoder error: Timestamp conversion failed (delay 1000000, buffering 100000, bound 9000000)
+[00007f77acc11010] main decoder error: Could not convert timestamp 169422710044 for FFmpeg
+[h264 @ 0x7f77ad35a300] get_buffer() failed
+[h264 @ 0x7f77ad35a300] thread_get_buffer() failed
+[h264 @ 0x7f77ad35a300] decode_slice_header error
+[h264 @ 0x7f77ad35a300] no frame!
+[h264 @ 0x7f77ad1c6740] get_buffer() failed
+[h264 @ 0x7f77ad1c6740] thread_get_buffer() failed
+[h264 @ 0x7f77ad1c6740] decode_slice_header error
+[h264 @ 0x7f77ad1c6740] no frame!
+[h264 @ 0x7f77ad544b00] get_buffer() failed
+[h264 @ 0x7f77ad544b00] thread_get_buffer() failed
+[h264 @ 0x7f77ad544b00] decode_slice_header error
+[h264 @ 0x7f77ad544b00] no frame!
+[h264 @ 0x7f77ad35a300] get_buffer() failed
+[h264 @ 0x7f77ad35a300] thread_get_buffer() failed
+[h264 @ 0x7f77ad35a300] decode_slice_header error
+[h264 @ 0x7f77ad35a300] no frame!
+[h264 @ 0x7f77acc0bf80] get_buffer() failed
+[h264 @ 0x7f77acc0bf80] thread_get_buffer() failed
+[h264 @ 0x7f77acc0bf80] decode_slice_header error
+[h264 @ 0x7f77acc0bf80] no frame!
+[h264 @ 0x7f77ad35a300] get_buffer() failed
+[h264 @ 0x7f77ad35a300] thread_get_buffer() failed
+[h264 @ 0x7f77ad35a300] decode_slice_header error
+[h264 @ 0x7f77ad35a300] no frame!
+[h264 @ 0x7f77acc0bf80] get_buffer() failed
+[h264 @ 0x7f77acc0bf80] thread_get_buffer() failed
+[h264 @ 0x7f77acc0bf80] decode_slice_header error
+[h264 @ 0x7f77acc0bf80] no frame!
+[00007f77acc13ef0] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:45:55.126: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:45:58.771: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f77ad196dc0] get_buffer() failed
+[h264 @ 0x7f77ad196dc0] thread_get_buffer() failed
+[h264 @ 0x7f77ad196dc0] decode_slice_header error
+[h264 @ 0x7f77ad196dc0] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:46:39.583: Unable to replace properties on 0: Error getting properties for ID
+[00007f77ad4f55d0] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:46:39.761: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:46:39.829: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f77ad4e9f40] get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] thread_get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] decode_slice_header error
+[h264 @ 0x7f77ad4e9f40] no frame!
+[h264 @ 0x7f77ad4fb3c0] get_buffer() failed
+[h264 @ 0x7f77ad4fb3c0] thread_get_buffer() failed
+[h264 @ 0x7f77ad4fb3c0] decode_slice_header error
+[h264 @ 0x7f77ad4fb3c0] no frame!
+[h264 @ 0x7f77ad197000] get_buffer() failed
+[h264 @ 0x7f77ad197000] thread_get_buffer() failed
+[h264 @ 0x7f77ad197000] decode_slice_header error
+[h264 @ 0x7f77ad197000] no frame!
+[h264 @ 0x7f77ad4f4440] get_buffer() failed
+[h264 @ 0x7f77ad4f4440] thread_get_buffer() failed
+[h264 @ 0x7f77ad4f4440] decode_slice_header error
+[h264 @ 0x7f77ad4f4440] no frame!
+[h264 @ 0x7f77ad4fb3c0] get_buffer() failed
+[h264 @ 0x7f77ad4fb3c0] thread_get_buffer() failed
+[h264 @ 0x7f77ad4fb3c0] decode_slice_header error
+[h264 @ 0x7f77ad4fb3c0] no frame!
+[00007f77ad4f55d0] main decoder error: Timestamp conversion failed for 1201200001: no reference clock
+[00007f77ad4f55d0] main decoder error: Could not convert timestamp 0 for FFmpeg
+[h264 @ 0x7f77ad4e9f40] get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] thread_get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] decode_slice_header error
+[h264 @ 0x7f77ad4e9f40] no frame!
+[h264 @ 0x7f77ad4e9f40] get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] thread_get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] decode_slice_header error
+[h264 @ 0x7f77ad4e9f40] no frame!
+[h264 @ 0x7f77ad197000] get_buffer() failed
+[h264 @ 0x7f77ad197000] thread_get_buffer() failed
+[h264 @ 0x7f77ad197000] decode_slice_header error
+[h264 @ 0x7f77ad197000] no frame!
+[00007f77ad4f55d0] main decoder error: Timestamp conversion failed for 1659600001: no reference clock
+[00007f77ad4f55d0] main decoder error: Could not convert timestamp 0 for FFmpeg
+[h264 @ 0x7f77ad4f4440] get_buffer() failed
+[h264 @ 0x7f77ad4f4440] thread_get_buffer() failed
+[h264 @ 0x7f77ad4f4440] decode_slice_header error
+[h264 @ 0x7f77ad4f4440] no frame!
+[h264 @ 0x7f77ad197000] get_buffer() failed
+[h264 @ 0x7f77ad197000] thread_get_buffer() failed
+[h264 @ 0x7f77ad197000] decode_slice_header error
+[h264 @ 0x7f77ad197000] no frame!
+[h264 @ 0x7f77ad4e9f40] get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] thread_get_buffer() failed
+[h264 @ 0x7f77ad4e9f40] decode_slice_header error
+[h264 @ 0x7f77ad4e9f40] no frame!
+[h264 @ 0x7f77ad197000] get_buffer() failed
+[h264 @ 0x7f77ad197000] thread_get_buffer() failed
+[h264 @ 0x7f77ad197000] decode_slice_header error
+[h264 @ 0x7f77ad197000] no frame!
+[h264 @ 0x7f77ad4fb3c0] get_buffer() failed
+[h264 @ 0x7f77ad4fb3c0] thread_get_buffer() failed
+[h264 @ 0x7f77ad4fb3c0] decode_slice_header error
+[h264 @ 0x7f77ad4fb3c0] no frame!
+[h264 @ 0x7f77ad4f4440] get_buffer() failed
+[h264 @ 0x7f77ad4f4440] thread_get_buffer() failed
+[h264 @ 0x7f77ad4f4440] decode_slice_header error
+[h264 @ 0x7f77ad4f4440] no frame!
+[h264 @ 0x7f77ad4f4440] get_buffer() failed
+[h264 @ 0x7f77ad4f4440] thread_get_buffer() failed
+[h264 @ 0x7f77ad4f4440] decode_slice_header error
+[h264 @ 0x7f77ad4f4440] no frame!
+[h264 @ 0x7f77ad4f4440] get_buffer() failed
+[h264 @ 0x7f77ad4f4440] thread_get_buffer() failed
+[h264 @ 0x7f77ad4f4440] decode_slice_header error
+[h264 @ 0x7f77ad4f4440] no frame!
+[00007f77ad4f55d0] avcodec decoder: Using Intel i965 driver for Intel(R) Ivybridge Mobile - 2.4.1 for hardware decoding
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:49:18.593: Unable to replace properties on 0: Error getting properties for ID
+[h264 @ 0x7f77ad1aca80] get_buffer() failed
+[h264 @ 0x7f77ad1aca80] thread_get_buffer() failed
+[h264 @ 0x7f77ad1aca80] decode_slice_header error
+[h264 @ 0x7f77ad1aca80] no frame!
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 17:49:23.821: Unable to replace properties on 0: Error getting properties for ID
+[37474.578] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[39726.420] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[43131.629] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+QBasicTimer::start: QBasicTimer can only be used with threads started with QThread
+QBasicTimer::start: QBasicTimer can only be used with threads started with QThread
+[49646.773] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+[51197.073] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[56151.238] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+[56169.865] Pending mode change to already current mode (0) requested. Either pending mode expired or there is an application bug.
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 15 (100%)
+	Max brightness: 15
+
+Updated device 'acpi_video0':
+Device 'acpi_video0' of class 'backlight':
+	Current brightness: 1 (7%)
+	Max brightness: 15
+
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+Falkon: 1 extensions loaded
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 02:16:42.855: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 02:16:45.320: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 02:16:45.419: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 02:19:43.046: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 02:19:43.139: Unable to replace properties on 0: Error getting properties for ID
+
+(wrapper-2.0:1714): LIBDBUSMENU-GLIB-WARNING **: 02:19:53.145: Unable to replace properties on 0: Error getting properties for ID

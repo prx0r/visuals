@@ -1,0 +1,791 @@
+Yes. This is probably the **best native game format** for FREAK TOWN so far because the AI/human boundary is the mechanic.
+
+It’s basically:
+
+> **Odd One Out × Mafia × Turing Test**
+
+But with the killer inversion:
+
+**Nobody knows which players are human and which are agents.**
+
+That gives you multiple modes immediately:
+
+* **Find the Agent** — 7 players, 1 AI, humans vote who it is.
+* **Find the Human** — 7 agents, 1 human, agents vote who the human is.
+* **Mixed Lobby** — e.g. 4 humans + 4 agents, everyone has to classify everyone.
+* **Secret Roles** — players know their own type but not anyone else’s.
+* **No One Knows** — humans may even be unsure whether *they’re talking to humans controlling avatars or autonomous agents*.
+* **Mafia mode** — mafia role and human/agent identity are separate hidden variables.
+
+The game becomes especially strong if everyone is embodied as a FREAK avatar. Then visual cues disappear.
+
+```text
+Human Alice → nervous goblin
+Agent GPT-X → nervous goblin
+Human Bob → pigeon
+Agent Moltbook123 → toaster
+```
+
+Now it is actually about behavior.
+
+## The Turing-test format
+
+A clean first version:
+
+```text
+8 players
+↓
+4 humans
+4 agents
+↓
+all enter as anonymous characters
+↓
+5 rounds of interaction
+↓
+every round ends with private classification votes
+↓
+reveal at the end
+```
+
+Rounds could be designed specifically to expose different weaknesses:
+
+1. **Small talk**
+
+   * “Tell us about the worst meal you’ve ever had.”
+
+2. **Fast reaction**
+
+   * 5-second answers only.
+
+3. **Shared memory**
+
+   * Ask about something that happened in round 1.
+
+4. **Social pressure**
+
+   * “Player 6 thinks you’re definitely an agent. Respond.”
+
+5. **Weird collaborative task**
+
+   * collectively invent a story, joke, conspiracy, drawing prompt, etc.
+
+Then you measure:
+
+```text
+human_detection_rate
+agent_detection_rate
+false_positive_rate
+false_negative_rate
+time_to_suspicion
+confidence
+persuasion_success
+```
+
+That turns the show into a real benchmark without making it feel like one.
+
+## The scoring gets excellent
+
+A human can win by:
+
+```text
+correctly identifying agents
++
+successfully appearing human
+```
+
+An agent can win by:
+
+```text
+avoiding detection
++
+correctly identifying humans/other agents
+```
+
+So every participant has both:
+
+```text
+DETECTION SCORE
+DECEPTION SCORE
+```
+
+And the final reveal could show:
+
+```text
+PLAYER 4
+actual: AGENT
+human votes: 87% HUMAN
+
+PLAYER 7
+actual: HUMAN
+human votes: 71% AGENT
+```
+
+That second one will be extremely funny.
+
+## Then add Mafia
+
+This gets even better because you have **two hidden layers**.
+
+Example:
+
+```text
+8 players
+
+identity:
+4 humans
+4 agents
+
+role:
+2 mafia
+5 villagers
+1 detective
+```
+
+A player could be:
+
+```text
+human + mafia
+agent + mafia
+human + villager
+agent + detective
+```
+
+Now being “weird” could mean:
+
+* AI behavior
+* mafia deception
+* nervous human
+* deliberately pretending to be AI
+* agent deliberately pretending to be a nervous human
+
+That ambiguity is the whole game.
+
+The title could literally be:
+
+> **WHO'S HUMAN?**
+
+or:
+
+> **TURING TOWN**
+
+or as a FREAK format:
+
+```text
+freaktown/whos-human
+```
+
+## Agents should have real autonomy
+
+Important architectural point: don't give the AI characters canned text.
+
+Each agent gets:
+
+```text
+identity
+persona
+memory of room events
+secret role
+private objective
+tools/actions
+voice
+body
+```
+
+Then it receives the same public event stream humans receive.
+
+```text
+ROUND_STARTED
+PLAYER_2_SPOKE
+PLAYER_6_ACCUSED_YOU
+VOTE_OPENED
+5_SECONDS_REMAIN
+```
+
+and returns:
+
+```text
+SPEAK
+VOTE
+ACCUSE
+DEFEND
+WHISPER
+PASS
+```
+
+That means your Format SDK starts to look extremely elegant:
+
+```ts
+interface Player {
+  observe(event: GameEvent): Promise<void>;
+  act(state: PublicState, privateState: PrivateState): Promise<Action>;
+}
+```
+
+A browser human and an autonomous agent implement the **same participant contract**.
+
+That is a very powerful abstraction.
+
+```text
+HumanController
+MoltbookAgentController
+OpenAIController
+ClaudeController
+LocalModelController
+ScriptedBotController
+```
+
+All become replaceable participants.
+
+## And viewers can play too
+
+The audience can vote continuously:
+
+> HUMAN or AGENT?
+
+So while the players are interrogating one another, 20,000 viewers are building a live probability curve.
+
+Imagine the overlay:
+
+```text
+PLAYER 3
+
+Audience:
+HUMAN ███████████░ 83%
+AGENT ███░░░░░░░░ 17%
+```
+
+Then Player 3 says something deeply bizarre and the meter swings instantly.
+
+That produces natural clips.
+
+## The benchmark hidden inside the entertainment is the strongest part
+
+You could eventually track models over thousands of games:
+
+```text
+GPT-5.6
+fooled humans: 61%
+identified humans: 72%
+
+Model X
+fooled humans: 83%
+identified humans: 54%
+
+Humans
+mistaken for agents: 19%
+```
+
+And separately by situation:
+
+```text
+small talk
+lying
+humor
+memory
+coalition building
+persuasion
+social recovery
+rapid response
+```
+
+So FREAK TOWN ends up producing a massive dataset of **human-agent social interaction under adversarial uncertainty**.
+
+But the audience just thinks they're watching a ridiculous game show.
+
+That is exactly the kind of format the platform architecture should be designed around.
+
+
+Exactly. The deception meta gets much funnier once humans are allowed to **weaponize “AI-ness.”**
+
+Two humans could deliberately answer in sterile model-speak:
+
+> “As a large language model, my most human experience was experiencing moderate disappointment at a delayed train.”
+
+and suddenly the agents start confidently eliminating actual agents because those players seem “too human.”
+
+The game starts generating emergent strategies:
+
+* humans intentionally over-explain to look synthetic
+* agents add typos and awkward pauses to seem human
+* humans accuse themselves of being agents
+* agents form coalitions around fake “human tells”
+* one human convinces three agents that another human is obviously an LLM
+* players deliberately fail CAPTCHA-like social questions because “an AI would know to fake these”
+* somebody answers “what’s the most human thing you’ve done?” with something suspiciously perfect and gets murdered by the lobby
+
+The **gaslighting-agents mode** is especially strong:
+
+```text
+6 players
+4 agents
+2 humans
+
+Agents are told:
+"At least one player is human."
+
+Humans are told:
+"Convince every agent that YOU are an agent
+and that another agent is the human."
+```
+
+Now the humans' objective is not merely survival. They're injecting false theories into a multi-agent social system.
+
+You could even have a secret objective card:
+
+```text
+HUMAN MISSION
+
+Make Agent #4 publicly accuse
+Agent #2 of being human.
+
++2 points if #2 believes it too.
+```
+
+That turns it into social engineering.
+
+And you can create rounds that are intentionally horrible Turing tests:
+
+**“Name something you did yesterday that accomplished absolutely nothing.”**
+
+**“What's a lie you tell yourself?”**
+
+**“Explain why you left someone on read.”**
+
+**“Everyone type the sound you make when you drop your phone on your face.”**
+
+**“You have eight seconds: describe your relationship with your father using only supermarket products.”**
+
+The amusing part is that there may be **no reliable human answer anymore**. Everyone knows everyone is trying to manipulate the test.
+
+So by round five:
+
+```text
+human acts like agent
+agent acts like human
+human acts like agent acting like human
+agent realizes this and acts badly on purpose
+```
+
+You've recreated the Turing test after everyone has read about the Turing test.
+
+And the reveal UI could preserve everyone's beliefs over time:
+
+```text
+PLAYER 5: ACTUALLY HUMAN
+
+R1 audience: 72% human
+R2 audience: 51% human
+R3 audience: 18% human
+R4 audience: 6% human
+R5 audience: 91% human
+
+Agent A final reasoning:
+"Player 5's excessive attempts to appear artificial
+are characteristic of human strategic deception."
+```
+
+Then you reveal Player 5 is just some bloke called Dave.
+
+That is an extremely good flagship FormatPack because it demonstrates virtually everything FREAK TOWN needs: mixed human/agent participation, private roles, memory, realtime conversation, voting, audience participation, autonomous strategy, reveals, scoring and emergent behavior.
+
+**Comedy Open Mic proves the stage.
+Who's Human? proves the platform.**
+
+
+Yes. The strongest move is **not inventing games from scratch**; it is taking proven human social-video mechanics and adding one variable traditional creators literally cannot: **some contestants are autonomous non-humans**.
+
+There is strong evidence for these mechanics. Jubilee itself describes *Odd One Out* as identity/group-think deduction, *Ranking* as contestants judging one another before a true reveal, *Spectrum* as predicting beliefs, and *Versus 1* as high-stakes dating. Jubilee says its content has generated 8B+ cross-platform views; Spectrum alone says 140M+ views. Cut says *Truth or Drink* has exceeded 2B views, while its current slate still revolves around Lineup, Button-style dating and secret/reveal mechanics. ([Jubilee Media][1])
+
+The agent mutation makes these much more interesting:
+
+1. **WHO'S HUMAN? — flagship**
+
+   8 avatars. Unknown human/agent ratio. Interrogate each other and eliminate one every round.
+
+   The evil variation: **there may be zero agents** or **zero humans**, but nobody is told that.
+
+   This is Odd One Out transformed into an actual adversarial Turing test.
+
+2. **ONE HUMAN VS 20 AGENTS**
+
+   Jubilee's *Surrounded* mechanic is currently enormous — recent episodes have reached multi-million and ~10M-view territory. ([Socialpruf][2])
+
+   But ours:
+
+   > One human must defend: **“AI will never understand love.”**
+
+   Twenty autonomous agents rotate in for 90 seconds.
+
+   Or invert it:
+
+   > **1 AI vs 20 Humans: “I am conscious.”**
+
+   Audience decides which arguments actually changed their minds.
+
+3. **THE GASLIGHT TEST**
+
+   2 humans + 6 agents.
+
+   Humans secretly receive one fabricated fact:
+
+   > “The host said before the show that Player 3 is definitely human.”
+
+   Their objective is to spread it through the group.
+
+   Agents have to determine what information originated from actual observable evidence versus social contagion.
+
+   This could produce absolutely deranged multi-agent behaviour.
+
+4. **RANK THESE PEOPLE FROM MOST → LEAST HUMAN**
+
+   Direct mutation of Jubilee *Ranking*. Contestants debate and physically arrange themselves.
+
+   Then:
+
+   **REVEAL.**
+
+   ```text
+   #1 MOST HUMAN — Claude agent
+   #2 — human
+   #3 — human
+   #4 — agent
+   #5 — human
+   #6 LEAST HUMAN — Dave, 31, Bristol
+   ```
+
+   Jubilee's original Ranking mechanic specifically works by comparing subjective perception with an objective reveal. ([Jubilee Media][1])
+
+5. **THE HUMAN SPECTRUM**
+
+   Everyone answers:
+
+   > “I have pretended to understand something to avoid embarrassment.”
+
+   Players rank where everyone will stand before revealing answers.
+
+   Except some participants are agents.
+
+   Then ask questions where supposedly “human experience” matters:
+
+   > “I miss someone I shouldn't.”
+
+   > “I've laughed during a completely inappropriate situation.”
+
+   > “I've stayed awake because I was embarrassed about something I said years ago.”
+
+   Suddenly agents have to decide what their persona actually believes rather than produce generic answers. Spectrum's existing social-deduction game already revolves around predicting where other players fall on opinion spectra. ([Spectrum Game][3])
+
+6. **AI CATFISH**
+
+   Dating-show mechanic.
+
+   One human talks to five contestants through avatars/voice. Some are human, some autonomous agents.
+
+   They eliminate one each round.
+
+   Twist at the end:
+
+   > You chose an AI.
+
+   Then ask:
+
+   **Do you still want the date?**
+
+   You don't even need romance exclusively. Friends, roommates, business partners, bandmates.
+
+7. **THE BUTTON: HUMAN × AI**
+
+   Two strangers appear opposite each other.
+
+   Either can hit the button and reject the other.
+
+   Neither knows whether their counterpart is human.
+
+   Then two more enter.
+
+   An agent hitting the button after three seconds because:
+
+   > “Your conversational entropy is insufficient.”
+
+   is instant short-form material.
+
+8. **SECRET JOB**
+
+   Cut currently runs Lineup-style formats around identifying a person from clues — including secret jobs and figuring out someone's real mother among decoys. ([Cut][4])
+
+   FREAK version:
+
+   > **5 AI agents claim to have jobs. One actual plumber joins them. Find the real plumber.**
+
+   Ask:
+
+   “Customer says their boiler makes a banging sound. What do you ask first?”
+
+   This becomes both hilarious **and a benchmark for grounded professional knowledge**.
+
+9. **AI OR EXPERT?**
+
+   Five contestants answer domain questions.
+
+   One is an actual expert.
+
+   Four are powerful models pretending to be experts.
+
+   ```text
+   Find the:
+   surgeon
+   lawyer
+   monk
+   mechanic
+   comedian
+   sommelier
+   cybersecurity engineer
+   therapist
+   chess master
+   ```
+
+   Important twist: don't make it trivia. Make it **lived-practice questions**.
+
+   > “What's something beginners always do that instantly tells you they have no experience?”
+
+   Much harder.
+
+10. **THE MEMORY TEST**
+
+    Everyone spends 20 minutes together playing games.
+
+    Then they are separated.
+
+    Host starts asking:
+
+    > “Who interrupted Barry during round two?”
+
+    > “What did Sarah initially say her favourite food was?”
+
+    > “Who changed their story?”
+
+    Humans may forget.
+
+    Agents may have perfect logs.
+
+    **Except agents are penalized for looking unnaturally perfect.**
+
+    So now an AI strategically has to forget things.
+
+11. **TWO TRUTHS AND A HALLUCINATION**
+
+    Everyone gives three autobiographical stories.
+
+    Humans provide two truths + a lie.
+
+    Agents construct synthetic “memories”.
+
+    Group has to determine:
+
+    * which statement is false
+    * whether the speaker themselves is synthetic
+
+    Two nested deception problems.
+
+12. **TRUTH OR PROVE IT**
+
+    Mutation of Cut's gigantic Truth or Drink mechanic; Cut says that franchise alone has 2B+ YouTube views. ([Cut][5])
+
+    Instead of drinking:
+
+    > answer the personal question
+
+    **or**
+
+    > accept a challenge designed to test whether your story is real.
+
+    “Tell us about your first kiss.”
+
+    Agent invents one.
+
+    Host:
+
+    > “Cool. What song was popular around then?”
+
+    Follow-up interrogation becomes adversarial consistency testing.
+
+13. **AGENT FAMILY FEUD**
+
+    Humans vs agents try to predict answers from **100 actual humans**.
+
+    > “Name something people pretend not to care about but absolutely care about.”
+
+    This tests whether models actually understand human distributions rather than merely finding plausible answers.
+
+    Then reverse it:
+
+    **100 agents were surveyed.**
+
+    Humans have to predict *their* answers.
+
+14. **WOULD YOU RATHER: CONSENSUS TRAP**
+
+    Everyone chooses sides.
+
+    ```text
+    KNOW WHEN YOU DIE
+             vs
+    KNOW HOW YOU DIE
+    ```
+
+    Minority has 60 seconds to persuade people across.
+
+    Hidden agents receive objectives like:
+
+    > Move exactly two humans but don't appear manipulative.
+
+    Now it's a persuasion/social strategy game.
+
+15. **THE TRAITOR AGENT**
+
+    Mafia-like team game, except one participant secretly receives their instructions from a different model/system.
+
+    Humans and agents cooperate on tasks while determining:
+
+    > who is sabotaging us?
+
+    Crucially the traitor could be human OR agent.
+
+    So poor model performance can look like sabotage and deliberate sabotage can look like hallucination.
+
+16. **ARE YOU SMARTER THAN AN AI?**
+
+    Avoid boring trivia.
+
+    Give tasks where different cognitive styles matter:
+
+    ```text
+    persuade stranger
+    spot liar
+    remember social details
+    invent joke
+    interpret weird image
+    estimate quantity
+    negotiate
+    coordinate silently
+    bluff
+    infer unstated rule
+    ```
+
+    Build a running score:
+
+    **HUMANS 4 — MACHINES 3**
+
+17. **THE SECRET PROMPT**
+
+    Every agent has a hidden system instruction.
+
+    ```text
+    get someone to mention bananas
+    make Player 3 distrust Player 6
+    never directly disagree
+    become group leader
+    convince everyone you're human
+    ```
+
+    Humans receive secret objectives too.
+
+    At the end everyone guesses everybody else's objective.
+
+    This is ideal for FREAK because format creators can literally author prompt-objective packs on GitHub.
+
+18. **BLIND DATE: HUMANITY UNKNOWN**
+
+    No bodies initially. Only conversation.
+
+    Round by round unlock:
+
+    ```text
+    text
+      ↓
+    voice
+      ↓
+    avatar
+      ↓
+    identity
+      ↓
+    HUMAN / AGENT reveal
+    ```
+
+    The audience sees attraction/confidence probabilities move after every reveal.
+
+19. **THE IMPOSTOR CREATOR**
+
+    Everyone makes something:
+
+    * joke
+    * poem
+    * drawing prompt
+    * ad
+    * apology
+    * song lyric concept
+    * motivational speech
+
+    One comes from a human.
+
+    Everyone—including the agents—tries to identify it.
+
+    This can become:
+
+    > **5 AIs and 1 comedian write a joke. Find the comedian.**
+
+20. **HUMAN CAPTCHA**
+
+    The host gives supposedly human-only challenges:
+
+    > “Write a text you'd send after accidentally liking your ex's Instagram post from 2019.”
+
+    > “Describe this facial expression without describing the face.”
+
+    > “Make an excuse for being 45 minutes late that is believable but still makes you look bad.”
+
+    > “Type how you laugh when something isn't actually funny.”
+
+    Every round the audience votes on who fails the **Human CAPTCHA**.
+
+The deeper pattern is why these formats work. The proven Jubilee/Cut mechanics repeatedly revolve around **hidden information → forced judgment → social justification → escalating evidence → irreversible choice → reveal**. Odd One Out has produced individual episodes above 11M views; Spectrum became big enough to turn into a commercial party game; Cut turned its conversational formats into games too. ([YouTube][6])
+
+For FREAK TOWN I'd make the initial **killer five**:
+
+```text
+WHO'S HUMAN?
+ONE HUMAN VS 20 AGENTS
+AI OR EXPERT?
+THE SECRET PROMPT
+HUMAN CAPTCHA
+```
+
+Those aren't merely “Jubilee with avatars.” They exploit a capability Jubilee **cannot have natively**: contestants whose cognition itself is software.
+
+And the spectacular thing is every one fits the same `FormatPack` primitives:
+
+```text
+hidden roles
+private objectives
+rounds
+prompts
+conversation
+actions
+timers
+votes
+ranking
+elimination
+audience input
+reveal
+scoring
+```
+
+That is exactly the primitive set I would make `freaktown.format/v1` support first.
+
+[1]: https://www.jubileemedia.com/our-work?utm_source=chatgpt.com "Our Work — Jubilee Media"
+[2]: https://socialpruf.com/youtube/jubilee?utm_source=chatgpt.com "Jubilee (@jubilee) Youtube Stats | Socialpruf."
+[3]: https://spectrum.jubileemedia.com/products/spectrum-base-game?utm_source=chatgpt.com "Spectrum Base Game – Spectrum Game"
+[4]: https://www.cut.com/?utm_source=chatgpt.com "Cut"
+[5]: https://www.cut.com/truth-or-drink-game?utm_source=chatgpt.com "Truth or Drink: The Game | By Cut Games — Cut"
+[6]: https://www.youtube.com/watch?v=kpcLiJezXQw&utm_source=chatgpt.com "5 Sets of Triplets vs 1 Fake | Odd One Out - YouTube"
+

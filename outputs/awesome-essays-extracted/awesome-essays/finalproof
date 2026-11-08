@@ -1,0 +1,1149 @@
+Yes. The cleanest canonical design is to treat verification as a **stack of independent witnesses**, not as one giant ML model and not as a pile of redundant libraries.
+
+The main correction is:
+
+> **ML should only verify the dimensions that are genuinely semantic or probabilistic. Deterministic transformations should be proven deterministically. Existing Sanskrit tools should own morphology/segmentation. Existing factuality tools should own generic entailment-style checks. Pāṭala should own the scholarly contracts, failure classes, provenance and authority ceilings.**
+
+## The actual verification stack
+
+Think of every layer as producing a proof bundle from four possible evidence classes:
+
+```text
+D = deterministic proof
+W = external machine witnesses
+M = learned / model-based semantic evaluation
+H = human / scholar adjudication
+```
+
+Not every layer needs all four.
+
+The canonical rule should be:
+
+[
+Proof(L) = D_L \cup W_L \cup M_L \cup H_L
+]
+
+while preserving which component established what.
+
+A Vidyut morphology agreement should never become “translation verified,” and an LLM entailment judgment should never become “scholar approved.”
+
+---
+
+# 1. SOURCE
+
+### What the layer claims
+
+> This exact Sanskrit source span is the thing all downstream objects derive from.
+
+### Use what already exists
+
+**Pāṭala native:**
+
+* hashes;
+* stable IDs;
+* span resolution;
+* source registry;
+* witness/version relationships;
+* supersession.
+
+**External:**
+
+* GROBID / Docling for document extraction where needed;
+* RO-Crate/PROV-style packaging/provenance;
+* OCR tooling only when source material actually requires OCR.
+
+### ML verification?
+
+Almost none.
+
+This layer should be overwhelmingly deterministic:
+
+```text
+bytes/hash
+span resolution
+roundtrip
+Unicode normalization
+locator uniqueness
+source mutation detection
+```
+
+Machine proof:
+
+```text
+SOURCE_PROOF
+  hash_match = PASS
+  span_resolution = PASS
+  character_coverage = 100%
+  unidentified_content = 0
+```
+
+**Do not spend Agent 1 time ML-verifying SOURCE.**
+
+---
+
+# 2. T1 — this is where Sanskrit ML matters
+
+This is the first genuinely semantic transformation:
+
+```text
+SOURCE
+→ transliteral word/phrase gloss
+```
+
+Here you already have a surprisingly good verification ensemble.
+
+## Existing witness 1: Vidyut
+
+Ambuda describes Vidyut as its “reliable infrastructure for Sanskrit software”; it is actively maintained. ([GitHub][1])
+
+You already have a calibrated Vidyut-based morphology lane internally.
+
+So Vidyut should remain the primary deterministic/lexicon-based machine witness for:
+
+```text
+lemma
+inflection
+morphological possibilities
+sandhi/segmentation candidates
+```
+
+Not English meaning.
+
+---
+
+# 3. Existing witness 2: Sanskrit Heritage
+
+This is also ideal.
+
+The Heritage tooling exposes:
+
+* morphological analysis;
+* segmentation;
+* sandhi;
+* declensions;
+* conjugations;
+* parsing/semantic roles;
+* lexicon access. ([GitHub][2])
+
+You are already using Vidyut × Heritage disagreement as a calibrated morphology signal.
+
+**Keep that. Don't rebuild morphology ML.**
+
+Canonical T1 linguistic evidence:
+
+```text
+TOKEN
+ │
+ ├─ Vidyut analysis
+ ├─ Heritage analysis
+ │
+ └─ optionally neural witness
+        ↓
+MachineMorphologyEvidence
+```
+
+Then record:
+
+```text
+CONSENSUS
+SINGLE_WITNESS
+CONFLICT
+UNANALYZED
+```
+
+You already have this conceptual machinery.
+
+---
+
+# 4. Add ByT5-Sanskrit only as a third independent witness
+
+ByT5-Sanskrit is relevant because it jointly handles:
+
+* Sanskrit word segmentation;
+* lemmatization;
+* morphosyntactic tagging;
+
+and was evaluated as a preprocessing model for Sanskrit NLP/translation. ([arXiv][3])
+
+Therefore don't replace:
+
+```text
+Vidyut + Heritage
+```
+
+with:
+
+```text
+ByT5
+```
+
+Use:
+
+```text
+Vidyut       symbolic/lexical
+Heritage     independent classical analyzer
+ByT5         neural witness
+```
+
+Then disagreement becomes useful data.
+
+For example:
+
+```text
+Vidyut   NOM.SG
+Heritage NOM.SG
+ByT5     NOM.SG
+
+→ strong machine consensus
+```
+
+versus:
+
+```text
+Vidyut   GEN.SG
+Heritage GEN.SG
+ByT5     NOM.SG
+
+→ disagreement recorded
+```
+
+Still not truth, but a far better evidence profile.
+
+And importantly, **don't integrate ByT5 until the existing two-witness ensemble fails materially on T1-HARD**.
+
+That's the reuse-first doctrine.
+
+---
+
+# 5. CharSS / newer segmentation work is benchmark material, not another dependency
+
+CharSS reports strong Sanskrit word-segmentation results using a character-level transformer. ([arXiv][4])
+
+Useful?
+
+Yes.
+
+Do we immediately integrate it?
+
+No.
+
+You already have:
+
+```text
+Vidyut
+Heritage
+possibly ByT5
+```
+
+If segmentation is empirically a major failure source, Agent 1 can benchmark:
+
+```text
+Vidyut
+Heritage
+ByT5
+CharSS
+```
+
+on a frozen Pāṭala segmentation set.
+
+Only adopt another system if it improves:
+
+```text
+accuracy
+coverage
+abstention
+or review burden
+```
+
+This should be a standing rule for every external ML component.
+
+---
+
+# 6. T1 gloss verification itself is not morphology
+
+This is the part you actually need Pāṭala-specific ML for.
+
+Suppose:
+
+```text
+vimarśa
+```
+
+is morphologically obvious.
+
+Vidyut can verify form.
+
+Heritage can verify form.
+
+Neither can establish whether:
+
+```text
+reflexion
+reflexive awareness
+discursive reflection
+self-apprehension
+```
+
+is the appropriate contextual English gloss.
+
+So T1 proof separates:
+
+```text
+FORM PROOF
+   Vidyut/Heritage/neural witnesses
+
+SEMANTIC PROOF
+   held-out T1 gold
+   alternative acceptable readings
+   technical-sense benchmark
+   ambiguity/abstention benchmark
+```
+
+That's the first real Agent-1 ML problem.
+
+---
+
+# 7. GlossLM belongs here — as a baseline, not verifier
+
+GlossLM solves automatic interlinear gloss generation.
+
+That's extremely close methodologically to T1.
+
+But its role should be:
+
+```text
+Pāṭala Agent2 T1 generator
+        VS
+GlossLM
+        VS
+generic LLM
+```
+
+on the **same T1-HARD test**.
+
+It doesn't certify Agent 2.
+
+It establishes an external baseline.
+
+That's academically valuable because you can say:
+
+> Agent 2's method beats / does not beat an established gloss-generation model on the same frozen Sanskrit philosophical data.
+
+That's the proper use.
+
+---
+
+# 8. Therefore the canonical T1 proof should look like this
+
+```text
+T1Proof
+│
+├── SOURCE COVERAGE
+│      native deterministic
+│
+├── SEGMENTATION
+│      Vidyut
+│      Heritage
+│      optional ByT5
+│
+├── MORPHOLOGY
+│      Vidyut
+│      Heritage
+│      optional ByT5
+│
+├── LITERAL GLOSS
+│      T1-HARD gold
+│      machine adjudicator
+│
+├── TECHNICAL SENSE
+│      context-specific gold
+│
+├── AMBIGUITY
+│      false-certainty
+│      abstention
+│
+├── ADVERSARIAL
+│      metamorphic suite
+│
+└── EXTERNAL BASELINE
+       GlossLM
+```
+
+**This is enough.**
+
+Don't add eight other systems.
+
+---
+
+# 9. L0 — absolutely no ML
+
+This is where the new canonical architecture saves tons of wasted work.
+
+Canonical:
+
+```text
+T1
+→ t1_extract.py
+→ L0
+```
+
+L0 is a structured representation of T1.
+
+Therefore verification should be:
+
+```text
+T1 → L0 → reconstructed T1
+```
+
+and:
+
+```text
+record coverage = 100%
+ordering = exact
+parent refs = exact
+hashes = exact
+gloss transfer = exact
+source binding = exact
+```
+
+No neural embeddings.
+
+No RefChecker.
+
+No LLM judge.
+
+No semantic equivalence model.
+
+**L0 inherits T1 semantic quality.**
+
+This eliminates a whole redundant ML subproject.
+
+---
+
+# 10. ARGMAP — use Agent 1's work, not new external ML infrastructure
+
+This is another genuinely Pāṭala-specific layer.
+
+Canonical:
+
+```text
+SOURCE + T1/L0
+→ argument map
+```
+
+You already have the relevant machinery from Agent 1:
+
+* Proposition;
+* Commitment;
+* ResearchQuestion;
+* Position;
+* inference;
+* Attack;
+* support;
+* grounding;
+* SemanticAlignment;
+* DebateFrame;
+* Crux;
+* five argument golds;
+* historical failure taxonomy.
+
+And most importantly, you already discovered:
+
+```text
+grounding ≠ inference ≠ dialectical relation
+```
+
+So don't search for an “argument map AI” and replace it.
+
+External frameworks like xAIF/ASPIC are useful for:
+
+```text
+representation
+interchange
+formal evaluation
+```
+
+but not for determining what Abhinavagupta is arguing.
+
+### Verification should be supervised graph comparison
+
+Agent 1 gold:
+
+```text
+gold nodes
+gold roles
+gold typed edges
+gold speaker attribution
+gold scope
+```
+
+Model output:
+
+```text
+predicted graph
+```
+
+Score:
+
+```text
+node precision/recall
+role macro-F1
+edge precision/recall
+speaker accuracy
+scope accuracy
+OPEN recovery
+unsupported-edge rate
+```
+
+Plus metamorphic mutations.
+
+This should be native Pāṭala ML evaluation.
+
+---
+
+# 11. Use ASPIC/xAIF **after extraction**, not to judge extraction
+
+This distinction prevents redundancy.
+
+```text
+ARGMAP extraction
+    ↓
+Pāṭala graph
+    ↓
+xAIF adapter
+ASPIC evaluator
+```
+
+ASPIC may tell you:
+
+> given this encoded argument, conclusion C is defeated under this evaluation profile.
+
+It cannot tell you:
+
+> this is what Abhinavagupta meant.
+
+That's a different epistemic job.
+
+---
+
+# 12. L2 — this is where generic factuality tools become useful
+
+Canonical:
+
+```text
+SOURCE + T1/L0 + ARGMAP
+→ readable prose
+```
+
+There are two proof obligations:
+
+### Coverage
+
+Did everything materially important survive?
+
+### Licensing
+
+Did the readable translation add anything not licensed upstream?
+
+This is where **RefChecker/FActScore architecture** fits very naturally.
+
+Not because Sanskrit translation is generic factual QA.
+
+But because they already solve:
+
+```text
+output
+→ atomic claims
+→ compare against reference
+```
+
+So:
+
+```text
+L2
+ ↓
+atomic propositions
+ ↓
+SOURCE/T1/ARGMAP evidence
+ ↓
+ENTAILED
+UNSUPPORTED
+CONTRADICTED
+```
+
+Then Pāṭala adds the philosophical dimensions generic factuality tools don't know:
+
+```text
+speaker
+scope
+modality
+negation
+qualification
+technical-term stability
+```
+
+---
+
+# 13. Do not use BLEU as your main L2 verifier
+
+This is crucial.
+
+Good philosophical translations can differ radically in English wording.
+
+So:
+
+```text
+BLEU/chrF/etc
+```
+
+may be interesting auxiliary diagnostics but should not determine correctness.
+
+Use:
+
+```text
+source coverage
+output licensing
+scope/modality conservation
+```
+
+instead.
+
+---
+
+# 14. AlignScore is just a cheap candidate witness
+
+If you use it:
+
+```text
+upstream ↔ L2 claim similarity
+```
+
+it should nominate cases for deeper checking.
+
+Never:
+
+```text
+AlignScore > .8
+→ VERIFIED
+```
+
+You already had one semantic-alignment experiment fail badly.
+
+So the gate is:
+
+> does AlignScore improve a frozen benchmark over a lexical/simple baseline?
+
+If not, delete it.
+
+---
+
+# 15. L200 — you basically already built the right benchmark
+
+This is another case where **don't import a generic tool just because one exists**.
+
+L200 is highly domain-specific:
+
+```text
+material translation decisions
+interpretive assumptions
+open questions
+derivation map
+```
+
+You already have:
+
+```text
+MT
+IA
+OPEN
+IGNORE
+```
+
+with an existing benchmark and a known failure mode of overproduction.
+
+So verification should remain:
+
+```text
+precision/recall per class
+false-positive MT
+false certainty
+source linkage
+derivation linkage
+```
+
+wrapped in Inspect.
+
+No external package is likely to understand “material translation decision” better than your own gold.
+
+Agent 1's current finding that the live L200 objects are placeholder-heavy is exactly the kind of natural-eval evidence this benchmark should catch.
+
+---
+
+# 16. C1 — reuse L2's atomic licensing machinery
+
+Canonical commentary:
+
+```text
+C1
+```
+
+must remain passage-local.
+
+So use the same generic verifier kernel:
+
+```text
+C1
+↓
+atomic claims
+↓
+SOURCE + L2 + L200
+↓
+licensed / unsupported / contradicted
+```
+
+plus native:
+
+```text
+LOCALITY
+BOUNDARY
+TECHNICAL_TERM
+AUTHOR_ATTRIBUTION
+```
+
+RefChecker/FActScore-style checking becomes reusable infrastructure here.
+
+No need to build a second commentary-specific semantic model from scratch.
+
+---
+
+# 17. THEME / ESSAY / EDUCATION
+
+Same principle again.
+
+You already have Agent 1's:
+
+```text
+SentenceEvidenceAudit
+epistemic ceiling
+dependency graph
+```
+
+So use generic atomic-support machinery underneath.
+
+### Theme
+
+ML clustering can nominate members.
+
+But:
+
+```text
+cluster ≠ theme
+```
+
+Verification:
+
+```text
+membership precision
+role correctness
+theme proposition licensed by members
+counterexamples retained
+```
+
+### Essay
+
+Every substantive sentence resolves to upstream evidence.
+
+Agent 1 already has the best native mechanism here.
+
+External factuality methods can supplement it, not replace it.
+
+### Education
+
+Check:
+
+```text
+did simplification preserve the essay's actual claims?
+```
+
+Same atomic licensing kernel.
+
+---
+
+# 18. Where TantraFact actually fits
+
+Important distinction:
+
+**TantraFact is not a generic external tool like Vidyut or Inspect.**
+
+Agent 1's handover describes it as a future Pāṭala benchmark/evaluation artifact associated with false-positive-tested scholarly corroboration.
+
+So TantraFact should become something like:
+
+```text
+PĀṬALA's factual/scholarly claim benchmark
+```
+
+For example:
+
+```text
+claim
+supporting scholar span
+qualifying scholar span
+contradicting scholar span
+independence lineage
+correct relation
+```
+
+Then evaluate:
+
+```text
+SourceAssertion extraction
+scholar evidence retrieval
+support/qualify/contradict classification
+```
+
+It is **not the T1 translation verifier**.
+
+It sits mostly in:
+
+```text
+SCHOLAR EVIDENCE COMPILER
+```
+
+not:
+
+```text
+PRIMARY-TEXT PHILOLOGY
+```
+
+---
+
+# 19. This is where PaperQA2 slots in
+
+Again, no redundancy if properly scoped.
+
+PaperQA2:
+
+```text
+question/proposition
+↓
+retrieve scholarly evidence
+↓
+candidate spans
+```
+
+Pāṭala:
+
+```text
+candidate span
+↓
+SourceAssertion
+↓
+DIRECT_SUPPORT / PARTIAL / QUALIFIER / ALTERNATIVE / CONTRADICTION
+↓
+independence lineage
+```
+
+Then TantraFact benchmarks whether that pipeline worked.
+
+So:
+
+```text
+PaperQA2 = candidate evidence generator
+
+TantraFact = Pāṭala benchmark
+
+SourceAssertion/CorroborationEvent
+= canonical epistemic objects
+```
+
+Very clean.
+
+---
+
+# 20. OpenReview is also useful — but later and for humans
+
+OpenReview is not an ML verification engine.
+
+It provides research-review workflows and APIs for review/venue processes. ([OpenReview Docs][5])
+
+Its right place is:
+
+```text
+MACHINE PROOF
+       ↓
+scholar review candidate
+       ↓
+OpenReview-style workflow
+       ↓
+human judgment
+       ↓
+Pāṭala ReviewEvent
+```
+
+Potentially:
+
+```text
+review
+rebuttal
+revision
+meta-review
+```
+
+can come from OpenReview-like workflows.
+
+But the canonical result should still become:
+
+```text
+Pāṭala ReviewEvent
+Adjudication
+Supersession
+ImpactReport
+```
+
+You do **not** reshape the core around OpenReview's schema.
+
+It is a human-workflow adapter.
+
+---
+
+# 21. OpenReview data itself could eventually become useful ML data
+
+This is interesting but later.
+
+OpenReview contains:
+
+* reviews;
+* rebuttals;
+* decisions;
+* meta-reviews;
+
+and researchers have explicitly argued that this expert-deliberation dataset could support LLM evaluation and research. ([arXiv][6])
+
+That could later train/test:
+
+```text
+review quality
+critique generation
+evidence-grounded scholarly disagreement
+```
+
+But there is almost no reason to do this before your Sanskrit translation proof is mature.
+
+---
+
+# 22. Inspect's actual role across everything
+
+Inspect should be boring infrastructure.
+
+One runtime:
+
+```text
+Inspect
+```
+
+running:
+
+```text
+T1-EVAL
+ARGMAP-EVAL
+L2-EVAL
+L200-EVAL
+C1-EVAL
+TANTRAFACT
+```
+
+It supports custom/multiple scorers, offline rescoring and separate scanner-style checks, so this is exactly the appropriate use. ([Inspect][7])
+
+Do not create:
+
+```text
+T1 benchmark runner
+L2 benchmark runner
+L200 benchmark runner
+TantraFact runner
+...
+```
+
+as parallel orchestration systems.
+
+Inspect owns execution/logging.
+
+Pāṭala owns the scorers/contracts/data.
+
+---
+
+# 23. The full canonical reuse map
+
+| Layer                | Existing/native Pāṭala            | External reuse                                         | ML role                           |
+| -------------------- | --------------------------------- | ------------------------------------------------------ | --------------------------------- |
+| SOURCE               | IDs, hashes, provenance           | GROBID/Docling/RO-Crate                                | essentially none                  |
+| **T1**               | T1 gold, false-certainty taxonomy | **Vidyut + Heritage**, optional ByT5, GlossLM baseline | literal/sense/ambiguity           |
+| **L0**               | `t1_extract`, registry            | none                                                   | **none**                          |
+| **ARGMAP**           | Agent1 gold + IR                  | ASPIC/xAIF after extraction                            | structured graph prediction       |
+| **L2**               | upstream dependency graph         | RefChecker/FActScore architecture; optional AlignScore | coverage + licensing              |
+| **L200**             | existing MT/IA/OPEN gold          | Inspect only                                           | classification                    |
+| **C1**               | C1 spec                           | reuse atomic verifier                                  | locality + licensing              |
+| THEME                | synthesis/graph machinery         | clustering libraries if useful                         | candidate clustering              |
+| ESSAY                | SentenceEvidenceAudit             | atomic factuality methods                              | sentence licensing                |
+| EDUCATION            | upstream graph                    | same verifier                                          | simplification faithfulness       |
+| **Scholar evidence** | SourceAssertion/Corroboration     | GROBID/OpenAlex/PaperQA2                               | evidence relation                 |
+| **TantraFact**       | benchmark                         | Inspect                                                | evaluates scholar-evidence system |
+| **Review**           | ReviewEvent/Adjudication          | OpenReview workflow                                    | human, not ML                     |
+
+That's the architecture I'd freeze.
+
+---
+
+# 24. The genuinely novel Pāṭala part is smaller than it looks
+
+We do **not** need to solve:
+
+* Sanskrit morphology;
+* document parsing;
+* benchmark orchestration;
+* review hosting;
+* generic claim decomposition;
+* generic citation search.
+
+Those are commodity components.
+
+The unique work becomes:
+
+### A. Canonical scholarly transformations
+
+```text
+SOURCE → T1 → L0 → ARGMAP → L2 → L200 → C1
+```
+
+### B. Layer contracts
+
+What does “faithful” mean at each transformation?
+
+### C. Sanskrit philosophical gold
+
+Especially:
+
+```text
+technical senses
+ambiguity
+scope
+speaker
+argument structure
+translation decisions
+```
+
+### D. Scholarly metamorphic relations
+
+```text
+NEGATION_DROP
+FALSE_DISAMBIGUATION
+GROUNDING_AS_INFERENCE
+OBJECTION_AS_AUTHOR_VIEW
+CLAIM_SURFACE_INFLATION
+...
+```
+
+### E. Proof composition
+
+This is potentially the coolest piece.
+
+For a final L2 object:
+
+```text
+Proof(L2)
+=
+Proof(SOURCE)
++
+Proof(T1)
++
+Proof(L0)
++
+Proof(ARGMAP)
++
+Proof(L2-transform)
+```
+
+with the weakest load-bearing component limiting the epistemic ceiling.
+
+That's very Pāṭala.
+
+---
+
+# 25. What I would have Agent 1 build next
+
+Not more integrations.
+
+Build:
+
+```text
+MachineTranslationProof v0
+```
+
+Then instantiate it on T1.
+
+Its evidence would contain:
+
+```text
+SOURCE integrity
+Vidyut witness
+Heritage witness
+T1-HARD comparison
+false certainty
+abstention
+metamorphic result
+GlossLM baseline result
+Inspect BenchmarkRun
+```
+
+Then when Agent 2 produces ARGMAP:
+
+```text
+MachineTranslationProof
+  + ARGMAP proof
+```
+
+and so on upward.
+
+By C1 you get:
+
+```text
+SOURCE
+  ✓ exact
+
+T1
+  ✓ linguistic witnesses
+  ✓ semantic benchmark
+
+L0
+  ✓ lossless transform
+
+ARGMAP
+  ✓ structural benchmark
+
+L2
+  ✓ source coverage
+  ✓ upstream licensing
+
+L200
+  ✓ translation-decision classification
+
+C1
+  ✓ passage-local licensing
+```
+
+**That is a machine-verifiable translation proof.**
+
+Not “AI says the translation is 92% correct.”
+
+A structured certificate showing exactly **which properties were established, by which independent methods, against which frozen benchmarks, and which properties remain OPEN**.
+
+That is where all the existing machinery—Vidyut, Heritage, Inspect, TantraFact, PaperQA2, OpenReview, the Pāṭala graph—finally slots together without duplication.
+
+[1]: https://github.com/ambuda-org?utm_source=chatgpt.com "Ambuda · GitHub"
+[2]: https://github.com/hrishikeshrt/heritage?utm_source=chatgpt.com "GitHub - hrishikeshrt/heritage: Heritage.py -- Python Interface to The Sanskrit Heritage Site · GitHub"
+[3]: https://arxiv.org/abs/2409.13920?utm_source=chatgpt.com "One Model is All You Need: ByT5-Sanskrit, a Unified Model for Sanskrit NLP Tasks"
+[4]: https://arxiv.org/abs/2407.06331?utm_source=chatgpt.com "CharSS: Character-Level Transformer Model for Sanskrit Word Segmentation"
+[5]: https://docs.openreview.net/?utm_source=chatgpt.com "OpenReview Documentation | OpenReview"
+[6]: https://arxiv.org/abs/2505.21537?utm_source=chatgpt.com "OpenReview Should be Protected and Leveraged as a Community Asset for Research in the Era of Large Language Models"
+[7]: https://inspect.aisi.org.uk/scoring.html?utm_source=chatgpt.com "Scoring – Inspect"

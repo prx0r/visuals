@@ -1,0 +1,1223 @@
+storyboard
+
+Yes. The missing idea is: **the storyboard has to serve two masters**.
+
+```txt
+1. It must be simple enough to generate beautiful videos.
+2. It must be structured enough that analytics can learn from it later.
+```
+
+So we should **not** make the DeepSeek output bloated. But we do need a few standardized labels so the system can compare videos later.
+
+The best structure is:
+
+```txt
+Essay-level mythos + style direction
+→ frame-level local labels
+→ frame-level concept tags
+→ frame-level visual descriptions
+→ compiler-generated video DNA
+→ YouTube retention mapped back to frames
+```
+
+For the Whitehead essay, the core movement is from civilization as participation in ideas, into Whitehead’s “buzzing world,” nonhuman value, Marx/Latour/Haraway, Gaia, bees/cathedrals, ecological catastrophe, and finally value as cosmological/ecological power. 
+
+DeepSeek can output valid JSON using its JSON mode by setting `response_format` to `{"type":"json_object"}` and explicitly asking for JSON in the prompt, according to DeepSeek’s official docs. ([DeepSeek API Docs][1]) YouTube can later give retention-style data using `elapsedVideoTimeRatio` as the position in the video and `audienceWatchRatio` as the ratio of viewers watching at that point, which is exactly what we need to map audience response back onto storyboard frames. ([Google for Developers][2])
+
+---
+
+# 1. Final DeepSeek storyboard JSON schema
+
+This is the schema I’d use.
+
+Keep DeepSeek output human-readable:
+
+```json
+{
+  "essay_title": "string",
+  "essay_thesis": "string",
+  "mythos_filter": "string",
+  "visual_direction": "string",
+  "global_concepts": ["string"],
+  "global_entities": ["string"],
+  "frames": [
+    {
+      "frame_label": "string",
+      "start": 0.0,
+      "end": 10.0,
+      "rhetorical_role": "hook | thesis | quote | example | contrast | expansion | transition | intensification | synthesis | closing",
+      "local_concepts": ["string"],
+      "image_description": "string",
+      "search_terms": ["string"],
+      "reason": "string",
+      "quote_text": null
+    }
+  ]
+}
+```
+
+That’s it.
+
+Not too much.
+
+The crucial fields are:
+
+```txt
+frame_label
+rhetorical_role
+local_concepts
+image_description
+quote_text
+```
+
+Because later analytics can say:
+
+```txt
+“quote” frames retained better than “contrast” frames.
+“alchemical vessel” images retained better than “portrait” images.
+“Gaia / enclosure / Earthbound” frames retained better than “Marx / labor-value” frames.
+```
+
+---
+
+# 2. Why frame labels matter
+
+You’re exactly right: if the whole essay is about **daimon**, tagging every frame `daimon` is useless.
+
+So we need two levels:
+
+```txt
+global_concepts = what the whole essay is about
+local_concepts = what this exact frame is doing
+```
+
+Example for a daimon essay:
+
+```json
+{
+  "global_concepts": ["daimon", "genius", "vocation", "soul-guidance"],
+  "frames": [
+    {
+      "frame_label": "The Call",
+      "local_concepts": ["summons", "vocation", "restlessness"]
+    },
+    {
+      "frame_label": "The Refusal",
+      "local_concepts": ["avoidance", "fear", "ego-resistance"]
+    },
+    {
+      "frame_label": "Eros as Guide",
+      "local_concepts": ["eros", "longing", "orientation"]
+    },
+    {
+      "frame_label": "Angel of the Work",
+      "local_concepts": ["genius", "service", "higher intelligence"]
+    }
+  ]
+}
+```
+
+So later the system can learn:
+
+```txt
+Daimon essays perform well generally.
+But within daimon essays, “call/refusal/eros/service” frames perform differently.
+```
+
+That is the key.
+
+---
+
+# 3. Standardized but not dead
+
+The labels should be **controlled enough for analytics**, but poetic enough for your mythos.
+
+Use three layers:
+
+```txt
+A. Global concept tags
+B. Frame local concepts
+C. Frame label
+```
+
+Example:
+
+```json
+{
+  "frame_label": "No Dead Nature",
+  "local_concepts": ["living matter", "value", "anti-mechanism"],
+  "rhetorical_role": "contrast"
+}
+```
+
+The `frame_label` is unique and human-readable.
+
+The `local_concepts` are semi-standardized.
+
+The `rhetorical_role` is fully standardized.
+
+This gives you analytics without killing the vibe.
+
+---
+
+# 4. The mythos filter
+
+Every essay, no matter the tradition, should pass through your house filter.
+
+This is the thing that makes the channel feel like itself.
+
+For example:
+
+```txt
+Hermetic mythos filter:
+Treat philosophy, Buddhism, ecology, alchemy, astrology, and metaphysics as different symbolic languages for consciousness, transformation, value, and participation. Prefer images that feel archival, sacred, intelligent, strange, luminous, and mythic. Avoid generic AI fantasy, wellness-core, corporate stock imagery, or random occult wallpaper.
+```
+
+Then tradition-specific direction varies.
+
+For Tibetan Buddhism:
+
+```txt
+Use Tibetan thangka composition, mandala geometry, wrathful/peaceful deity symbolism, mountain monasteries, ritual implements, subtle body diagrams, and luminous void imagery — but render them through the same slow, serious, symbolic essay style.
+```
+
+For Whitehead:
+
+```txt
+Use Renaissance ecological alchemy, natural-history engravings, bees, soil, roots, celestial diagrams, cathedrals, and Earth-as-vessel imagery.
+```
+
+So the variety is huge, but the mythos remains consistent.
+
+---
+
+# 5. Full DeepSeek prompt
+
+Use this as the actual storyboard-generation prompt.
+
+You are a storyboard director for philosophical, mystical, ecological, and esoteric audio essays.
+
+Your job is to convert an essay script with timings into a rhythm-aware visual storyboard for a slow cinematic listening video.
+
+The video style is not generic educational content. It must retain a coherent mythos: archival, symbolic, luminous, contemplative, strange, intelligent, and sacred without becoming cheap fantasy or random occult wallpaper.
+
+You will receive:
+
+1. Essay script.
+2. Sentence-level or paragraph-level timings.
+3. Optional quote timings.
+4. Optional target frame duration.
+
+Your task:
+
+First, analyze the essay’s structure as rhythm:
+
+* Where does the essay breathe?
+* Where does a new theme begin?
+* Where is a quote being read?
+* Where does the argument pivot?
+* Where would an image genuinely help the listener understand?
+* Where should one image stay longer to preserve atmosphere?
+
+Do not illustrate every sentence.
+Do not change image randomly.
+Use roughly 10-second frames by default.
+Use 6–8 seconds for quick transitions.
+Use 14–20 seconds for major meditative images or important sections.
+Avoid frames shorter than 6 seconds unless absolutely necessary.
+Avoid frames longer than 20 seconds unless the image is intentionally held.
+
+Return valid JSON only.
+
+The JSON must have this shape:
+
+{
+"essay_title": "...",
+"essay_thesis": "...",
+"mythos_filter": "...",
+"visual_direction": "...",
+"global_concepts": ["..."],
+"global_entities": ["..."],
+"frames": [
+{
+"frame_label": "...",
+"start": 0.0,
+"end": 10.0,
+"rhetorical_role": "hook | thesis | quote | example | contrast | expansion | transition | intensification | synthesis | closing",
+"local_concepts": ["..."],
+"image_description": "...",
+"search_terms": ["..."],
+"reason": "...",
+"quote_text": null
+}
+]
+}
+
+Rules for fields:
+
+essay_title:
+A clear title for the essay.
+
+essay_thesis:
+One sentence summarizing the essay’s central argument.
+
+mythos_filter:
+A short description of the house mythos/filter that should govern the visual treatment.
+
+visual_direction:
+A specific visual direction for this essay based on its authors, time periods, traditions, metaphors, and concepts.
+
+global_concepts:
+5–12 broad concepts that describe the whole essay. These are video-level tags, not frame-level tags.
+
+global_entities:
+Authors, traditions, texts, historical figures, or named beings central to the essay.
+
+frames:
+Divide the essay into visual frames based on rhythm and conceptual turns.
+
+frame_label:
+A short, unique, memorable label for this exact frame. 2–6 words. Do not use the same generic label repeatedly.
+
+rhetorical_role:
+Choose exactly one from the allowed list. This helps analytics compare frame types.
+
+local_concepts:
+1–4 concepts specific to this frame. Do not simply repeat the global topic every time. Use the actual local movement of the argument.
+
+image_description:
+Describe one image, artwork, animated still, or reusable B-roll clip that would fit this frame. Be concrete and visually useful. Prefer subjects, objects, figures, places, symbols, and compositions. Avoid vague phrases like “mystical image” or “abstract philosophy background.”
+
+search_terms:
+3–5 practical search phrases for finding public-domain or archival images. Include period/style words when useful.
+
+reason:
+Explain why this image fits this moment of the argument.
+
+quote_text:
+If a direct quote should appear on screen during this frame, include the exact quote. Otherwise use null. Do not put long paragraphs here. If the quote is too long, select only the most visually important excerpt.
+
+Important:
+The storyboard is not the final render timeline. It is a creative plan. The video compiler will later use audio alignment to place quotes and subtitles exactly.
+
+---
+
+# 6. Full example for the Whitehead essay
+
+This is what the DeepSeek output could look like for the essay you sent.
+
+I’m not using exact audio timings because we don’t have the MP3 alignment here, so these are **estimated structural timings** assuming roughly a 10–13 minute narration. In the real system, DeepSeek receives sentence timings and outputs exact frame times.
+
+```json
+{
+  "essay_title": "Whitehead, Marx, and the Living Earth",
+  "essay_thesis": "Value is not merely produced by human labor or human consciousness; it is a cosmological and ecological power in which humans, animals, soil, stars, and societies all participate.",
+  "mythos_filter": "A symbolic essay cinema filter: archival, luminous, ecological, hermetic, serious, and contemplative. Treat philosophy, ecology, politics, and alchemy as interwoven languages of participation, value, and transformation. Avoid generic fantasy occult imagery, corporate educational visuals, or random mystical decoration.",
+  "visual_direction": "Renaissance ecological alchemy. Use public-domain engravings, natural-history plates, alchemical vessels, celestial diagrams, bees, soil, roots, medieval cathedrals, early scientific illustrations, Earth-as-vessel imagery, and restrained surreal compositions. The style should feel like Whiteheadian process philosophy rendered through alchemical natural history.",
+  "global_concepts": [
+    "value",
+    "nonhuman agency",
+    "process philosophy",
+    "ecology",
+    "living matter",
+    "Gaia",
+    "capitalism",
+    "cosmic history",
+    "participation",
+    "anthropocentrism"
+  ],
+  "global_entities": [
+    "Alfred North Whitehead",
+    "Karl Marx",
+    "Bruno Latour",
+    "Donna Haraway",
+    "Gaia",
+    "bees",
+    "Earth"
+  ],
+  "frames": [
+    {
+      "frame_label": "Civilization as Participation",
+      "start": 0.0,
+      "end": 12.0,
+      "rhetorical_role": "hook",
+      "local_concepts": ["civilization", "ideas", "participation"],
+      "image_description": "A serious portrait of Alfred North Whitehead beside an open manuscript, with a faint celestial diagram and small natural forms around the margins.",
+      "search_terms": [
+        "Alfred North Whitehead portrait public domain",
+        "old philosophy manuscript celestial diagram",
+        "Renaissance cosmology diagram public domain"
+      ],
+      "reason": "The essay opens by asking what civilization means for Whitehead and frames it as conscious participation in the creative power of ideas.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Buzzing World",
+      "start": 12.0,
+      "end": 23.0,
+      "rhetorical_role": "quote",
+      "local_concepts": ["creaturely democracy", "living world", "fellow beings"],
+      "image_description": "A Renaissance natural-history engraving of bees, squirrels, plants, insects, and small creatures arranged like an assembly of fellow beings.",
+      "search_terms": [
+        "natural history bees engraving public domain",
+        "Renaissance animals plants engraving",
+        "public domain beehive illustration",
+        "squirrel natural history engraving"
+      ],
+      "reason": "This supports Whitehead's image of a buzzing world and a democracy of fellow creatures.",
+      "quote_text": "We find ourselves in a buzzing world, amid a democracy of fellow creatures."
+    },
+    {
+      "frame_label": "Ideas Before Humans",
+      "start": 23.0,
+      "end": 38.0,
+      "rhetorical_role": "expansion",
+      "local_concepts": ["ideas", "evolution", "cosmic creativity"],
+      "image_description": "An alchemical sun above peacocks, butterflies, and roses, as if beauty and value are active in evolution before human thought.",
+      "search_terms": [
+        "alchemical sun manuscript public domain",
+        "peacock butterfly rose engraving",
+        "Renaissance botanical animal engraving",
+        "cosmological sun diagram public domain"
+      ],
+      "reason": "The essay argues that ideas are not only in human heads but are active in evolutionary, geohistorical, and cosmic processes.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Value Experience",
+      "start": 38.0,
+      "end": 51.0,
+      "rhetorical_role": "quote",
+      "local_concepts": ["value", "actuality", "whole"],
+      "image_description": "A circular chain of bacterium, bee, human, tree, and star arranged around an alchemical mandala of value.",
+      "search_terms": [
+        "alchemical mandala public domain",
+        "chain of being engraving public domain",
+        "microcosm macrocosm diagram",
+        "natural history bee star tree engraving"
+      ],
+      "reason": "This frame visualizes Whitehead's claim that everything has value for itself, others, and the whole.",
+      "quote_text": "Everything has some value for itself, for others, and for the whole."
+    },
+    {
+      "frame_label": "Soil and Seeds",
+      "start": 51.0,
+      "end": 64.0,
+      "rhetorical_role": "example",
+      "local_concepts": ["food sovereignty", "soil", "material conditions"],
+      "image_description": "Hands holding seeds above dark soil, treated like an alchemical substance, with faint planetary symbols in the background.",
+      "search_terms": [
+        "public domain hands seeds soil",
+        "agriculture engraving seeds soil",
+        "Renaissance farming engraving",
+        "alchemical earth element symbol manuscript"
+      ],
+      "reason": "Whitehead's remarks on Marx lead into the importance of food sovereignty, farmers, soil, and seeds as the material ground of political transformation.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Labor and Dead Nature",
+      "start": 64.0,
+      "end": 80.0,
+      "rhetorical_role": "contrast",
+      "local_concepts": ["labor value", "commodity", "dead nature"],
+      "image_description": "A split composition: on one side, a 19th-century factory worker and machinery; on the other, roots and soil shown as living, glowing matter.",
+      "search_terms": [
+        "19th century factory worker engraving",
+        "industrial revolution factory engraving public domain",
+        "roots soil engraving public domain",
+        "living earth alchemy engraving"
+      ],
+      "reason": "The essay contrasts Marx's human labor theory of value with Whitehead's refusal of dead, inert raw matter.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "No Mere Matter",
+      "start": 80.0,
+      "end": 92.0,
+      "rhetorical_role": "quote",
+      "local_concepts": ["living matter", "anti-mechanism", "cosmic value"],
+      "image_description": "An alchemical vessel containing earth, minerals, roots, and stars, suggesting that matter itself is alive with value-experience.",
+      "search_terms": [
+        "alchemical vessel earth stars manuscript",
+        "prima materia alchemy engraving",
+        "alchemy flask cosmos public domain",
+        "Renaissance alchemical laboratory engraving"
+      ],
+      "reason": "This visual supports the Whiteheadian claim that there is no mere matter or dead nature.",
+      "quote_text": "We have no right to deface the value-experience which is the very essence of the universe."
+    },
+    {
+      "frame_label": "Modern Entanglement",
+      "start": 92.0,
+      "end": 108.0,
+      "rhetorical_role": "transition",
+      "local_concepts": ["modernity", "entanglement", "nature-culture"],
+      "image_description": "A globe wrapped in threads connecting factories, animals, plants, laboratories, and human figures, like a Latourian network.",
+      "search_terms": [
+        "globe network engraving public domain",
+        "industrial nature culture collage public domain",
+        "old map globe threads engraving",
+        "Bruno Latour Gaia illustration public domain"
+      ],
+      "reason": "The essay turns to Latour's critique of modernity: while humans emancipate themselves, they become more entangled in the fabric of nature.",
+      "quote_text": "We have never been modern."
+    },
+    {
+      "frame_label": "Earth Turned Inside Out",
+      "start": 108.0,
+      "end": 125.0,
+      "rhetorical_role": "expansion",
+      "local_concepts": ["Gaia", "earthbound", "enclosure"],
+      "image_description": "A surreal but archival-looking cosmological diagram where Earth is not a globe beneath us but an enclosing sphere around humans, clouds, soil, and atmosphere.",
+      "search_terms": [
+        "old cosmology diagram spheres public domain",
+        "Earth atmosphere engraving public domain",
+        "Gaia globe inside out illustration",
+        "Renaissance celestial spheres diagram"
+      ],
+      "reason": "This shows Latour's Gaia inversion: humans are not outside the Earth looking at a globe, but enclosed within Earth processes.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Bee and Architect",
+      "start": 125.0,
+      "end": 142.0,
+      "rhetorical_role": "contrast",
+      "local_concepts": ["creativity", "planning", "instinct"],
+      "image_description": "A medieval architect's plan dissolving into a honeycomb, showing the comparison between human design and bee creativity.",
+      "search_terms": [
+        "medieval architect cathedral plan engraving",
+        "honeycomb engraving public domain",
+        "cathedral construction manuscript public domain",
+        "bee hive geometry engraving"
+      ],
+      "reason": "The essay challenges Marx's distinction between human architects and bees, asking whether creativity really requires a central conscious plan.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Cathedral Honeycomb",
+      "start": 142.0,
+      "end": 158.0,
+      "rhetorical_role": "example",
+      "local_concepts": ["emergent order", "pattern language", "distributed creativity"],
+      "image_description": "A cathedral vault visually matched with the hexagonal geometry of honeycomb, both glowing as forms of emergent order.",
+      "search_terms": [
+        "gothic cathedral vault public domain",
+        "honeycomb macro public domain",
+        "cathedral vault engraving",
+        "geometric honeycomb engraving"
+      ],
+      "reason": "The essay uses Christopher Alexander and insect nests to suggest that living order emerges through participation in pattern, not top-down mastery.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Possessed by Ideas",
+      "start": 158.0,
+      "end": 170.0,
+      "rhetorical_role": "synthesis",
+      "local_concepts": ["ideas", "participation", "co-working"],
+      "image_description": "A human figure working at a manuscript while luminous forms descend through the room, suggesting ideas guiding rather than being invented by the mind.",
+      "search_terms": [
+        "Renaissance scholar manuscript candle public domain",
+        "inspiration muse engraving public domain",
+        "celestial ideas descending engraving",
+        "philosopher study celestial diagram"
+      ],
+      "reason": "This frame visualizes the essay's claim that consciousness of ideas does not mean mastery over ideas; we participate in their power.",
+      "quote_text": "Ideas possess us, purpose us; we participate in their power."
+    },
+    {
+      "frame_label": "Big Enough Stories",
+      "start": 170.0,
+      "end": 187.0,
+      "rhetorical_role": "quote",
+      "local_concepts": ["Haraway", "story", "anti-teleology"],
+      "image_description": "A woven ecological web of humans, animals, fungi, roots, and tools, arranged like an unfinished tapestry rather than a master plan.",
+      "search_terms": [
+        "ecological web tapestry public domain",
+        "roots fungi animals engraving",
+        "weaving nature human engraving",
+        "Donna Haraway Chthulucene symbolic image"
+      ],
+      "reason": "Haraway's 'big-enough stories' are situated, unfinished, relational, and anti-teleological.",
+      "quote_text": "We can inherit their bravery and capacity to tell big-enough stories without determinism, teleology, and plan."
+    },
+    {
+      "frame_label": "Ritual Sensitivity",
+      "start": 187.0,
+      "end": 204.0,
+      "rhetorical_role": "expansion",
+      "local_concepts": ["ritual", "aesthetic practice", "nonhuman value"],
+      "image_description": "A ritual circle outdoors with plants, animal tracks, candles, water, and stones, rendered as an old ethnographic or alchemical plate rather than modern fantasy.",
+      "search_terms": [
+        "ritual circle nature engraving public domain",
+        "indigenous ritual plants animals public domain",
+        "alchemy elements circle manuscript",
+        "sacred ecology illustration public domain"
+      ],
+      "reason": "The essay asks how humans can become sensitive to the values of nonhumans through practices, stories, rituals, and aestheticization.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Life Is Robbery",
+      "start": 204.0,
+      "end": 218.0,
+      "rhetorical_role": "quote",
+      "local_concepts": ["robbery", "justification", "hierarchy of values"],
+      "image_description": "A stark natural scene of harvest, predator, and sacrifice arranged around an alchemical balance scale.",
+      "search_terms": [
+        "alchemy balance scale engraving",
+        "harvest sacrifice engraving public domain",
+        "predator prey natural history engraving",
+        "justice scales nature engraving"
+      ],
+      "reason": "Whitehead's phrase 'life is robbery' is not sentimental ecology; it introduces the need to justify human taking within a hierarchy of values.",
+      "quote_text": "Life is robbery. The robber needs justification."
+    },
+    {
+      "frame_label": "Planetary Presence",
+      "start": 218.0,
+      "end": 235.0,
+      "rhetorical_role": "intensification",
+      "local_concepts": ["Anthropocene", "geological force", "human Earth"],
+      "image_description": "Human cities, mines, smoke, satellite views, and geological strata layered together like a planetary cross-section.",
+      "search_terms": [
+        "geological strata human city collage public domain",
+        "industrial landscape engraving public domain",
+        "satellite earth city lights public domain",
+        "Anthropocene geology illustration"
+      ],
+      "reason": "The essay intensifies into the claim that humans have become a planetary presence and geological force.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Extinction Headline",
+      "start": 235.0,
+      "end": 250.0,
+      "rhetorical_role": "intensification",
+      "local_concepts": ["extinction", "ecological catastrophe", "species loss"],
+      "image_description": "A dark archival collage of vanished animals, coral, wetlands, bees, and newspaper-like extinction headlines.",
+      "search_terms": [
+        "extinct animals engraving public domain",
+        "coral reef public domain",
+        "wetlands wild bees public domain",
+        "ecological catastrophe newspaper collage"
+      ],
+      "reason": "The essay moves from metaphysics into the concrete ecological catastrophe of extinction and planetary disruption.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Many Names for Crisis",
+      "start": 250.0,
+      "end": 264.0,
+      "rhetorical_role": "synthesis",
+      "local_concepts": ["Anthropocene", "Capitalocene", "Chthulucene"],
+      "image_description": "A ring of names — Anthropocene, Capitalocene, Plantationocene, Chthulucene, Ecozoic — around a wounded but luminous Earth.",
+      "search_terms": [
+        "Earth alchemical circle public domain",
+        "wounded earth symbolic illustration",
+        "Renaissance world map circle",
+        "planet earth engraving public domain"
+      ],
+      "reason": "The essay lists different names for the current ecological epoch and says diagnosing metaphysical roots matters.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Nature as Body",
+      "start": 264.0,
+      "end": 280.0,
+      "rhetorical_role": "quote",
+      "local_concepts": ["Marx", "inorganic body", "metabolism"],
+      "image_description": "A human anatomical figure blended with rivers, forests, minerals, and atmosphere, showing nature as the human's wider body.",
+      "search_terms": [
+        "microcosm macrocosm human body nature engraving",
+        "Renaissance anatomical man cosmos",
+        "human body landscape engraving public domain",
+        "nature as body illustration public domain"
+      ],
+      "reason": "This gives Marx his due: he recognizes that nature is man's inorganic body and that humans are part of nature.",
+      "quote_text": "Nature is man's inorganic body."
+    },
+    {
+      "frame_label": "Metabolism with Nature",
+      "start": 280.0,
+      "end": 296.0,
+      "rhetorical_role": "contrast",
+      "local_concepts": ["metabolic rift", "mediation", "control"],
+      "image_description": "A 19th-century worker standing between a machine and a living river/forest system, mediating a flow between human labor and Earth.",
+      "search_terms": [
+        "industrial worker nature engraving",
+        "human labor river forest public domain",
+        "metabolism nature Marx illustration",
+        "factory landscape engraving public domain"
+      ],
+      "reason": "The essay acknowledges Marx's dialectical account of the human-earth relation, while still arguing that Marx treats nature as awaiting human value creation.",
+      "quote_text": null
+    },
+    {
+      "frame_label": "Cosmological Value",
+      "start": 296.0,
+      "end": 314.0,
+      "rhetorical_role": "closing",
+      "local_concepts": ["cosmological value", "ecological power", "participation"],
+      "image_description": "A luminous Earth inside an alchemical vessel, with bees, roots, humans, stars, and galaxies arranged as participants in one living field of value.",
+      "search_terms": [
+        "alchemical vessel earth stars public domain",
+        "anima mundi world soul engraving",
+        "microcosm macrocosm earth alchemy",
+        "living earth alchemical illustration"
+      ],
+      "reason": "The essay closes with the Whiteheadian thesis that value is not a human construct but a cosmological and ecological power from which human value derives.",
+      "quote_text": null
+    }
+  ]
+}
+```
+
+This is the kind of output we want.
+
+---
+
+# 7. How this becomes video
+
+The storyboard is **not** the render timeline.
+
+The system adapts it like this:
+
+```txt
+DeepSeek storyboard
+→ validate JSON
+→ resolve concepts against glossary
+→ fetch/select image or motion asset
+→ align quotes to word timings
+→ generate subtitle chunks
+→ compile render timeline
+→ render mp4
+→ save video DNA
+```
+
+DeepSeek says:
+
+```txt
+Image: cathedral vault compared with honeycomb.
+Quote: null.
+Frame: 142–158.
+```
+
+The compiler says:
+
+```json
+{
+  "scene_id": "scene_011",
+  "start": 142.0,
+  "end": 158.0,
+  "asset_id": "motion_honeycomb_cathedral_002",
+  "motion": "slow_push",
+  "transition_in": "crossfade",
+  "transition_out": "crossfade",
+  "subtitles": true,
+  "quote_overlay": null
+}
+```
+
+If a reusable motion clip exists, use it.
+
+If not:
+
+```txt
+1. Use approved glossary image.
+2. Animate still image with slow zoom/parallax.
+3. Queue it for future image-to-video generation.
+```
+
+So the output can become:
+
+```txt
+still image video now
+animated still video soon
+Wan/LTX generated motion version later
+```
+
+Same storyboard.
+
+---
+
+# 8. Best analytics design
+
+This is the important part.
+
+You should track three layers of meaning:
+
+## A. Video-level DNA
+
+What the whole video is about.
+
+```json
+{
+  "global_concepts": ["daimon", "vocation", "genius", "eros"],
+  "global_entities": ["Plato", "Ficino", "Hillman"],
+  "visual_direction": "Florentine hermetic daemonology...",
+  "style_profile": "hermetic_documentary_v1"
+}
+```
+
+## B. Frame-level DNA
+
+What this exact moment is doing.
+
+```json
+{
+  "frame_label": "The Call",
+  "rhetorical_role": "hook",
+  "local_concepts": ["summons", "restlessness", "vocation"],
+  "asset_tags": ["candlelit figure", "threshold", "angelic light"],
+  "duration": 11.2,
+  "quote_active": false
+}
+```
+
+## C. Performance data
+
+How viewers responded.
+
+```json
+{
+  "frame_label": "The Call",
+  "retention_start": 1.0,
+  "retention_end": 0.87,
+  "retention_delta": -0.13,
+  "rewatch_signal": false,
+  "dropoff_flag": true
+}
+```
+
+Now you can ask meaningful questions.
+
+Not:
+
+```txt
+Did daimon perform well?
+```
+
+But:
+
+```txt
+Within daimon essays, did “The Call,” “The Refusal,” “Eros as Guide,” or “Angel of the Work” retain better?
+```
+
+That is the difference.
+
+---
+
+# 9. How to map YouTube retention to frames
+
+YouTube retention reports use ratios, not your storyboard frame names. The `elapsedVideoTimeRatio` gives the elapsed portion of the video, and a value like `0.4` corresponds to 40% through the video; `audienceWatchRatio` gives the viewer ratio at that point. ([Google for Developers][3])
+
+So your system converts:
+
+```txt
+elapsedVideoTimeRatio × video_duration = elapsed_seconds
+```
+
+Example:
+
+```txt
+video duration = 314s
+elapsedVideoTimeRatio = 0.40
+elapsed_seconds = 125.6s
+```
+
+Then find the matching frame:
+
+```txt
+125.6s belongs to frame:
+"Bee and Architect"
+start: 125.0
+end: 142.0
+```
+
+Now the analytics record becomes:
+
+```json
+{
+  "video_id": "whitehead_001",
+  "elapsed_ratio": 0.40,
+  "elapsed_seconds": 125.6,
+  "audience_watch_ratio": 0.74,
+  "frame_label": "Bee and Architect",
+  "local_concepts": ["creativity", "planning", "instinct"],
+  "rhetorical_role": "contrast"
+}
+```
+
+That’s how we tie YouTube data back to storyboard DNA.
+
+---
+
+# 10. Frame scoring
+
+For every frame, compute:
+
+```txt
+retention_start
+retention_end
+retention_delta
+average_retention
+max_retention
+min_retention
+dropoff_rate
+rewatch_signal
+```
+
+Example:
+
+```json
+{
+  "frame_label": "Cathedral Honeycomb",
+  "start": 142.0,
+  "end": 158.0,
+  "average_retention": 0.76,
+  "retention_delta": 0.03,
+  "performance_note": "Positive retention movement during distributed creativity visual."
+}
+```
+
+Then aggregate across videos:
+
+```txt
+Which rhetorical roles retain best?
+Which local concepts retain best?
+Which visual motifs retain best?
+Which author names cause dropoff?
+Which quote-card lengths work?
+Which image durations work?
+Which style profiles perform best?
+```
+
+---
+
+# 11. The best tag system
+
+Use this hierarchy:
+
+```txt
+Global concepts:
+Broad essay topic.
+
+Local concepts:
+What this specific frame is about.
+
+Frame label:
+Unique poetic name.
+
+Rhetorical role:
+Standardized analytics category.
+
+Visual motifs:
+What appears visually.
+
+Asset concepts:
+Glossary-linked concepts attached to the actual chosen image/clip.
+```
+
+Example:
+
+```json
+{
+  "frame_label": "Earth Turned Inside Out",
+  "rhetorical_role": "expansion",
+  "global_concepts": ["ecology", "Gaia", "nonhuman agency"],
+  "local_concepts": ["Gaia", "earthbound", "enclosure"],
+  "visual_motifs": ["sphere", "atmosphere", "cosmological diagram"],
+  "asset_concepts": ["anima mundi", "world soul", "macrocosm"]
+}
+```
+
+Why this works:
+
+```txt
+global_concepts tells you the essay category
+local_concepts tells you the moment
+frame_label lets humans understand it
+rhetorical_role lets analytics compare structure
+visual_motifs lets you learn what images work
+asset_concepts ties it to the glossary
+```
+
+That is the best balance.
+
+---
+
+# 12. Database tables
+
+Start with these:
+
+```txt
+essays
+- id
+- title
+- script_text
+- essay_thesis
+- global_concepts
+- global_entities
+- created_at
+
+storyboards
+- id
+- essay_id
+- version
+- mythos_filter
+- visual_direction
+- storyboard_json
+- created_at
+
+frames
+- id
+- storyboard_id
+- frame_index
+- frame_label
+- start_seconds
+- end_seconds
+- rhetorical_role
+- local_concepts
+- image_description
+- search_terms
+- quote_text
+
+assets
+- id
+- title
+- source
+- source_url
+- local_path
+- license
+- content_tags
+- style_tags
+- concept_ids
+- reusable_score
+
+motion_assets
+- id
+- base_asset_id
+- file_path
+- duration_seconds
+- prompt
+- model_used
+- concepts
+- reusable_score
+- has_dialogue
+- loopable
+
+renders
+- id
+- storyboard_id
+- render_engine
+- output_path
+- style_profile
+- duration_seconds
+- timeline_json
+- created_at
+
+video_dna
+- id
+- render_id
+- dna_json
+- created_at
+
+youtube_uploads
+- id
+- render_id
+- youtube_video_id
+- title
+- description
+- thumbnail_id
+- upload_time
+- privacy_status
+
+youtube_retention_points
+- id
+- youtube_video_id
+- elapsed_ratio
+- elapsed_seconds
+- audience_watch_ratio
+
+frame_performance
+- id
+- frame_id
+- youtube_video_id
+- average_retention
+- retention_start
+- retention_end
+- retention_delta
+- dropoff_flag
+- rewatch_signal
+```
+
+For upload automation later, the YouTube Data API supports video upload workflows through `videos.insert`; for analytics at scale, YouTube’s Reporting API is designed for bulk reports, while the Analytics API works for targeted queries. ([Google for Developers][4])
+
+---
+
+# 13. The algorithm
+
+Use this exact algorithm.
+
+```txt
+1. Input essay script and MP3.
+
+2. Run forced alignment.
+   Output:
+   - word timings
+   - sentence timings
+   - paragraph timings
+   - quote timings
+
+3. Send script + timings to DeepSeek.
+   Ask for:
+   - essay thesis
+   - mythos filter
+   - visual direction
+   - global concepts
+   - global entities
+   - rhythm-aware frames
+
+4. Validate JSON.
+   Check:
+   - no overlapping frames
+   - no frame below 6s unless allowed
+   - no frame above 20s unless allowed
+   - valid rhetorical_role
+   - quote_text appears in script or is marked excerpt
+
+5. Normalize tags.
+   Map local_concepts to glossary concept IDs where possible.
+   Keep unmatched concepts as candidate glossary terms.
+
+6. Resolve assets.
+   For each frame:
+   - search reusable motion assets first
+   - search glossary artworks second
+   - search public-domain archives third
+   - generate/animate only if needed
+
+7. Compile timeline.
+   For each frame:
+   - assign asset
+   - add motion preset
+   - add transition
+   - add quote overlay using exact audio timings
+   - add subtitles from alignment
+
+8. Render video.
+
+9. Save video DNA.
+   Store:
+   - storyboard
+   - exact assets
+   - exact timings
+   - exact overlays
+   - style profile
+   - render settings
+
+10. Upload to YouTube or record manual upload ID.
+
+11. Ingest YouTube analytics.
+   Pull:
+   - views
+   - impressions
+   - CTR
+   - watch time
+   - average view duration
+   - average view percentage
+   - retention points
+
+12. Map retention points to frames.
+   elapsed_ratio × duration = elapsed_seconds.
+   Find frame where start <= elapsed_seconds < end.
+
+13. Compute frame performance.
+   Score each frame.
+
+14. Generate insight report.
+   Ask:
+   - which local concepts retained?
+   - which rhetorical roles dropped?
+   - which visual motifs worked?
+   - which assets should be reused?
+   - which frame types need better visuals?
+```
+
+---
+
+# 14. What the insight report should say
+
+After a video gets data, the system should produce something like:
+
+```txt
+Video: Whitehead, Marx, and the Living Earth
+
+Strongest frames:
+1. Cathedral Honeycomb
+   Local concepts: emergent order, distributed creativity
+   Visual motif: cathedral + honeycomb
+   Retention delta: +3%
+
+2. Ideas Before Humans
+   Local concepts: ideas, evolution, cosmic creativity
+   Visual motif: alchemical sun + peacock + rose
+   Retention delta: +2%
+
+Weakest frames:
+1. Labor and Dead Nature
+   Local concepts: labor value, commodity, dead nature
+   Visual motif: factory worker
+   Retention delta: -8%
+
+Hypotheses:
+- Viewers respond well to vivid symbolic comparisons.
+- Abstract political-economic sections may need stronger visual metaphors.
+- Alchemical-natural imagery performs better than industrial engraving imagery in this mythos.
+- Quote cards under 20 words performed better than longer quote cards.
+```
+
+This is the feedback loop.
+
+---
+
+# 15. The core final design
+
+The full system is:
+
+```txt
+Essay
+→ rhythm analysis
+→ mythos-filtered storyboard
+→ glossary/concept matching
+→ still or motion asset selection
+→ video render timeline
+→ mp4
+→ video DNA
+→ YouTube retention mapping
+→ frame-level performance
+→ creative insight
+→ better future storyboard
+```
+
+The magic is not just automation.
+
+The magic is that every video becomes an experiment in:
+
+```txt
+Which ideas,
+under which symbolic images,
+at which rhythm,
+with which mythic style,
+held attention?
+```
+
+That is the product.
+
+[1]: https://api-docs.deepseek.com/guides/json_mode?utm_source=chatgpt.com "JSON Output"
+[2]: https://developers.google.com/youtube/analytics/metrics?utm_source=chatgpt.com "Metrics | YouTube Analytics and Reporting APIs"
+[3]: https://developers.google.com/youtube/analytics/dimensions?utm_source=chatgpt.com "Dimensions | YouTube Analytics and Reporting APIs"
+[4]: https://developers.google.com/youtube/v3/guides/uploading_a_video?utm_source=chatgpt.com "Upload a Video | YouTube Data API"

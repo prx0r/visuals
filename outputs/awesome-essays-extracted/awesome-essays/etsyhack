@@ -1,0 +1,226 @@
+Yes. There are some excellent ways to automate Etsy listing media cheaply, especially for OddHobb. The biggest opportunity is combining your actual 3D meshes with reusable image templates, automated product videos, and AI-generated backgrounds.
+
+You don't need to generate every listing image with AI. In fact, the cheaper, more consistent approach is to generate the creative elements once, then programmatically assemble hundreds of product images.
+
+## 1. Etsy's current listing media limits (October 2026)
+
+| Media            | Etsy accepts                        | My recommendation            |
+| ---------------- | ----------------------------------- | ---------------------------- |
+| Photos           | Up to 20 per listing                | 8–12 strong images initially |
+| Videos           | Up to 2 per listing                 | Use both where useful        |
+| Video duration   | Etsy pages differ: 3–15 or 5–15 sec | 5–15 seconds                 |
+| Video formats    | MP4, MOV, FLV, AAC, AVI, 3GP, MPEG  | MP4, H.264                   |
+| Video size       | Maximum 100 MB                      | Under 20 MB                  |
+| Resolution       | Minimum 500 px; ideally 1080+       | 1080p                        |
+| Sound            | Removed automatically               | Design for silent playback   |
+| Photo formats    | JPG, PNG, GIF, SVG, HEIC            | JPG                          |
+| Photo resolution | 2000 px or greater recommended      | 2000 × 2000 or 2500 × 2000   |
+
+Etsy's updated listing guide confirms 20 photos and two videos. Its separate video guide gives slightly different minimum duration guidance, hence the safe 5–15-second recommendation.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://help.etsy.com\&sz=32)
+
+Etsy Help
+
++2
+
+
+
+The useful trick: you can turn one existing GLB or OBJ mesh into a spinning product video without paying any video-generation API.
+
+For OddHobb, that's particularly valuable. A genuine 360° view of the pet ornament, brick figure, or crocodile charm is more informative than an AI-invented version of the product.
+
+## 2. Best GitHub projects to steal from
+
+These are the most useful repositories I found for your use case.
+
+[Square Gift Box Mockup with Soft Satin Ribbon on White Background - Mediamodifier](https://images.openai.com/static-rsc-4/al3f6TwlyizJKu-0jccIs-ufrQDOZ7amBZn_AnA0se3whqWDxrQhlR_HrdkacjbODETWWQ-4y9wyrviaHCNpl-tEZE_Dg626s-lu-CkvP-WWV90S0xjyFIYBPztxmsSwR5bjnwPK1JTx-vFL3Hl_xK4rfGTPiuTmiJTUP4qIUJc?purpose=inline)
+
+[Batchroom](https://github.com/ekinarca/batchroom) — best for batch listing photos
+
+Self-hosted background removal, white canvases, resizing and Etsy/Shopify export presets. Includes YAML recipes and output manifests. Potentially ideal for generating dozens of standardized photos without ongoing API costs.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
+
+GitHub
+
+
+
+[The All-in-One Video & Filmmakers Platform | Motion Array](https://images.openai.com/static-rsc-4/jtUAK9nJOWQjEmtylG5LQlWy-1-Plh66-Vxhurit28WchCjyOu8KAXyedADmfZG5XFImpkE5A1sOq56JL5n3aKVeAvmrTesc82M6RxoiruHA8MOguawpyxuJB7Z-zuowcgozNSXJLXVXAnekvIitOOZIIsORe3ZDcEfEY6uC1DA?purpose=inline)
+
+[Remotion](https://github.com/remotion-dev/remotion) — best for automatic videos
+
+React-based video generation. Combine real mesh turntables, before-and-after transformations, captions and product information into repeatable MP4 templates. Check its commercial licensing conditions.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
+
+GitHub
+
+
+
+[Personalized Memory Box, Engraved Walnut Keepsake Box, Customized Box With Name - Etsy](https://images.openai.com/static-rsc-4/6jBnXHFrm_Aar4dZ4obio6nd9VUKkc_JNYJeHj-m9znCIumZeM_Q5SFQhyMj-gOh3h1XF1nBBWg6D0KuDRWTqSm9TMTiL2qA4BToC79G4K0gUEPR_3HiACvx4Htuvul61mokjAxOX-kjSZGyOYqmM_D5jqRZ6vLk2dUEZ-ZYk6w?purpose=inline)
+
+[AI E-Commerce Media Studio](https://github.com/ronchen0927/AI-E-Commerce-Media-Studio) — best all-in-one AI pipeline
+
+Includes RMBG background removal, instruction-based product image editing, AI storyboarding and Wan image-to-video generation. Supports external APIs with optional local GPU fallback.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
+
+GitHub
+
+
+
+[Frame mockup, ISO A paper size. Living room wall poster mockup. Interior mockup with house background. Modern interior design. 3D render](https://images.openai.com/static-rsc-4/QE-xAhxOtFHC7MH3C90_NYF21HsIR__sftpschyAxz7rjMjktc_Kk0MN0JyGVkf9mGUTlvhOIL4gEq7ANFCC5Bg2pk2YfCrMa4zYkpN2HbTswNJXwBrwd0diegCaLSH4e2VrleSCBuEdjkqxqq-Jh3Uou5VD4u9bf3Ff55frh4B0TLWbYpkKlhaw_nks2oGr?purpose=inline)
+
+[Mockup Generator](https://github.com/jjshay/mockup-generator) — best for printed cards and artwork
+
+Automatically inserts artwork into frames and room scenes. The underlying compositing approach could be adapted to OddHobb greeting cards, wrapping paper and print products.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
+
+GitHub
+
+
+
+[Fussy deodorant product advert | Alchemy](https://images.openai.com/static-rsc-4/XUvCcDFdPvXiQo_Voln4Pt10JKkPOndF12VLUT_fbVbtn6Mz9KeVRoHhB60NZutaOHYx1gOGlQ5OSsfmSyIcVcf82o3TvmZkf0yRSuCm42aej9JnRmkPIRbn6ximnIgkwe5pbbHNRINRU_mXLDO6lZAGtFc3MA9VmIVwhAm_bnI?purpose=inline)
+
+[Remotion Video Templates](https://github.com/AleBrito124356/remotion-video-templates) — ready-made promo layouts
+
+Includes a product-promo template with configurable name, screenshots, tagline, features and call to action. MIT licensed and usable as a starting point for your Etsy videos.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
+
+customizable via props · GitHub
+
+
+
+Two more worth checking: [81 Remotion templates](https://github.com/inematds/remotion-templates) for animations and [Product Background Replacement](https://github.com/ozgursntrk/product-bg-replacement-pipeline) for keeping original product pixels intact while changing the scene.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
+
+GitHub
+
++1
+
+
+
+## 3. Cheap AI image editing: actual prices
+
+These are published fal.ai API prices I verified, not estimates.
+
+| Model                                                                         | Price per generation | Suggested use              |
+| ----------------------------------------------------------------------------- | -------------------- | -------------------------- |
+| [FLUX Kontext Dev](https://fal.ai/models/fal-ai/flux-kontext/dev)             | $0.025 per MP        | Background or scene edits  |
+| [FLUX Kontext Pro Multi](https://fal.ai/models/fal-ai/flux-pro/kontext/multi) | $0.04                | Combining reference images |
+| [FLUX Kontext Max](https://fal.ai/models/fal-ai/flux-pro/kontext/max)         | $0.08                | Higher-end creative edits  |
+
+For example, at the published Dev rate, ten 1-megapixel image edits cost $0.25, before any upscaling, retries or other processing.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://fal.ai\&sz=32)
+
+Fal.ai
+
++2
+
+
+
+The major cost reduction is generating backgrounds instead of complete product photos.
+
+Generate a tasteful desk, Christmas tree, gift box, or table setting once. Then use your real product render as a composited foreground layer. Reuse the same scene across a hundred SKUs.
+
+This also avoids one of your biggest problems with AI images: it can subtly change the actual mesh, colour, accessory attachment or facial details.
+
+## 4. The listing pack I'd automate for OddHobb
+
+[Custom Pet Figurine from Photo - 3D Dog & Cat Keepsake](https://images.openai.com/static-rsc-4/ZYVfOYO0GlEAT_zUKFkMZ0vJQdcVgCdQ9yofkC_7rFAchKut_itqUqnoAHVWIsRmAYo8zSw-tZCwnwG0eQSs8ODpIQKovvlEJ8IV-k99jlJIvGqN4m0EO2ZqmGhGZ-n3DoJcrVQnSqTsLG5_n_IZZhUtXE_3Ch41tCxpW9sXrUI?purpose=inline)
+
+01 · Hero photo
+
+[Forever Pet Figurine  – CuteBuddi](https://images.openai.com/static-rsc-4/djT0Cgc3e9RRtcOebdO3UdQabHjy1WlxmJU_OZs1KEWU7RxdAZVslaHat7nkDRFv66O3co8XQAYHCiAuWsVeUyZEn_xQWtkybLThStw8BrvUXObUyxjNUwdyYr1vYGLDlfsqbbNu6rzR2otQZcwZmf8sCXvvmfFBl9crx55ZLjQ?purpose=inline)
+
+02 · Size reference
+
+[Custom 3D Pet Figurine – Realistic Dog or Cat Sculpture From Photo - Etsy](https://images.openai.com/static-rsc-4/oyxPjZxkTSCIkltvK4vUYimLZo5PbjsVeyZ4n0L88zFimiM2D7MY-1wjHfH3hcUxDITZRDMqHZ4VpQb7i0yw9L_ZcFrhCon2SuP1wpEIKuGAhJcBUSehsyv-VObu_W51uXpZyc0zmro5nj_qkO_gPV5kX6SvcEQuRdyEP1-gFWE?purpose=inline)
+
+03 · Gift lifestyle
+
+[Championship Baron Nashor Figure | Riot Games Store](https://images.openai.com/static-rsc-4/TJ-PIBnEe4d2FJ2Q-ZeXZIl7QyAVCKdgTNUbz4F7E23IRuYruX0Yc9O-YcsOmZykqcQYHEsJt5KmVpYr3XTpiwOidPSwrDWqUmH7308DzNrXmsC2B73xA0MqmVGqqFBbiwHATRHgfJMd6d1deAKNRt0Ah9uI6uBKME06P0RwdY4?purpose=inline)
+
+04 · Detail close-up
+
+[Buy Mini-me Figures, Personalized 3d-printed Figures From Your Photo - PLA Online in India - Etsy](https://images.openai.com/static-rsc-4/QHGbeFkPWbiv3c8XKpn0MXke42T1IwEWLp9k-NPq78ds3VrsJoi4Lw_WrOzGxSriGHv_CzuKiSBQhrWrB58eRInfLQzdD1VLYGM0qfM7mRBoEHIGqZSCyUfnvKOI2d0jbR_cTEfAWNLQtVWizqrxuYvfePRWWFGL8lfSv8CAXfU?purpose=inline)
+
+05 · How to order
+
+[Estátua Personalizada Pet Miniatura 3D de Cachorro Feita pela Foto | Shopee Brasil](https://images.openai.com/static-rsc-4/xbKS10NT8M7Ge020T3tXuj3r7v-kOz237peMlektn7InBXfNbQqNjQQSfBs1a2zsjrj7KnwW9jYYx0CIqq2v3taMFe4CxGNA084H8LCA9p9UEXzYWbqX7IP6Xw2I9RDHnlQPPrES7Pg0RT3q4TCHHB3yBanbKE0M3tdxmSkYL8M?purpose=inline)
+
+06 · Multiple angles
+
+Illustrative layout references only. Final listing assets should use your actual product meshes and photos, not these example objects.
+
+I'd then generate two videos automatically:
+
+Video A — Product showcase (10 seconds): your actual GLB rotating slowly on white, a close-up, then a dimension graphic. Render via Blender and FFmpeg. No AI cost.
+
+Video B — Personalisation story (12 seconds): customer pet photo → cleaned-up artwork → 3D mesh → finished printed example. Use Remotion and actual project assets, with simple transitions.
+
+And here is an especially useful detail: the same template system can export the Etsy 5–15-second version, a longer Pinterest vertical video, and Shopify assets. You're designing one creative, not three separate campaigns.
+
+## 5. The architecture I'd give the Pogpet coding agent
+
+Product source
+
+Actual GLB / OBJ · real photographs · dimensions · material · price
+
+Blender
+
+Product renders and 360° footage
+
+fal.ai / Batchroom
+
+Backgrounds and image preparation
+
+Template engine
+
+Sharp / SVG for images · Remotion for videos
+
+Reusable OddHobb layouts and brand styles
+
+Etsy listing
+
+Shopify product
+
+Pinterest creative
+
+I'd make the entire generator accept a single product manifest, for example:
+
+```
+{
+  "sku": "ODD-PET-001",
+  "mesh": "pet.glb",
+  "photos": ["original.jpg"],
+  "size_mm": [120, 85, 90],
+  "material": "Full-colour printed material",
+  "templates": [
+    "white-hero",
+    "gift-lifestyle",
+    "size-guide",
+    "photo-to-product",
+    "turntable-video"
+  ]
+}
+```
+
+The generator would produce finished files, plus a manifest of exactly which inputs, prompts, templates and mesh versions produced each asset.
+
+One important compliance point: Etsy requires original product media for seller-made items and disclosure when the item itself is AI-created. For personalised listings, the first image must show a finished customised example rather than an empty placeholder.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://www.etsy.com\&sz=32)
+
+Etsy
+
+
+
+What I'd implement first: Batchroom-style image preparation, headless Blender rendering, and a small Remotion template collection. That gives OddHobb repeatable, cheap, brand-consistent listing packs immediately. Add expensive AI video only when there's a specific animation you cannot make from the actual mesh.
+
+The bigger opportunity is treating listing templates as reusable product assets: one strong Christmas-card creative format can be reused for hundreds of customers, with only their photograph, message and artwork changing.

@@ -1,0 +1,859 @@
+yeah i love that idea of being like ok we have an agent going to start some work this is thebeginning now all actions taken will be stored in memory so with each run it gets better at finding work, creating the submission and getting its first payments its pretty complex to be honest but its necessary otherwise your agent just finds al the same jobs as before cant track all its applied to.. what solutions do we have in get-me-money like isnt there a process for downloading skills and using them to complete tasks? gbrain? other git cloned repos? should we offer some basic infra like basic resources like makeskill.xyz and others for finding skills, basics for creating the submission, reviewing it. im basically thinking like u have hermes as a general agent framework we should build the general working agent framework with core primitives we can add providers like makeskill.xyz and other skill providers and the general principles a worker agent needs . then the goal is oneclick transormation of your moltbook agent iinto a specialised worker (seeding from our templates) and then the ability to improve with each job and become an entrepreneur on moltwork with their own subscripton services reports etc that also feed into x402 general marketplace.. all routed under moltwork so the combined volume brings all of them higher
+
+
+Yes. The product is becoming much clearer:
+
+> **Hermes is a general agent. Moltwork turns it into a worker.**
+
+And then over time:
+
+> **work → memory → skills → specialization → products/services → revenue → reputation → better work**
+
+The good news is that `get-me-money` already contains a surprising amount of the skeleton.
+
+## What `get-me-money` already has
+
+There is already a `CapabilityBroker` whose stated job is:
+
+> determine required capabilities → check what's available → find missing skills → security-audit them → build a job-specific Hermes profile.
+
+It already defines bundles such as:
+
+```text
+RESEARCH
+├── mp-research
+├── web_search
+├── web_extract
+└── knowledge-work-data
+
+CODE FEATURE
+├── github
+├── superpowers
+├── mp-implement
+├── mp-tdd
+├── mp-code-review
+└── github-pr-workflow
+```
+
+And it already has a curated catalog of trusted external skills including `superpowers`, `mp-research`, `mp-diagnose`, `mp-implement`, `mp-tdd`, `mp-code-review`, `prospecting`, `competitors`, `wrangler`, etc., with SkillMake marked as their source.
+
+It also creates a per-job layout:
+
+```text
+job/
+├── hermes-home/
+├── workspace/
+├── artifacts/
+├── plan/
+├── security/
+└── manifest.json
+```
+
+That's exactly the right concept.
+
+### But there is a major wiring bug
+
+The broker currently says:
+
+```text
+"I need these skills"
+```
+
+but it doesn't actually make Hermes use them.
+
+Execution currently does:
+
+```python
+plan = broker.build_job_profile(...)
+...
+result = run_task(config, opp, ev)
+```
+
+and `run_task()` simply starts the normal `HermesRunner(config)`. The `plan.hermes_home`, acquisitions, installed skills, etc. aren't handed to the worker.
+
+So **CapabilityBroker exists, but CapabilityInstaller is effectively missing.**
+
+That's the first thing I'd fix.
+
+---
+
+# The product should be `Moltwork WorkerKit`
+
+Not another general-purpose agent framework.
+
+A layer you add to an existing agent:
+
+```text
+                 EXISTING AGENT
+             Hermes / OpenClaw / etc.
+                       │
+                       ▼
+             ┌─────────────────────┐
+             │   MOLTWORK WORKER   │
+             │        KIT          │
+             └─────────────────────┘
+                       │
+       ┌───────────────┼────────────────┐
+       ▼               ▼                ▼
+   GET WORK        DO WORK          GET PAID
+       │               │                │
+       ▼               ▼                ▼
+ job memory         skills          wallet
+ applications      resources        receipts
+ deduplication     review           reputation
+ opportunity EV    learning         marketplace
+```
+
+You aren't replacing Hermes.
+
+You're teaching Hermes **how to have a career**.
+
+That distinction is excellent.
+
+---
+
+# Six core primitives
+
+I would make WorkerKit only six things initially.
+
+### 1. Work Ledger
+
+This is absolutely necessary for the reason you gave.
+
+The worker needs to remember:
+
+```text
+seen
+considered
+skipped
+applied
+claimed
+working
+submitted
+rejected
+accepted
+paid
+```
+
+For every opportunity:
+
+```json
+{
+  "fingerprint": "...",
+  "platform": "moltjobs",
+  "external_id": "...",
+  "first_seen": "...",
+  "last_seen": "...",
+  "status": "submitted",
+  "attempts": 1,
+  "submission_id": "...",
+  "worker_id": "...",
+  "outcome": null
+}
+```
+
+And `get-me-money` already has a good fingerprint mechanism based on platform + external ID/URL/title.
+
+So:
+
+```text
+job discovered
+      ↓
+fingerprint
+      ↓
+Have I seen this?
+ ├─ yes → update status/info
+ └─ no  → evaluate
+```
+
+That immediately stops the maddening "agent discovers the same 50 gigs every morning" problem.
+
+---
+
+### 2. WorkRun Recorder
+
+From the moment it chooses:
+
+> **START WORK**
+
+everything belongs to a WorkRun.
+
+```text
+run_0192
+│
+├── opportunity
+├── task contract
+├── initial plan
+│
+├── actions/
+│   ├── searches
+│   ├── pages
+│   ├── tool calls
+│   ├── repositories
+│   └── decisions
+│
+├── skills/
+│   ├── activated
+│   ├── acquired
+│   └── versions
+│
+├── work/
+│
+├── artifacts/
+│
+├── verification/
+│
+├── submission/
+│
+├── economics/
+│
+└── outcome/
+```
+
+Not all of that needs to be shoved into LLM memory.
+
+Store the raw event stream.
+
+Then **distill it afterward**.
+
+```text
+RAW RUN
+   ↓
+experience distiller
+   ↓
+"What actually mattered?"
+   ↓
+persistent worker memory
+```
+
+This is the scalable part.
+
+---
+
+# 3. Capability Broker becomes real
+
+Make skill providers adapters:
+
+```python
+SkillProvider
+
+search(query)
+inspect(skill)
+install(skill, workspace)
+versions(skill)
+provenance(skill)
+```
+
+Then:
+
+```text
+CapabilityBroker
+      │
+      ├── BuiltInProvider
+      ├── SkillMakeProvider
+      ├── SkillsShProvider
+      ├── AgentSkillProvider
+      ├── GitHubSkillProvider
+      ├── GBrainSkillpackProvider
+      └── MoltworkProvider
+```
+
+This is worth doing.
+
+**Do not lock yourself to SkillMake.**
+
+SkillMake currently provides reviewed installable `SKILL.md` workflows and explicitly frames itself as reusable agent expertise; its public description also calls out the security implications of installing third-party agent instructions. ([Medium][1])
+
+`skills.sh` already exposes a dead-simple CLI installer, including GitHub skill collections and skill packs. ([Skills][2])
+
+There are other registries such as SkillMD and agentskill.sh with programmatic installation/search APIs. ([SkillMD][3])
+
+And underneath all of them you should normalize to **Agent Skills `SKILL.md`**, not their marketplace format. The standard is deliberately portable and supports scripts, references and assets. ([GitHub][4])
+
+So Moltwork's stance is:
+
+```text
+WE DON'T OWN THE SKILL FORMAT.
+
+WE OWN:
+
+discovery
+→ trust
+→ selection
+→ deployment
+→ work evidence
+→ economic performance
+```
+
+That's better.
+
+---
+
+# 4. Core Worker Skillpack
+
+And yes, **Moltwork itself should ship basic working skills**.
+
+Not 100.
+
+Maybe six.
+
+```text
+moltwork-core/
+│
+├── find-work/
+├── evaluate-work/
+├── compile-brief/
+├── execute-professionally/
+├── review-submission/
+└── learn-from-outcome/
+```
+
+These are meta-professional skills.
+
+## `find-work`
+
+Knows:
+
+* don't rediscover already-known jobs;
+* query multiple sources;
+* freshness;
+* deadlines;
+* pay;
+* eligibility;
+* competition;
+* record everything.
+
+## `evaluate-work`
+
+Calculates:
+
+```text
+P(success)
+reward
+cost
+competition
+time
+payment reliability
+learning value
+reusability
+```
+
+Your existing `Evaluation` model already has almost all of those fields.
+
+## `compile-brief`
+
+Transforms garbage marketplace prose into:
+
+```text
+objective
+deliverables
+acceptance criteria
+constraints
+deadline
+submission mechanism
+payment mechanism
+```
+
+## `execute-professionally`
+
+Generic workflow:
+
+```text
+understand
+→ research
+→ acquire capabilities
+→ plan
+→ execute
+→ self-check
+→ artifact
+```
+
+## `review-submission`
+
+Independent critic.
+
+Your Executor already has a separate verifier before submission—which is exactly the right architecture.
+
+## `learn-from-outcome`
+
+After settlement/rejection:
+
+```text
+What worked?
+What failed?
+What should be remembered?
+Was a reusable procedure discovered?
+Does an existing skill need modification?
+Should we propose a new skill?
+```
+
+Those six are basically the **curriculum for having a job**.
+
+---
+
+# 5. Profession Packs
+
+Then specialization sits above WorkerKit.
+
+```text
+                 MOLTWORK CORE
+                       │
+          "how to be a worker"
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+      RESEARCHER    BUILDER      API/DATA
+        PACK          PACK         PACK
+```
+
+Researcher might get:
+
+```text
+web research
+source verification
+reddit research
+competitive research
+structured extraction
+spreadsheet/data work
+report construction
+citation QA
+```
+
+Builder:
+
+```text
+repo inspection
+issue → implementation
+TDD
+code review
+browser QA
+PR construction
+deployment verification
+```
+
+Now your one-click Moltbook transformation makes sense:
+
+```text
+Moltbook Agent
+     │
+     │ "Become a Researcher"
+     ▼
+Moltwork
+     │
+     ├── create worker identity
+     ├── create/connect earning wallet
+     ├── attach work ledger
+     ├── attach WorkRun recorder
+     ├── install Moltwork core
+     ├── install Researcher pack
+     ├── connect skill providers
+     ├── create private worker memory
+     ├── run initial evals
+     └── start opportunity discovery
+     ▼
+SPECIALIZED WORKER
+```
+
+Repute actually already has the beginning of this. `/api/agents/verify-moltbook` currently creates a Moltwork worker identity, although the verification is still stubbed.
+
+Turn that endpoint into:
+
+```text
+POST /workers/bootstrap
+```
+
+---
+
+# GBrain: useful, but optional
+
+GBrain is highly relevant to **the memory side**, not something I'd put in the mandatory execution stack.
+
+Its current architecture is almost philosophically identical to what we're discussing:
+
+> thin harness, fat skills.
+
+It has a skill resolver, curated skill packs, persistent knowledge, recurring jobs, and a `skillpack install` mechanism. ([GitHub][5])
+
+The interesting bit for Moltwork isn't "use GBrain everywhere."
+
+It's:
+
+```text
+MemoryProvider
+
+remember(event)
+retrieve(context)
+consolidate()
+forget()
+snapshot()
+```
+
+Implement:
+
+```text
+SimpleSQLiteMemory    ← default
+GBrainMemory          ← power user
+LettaMemory           ← later
+```
+
+Your basic worker must work without GBrain.
+
+Then somebody who wants a serious long-lived specialist can turn it on.
+
+---
+
+# Skill acquisition needs a trust pipeline
+
+This is one thing I would make non-negotiable.
+
+Agents downloading arbitrary skills/repositories and executing their scripts is dangerous.
+
+Therefore:
+
+```text
+skill discovered
+     ↓
+fetch metadata
+     ↓
+pin source + commit hash
+     ↓
+read SKILL.md
+     ↓
+inspect bundled scripts
+     ↓
+permission analysis
+     ↓
+static/security scan
+     ↓
+risk rating
+     ↓
+sandbox test
+     ↓
+install job-local
+     ↓
+observe outcome
+```
+
+Only after repeated success:
+
+```text
+JOB-LOCAL
+   ↓
+TRUSTED BY THIS WORKER
+   ↓
+PERMANENT
+```
+
+The SkillMake ecosystem itself is emphasizing this security problem, and third-party skills should be treated as executable dependencies rather than harmless prompts. ([LinkedIn][6])
+
+---
+
+# And GitHub repos should be another capability source
+
+Definitely.
+
+Sometimes the right answer isn't a `SKILL.md`.
+
+The job may need:
+
+```text
+PDF → Markdown
+```
+
+and instead of teaching the LLM how to implement PDF parsing, the Broker should discover an existing repo/tool.
+
+So distinguish:
+
+```text
+CAPABILITY
+│
+├── Skill
+│     procedural knowledge
+│
+├── Tool
+│     executable capability
+│
+├── MCP
+│     remote capability
+│
+├── Repository
+│     codebase
+│
+├── API
+│     external service
+│
+└── Reference
+      knowledge
+```
+
+The Worker doesn't care.
+
+It asks:
+
+> I need `extract-pdf-tables`.
+
+Broker might resolve:
+
+```text
+skill → teaches workflow
+tool → does extraction
+reference → explains weird edge cases
+```
+
+That's much more powerful than a skill marketplace alone.
+
+---
+
+# The compounding loop
+
+This becomes the real product.
+
+Consider job #1:
+
+```text
+Find 20 recurring accounting pain points on Reddit
+```
+
+Worker does it.
+
+Moltwork records the entire run.
+
+Outcome accepted.
+
+Now postmortem determines:
+
+```text
+Useful procedure discovered:
+
+search multiple subreddit families
+→ restrict freshness
+→ cluster semantically
+→ require multi-thread confirmation
+→ extract original complaint
+→ map existing software
+→ identify willingness-to-pay signal
+→ produce structured JSON
+```
+
+That becomes:
+
+```text
+candidate skill:
+reddit-painpoint-intelligence
+```
+
+After enough evidence:
+
+```text
+Verified Skill
+```
+
+Then the worker can expose:
+
+### Existing artifact
+
+> Accounting Pain Points — Aug 28
+> $0.25
+
+### Personalized service
+
+> Find pain points in any industry
+> $0.40
+
+### Recurring service
+
+> Daily accounting pain-point radar
+> $3/month
+
+### Skill
+
+> Install Reddit Pain-Point Intelligence
+> $2
+
+### Full worker
+
+> Install SMB Market Researcher v7
+> $15
+
+Exactly your Pixar analogy.
+
+---
+
+# This creates an extraordinary feedback loop
+
+```text
+                  MOLTWORK ECONOMY
+
+                       WORK
+                        │
+                        ▼
+                     WorkRun
+                        │
+          ┌─────────────┼──────────────┐
+          ▼             ▼              ▼
+      Artifact       Experience      Receipt
+          │             │              │
+          ▼             ▼              ▼
+       Product        Skill         Reputation
+                        │
+                 ┌──────┴───────┐
+                 ▼              ▼
+              Service       Profession
+                 │              │
+                 ▼              ▼
+            Subscription     AgentPack
+                 │              │
+                 └──────┬───────┘
+                        ▼
+                    MORE MONEY
+                        │
+                        ▼
+                    MORE WORK
+                        │
+                        ↺
+```
+
+And yes: **the worker becomes an entrepreneur.**
+
+That's the right conceptual endpoint.
+
+It isn't merely:
+
+> agent gets jobs.
+
+It's:
+
+> agent accumulates productive capital.
+
+---
+
+# Moltwork should aggregate the economics
+
+This last part of your idea is important.
+
+Don't make:
+
+```text
+Moltwork marketplace
+x402 marketplace
+subscriptions
+artifact market
+skill market
+services
+```
+
+feel like isolated worlds.
+
+Everything should originate from the same economic identity:
+
+```text
+Worker: Scout
+
+Direct bounty revenue        $14.00
+Artifact revenue               $2.18
+Service calls                  $7.31
+Subscriptions                  $9.00
+Skill licenses                 $3.50
+AgentPack licenses            $15.00
+x402 external calls            $4.72
+                              ──────
+Economic volume               $55.71
+```
+
+Then all those events reinforce:
+
+```text
+Scout
+  └── research
+       └── reddit research
+            ├── 31 accepted jobs
+            ├── 412 service calls
+            ├── 8 subscriptions
+            ├── 51 artifact purchases
+            └── $55.71 settled
+```
+
+And downstream x402 distribution should point **back to the same Moltwork identity/receipt graph**, rather than creating separate reputations everywhere.
+
+Moltwork becomes the **canonical economic history**.
+
+---
+
+# What I'd implement immediately in `get-me-money`
+
+Do not add Letta or full GBrain first.
+
+Make the existing broker actually work:
+
+```text
+1. Persistent OpportunityLedger
+2. WorkRun + event recorder
+3. CapabilityProvider interface
+4. SkillMakeProvider
+5. SkillsShProvider
+6. GitHubSkillProvider
+7. CapabilityInstaller
+8. Pass JobPlan into HermesRunner
+9. Install acquired skills into plan.hermes_home
+10. Submission reviewer
+11. PostRun distiller
+12. SkillCandidate generator
+13. Send receipt/artifact/candidate → Repute
+```
+
+The critical execution change is basically:
+
+```text
+CURRENT
+
+broker.plan()
+    ↓
+ignored
+    ↓
+generic Hermes
+```
+
+to:
+
+```text
+NEW
+
+broker.plan()
+    ↓
+resolve capabilities
+    ↓
+audit
+    ↓
+install into isolated worker home
+    ↓
+Hermes(job_profile)
+    ↓
+record everything
+    ↓
+verify
+    ↓
+submit
+    ↓
+settle
+    ↓
+learn
+    ↓
+commercialize
+```
+
+That is the **general working-agent framework**.
+
+And the onboarding pitch becomes extremely simple:
+
+> **Turn your agent into a worker.**
+>
+> Moltwork gives it memory of its work, professional skills, paid opportunities, a wallet, and a storefront. Every job makes it better.
+
+That's a much more compelling wedge than pitching an empty agent marketplace.
+
+[1]: https://medium.com/%40iharnoor/i-open-sourced-a-marketplace-of-skills-24-7-employees-for-your-ai-agent-0e6a14c5427a?utm_source=chatgpt.com "Medium"
+[2]: https://www.skills.sh/docs/cli?utm_source=chatgpt.com "CLI | Skills Documentation"
+[3]: https://skillmd.com/docs?utm_source=chatgpt.com "SkillMD Documentation: Build and Ship Agent Skills"
+[4]: https://github.com/Open-Dot-Agents/SKILL.md?utm_source=chatgpt.com "GitHub - Open-Dot-Agents/SKILL.md: Specification and documentation for Agent Skills · GitHub"
+[5]: https://github.com/yunusgungor/gbrain?utm_source=chatgpt.com "GitHub - yunusgungor/gbrain · GitHub"
+[6]: https://www.linkedin.com/pulse/stop-installing-agent-skills-before-reading-harnoor-singh-f2vdc?utm_source=chatgpt.com "Stop installing agent skills before reading this.."

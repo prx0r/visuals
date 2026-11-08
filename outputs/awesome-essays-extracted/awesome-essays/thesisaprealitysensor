@@ -1,0 +1,816 @@
+Yes. I think **“sensors into reality for agents” is a genuinely useful framing**, and your Hermes annoyances are exactly the kind of pain cuntgoblin should mine.
+
+The important inversion is:
+
+> **Agents increasingly have enough intelligence. What they lack is dependable perception, execution and feedback from the outside world.**
+
+A model can reason perfectly about a page and still fail because the page returns 403 from a VPS. It can know how to process a YouTube video but fail because the execution environment is a datacenter IP. It can correctly plan a 12-hour workflow and still lose everything because process #7 crashes. These are infrastructure problems rather than intelligence problems.
+
+Your API Evangelist reference is especially relevant. Kin Lane's current definition of an API product emphasizes a known consumer, clear value, sustainable business model, roadmap and feedback loop—not merely exposing an endpoint. He has also started charging for deeper API/MCP access while keeping the public discovery layer open. That is very close to the model I'd use here. ([API Evangelist][1])
+
+## First: what I mean by a “live fragmented-data API”
+
+Imagine an agent wants to know:
+
+> “What is the cheapest genuinely usable frontier-ish model for a 150k-context coding job **right now**?”
+
+There is no authoritative endpoint containing that answer.
+
+The evidence is scattered among provider pricing pages, promotions, docs, model cards, status pages, rate-limit documentation, OpenRouter, free tiers, Discord announcements, changelogs, benchmark providers and actual runtime testing.
+
+That's **fragmented reality**.
+
+Your product turns:
+
+**100 messy changing sources**
+
+into something like:
+
+```text
+GET /inference/options
+  ?context_min=150000
+  &task=coding
+  &max_cost=0.50
+
+→ model
+→ provider
+→ effective_price
+→ promotional_price
+→ promotion_expires_at
+→ observed_latency
+→ observed_throughput
+→ context
+→ tool_calling
+→ rate_limit
+→ signup_requirement
+→ evidence[]
+→ observed_at
+→ confidence
+```
+
+And importantly:
+
+```text
+GET /changes?since=2026-08-17
+```
+
+The **change feed** may be more valuable than the database.
+
+Exa is validating the generic layer of this thesis already: its Websets API searches, verifies, enriches and continuously monitors web-derived datasets, with webhook events as new information appears. ([Exa][2])
+
+Your opportunity isn't “build another Exa.”
+
+It is:
+
+> **Use things like Exa/browser infrastructure underneath hundreds of opinionated vertical sensors.**
+
+---
+
+# The product landscape I'd give cuntgoblin
+
+| Product class                              | Actual problem                                                                       | Existing validation                                   | Gap I would attack                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **1. Agent Web Access Router**             | Agent gets blocked, bad HTML, JS-only page, auth wall, CAPTCHA, weird rendering      | Browserbase, Cloudflare Browser Run, Firecrawl, Apify | Automatically choose the cheapest *permitted* access mechanism and explain failures    |
+| **2. Execution Placement Sensor**          | Code works locally but not VPS/region/provider/environment                           | E2B, Browserbase global browser infra                 | Measure which environment can perform a capability and route execution accordingly     |
+| **3. Live Fragmented Data APIs**           | Important facts scattered across constantly changing pages                           | Exa Websets/monitors                                  | Highly specialized, strongly typed vertical datasets                                   |
+| **4. Agent Tool Health Oracle**            | MCP/API exists but may be broken, slow, stale or incompatible today                  | LangSmith/MCP observability/AWS monitoring            | Independent continuous synthetic testing of tools from multiple environments           |
+| **5. Durable Agent Runtime**               | Long jobs crash, duplicate work, lose state, loop forever                            | Inngest, Trigger.dev, Temporal/LangGraph ecosystem    | Framework-neutral supervisor specifically for autonomous coding/research agents        |
+| **6. Agent Capability Router**             | Agent has hundreds/thousands of tools and doesn't know which one actually works best | MCP gateways increasingly handle routing              | Empirical routing based on past success/cost/latency rather than descriptions          |
+| **7. Agent-Readable Transformation**       | Services have APIs but agents cannot understand onboarding/policies/actions          | API Evangelist Toolsmith/OpenAPI→MCP work             | Don't build generic conversion; build **continuous readiness auditing**                |
+| **8. Verification / Receipt Layer**        | Agent says it performed an action; did it actually happen?                           | Observability products give traces                    | Independent externally observable proofs/outcome verification                          |
+| **9. Media / Artifact Acquisition Broker** | Files, video, PDFs and other artifacts behave differently by environment/site        | yt-dlp, browser services, extraction platforms        | “Give me this artifact legally/reliably” abstraction with multiple acquisition methods |
+| **10. Consumer Sensor Apps**               | Consumers don't want infrastructure; they want answers/actions about their world     | Every personal AI product points this way             | Use the same sensor infrastructure beneath extremely focused apps                      |
+
+There are several unusually good businesses hiding inside those.
+
+---
+
+# 1. `AgentReach` — an Internet connectivity layer for agents
+
+This one directly comes from your Cloudflare problem.
+
+Today an agent tends to do:
+
+```text
+requests.get(url)
+↓
+403
+↓
+confusion
+```
+
+But websites now differ enormously.
+
+Some have an API.
+
+Some are static HTML.
+
+Some require JavaScript.
+
+Some permit compliant crawling but need a browser renderer.
+
+Some require the user's authenticated browser.
+
+Some should not be automatically accessed at all.
+
+Browserbase already markets browsers, fetch, search, persistent sessions and agent identity as one platform precisely because normal agent HTTP access regularly hits JavaScript, authentication and anti-bot barriers. Cloudflare similarly offers programmatic Browser Run plus a crawl endpoint that explicitly respects robots.txt and AI Crawl Control by default. ([Browserbase][3])
+
+The opportunity I see is **one level above them**.
+
+Your API:
+
+```text
+POST /reach
+
+{
+  "url": "...",
+  "intent": "extract_public_information"
+}
+```
+
+returns something like:
+
+```text
+status: reachable
+
+strategy:
+  type: browser_render
+  provider: cloudflare
+
+attempts:
+  - raw_http: 403
+  - fetch_provider: failed
+  - browser_render: success
+
+cost: 0.0021
+latency_ms: 1840
+robots_allowed: true
+freshness: live
+content_hash: ...
+```
+
+AgentReach isn't necessarily the browser company.
+
+It is the **router between browser companies and execution methods**.
+
+That's a much cooler cuntgoblin product.
+
+And you can benchmark providers constantly.
+
+---
+
+# 2. `EgressMap` — “where can my agent actually execute this?”
+
+Your `yt-dlp` issue is a fantastic seed.
+
+The current yt-dlp project explicitly says that 403s can be expected on datacenter IP addresses, and its documentation tracks YouTube's newer Proof-of-Origin token requirements. There are recent 2026 reports specifically involving VPS/datacenter environments behaving differently from ordinary browser environments. ([GitHub][4])
+
+Don't build:
+
+> “YouTube-block bypass API.”
+
+That's fragile and turns into an endless adversarial arms race.
+
+Build the abstraction:
+
+> **“This operation has environmental requirements. Where should it execute?”**
+
+That's much broader.
+
+Imagine:
+
+```text
+POST /capability/test
+
+{
+  "capability": "retrieve_video_metadata",
+  "target": "youtube",
+  "requirements": {
+    "region": "GB"
+  }
+}
+```
+
+Or:
+
+```text
+GET /environments/best
+  ?capability=playwright_login
+```
+
+Your agents could know:
+
+```text
+Hetzner Helsinki
+  youtube_metadata       DEGRADED
+  cloudflare_browser     N/A
+  github                 OK
+  huggingface            OK
+
+User node / Cambodia
+  youtube_metadata       OK
+  government-site-X      OK
+
+Browserbase US-West
+  authenticated_browser  OK
+  page-X                 OK
+```
+
+Now you've created **capability-aware compute routing**.
+
+E2B validates one side of this market: agents increasingly get disposable, isolated computers/sandboxes, and its current agent integrations explicitly support persistent workspace state and parallel sandboxes. ([E2B][5])
+
+But E2B answers:
+
+> “Give me a computer.”
+
+Your proposed system answers:
+
+> **“Which computer/environment should this particular action occur on?”**
+
+That's different.
+
+I rate this **9/10**.
+
+---
+
+# 3. `ToolPulse` — Downdetector for agent capabilities
+
+This could be extremely useful.
+
+Agents increasingly discover a tool through MCP/OpenAPI and assume:
+
+```text
+tool exists = tool works
+```
+
+Wrong.
+
+Consider what actually matters:
+
+```text
+Is it online?
+Does authentication work?
+Did its schema change?
+Does Claude use it successfully?
+Does GPT use it successfully?
+Is latency 300 ms or 40 seconds?
+Are calls currently being throttled?
+Does the free tier still exist?
+Does it work from AWS?
+Does it work from Hetzner?
+Has its output schema silently changed?
+Does it fail after step 3?
+```
+
+Current MCP is becoming much more friendly to normal infrastructure: the July 28, 2026 spec added stateless operation, header routing, caching and trace propagation specifically to improve reliability and scalability. AWS and other gateways are consequently adding invocation, latency, error and trace monitoring. ([Model Context Protocol Blog][6])
+
+But most observability is **inside your own system**.
+
+I want an external oracle.
+
+Like:
+
+```text
+GET /tools/github/create_issue/health
+
+availability_24h: 99.98%
+median_latency: 412ms
+p95_latency: 944ms
+
+agent_success:
+  claude: 0.97
+  gpt: 0.96
+  kimi: 0.91
+
+schema_changed:
+  at: ...
+
+known_failures:
+  - auth_expiry
+  - pagination
+
+tested_from:
+  - cloudflare
+  - aws
+  - hetzner
+```
+
+Then an orchestrator can ask:
+
+```text
+resolve("search web")
+```
+
+and your oracle returns:
+
+```text
+1. exa.search       score .94
+2. browserbase      score .91
+3. firecrawl        score .86
+```
+
+**based on live empirical results**, not descriptions.
+
+That's very valuable.
+
+---
+
+# 4. `RealityFeeds` — the fragmented API factory
+
+This might be the easiest product family for cuntgoblin to mass-produce.
+
+You define one common sensor framework:
+
+```text
+sources/
+collectors/
+extractors/
+normalizers/
+validators/
+change_detection/
+provenance/
+confidence/
+api/
+mcp/
+webhooks/
+```
+
+Then cuntgoblin searches for domains where people currently have to manually check many places.
+
+Examples I would investigate:
+
+**Inference deals**
+
+Exactly Dell.
+
+**GPU supply/pricing**
+
+“Where can I rent 8×H100 right now, how much, for how long, which region?”
+
+**API promotions and free tiers**
+
+Cloud credits, inference grants, startup offers, temporary API promotions.
+
+**API capability changes**
+
+Model removed.
+
+Context increased.
+
+Price changed.
+
+Endpoint deprecated.
+
+Free quota disappeared.
+
+**Software/API status intelligence**
+
+Not merely “service down.”
+
+> “Tool calling is currently failing on provider X/model Y.”
+
+**Public grant/funding deadlines**
+
+Government pages + universities + foundations → normalized opportunities.
+
+**Regulatory change feeds**
+
+Machine-readable `old_rule → new_rule → affected_entity → effective_date`.
+
+**Government/public datasets**
+
+Detect releases and schema changes.
+
+**Academic dataset/model releases**
+
+GitHub + Hugging Face + arXiv + papers + project pages → machine-readable release objects.
+
+**Open-source capability intelligence**
+
+“Show every open-source agent browser released in the previous 14 days that runs under 4 GB RAM.”
+
+These are much more difficult for an LLM to hallucinate its way through because **freshness is the product**.
+
+API Evangelist itself is now moving toward this style of machine-readable infrastructure: its network publishes machine-readable catalogs, APIs.json, schemas and agent-facing discovery artifacts rather than forcing agents to infer everything from HTML. ([API Evangelist][7])
+
+---
+
+# 5. `AgentSyscall` — one abstraction over messy external operations
+
+This gets more ambitious.
+
+Linux programs don't care how a disk controller works.
+
+They call:
+
+```text
+read()
+write()
+```
+
+What are the equivalent syscalls for agents?
+
+Maybe:
+
+```text
+search()
+fetch()
+browse()
+authenticate()
+execute()
+download()
+verify()
+message()
+purchase()
+schedule()
+observe()
+wait()
+```
+
+The implementation underneath can change.
+
+For:
+
+```text
+observe(url)
+```
+
+the router might use:
+
+```text
+HTTP
+→ Exa
+→ Cloudflare Browser
+→ Browserbase
+→ authenticated user node
+→ human request
+```
+
+depending on requirements.
+
+For:
+
+```text
+execute(code)
+```
+
+it chooses:
+
+```text
+local
+→ Docker
+→ E2B
+→ Cloudflare
+→ VPS
+```
+
+This becomes something like an **agent operating system's hardware abstraction layer**.
+
+I wouldn't build the giant version immediately.
+
+I'd let cuntgoblin discover individual abstractions and slowly converge on it.
+
+---
+
+# 6. Orchestration itself: don't build another CrewAI
+
+This area is huge but crowded.
+
+The real production problem has moved away from:
+
+> “How do I get three agents to talk?”
+
+toward:
+
+> **“How do I guarantee that this 19-hour nondeterministic computation eventually finishes correctly without wasting everything when something dies?”**
+
+Inngest now describes durable agents explicitly in these terms: each LLM/tool step is checkpointed, completed operations are memoized, agents can suspend without keeping a process alive, and failed substeps can retry independently. Trigger.dev likewise sells long-running execution, retries, queues, idempotency, human pauses and observability specifically for agents. ([Inngest][8])
+
+So I would **not** make cuntgoblin generate:
+
+`YetAnotherAgentFramework`
+
+I would investigate gaps *above* these frameworks.
+
+For example:
+
+```text
+Agent Supervisor
+```
+
+that can run Hermes, Claude Code, Codex, OpenCode or arbitrary shell agents and understand:
+
+```text
+alive
+stuck
+looping
+productive
+waiting
+blocked
+needs-human
+budget-exceeded
+completed
+contradicting-another-agent
+```
+
+Then:
+
+```text
+restart
+resume
+fork
+change-model
+change-tool
+escalate
+kill
+```
+
+That is much closer to what you're already discovering with Hermes.
+
+And importantly, there is research suggesting that elaborate orchestration can actually underperform simpler model-driven procedures for some procedural tasks, which reinforces the idea that the valuable layer isn't another fancy graph abstraction—it is **durability, measurement and supervision**. ([arXiv][9])
+
+---
+
+# 7. `AgentReady` — constantly test whether the web is actually usable by agents
+
+API Evangelist has already built Toolsmith for turning OpenAPI operations into deliberate MCP tools and skills. So generic:
+
+> “OpenAPI → MCP!”
+
+is increasingly commoditized. ([API Evangelist][10])
+
+But there's another opportunity.
+
+Give an API/site a score:
+
+```text
+agentready.com/github
+
+OpenAPI                 ✓
+machine discovery       ✓
+llms.txt                ✓
+MCP                     ✓
+A2A                     ✗
+pricing machine-readable ✗
+rate limits discoverable ✓
+automated signup         ✗
+OAuth agent-compatible   ✓
+sandbox                  ✓
+health endpoint          ✓
+schema stability        97.2
+observed agent success  94.1%
+```
+
+And continuously retest.
+
+This is more interesting because the ecosystem is currently surprisingly immature. API Evangelist's July 2026 scan found only a tiny fraction of its tens of thousands of catalogued providers publishing actual A2A agent cards, with even fewer conforming correctly. ([API Evangelist][11])
+
+That tells cuntgoblin:
+
+**massive amounts of the existing API economy aren't agent-ready yet.**
+
+That's opportunity.
+
+---
+
+# 8. Verification is probably going to be enormous
+
+Agents increasingly say:
+
+> “Done.”
+
+But “done” is not an observable fact.
+
+An agent may say:
+
+```text
+deployed
+```
+
+while the deployment returns 500.
+
+It may say:
+
+```text
+email sent
+```
+
+when it created a draft.
+
+It may say:
+
+```text
+database migrated
+```
+
+while half the rows failed.
+
+So provide:
+
+```text
+verify_deployment(url)
+verify_api(endpoint, contract)
+verify_purchase(receipt)
+verify_message(destination)
+verify_file(hash)
+verify_data_claim(source)
+verify_job(output_spec)
+```
+
+The verifier should preferably use an **independent observation channel** from the worker.
+
+This fits cuntgoblin's existing philosophy particularly well because the repo already insists that written claims do not count as evidence; machine-run experiments and reproducible records do.
+
+That's not merely an internal principle.
+
+**Sell that principle.**
+
+---
+
+# And yes: consumer apps become extremely interesting
+
+I wouldn't ignore consumer software at all.
+
+The economics may actually become extraordinary because you can conduct far more experiments.
+
+But I would distinguish:
+
+**bad**
+
+```text
+AI calorie app #9282
+AI todo #19191
+AI journal #881
+```
+
+from:
+
+**interesting**
+
+```text
+sensor infrastructure
++
+personal state
++
+simple consumer interface
+```
+
+For example:
+
+### “Tell me when anything I care about changes”
+
+Consumer chooses:
+
+```text
+band
+game
+software
+researcher
+company
+visa rule
+product
+restaurant
+neighborhood
+GitHub repo
+AI model
+```
+
+Your sensor infrastructure monitors reality and only surfaces meaningful changes.
+
+Underneath that's RealityFeeds.
+
+Consumer-facing it is simply:
+
+> **“Follow anything.”**
+
+### Personal web agent that doesn't mysteriously fail
+
+A normal person says:
+
+> “Get this document.”
+
+The application figures out whether that requires search, fetch, browser rendering, login, their own machine or asking them for confirmation.
+
+Underneath that's AgentReach.
+
+### Personal “watch this price/availability” universal app
+
+Not merely Amazon price tracking.
+
+Point it at almost anything:
+
+```text
+hotel
+flight
+GPU
+API price
+rent listing
+concert
+software subscription
+restaurant menu
+product inventory
+course
+```
+
+The consumer shouldn't care whether there is an API.
+
+### “My Internet”
+
+A personal data layer that watches the parts of the Internet you've explicitly chosen and creates:
+
+```text
+people
+places
+projects
+products
+topics
+events
+changes
+```
+
+Now AI has a continuously refreshed reality graph specifically relevant to you.
+
+That could become extremely sticky because the moat becomes **accumulated personal state**, not frontend code.
+
+---
+
+## The thing I think cuntgoblin should explicitly search for
+
+Instead of scoring ideas primarily on:
+
+```text
+novel?
+technically impressive?
+big TAM?
+```
+
+add a **Reality Friction Score**:
+
+```text
+How frequently do agents need this capability?
+How often does it currently fail?
+Does failure depend on environment?
+Is information fragmented?
+Does information change frequently?
+Is there an authoritative API already?
+Can observations be independently verified?
+Can the product improve through accumulated observations?
+Can we expose a simple stable abstraction over something messy?
+Will another agent pay fractions of a cent/dollars per successful result?
+```
+
+The highest-scoring combination is:
+
+> **high agent demand + ugly external world + changing information + no canonical machine interface + objectively testable output.**
+
+That's cuntgoblin gold.
+
+And I think there is a larger company hiding here:
+
+**an agent sensor/actuator network.**
+
+Not one giant product exposed to users. Internally:
+
+```text
+                    REALITY
+                       │
+           ┌───────────┼───────────┐
+           ▼           ▼           ▼
+        web sensor  API sensor  compute sensor
+           │           │           │
+           └──────┬────┴─────┬─────┘
+                  ▼          ▼
+              provenance   health
+                  │          │
+                  └────┬─────┘
+                       ▼
+                    ORACLE
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+        agents        APIs       consumer apps
+```
+
+**Cuntgoblin discovers and births the sensors.
+The Oracle learns which sensors actually work.
+Individual tiny APIs sell reliable observations.
+Consumer apps are beautiful interfaces over the exact same infrastructure.**
+
+That feels considerably stronger than “autonomously generate SaaS apps.”
+
+And the current direction of MCP actually helps you: its July 2026 spec makes tools more conventionally routable, cacheable and observable, meaning a sensor network/gateway sitting above many heterogeneous capabilities is becoming technically easier to build rather than harder. ([Model Context Protocol Blog][6])
+
+I can monitor this emerging niche for new **agent sensor, browser, orchestration and reality-API products** and surface genuinely novel entrants.
+
+[1]: https://apievangelist.com/2025/01/24/what-is-an-api-product/?utm_source=chatgpt.com "What is an API Product? - API Evangelist"
+[2]: https://exa.ai/docs/websets/api/overview?utm_source=chatgpt.com "Overview - Exa"
+[3]: https://www.browserbase.com/?utm_source=chatgpt.com "Browserbase"
+[4]: https://github.com/yt-dlp/yt-dlp/issues/17103?utm_source=chatgpt.com "HTTP Error 403: Forbidden · Issue #17103 · yt-dlp/yt-dlp · GitHub"
+[5]: https://www.e2b.dev/blog/e2b-is-now-in-agents-sdk?utm_source=chatgpt.com "E2B is now supported in the OpenAI Agents SDK — E2B Blog"
+[6]: https://blog.modelcontextprotocol.io/posts/2026-07-28/?utm_source=chatgpt.com "The 2026-07-28 Specification | Model Context Protocol Blog"
+[7]: https://apievangelist.com/blog/2026/05/16/making-the-api-evangelist-network-agent-readable/?utm_source=chatgpt.com "Making the API Evangelist Network Agent-Readable - API Evangelist"
+[8]: https://www.inngest.com/docs/learn/durable-agents?utm_source=chatgpt.com "Durable Agents - Inngest Docs"
+[9]: https://arxiv.org/abs/2604.27891?utm_source=chatgpt.com "In-Context Prompting Obsoletes Agent Orchestration for Procedural Tasks"
+[10]: https://apievangelist.com/2026/07/11/forging-the-agent-layer-of-your-api/?utm_source=chatgpt.com "Forging the Agent Layer of Your API - API Evangelist"
+[11]: https://apievangelist.com/2026/07/29/most-published-agent-cards-are-not-actually-a2a/?utm_source=chatgpt.com "Most Published Agent Cards Are Not Actually A2A - API Evangelist"

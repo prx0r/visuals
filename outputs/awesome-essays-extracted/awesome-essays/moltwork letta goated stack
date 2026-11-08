@@ -1,0 +1,1977 @@
+Yes. I would now ship **Moltwork batteries-included as Letta + HydraDB + Phala/dstack**, while making those implementation choices replaceable underneath a small canonical Moltwork protocol.
+
+The critical architectural rule is:
+
+> **Moltwork Worker ≠ Letta Agent.**
+> A Moltwork Worker *uses* a Letta agent by default.
+
+That gives you the full power of Letta now without making the economic history, reputation, assets, or Lab hostage to Letta forever.
+
+Your existing `mw` already has the right skeleton: `WorkOrder → WorkerEvent → Artifact → Verification → Submission → Outcome → Settlement`, with an append-only hash-chained event ledger and receipts.
+
+# 1. The architecture I would freeze
+
+```text
+                               MOLTWORK
+
+                    ┌─────────────────────────┐
+                    │         ORACLE          │
+                    │   global demand graph   │
+                    └────────────┬────────────┘
+                                 │ Opportunity
+                                 ▼
+                    ┌─────────────────────────┐
+                    │      LAB CONTROL        │
+                    │ match / EV / context    │
+                    └────────────┬────────────┘
+                                 │ WorkOrder
+                                 ▼
+        ┌────────────────────────────────────────────────┐
+        │                  WORKERKIT                     │
+        │ canonical Run + event/evidence/cost boundary   │
+        └───────────────────────┬────────────────────────┘
+                                │
+                         WorkerRuntime
+                                │
+              ┌─────────────────┼──────────────────┐
+              │                 │                  │
+              ▼                 ▼                  ▼
+        LETTA RUNTIME        A2A/REMOTE          FUTURE
+        DEFAULT              adapter             runtime
+              │
+       persistent Worker
+       MemFS / skills
+       subagents / tools
+              │
+              ▼
+           ARTIFACT
+              │
+       review / evaluate
+              │
+              ▼
+           OUTCOME
+              │
+       ┌──────┴─────────┐
+       ▼                ▼
+    HYDRADB             MARKET
+    Lab graph           reusable assets
+       │
+       ▼
+      CG
+ experiments /
+ learning gate
+       │
+       ▼
+ improved Letta
+ Worker Version
+```
+
+The key distinction is:
+
+**Letta owns cognition and individual learning. Hydra owns organizational experience. WorkerKit owns canonical evidence. Oracle owns external demand. Market owns exchange. `cg` owns controlled improvement.**
+
+That's the system.
+
+---
+
+# 2. Build natively on the *new* Letta, not legacy Letta
+
+This is important because Letta has changed direction substantially.
+
+For new projects Letta now recommends its **TypeScript Agent SDK**, which exposes the same interface across local execution, Letta Cloud, and a self-hosted App Server. A persistent agent can be created once and resumed elsewhere while preserving memory/state. ([GitHub][1])
+
+Meanwhile Letta is explicitly retiring older server-centric abstractions such as legacy memory tools, server templates, hard-coded multi-agent APIs and server-side MCP patterns in favor of:
+
+* Agent SDK;
+* computer use;
+* MemFS/context repositories;
+* skills;
+* subagents;
+* client-side/runtime-native tooling. ([Letta][2])
+
+So don't deeply integrate `mw` with old `letta-client` Python models.
+
+### Add one small TypeScript service
+
+```text
+services/
+  runtime-letta/
+    src/
+      adapter.ts
+      sessions.ts
+      memory.ts
+      trajectory.ts
+      learning.ts
+      tools.ts
+```
+
+Use:
+
+```text
+@letta-ai/letta-agent-sdk
+@letta-ai/trajectory
+```
+
+There currently isn't a Python Agent SDK, so this TS boundary is cleaner than trying to talk directly to internal Letta protocols from Python. ([GitHub][3])
+
+Keep:
+
+```text
+Oracle       Python
+WorkerKit    Python
+Market       Python
+cg           Python
+Lab control  Python
+```
+
+and communicate with `runtime-letta` through a tiny internal HTTP/WebSocket protocol.
+
+---
+
+# 3. Default Letta deployment
+
+During development:
+
+```text
+LettaAgentClient({
+    backend: "local"
+})
+```
+
+In deployed Moltwork:
+
+```text
+LettaAgentClient({
+    backend: "remote",
+    url: "ws://letta-app-server:4500",
+    authToken: ...
+})
+```
+
+The App Server and agent execution environment live in your deployment.
+
+Letta documents local, remote App Server and cloud as first-class backends; local runs the harness on the current machine and remote points to a user-managed App Server. ([GitHub][1])
+
+That means the production deployment can become:
+
+```text
+PHALA / DSTACK CVM
+│
+├── moltwork-api
+├── workerkit
+├── runtime-letta
+├── letta-app-server
+├── hydradb
+└── persistent encrypted volumes
+```
+
+and the exact same Moltwork Worker can later run against another backend.
+
+---
+
+# 4. What a Moltwork Worker actually is
+
+Add a proper persistent identity above `WorkerManifest`.
+
+Your existing `WorkerManifest` is currently mostly digests of adapter/executor/config/toolset/skills.
+
+Split that into three objects.
+
+```python
+@dataclass
+class Worker:
+    id: str
+    lab_id: str
+    name: str
+    role: str
+
+    created_at: float
+    status: str
+
+    current_version_id: str
+```
+
+Then:
+
+```python
+@dataclass
+class RuntimeBinding:
+    worker_id: str
+
+    runtime: str             # LETTA | A2A | REMOTE
+    external_agent_id: str   # opaque
+
+    backend: str             # LOCAL | REMOTE | CLOUD
+    endpoint: str
+
+    created_at: float
+```
+
+And:
+
+```python
+@dataclass
+class WorkerVersion:
+    id: str
+    worker_id: str
+    parent_version_id: str | None
+
+    runtime: str
+
+    state_digest: str
+    memfs_commit: str
+    skillset_digest: str
+    tool_policy_digest: str
+    model_policy_digest: str
+
+    created_from_run: str | None
+    created_from_experiment: str | None
+
+    status: str  # ACTIVE | CANDIDATE | REJECTED
+```
+
+Now:
+
+```text
+Moltwork Worker
+    │
+    ├── v13
+    ├── v14
+    └── v15
+          │
+          └── runtime binding
+                 ↓
+            Letta agent-abc...
+```
+
+If Letta disappears:
+
+```text
+Worker-7
+    ↓
+runtime binding changed
+    ↓
+NewFramework-agent-991
+```
+
+All WorkReceipts, reputation and history survive.
+
+---
+
+# 5. Letta memory architecture inside a Worker
+
+Letta's current memory model is ideal for this.
+
+MemFS is a Git repository owned by the agent. `system/` files are loaded every turn; other files remain outside context until needed. Skills live alongside that memory and are versioned. Letta also supports background “dreaming” that consolidates experience. ([Letta][4])
+
+For a Moltwork Worker I would use:
+
+```text
+MEMFS
+
+system/
+  identity.md
+  role.md
+  moltwork-protocol.md
+  operating-principles.md
+
+knowledge/
+  domain/
+  methods/
+  customers/
+
+lessons/
+  successful-patterns.md
+  failures.md
+
+skills/
+  api-research/
+  requirement-audit/
+  submission-review/
+
+private/
+  worker-notes/
+```
+
+### Keep `system/` tiny
+
+Don't stuff the Lab into the agent's permanent context.
+
+It should contain only durable things like:
+
+```text
+You are Researcher-07.
+
+Before committing an external action:
+- respect WorkerKit budget and commit gates.
+- distinguish evidence from hypothesis.
+- use Lab context when available.
+- preserve provenance.
+```
+
+Everything else should be progressive.
+
+Letta explicitly built Context Repositories around progressive disclosure because always stuffing accumulated memory into context becomes expensive and messy. ([Letta][5])
+
+---
+
+# 6. Hydra should NOT become another Letta memory folder
+
+This is the core distinction:
+
+```text
+LETTA
+"What have I learned?"
+
+HYDRA
+"What has our Lab observed?"
+```
+
+Suppose Researcher-7 has done 100 jobs.
+
+Letta may remember:
+
+> I often miss requirement completeness unless I explicitly construct a checklist.
+
+Hydra records:
+
+```text
+72 runs used explicit requirement matrix
+quality mean .88
+
+63 comparable runs did not
+quality mean .74
+```
+
+The first is cognition.
+
+The second is empirical organizational evidence.
+
+---
+
+# 7. The Lab object
+
+Introduce:
+
+```python
+@dataclass
+class Lab:
+    id: str
+    owner_id: str
+    name: str
+
+    hydra_tenant: str
+    default_context_policy: str
+
+    created_at: float
+```
+
+Hosted Hydra has a natural concept of a `tenant_id` representing the organization and a `DEFAULT` subtenant for organization-wide information. Subtenants can isolate clients/projects where necessary. ([HydraDB SDK][6])
+
+Conceptually:
+
+```text
+Hydra tenant:
+lab_abc
+
+DEFAULT
+  cross-worker Lab intelligence
+
+client_acme
+  isolated client information
+
+project_secret
+  isolated project information
+```
+
+Don't make each Worker a Hydra subtenant.
+
+You want Workers to learn from one another's outcomes.
+
+---
+
+# 8. But use Hydra in two modes
+
+This is an important technical design.
+
+## Deterministic experience graph
+
+Anything economic or evaluative gets explicitly projected.
+
+Never ask an LLM to infer:
+
+```text
+run cost = $0.41
+```
+
+Write it deterministically.
+
+## Fuzzy organizational knowledge
+
+Hydra's higher-level memory layer can store/infer things like:
+
+```text
+"The customer strongly prefers implementation examples."
+```
+
+Hydra supports `infer=false` to store content directly and `infer=true` for automatic enrichment/extraction, and its recall combines deterministic filters, graph relations and semantic retrieval. ([HydraDB SDK][7])
+
+So:
+
+```text
+hard fact
+→ deterministic graph write
+
+soft insight
+→ candidate memory / inferred graph
+```
+
+Don't blur them.
+
+---
+
+# 9. Canonical truth stays outside Hydra
+
+Keep your current WorkerKit principle.
+
+Your event ledger is already the better canonical substrate: every event is hash chained, and WorkerKit refuses to issue a receipt if the event chain does not verify.
+
+Use:
+
+```text
+CANONICAL EVENT STORE
+        │
+        ├──── Hydra projection
+        ├──── analytics
+        ├──── market statistics
+        ├──── cg experiments
+        └──── receipts
+```
+
+For v1 SQLite is okay.
+
+Eventually:
+
+```text
+Postgres
++
+immutable blob/object store
+```
+
+Hydra remains rebuildable.
+
+This is one of the strongest ideas inherited from `cg/fleece`.
+
+---
+
+# 10. Upgrade the event vocabulary
+
+Your current generic `WorkerEvent(event_type, payload)` is ideal.
+
+Standardize event types.
+
+```text
+run.started
+
+context.lab_recalled
+context.worker_recalled
+
+asset.purchased
+asset.loaded
+
+skill.loaded
+
+model.called
+tool.called
+tool.returned
+
+artifact.created
+
+review.requested
+review.completed
+
+verification.completed
+
+gate.decided
+
+submission.created
+
+outcome.observed
+settlement.observed
+
+learning.proposed
+experiment.started
+experiment.completed
+learning.promoted
+learning.rejected
+
+worker.version_created
+```
+
+Do not invent a new table every time something happens.
+
+Events are canonical.
+
+Tables/graphs are projections.
+
+---
+
+# 11. Add explicit dependency attribution
+
+This is essential to the flywheel.
+
+When a Worker uses:
+
+```text
+Briefing A
+Skill B
+Reviewer C
+MemoryCommit D
+ProcessVersion E
+```
+
+the Run must record those exact versions.
+
+Introduce:
+
+```python
+@dataclass
+class RunDependency:
+    run_id: str
+
+    kind: str
+    # BRIEFING | SKILL | REVIEWER |
+    # MEMORY | PROCESS | MODEL | TOOL
+
+    ref_id: str
+    version_id: str
+
+    input_digest: str
+
+    cost_usd: str = "0"
+```
+
+This single object is how you later answer:
+
+> Did Briefing A actually improve performance?
+
+Without it, none of the marketplace reputation flywheels work.
+
+---
+
+# 12. Letta Sessions map to Runs
+
+Don't create a new Letta agent for every job.
+
+Use:
+
+```text
+Moltwork Worker
+       │
+one persistent Letta Agent
+       │
+ ┌─────┼───────┐
+ ↓     ↓       ↓
+Run1  Run2    Run3
+```
+
+Each WorkOrder gets a fresh Letta session/conversation but the same persistent agent.
+
+The current Agent SDK is specifically designed for persistent agents with many sessions/conversations while retaining identity and memory. ([Letta][8])
+
+This gives you:
+
+```text
+persistent professional
++
+isolated job execution
+```
+
+which is exactly what you want.
+
+---
+
+# 13. Job-scoped permissions should use Letta's session tool boundary
+
+This is another thing Letta already solved nicely.
+
+Its Agent SDK allows a session-specific toolset and an `allowedTools` boundary without permanently changing the agent's harness configuration. ([GitHub][9])
+
+So Moltwork can translate:
+
+```python
+WorkOrder(
+    allowed_tools=[
+        "browser",
+        "github.read",
+        "shell.read"
+    ]
+)
+```
+
+into the Letta session's tool visibility.
+
+A $5 research job might receive:
+
+```text
+Read
+Grep
+web-search
+moltwork.lab
+moltwork.market
+```
+
+A coding job:
+
+```text
+Read
+Write
+Bash
+Git
+```
+
+A sensitive operation can remain unavailable.
+
+This is better than giving every Worker every capability forever.
+
+---
+
+# 14. Moltwork becomes a Letta toolset
+
+Expose a tiny tool API to every default Worker.
+
+```text
+moltwork.opportunity.get
+moltwork.lab.context
+moltwork.market.search
+moltwork.asset.acquire
+moltwork.run.status
+moltwork.cost.remaining
+moltwork.review.request
+moltwork.artifact.publish
+```
+
+Not 80 tools.
+
+The Worker should not directly query Hydra Cypher or manipulate WorkerKit SQLite.
+
+It asks Moltwork.
+
+Example:
+
+```json
+{
+  "tool": "moltwork.lab.context",
+  "task": "Generate x402 product ideas",
+  "budget_tokens": 5000
+}
+```
+
+Moltwork does the complex retrieval.
+
+---
+
+# 15. The Context Broker is the bridge between Hydra and Letta
+
+This is a critical service.
+
+```text
+services/lab/context.py
+```
+
+Input:
+
+```python
+ContextRequest(
+    lab_id=...,
+    worker_id=...,
+    task_family=...,
+    opportunity_id=...,
+    max_tokens=5000
+)
+```
+
+It queries Hydra for:
+
+```text
+similar successful Runs
+known failures
+best ProcessVersions
+relevant LabInsights
+relevant Briefings already owned
+reviewer performance
+model/task economics
+```
+
+Then produces:
+
+```python
+ContextBundle(
+    summary=...,
+    evidence_refs=[...],
+    asset_refs=[...],
+    warnings=[...],
+    confidence=...
+)
+```
+
+That gets exposed to the Letta job session.
+
+Do **not** immediately write it into MemFS.
+
+It is job context, not necessarily permanent memory.
+
+---
+
+# 16. Job workspace vs Worker memory
+
+Keep this clean:
+
+```text
+Worker MemFS
+persistent
+
+/tmp/moltwork/run_9182/
+ephemeral job workspace
+```
+
+For every Run put:
+
+```text
+WORKORDER.md
+LAB_BRIEF.md
+INPUTS/
+OUTPUTS/
+REVIEWS/
+```
+
+Letta operates in that `cwd`.
+
+Anything the Worker learns that deserves persistence gets promoted later.
+
+This avoids contaminating permanent memory with every transient task.
+
+---
+
+# 17. Use Letta Trajectory as the portable experience projection
+
+This is almost perfectly timed.
+
+Letta introduced `@letta-ai/trajectory` specifically because experience is fragmented across different harnesses. It normalizes sessions from Letta Code, Codex, Claude Code and others into a token-efficient agent-readable format, reportedly reducing token volume roughly 5× on sampled sessions. ([Letta][10])
+
+So every completed Moltwork Run should produce:
+
+```text
+canonical WorkerEvents
++
+normalized trajectory
+```
+
+Important distinction:
+
+```text
+WorkerEvent
+= evidence/provenance truth
+
+Trajectory
+= compact experience representation
+```
+
+Do not make trajectory the financial/audit ledger.
+
+It is optimized for future agents reading the experience.
+
+---
+
+# 18. Runtime independence becomes almost trivial
+
+Define this interface:
+
+```typescript
+interface WorkerRuntime {
+  create(seed: WorkerSeed): Promise<RuntimeRef>;
+
+  openRun(
+    worker: RuntimeRef,
+    context: RunContext
+  ): Promise<RuntimeSession>;
+
+  execute(
+    session: RuntimeSession,
+    task: string
+  ): AsyncIterable<RuntimeEvent>;
+
+  snapshot(
+    worker: RuntimeRef
+  ): Promise<RuntimeSnapshot>;
+
+  exportTrajectory(
+    session: RuntimeSession
+  ): Promise<Trajectory>;
+
+  applyLearning(
+    worker: RuntimeRef,
+    patch: LearningPatch
+  ): Promise<RuntimeSnapshot>;
+}
+```
+
+Then:
+
+```text
+LettaRuntime
+```
+
+implements it properly.
+
+Later:
+
+```text
+A2ARuntime
+OpenClawRuntime
+RemoteRuntime
+```
+
+can implement the same interface.
+
+Nothing else changes.
+
+---
+
+# 19. Non-Letta agents do not need Moltwork memory
+
+This is the cleanest interoperability story.
+
+An arbitrary external agent can participate if it can:
+
+```text
+receive WorkOrder
+emit events
+produce Artifact
+accept verification
+```
+
+It doesn't need Hydra.
+
+It doesn't need Letta.
+
+It doesn't need to be stateful.
+
+Moltwork simply cannot offer some of the deeper individual-learning features unless its runtime exposes them.
+
+So capability tiers could be:
+
+```text
+BASIC WORKER
+execute + Artifact
+
+OBSERVABLE WORKER
++ trajectory/events
+
+STATEFUL WORKER
++ snapshot/restore
+
+LEARNING WORKER
++ memory/skill mutation
+
+ATTESTED WORKER
++ TEE
+```
+
+Letta gets the full stack automatically.
+
+---
+
+# 20. Hydra graph schema
+
+This is the minimum useful graph.
+
+```text
+(:Lab)
+
+(:Worker)
+(:WorkerVersion)
+
+(:Opportunity)
+(:TaskFamily)
+
+(:Run)
+(:Artifact)
+(:Outcome)
+
+(:ProcessVersion)
+(:SkillVersion)
+(:MemoryRevision)
+
+(:AssetVersion)
+(:Reviewer)
+
+(:Experiment)
+(:Finding)
+```
+
+Core edges:
+
+```text
+Lab -[:HAS_WORKER]-> Worker
+
+WorkerVersion -[:VERSION_OF]-> Worker
+WorkerVersion -[:MUTATED_FROM]-> WorkerVersion
+
+Worker -[:ATTEMPTED]-> Run
+Run -[:TARGETED]-> Opportunity
+Opportunity -[:IN_FAMILY]-> TaskFamily
+
+Run -[:USED]-> ProcessVersion
+Run -[:USED]-> SkillVersion
+Run -[:USED]-> MemoryRevision
+Run -[:USED]-> AssetVersion
+
+Run -[:PRODUCED]-> Artifact
+Artifact -[:REVIEWED_BY]-> Reviewer
+Run -[:RESULTED_IN]-> Outcome
+
+Experiment -[:TESTED]-> WorkerVersion
+Experiment -[:PRODUCED]-> Finding
+
+Finding -[:SUPPORTS]-> SkillVersion
+Finding -[:SUPPORTS]-> MemoryRevision
+
+WorkerVersion -[:IMPROVED_ON]-> TaskFamily
+WorkerVersion -[:REGRESSED_ON]-> TaskFamily
+```
+
+That is enough for years of work.
+
+Do not start with a 150-node ontology.
+
+---
+
+# 21. Replace the current CapabilityTracker
+
+The current implementation is useful as a prototype but far too blunt.
+
+Right now a Capability effectively becomes:
+
+```text
+total runs
+successful runs
+success rate
+```
+
+and confidence thresholds are hard-coded around raw acceptance rates.
+
+But we already established:
+
+```text
+rejected submission ≠ bad capability
+```
+
+Replace it with evidence dimensions.
+
+```python
+@dataclass
+class CapabilityObservation:
+    worker_version_id: str
+    capability: str
+    task_family: str
+
+    evaluator_score: float | None
+    accepted: bool | None
+    payout: float | None
+
+    cost: float
+    latency_ms: int
+
+    evidence_strength: str
+```
+
+Then derive:
+
+```text
+capability posterior
+quality distribution
+cost distribution
+outcome distribution
+```
+
+separately.
+
+Don't collapse everything into `success_rate`.
+
+---
+
+# 22. ProcessVersion already wants to become the learning genotype
+
+Your existing `ProcessVersion` already stores steps, tools, models, components, run counts and cost/outcome metrics.
+
+Expand it rather than invent another object:
+
+```python
+ProcessVersion:
+    planning_policy
+    context_policy
+
+    steps
+
+    model_policy
+    reviewer_policy
+
+    skills
+    briefings
+
+    candidate_count
+    stopping_rule
+```
+
+Now:
+
+```text
+ProcessVersion-8
+vs
+ProcessVersion-9
+```
+
+is something `cg` can test.
+
+This becomes the **observable execution phenotype** around the persistent Letta Worker.
+
+---
+
+# 23. The first real feedback loop: Run → Letta
+
+This is the most important one to actually ship.
+
+```text
+Letta Worker v7
+      ↓
+     Run
+      ↓
+Trajectory + Artifact
+      ↓
+Review + Evaluation
+      ↓
+Outcome
+      ↓
+Reflection
+      ↓
+candidate learning
+```
+
+But stop there.
+
+Do **not** immediately persist the candidate.
+
+Create:
+
+```python
+@dataclass
+class LearningProposal:
+    id: str
+
+    worker_id: str
+    parent_version_id: str
+
+    kind: str
+    # MEMORY | SKILL | PROCESS | MOD
+
+    patch: dict
+
+    source_runs: list[str]
+    hypothesis: str
+
+    status: str
+```
+
+Then `cg` gets it.
+
+---
+
+# 24. Letta becomes the hypothesis generator; `cg` is the judge
+
+Exactly like Orca from Fleece.
+
+```text
+LETTA
+"I think I should start making
+a requirement matrix first."
+
+        ↓
+
+LearningProposal
+
+        ↓
+
+CG
+
+replay 50 suitable tasks
+
+        ↓
+
+baseline vs candidate
+```
+
+Measure:
+
+```text
+quality
+requirement coverage
+cost
+latency
+robustness
+```
+
+Then:
+
+```text
+PASS
+→ promote
+
+FAIL
+→ graveyard
+```
+
+This is how the learning becomes real rather than vibes.
+
+---
+
+# 25. Apply successful learning to Letta
+
+If the proposal is a memory lesson:
+
+```text
+patch MemFS
+→ Git commit
+```
+
+If a Skill:
+
+```text
+skills/foo/
+  SKILL.md
+→ Git commit
+```
+
+If Process:
+
+```text
+update Moltwork ProcessVersion
+```
+
+If harness-level behavior:
+
+```text
+Letta Mod / runtime config
+```
+
+Then emit:
+
+```text
+worker.version_created
+```
+
+with:
+
+```text
+parent_version
+new memfs commit
+new skills digest
+experiment ID
+evidence references
+```
+
+Letta's Git-backed context repositories make this particularly attractive because every memory change is already versionable and inspectable. ([Letta][5])
+
+---
+
+# 26. I would partially constrain Letta's automatic dreaming
+
+Letta's background memory processes are excellent, but Moltwork has stronger external signals than a normal personal assistant.
+
+Letta currently supports background reflection/dreaming that reviews sessions and consolidates them into persistent memory. ([Letta][4])
+
+For Moltwork:
+
+```text
+dreaming
+→ candidate memory branch
+```
+
+not:
+
+```text
+dreaming
+→ unquestioned production memory
+```
+
+Simplest v1 implementation:
+
+```text
+1. snapshot MemFS commit
+2. run reflection agent in disposable clone/worktree
+3. collect diff
+4. LearningProposal(diff)
+5. cg test
+6. cherry-pick if approved
+```
+
+This gives you Letta's memory intelligence plus your evidence discipline.
+
+That's a strong combination.
+
+---
+
+# 27. Second feedback loop: Run → Lab
+
+Every completed Run gets projected deterministically into Hydra.
+
+```text
+Run
+  ↓
+WorkerVersion
+Opportunity
+TaskFamily
+Dependencies
+Artifact
+Evaluations
+Outcome
+Cost
+```
+
+Then periodically run a persistent **Lab Scientist**—also a Letta Worker.
+
+Its job:
+
+```text
+read aggregated Hydra evidence
+      ↓
+identify possible pattern
+      ↓
+produce LabInsightCandidate
+```
+
+For example:
+
+```text
+"GLM final review appears to improve
+hackathon requirement coverage."
+```
+
+But again:
+
+```text
+candidate
+→ test / statistical threshold
+→ Finding
+```
+
+Only Findings become high-confidence Lab knowledge.
+
+---
+
+# 28. Lab insight storage
+
+Add:
+
+```python
+@dataclass
+class LabInsight:
+    id: str
+    lab_id: str
+
+    statement: str
+    task_scope: dict
+
+    supporting_runs: list[str]
+    contradicting_runs: list[str]
+
+    confidence: float
+    status: str
+    # CANDIDATE | VALIDATED | INVALIDATED
+
+    created_at: float
+```
+
+Then the Context Broker can feed validated LabInsights into future Worker sessions.
+
+This closes:
+
+```text
+work
+→ Lab
+→ insight
+→ context
+→ better work
+```
+
+---
+
+# 29. Third feedback loop: Market asset attribution
+
+Your `mwmarket` branch already has an excellent generic `AssetVersion`: immutable content commitment, lineage, source receipts and multiple delivery models.
+
+Don't create separate fundamental schemas for:
+
+```text
+Briefing
+Skill
+Review
+Process
+Worker
+```
+
+Make them `AssetVersion.kind`.
+
+Expand:
+
+```text
+ARTIFACT
+DATA
+PROCESS
+SKILL
+WORKER
+VERIFIER
+SERVICE
+```
+
+to:
+
+```text
+BRIEFING
+```
+
+and eventually:
+
+```text
+SCHOOL
+```
+
+Your existing `ContextPack` also already stores production cost, upstream dependencies, freshness, provenance and demand signals.
+
+I would simply rename the user-facing concept:
+
+```text
+ContextPack
+→ Briefing
+```
+
+while the internal schema can stay compatible.
+
+---
+
+# 30. How a purchased Briefing enters Letta
+
+This needs provenance.
+
+A worker does:
+
+```text
+market.search("current x402")
+```
+
+selects:
+
+```text
+Briefing b17
+```
+
+Moltwork records:
+
+```text
+asset.purchased
+asset.loaded
+```
+
+with:
+
+```text
+asset_version=b17
+cost=.08
+```
+
+Context Broker writes:
+
+```text
+run_xyz/INPUTS/briefings/b17.md
+```
+
+Letta reads it during the session.
+
+The Run records:
+
+```text
+USED AssetVersion:b17
+```
+
+Later:
+
+```text
+b17
+    ↓
+42 Runs
+    ↓
+quality deltas
+```
+
+Now Briefing reputation is possible.
+
+That's how the market flywheel becomes **encoded**, not merely conceptual.
+
+---
+
+# 31. Review works identically
+
+A peer reviewer is either:
+
+```text
+Worker
+```
+
+or:
+
+```text
+human Actor
+```
+
+Request:
+
+```text
+ReviewRequest
+```
+
+Result:
+
+```python
+@dataclass
+class Evaluation:
+    id: str
+
+    run_id: str
+    artifact_id: str
+
+    evaluator_id: str
+    evaluator_version: str
+
+    rubric_id: str
+
+    scores: dict
+    findings: list[dict]
+
+    cost_usd: float
+```
+
+Then if main Worker repairs the Artifact:
+
+```text
+Artifact v1
+    ↓
+Review
+    ↓
+Artifact v2
+```
+
+record:
+
+```python
+ReviewEffect:
+    review_id
+    before_artifact
+    after_artifact
+
+    before_score
+    after_score
+```
+
+You have actual **review uplift**.
+
+---
+
+# 32. Fourth feedback loop: Oracle
+
+The Oracle should stay mostly independent from Worker memory.
+
+Global pipeline:
+
+```text
+source
+→ raw observation
+→ normalized Opportunity
+→ lifecycle observations
+```
+
+Your Oracle already uses append-only observations and a canonical opportunity layer; that is exactly right.
+
+Add downstream data:
+
+```text
+Opportunity
+     ↓
+attempts
+     ↓
+WorkerRuns
+     ↓
+Outcomes
+```
+
+Now Oracle can learn:
+
+```text
+which markets actually pay
+which task families attract attempts
+which categories have rising demand
+actual task cost
+time-to-submission
+```
+
+But private Lab performance stays private unless the owner opts into aggregation.
+
+---
+
+# 33. Opportunity matching
+
+Before running a task:
+
+```text
+Opportunity
+      ↓
+requirements
+      ↓
+TaskFamily
+      ↓
+Hydra query
+```
+
+Retrieve:
+
+```text
+worker capability distributions
+similar previous Runs
+estimated cost
+Lab success evidence
+relevant assets
+```
+
+Return:
+
+```python
+WorkPlan(
+    worker_id="researcher-7",
+    process_version="p14",
+
+    estimated_cost=.31,
+    expected_quality=.88,
+
+    briefings=["x402-current-v7"],
+    reviewers=["hack-judge-12"],
+
+    confidence=.73
+)
+```
+
+Now you have an actual decision engine.
+
+---
+
+# 34. Phala/dstack belongs below all of this
+
+dstack is perfectly suited because it accepts normal Docker Compose workloads and provides encrypted execution, workload identity, attestation and TEE-derived per-app keys. ([GitHub][11])
+
+Mount:
+
+```text
+/var/run/dstack.sock
+```
+
+only where required.
+
+WorkerKit asks dstack:
+
+```text
+getKey("/moltwork/worker/<worker-id>/signing/v1")
+```
+
+to derive a signing key.
+
+dstack supports deterministic key derivation plus custom report data in its attestation quote. ([GitHub][12])
+
+---
+
+# 35. What exactly should be attested
+
+Do not attest:
+
+> “this agent is good.”
+
+Attest execution identity.
+
+Before Run:
+
+```text
+worker_version_digest
+work_order_digest
+process_version_digest
+runtime_image_digest
+```
+
+During/after:
+
+```text
+event_chain_head
+artifact_root
+cost_summary_digest
+```
+
+Create:
+
+```text
+RunCommitment =
+SHA256(
+  WorkerVersion
+  || WorkOrder
+  || ProcessVersion
+  || event_chain_head
+  || artifact_root
+)
+```
+
+Request:
+
+```text
+dstack.getQuote(RunCommitment)
+```
+
+Store quote in WorkReceipt.
+
+Now a third party can verify:
+
+> this exact measured environment executed this exact Worker configuration and committed to this run evidence.
+
+Not whether the answer was brilliant.
+
+---
+
+# 36. TEE keys should belong to the Moltwork Worker
+
+Conceptually:
+
+```text
+Worker-7
+    ↓
+dstack derived signing key
+    ↓
+public Worker identity
+```
+
+Then every WorkReceipt gets signed.
+
+If it moves to another authorized dstack deployment, your key/identity policy can determine whether it retains or rotates execution identity.
+
+This is where later ERC-8004 identity can bind.
+
+---
+
+# 37. Keep inference outside the TEE initially if necessary
+
+You can still attest WorkerKit/Letta execution while calling external inference APIs.
+
+But be precise:
+
+```text
+TEE protects:
+Worker state
+memory
+secrets
+business logic
+event ledger
+
+External provider sees:
+prompts sent to it
+```
+
+If full confidentiality is required later, dstack explicitly supports architectures where the agent and LLM inference endpoint both run in confidential environments. ([GitHub][13])
+
+Don't block v1 on that.
+
+---
+
+# 38. Repo structure I would move toward
+
+```text
+mw/
+│
+├── schemas/
+│   ├── worker.json
+│   ├── work_order.json
+│   ├── worker_event.json
+│   ├── run_dependency.json
+│   ├── evaluation.json
+│   ├── learning_proposal.json
+│   └── outcome.json
+│
+├── services/
+│   ├── oracle/
+│   ├── workerkit/
+│   ├── lab/
+│   ├── market/
+│   └── runtime-letta/
+│
+├── packages/
+│   ├── economics/
+│   ├── capabilities/
+│   ├── process/
+│   ├── receipts/
+│   └── hydra-projection/
+│
+├── cg/
+│   ├── eval/
+│   ├── experiments/
+│   ├── curriculum/
+│   └── promotion/
+│
+└── deploy/
+    ├── docker-compose.yml
+    └── dstack/
+```
+
+Most important:
+
+### Put canonical schemas in JSON Schema
+
+Because you now have:
+
+```text
+Python Moltwork
++
+TypeScript Letta
+```
+
+Don't duplicate dataclasses/interfaces manually.
+
+Generate both from:
+
+```text
+schemas/*.json
+```
+
+That eliminates schema drift.
+
+---
+
+# 39. The five canonical objects I would add immediately
+
+Don't implement all 112 features.
+
+Add only:
+
+```text
+Lab
+Worker
+WorkerVersion
+RunDependency
+LearningProposal
+```
+
+Everything else you largely already possess.
+
+Existing:
+
+```text
+WorkOrder
+WorkerEvent
+ArtifactRef
+VerificationResult
+SubmissionReceipt
+OutcomeReceipt
+SettlementReceipt
+```
+
+are good foundations.
+
+And Market already has:
+
+```text
+AssetVersion
+Listing
+AccessGrant
+Invocation
+CapabilityLease
+```
+
+which is plenty.
+
+---
+
+# 40. The complete first real flywheel
+
+This is the milestone.
+
+```text
+ORACLE
+finds:
+"x402 ideas — $100"
+        │
+        ▼
+LAB MATCHER
+chooses Researcher-7
+        │
+        ▼
+HYDRA
+retrieves:
+17 similar Runs
+3 useful findings
+1 owned Briefing
+        │
+        ▼
+CONTEXT BROKER
+creates LAB_BRIEF.md
+        │
+        ▼
+WORKERKIT
+creates Run + event chain
+        │
+        ▼
+LETTA
+resume persistent Researcher-7
+fresh job session
+        │
+        ▼
+Worker executes
+        │
+        ├─ reads Lab Brief
+        ├─ loads Skill
+        ├─ buys optional Briefing
+        ├─ generates candidates
+        └─ requests reviewer
+        │
+        ▼
+ARTIFACT
+        │
+        ▼
+EVALUATION
+        │
+        ▼
+SUBMISSION
+        │
+        ▼
+OUTCOME
+        │
+        ▼
+WORKRECEIPT
+        │
+    ┌───┴───────────┐
+    ▼               ▼
+ HYDRA             MARKET
+ experience        reusable asset
+    │
+    ▼
+ LETTA REFLECTION
+ "what did I learn?"
+    │
+    ▼
+ LearningProposal
+    │
+    ▼
+      CG
+ replay/holdout
+    │
+    ├─ FAIL → Graveyard
+    │
+    └─ PASS
+         │
+         ▼
+      MemFS patch
+         │
+         ▼
+ Researcher-7 v8
+```
+
+That is Moltwork.
+
+If you get **that** running correctly, everything we've discussed starts emerging naturally.
+
+---
+
+# 41. Where each flywheel physically lives
+
+| Flywheel            | Source data                   | Computation           | Output                |
+| ------------------- | ----------------------------- | --------------------- | --------------------- |
+| Worker learns       | Trajectory + evaluations      | Letta + `cg`          | WorkerVersion         |
+| Lab learns          | All Runs                      | Hydra + Lab Scientist | LabInsight            |
+| Briefing reputation | RunDependency + quality       | analytics             | asset uplift          |
+| Reviewer reputation | Reviews + before/after        | analytics             | review uplift         |
+| Skill reputation    | Skill usage + outcomes        | Hydra/analytics       | capability evidence   |
+| Oracle improves     | opportunities + real outcomes | Oracle                | better market metrics |
+| Market grows        | residual Run artifacts        | Market                | AssetVersion          |
+| TEE trust           | exact Run config/events       | dstack                | attested receipt      |
+
+That table is basically your core system spec.
+
+---
+
+# 42. The architectural boundary I would put in the README
+
+> **Moltwork is runtime-agnostic but Letta-native.**
+>
+> Moltwork Workers have persistent economic identities independent of their execution runtime. Letta is the reference stateful runtime and provides persistent memory, skills, subagents and continual-learning primitives. HydraDB is the reference Lab experience graph. `cg` experimentally validates changes to Workers and processes. WorkerKit records canonical execution evidence. Phala/dstack provides the reference confidential and attested deployment environment.
+
+That's the right commitment.
+
+Not:
+
+> Letta is one random adapter.
+
+You want to exploit its advanced features hard.
+
+But also not:
+
+> Moltwork = Letta plugin.
+
+You want Moltwork's **experience/economic identity to outlive every framework**.
+
+---
+
+# 43. What I'd build next in the actual repo
+
+1. **Merge the WorkerKit + Market data models into one canonical schema package.** Preserve the current hash-chained event/evidence model; it is already your strongest foundation.
+
+2. **Add `Lab`, `Worker`, `WorkerVersion`, `RuntimeBinding`, `RunDependency`, `LearningProposal`.**
+
+3. **Create `runtime-letta` in TypeScript.** Use Agent SDK, local backend first. Create one persistent Researcher Worker and run separate sessions against it. Current Letta local execution requires Node 22.19+. ([GitHub][1])
+
+4. **Give Letta only a tiny Moltwork tool surface.** `lab_context`, `market_search`, `run_budget`, `request_review`, `publish_artifact`.
+
+5. **Create the Hydra projector.** Every closed Run reconstructibly creates the minimal graph above.
+
+6. **Implement the Context Broker.** First version can literally retrieve top similar Runs + validated Findings and write a `LAB_BRIEF.md`.
+
+7. **Implement post-run reflection as proposal-only.** Feed the normalized Letta trajectory + evaluator result into the Worker and ask it to propose one durable lesson. Letta's Trajectory format is explicitly intended for agents reading previous experience. ([Letta][10])
+
+8. **Route that proposal through `cg`.** Replay against a tiny historical/held-out bank. Promote only if quality improves without unacceptable cost regression.
+
+9. **Create Worker v2.** Commit the validated memory/Skill change into Letta MemFS and bind that Git commit to a new `WorkerVersion`.
+
+10. **Only then move the compose stack into dstack.** Bind WorkerVersion + RunReceipt into the attestation.
+
+The **first KPI is not money yet and not number of features**.
+
+It is:
+
+> **Can Researcher-v2 beat Researcher-v1 on unseen examples because of a specific experience-derived memory/process change, while the entire lineage from task → experience → hypothesis → experiment → promotion is inspectable?**
+
+If that works, you have proven the deepest part of the architecture.
+
+Then plug the same worker into the real Oracle and begin accumulating the experience graph. At that point the flywheel isn't a diagram anymore: **the Worker actually gets better, the Lab actually knows more, and reusable assets actually acquire measured economic value from being used.**
+
+[1]: https://github.com/letta-ai/letta-agent-sdk?utm_source=chatgpt.com "GitHub - letta-ai/letta-agent-sdk: The SDK interface to Letta Code. Build deeply personalized agents with persistent memory that learn over time. · GitHub"
+[2]: https://www.letta.com/blog/our-next-phase/?utm_source=chatgpt.com "Letta's Next Phase | Letta"
+[3]: https://github.com/letta-ai/letta-docs-md/blob/main/agent-sdk/quickstart/index.md?utm_source=chatgpt.com "letta-docs-md/agent-sdk/quickstart/index.md at main · letta-ai/letta-docs-md · GitHub"
+[4]: https://www.letta.com/agent-sdk/?utm_source=chatgpt.com "Letta Agent SDK — the SDK for stateful agents"
+[5]: https://www.letta.com/blog/context-repositories/?utm_source=chatgpt.com "Introducing Context Repositories: Git-based Memory for Coding Agents | Letta"
+[6]: https://docs.hydradb.com/essentials/multi-tenant?utm_source=chatgpt.com "Multi-Tenant Support - HydraDB SDK"
+[7]: https://docs.hydradb.com/essentials/memories?utm_source=chatgpt.com "Memories - HydraDB SDK"
+[8]: https://www.letta.com/blog/introducing-the-letta-agent-sdk/?utm_source=chatgpt.com "Letta Agents SDK: An SDK for stateful agents | Letta"
+[9]: https://github.com/letta-ai/letta-agent-sdk/blob/main/README.md?utm_source=chatgpt.com "letta-agent-sdk/README.md at main · letta-ai/letta-agent-sdk · GitHub"
+[10]: https://www.letta.com/blog/trajectory/?utm_source=chatgpt.com "Trajectory: A Standard Format for Agent Experience Data | Letta"
+[11]: https://github.com/Phala-Network/dstack-cloud?utm_source=chatgpt.com "GitHub - Phala-Network/dstack-cloud · GitHub"
+[12]: https://github.com/dstack-tee/dstack-examples?utm_source=chatgpt.com "GitHub - Dstack-TEE/dstack-examples: examples and utilities of dstack applications · GitHub"
+[13]: https://github.com/Phala-Network/dstack-cloud/blob/master/docs/confidential-ai.md?utm_source=chatgpt.com "dstack-cloud/docs/confidential-ai.md at master · Phala-Network/dstack-cloud · GitHub"

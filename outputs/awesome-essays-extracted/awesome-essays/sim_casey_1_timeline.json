@@ -1,0 +1,131 @@
+{
+  "audio": "/home/box/comedy_sets/shorts/casey_rocket_1.mp4",
+  "windows": [
+    {
+      "t_start": 0.0,
+      "t_end": 6.0,
+      "wps": 0.91,
+      "p_laugh": 0.202,
+      "moment": 6.0
+    },
+    {
+      "t_start": 6.0,
+      "t_end": 12.0,
+      "wps": 1.23,
+      "p_laugh": 0.261,
+      "moment": 12.0
+    },
+    {
+      "t_start": 12.0,
+      "t_end": 18.0,
+      "wps": 1.12,
+      "p_laugh": 0.162,
+      "moment": 18.0
+    },
+    {
+      "t_start": 18.0,
+      "t_end": 24.0,
+      "wps": 2.02,
+      "p_laugh": 0.155,
+      "moment": 24.0
+    },
+    {
+      "t_start": 24.0,
+      "t_end": 30.0,
+      "wps": 0.68,
+      "p_laugh": 0.162,
+      "moment": 30.0
+    },
+    {
+      "t_start": 48.0,
+      "t_end": 54.0,
+      "wps": 1.59,
+      "p_laugh": 0.293,
+      "moment": 54.0
+    },
+    {
+      "t_start": 54.0,
+      "t_end": 60.0,
+      "wps": 3.06,
+      "p_laugh": 0.407,
+      "moment": 60.0
+    },
+    {
+      "t_start": 60.0,
+      "t_end": 66.0,
+      "wps": 1.5,
+      "p_laugh": 0.381,
+      "moment": 66.0
+    },
+    {
+      "t_start": 66.0,
+      "t_end": 72.0,
+      "wps": 3.7,
+      "p_laugh": 0.414,
+      "moment": 72.0
+    },
+    {
+      "t_start": 72.0,
+      "t_end": 78.0,
+      "wps": 1.94,
+      "p_laugh": 0.328,
+      "moment": 78.0
+    },
+    {
+      "t_start": 78.0,
+      "t_end": 84.0,
+      "wps": 3.28,
+      "p_laugh": 0.328,
+      "moment": 84.0
+    }
+  ],
+  "fired": [
+    {
+      "t_start": 54.0,
+      "t_end": 60.0,
+      "wps": 3.06,
+      "p_laugh": 0.407,
+      "moment": 60.0,
+      "kind": "chuckle",
+      "ms": 60000
+    },
+    {
+      "t_start": 60.0,
+      "t_end": 66.0,
+      "wps": 1.5,
+      "p_laugh": 0.381,
+      "moment": 66.0,
+      "kind": "chuckle",
+      "ms": 66000
+    },
+    {
+      "t_start": 66.0,
+      "t_end": 72.0,
+      "wps": 3.7,
+      "p_laugh": 0.414,
+      "moment": 72.0,
+      "kind": "chuckle",
+      "ms": 72000
+    },
+    {
+      "t_start": 72.0,
+      "t_end": 78.0,
+      "wps": 1.94,
+      "p_laugh": 0.328,
+      "moment": 78.0,
+      "kind": "chuckle",
+      "ms": 78000
+    },
+    {
+      "t_start": 78.0,
+      "t_end": 84.0,
+      "wps": 3.28,
+      "p_laugh": 0.328,
+      "moment": 84.0,
+      "kind": "chuckle",
+      "ms": 84000
+    }
+  ],
+  "threshold": 0.5,
+  "out": "/home/box/sim_casey_1.wav"
+}

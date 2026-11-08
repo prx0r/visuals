@@ -1,0 +1,1395 @@
+Yes. After reviewing `prx0r/finalbuilds2`, I think this is the cleanest interpretation:
+
+> **FinalBuilds2 is already most of the scientific brain you need for Pogtown.**
+>
+> It should not generate the comedy itself. It should decide **what question to ask next, what evidence would discriminate between explanations, what experiment deserves another probe, and how belief should change after the result.**
+
+Freaktown then becomes the experimental execution engine. Influence gets the experiment into the real world. qprivately controls consequences. Jev describes what happened. YouTube/Pogtown provide observations.
+
+The major caveat is that FinalBuilds2 was originally specialized toward software/product ideas, so some of its abstractions transfer beautifully and some absolutely should **not** be reused unchanged.
+
+# What FinalBuilds2 already has
+
+There is much more there than a simple idea registry.
+
+The useful research machinery is already:
+
+| Existing FinalBuilds2 primitive | Pogtown interpretation |
+|---|---|
+| append-only events | immutable creative/scientific history |
+| graph lineage | hypothesis → probe → episode → outcome |
+| `IdeaGenerator → Idea` | character/JokeBlock/topic candidate generation |
+| process attribution | which generation methods produce successful creative outcomes |
+| deterministic experiment assignment | real randomized Pogtown experiments |
+| observations | YouTube/Pogtown metrics |
+| HypothesisV2 | comedy/virality/character hypotheses |
+| immutable Forecasts | preregistered predictions |
+| evidence snapshot hashes | stop hindsight rewriting |
+| resolutions | deterministic outcome evaluation |
+| hypothesis branching | refine theory after failure/heterogeneity |
+| convergence detector | discover new hypotheses from accumulating evidence |
+| watchdog induction gate | only admit evidence-grounded hypotheses |
+| idea planner | decide what gets resources |
+| process lineage | identify which creative generation process worked |
+
+And yes: **there already is a hypothesis-generation machine.**
+
+The particularly useful path is:
+
+```text
+observations
+    ↓
+convergence-detector
+    ↓
+ClusterCandidate
+    ↓
+LLM induction
+    ↓
+hypothesis draft
+    ↓
+must cite >= 3 evidence items
+    ↓
+must declare falsifiable metric + window
+    ↓
+watchdog adversarial gate
+    ↓
+probation hypothesis
+```
+
+That is extremely close to what we want.
+
+For Pogtown:
+
+```text
+YouTube retention
++
+comments
++
+Pog votes
++
+character results
++
+Jev annotations
+        ↓
+evidence convergence
+        ↓
+"What if sincere characters specifically benefit
+ from misinterpreting failure as success?"
+        ↓
+new hypothesis
+        ↓
+diagnostic probes
+```
+
+That is the system.
+
+---
+
+# One important correction: FinalBuilds2 does not yet contain the generalized Bayesian engine we ultimately want
+
+There are actually two layers of thinking in the repository.
+
+The older `HYPOTHESIS-CALIBRATION.md` proposes:
+
+```text
+Beta-Bernoulli
+→ posterior updates
+→ Thompson sampling
+```
+
+But the newer and better `HYPOTHESIS-EVOLUTION-POLICY.md` explicitly says:
+
+> **Do not allocate builds by Beta-Bernoulli Thompson sampling over hypotheses.**
+
+Instead it recommends:
+
+```text
+expected product utility
++ λ information gain
++ λ diversity
+- build cost
+- risk
+```
+
+and postpones full Bayesian optimal experimental design until the measurement layer works.
+
+**The newer policy is right.**
+
+For Pogtown, a single Beta posterior is nowhere near expressive enough.
+
+Our outcomes include:
+
+```text
+CTR
+early retention
+retention AUC
+completion
+rewatches
+shares
+specific-positive-comment rate
+character-positive-comment rate
+return requests
+subscriber effect
+```
+
+and our explanatory variables include:
+
+```text
+character
+JokeBlock
+topic
+script realization
+delivery
+timing
+gesture
+mesh
+camera
+title
+thumbnail
+first frame
+```
+
+The eventual model wants to be hierarchical.
+
+Conceptually:
+
+```text
+outcome
+  ~ character
+  + JokeBlock
+  + topic
+  + performance
+  + visual
+  + packaging
+  + character×JokeBlock
+  + character×performance
+  + JokeBlock×topic
+  + ...
+```
+
+So I would **keep the current forecast/calibration machinery**, but treat a proper hierarchical Bayesian model as a later inference backend.
+
+Don't block MVP on PyMC-level machinery.
+
+---
+
+# The Idea Registry is absolutely useful for characters
+
+But **do not put character ideas through the current product scoring rubric**.
+
+Current FinalBuilds2 scores things on:
+
+```text
+delta
+pain
+cost_collapse
+composability
+evidence
+build_leverage
+```
+
+That makes sense for:
+
+> Build this API or SaaS?
+
+It makes no sense for:
+
+> Police sniffer dog with no sense of smell?
+
+So retain the registry concept and lineage:
+
+```text
+generator_id
+candidate
+parents
+evidence
+attempts
+outcomes
+```
+
+but introduce domain-specific candidate types.
+
+I'd use:
+
+```text
+domain = pogtown
+
+kind =
+character
+joke_block
+topic
+format
+performance
+visual
+camera
+packaging
+world
+```
+
+Then each uses an `admission_policy_id`.
+
+For example:
+
+```text
+character_candidate_v1
+```
+
+could initially score:
+
+```text
+premise clarity
+intrinsic contradiction
+visual recognizability
+behavioral generativity
+relationship potential
+mechanism compatibility
+distinctness from existing cast
+```
+
+And a JokeBlock candidate could score:
+
+```text
+mechanism clarity
+falsifiability
+cross-character portability
+escalation potential
+observable audience prediction
+```
+
+FinalBuilds2 should own the **candidate registry and lineage**, not one universal notion of candidate quality.
+
+---
+
+# This lets you evolve the entire creative stack scientifically
+
+The exciting part is that “what is funny?” is actually only one research program.
+
+I'd create several parent programs.
+
+```text
+HUMOUR
+What reliably causes comic response?
+
+CHARACTER
+What produces durable attachment to a fictional personality?
+
+VIRALITY
+What causes distribution/sharing beyond ordinary engagement?
+
+PERFORMANCE
+How do timing, movement and expression alter identical writing?
+
+DIRECTION
+How do framing, camera cuts and editing alter perception?
+
+PACKAGING
+What makes someone choose to watch?
+
+TOPICALITY
+When does current relevance amplify or damage comedy?
+
+WORLD
+Do relationships, continuity and lore increase attachment?
+```
+
+Now every new probe belongs to one or more.
+
+A breakthrough in one does not get confused with another.
+
+---
+
+# It gets extremely granular at the performance layer
+
+This is where Pogtown starts becoming computational filmmaking.
+
+Suppose we have exactly the same Nolan line:
+
+> “Technically we didn't *miss* the cocaine. We created an opportunity for the officers to discover it independently.”
+
+You can experimentally vary only:
+
+```text
+pause before “independently”
+pause after punchline
+eye contact
+head angle
+body stillness
+gesture
+voice energy
+speech pace
+camera distance
+camera cut timing
+audience reaction delay
+```
+
+Then the same written joke becomes ten different performances.
+
+Freaktown already has the correct primitives:
+
+```text
+DeliveryScore
+PerformanceEngine
+StageTimeline
+camera cues
+expressions
+gesture
+pause_after_ms
+```
+
+That means once writing is sufficiently controlled, you're no longer studying only comedy writing.
+
+You're studying:
+
+> **performance grammar.**
+
+And once you introduce multiple characters, blocking and scene changes:
+
+> **sketch grammar.**
+
+Then camera cuts and visual composition:
+
+> **film grammar.**
+
+The same experimental machinery survives all three.
+
+---
+
+# FinalBuilds2's process attribution becomes particularly interesting here
+
+It already knows how to ask observationally:
+
+> Which process produced the strongest downstream outcomes?
+
+Imagine generation processes like:
+
+```text
+writer_v1_whole_set_prompt
+writer_v2_jokeblock_planner
+writer_v3_character_graph
+writer_v4_news_conditioned
+```
+
+or:
+
+```text
+director_static_v1
+director_punchline_close_v2
+director_reaction_cut_v3
+```
+
+Then you can empirically compare the **creative processes themselves**.
+
+That is a much more valuable long-term asset than comparing prompts.
+
+---
+
+# Jev fits precisely between artifact and inference
+
+Keep Jev as an annotator, not a decider.
+
+An episode goes through Jev:
+
+```text
+Did the character maintain its false belief? 0.93
+
+How visible was the contradiction? 0.81
+
+How much did the situation escalate? 0.72
+
+Was the closing beat a callback? yes
+
+Was the visual silhouette immediately readable? 0.88
+
+How self-aware was the character? 0.09
+```
+
+Then the actual humans tell us:
+
+```text
+retention
+comments
+sharing
+Pog
+return requests
+```
+
+FinalBuilds2 learns associations between:
+
+```text
+Jev-observed mechanisms
+×
+actual outcomes
+```
+
+It should never become:
+
+> Jev thinks this is hilarious → publish it.
+
+That would close the loop on the model's taste rather than human taste.
+
+---
+
+# Comments should feed the hypothesis generator
+
+This is where your hypothesis machine could become extremely good.
+
+Suppose comments repeatedly say:
+
+> “It's him genuinely thinking he did a good job that kills me.”
+
+> “The confidence is what makes this character.”
+
+> “His little pause after saying it 😭”
+
+Jev can turn these into evidence claims:
+
+```text
+character mechanism:
+misinterpreted_success
+
+performance:
+post-punchline stillness
+
+audience attribution:
+positive
+```
+
+Now the convergence detector sees:
+
+```text
+12 independent comments
++
+4 videos
++
+3 characters
++
+retention spikes at matching beats
+```
+
+and emits a cluster.
+
+Then an LLM can propose:
+
+> **H-114:** Post-punchline stillness amplifies dramatic-irony JokeBlocks more strongly than ordinary punchlines.
+
+That's a seriously good hypothesis.
+
+Then FinalBuilds2 asks:
+
+> What experiment maximally distinguishes this hypothesis from alternatives?
+
+That is the machine.
+
+---
+
+# The next-piece selector should become “information gain first”
+
+Rather than asking:
+
+> What video do we predict will get the most views?
+
+ask:
+
+> Which next video is simultaneously likely to be entertaining **and** maximally reduces important uncertainty?
+
+Conceptually:
+
+```text
+probe_score =
+    expected_entertainment
+  + 1.5 × expected_information_gain
+  + novelty/coverage
+  + replication_value
+  - cost
+  - redundancy
+```
+
+Early Pogtown should heavily favor **exploration**.
+
+I still like:
+
+```text
+70% explore
+20% explain/replicate
+10% exploit
+```
+
+An exceptional video moves into the explanation bucket immediately.
+
+---
+
+# A Gold Run becomes an automatic hypothesis generator
+
+Suppose one episode massively outperforms.
+
+FinalBuilds2 knows all its frozen factors:
+
+```text
+Nolan@14
+
+JokeBlocks:
+FALSE_EXPERTISE
+MISINTERPRETED_SUCCESS
+
+topic:
+airport security
+
+mesh:
+police-dog-v3
+
+voice:
+nolan-v2
+
+performance:
+deadpan@7
+
+camera:
+close-after-punchline@3
+
+title:
+"DOG EXPLAINS AIRPORT SECURITY"
+
+first frame:
+close-up
+
+duration:
+27.2s
+```
+
+Instead of:
+
+> “make more Nolan airport videos”
+
+it creates competing explanations:
+
+```text
+H-A: Nolan drove the result.
+H-B: MISINTERPRETED_SUCCESS drove it.
+H-C: airport-security topical relevance drove it.
+H-D: the visual mesh drove initial retention.
+H-E: deadpan timing drove it.
+H-F: title/first frame drove acquisition.
+```
+
+Then it constructs the cheapest discriminating probes.
+
+That's exactly the behavior I'd want.
+
+---
+
+# The avatar stack: do not rebuild Freaktown around a new engine
+
+I did a current web pass specifically for what you could realistically get live **now**.
+
+My recommendation is very clear:
+
+> **Keep Three.js + VRM as Pogtown's canonical runtime. Add better motion/facial providers around it.**
+
+`@pixiv/three-vrm` is active, supports VRM 1.0 and has a VRM animation layer; it fits your existing browser StageRuntime rather than forcing you into Unity/Unreal. [GitHub](https://github.com/pixiv/three-vrm?utm_source=chatgpt.com)
+
+## The stack I would use
+
+| Layer | P0 now | Upgrade later |
+|---|---|---|
+| World | Marble → frozen club | more worlds / Atlas etc. |
+| Runtime | Three.js + `@pixiv/three-vrm` | keep |
+| Rigging | Meshy for humanoids | UniRig fallback |
+| Body motion | curated motion clips + retargeting | ARDY |
+| Gesture | authored semantic library | StreamTalk |
+| Lip sync | `three-vrm-lip-sync` | Audio2Face |
+| Facial emotion | VRM expressions | Audio2Face |
+| Voice | current Freaktown TTS router | keep provider-neutral |
+| Direction | Freaktown StageTimeline | evolve scientifically |
+| Post | fframes/FFmpeg | richer deterministic compositor |
+
+That's what I'd ship.
+
+---
+
+# Rigging: Meshy first, UniRig fallback
+
+You already have Meshy integration experience.
+
+Meshy's API can rig a model and then apply preset animations or Text-to-Motion clips. The important limitation is that its programmatic rigging currently works best on recognizable standard humanoid bipeds. [Meshy Docs](https://meshy-docs.vercel.app/en/api/rigging?utm_source=chatgpt.com)
+
+So:
+
+```text
+humanoid-looking character
+→ Meshy rig API
+```
+
+For weirder Freaks, look at **UniRig**.
+
+UniRig's stated goal is literally diverse automatic 3D rigging: it predicts skeleton topology and skin weights for varied 3D assets rather than requiring one canonical humanoid skeleton. [GitHub](https://github.com/vltrx/UniRig?utm_source=chatgpt.com)
+
+But I would consider UniRig:
+
+> promising asynchronous fallback
+
+rather than:
+
+> mandatory production dependency tonight.
+
+Your existing avatar capability contract already solves this elegantly.
+
+```text
+humanoid=true/false
+blink
+visemes
+expressions
+look_at
+```
+
+If some grotesque chair monster can't shrug:
+
+> it doesn't shrug.
+
+That's a feature of Freaktown.
+
+---
+
+# The highest-leverage motion trick: record real performances once
+
+This is what I'd do rather than immediately deploying a giant diffusion motion model.
+
+You already had the instinct earlier:
+
+> record yourself performing actions.
+
+Correct.
+
+Record a tiny **Pogtown Motion Library**:
+
+```text
+neutral stand
+walk on
+walk off
+small conversational gesture
+big emphasis
+shrug
+lean in
+look away
+awkward reaction
+confident nod
+nervous shift
+dead stare
+celebrate
+deflated
+point
+mic adjustment
+bow
+```
+
+Then extract real motion and retarget it.
+
+A recent open-source project called **MotionMind** already demonstrates essentially the exact architecture: ordinary video → GVHMR/SMPL motion → retarget onto VRM → deterministic browser animation with Three.js. It emphasizes that the resulting motion is structured joint motion rather than generated pixels, so the same clip can drive different avatars. [GitHub](https://github.com/rohitacharyams/MotionMind?utm_source=chatgpt.com)
+
+I would steal that architecture aggressively.
+
+You don't necessarily have to depend on the whole repo.
+
+Your pipeline becomes:
+
+```text
+Tom performs awkward stare on phone
+        ↓
+video
+        ↓
+GVHMR / SMPL
+        ↓
+canonical motion
+        ↓
+VRM retarget
+        ↓
+motion asset:
+reaction.awkward_stare@1
+        ↓
+every suitable Freak can use it
+```
+
+That will look more naturally acted **immediately** than asking text-to-motion to invent every conversational gesture.
+
+---
+
+# `ff-tracking` gives you another extremely useful principle
+
+Not avatar movement directly.
+
+**Timeline-driven rendering.**
+
+Its strongest architectural idea is that:
+
+```text
+camera
+visual state
+sound
+effects
+```
+
+all read the same deterministic timing data.
+
+That is exactly what Freaktown needs.
+
+Your equivalent:
+
+```text
+StageTimeline
+     ├── body
+     ├── face
+     ├── voice
+     ├── camera
+     ├── captions
+     ├── sound
+     └── post FX
+```
+
+Then fframes is potentially excellent as the **offline final compositor**.
+
+Three.js renders the stage plate.
+
+fframes/FFmpeg can add:
+
+```text
+captions
+punch-in
+grain
+camera effects
+graphic overlays
+end cards
+```
+
+all driven from the same timeline.
+
+I'd strongly consider that.
+
+---
+
+# `TERRA` is interesting, but not for this MVP
+
+Its strongest lesson is again architectural:
+
+> structured motion → retarget → validate → artifact → reuse.
+
+But TERRA is specifically terrain-aware musculoskeletal control and PPO, and some of the SMPL-related dependencies/data have restrictive licensing considerations documented by the project itself.
+
+It is far beyond what a synthetic stand-up comedian needs tonight.
+
+Where it gets interesting later:
+
+```text
+AR character walking stairs
+physical terrain
+park performance
+venue geometry
+more realistic locomotion
+```
+
+So keep it in the future research bucket.
+
+---
+
+# Speech/lip sync: P0 can now be embarrassingly easy
+
+There is a new small library called `three-vrm-lip-sync` that takes an audio file or stream and drives the standard five VRM viseme expressions entirely in-browser using an AudioWorklet. It can coexist with AnimationMixer body clips. [GitHub](https://github.com/vlapky/three-vrm-lip-sync/?utm_source=chatgpt.com)
+
+That's almost perfect for Freaktown P0.
+
+```text
+TTS WAV
+   ↓
+Web Audio
+   ├── speaker
+   └── three-vrm-lip-sync
+            ↓
+         VRM mouth
+```
+
+No phoneme extraction pipeline.
+
+No server viseme baking.
+
+No new provider.
+
+Get it working.
+
+---
+
+# Then Audio2Face is the quality upgrade
+
+NVIDIA has now made Audio2Face-3D a much more practical component.
+
+Current Audio2Face can generate audio-driven facial performance including jaw, eyes, tongue and skin movement; it supports both geometry outputs and solving onto blendshape controls. NVIDIA says it supports streaming/batch workflows and faster-than-real-time generation. [GitHub](https://github.com/NVIDIA/Audio2Face-3D-SDK/blob/main/docs/README.md?utm_source=chatgpt.com)
+
+The NIM/sample stack can specifically emit **ARKit blendshape animation with inferred or specified emotion**. [GitHub](https://github.com/NVIDIA/Audio2Face-3D-Samples?utm_source=chatgpt.com)
+
+So later your avatar contract can say:
+
+```text
+face_driver:
+  arkit52
+```
+
+and Audio2Face supplies a much richer face.
+
+Fallback:
+
+```text
+vrm5
+→ browser lip sync
+
+jaw_only
+→ amplitude
+
+none
+→ leave face alone
+```
+
+Again: capabilities, not provider names.
+
+---
+
+# Do not make Audio2Face mandatory for every Freak
+
+A sentient Roomba can be hilarious with:
+
+```text
+no mouth
+tiny rocking motion
+excellent voice
+perfect 1.2-second pause
+camera slowly pushing in
+```
+
+Trying to make every bizarre Freak into a photoreal digital human would kill the visual identity.
+
+Performance quality ≠ facial realism.
+
+---
+
+# ARDY is the motion upgrade I would watch most closely
+
+ARDY is a current SIGGRAPH 2026 system for **interactive long-horizon human motion generation** with text prompting plus spatial/keyframe constraints. The released code targets real-time responsiveness and can run with relatively modest GPU memory. [GitHub](https://github.com/zwukong/ardy-keyframeMotionGeneration?utm_source=chatgpt.com)
+
+That's extremely relevant eventually.
+
+Freaktown could say:
+
+```text
+walk toward mic
+
+stop here
+
+lean slightly forward
+
+gesture expansively
+
+return to neutral
+```
+
+with hard constraints.
+
+That's much more useful than an unconstrained:
+
+> “make funny movement.”
+
+But I would not put ARDY in your critical path tonight.
+
+---
+
+# StreamTalk is probably the eventual co-speech gesture layer
+
+A brand-new 2026 project called StreamTalk is explicitly aimed at real-time, long-horizon **speech-driven co-gesture generation**, using SMPL-X-style motion and key-pose anchoring to prevent drift. [GitHub](https://github.com/Xiangyue-Zhang/StreamTalk?utm_source=chatgpt.com)
+
+That's almost exactly the missing component for:
+
+> character naturally gesticulates while talking.
+
+But it is extremely new.
+
+I would test it as research.
+
+Don't make it the only way anyone can move.
+
+---
+
+# So the P0 “fluid actor” stack is simpler than it seems
+
+This is what I would implement immediately:
+
+```text
+                         SCRIPT
+                           │
+                           ▼
+                     DeliveryScore
+             text / timing / expression
+                           │
+                           ▼
+                     TTS AUDIO
+                           │
+           ┌───────────────┴───────────────┐
+           ▼                               ▼
+  browser VRM lip-sync                StageTimeline
+                                           │
+                        ┌──────────────────┼───────────────┐
+                        ▼                  ▼               ▼
+                   Motion Clip          Camera          Expression
+                        │                  │               │
+                        └─────────────┬────┴───────────────┘
+                                      ▼
+                              Three.js + VRM
+                                      │
+                           Marble Comedy Club
+                                      │
+                                      ▼
+                                 Stage Render
+                                      │
+                                      ▼
+                             fframes / FFmpeg
+                                      │
+                                      ▼
+                               YouTube MP4
+```
+
+Very little of that needs new research.
+
+---
+
+# Use Marble for exactly one thing right now
+
+Generate a **single great Pogtown Comedy Club**.
+
+World Labs' World API can generate explorable spatial environments from text/images/video and lets those worlds be used downstream in rendering or interactive systems. [World Labs](https://www.worldlabs.ai/blog/announcing-the-world-api?utm_source=chatgpt.com)
+
+Don't generate a venue per video.
+
+Make:
+
+```text
+pogtown-club@1
+```
+
+Freeze it.
+
+Define:
+
+```text
+stage anchor
+mic anchor
+entrance
+audience
+Ella position
+wide camera
+medium camera
+close camera
+side camera
+audience camera
+```
+
+Then every experiment has the same club.
+
+Excellent control variable.
+
+---
+
+# What I would do with FinalBuilds2 this weekend
+
+Don't copy FinalBuilds2 into Freaktown.
+
+Create a new domain adapter.
+
+Conceptually:
+
+```text
+finalbuilds2/domains/pogtown
+```
+
+or equivalent configuration.
+
+It provides:
+
+```text
+candidate registries
+sensors
+hypothesis namespace
+metrics
+experiment types
+admission scorer
+resolvers
+```
+
+The core FinalBuilds system remains generic.
+
+---
+
+# The Pogtown candidate registry
+
+I would seed it with maybe:
+
+```text
+20 character premises
+10 JokeBlocks
+20 topic families
+5 performance styles
+5 camera theories
+5 visual hypotheses
+```
+
+Not thousands.
+
+Then let the machine generate new ones over time.
+
+Example CharacterIdea:
+
+```json
+{
+  "id": "char_paranoid_pigeon_v1",
+
+  "domain": "pogtown",
+  "kind": "character",
+
+  "generator_id": "character_contradiction_generator_v1",
+
+  "premise": "A conspiracy pigeon who knows birds aren't real because he is one.",
+
+  "mechanism_features": {
+    "false_belief": true,
+    "dramatic_irony": 0.95,
+    "status_conflict": 0.5
+  },
+
+  "parents": [
+    "character_theory_false_belief_v1"
+  ]
+}
+```
+
+Now if that generator repeatedly produces great characters:
+
+FinalBuilds process attribution can discover that.
+
+Very cool.
+
+---
+
+# You need separate generators too
+
+This is another FinalBuilds primitive worth stealing.
+
+Not:
+
+```text
+generate_character()
+```
+
+but:
+
+```text
+contradiction_character_generator
+false_belief_generator
+visual_first_character_generator
+topical_character_generator
+relationship_generator
+```
+
+Now you can learn:
+
+> Which method produces good characters?
+
+Same for JokeBlocks.
+
+That's **meta-creative science**.
+
+---
+
+# The hypothesis graph could eventually become enormous
+
+Example hierarchy:
+
+```text
+H-HUMOUR
+│
+├── H-dramatic-irony
+│   ├── H-misinterpreted-success
+│   └── H-visible-contradiction
+│
+├── H-status
+│   ├── H-status-reversal
+│   └── H-false-expertise
+│
+└── H-timing
+    ├── H-punchline-hold
+    └── H-delayed-reaction
+
+
+H-CHARACTER
+│
+├── H-low-self-awareness
+├── H-core-contradiction
+├── H-sincere-overconfidence
+└── H-recurring-callbacks
+
+
+H-PERFORMANCE
+│
+├── H-stillness
+├── H-camera-proximity
+├── H-gesture-density
+└── H-delivery-speed
+
+
+H-VIRALITY
+│
+├── H-first-frame
+├── H-recognizability
+├── H-topicality
+└── H-shareable-quote
+```
+
+Hypotheses branch rather than get overwritten.
+
+FinalBuilds already explicitly supports this philosophy.
+
+---
+
+# Experimental assignment needs one upgrade
+
+Current FinalBuilds `ExperimentEngine` assumes:
+
+```text
+site ID
+→ stable treatment/control bucket
+```
+
+That's great for randomized surfaces.
+
+Make its experimental unit generic:
+
+```text
+unit_id
+```
+
+Then:
+
+### Pogtown
+
+```text
+viewer/session ID
+→ truly randomized arm
+```
+
+### YouTube
+
+Do **not** call it randomized assignment.
+
+Use:
+
+```text
+experiment_type = observational_matched_probe
+```
+
+with:
+
+```text
+release covariates
+traffic source
+video age
+channel state
+```
+
+Those are two different experiment classes.
+
+Never mix them in reports.
+
+---
+
+# The current statistics engine is intentionally basic
+
+`compareMeans()` with a z approximation is fine for smoke testing.
+
+It is not the final Pogtown science engine.
+
+Eventually:
+
+```text
+science/
+    descriptive
+    matched probes
+    randomized trials
+    hierarchical model
+    posterior summaries
+    multiple-testing policy
+```
+
+But again:
+
+**do not block rendering Nolan on this.**
+
+---
+
+# If you want Pogtown live immediately, this is the actual sprint
+
+1. **Generate `pogtown-club@1` in Marble and freeze it.** Do not build world-generation infrastructure beyond a provider wrapper.
+
+2. **Take one existing Freak mesh—Nolan if possible, otherwise a humanoid test freak—and get it to a normalized avatar contract.** Use Meshy for a clean humanoid rig; try UniRig separately for weird meshes. [Meshy Docs](https://meshy-docs.vercel.app/en/api/rigging?utm_source=chatgpt.com)
+
+3. **Create 12–20 reusable motion clips from real performances**, preferably by recording yourself acting out stand-up gestures and retargeting them via the MotionMind-style video→SMPL→VRM pipeline. This gives you fluid, human motion immediately. [GitHub](https://github.com/rohitacharyams/MotionMind?utm_source=chatgpt.com)
+
+4. **Install `three-vrm-lip-sync` into the current Three.js StageRuntime.** Feed it the existing Freaktown TTS audio. Get mouth movement today. [GitHub](https://github.com/vlapky/three-vrm-lip-sync/?utm_source=chatgpt.com)
+
+5. **Make StageTimeline the only authority for timing.** Voice beats, pauses, body clips, expressions, cameras, captions and post effects all come from one immutable timeline.
+
+6. **Freeze five camera positions and one simple `standup-short@1` camera grammar.** No AI cinematographer yet.
+
+7. **Use fframes/FFmpeg as the deterministic post-production layer.** Render the clean Three.js stage first, then overlay captions, graphics, zoom/effects from the same StageTimeline. The design pattern in `ff-tracking` is ideal for this.
+
+8. **Define only five JokeBlocks and one real CharacterGraph for Nolan.** Do not wait for the universal comedy ontology.
+
+9. **Add `ProbeManifest`, `EpisodePack`, and `domain=pogtown` candidate/hypothesis support to FinalBuilds2.** Do not rewrite its event/hypothesis infrastructure.
+
+10. **Create one two-arm experiment.** Same Nolan, same club, same performance system, same topic family; manipulate one JokeBlock.
+
+11. **Send both EpisodePacks through Influence Review Canvas and qprivately, then post them.** The external consequence system is already conceptually defined.
+
+12. **Ingest age-normalized YouTube metrics and comments.** Let Jev annotate the creative mechanisms.
+
+13. **Write one real FinalBuilds Forecast before looking at the result.**
+
+14. **Resolve it.** Even if it loses.
+
+15. **Have FinalBuilds choose probe #3 specifically because of what #1/#2 taught it.**
+
+If you reach step 15, Pogtown is alive.
+
+---
+
+# And then immediately move into performance experiments
+
+Once the basic actor looks passable, stop improving graphics for a moment.
+
+Run something like:
+
+```text
+same Nolan
+same script
+same voice
+same mesh
+same club
+
+A:
+300ms punchline hold
+
+B:
+1200ms punchline hold
+```
+
+Then:
+
+```text
+same everything
+
+A:
+medium camera
+
+B:
+close-up during punchline
+```
+
+Then:
+
+```text
+same everything
+
+A:
+big gestures
+
+B:
+almost completely still
+```
+
+This will tell you more about synthetic acting than another month of visual polish.
+
+---
+
+# The path into sketches and filmmaking is completely natural
+
+Stand-up:
+
+```text
+one actor
+one location
+one timeline
+```
+
+Sketch:
+
+```text
+multiple CharacterGraphs
++
+scene state
++
+blocking
++
+dialogue
++
+shot grammar
+```
+
+Film:
+
+```text
+scene graph
++
+multiple locations
++
+editing grammar
++
+sound design
++
+visual motifs
++
+story arcs
+```
+
+FinalBuilds does not care.
+
+It still sees:
+
+```text
+hypothesis
+→ controlled creative process
+→ artifact
+→ observation
+→ inference
+```
+
+That's what makes the architecture strong.
+
+---
+
+# My recommendation on technologies
+
+For **getting Pogtown live**, I would decisively choose:
+
+> **Marble + Three.js/VRM + real captured/retargeted motion + Freaktown TTS + browser VRM lip-sync + StageTimeline + fframes/FFmpeg.**
+
+Do **not** block on:
+- Unreal;
+- MetaHumans;
+- full Audio2Face deployment;
+- ARDY;
+- StreamTalk;
+- musculoskeletal simulation;
+- photoreal humans.
+
+Those are upgrades.
+
+The quality breakthrough you need first is:
+
+> **good timing + believable body motion + stable character silhouette + clean camera language.**
+
+Then add Audio2Face where avatars have appropriate facial rigs. Then experiment with ARDY for generative motion and StreamTalk for natural co-speech gestures. Audio2Face currently offers materially richer audio-driven facial animation than the simple VRM lip-sync path, while ARDY and StreamTalk are promising current research for interactive full-body and co-speech motion respectively. [GitHub](https://github.com/NVIDIA/Audio2Face-3D-SDK/blob/main/docs/README.md?utm_source=chatgpt.com)
+
+And crucially: because everything enters through your **AvatarCapabilities + MotionProvider + FaceDriver contracts**, none of those future upgrades require changing Pogtown's scientific model.
+
+That is the stack I would put an agent on now.

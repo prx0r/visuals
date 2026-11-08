@@ -1,0 +1,27 @@
+I completed the deep review and packaged the full engineering dossier.
+
+**Main verdict: `cuntgoblin` does not currently work end-to-end at the inspected `master` head.** This is not just missing polish: there are deterministic wiring breaks. `api.py` and the MCP layer import a nonexistent `factory.system`; Docker tries to start that nonexistent module; `global_os/go.py` imports sibling modules absent from the current directory; and the research packet imports search functions absent from the scoring engine.
+
+There **is good stuff worth preserving**. `factory/hotswap` is legitimately useful: quality floors, quota-aware selection, Bayesian/bandit feedback, expected completion cost, Pareto filtering and fallback planning are real mechanisms rather than agent-framework decoration.  Its tests cover budgets, quota reservation, free-route behavior, quality gates and failure classification.  The market layer is also strong: source-breadth gates, mandatory-unknown handling, factory reuse/genesis logic and value-of-information research selection are exactly the kinds of anti-bullshit mechanisms you want.
+
+The biggest architectural recommendation is **do not build another giant orchestrator**. Make VentureLab a durable **Factory Kernel**, then use Hermes as its execution substrate. Current Hermes already has SQLite-backed multi-profile Kanban, idempotency keys, retries, runtime limits, isolated workspaces, skills and a dispatcher. ([github.com][1]) It also exposes HTTP, JSON-RPC and ACP programmatic interfaces over the same agent core. ([GitHub][2]) Your present wrapper is behind the current Kanban command surface: modern automation is board-scoped `create`, and comments operate on a concrete task ID. The dossier includes a replacement adapter.
+
+I also deliberately filtered the research to things that map to code you already have rather than adding fashionable infrastructure. **WISERouter** maps directly onto HotSwap by adding workload-level budget constraints and contextual bandit learning. ([arXiv][3]) **BaRP** is directly relevant because VentureLab observes feedback only for the route it actually selects. ([arXiv][4]) **Verified Multi-Agent Orchestration** gives you the right research/build pattern: dependency DAG → parallel execution → independent verification → bounded replanning. ([arXiv][5]) LangGraph is useful primarily as a reference for durable execution/checkpoint/idempotency principles; I would not add it yet unless your small scheduler becomes painful. ([GitHub][6]) The handwritten MCP server should be replaced with the official SDK; as of August 2026 its v2 line is stable and uses `MCPServer`. ([GitHub][7])
+
+The factory expansion I settled on is also in the bundle. Beyond your **API/Data Oracle Factory** and **Agent Factory**, the strongest candidates are **Connector Factory** (API/OpenAPI → SDK + CLI + MCP + tests), **Dataset/Benchmark Factory**, **Commerce/Shopify Factory**, **Research-Transfer Factory**, **Vertical Intelligence Factory**, **Micro-SaaS Factory**, **Automation Factory**, and **Data Pipeline Factory**. The important part is that your existing `factory_genesis_decision()` should decide whether a new factory deserves to exist rather than spawning factories because an idea sounds interesting.
+
+The ZIP contains **55 files**, including the full peer review, P0/P1/P2 roadmap, architecture diagrams, Hermes orchestration design, HotSwap upgrade, research/evidence specification, certification/eval design, database schema, durable scheduler starter, corrected Hermes Kanban adapter, bounded Hermes worker, proposed composition root, REST/MCP starters, four Hermes skills, proposed CI/packaging, Shopify design, 16-factory catalog, machine-readable implementation tasks, acceptance checklists, source ledger and SHA-256 manifest. All nine included Python reference files were syntax-checked, and the archive itself passed ZIP integrity checking.
+
+**Start with `03_P0_BREAKAGES.md` and implement `P0-01` through `P0-10` before adding another factory.**
+
+[Download the complete VentureLab peer-review + implementation ZIP](sandbox:/mnt/data/venturelab_peer_review_2026-08-18.zip)
+
+Because Hermes/agent infrastructure and routing research are moving quickly, I can also monitor GitHub/arXiv for genuinely relevant new orchestration, routing and factory-runtime developments rather than generic agent news.
+
+[1]: https://github.com/nousresearch/hermes-agent/blob/main/website/docs/reference/cli-commands.md?utm_source=chatgpt.com "hermes-agent/website/docs/reference/cli-commands.md at main · NousResearch/hermes-agent · GitHub"
+[2]: https://github.com/nousresearch/hermes-agent/blob/main/website/docs/developer-guide/programmatic-integration.md "https://github.com/nousresearch/hermes-agent/blob/main/website/docs/developer-guide/programmatic-integration.md"
+[3]: https://arxiv.org/abs/2607.23765 "https://arxiv.org/abs/2607.23765"
+[4]: https://arxiv.org/abs/2510.07429 "https://arxiv.org/abs/2510.07429"
+[5]: https://arxiv.org/abs/2603.11445 "https://arxiv.org/abs/2603.11445"
+[6]: https://github.com/langchain-ai/langgraph "https://github.com/langchain-ai/langgraph"
+[7]: https://github.com/modelcontextprotocol/python-sdk/blob/main/README.md "https://github.com/modelcontextprotocol/python-sdk/blob/main/README.md"

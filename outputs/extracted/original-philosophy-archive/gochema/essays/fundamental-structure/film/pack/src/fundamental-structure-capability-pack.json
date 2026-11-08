@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "id": "fundamental-structure",
+  "title": "Fundamental Structure",
+  "description": "Visual primitives and proof states for the recursive o/x static and dynamic structure.",
+  "extends": [
+    "invariant-composition",
+    "temporal-processes",
+    "systems-dynamics",
+    "pathkit-geometry"
+  ],
+  "defaultTheme": "whiteScientific",
+  "runtimeModule": "../../src/fundamental-structure-visuals.mjs",
+  "themes": [],
+  "assets": [],
+  "mechanisms": [
+    {
+      "id": "fundamental-structure",
+      "description": "Twenty-seven proof states spanning distinction, interchange, recursion, duration, intensity and temporal hierarchy.",
+      "relations": [
+        "distinction",
+        "priority",
+        "transformation",
+        "invariance",
+        "recursion",
+        "duration",
+        "selection"
+      ],
+      "operators": [
+        "introduce",
+        "pair",
+        "interchange",
+        "superpose",
+        "recurse",
+        "accelerate",
+        "replace",
+        "weight",
+        "select"
+      ],
+      "semanticTags": [
+        "nanavira",
+        "fundamental-structure",
+        "static",
+        "dynamic",
+        "reflexion",
+        "time"
+      ],
+      "motionProof": "Each scene performs one formal construction in the same o/x alphabet.",
+      "parameters": {}
+    }
+  ],
+  "selectionPolicy": {
+    "requireMotionProof": true,
+    "maximumConsecutiveMechanism": 27
+  }
+}

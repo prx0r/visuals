@@ -1,0 +1,443 @@
+Yes. The current ecosystem is much better than it was a few months ago. For Stealth, I’d separate providers into **(A) uncensored/reduced-refusal**, **(B) verifiable TEE/private inference**, and **(C) the rare overlap where you get both**.
+
+The strongest overlap I found right now is **Phala/RedPill, Venice, and a few newer providers exposing uncensored open-weight models through confidential infrastructure**.
+
+| Provider            |                   Uncensored / reduced-refusal |                                  TEE / E2EE |               API | Notes                                            |
+| ------------------- | ---------------------------------------------: | ------------------------------------------: | ----------------: | ------------------------------------------------ |
+| **Phala / RedPill** |                                        **Yes** |                                     **Yes** | OpenAI-compatible | Best direct match                                |
+| **Venice**          |                                        **Yes** | **Yes, including E2EE on supported models** | OpenAI-compatible | Very attractive Stealth backend                  |
+| **Chutes**          |         Not specifically uncensored by default |                                     **Yes** | OpenAI-compatible | Huge cheap TEE catalogue                         |
+| **NanoGPT**         |      Some open-weight / reduced-refusal routes |                                     **Yes** | OpenAI-compatible | Aggregator, already familiar                     |
+| **Tinfoil**         | Open-weight models; not marketed as uncensored |                                     **Yes** | OpenAI-compatible | Strong verifiable privacy                        |
+| **NEAR AI**         |                    Mostly standard open models |                              **Yes / E2EE** | OpenAI-compatible | Confidential inference                           |
+| **PPQ.ai**          |              **Separate uncensored catalogue** |             **Separate E2EE TEE catalogue** | OpenAI-compatible | Interesting but uncensored ≠ necessarily private |
+| **Confidential.ai** |      Open weights, not specifically uncensored |                                     **Yes** | OpenAI-compatible | Strong attestation design                        |
+| **Vynaris**         |                                        **Yes** |                      unclear/not core claim | OpenAI-compatible | Security/red-team oriented                       |
+| **Unlid**           |                                        **Yes** |                   No strong TEE claim found | OpenAI-compatible | 9 uncensored checkpoints                         |
+| **Uncensored.ai**   |                                        **Yes** |                 No verified TEE claim found | OpenAI-compatible | Straight uncensored API                          |
+| **uncensored.chat** |                                        **Yes** |                 No verified TEE claim found | OpenAI-compatible | Hosted uncensored API                            |
+
+### 1. Phala / RedPill is almost exactly what you were asking for
+
+Phala currently lists **28 TEE models** and explicitly has uncensored variants including:
+
+* `Gemma-4 26B-A4B Uncensored (Heretic)`
+* `Qwen3.6 35B-A3B Uncensored (Aggressive)`
+
+alongside GLM 5.3, GLM 5.3 Flash, DeepSeek V4 Flash, Qwen3.8 27B, Kimi K3, GPT-OSS 120B/20B and others. ([Phala][1])
+
+RedPill is effectively a convenient storefront/router for this confidential model ecosystem, and current listings show models served through Phala-backed TDX-attested environments. ([RedPill][2])
+
+This is the cleanest:
+
+```text
+Stealth
+   ↓
+OpenAI-compatible API
+   ↓
+Phala / RedPill
+   ↓
+TEE
+   ↓
+uncensored open-weight model
+```
+
+For your use case, **this should be one of our default backends**.
+
+---
+
+## 2. Venice is arguably even more interesting
+
+Venice now exposes four distinct privacy modes:
+
+```text
+Anonymous
+Private
+TEE
+E2EE
+```
+
+Their E2EE mode encrypts the request client-side and only decrypts it inside the verified enclave. Venice says even its own service can't see the prompt in that mode. ([Venice][3])
+
+And their API is explicitly designed around **uncensored models**.
+
+Current docs expose a `text:uncensored` / `most_uncensored` model trait and models such as `gemma-4-uncensored`; their API supports OpenAI SDK compatibility. ([GitHub][4])
+
+Even more relevant: Venice has offered TEE/E2EE variants of its own uncensored models and open models including GPT-OSS, Gemma and GLM, although their exact catalogue changes frequently. Their changelog explicitly warns models are routinely added/deprecated. ([Featurebase][5])
+
+Also:
+
+> Venice supports **x402 wallet authentication**, meaning an agent can pay using USDC without a conventional API account/key flow. ([GitHub][4])
+
+For Stealth that is very interesting:
+
+```text
+private commerce agent
+        │
+        ├─ private inference
+        └─ machine-native payment
+```
+
+I would definitely integrate Venice.
+
+---
+
+## 3. Chutes is probably the best cheap confidential-model pool
+
+This one surprised me.
+
+Chutes' current live catalogue has **14 TEE models**, all accessible over a normal OpenAI-compatible endpoint. Current examples include:
+
+* Mistral Nemo
+* Nemotron 3 Nano Omni
+* Qwen3 32B
+* Gemma 4 31B
+* Qwen3.6 27B
+* **Qwen3.8 27B**
+* DeepSeek V4 Flash 0731
+* Qwen3.5 397B A17B
+* Kimi K2.6
+* GLM 5.1
+* GLM 5.2
+* Kimi K3
+
+and others. ([Chutes][6])
+
+Prices are extremely aggressive. Some models start around **$0.0245/M input**, and Qwen3 32B TEE is around $0.10/M input. ([Chutes][7])
+
+This is almost perfect for our cheap agent workloads.
+
+Important caveat: Chutes recommends actually validating the attestation evidence rather than assuming `-TEE` in the model name proves anything. That's exactly the attitude Stealth should adopt. ([Chutes][6])
+
+So:
+
+```text
+Stealth ModelRouter
+
+routine/private:
+    Chutes TEE
+
+strong/private:
+    GLM / Qwen / Kimi TEE
+
+uncensored/private:
+    Phala/RedPill or Venice
+```
+
+---
+
+## 4. NanoGPT remains useful, but not as the root of trust
+
+A current independent confidential-inference directory tracks NanoGPT as having roughly **28 confidential models**, using H100 confidential compute plus attestation/signature mechanisms. ([Confidential Inference][8])
+
+That's useful because it gives us **one aggregator endpoint**.
+
+But architecturally I'd rather have Stealth know the actual underlying trust level:
+
+```text
+NanoGPT route:
+   TEE?             yes/no
+   provider?        X
+   attestation?     X
+   uncensored?      X
+```
+
+rather than:
+
+```text
+"NanoGPT says private"
+```
+
+So keep NanoGPT, but treat it as a **router**.
+
+---
+
+# 5. Tinfoil is one of the strongest privacy-first options
+
+Tinfoil is building specifically around **verifiably private inference**.
+
+They now go beyond model inference: **Tinfoil Containers** allow the application's own backend/agent loop to run inside confidential infrastructure. ([Tinfoil][9])
+
+This is extremely relevant because private inference alone doesn't solve:
+
+```text
+Goose process
+ ↓
+reads wallet/address/messages
+ ↓
+calls private LLM
+```
+
+If the Goose machine itself is compromised, your TEE model isn't enough.
+
+Potential later architecture:
+
+```text
+user device
+    │ encrypted
+    ▼
+Tinfoil confidential container
+    │
+    ├─ Goose
+    ├─ QP
+    ├─ Stealth state
+    │
+    ▼
+private inference
+```
+
+That's probably overkill for v1, but conceptually important.
+
+---
+
+# 6. PPQ is interesting because they expose both categories
+
+PPQ's private models use HPKE encryption from a local open-source proxy into the enclave. PPQ says it sees ciphertext/routing metadata rather than the prompt/completion. ([PayPerQ][10])
+
+They also recently added a sizeable **uncensored model section**.
+
+But there's a subtlety: PPQ itself explicitly says an uncensored Gemma model may be running in an enclave upstream while **not carrying PPQ's own end-to-end attestation/privacy guarantee**. ([PayPerQ][11])
+
+That distinction is crucial:
+
+```text
+UNCENSORED ≠ PRIVATE
+
+TEE somewhere ≠ VERIFIED END-TO-END TEE
+```
+
+Stealth should encode that distinction in the UI.
+
+---
+
+# 7. Confidential.ai looks technically excellent
+
+This is more privacy-engineering-oriented than “uncensored.”
+
+They provide:
+
+* OpenAI-compatible API
+* confidential inference
+* fresh attestation with nonces
+* Intel TDX verification
+* workload/container hashes
+* model routes
+* signed/verifiable infrastructure
+
+and explicitly document **failing closed** if attestation doesn't match. ([Confidential AI][12])
+
+Current model descriptions include DeepSeek V4 Flash/Pro, Qwen3.6, GLM 5.2, and Kimi K3 capacity. ([Confidential AI][13])
+
+This should be one of our reference implementations for how Stealth handles attestation.
+
+---
+
+# 8. NEAR AI
+
+NEAR appears in the current confidential-inference landscape with Intel TDX + NVIDIA confidential GPU infrastructure and E2EE/attestation mechanisms. The current directory reports around 14 models across Qwen, DeepSeek, Kimi, GPT-OSS/other open-weight families. ([Confidential Inference][8])
+
+I wouldn't make it primary until we verify the exact live catalogue/API during implementation, but it belongs in the adapter list.
+
+---
+
+# 9. Pure uncensored providers
+
+If privacy isn't required for a particular request, there are several more options.
+
+**Vynaris** currently hosts reduced-refusal/uncensored models such as Qwen3.6 35B A3B uncensored, with an OpenAI-compatible API aimed particularly at authorized security research/red teaming. ([Vynaris][14])
+
+**Unlid** currently advertises **17 served models / 9 uncensored checkpoints**, including GLM-5.3 Flash uncensored, over an OpenAI-compatible API. ([Unlid][15])
+
+**Uncensored.ai** has an OpenAI-compatible hosted uncensored model API. ([Uncensored AI][16])
+
+**uncensored.chat** similarly has paid API access and hosted uncensored model variants. ([Uncensored Chat][17])
+
+These aren't what I'd use for truly sensitive Stealth state unless we separately verify their privacy architecture.
+
+---
+
+# 10. OpenRouter: useful discovery/router, not the privacy layer
+
+OpenRouter now exposes per-provider retention/training information. Its provider directory includes distinctions such as:
+
+* zero retention
+* prompt retention
+* training/no training
+* BYOK
+
+across dozens of providers. ([OpenRouter][18])
+
+That's useful for ordinary model routing.
+
+But for Stealth, **“zero retention” is weaker than TEE + attestation**.
+
+There is a hierarchy:
+
+```text
+Weakest
+│
+├ ordinary API
+├ "we don't train"
+├ zero-data-retention policy
+├ operator-controlled private infrastructure
+├ TEE
+├ remotely attested TEE
+├ E2EE → attested TEE
+└ local inference
+Strongest
+```
+
+Not absolute in every threat model, but directionally that's how I'd think about it.
+
+---
+
+# There is already a meta-layer we can reuse too
+
+The project **Dstack Private AI Gateway** is particularly useful.
+
+It's an open-source OpenAI-compatible gateway that can verify/reroute multiple confidential inference providers, including:
+
+```text
+Tinfoil
+NEAR AI
+Chutes
+Secret AI
+Phala direct
+generic ACI providers
+```
+
+and produces signed receipts/attestation information. ([GitHub][19])
+
+That may mean we don't even need to build much of our own TEE-router verification logic.
+
+Potentially:
+
+```text
+                 STEALTH
+                    │
+              ModelRouter
+                    │
+          Private AI Gateway
+             /       |       \
+            /        |        \
+        Phala     Chutes     Tinfoil
+          │          │          │
+        TEE        TEE        TEE
+```
+
+That is exactly consistent with our “don't rebuild shit” rule.
+
+---
+
+# What I'd actually configure for Stealth
+
+I would give the app **four inference modes**, rather than forcing users to understand providers:
+
+```text
+FAST
+cheap open model
+Chutes / NanoGPT
+
+PRIVATE
+attested TEE
+Chutes / Tinfoil / Confidential.ai
+
+PRIVATE + UNCENSORED
+Phala/RedPill / Venice
+
+LOCAL
+user-hosted model
+nothing leaves device
+```
+
+And internally every model gets capability metadata:
+
+```yaml
+model:
+  provider: phala
+  id: qwen3.6-35b-uncensored
+
+privacy:
+  tee: true
+  attestation: true
+  e2ee: false
+  retention: none
+
+behavior:
+  reduced_refusal: true
+
+capabilities:
+  tools: true
+  vision: false
+  reasoning: true
+```
+
+Then Stealth can route automatically.
+
+---
+
+## Most interesting setup right now
+
+For **your specific app**, my initial stack would be:
+
+```text
+STEALTH
+  │
+  ├─ Goose
+  │
+  ├─ model router
+  │    │
+  │    ├─ Chutes
+  │    │     cheap TEE
+  │    │
+  │    ├─ Phala / RedPill
+  │    │     TEE + uncensored
+  │    │
+  │    ├─ Venice
+  │    │     uncensored + TEE/E2EE
+  │    │
+  │    └─ local model
+  │          highest privacy
+  │
+  ├─ SimpleX
+  ├─ Monero
+  ├─ XMRBazaar
+  └─ Tor
+```
+
+And I'd make **attestation an actual runtime condition**, not a badge:
+
+```text
+sensitive request
+      ↓
+request fresh attestation
+      ↓
+verify
+      ↓
+PASS ──→ send prompt
+FAIL ──→ do not transmit
+```
+
+That's exactly the sort of thing QP is good for.
+
+The biggest discovery here is that we **don't need to choose between “uncensored” and “TEE” anymore**. There are already practical APIs giving us both, especially **Phala/RedPill and Venice**, while **Chutes** gives us an extremely cheap confidential default pool.
+
+[1]: https://phala.com/models?utm_source=chatgpt.com "Confidential AI model catalog"
+[2]: https://redpill.ai/models?utm_source=chatgpt.com "Private AI Models: Providers, Pricing & Metrics | RedPill"
+[3]: https://venice.ai/privacy?utm_source=chatgpt.com "Privacy in Venice | Venice AI"
+[4]: https://github.com/veniceai/api-docs/blob/main/agents.md?utm_source=chatgpt.com "api-docs/agents.md at main · veniceai/api-docs · GitHub"
+[5]: https://featurebase.venice.ai/changelog?utm_source=chatgpt.com "Changelog - Venice.ai"
+[6]: https://chutes.ai/agents/private?utm_source=chatgpt.com "Private Inference on Chutes - Chutes"
+[7]: https://chutes.ai/pricing?utm_source=chatgpt.com "Pricing - Chutes"
+[8]: https://confidentialinference.net/?utm_source=chatgpt.com "Confidential Inference Directory — Compare TEE-Based AI Providers"
+[9]: https://tinfoil.sh/blog/2026-03-10-tinfoil-containers?utm_source=chatgpt.com "Tinfoil - Introducing Tinfoil Containers"
+[10]: https://ppq.ai/api-docs?utm_source=chatgpt.com "API Docs | PayPerQ"
+[11]: https://ppq.ai/blog/introducing-uncensored-models?utm_source=chatgpt.com "Expanding Our Uncensored Models - Ten More That Decline on Capability, Not Policy<!-- --> | PayPerQ Blog"
+[12]: https://confidential.ai/docs/inference-api/reference?utm_source=chatgpt.com "Confidential AI ･ API Spec"
+[13]: https://confidential.ai/confidential-inference?utm_source=chatgpt.com "Confidential AI ･ Confidential Inference"
+[14]: https://vynaris.com/uncensored-models?utm_source=chatgpt.com "Uncensored model directory and hosted API | Vynaris"
+[15]: https://unlid.ai/?utm_source=chatgpt.com "Unlid — uncensored models, one API"
+[16]: https://uncensored.ai/api?utm_source=chatgpt.com "API - Developer Access | Uncensored AI"
+[17]: https://uncensored.chat/docs?utm_source=chatgpt.com "Uncensored AI API Docs — Authentication, Endpoints & Examples"
+[18]: https://openrouter.ai/providers/?utm_source=chatgpt.com "Providers | OpenRouter"
+[19]: https://github.com/Dstack-TEE/private-ai-gateway?utm_source=chatgpt.com "GitHub - Dstack-TEE/private-ai-gateway: Private AI Gateway for Attested Confidential Inference · GitHub"

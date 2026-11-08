@@ -1,0 +1,2636 @@
+The strongest design principle from your uploaded architecture is to make every product a different projection of the same **WorldGraph → Signal → Opportunity → Product → Outcome** substrate, rather than 50 separate databases. Your own current design already identifies the shared evidence/observation graph as the eventual moat. 
+
+The frontier research reinforces that direction. OSSInsight already analyzes 10B+ GitHub events, deps.dev exposes dependency/security intelligence, MCP has a formal registry API, durable-agent systems are converging around checkpointed/replayable execution, and agent-search optimization is becoming a real—but still poorly measured—market. ([GitHub][1]) The key opportunity is usually **not duplicating those substrates**, but adding the higher-order decision/evidence layer that Cuntgoblin itself needs.
+
+For your Agent SEO example specifically: GrowthBadger's study is useful evidence about **human** TLD trust/recall—`.com` led among the tested extensions—but it is not evidence that ChatGPT or another agent algorithmically prefers `.com`. ([GrowthBadger][2]) OpenAI's actual publisher guidance says crawlability by OAI-SearchBot matters, while recent GEO research finds source selection varies substantially by engine and that one-shot optimization claims are unreliable. ([OpenAI Help Center][3]) So the valuable product is an experimental measurement system, not another checklist.
+
+# Cuntgoblin / QDW — 50 Internal-First Product Architectures
+
+## Common substrate
+
+Do **not** build these as 50 monoliths.
+
+Every product should reuse:
+
+```text
+                    WORLD SOURCES
+                         │
+                SOURCE ADAPTERS
+                         │
+                         ▼
+               EvidenceArtifact
+                         │
+                         ▼
+                  Observation
+                         │
+          ┌──────────────┼─────────────┐
+          ▼              ▼             ▼
+       Entity         Relation       Event
+          │              │             │
+          └──────────────┼─────────────┘
+                         ▼
+                     WorldGraph
+                         │
+                         ▼
+                      Signal
+                         │
+                         ▼
+                   Claim / Finding
+                         │
+                         ▼
+                    Opportunity
+                         │
+                         ▼
+                       QDW
+               falsification / proof
+                         │
+                         ▼
+                    Cuntgoblin
+                         │
+                         ▼
+                      Product
+                         │
+                         ▼
+                 ProductPassport
+                         │
+                         ▼
+                      Outcome
+                         │
+                         └────→ calibration
+```
+
+Core reusable services:
+
+```text
+packages/
+  contracts/
+  evidence/
+  identity/
+  temporal/
+  graph/
+  scoring/
+  verification/
+  provenance/
+  licensing/
+  scheduler/
+  adapters/
+  api/
+  mcp/
+  qdw/
+  cuntgoblin/
+```
+
+Every sensor should emit approximately:
+
+```json
+{
+  "observation_id": "...",
+  "oracle_id": "...",
+  "entity_id": "...",
+  "metric": "...",
+  "value": {},
+  "observed_at": "...",
+  "occurred_at": "...",
+  "source_family": "...",
+  "evidence": {
+    "artifact_sha256": "...",
+    "source_url": "..."
+  },
+  "quality": {
+    "confidence": 0.93,
+    "method_version": "..."
+  }
+}
+```
+
+Every interesting product finding can therefore enter Cuntgoblin without bespoke glue.
+
+---
+
+# A. AGENT DISCOVERY / SEO / DISTRIBUTION
+
+## 1. AgentRank — empirical SEO for agents
+
+**Priority: P0**
+
+### Problem
+
+Existing GEO/AEO products mostly monitor mentions and citations. Several current products already cover ChatGPT/Perplexity/Gemini visibility, and open-source tools can already run basic AI-visibility audits. ([NBound Marketing][4])
+
+The harder problem is:
+
+> **What actually causes an agent to retrieve, trust, cite, absorb and act on a source?**
+
+### Architecture
+
+```text
+Query Corpus
+    ↓
+query paraphrase generator
+    ↓
+┌ ChatGPT/Search
+├ Gemini
+├ Perplexity
+├ Claude/search
+└ other engines
+    ↓
+retrieval/citation capture
+    ↓
+CitationEvent
+    ↓
+page fetch + feature extraction
+    ↓
+72+ page/domain/protocol features
+    ↓
+multivariate attribution
+    ↓
+controlled site experiments
+    ↓
+repeat queries
+    ↓
+causal-ish delta estimator
+```
+
+Features:
+
+```text
+domain
+TLD
+domain age
+source class
+earned/owned/community
+page age
+freshness
+semantic HTML
+heading density
+JSON-LD
+citations
+numerical evidence
+tables
+definitions
+page length
+token count
+latency
+SSR/static/client-rendered
+robots policy
+OAI-SearchBot accessibility
+llms.txt
+agents.txt
+OpenAPI
+MCP
+canonical
+sitemap
+language
+location
+```
+
+### Important principle
+
+Do **not** declare:
+
+```text
+.ts > .js
+Astro > Next
+.com > .ai
+```
+
+from intuition.
+
+Build equivalent controlled sites and actually test them.
+
+Agents primarily see the resulting HTTP/content surface, so implementation language should be treated as an experimental variable only where it changes rendering, latency, availability or structure.
+
+### Internal value
+
+Automatically optimize:
+
+* GitGoblin
+* AlternativeAPI
+* Egoic
+* QDW
+* every generated product.
+
+### Public product
+
+```text
+agentrank.com/{domain}
+
+POST /experiments
+GET /visibility
+GET /citations
+GET /source-preference
+GET /recommendations
+```
+
+### Moat
+
+Longitudinal black-box measurements of how actual engines behave.
+
+---
+
+## 2. AgentReady Compiler
+
+**Priority: P0**
+
+Basic readiness scanners already exist, including tools checking `llms.txt`, robots, schema, MCP/A2A and related discovery surfaces. ([Agent Ready][5])
+
+So ours should **fix**, not merely diagnose.
+
+```text
+repository
+    ↓
+framework detector
+    ↓
+route/content scan
+    ↓
+agent surface compiler
+    ↓
+generate/patch:
+  robots.txt
+  sitemap.xml
+  llms.txt
+  llms-full.txt
+  JSON-LD
+  OpenAPI
+  MCP metadata
+  agent discovery metadata
+  security.txt
+    ↓
+build
+    ↓
+local crawler test
+    ↓
+live deployment test
+    ↓
+QDW certificate
+```
+
+Supports:
+
+```text
+Astro
+Next.js
+Nuxt
+SvelteKit
+FastAPI
+Django
+Rails
+static HTML
+Cloudflare Workers
+```
+
+Use Apache/MIT-style tooling such as HERALD as architectural reference rather than recreating basic emitters. ([GitHub][6])
+
+Internal use: every Cuntgoblin build gets passed through it automatically.
+
+Public: CLI/GitHub Action/API.
+
+---
+
+## 3. CitationGraph
+
+**Priority: P0**
+
+Tracks the actual **information supply chain** behind agent answers.
+
+```text
+Prompt
+ ↓
+Answer
+ ↓
+Citation
+ ↓
+Page
+ ↓
+Domain
+ ↓
+Author/Company
+ ↓
+Source class
+```
+
+Derive:
+
+```text
+citation_share
+citation_depth
+citation_absorption
+source exclusivity
+source overlap
+engine-specific authority
+topic-specific authority
+citation persistence
+```
+
+Recent research distinguishes merely being cited from actually influencing the generated answer. ([arXiv][7])
+
+Internal use:
+
+> Before publishing a product, identify the domains already acting as authority nodes for that exact problem.
+
+External product:
+
+> Bloomberg-like citation graph for AI discovery.
+
+---
+
+## 4. QueryAtlas
+
+Build the **keyword planner for agent questions**.
+
+Instead of:
+
+```text
+"cheap LLM"
+```
+
+model:
+
+```text
+"What is the cheapest reliable coding LLM?"
+"What should I use instead of OpenAI?"
+"Which API has a free tier?"
+"What works with 200k context?"
+```
+
+Architecture:
+
+```text
+search-intent sources
+customer questions
+support forums
+Painfinder
+search suggestions
+existing agent answers
+    ↓
+semantic intent clustering
+    ↓
+QuestionIntent
+    ↓
+commercial/problem/research classification
+    ↓
+agent-query simulator
+    ↓
+result/citation distribution
+```
+
+Outputs:
+
+```text
+GET /queries/{topic}
+GET /unanswered
+GET /weakly-served
+GET /commercial-intent
+```
+
+Internal use: discover what pages/APIs Cuntgoblin should build.
+
+---
+
+## 5. AgentContentLab
+
+Experimental content optimizer.
+
+Not:
+
+> “LLMs prefer FAQs.”
+
+Instead:
+
+```text
+page A
+page B
+page C
+ ↓
+same facts
+different structures
+ ↓
+repeated controlled query battery
+ ↓
+retrieval
+citation
+absorption
+accuracy
+```
+
+Tests:
+
+* prose vs table
+* explicit definition vs implicit
+* numerical facts
+* source links
+* concise vs detailed
+* FAQ
+* comparison matrix
+* markdown mirrors
+* page segmentation
+* author credentials
+* timestamp/freshness.
+
+Recent observational work associates structured data, semantic HTML, metadata and freshness with citation, but these need domain-specific validation. ([arXiv][8])
+
+Internal: automatically improve product documentation.
+
+---
+
+## 6. AgentAPI Optimizer
+
+**Very strong. P0.**
+
+Take OpenAPI/MCP interfaces and answer:
+
+> Can an agent actually use this correctly?
+
+Recent industrial research found structurally valid APIs could still produce systematic agent planning/tool-use failures. ([arXiv][9])
+
+Architecture:
+
+```text
+OpenAPI/MCP
+ ↓
+endpoint semantic audit
+ ↓
+tool-task generation
+ ↓
+multi-model agent trials
+ ↓
+success/failure classification
+ ↓
+schema/tool description mutation
+ ↓
+rerun
+ ↓
+recommended interface
+```
+
+Metrics:
+
+```text
+tool_selection_accuracy
+payload_accuracy
+calls_to_success
+tokens_to_success
+latency
+retries
+hallucinated_fields
+recovery_rate
+```
+
+Internal use: certify every API Factory product.
+
+Public: “Lighthouse for agent APIs.”
+
+---
+
+## 7. AgentPerf
+
+Measures **agent usability performance**, not website Core Web Vitals.
+
+```text
+agent request
+ ↓
+discovery
+ ↓
+schema/context load
+ ↓
+tool selection
+ ↓
+API invocation
+ ↓
+result parsing
+```
+
+Measure:
+
+```text
+discovery_ms
+schema_tokens
+tool_description_tokens
+calls/task
+median task latency
+P95
+bytes transferred
+context pollution
+cost/task
+failure probability
+```
+
+Can automatically suggest:
+
+* smaller schemas
+* split MCP servers
+* compressed descriptions
+* better pagination
+* endpoint consolidation
+* structured errors.
+
+Internal: reduce Cuntgoblin agent cost.
+
+Public: API/MCP performance consultancy as software.
+
+---
+
+## 8. AgentReferral
+
+Tracks economic outcomes after AI discovery.
+
+```text
+CitationEvent
+ ↓
+referral
+ ↓
+session
+ ↓
+signup/API key
+ ↓
+activation
+ ↓
+revenue
+```
+
+Also handles **zero-click** cases by correlating visibility changes with branded searches/direct traffic.
+
+OpenAI explicitly supports publisher referral tracking from ChatGPT links. ([OpenAI Help Center][10])
+
+Internal:
+
+> Determine whether optimizing Egoic/AlternativeAPI for agent citations creates actual value.
+
+External: attribution layer for GEO agencies.
+
+---
+
+## 9. DomainSignal
+
+The evidence-backed version of your TLD idea.
+
+Separate:
+
+```text
+HumanTrust
+HumanRecall
+SearchRank
+AgentCitation
+AgentRetrieval
+AgentActionTrust
+```
+
+GrowthBadger's `.com` findings belong only in the first two dimensions. ([GrowthBadger][2])
+
+Architecture:
+
+```text
+domain corpus
+ ↓
+TLD / age / DNS / TLS / organization
+ ↓
+human studies
+ ↓
+agent citation experiments
+ ↓
+search visibility
+ ↓
+authority graph
+```
+
+Eventually answer:
+
+> For an AI infrastructure API in 2026, how much measurable benefit does `.com`, `.ai`, `.org`, etc. actually confer?
+
+Internal: domain-selection oracle for Cuntgoblin.
+
+---
+
+## 10. DistributionOracle
+
+Determines **where agents discover software**.
+
+Track:
+
+```text
+GitHub
+MCP Registry
+npm
+PyPI
+Hacker News
+technical blogs
+directories
+docs sites
+search engines
+Reddit-like communities
+earned media
+```
+
+Then:
+
+```text
+ProductType
+ ↓
+DistributionSurface[]
+ ↓
+expected discovery probability
+expected cost
+time-to-index
+agent discoverability
+human discoverability
+historical conversion
+```
+
+Internal:
+
+> Cuntgoblin should know where to publish a new MCP server versus API versus consumer app.
+
+---
+
+# B. AGENT SENSORS INTO REALITY
+
+## 11. AgentReach
+
+**P0.**
+
+A compliant access-router for agents.
+
+```text
+URL + intent
+ ↓
+policy/robots inspection
+ ↓
+capability planner
+ ↓
+HTTP
+official API
+search provider
+browser render
+authenticated browser
+user-owned node
+human request
+ ↓
+success verifier
+```
+
+Returns:
+
+```json
+{
+  "method": "browser",
+  "status": "success",
+  "cost": 0.002,
+  "latency_ms": 1300,
+  "evidence_hash": "...",
+  "policy": {}
+}
+```
+
+Use agent-browser's provider abstraction and security concepts as reference. ([GitHub][11])
+
+Internal: fixes Hermes web-reach failures.
+
+---
+
+## 12. EgressMap
+
+**P0.**
+
+Maps **where an operation works**.
+
+```text
+capability × target
+       ↓
+execution probes
+       ↓
+AWS
+Hetzner
+Cloudflare
+local machine
+Browserbase-like environment
+region A/B/C
+       ↓
+CapabilityEnvironmentMatrix
+```
+
+Measures:
+
+```text
+reachable
+latency
+rate-limit
+geo-result
+authentication
+CAPTCHA
+protocol support
+stability
+```
+
+Then Cuntgoblin asks:
+
+```text
+resolve_environment(capability)
+```
+
+instead of blindly retrying on the same VPS.
+
+---
+
+## 13. ArtifactFetch
+
+Universal artifact acquisition abstraction.
+
+```text
+resolve_artifact(url_or_id)
+```
+
+Supports permitted acquisition of:
+
+```text
+PDF
+HTML
+Git repository
+release artifact
+dataset
+RSS enclosure
+image
+public video metadata
+package
+paper
+model card
+```
+
+Pipeline:
+
+```text
+identifier
+ ↓
+resolver registry
+ ↓
+metadata
+ ↓
+authorized acquisition method
+ ↓
+hash
+ ↓
+content type
+ ↓
+parser
+ ↓
+evidence store
+```
+
+Internal: stops every agent reinventing download logic.
+
+---
+
+## 14. BrowserBench
+
+Continuous empirical benchmark for agent browsers.
+
+Test:
+
+```text
+Playwright
+agent-browser
+browser providers
+lightweight browser engines
+remote CDP
+```
+
+Tasks:
+
+```text
+static page
+JS-heavy
+SPA
+login
+download
+form
+infinite scroll
+PDF
+tables
+cross-page workflow
+```
+
+Security should be explicit because recent work shows substantial variation in agentic-browser security assumptions. ([agent-security.cs.washington.edu][12])
+
+Output:
+
+```text
+best browser for task X
+```
+
+Internal: StackOracle feeds this into AgentReach.
+
+---
+
+## 15. AuthBridge
+
+Credential-safe authenticated browsing for agents.
+
+Architecture:
+
+```text
+Credential Vault
+ ↓
+opaque credential handle
+ ↓
+browser session manager
+ ↓
+agent receives:
+  session_id
+  capabilities
+not password
+ ↓
+policy enforcement
+ ↓
+audit log
+```
+
+Add:
+
+```text
+domain allowlists
+action allowlists
+expiry
+revocation
+human approval
+```
+
+Vercel's agent-browser already demonstrates the useful pattern of keeping passwords outside the model context. ([GitHub][11])
+
+Internal: safe Hermes account sessions.
+
+---
+
+## 16. RegionProbe
+
+Geo/regional behavior sensor.
+
+Test:
+
+```text
+availability
+pricing
+API response
+content
+search rankings
+latency
+regulatory restrictions
+model availability
+```
+
+across regions.
+
+Output:
+
+```text
+RegionCapability
+```
+
+Feeds:
+
+* StackOracle
+* Global Gap Oracle
+* AgentReach
+* product localization decisions.
+
+---
+
+## 17. WebChange
+
+Semantic website change detection.
+
+Not simple diff.
+
+```text
+page snapshots
+ ↓
+DOM normalization
+ ↓
+semantic extraction
+ ↓
+entity/fact comparison
+ ↓
+ChangeEvent
+```
+
+Detect:
+
+```text
+price changed
+free tier removed
+API deprecated
+new product
+terms changed
+rate limit changed
+model added
+feature removed
+```
+
+Internal: critical substrate for Dell/AlternativeAPI/StackOracle.
+
+Public: “monitor anything meaningful.”
+
+---
+
+## 18. StructSense
+
+Turns messy public pages into versioned machine-readable facts.
+
+```text
+HTML/PDF/API
+ ↓
+extract
+ ↓
+schema map
+ ↓
+fact assertions
+ ↓
+source spans
+ ↓
+cross-source validation
+ ↓
+Fact
+```
+
+Every fact includes:
+
+```text
+value
+observed_at
+valid_from?
+confidence
+provenance
+source hash
+```
+
+This becomes the generic ingestion substrate for fragmented-data APIs.
+
+---
+
+## 19. CapabilityMap
+
+Builds a machine-readable map of what any website/service lets agents do.
+
+```text
+domain
+ ↓
+discover:
+  OpenAPI
+  MCP
+  A2A
+  forms
+  feeds
+  downloads
+  search
+  auth
+  pricing
+ ↓
+Capability[]
+```
+
+Example:
+
+```text
+github.com
+  search_repo
+  read_file
+  create_issue
+  ...
+```
+
+Internal: AgentReach/AlternativeAPI.
+
+Public: machine capability directory.
+
+---
+
+## 20. RealityFeeds Factory
+
+Factory for turning fragmented public information into specialist APIs.
+
+Template:
+
+```text
+sources/
+normalizer/
+validator/
+change_detector/
+provenance/
+API/
+MCP/
+webhooks/
+```
+
+Vertical outputs:
+
+```text
+LLM deals
+GPU supply
+grants
+regulations
+software releases
+datasets
+research releases
+API promotions
+```
+
+This is not one feed—it is the reusable factory for creating many.
+
+---
+
+# C. TOOL RELIABILITY, SECURITY AND VERIFICATION
+
+## 21. ToolPulse
+
+**P0.**
+
+Synthetic monitoring for MCP/API tools.
+
+```text
+ToolRegistry
+ ↓
+canonical tasks
+ ↓
+scheduled executions
+ ↓
+multiple models
+multiple regions
+multiple environments
+ ↓
+TaskResult
+```
+
+Track:
+
+```text
+uptime
+latency
+task success
+schema drift
+auth failure
+semantic failure
+stale data
+model compatibility
+```
+
+Public:
+
+> Downdetector + Statuspage + benchmark for agent tools.
+
+---
+
+## 22. ToolRouter
+
+Empirical capability resolver.
+
+Input:
+
+```text
+"search recent papers"
+```
+
+Candidates:
+
+```text
+tool A
+tool B
+tool C
+```
+
+Score:
+
+```text
+success_probability
+latency
+price
+freshness
+security
+historical model/tool compatibility
+```
+
+Then select dynamically.
+
+Important distinction:
+
+> routing based on observed outcomes rather than tool-description embeddings alone.
+
+Internal: enormous value to Hermes/Cuntgoblin.
+
+---
+
+## 23. MCPTrust
+
+Security/reputation system for MCP servers.
+
+Recent research increasingly treats MCP/tool infrastructure as a distinct supply-chain attack surface. ([arXiv][13])
+
+Architecture:
+
+```text
+MCP registry
+GitHub source
+package
+dependencies
+publisher identity
+release history
+ ↓
+static analysis
+dependency analysis
+sandboxed protocol tests
+permission analysis
+tool-description diff
+ ↓
+TrustProfile
+```
+
+Returns:
+
+```text
+publisher trust
+code provenance
+permissions
+known vulnerabilities
+unexpected behavior
+maintenance
+license
+risk
+```
+
+Internal: never let Cuntgoblin install random MCP tooling blindly.
+
+---
+
+## 24. SkillTrust
+
+Same concept for Agent Skills/`SKILL.md` bundles.
+
+```text
+skill
+ ↓
+prompt analysis
+script analysis
+dependency analysis
+claimed permissions
+actual behavior sandbox
+signature
+ ↓
+SkillPassport
+```
+
+Useful because portable agent skills increasingly behave more like executable dependencies than harmless prompts.
+
+Internal first; enterprise marketplace later.
+
+---
+
+## 25. ToolReceipts
+
+**P0.**
+
+Every side-effecting tool invocation emits a verifiable receipt.
+
+```text
+Agent
+ ↓
+Tool Proxy
+ ↓
+real tool
+ ↓
+result
+ ↓
+signed receipt
+```
+
+Receipt:
+
+```text
+tool
+arguments_hash
+result_hash
+timestamp
+identity
+side_effect
+verification
+signature
+```
+
+Recent research has explicitly explored tool receipts as a practical way to catch fabricated agent claims. ([arXiv][14])
+
+This fits QDW almost perfectly.
+
+---
+
+## 26. FaultGoblin
+
+Cloud fault-injection system for agents.
+
+AgentCheck research shows agents often fail silently when tools return stale, wrong or delayed responses. ([arXiv][15])
+
+Inject:
+
+```text
+timeout
+HTTP 500
+schema mutation
+stale result
+wrong unit
+missing field
+poisoned description
+partial result
+duplicate
+slow result
+```
+
+Then measure recovery.
+
+Internal:
+
+> every Cuntgoblin agent and generated MCP product gets chaos-tested.
+
+---
+
+## 27. AgentSLA
+
+Defines service-level objectives for **agent tasks**, not requests.
+
+Example:
+
+```text
+Task:
+"Create verified GitHub release"
+
+SLA:
+success >= 99%
+P95 < 90 sec
+cost < $0.10
+human escalation < 2%
+```
+
+Architecture:
+
+```text
+trace
+tool calls
+receipts
+outcome verifier
+ ↓
+TaskSLA
+```
+
+Public product for teams running agents.
+
+---
+
+## 28. CostLedger
+
+Exact economic accounting per agent outcome.
+
+```text
+Run
+ ├ model tokens
+ ├ search
+ ├ browser
+ ├ compute
+ ├ APIs
+ ├ storage
+ ├ retries
+ └ human time
+```
+
+Produces:
+
+```text
+cost/run
+cost/success
+cost/product
+marginal cost
+failure cost
+wasted spend
+```
+
+Feeds Cuntgoblin's capital allocator.
+
+Potential public product:
+
+> FinOps for agents.
+
+---
+
+## 29. AgentSupervisor
+
+**P0.**
+
+Framework-neutral process supervisor.
+
+Supports:
+
+```text
+Hermes
+Codex
+Claude Code
+OpenCode
+shell agents
+custom workers
+```
+
+Classifies agents:
+
+```text
+WORKING
+WAITING
+BLOCKED
+LOOPING
+CRASHED
+STALE
+NEEDS_HUMAN
+DONE_UNVERIFIED
+VERIFIED
+```
+
+Actions:
+
+```text
+restart
+resume
+fork
+swap model
+swap environment
+escalate
+kill
+```
+
+Do not reinvent durable workflow engines underneath; integrate checkpoint systems such as Temporal/Inngest patterns. ([Inngest][16])
+
+---
+
+## 30. AgentReplay
+
+Black-box flight recorder.
+
+Store:
+
+```text
+prompt
+context hash
+model
+tool schema
+tool call
+result
+receipts
+filesystem deltas
+network activity metadata
+checkpoint
+outcome
+```
+
+Then:
+
+```text
+replay exact tool outputs
+replace model
+inject alternative tool
+compare decisions
+```
+
+Uses:
+
+* debugging
+* benchmark replay
+* counterfactual evaluation
+* model migration
+* agent audit.
+
+---
+
+# D. FRONTIER / MARKET INTELLIGENCE
+
+## 31. GitGoblin
+
+Already built.
+
+Role:
+
+```text
+people
+repos
+papers
+dependencies
+events
+    ↓
+expert attention graph
+    ↓
+technical alpha
+    ↓
+primitive
+    ↓
+opportunity
+```
+
+Upstream data should leverage rather than reproduce ecosystems such as OSSInsight and deps.dev. ([GitHub][1])
+
+---
+
+## 32. Painfinder
+
+**P0.**
+
+Your uploaded design already identifies recurring pain mining as a first-class intelligence product. 
+
+Sensors:
+
+```text
+GitHub Issues
+GitHub Discussions
+HN
+Stack Exchange
+public forums
+support boards
+blogs
+```
+
+Extract:
+
+```text
+Problem
+workaround
+frequency
+intensity
+money language
+manual steps
+existing solution
+agent solvability
+verification possibility
+```
+
+Cluster into `PainCluster`.
+
+Internal:
+
+> empirical demand side of Cuntgoblin.
+
+---
+
+## 33. StackOracle
+
+**P0.**
+
+Current optimal resource for a technical capability.
+
+```text
+CapabilityRequest
+ ↓
+candidate discovery
+ ↓
+live benchmark
+ ↓
+cost
+quality
+latency
+availability
+limits
+licensing
+privacy
+ ↓
+Pareto frontier
+```
+
+Covers:
+
+```text
+LLM
+TTS
+ASR
+OCR
+browser
+search
+database
+hosting
+embedding
+email
+payments
+vision
+video
+storage
+```
+
+Internal: every factory asks StackOracle instead of hardcoding tooling.
+
+---
+
+## 34. AlternativeAPI
+
+**P0.**
+
+Input:
+
+```text
+current_service + requirements
+```
+
+Output:
+
+```text
+direct replacement
+cheaper replacement
+free replacement
+open-source replacement
+composite replacement
+buildable gap
+```
+
+Architecture:
+
+```text
+API catalog
+StackOracle
+GitGoblin
+pricing
+docs
+benchmarks
+ ↓
+CapabilityCompatibilityGraph
+ ↓
+migration planner
+```
+
+If:
+
+```text
+NO SUITABLE ALTERNATIVE
+```
+
+emit an Opportunity into Cuntgoblin.
+
+Your own design explicitly identifies this closed loop. 
+
+---
+
+## 35. FundingRadar
+
+Track what capital is revealing.
+
+Data:
+
+```text
+YC
+public funding announcements
+company sites
+investor portfolios
+job openings
+launches
+acquisitions
+shutdowns
+```
+
+There are already machine-readable community datasets covering thousands of YC companies, making this relatively cheap to bootstrap. ([GitHub][17])
+
+Don't say:
+
+> funded = good.
+
+Derive:
+
+```text
+problem cluster
+funding acceleration
+investor convergence
+technical primitive
+geographical concentration
+```
+
+Join with Painfinder/GitGoblin.
+
+---
+
+## 36. Paper2Product
+
+Convert recent research into product primitives.
+
+```text
+arXiv/OpenAlex
+ ↓
+novelty/relevance filter
+ ↓
+methods extraction
+ ↓
+code repository resolution
+ ↓
+reproducibility score
+ ↓
+Primitive
+ ↓
+cost-to-implement
+ ↓
+Painfinder join
+ ↓
+ProductHypothesis
+```
+
+Example:
+
+```text
+new verification technique
++
+pain: agents falsely claim tool success
+=
+ToolReceipts opportunity
+```
+
+---
+
+## 37. DependencyAlpha
+
+Technical-alpha signal from actual package adoption.
+
+deps.dev now exposes deep dependency and security information across major package ecosystems. ([Deps.dev][18])
+
+Track:
+
+```text
+new dependency adoption
+version migration
+package removal
+downstream growth
+maintainer quality
+important adopter
+```
+
+Stronger signal:
+
+```text
+expert PUTS REPO IN PRODUCTION
+```
+
+than:
+
+```text
+expert STARRED REPO
+```
+
+Feeds GitGoblin.
+
+---
+
+## 38. MaintainerMigration
+
+Tracks where unusually strong engineers move.
+
+Graph:
+
+```text
+Person
+ ├ commits
+ ├ organization
+ ├ packages
+ ├ projects
+ └ collaborators
+```
+
+Detect:
+
+```text
+five database engineers shift toward agent state
+```
+
+or:
+
+```text
+browser engineers converge on new runtime
+```
+
+This can surface capability transitions before product launches.
+
+---
+
+## 39. HiringSignal
+
+Job postings as technical-intent data.
+
+```text
+Company
+ ↓
+JobPost
+ ↓
+skills
+team
+location
+seniority
+language
+infrastructure
+```
+
+Infer carefully:
+
+```text
+company building browser infra?
+MCP team?
+agent security?
+GPU serving?
+```
+
+Join with:
+
+* FundingRadar
+* GitGoblin
+* StackOracle.
+
+Internal alpha only initially.
+
+---
+
+## 40. PolicyPulse
+
+Machine-readable regulatory/product-policy changes.
+
+```text
+government sources
+regulator feeds
+standards organizations
+platform policies
+terms/changelogs
+ ↓
+document diff
+ ↓
+RuleChange
+ ↓
+affected capabilities/entities
+ ↓
+Opportunity
+```
+
+Examples:
+
+```text
+new reporting requirement
+→ compliance API
+
+platform API restriction
+→ migration tooling
+
+new standard
+→ compatibility tooling
+```
+
+---
+
+# E. CUNTGOBLIN / QDW FACTORY INTELLIGENCE
+
+## 41. OpportunityGraph
+
+Merge all discovery systems.
+
+```text
+Pain
+Capability
+Primitive
+Company
+Policy
+CountryGap
+API
+Model
+Repo
+Funding
+```
+
+Edges:
+
+```text
+SOLVES
+ENABLES
+BLOCKS
+REPLACES
+DEPENDS_ON
+COMPLEMENTS
+COMPETES_WITH
+VALIDATES
+```
+
+Then opportunity synthesis becomes graph traversal:
+
+```text
+Pain
+ ×
+new Primitive
+ ×
+cheap Capability
+ ×
+weak Competition
+```
+
+rather than freeform prompting.
+
+---
+
+## 42. IdeaGenome
+
+Permanent identity for every idea.
+
+Your uploaded design already defines this as the mechanism for avoiding endless regeneration and enabling resurrection. 
+
+Store:
+
+```text
+problem identity
+solution identity
+customer
+parents
+analogues
+evidence snapshot
+score snapshot
+status
+rejection reason
+```
+
+Then:
+
+```text
+SAME_PROBLEM_NEW_TECH
+SAME_IDEA_NEW_COUNTRY
+SAME_PROBLEM_NEW_FACTORY
+```
+
+are mutations, not duplicates.
+
+---
+
+## 43. CompetitorAutopsy
+
+Not:
+
+> give me competitors.
+
+Output:
+
+```text
+Competitor
+what_they_sell
+customer
+pricing
+stack
+distribution
+complaints
+strength
+weakness
+switching_cost
+traction proxies
+funding
+open-source components
+wedge
+```
+
+Then create:
+
+```text
+SwitchingHypothesis
+```
+
+and test it.
+
+Internal: required before Cuntgoblin builds a product.
+
+Public later: automated technical due diligence.
+
+---
+
+## 44. FactoryBench
+
+Benchmarks your own factories against one another.
+
+Example:
+
+```text
+API Factory v3
+vs
+API Factory v4
+```
+
+Metrics:
+
+```text
+build time
+build cost
+test coverage
+defects
+security failures
+agent-readiness
+documentation
+deployment success
+30-day maintenance
+usage
+revenue
+```
+
+This turns factory improvements into an engineering science.
+
+---
+
+## 45. RecipeGenome
+
+Tracks which architecture/agent recipes produce good outcomes.
+
+```text
+FactoryGenome
+research recipe
+builder recipe
+model routing
+contractors
+stack
+verification
+distribution
+```
+
+Outcome analysis:
+
+```text
+Recipe X
+→ 40% cheaper
+→ same certification
+→ higher maintenance
+
+Recipe Y
+→ slower
+→ 2× retention
+```
+
+Eventually Cuntgoblin evolves based on evidence.
+
+---
+
+## 46. DistributionRegistry
+
+Machine-readable registry of where products can be published.
+
+```text
+GitHub
+PyPI
+npm
+MCP Registry
+Chrome Web Store
+website
+API directories
+marketplaces
+```
+
+Per surface:
+
+```text
+product types
+auth requirements
+publishing process
+fees
+human action
+schema
+review latency
+verification
+traffic
+historical outcomes
+```
+
+The official MCP Registry already exposes a proper machine-readable publishing/discovery API. ([GitHub][19])
+
+---
+
+## 47. ProductPassport
+
+Every build gets one immutable dossier.
+
+```text
+ORIGIN
+ idea
+ evidence
+
+DECISION
+ scoring
+ alternatives
+
+BUILD
+ factory
+ agents
+ models
+ cost
+
+PROOF
+ tests
+ security
+ hashes
+ certificate
+
+PUBLICATION
+ repo
+ package
+ endpoint
+ domain
+
+OUTCOME
+ usage
+ cost
+ revenue
+ incidents
+
+LEARNING
+ successes
+ failures
+ reusable components
+```
+
+Internal immediately.
+
+Public subset:
+
+> “Verified by QDW.”
+
+---
+
+## 48. OutcomeOracle
+
+**P0.**
+
+Without this, Cuntgoblin never actually learns.
+
+Collect:
+
+```text
+traffic
+API calls
+GitHub adoption
+stars
+dependencies
+signups
+returning users
+latency
+incidents
+cost
+revenue
+human effort
+```
+
+Join:
+
+```text
+prediction at build time
+        vs
+actual outcome
+```
+
+Then calibrate:
+
+```text
+which signals predict success?
+which agents overestimate?
+which product categories work?
+which builders discovered good primitives?
+```
+
+This closes the entire loop.
+
+---
+
+## 49. ConsumerScout
+
+Consumer-app discovery engine.
+
+Cheap software generation makes consumer experiments attractive, but the factory needs to look for **retained state + recurring job + distribution**, not generic wrappers.
+
+Sensors:
+
+```text
+App Store categories
+Play Store categories
+search demand
+reviews
+complaints
+consumer forums
+GitHub tools
+new model capabilities
+```
+
+Derive:
+
+```text
+ConsumerJob
+frequency
+current workaround
+retention potential
+personal-state moat
+distribution channel
+```
+
+Then prototype:
+
+```text
+web MVP
+ ↓
+instrument
+ ↓
+real use
+ ↓
+native build only after proof
+```
+
+Could produce things like:
+
+* universal watchlists
+* personal knowledge sensors
+* research assistants
+* niche media tools
+* local information apps.
+
+---
+
+## 50. WorldState API
+
+This is potentially the **internal product underneath everything**.
+
+It presents Cuntgoblin's accumulated reality as an API:
+
+```text
+GET /entities/{id}
+GET /observations
+GET /changes
+GET /signals
+GET /relationships
+GET /claims
+GET /opportunities
+GET /products
+GET /outcomes
+```
+
+Example:
+
+```text
+GET /changes?
+  entity=openrouter
+  since=2026-08-01
+```
+
+or:
+
+```text
+GET /signals?
+  sector=agent-infra
+  min_confidence=.8
+```
+
+Internally:
+
+```text
+GitGoblin
+Painfinder
+StackOracle
+AlternativeAPI
+AgentRank
+ToolPulse
+FundingRadar
+PolicyPulse
+OutcomeOracle
+       │
+       └────────────→ WorldState
+```
+
+Externally, expose only curated/safe projections.
+
+This is likely where the deepest moat eventually lives.
+
+---
+
+# The 12 I would build first
+
+Not all 50 deserve equal investment.
+
+## Tier 0 — immediate internal compounding
+
+```text
+1.  AgentRank
+6.  AgentAPI Optimizer
+11. AgentReach
+12. EgressMap
+21. ToolPulse
+22. ToolRouter
+25. ToolReceipts
+29. AgentSupervisor
+32. Painfinder
+33. StackOracle
+34. AlternativeAPI
+48. OutcomeOracle
+```
+
+These directly improve the system producing every later product.
+
+---
+
+# The strongest closed loops
+
+## Loop 1 — technical alpha
+
+```text
+GitGoblin
+    ↓
+DependencyAlpha
+    ↓
+Paper2Product
+    ↓
+new Primitive
+    ↓
+OpportunityGraph
+```
+
+## Loop 2 — real demand
+
+```text
+Painfinder
+    ↓
+QueryAtlas
+    ↓
+CompetitorAutopsy
+    ↓
+OpportunityGraph
+```
+
+## Loop 3 — cheap execution
+
+```text
+StackOracle
+    ↓
+ToolPulse
+    ↓
+ToolRouter
+    ↓
+EgressMap
+    ↓
+AgentReach
+```
+
+## Loop 4 — building
+
+```text
+OpportunityGraph
+    ↓
+IdeaGenome
+    ↓
+Cuntgoblin
+    ↓
+Factory
+    ↓
+QDW
+    ↓
+ProductPassport
+```
+
+## Loop 5 — distribution
+
+```text
+AgentReady Compiler
+    ↓
+AgentAPI Optimizer
+    ↓
+AgentRank
+    ↓
+DistributionOracle
+```
+
+## Loop 6 — learning
+
+```text
+Product
+ ↓
+OutcomeOracle
+ ↓
+FactoryBench
+ ↓
+RecipeGenome
+ ↓
+new allocation policy
+ ↓
+Cuntgoblin
+```
+
+---
+
+# Shared repo strategy
+
+The products should **look independent externally**, while internally importing a small stable common library.
+
+Not:
+
+```text
+gigantic monorepo
+where everything knows everything
+```
+
+Prefer:
+
+```text
+qdw-contracts
+qdw-evidence
+qdw-provenance
+qdw-client
+```
+
+plus independent repositories:
+
+```text
+agentrank/
+agentreach/
+toolpulse/
+painfinder/
+stackoracle/
+alternativeapi/
+...
+```
+
+Their integration boundary is JSON/HTTP/events, not Python imports across every repository.
+
+Example:
+
+```text
+ToolPulse
+    │
+    ├── POST WorldState Observation
+    │
+    └── emits capability.health.changed
+
+StackOracle
+    │
+    └── consumes capability.health.changed
+
+ToolRouter
+    │
+    └── queries StackOracle
+
+Cuntgoblin
+    │
+    └── queries ToolRouter
+```
+
+This preserves the ability to:
+
+* sell a product separately;
+* open-source one product;
+* replace implementation languages;
+* deploy independently;
+* keep the shared intelligence core private.
+
+---
+
+# Standard ZIP contract
+
+Every one of these should eventually be generated with the same GitGoblin-style package contract:
+
+```text
+PRODUCT/
+├── AGENTS.md
+├── README.md
+├── LICENSE-POLICY.md
+├── pyproject.toml / package.json
+├── Dockerfile
+├── docker-compose.yml
+├── .github/workflows/
+├── config/
+├── schemas/
+├── src/
+│   ├── domain/
+│   ├── adapters/
+│   ├── evidence/
+│   ├── scoring/
+│   ├── engine/
+│   ├── qdw/
+│   ├── cuntgoblin/
+│   ├── api/
+│   └── cli/
+├── tests/
+│   ├── unit/
+│   ├── contract/
+│   ├── mutation/
+│   ├── integration/
+│   └── e2e/
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── RESEARCH.md
+│   ├── COMPETITORS.md
+│   ├── EXTENDING.md
+│   ├── MONETIZATION.md
+│   ├── OPERATIONS.md
+│   └── TEST-REPORT.md
+└── build/
+    ├── CERTIFICATE.json
+    ├── test.log
+    └── manifest.json
+```
+
+## Required QDW gates
+
+A product does **not** certify because an agent says it is finished.
+
+Require:
+
+```text
+G0 schema validity
+G1 deterministic unit tests
+G2 source/provenance integrity
+G3 adapter contract tests
+G4 mutation/fault tests
+G5 end-to-end real workflow
+G6 API/MCP interoperability
+G7 security baseline
+G8 cost benchmark
+G9 reproducible build
+G10 machine-readable certificate
+```
+
+For intelligence products additionally:
+
+```text
+historical replay
+false-positive analysis
+source-family independence
+timestamp correctness
+evidence hashes
+method versions
+no synthetic evidence
+```
+
+---
+
+# One particularly important architectural decision
+
+There are really **three classes** in the 50:
+
+### Sensors
+
+Observe reality.
+
+```text
+GitGoblin
+Painfinder
+ToolPulse
+AgentRank
+FundingRadar
+PolicyPulse
+WebChange
+```
+
+### Oracles
+
+Turn observations into decisions.
+
+```text
+StackOracle
+AlternativeAPI
+ToolRouter
+DistributionOracle
+OpportunityGraph
+```
+
+### Actuators/factories
+
+Change reality.
+
+```text
+AgentReady Compiler
+AgentReach
+Cuntgoblin
+Factory system
+distribution/publishing
+```
+
+QDW sits across all three and asks:
+
+```text
+What was observed?
+What was inferred?
+What was actually done?
+How do we prove each?
+```
+
+That separation is what prevents the ecosystem becoming an enormous self-referential pile of agents confidently telling one another that they succeeded.
+
+---
+
+# My top three potential standalone businesses
+
+### 1. AgentRank
+
+Not “SEO for ChatGPT.”
+
+**Empirical optimization of the entire human→search→agent→citation→action information path.**
+
+The competitive space is already crowded at the monitoring layer, which is exactly why the experiment/verification layer is more interesting. Current GEO scholarship itself argues that visibility is stochastic and multi-stage and warns against unsupported universal optimization rules. ([arXiv][20])
+
+### 2. StackOracle
+
+Potentially:
+
+> **The decision API for software capabilities.**
+
+Every coding agent eventually has to decide:
+
+```text
+what model?
+what browser?
+what OCR?
+what API?
+what database?
+what hosting?
+```
+
+The more options exist, the more valuable empirical routing becomes.
+
+### 3. ToolPulse + ToolRouter
+
+Together:
+
+> **The live capability network for agents.**
+
+The world is rapidly gaining MCP servers/tools, while current research is simultaneously uncovering reliability and security problems in tool-using agents. ([arXiv][15])
+
+That produces a natural market for:
+
+```text
+"Don't tell me what tools exist.
+Tell me what actually works right now,
+for this agent,
+for this job,
+and prove it."
+```
+
+---
+
+# Overall build sequence
+
+```text
+PHASE I — MAKE OUR OWN FACTORY BETTER
+
+GitGoblin       DONE v0.1
+Painfinder
+StackOracle
+ToolPulse
+AgentReach
+EgressMap
+ToolReceipts
+AgentSupervisor
+OutcomeOracle
+
+             ↓
+
+PHASE II — TURN INTERNAL INTELLIGENCE INTO ALPHA
+
+AlternativeAPI
+DependencyAlpha
+Paper2Product
+FundingRadar
+PolicyPulse
+OpportunityGraph
+
+             ↓
+
+PHASE III — DISTRIBUTION EDGE
+
+AgentRank
+AgentAPI Optimizer
+AgentReady Compiler
+CitationGraph
+QueryAtlas
+
+             ↓
+
+PHASE IV — SELF-IMPROVING FACTORY
+
+IdeaGenome
+FactoryBench
+RecipeGenome
+ProductPassport
+WorldState API
+
+             ↓
+
+PHASE V
+
+Expose whichever internal systems
+have already proved useful enough
+to deserve public products.
+```
+
+The philosophy should be:
+
+> **Never invent a public startup and then hope it is useful. Build an internal instrument because Cuntgoblin genuinely needs it, record its utility, and only externalize the ones that repeatedly save money, discover alpha, increase reliability, or improve outcomes.**
+
+That gives every product its first customer automatically: **you**.
+
+[1]: https://github.com/pingcap/ossinsight?utm_source=chatgpt.com "GitHub - pingcap/ossinsight: Analysis, Comparison, Trends, Rankings of Open Source Software, you can also get insight from more than 10 billion with natural language (powered by LLM). Follow us on Twitter: https://twitter.com/ossinsight · GitHub"
+[2]: https://growthbadger.com/top-level-domains/?utm_source=chatgpt.com "Domain Extensions: .com vs .org, .net, .io & 4 Other TLDs (Study)"
+[3]: https://help.openai.com/en/articles/9237897?utm_source=chatgpt.com "ChatGPT Search | OpenAI Help Center"
+[4]: https://nboundmarketing.com/research/ai-visibility/geo-software-feature-comparison/?utm_source=chatgpt.com "GEO Software Feature Comparison 2026 | NBound Research"
+[5]: https://agent-ready.dev/?utm_source=chatgpt.com "Agent Ready — AI Agent Readability Checker"
+[6]: https://github.com/agents-txt/herald?utm_source=chatgpt.com "GitHub - agents-txt/HERALD: HERALD is an open-source CLI that emits the standard discovery files agents need to read your site and discover its agent-interaction capabilitie. One config object drives all of it. Each file is an independent open standard; pick the layers you want and HERALD generates only those. · GitHub"
+[7]: https://arxiv.org/abs/2604.25707?utm_source=chatgpt.com "From Citation Selection to Citation Absorption: A Measurement Framework for Generative Engine Optimization Across AI Search Platforms"
+[8]: https://arxiv.org/abs/2509.10762?utm_source=chatgpt.com "AI Answer Engine Citation Behavior An Empirical Analysis of the GEO16 Framework"
+[9]: https://arxiv.org/abs/2605.14312?utm_source=chatgpt.com "Making OpenAPI Documentation Agent-Ready: Detecting Documentation and REST Smells with a Multi-Agent LLM System"
+[10]: https://help.openai.com/en/articles/12627856-publishers-and-developers-faq%23%3A~%3Atext%3DChatGPT%2520automatically%2520includes%2520the%2520UTM%2520parameter%2520utm_source%253Dchatgpt.com%2520in%2520referral%2520URLs%252C%2520enabling%2520clear%2520tracking%2520and%2520analysis%2520of%2520inbound%2520traffic%2520from%2520ChatGPT%2520search%2520results?utm_source=chatgpt.com "Publishers and Developers - FAQ | OpenAI Help Center"
+[11]: https://github.com/vercel-labs/agent-browser?utm_source=chatgpt.com "GitHub - vercel-labs/agent-browser: Browser automation CLI for AI agents · GitHub"
+[12]: https://agent-security.cs.washington.edu/agentic_browsers_sop.html?utm_source=chatgpt.com "Agentic Browsers and the Same-Origin Policy"
+[13]: https://arxiv.org/abs/2604.05969?utm_source=chatgpt.com "A Formal Security Framework for MCP-Based AI Agents: Threat Taxonomy, Verification Models, and Defense Mechanisms"
+[14]: https://arxiv.org/abs/2603.10060?utm_source=chatgpt.com "Tool Receipts, Not Zero-Knowledge Proofs: Practical Hallucination Detection for AI Agents"
+[15]: https://arxiv.org/abs/2607.11098?utm_source=chatgpt.com "AgentCheck: A Reproduce-Intervene-Mitigate Workbench for LLM Agents over MCP"
+[16]: https://www.inngest.com/docs/learn/durable-agents?utm_source=chatgpt.com "Durable Agents - Inngest Docs"
+[17]: https://github.com/yc-oss/api?utm_source=chatgpt.com "GitHub - yc-oss/api: 📎 Public API for companies funded by Y Combinator · GitHub"
+[18]: https://deps.dev/?utm_source=chatgpt.com "Open Source Insights"
+[19]: https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/api/official-registry-api.md?utm_source=chatgpt.com "registry/docs/reference/api/official-registry-api.md at main · modelcontextprotocol/registry · GitHub"
+[20]: https://arxiv.org/abs/2607.14035?utm_source=chatgpt.com "Optimizing Visibility in Generative Engines: A Critical Survey of Generative Engine Optimization (2023-2026)"

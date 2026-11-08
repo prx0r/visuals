@@ -1,0 +1,974 @@
+Yes. That is probably the **more fundamental architecture**.
+
+The mistake would be to hardcode:
+
+> “We have an API factory, a benchmark factory, an agent-system factory…”
+
+and then manually decide what should exist.
+
+Instead, put a **Market Intelligence Factory above them** whose job is to continuously model reality and decide:
+
+1. **which markets are changing;**
+2. **where unmet demand is appearing;**
+3. **which product archetype best exploits each opportunity;**
+4. **whether an existing factory can build it;**
+5. **whether a new specialized factory should be spawned;**
+6. **what that factory’s vision, product constraints, research sources, scoring rubric and completion contract should be.**
+
+That changes VentureLab from a product factory into an **autonomous economic search system**.
+
+## The hierarchy
+
+```text
+                    GLOBAL MARKET INTELLIGENCE
+                              │
+                              ▼
+                       OPPORTUNITY GRAPH
+                              │
+                              ▼
+                       META-FACTORY / CIO
+                              │
+        ┌─────────────────────┼──────────────────────┐
+        │                     │                      │
+        ▼                     ▼                      ▼
+   EXISTING FACTORY      MODIFY FACTORY         SPAWN FACTORY
+        │                     │                      │
+        ▼                     ▼                      ▼
+      BUILD              NEW STRATEGY          FACTORY SPEC
+                                                   │
+                                                   ▼
+                                            PRODUCT SEARCH
+                                                   │
+                                                   ▼
+                                                BUILD
+```
+
+So the fundamental unit is no longer:
+
+```text
+idea → product
+```
+
+It becomes:
+
+```text
+market evidence
+→ opportunity
+→ optimal factory
+→ product population
+→ real-world outcomes
+→ updated market intelligence
+```
+
+That is substantially stronger.
+
+---
+
+# Market Intelligence Factory
+
+Its output should **not primarily be ideas**.
+
+Its output should be a continuously updated model of the world.
+
+For example:
+
+```yaml
+market:
+  id: agent-architecture-infrastructure
+
+signals:
+  adoption_velocity: 0.84
+  research_velocity: 0.91
+  developer_interest: 0.78
+  commercial_activity: 0.62
+
+structure:
+  crowdedness: 0.34
+  incumbent_strength: 0.28
+  fragmentation: 0.89
+  standards_maturity: 0.61
+
+pain:
+  interoperability: 0.81
+  discoverability: 0.72
+  reproducibility: 0.87
+  objective_comparison: 0.92
+
+economics:
+  buyer_clarity: 0.67
+  willingness_to_pay_evidence: 0.58
+  marginal_cost: 0.13
+
+confidence: 0.79
+```
+
+That is its permanent product.
+
+Ideas are downstream projections.
+
+---
+
+# Then create an Opportunity object
+
+An opportunity is not yet a startup/product idea.
+
+```yaml
+opportunity:
+  id: opp-agent-architecture-portability
+
+market: agent-architecture-infrastructure
+
+problem:
+  "Complete agent systems are difficult to discover,
+   reproduce, compare and transfer between runtimes."
+
+evidence:
+  - market_claim_928
+  - market_claim_1021
+  - market_claim_1172
+
+scores:
+  pain: 0.89
+  growth: 0.84
+  competition_gap: 0.72
+  technical_feasibility: 0.88
+
+confidence: 0.81
+```
+
+Only then ask:
+
+> What is the best economic response to this opportunity?
+
+---
+
+# This is where the MetaFactory chooses the factory
+
+For an opportunity like:
+
+```text
+agents cannot objectively compare inference deals
+```
+
+the solution type might be:
+
+```text
+data oracle + API/MCP
+```
+
+→ spawn/use:
+
+```text
+Inference Intelligence Factory
+```
+
+For:
+
+```text
+no reproducible comparison of agent architectures
+```
+
+solution:
+
+```text
+benchmark + registry + agent system
+```
+
+→ potentially spawn:
+
+```text
+Agent Architecture Factory
+```
+
+For:
+
+```text
+massive search interest around a poorly explained technical topic
+```
+
+solution:
+
+```text
+living information site
+```
+
+→ use:
+
+```text
+Evidence Publishing Factory
+```
+
+The product form itself becomes a **decision**, not something assumed upfront.
+
+---
+
+# The Factory Resolver
+
+Make this explicit.
+
+```text
+opportunity
+    ↓
+factory_resolve()
+```
+
+It evaluates possible responses:
+
+```text
+API
+MCP
+dataset
+benchmark
+library
+agent system
+registry
+information site
+research product
+service
+micro-SaaS
+```
+
+against things like:
+
+```text
+machine-readable demand
+required freshness
+data accumulation potential
+interaction model
+distribution
+buyer
+operating cost
+build complexity
+existing reusable components
+```
+
+Output:
+
+```json
+{
+  "opportunity": "opp_293",
+
+  "recommended_response": {
+    "factory_type": "data-oracle",
+    "confidence": 0.86,
+
+    "reason": [
+      "problem requires continuously changing data",
+      "primary consumers are agents",
+      "machine-readable interface is important",
+      "historical observations compound in value"
+    ]
+  },
+
+  "alternatives": [
+    {
+      "factory_type": "content-intelligence",
+      "score": 0.58
+    }
+  ]
+}
+```
+
+Very similar philosophically to Dell's resolver.
+
+---
+
+# Even more interesting: it can decide that no existing factory fits
+
+Suppose research finds a large opportunity around:
+
+```text
+AI-generated interactive educational simulations
+```
+
+but your factories are:
+
+```text
+API/MCP
+benchmark
+agent systems
+datasets
+```
+
+The MetaFactory can output:
+
+```text
+FACTORY_GAP
+```
+
+rather than forcing it into an API template.
+
+Then:
+
+```text
+spawn_factory(opportunity)
+```
+
+creates:
+
+```text
+Interactive Learning Factory
+```
+
+with its own:
+
+```text
+VISION
+PRODUCT TYPES
+BUILD TEMPLATE
+QUALITY CRITERIA
+TESTS
+DISTRIBUTION CHANNELS
+MONETIZATION ASSUMPTIONS
+MARKET SIGNALS
+```
+
+This is where things get genuinely interesting.
+
+---
+
+# Factory Genesis
+
+I'd formalize new-factory creation as its own pipeline.
+
+```text
+OPPORTUNITY CLUSTER
+       ↓
+REPEATED PRODUCT SHAPE
+       ↓
+FACTORY THESIS
+       ↓
+FACTORY RESEARCH
+       ↓
+FACTORY SPEC
+       ↓
+REFERENCE PRODUCT
+       ↓
+TEMPLATE EXTRACTION
+       ↓
+FACTORY CERTIFICATION
+       ↓
+ACTIVE FACTORY
+```
+
+You should **not** spawn a factory for every idea.
+
+A factory deserves to exist when there are multiple plausible products sharing:
+
+```text
+data architecture
+build process
+testing methodology
+distribution channel
+customer
+technology
+```
+
+For example:
+
+```text
+Dell
+EndpointTruth
+MCPTruth
+MarketOracle
+```
+
+all suggest a reusable:
+
+> **Truth/Oracle Factory**
+
+because they share:
+
+```text
+sources
+→ artifacts
+→ observations
+→ claims
+→ temporal state
+→ reconciliation
+→ API/MCP
+```
+
+That's a real factory archetype.
+
+---
+
+# Therefore there are actually two taxonomies
+
+## Product archetype
+
+```text
+API
+MCP
+dataset
+benchmark
+site
+library
+agent system
+```
+
+That's how the thing gets packaged.
+
+## Factory thesis
+
+```text
+Market Intelligence
+Agent Infrastructure
+Oracle/Truth Systems
+Research Intelligence
+Developer Infrastructure
+Evidence Publishing
+```
+
+That's **what kinds of opportunities it searches for**.
+
+This distinction is important.
+
+A:
+
+```text
+Agent Infrastructure Factory
+```
+
+might output:
+
+```text
+API
+benchmark
+agent system
+registry
+```
+
+It shouldn't be constrained to one packaging format.
+
+---
+
+# So each factory should have two layers
+
+Example:
+
+```yaml
+factory:
+  id: agent-infrastructure
+
+vision:
+  mission:
+    "Find and build infrastructure that improves
+     autonomous agent economics, reliability or capability."
+
+market_scope:
+  - agent runtimes
+  - MCP
+  - orchestration
+  - model routing
+  - memory
+  - evaluation
+
+allowed_products:
+  - api_mcp
+  - benchmark
+  - agent_system
+  - registry
+  - library
+
+preferred_economics:
+  - data_compounding
+  - low_marginal_cost
+  - developer_distribution
+```
+
+Then within the factory:
+
+```text
+opportunity → ProductTypeResolver → appropriate compiler
+```
+
+Much cleaner.
+
+---
+
+# The Market Intelligence Factory decides Factory Portfolio
+
+You effectively get an autonomous strategy layer.
+
+```text
+                    MARKET GRAPH
+                        │
+                        ▼
+               STRATEGIC OPPORTUNITIES
+                        │
+                        ▼
+                  FACTORY PORTFOLIO
+
+               budget / workers / compute
+                        │
+         ┌──────────────┼──────────────┐
+         ▼              ▼              ▼
+      Factory A      Factory B      Factory C
+        45%            35%            20%
+```
+
+If market evidence changes:
+
+```text
+MCP directories:
+crowdedness ↑↑
+opportunity ↓
+```
+
+MetaFactory reduces resources.
+
+Meanwhile:
+
+```text
+agent architecture optimization:
+research velocity ↑↑
+competition low
+demand ↑
+```
+
+MetaFactory reallocates workers there.
+
+That's essentially an autonomous R&D portfolio manager.
+
+---
+
+# Vision becomes generated, but constrained
+
+I wouldn't have an LLM casually rewrite a factory's mission.
+
+Generate a proposed **Factory Thesis** from evidence:
+
+```yaml
+proposal:
+  factory: agent-system-intelligence
+
+why_now:
+  - architecture diversity rising
+  - evaluation demand rising
+  - no dominant architecture registry
+  - model-specific architecture interactions observed
+
+vision:
+  "Make complete autonomous-agent architectures
+   discoverable, reproducible and empirically comparable."
+
+allowed_products:
+  - registry
+  - resolver
+  - benchmark
+  - runtime compiler
+
+success_metrics:
+  - architectures indexed
+  - reproducible installs
+  - benchmark coverage
+  - resolver uplift
+```
+
+Then version it:
+
+```text
+factory-thesis-v1
+```
+
+and evaluate it empirically.
+
+---
+
+# Factory visions can compete too
+
+This is frontier-worthy.
+
+Suppose there are competing interpretations:
+
+### Thesis A
+
+> Agent architecture marketplace.
+
+### Thesis B
+
+> Architecture benchmark service.
+
+### Thesis C
+
+> Architecture compiler/runtime.
+
+Don't choose based on prose debate.
+
+Spawn bounded experiments:
+
+```text
+Vision A → experiment A
+Vision B → experiment B
+Vision C → experiment C
+```
+
+Compare:
+
+```text
+user adoption
+repeat usage
+build feasibility
+data moat
+distribution
+```
+
+Then commit more resources to winners.
+
+So factory vision itself becomes testable.
+
+---
+
+# This fixes the current idea-scoring problem
+
+At the moment you're effectively doing:
+
+```text
+idea
+→ try to research it
+→ score it
+```
+
+But that's backwards for systematic discovery.
+
+Better:
+
+```text
+research entire market
+→ identify structural patterns
+→ identify opportunities
+→ generate multiple hypotheses
+→ score using already-collected evidence
+```
+
+Then you're not searching GitHub from scratch 167 times.
+
+You already know:
+
+```text
+market competitors
+research landscape
+adoption signals
+technologies
+problems
+```
+
+Idea scoring becomes cheap graph queries plus targeted uncertainty reduction.
+
+---
+
+# Market research also becomes reusable
+
+Current bad architecture:
+
+```text
+Idea A ──research──> 30 sources
+Idea B ──research──> same 30 sources
+Idea C ──research──> same 30 sources
+```
+
+Better:
+
+```text
+                    MARKET KNOWLEDGE
+                   /       |        \
+                  /        |         \
+             Idea A     Idea B      Idea C
+```
+
+Research once.
+
+Reuse indefinitely.
+
+That's another compounding moat.
+
+---
+
+# You can have Market Scouts
+
+Different agents specialize in different information acquisition.
+
+```text
+RESEARCH SCOUT
+arXiv/OpenAlex
+
+OSS SCOUT
+GitHub/ecosyste.ms/packages
+
+USAGE SCOUT
+OpenRouter/HF/MCP registries
+
+ATTENTION SCOUT
+HN/Trends/Cloudflare
+
+COMMERCIAL SCOUT
+pricing/launches/company sites
+
+PAIN SCOUT
+issues/forums/questions
+```
+
+All write into the same ontology.
+
+No scout decides what to build.
+
+That prevents research agents from biasing strategic decisions.
+
+---
+
+# Then Market Analyst agents derive claims
+
+```text
+raw observations
+      ↓
+market analysts
+      ↓
+structured claims
+```
+
+Examples:
+
+```text
+"Agent registry market becoming crowded."
+
+"Runtime architecture comparison remains weakly served."
+
+"Model-routing research is accelerating."
+
+"Developer package adoption for X is declining."
+```
+
+But every claim links back to quantitative observations.
+
+---
+
+# Opportunity Miner comes next
+
+This can run multiple algorithms:
+
+```text
+high pain × low competition
+high growth × low infrastructure
+new technology × unsolved application
+high spend × poor tooling
+fragmentation × missing standardization
+portfolio component × adjacent unmet need
+```
+
+Then generates opportunities.
+
+Again:
+
+```text
+OPPORTUNITY != IDEA
+```
+
+Important distinction.
+
+---
+
+# Idea Lab then explores responses
+
+For one opportunity:
+
+> Agents cannot reliably choose complete architectures.
+
+Generate:
+
+```text
+architecture registry
+architecture benchmark
+architecture resolver
+architecture compiler
+architecture telemetry service
+architecture optimization lab
+```
+
+Then score each.
+
+A single market gap can therefore produce a **family of products**.
+
+And MetaFactory may decide:
+
+> This is big enough to justify its own factory.
+
+---
+
+# Factories themselves become products of the system
+
+So hierarchy becomes:
+
+```text
+Market Intelligence Factory
+        │
+        ▼
+Opportunity Discovery
+        │
+        ▼
+MetaFactory
+        │
+        ├── existing factory
+        │
+        └── Factory Genesis
+                  │
+                  ▼
+               Factory
+                  │
+                  ▼
+            Product population
+```
+
+That is the key realization.
+
+---
+
+# Long-term evolutionary loop
+
+Then the genuinely frontier architecture is:
+
+```text
+        WORLD
+          │
+          ▼
+ MARKET OBSERVATIONS
+          │
+          ▼
+   MARKET MODEL
+          │
+          ▼
+ OPPORTUNITY MODEL
+          │
+          ▼
+ FACTORY POPULATION
+          │
+          ▼
+ PRODUCT POPULATION
+          │
+          ▼
+ REAL OUTCOMES
+          │
+          ▼
+   FITNESS SIGNALS
+          │
+          ├─────────────┐
+          ▼             ▼
+ evolve products    evolve factories
+          │             │
+          └──────┬──────┘
+                 ▼
+             evolve
+             strategy
+```
+
+You aren't just evolving code.
+
+You're evolving:
+
+```text
+what markets to inspect
+what evidence matters
+what opportunities to pursue
+what factories should exist
+how those factories search
+what products they generate
+how they build them
+```
+
+That's much more ambitious and coherent than the original “generate startup ideas” concept.
+
+---
+
+# I would now define four top-level system objects
+
+### `Market`
+
+What exists/is changing.
+
+### `Opportunity`
+
+An evidence-backed unmet economic/technical condition.
+
+### `Factory`
+
+A repeatable strategy + machinery for exploiting a class of opportunities.
+
+### `Product`
+
+A concrete deployed experiment/business/tool produced by a factory.
+
+And relationships:
+
+```text
+Market
+  ↓ supports
+Opportunity
+  ↓ justifies
+Factory
+  ↓ produces
+Product
+  ↓ generates
+Outcome
+  ↓ updates
+Market
+```
+
+That is the ontology.
+
+---
+
+# One more crucial object: `Pattern`
+
+Because products and factories both generate reusable knowledge.
+
+```text
+Product
+  ↓ discovers
+Pattern
+  ↓ adopted_by
+Factories
+```
+
+So full ontology:
+
+```text
+MARKET
+OPPORTUNITY
+FACTORY
+PRODUCT
+PATTERN
+OUTCOME
+```
+
+Six objects.
+
+That's enough to represent nearly everything we've been talking about.
+
+---
+
+# What I would build next in `cuntgoblin`
+
+Not evolution yet.
+
+I would make the next architecture:
+
+```text
+CP-MI0  Market observation schema
+CP-MI1  Entity graph
+CP-MI2  Source adapters
+CP-MI3  Market snapshots
+CP-MI4  Trend derivation
+CP-MI5  Opportunity objects
+CP-MI6  Opportunity miners
+CP-MI7  Factory resolver
+CP-MI8  Factory Genesis manifest
+CP-MI9  Spawn a real factory from market evidence
+```
+
+The proof should be:
+
+> **Can the system independently research the AI-agent market, identify an opportunity cluster, conclude that a specific new factory is justified, generate its evidence-backed vision and completion criteria, then use that factory to generate and rank products?**
+
+If it can do that reproducibly, `cuntgoblin` stops being an autonomous coding pipeline and becomes a genuine **autonomous venture/R&D operating system**.
+
+And yes: I think **Market Intelligence should be above every other factory**, because without it you're optimizing execution while still manually choosing what universe is worth exploring.

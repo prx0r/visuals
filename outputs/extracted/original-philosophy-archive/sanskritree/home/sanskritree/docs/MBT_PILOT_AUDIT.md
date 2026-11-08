@@ -1,0 +1,79 @@
+# Manthānabhairavatantra pilot audit
+
+## Local supplied source
+
+- Archive: `sources/Manthanabhairavatantram Kumarikakhandah_ The section -- Mark Dyczkowski -- d43562aff914418103f70f0175695938 -- Anna’s Archive.zip`
+- User confirmed permission for Sanskritree use on 2026-07-23.
+- SHA-256: `ff929b10809b334c5f22cbb6a01c4f01c19062f42eb1b46593f9ea4257ba1803`
+- Contents: `Text and Translation.pdf` (3,655 pages) and `Introduction Volume.pdf` (1,874 pages).
+
+## Candidate pilot
+
+The smallest coherent calibration unit begins with **Kumārikākhaṇḍa, Chapter 1, “Śrīnātha's Inquiry”**. PDF page 17 contains Sanskrit verses 1–4 and PDF page 18 contains the aligned Dyczkowski translation; the following page pair continues the inquiry. This is appropriate for source/translation/commentary separation and blind–reveal evaluation.
+
+## Ingestion decision: blocked pending a faithful Sanskrit representation
+
+The English layer extracts cleanly. The Sanskrit PDF text layer is encoded through a legacy embedded font and extracts as glyph-code text rather than IAST or Unicode Devanāgarī. The available renderer produced a blank Sanskrit page, and installed OCR has no Sanskrit language model. Therefore V2 must not ingest the extracted glyph stream as a Sanskrit reading.
+
+## Follow-up font diagnosis
+
+The Chapter 1 Sanskrit page declares `TimesNewRomanPSMT`, with neither an embedded font program nor a Unicode map. Its extracted ASCII-like stream is consistent with a legacy Devanāgarī-font workflow, but it cannot safely be identified as standard Kruti Dev from this PDF alone. A generic Kruti Dev converter is therefore only a hypothesis and must not be applied corpus-wide without calibration against a known source reading.
+
+The reliable recovery workflow is:
+
+1. acquire the original font or authoring source from the editor/publisher and create a font-specific Unicode mapping;
+2. validate that mapping on the printed Chapter 1 heading and a manually checked set of at least 50 grapheme clusters/verse lines;
+3. retain raw glyph codes and page coordinates beside every transcoded reading;
+4. route low-confidence lines to human review, never directly to morphology or alignment.
+
+## Empirical decoder control
+
+An offline standard Kruti Dev decoder was tested only on the heading stream. It produced `मन्थानभैतवतन्त्रे कुमारिकाखण्डे`; replacing one context-specific glyph interpretation produces the expected `मन्थानभैरवतन्त्रे कुमारिकाखण्डे`. A second heading control still fails under the generic decoder. Result: the stream is Kruti-like but the extracted PDF mapping is not standard Kruti Dev. The V2 legacy-font adapter now records this as a **blocked** decoder candidate until a control suite passes.
+
+Permitted next paths, in order:
+
+1. obtain the editor's Unicode/IAST electronic source or a source-authorized plain-text edition with the same reading;
+2. install an approved Sanskrit OCR model and manually validate each passage against page images;
+3. ingest the translation, notes, and page-level provenance as a calibration-only record while leaving `reading_id` absent—never pretending it aligns to a reconstructed Sanskrit text.
+
+This protects V2 invariants: raw source remains immutable, every translation ultimately references an exact reading, and uncertainty is visible.
+# Pilot-source decision update — 2026-07-23
+
+The supplied *Manthanabhairavatantra, Kumārikākhaṇḍa* archive remains a
+valuable calibration source for its English translation, notes, and commentary.
+It is **not** selected for the first Sanskrit-reading vertical slice. In the
+available PDF, the Sanskrit is encoded in an unembedded legacy glyph font:
+
+* text extraction yields a non-Unicode glyph stream;
+* PDF rasterisation produces a blank Sanskrit page, so Tesseract has no
+  recoverable image to read;
+* a generic Kruti-style converter can recover part of a title but fails known
+  controls, so it cannot establish an auditable Sanskrit reading.
+
+The source reading is consequently retained as `unrecoverable_legacy_encoding`,
+not silently guessed or normalised. A font-specific mapping may be added later
+only after it passes a documented controls corpus.
+
+## Replacement first vertical-slice source
+
+Use the supplied Dyczkowski volume *The Stanzas on Vibration: the
+Spandakārikā with Four Commentaries* as the first fully auditable local pilot.
+Its Appendix 3 contains extractable Roman transliteration. The opening stanza
+is present as:
+
+```text
+Yasyonmesanimesabhyam jagatah pralayodayau /
+Tam Sakticakravibhavaprabhavam Sankaram stumah // 1
+```
+
+The same volume supplies an explicit English rendering in its discussion of
+Stanza One, as well as distinguishable brief and extended commentarial
+material. The import must record the appendix transliteration as an
+edition-derived source reading, retain the page number, and mark the
+commercial PDF as locally supplied / not for redistribution. The two text
+forms must never be conflated with the garbled Devanagari-like OCR on other
+pages of that scan.
+
+This is a calibration pilot, not a substitute for the planned
+Manthānabhairava/Kubjikā pilot. It exercises the complete V2 evidence path
+without falsely claiming recovery of the MBT Sanskrit.

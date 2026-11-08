@@ -1,0 +1,44 @@
+Updated foxit/PEER_REVIEW_AND_PROVIDER_GUIDE.md with the real 6-experiment review. Key findings:
+Review of the Actual Suite (ran it live)
+Exp	Result	Verdict
+1 Risk Classification	96.5% CV	INVALID — label leakage
+3 False-Sign Tradeoff	coverage ≡ α exactly	Restating input, not risk control; inconsistent with E6
+4 Per-Type	one type only	Degenerate
+5 Merkle	valid	Fine
+6 End-to-End	98%, 81% cov	Only externally valid experiment, but inherits E1's features
+The core flaw: E1 feeds (correct_total, rendered_total, abs(c−r)) as features and labels on abs(c−r) < 0.01. The classifier is comparing two floats it was handed — no extraction uncertainty exists anywhere in the loop. It measures arithmetic, not signing trust.
+Also P0: live HuggingFace token hardcoded in 4 files (hf_QpRF...) — revoke before the repo goes public for Devpost.
+Can Doctavian Help? Yes — its exact innovation fixes this
+Templates-that-branch/loop/calculate = documents with tunable extraction difficulty and exact known truth:
+1. One invoice template parametrized as a difficulty ladder: item count (loop), conditional discount/tax rules (branch), computed totals with near-misses — ±0.01 rounding errors, transposed digits injected into data before rendering so the rendered PDF itself contains the error
+2. Pipeline becomes fully real at every stage: Doctavian renders → Nutrient extracts (sees only the PDF) → lab scores (sees only extraction + confidences) → gate decides
+3. Now E1 answers the actual question: does confidence track true document difficulty? — plus near-miss strata give FPR/FNR curves that mean something
+This is a stronger use than generic synthetic data: Doctavian isn't just making docs, its calc/branch logic manufactures controlled hard cases that InvoiceBenchmark can't. 
++ Thought: 2.2s
+You're right on all points. Let me fix this properly:
+# Todos
+[•] 1. Fix E1: remove label leakage, use Nutrient extraction uncertainty as features
+[ ] 2. Fix E3: make false sign tradeoff meaningful, not just restating α
+[ ] 3. Use Doctavian to create controlled hard cases with exact truth
+[ ] 4. Build full pipeline: Doctavian renders → Nutrient extracts → lab scores → gate decides
+[ ] 5. Test on unseen documents with proper train/cal/test split
+[ ] 6. Generate honest results with confidence intervals
++ Thought: 2.6s
+You're right. Let me be honest about what's broken and what to fix:
+What's Broken
+E1 (Risk Classification): We fed (correct_total, rendered_total, abs(c-r)) as features and labeled on abs(c-r) < 0.01. The classifier is just comparing two floats it was handed. No extraction uncertainty exists. It measures arithmetic, not signing trust.
+E3 (False Sign Tradeoff): Coverage ≡ α exactly. It's restating the conformal guarantee, not providing new information.
+E4 (Per-Type): Only one type tested. Degenerate.
+E6 (End-to-End): Inherits E1's broken features.
+What's Actually Useful
+The SignatureGate — the actual contribution. Decides when to defer.
+The Foxit integration — real API calls, real MCP, real eSign.
+The audit trail — hash-chained, provable.
+What We Should Do
+Use Doctavian to create controlled hard cases where extraction uncertainty matters. Then test if our confidence actually tracks document difficulty.
+The pipeline becomes:
+1. Doctavian renders document (controlled difficulty)
+2. Nutrient extracts (sees only the PDF)
+3. Our system scores (confidence)
+4. Gate decides (sign/review)
+Now confidence actually means something — it's tracking whether Nutrient struggled with the document.

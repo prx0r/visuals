@@ -1,0 +1,13 @@
+{
+ "pack": "what-is-jhana",
+ "started": "20261020T192248Z",
+ "phases": [
+  "draft",
+  "gate",
+  "push"
+ ],
+ "slop_target": 0.2,
+ "chapters": [],
+ "finished": "20261020T192248Z",
+ "elapsed_s": 0.0
+}

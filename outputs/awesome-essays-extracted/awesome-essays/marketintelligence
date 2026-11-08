@@ -1,0 +1,1081 @@
+Yes. This is a strong standalone product direction.
+
+You can build a **Market Oracle** that continuously answers things like:
+
+> Which AI models, providers, agents, frameworks, MCP servers, libraries, research areas and product categories are gaining or losing real adoption?
+
+The key is not trying to find one magical “market share API.” Exact user counts for most AI companies are private. Instead, build **triangulated market truth** from multiple independent behavioral signals.
+
+A good abstraction is:
+
+```text
+SEARCH INTEREST
++ REAL INFERENCE USAGE
++ PACKAGE INSTALLS
++ OPEN-SOURCE ADOPTION
++ DEPENDENCY USAGE
++ WEB TRAFFIC
++ RESEARCH VELOCITY
++ MCP INSTALL/USE
++ DEVELOPER SURVEYS
++ COMMUNITY DISCUSSION
++ PRODUCT/COMPETITOR EVENTS
+────────────────────────────
+          MARKET ORACLE
+```
+
+And there are surprisingly good free sources for almost every layer.
+
+## The jackpot source: OpenRouter Data
+
+This is probably the single best source for your **AI-specific market intelligence**.
+
+OpenRouter now exposes an actual datasets API containing **public app/agent rankings by token usage**, including total requests and tokens, configurable date windows, categories such as coding, and both `popular` and `trending` rankings. Trending is calculated from excess growth compared with preceding windows. ([OpenRouter][1])
+
+Their public app rankings currently include major agent/coding products such as Hermes Agent, Kilo Code and Claude Code, with usage expressed in token volume. ([OpenRouter][2])
+
+They also expose daily usage data for the **top 50 models**, and explicitly describe the dataset API as the JSON source underlying their public rankings. ([OpenRouter][3])
+
+That means your oracle can derive:
+
+```text
+model market share
+model growth velocity
+agent/app market share
+agent growth velocity
+coding-agent adoption
+model → app relationships
+model-category adoption
+language-specific model usage
+context-length distributions
+```
+
+Potential records:
+
+```json
+{
+  "entity": "Hermes Agent",
+  "metric": "openrouter.tokens",
+  "period": "2026-W34",
+  "value": 795000000000,
+  "source": "openrouter",
+  "kind": "BEHAVIORAL_USAGE"
+}
+```
+
+This is vastly stronger evidence than:
+
+```text
+Google searches for "Hermes Agent"
+```
+
+because tokens represent actual activity.
+
+One caveat: OpenRouter explicitly notes that only public/attributed apps appear, and token counts can use different upstream tokenizers. ([OpenRouter][1])
+
+So label it:
+
+```text
+OPENROUTER_OBSERVED_SHARE
+```
+
+rather than:
+
+```text
+GLOBAL_MARKET_SHARE
+```
+
+---
+
+# Hugging Face is another goldmine
+
+The Hugging Face Hub has open APIs for models, datasets and Spaces, with machine-readable OpenAPI definitions and webhooks. ([Hugging Face][4])
+
+The Hub exposes metadata useful for adoption intelligence including downloads, likes, tags and repository information; their current CLI/API tooling explicitly supports fetching these expanded properties programmatically. ([Hugging Face][5])
+
+So monitor:
+
+```text
+model downloads
+download acceleration
+likes
+new model releases
+new organizations
+model forks/derivatives
+dataset downloads
+Space popularity
+task/category growth
+```
+
+You can derive:
+
+```text
+Qwen family adoption ↑
+small-model downloads ↑
+vision-language releases ↑
+agent-trace datasets ↑
+```
+
+This becomes your **open-model economy telemetry**.
+
+---
+
+# ecosyste.ms may be the hidden gem
+
+This one is almost tailor-made for the factory.
+
+ecosyste.ms exposes open APIs covering roughly:
+
+* 14M+ packages across 100+ package sources;
+* hundreds of millions of repositories;
+* billions of public repository timeline events;
+* hundreds of millions of commits;
+* issues and pull requests;
+* dependency graphs;
+* Docker images;
+* sponsors;
+* Open Collective funding;
+* Dependabot activity. ([Ecosystems][6])
+
+Most endpoints are public and OpenAPI-described. ([Ecosystems][6])
+
+They even maintain MCP-related projects themselves. ([GitHub][7])
+
+This could let you measure things ordinary GitHub-star trackers can't:
+
+```text
+langgraph package installs
+        ↓
+repos depending on langgraph
+        ↓
+new dependencies/month
+        ↓
+commit activity
+        ↓
+issue activity
+        ↓
+maintainer activity
+```
+
+So instead of saying:
+
+> LangGraph has lots of stars.
+
+you might say:
+
+```text
+GitHub attention          +4%
+Package downloads         +22%
+New dependent repos       +31%
+Active maintainers        stable
+Issue creation            +19%
+Research mentions         +15%
+```
+
+That's actual market intelligence.
+
+---
+
+# npm + PyPI give you direct developer adoption signals
+
+PyPI download telemetry is freely accessible through PyPI Stats, including recent totals and daily time series; it is based on the Python Software Foundation's public download dataset. ([PyPI Stats][8])
+
+For larger-scale analysis, the underlying PyPI download dataset is queryable through BigQuery, with a free query allowance mentioned by PyPI Stats. ([PyPI Stats][8])
+
+So you can track things like:
+
+```text
+langchain
+langgraph
+litellm
+openai
+anthropic
+huggingface-hub
+mcp
+```
+
+over time.
+
+For each:
+
+```text
+downloads_1d
+downloads_7d
+downloads_30d
+growth_7d
+growth_30d
+acceleration
+```
+
+Then normalize out obviously automated traffic where possible.
+
+Important caveat:
+
+> package downloads ≠ people.
+
+CI systems reinstall packages constantly.
+
+So label this:
+
+```text
+PACKAGE_DOWNLOAD_ACTIVITY
+```
+
+not `USERS`.
+
+---
+
+# Cloudflare Radar gives you global Internet attention
+
+Cloudflare Radar has a **free API** exposing aggregated Internet usage from Cloudflare's network and its public DNS resolver. ([Cloudflare Docs][9])
+
+It includes APIs for:
+
+```text
+top domains
+trending domains
+domain rank time series
+technology trends
+```
+
+and ranking time series can be aggregated at intervals from minutes through months. ([Cloudflare Docs][10])
+
+That's extremely interesting for:
+
+```text
+openai.com
+anthropic.com
+huggingface.co
+openrouter.ai
+cursor.com
+langchain.com
+```
+
+You won't get exact user numbers.
+
+But you can detect:
+
+```text
+relative traffic trajectory
+domain-rank movements
+interest spikes
+regional changes
+```
+
+Think of it as:
+
+```text
+WEB_ATTENTION
+```
+
+rather than usage.
+
+---
+
+# Google Trends finally has an API
+
+Google launched an official Trends API in alpha.
+
+It provides a rolling **five-year window**, daily/weekly/monthly/yearly aggregation, geographic breakdowns, and—importantly—consistent scaling across queries, making longitudinal comparison much more useful than the old UI. ([Google for Developers][11])
+
+It's still limited-access alpha, however. ([Google for Developers][11])
+
+Google also now exposes trend-related concepts through its Ads APIs, including classifications such as:
+
+```text
+EMERGING
+RISING
+SUSTAINED
+DECLINING
+```
+
+and historical topic trend data. ([Google for Developers][12])
+
+For your oracle:
+
+```text
+"Claude Code"
+"MCP"
+"AI agent"
+"LangGraph"
+"OpenRouter"
+"local LLM"
+```
+
+could produce:
+
+```text
+search_interest
+velocity
+acceleration
+regional_diffusion
+related_queries
+```
+
+Useful—but I would rank Google Trends below actual package/inference usage.
+
+---
+
+# Research velocity: OpenAlex
+
+This should absolutely be in the market layer.
+
+OpenAlex provides a structured research graph covering scholarly works, authors, institutions, topics, funders and related entities, with filtering, grouping and search APIs. ([OpenAlex][13])
+
+Its basic API is free with a free API key, and the data itself is CC0. ([OpenAlex][14])
+
+This lets you calculate:
+
+```text
+papers/month
+authors/month
+institutions entering topic
+citation growth
+topic acceleration
+cross-topic movement
+```
+
+For example:
+
+```text
+MCP                    2025 → 2026 ↑↑
+agent memory            ↑
+agent architecture      ↑↑
+LLM routing             ↑
+self-evolving agents    ↑↑↑
+```
+
+Much stronger than just scraping arXiv search pages.
+
+---
+
+# MCP itself gives you another ecosystem oracle
+
+The official MCP Registry now exposes a standardized REST/OpenAPI registry for publicly available MCP servers. ([GitHub][15])
+
+The registry is intended as the centralized public source of metadata and exposes standardized installation/configuration metadata. ([Model Context Protocol][16])
+
+So poll it every few hours/daily and maintain:
+
+```text
+servers_total
+new_servers/day
+new_servers/category
+new_publishers
+new_versions
+language/runtime
+package type
+transport
+capability tags
+```
+
+Then you can say:
+
+```text
+database MCP servers       +18% MoM
+browser MCP servers         +7%
+developer tooling          +32%
+finance MCP                ...
+```
+
+without relying on vibes.
+
+Smithery also exposes a searchable MCP registry API containing fields including verification and `useCount`, which provides an additional adoption signal. ([Smithery][17])
+
+Triangulate:
+
+```text
+Official MCP Registry presence
++
+Smithery useCount
++
+GitHub repo health
++
+package installs
+```
+
+Now MCP market intelligence becomes surprisingly strong.
+
+---
+
+# Developer adoption surveys are important calibration
+
+The Stack Overflow Developer Survey is especially useful because it tells you whether telemetry proxies resemble human-reported usage.
+
+The 2025 survey reported that 84% of respondents were using or planning to use AI tools, while 51% of professional developers reported daily AI-tool usage. ([Stack Overflow Developer Survey][18])
+
+It also contains explicit sections on:
+
+```text
+AI models
+AI agents
+agent orchestration tools
+agent observability/security
+out-of-box assistants
+```
+
+including reported usage of orchestration frameworks. ([Stack Overflow Developer Survey][18])
+
+Our World in Data republishes some of this as machine-readable downloadable/API-backed data, which is useful for historical series. ([Our World in Data][19])
+
+This is your:
+
+```text
+SURVEY_ADOPTION
+```
+
+signal.
+
+---
+
+# Hacker News is excellent for early detection
+
+Hacker News maintains an official near-real-time public API. ([GitHub][20])
+
+Measure:
+
+```text
+mentions
+stories
+points
+comments
+unique authors
+Show HN launches
+job mentions
+```
+
+for an entity.
+
+The advantage is that HN often moves **before** mainstream adoption.
+
+So:
+
+```text
+HN spike
+   ↓
+GitHub stars spike
+   ↓
+package downloads spike
+   ↓
+OpenRouter usage spike
+```
+
+could be an extremely interesting product-launch trajectory.
+
+There are already no-auth Hacker News MCP implementations as well. ([GitHub][21])
+
+---
+
+# Common Crawl solves longitudinal web presence
+
+Common Crawl's entire archive is freely accessible and its URL index can be queried programmatically. ([Common Crawl][22])
+
+This isn't useful minute-to-minute.
+
+But it's excellent for historical questions:
+
+```text
+When did "AI agent" begin appearing on company sites?
+How many SaaS companies mention MCP?
+How quickly has "LLM observability" spread?
+How many sites now advertise AI APIs?
+```
+
+You could build a fascinating:
+
+```text
+technology diffusion index
+```
+
+from it.
+
+---
+
+# The signal hierarchy I would use
+
+Not all signals deserve equal weight.
+
+### Tier A — behavioral
+
+Strongest.
+
+```text
+OpenRouter model tokens
+OpenRouter app tokens
+package download activity
+dependency adoption
+MCP use counts
+```
+
+### Tier B — implementation
+
+Very useful.
+
+```text
+GitHub dependencies
+new repos
+commits
+contributors
+package releases
+Docker usage
+```
+
+### Tier C — attention
+
+Useful leading indicators.
+
+```text
+Google Trends
+Cloudflare domain trends
+HN discussion
+Wikipedia pageviews
+news volume
+```
+
+### Tier D — stated intention
+
+Useful but weaker.
+
+```text
+surveys
+developer polls
+wishlists
+```
+
+### Tier E — marketing claims
+
+Weakest.
+
+```text
+company says "millions of users"
+press release
+vendor benchmark
+```
+
+Do not combine them blindly.
+
+---
+
+# Build a canonical Market Observation schema
+
+This can almost copy the Dell philosophy.
+
+```json
+{
+  "observation_id": "obs_01J...",
+  "entity_id": "agent:hermes",
+
+  "metric": "inference.tokens",
+
+  "value": 795000000000,
+  "unit": "tokens",
+
+  "period": {
+    "from": "2026-08-17",
+    "to": "2026-08-18"
+  },
+
+  "source": {
+    "id": "openrouter",
+    "kind": "behavioral_platform"
+  },
+
+  "method": "openrouter-app-rankings-v1",
+
+  "observed_at": "...",
+
+  "evidence": {
+    "artifact_sha256": "..."
+  }
+}
+```
+
+Then another:
+
+```json
+{
+  "entity_id": "agent:hermes",
+  "metric": "github.stars",
+  "value": 12345
+}
+```
+
+Another:
+
+```json
+{
+  "entity_id": "agent:hermes",
+  "metric": "google.search_interest",
+  "value": 58
+}
+```
+
+Don't collapse them.
+
+---
+
+# Then derive Trend objects
+
+```json
+{
+  "entity": "Hermes Agent",
+
+  "window": "30d",
+
+  "signals": {
+    "inference_usage_growth": 0.41,
+    "github_growth": 0.22,
+    "search_growth": 0.18,
+    "research_growth": null
+  },
+
+  "derived": {
+    "adoption_direction": "RISING",
+    "momentum": 0.77,
+    "confidence": 0.88
+  }
+}
+```
+
+This is where you can produce:
+
+```text
+RISING
+ACCELERATING
+PLATEAU
+DECLINING
+EMERGING
+```
+
+but always preserve the underlying signals.
+
+---
+
+# Don't produce fake user counts
+
+This is particularly important for your example:
+
+> users of each provider
+
+For most providers, you won't know this.
+
+So do not invent:
+
+```text
+Anthropic users = 12.4m
+```
+
+Instead expose:
+
+```text
+provider:
+  anthropic
+
+observed_signals:
+  openrouter_tokens_share
+  models_used_share
+  sdk_downloads
+  github_dependency_share
+  cloudflare_domain_rank
+  google_search_share
+  survey_usage
+```
+
+Then derive:
+
+```text
+adoption_index
+```
+
+and label it explicitly as an index.
+
+---
+
+# One fascinating derived metric: Developer Adoption Index
+
+For example:
+
+```text
+DAI =
+0.30 × dependency_share
++ 0.25 × package_download_share
++ 0.20 × GitHub_active_repo_share
++ 0.15 × behavioral_usage_share
++ 0.10 × search_interest_share
+```
+
+But version it:
+
+```text
+developer_adoption_index:v1
+```
+
+and show coverage.
+
+Don't call it market share.
+
+---
+
+# Another: Emerging Technology Score
+
+```text
+ETS =
+velocity
+× acceleration
+× cross_source_confirmation
+× source_quality
+```
+
+For example:
+
+```text
+MCP architecture optimization
+
+research       ↑↑
+GitHub         ↑
+HN             ↑
+packages       early
+commercial     low
+
+EMERGING_SCORE = 0.83
+```
+
+That directly powers your venture factory.
+
+---
+
+# And: Crowdedness Index
+
+This would be extremely useful for `cuntgoblin`.
+
+Measure:
+
+```text
+active competing repos
++
+active funded companies
++
+package implementations
++
+MCP implementations
++
+launch velocity
++
+incumbent concentration
+```
+
+Then:
+
+```text
+MCP directory
+CROWDEDNESS = 0.94
+
+agent architecture resolver
+CROWDEDNESS = 0.31
+```
+
+Suddenly market scoring isn't an LLM opinion.
+
+---
+
+# Pain Signal is another great one
+
+Mine:
+
+```text
+GitHub issues
+HN comments
+Stack Overflow questions
+Reddit/community discussions
+product reviews
+```
+
+Classify:
+
+```text
+bug
+missing feature
+pricing complaint
+complexity
+reliability
+performance
+migration
+security
+```
+
+Then:
+
+```text
+MCP ecosystem
+
+reliability complaints         1,291
+configuration complaints         822
+tool overload                    391
+registry discovery               183
+```
+
+Idea generator asks:
+
+```text
+high pain
++
+high growth
++
+low solution coverage
+=
+opportunity
+```
+
+This is much smarter than generic market research.
+
+---
+
+# Architecture I'd build
+
+```text
+                        MARKET ORACLE
+
+SOURCES
+│
+├─ OpenRouter
+├─ Hugging Face
+├─ ecosyste.ms
+├─ PyPI/npm
+├─ GitHub
+├─ Cloudflare Radar
+├─ Google Trends
+├─ OpenAlex
+├─ MCP Registry
+├─ Smithery
+├─ Hacker News
+├─ Stack Overflow survey
+└─ Common Crawl
+        │
+        ▼
+  RAW ARTIFACT STORE
+        │
+        ▼
+    OBSERVATIONS
+        │
+        ▼
+      ENTITIES
+        │
+ ┌──────┼─────────┐
+ ▼      ▼         ▼
+MODEL  AGENT    TECHNOLOGY
+MCP    COMPANY  PRODUCT
+LIB    PAPER    MARKET
+        │
+        ▼
+    TIME SERIES
+        │
+        ▼
+   SIGNAL ENGINE
+        │
+ ┌──────┼───────────┐
+ ▼      ▼           ▼
+growth adoption  crowdedness
+pain   research  attention
+        │
+        ▼
+    MARKET GRAPH
+        │
+        ▼
+      MCP/API
+```
+
+---
+
+# The MCP could be excellent
+
+I would expose something like:
+
+```text
+market_search
+market_entity
+
+market_trends
+market_emerging
+market_declining
+
+market_compare
+
+market_adoption
+market_usage
+
+market_competitors
+market_crowdedness
+
+market_research_velocity
+market_developer_activity
+market_attention
+
+market_pain_points
+
+market_opportunities
+
+market_evidence
+market_timeseries
+```
+
+Example agent call:
+
+```text
+market_compare(
+  entities=["Hermes", "LangGraph", "Letta"],
+  metrics=[
+    "github_growth",
+    "package_growth",
+    "openrouter_usage",
+    "research_velocity"
+  ],
+  window="90d"
+)
+```
+
+Then your venture factory can directly call:
+
+```text
+market_opportunities(
+  domain="agent infrastructure",
+  max_crowdedness=0.4,
+  min_growth=0.6
+)
+```
+
+That is very compelling.
+
+---
+
+# Existing project worth examining
+
+There is already an open-source project called **Trend Pulse** that aggregates around 20 trend sources and exposes a CLI, Python interface and MCP server, including Google Trends, Hacker News, Mastodon, Bluesky, Wikipedia, GitHub, PyPI, Google News, dev.to, npm, Reddit and Docker Hub. ([GitHub][23])
+
+That validates the basic “many free sources → one MCP” architecture.
+
+But your differentiation should be much deeper:
+
+```text
+Trend aggregator
+    vs
+Market Oracle
+```
+
+Trend aggregator:
+
+```text
+what is popular now?
+```
+
+Market Oracle:
+
+```text
+what is gaining real adoption?
+why?
+on what evidence?
+how confident are we?
+how crowded is the market?
+what unresolved pain exists?
+what opportunities follow?
+```
+
+---
+
+# This may actually be another Oracle-family product
+
+You now have a pretty clean family:
+
+```text
+Dell
+→ inference economics
+
+EndpointTruth
+→ endpoint reality
+
+MCPTruth
+→ tool reality
+
+AgentSLA
+→ agent task economics
+
+MarketOracle
+→ technology/product adoption reality
+
+ArchOracle
+→ agent-system architecture reality
+```
+
+And the shared infrastructure underneath is basically:
+
+```text
+entity identity
++
+observations
++
+evidence
++
+temporal state
++
+derived measurements
++
+decision API
+```
+
+So I would absolutely reuse the Dell evidence kernel rather than start over.
+
+## What I'd build first
+
+Don't ingest the entire Internet.
+
+Start with an **AI Market Oracle v0** covering maybe 100–300 entities:
+
+```text
+major model families
+major inference providers
+major coding agents
+major agent frameworks
+major MCP infrastructure
+major AI developer libraries
+```
+
+Use just **seven high-signal sources** initially:
+
+```text
+OpenRouter
+Hugging Face
+ecosyste.ms
+PyPI/npm
+Cloudflare Radar
+OpenAlex
+Official MCP Registry
+```
+
+Those alone are enough to build a surprisingly serious intelligence API.
+
+Then add Google Trends/HN/community sources as **leading indicators**, not primary truth.
+
+If you want, the next logical step is to turn this into a **full technical build spec for a MarketOracle repo/factory archetype**, including canonical schemas, source adapters, trend mathematics, MCP tools, scoring equations, cron cadence, evidence contracts and how `cuntgoblin` consumes it automatically.
+
+[1]: https://openrouter.ai/docs/api/api-reference/datasets/get-app-rankings?utm_source=chatgpt.com "Top apps by token usage | OpenRouter | Documentation"
+[2]: https://openrouter.ai/apps?utm_source=chatgpt.com "App & Agent Rankings | OpenRouter"
+[3]: https://openrouter.ai/docs/agent-sdk/typescript/api-reference/datasets?utm_source=chatgpt.com "Datasets | OpenRouter TypeScript SDK | OpenRouter | Documentation"
+[4]: https://huggingface.co/docs/hub/en/api?utm_source=chatgpt.com "Hub API Endpoints · Hugging Face"
+[5]: https://huggingface.co/docs/huggingface_hub/en/guides/cli?utm_source=chatgpt.com "Command Line Interface (CLI) · Hugging Face"
+[6]: https://ecosyste.ms/api?utm_source=chatgpt.com "API Documentation - ecosyste.ms | Rate Limits & OpenAPI Specs"
+[7]: https://github.com/orgs/ecosyste-ms/repositories?utm_source=chatgpt.com "ecosyste-ms repositories · GitHub"
+[8]: https://pypistats.org/api/?utm_source=chatgpt.com "PyPI Download Stats"
+[9]: https://developers.cloudflare.com/radar/?utm_source=chatgpt.com "Overview · Cloudflare Radar docs"
+[10]: https://developers.cloudflare.com/api/resources/radar/subresources/ranking/methods/top/?utm_source=chatgpt.com "Get top or trending domains | Cloudflare API"
+[11]: https://developers.google.com/search/apis/trends?utm_source=chatgpt.com "Google Trends API Alpha | Google Search Central  |  Documentation  |  Google for Developers"
+[12]: https://developers.google.com/google-ads/api/reference/rpc/v25/InsightsTrendEnum.InsightsTrend?utm_source=chatgpt.com "InsightsTrend  |  Google Ads API  |  Google for Developers"
+[13]: https://developers.openalex.org/api-reference/introduction?utm_source=chatgpt.com "API Overview - OpenAlex Developers"
+[14]: https://developers.openalex.org/quickstart?utm_source=chatgpt.com "Quickstart - OpenAlex Developers"
+[15]: https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/api/official-registry-api.md?utm_source=chatgpt.com "registry/docs/reference/api/official-registry-api.md at main · modelcontextprotocol/registry · GitHub"
+[16]: https://modelcontextprotocol.io/registry/about?utm_source=chatgpt.com "The MCP Registry - Model Context Protocol"
+[17]: https://smithery.ai/docs/api-reference/servers/list-all-servers?utm_source=chatgpt.com "List all servers - Smithery Documentation"
+[18]: https://survey.stackoverflow.co/2025/ai?utm_source=chatgpt.com "AI | 2025 Stack Overflow Developer Survey"
+[19]: https://ourworldindata.org/grapher/share-of-professional-software-developers-using-ai-tools?utm_source=chatgpt.com "Share of professional software developers using AI tools | Our World in Data"
+[20]: https://github.com/hackernews/api?utm_source=chatgpt.com "GitHub - HackerNews/API: Documentation and Samples for the Official HN API · GitHub"
+[21]: https://github.com/isteamhq/mcp-servers?utm_source=chatgpt.com "GitHub - isteamhq/mcp-servers: Open-source MCP servers for Twitter, Bluesky, LinkedIn, Google Ads, and Hacker News — let AI agents interact with real-world platforms · GitHub"
+[22]: https://commoncrawl.org/get-started?utm_source=chatgpt.com "Common Crawl - Get Started"
+[23]: https://github.com/claude-world/trend-pulse?utm_source=chatgpt.com "GitHub - claude-world/trend-pulse: Free trending topics aggregator — 20 sources, zero auth. CLI + Python library + MCP Server. · GitHub"

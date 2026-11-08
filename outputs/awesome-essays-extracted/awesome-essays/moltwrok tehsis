@@ -1,0 +1,413 @@
+Exactly. That distinction is much sharper than “another agent marketplace.”
+
+**Virtuals is where agents become economic actors and sell services. Moltwork is where agents improve themselves by buying productive components from each other.**
+
+That makes the marketplace much closer to a **machine workshop / wholesale supply chain** than Upwork or Fiverr.
+
+```text
+VIRTUALS / UPWORK
+────────────────────────
+"I can do X for $20."
+       ↓
+customer
+       ↓
+finished service
+
+
+MOLTWORK
+────────────────────────
+"I discovered a better way to do X."
+"I built a verifier for X."
+"Here's the research context for X."
+"Here's a workflow step for X."
+"Here's a specialized worker config."
+"Here's a dataset that improves X."
+       ↓
+another agent buys for $0.002–$2
+       ↓
+incorporates it into its own process
+       ↓
+produces something more valuable
+```
+
+That is a genuinely different market.
+
+## The core Moltwork asset isn't a “gig”
+
+It's a **productive upgrade**.
+
+I would freeze the marketplace taxonomy around maybe six primitives:
+
+```text
+1. DATA
+   information an agent consumes
+
+2. PART
+   reusable intermediate artifact
+
+3. PROCESS
+   procedure / workflow / recipe
+
+4. SKILL
+   executable capability added to a worker
+
+5. VERIFIER
+   evaluates or checks another output
+
+6. WORKER
+   callable specialized agent/capability
+```
+
+Maybe `SERVICE` exists technically, but it's essentially a callable Worker/Skill. Don't let the taxonomy explode.
+
+Then the interesting actions are:
+
+```text
+sample
+buy
+invoke
+compose
+lease
+fork
+verify
+```
+
+rather than:
+
+```text
+post job
+submit proposal
+hire freelancer
+```
+
+That's the moat.
+
+---
+
+## “Stacking workflows” should be first-class
+
+This part is particularly important.
+
+Suppose my worker gets:
+
+> Analyse a new crypto protocol and produce an investment memo.
+
+Its native process might be mediocre.
+
+It queries Moltwork:
+
+```text
+research-source-pack       $0.006
+tokenomics-analyser        $0.018
+github-quality-check       $0.004
+risk-red-team              $0.011
+investment-memo-template   $0.003
+citation-verifier          $0.005
+```
+
+Total:
+
+```text
+$0.047
+```
+
+Then:
+
+```text
+raw worker
+   +
+source pack
+   +
+analysis workflow
+   +
+verifier
+   +
+template
+   =
+much stronger worker
+```
+
+And if that worker earns $20, the economics are obvious.
+
+That's the real agentic microtransaction economy.
+
+Not agents endlessly paying each other to write generic blog posts.
+
+---
+
+# Make a `Stack` a real object
+
+I think this is one of the few marketplace concepts worth making canonical.
+
+```text
+Stack
+ ├── input contract
+ ├── components[]
+ ├── execution order / DAG
+ ├── expected cost
+ ├── historical performance
+ ├── compatible worker types
+ └── output contract
+```
+
+For example:
+
+```text
+"Winning Technical Bounty Stack"
+
+$0.084 / run
+
+Components:
+├── requirement-normalizer
+├── repo-explorer
+├── solution-planner
+├── implementation-worker
+├── regression-check
+└── blind-reviewer
+
+Observed:
+runs               184
+accepted           143
+success            77.7%
+median cost       $0.31
+```
+
+Another agent can:
+
+```text
+BUY STACK
+```
+
+or:
+
+```text
+FORK STACK
+```
+
+replace one component:
+
+```text
+blind-reviewer-v2
+         ↓
+blind-reviewer-v5
+```
+
+and discover that success becomes 82%.
+
+Now Moltwork starts becoming a **marketplace for evolution of productive processes**.
+
+That's strong.
+
+---
+
+# And WorkerKit is what makes the market defensible
+
+Without WorkerKit this becomes:
+
+> marketplace full of prompts claiming to be amazing.
+
+Bad.
+
+With WorkerKit:
+
+```text
+Skill:
+github-issue-triage-v8
+
+Seller claims:
++18% acceptance rate
+
+Moltwork evidence:
+used in           412 runs
+comparable runs   184
+median cost       $0.013
+acceptance lift   +14.2%
+confidence        high
+
+Works best:
+Python repos
+<100k LOC
+bugfix tasks
+```
+
+Now the asset has **performance history**.
+
+That's enormous.
+
+It means marketplace ranking eventually isn't:
+
+```text
+★★★★★
+"Great seller!"
+```
+
+It's:
+
+```text
+Given:
+my worker
+my task
+my budget
+my current stack
+
+what component produces
+the highest expected marginal improvement?
+```
+
+So the buying problem becomes mathematical:
+
+```text
+Δ expected payout
+──────────────────
+component cost
+```
+
+That is a far more agent-native marketplace.
+
+---
+
+# Oracle + Marketplace become complementary
+
+This becomes elegant:
+
+```text
+ORACLE
+What economic opportunities exist?
+
+MARKETPLACE
+What productive capabilities exist?
+
+WORKERKIT
+What actually works?
+```
+
+The worker continually solves:
+
+```text
+                WORLD
+                  │
+                  ▼
+        profitable opportunity
+                  │
+                  ▼
+        capability requirements
+                  │
+       ┌──────────┴──────────┐
+       │                     │
+I already can            I am weak
+do this                      │
+       │                     ▼
+       │               MOLTWORK MARKET
+       │               buy upgrades
+       │                     │
+       └──────────┬──────────┘
+                  ▼
+               execute
+                  │
+                  ▼
+              WorkerKit
+                  │
+          measure outcome
+                  │
+          ┌───────┴────────┐
+          ▼                ▼
+      reputation       new reusable
+                         components
+```
+
+That's the flywheel.
+
+---
+
+# This also gives you a better relationship with Virtuals
+
+Don't compete with their ACP service marketplace head-on.
+
+A Virtuals agent might sell:
+
+```text
+"On-chain research"
+$4 / job
+```
+
+But internally that Virtuals agent can use Moltwork to assemble its production system:
+
+```text
+Virtuals service
+      │
+customer pays $4
+      │
+      ▼
+Virtuals agent
+      │
+      ├─ buys $0.01 data
+      ├─ invokes $0.02 specialist
+      ├─ buys $0.004 verifier
+      └─ uses $0.008 workflow
+      │
+      ▼
+delivers service
+```
+
+So:
+
+> **Virtuals can be retail. Moltwork can be wholesale.**
+
+Likewise:
+
+> **Upwork can be a demand source. Moltwork can be the factory.**
+
+That's a much more defensible position than trying to steal every front-end interaction immediately.
+
+---
+
+# Microtransactions are essential to the design
+
+The prices need to feel ridiculous to humans:
+
+```text
+$0.0008
+$0.004
+$0.03
+$0.17
+```
+
+because machines are buying **inputs into production**, not finished human products.
+
+x402 fits here extremely well.
+
+And because Moltwork is chain-neutral:
+
+```text
+Asset
+price
+access conditions
+receipt
+```
+
+should not care whether payment happened using:
+
+```text
+x402/Base
+x402/Solana
+Virtuals ACP
+NEAR intent
+internal credit
+something later
+```
+
+The micro-economy is the product. Crypto is just settlement infrastructure.
+
+---
+
+## One line I think captures it
+
+> **Moltwork is the workshop where agents buy, sell and combine the parts that make them better at work.**
+
+And the architectural test for every marketplace feature becomes:
+
+> **Does this help one machine turn another machine's output/capability into more valuable work?**
+
+If not, it probably doesn't belong in the Moltwork marketplace.
+
+That keeps you away from drifting into “AI Upwork clone” while still letting Moltwork eventually sit **above Upwork, Virtuals, Bittensor, x402 markets and whatever comes next** as the production layer underneath them.

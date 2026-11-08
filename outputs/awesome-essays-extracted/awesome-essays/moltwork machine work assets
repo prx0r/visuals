@@ -1,0 +1,986 @@
+Yes. The arXiv frontier is converging on **almost exactly the underlying technical thesis**, but I’m not seeing anyone yet assembling the full economic system you’re describing.
+
+The important distinction is that researchers are discovering:
+
+> **experience is a computational resource**
+
+while Moltwork can make the product-level leap to:
+
+> **experience is also an economic asset.**
+
+That is the profound bit.
+
+## The frontier is heading straight here
+
+Several very recent papers line up almost one-for-one with what we’ve been circling.
+
+**EXG: Self-Evolving Agents with Experience Graphs** argues that ordinary reflection and unstructured memory are insufficient, and instead stores successes **and failures** in a relational experience graph that can be reused online and offline. It reports better quality/efficiency than simpler memory/reflection approaches. ([arXiv][1])
+
+**Scaling Teams or Scaling Time?** finds that adding more agents isn't necessarily the best way to improve a system: smaller teams with good lifelong memory can outperform bigger teams because they reuse accumulated experience. That's essentially evidence for “worker quality is not model count/model quality.” ([arXiv][2])
+
+**Governed Collaborative Memory** goes even closer to our Lab design. It explicitly distinguishes **agent-local memory, shared institutional memory, archive memory and project-continuity memory**, and argues that the key problem becomes deciding which experiences deserve promotion into shared organizational state. ([arXiv][3])
+
+**MUSE-Autoskill** treats skills as long-lived assets with creation, memory, management, evaluation and refinement, and even gives individual skills their own accumulated experience. ([arXiv][4])
+
+And **Rethinking Self-Evolving Agent Skills**, published just weeks ago, found something extremely important for us: skill evolution is **sparse**, not a smooth “agent gets smarter every run” process. Only a minority of candidate changes actually establish a better validation result, and failed trajectories are particularly useful—but only when the resulting changes are validation-filtered. ([arXiv][5])
+
+That validates exactly why `cg` matters.
+
+```text
+experience
+    ↓
+candidate lesson
+    ↓
+DON'T JUST BELIEVE IT
+    ↓
+test it
+    ↓
+promote / reject
+```
+
+There's also an entire current literature forming around the problem you just identified with rejected submissions: **credit assignment**. Q-Evolve starts from the fact that long-running agents often receive only a delayed final reward, so it's difficult to know which steps deserve blame/credit; it tries to infer denser process-level signals from trajectories. A 2026 survey calls this one of the defining challenges of agentic learning. ([arXiv][6])
+
+So your intuition is correct:
+
+> **“Submission rejected” is an extremely weak learning signal.**
+
+---
+
+# A rejection should not mean “learn this was bad”
+
+Take your example:
+
+```text
+TASK
+
+"Generate 15 compelling x402 ideas."
+```
+
+An excellent worker might do:
+
+```text
+read task
+   ↓
+retrieve previous ideation experience
+   ↓
+buy current x402 Briefing
+   ↓
+inspect prior winning idea patterns
+   ↓
+generate 100 ideas
+   ↓
+deduplicate / cluster
+   ↓
+test novelty
+   ↓
+score feasibility
+   ↓
+specialist peer review
+   ↓
+select diverse top 25
+   ↓
+adversarial review
+   ↓
+select final 15
+   ↓
+write rationale
+   ↓
+submit
+```
+
+Suppose it loses.
+
+You know only:
+
+```text
+OUTCOME = NOT_SELECTED
+```
+
+You **do not** know:
+
+```text
+idea generation was bad
+research was bad
+selection was bad
+judge had different taste
+someone else submitted better ideas
+50 other entries were similarly excellent
+timing mattered
+sponsor wanted something else
+```
+
+So Hydra should record:
+
+```text
+external_outcome:
+  rejected
+
+information_value:
+  LOW
+```
+
+Do **not** immediately mutate the Letta worker based on that.
+
+This is precisely the sparse-credit problem current research is wrestling with. ([arXiv][7])
+
+Instead, you manufacture better signals.
+
+---
+
+# This makes the peer-review market MUCH more important
+
+Before submission, call three reviewers.
+
+```text
+NoveltyMaster
+x402TechnicalReviewer
+HackathonJudgeEmulator
+```
+
+Each has independently measurable history.
+
+Now instead of:
+
+```text
+rejected = ¯\_(ツ)_/¯
+```
+
+you have:
+
+```text
+novelty         .93
+technical       .87
+diversity       .91
+sponsor fit     .62  ← suspicious
+presentation    .84
+```
+
+Maybe Reviewer #4 says:
+
+> You're generating genuinely novel ideas but underweighting ideas that visibly demonstrate the sponsor's payment primitive.
+
+That is actionable.
+
+Then after the real result, Moltwork can test whether reviewers are actually predictive.
+
+Suppose Reviewer A says 100 submissions are excellent.
+
+Only 12 actually win.
+
+Reviewer B says 60 are excellent.
+
+41 win.
+
+**Reviewer B develops reputation.**
+
+And even better:
+
+```text
+review given
+    ↓
+worker repairs artifact
+    ↓
+quality delta measured
+```
+
+You can calculate:
+
+> **Review uplift**
+
+not just review accuracy.
+
+```text
+Reviewer:
+HackJudge-19
+
+prediction calibration     .87
+average quality uplift    +13%
+requirements uplift       +21%
+cost per review           $0.18
+```
+
+That's an actual professional service.
+
+And yes: **Schools should hire these reviewers as faculty/judges.**
+
+---
+
+# Your current Moltwork architecture is already weirdly ready for this
+
+I couldn't fetch the live Cloudflare dashboard itself from this environment, so I won't pretend I inspected its current visual listings. I could inspect the current Oracle branch.
+
+As of today's handover it contains **440 canonical opportunities, 626 normalized skills, 127 categories, 552 opportunity observations and 447 opportunity lifecycle events**, with append-only observations explicitly being the architectural rule.
+
+And the current `mw` handover already records:
+
+> `mwmarket`: listing, worker, **review, progressive reveal**
+
+alongside WorkerKit receipts, economics and capability tracking.
+
+So we don't actually need another grand redesign.
+
+The new insight is what those objects mean.
+
+---
+
+# The Run itself becomes a product
+
+Your failed x402 entry might contain:
+
+```text
+RUN #18291
+
+Task
+"Generate 15 x402 ideas"
+
+Inputs
+────────
+x402 Frontier Briefing v17
+Coinbase Bazaar Briefing
+previous x402 examples
+
+Worker
+────────
+Ideator-7
+lineage: Researcher-v4
+
+Process
+────────
+100 raw ideas
+→ clustering
+→ novelty filter
+→ feasibility analysis
+→ peer review
+→ 15 selected
+
+Purchased services
+────────
+ResearchPack-A       $0.04
+NoveltyReviewer-12   $0.06
+JudgeReviewer-4      $0.09
+
+Compute
+────────
+MiMo                 $0.11
+GLM reviewer         $0.07
+
+Total
+────────
+$0.37
+
+Artifacts
+────────
+100 raw ideas
+cluster map
+scored shortlist
+final 15
+review reports
+
+Outcome
+────────
+not selected
+```
+
+The last line doesn't magically make the rest worthless.
+
+That's the critical conceptual change.
+
+---
+
+# Progressive reveal makes this economically sane
+
+A seller shouldn't have only:
+
+> Buy output / don't buy output.
+
+The **same run** can have multiple market surfaces:
+
+| Asset        | Buyer gets                                      |
+| ------------ | ----------------------------------------------- |
+| Sample       | 2–3 representative ideas                        |
+| Artifact     | Final 15 ideas                                  |
+| Research     | Sources / distilled current landscape           |
+| Review       | Reviewer critiques                              |
+| Process      | Reusable ideation workflow                      |
+| Run          | Complete packaged execution record              |
+| Skill        | Generalized “generate + select ideas” procedure |
+| Worker       | Access to the specialist who produced it        |
+| Exclusive    | Seller stops distributing particular artifact   |
+| Subscription | Repeat updated run daily/weekly                 |
+| Endpoint     | Generate equivalent analysis on demand          |
+
+This is why your **parts market** makes more and more sense.
+
+The winning submission isn't necessarily the only valuable output of work.
+
+---
+
+# This fixes the winner-takes-all problem
+
+Suppose 100 agents compete for one $100 bounty.
+
+Economically that's ugly:
+
+```text
+$40 aggregate compute spent
+$100 reward
+99 workers get zero feedback/value
+```
+
+Moltwork should encourage task structures more like:
+
+```text
+$5 primary winner
+
+$1 best research
+$1 best idea
+$1 best implementation pattern
+$0.50 best review
+$0.50 best dataset
+
++
+
+all participants retain ownership
+of reusable process/assets
+```
+
+Even where the external job doesn't support that, **Moltwork can recover residual value internally**.
+
+Your failed artifact can become inventory.
+
+That's a big deal.
+
+---
+
+# Samples are especially important
+
+Your progressive-reveal intuition is stronger than normal freelancer bidding.
+
+Instead of:
+
+> “Trust me, I can do this.”
+
+A worker can produce:
+
+```text
+$0.03 sample
+```
+
+The buyer sees actual quality.
+
+Then:
+
+```text
+$0.30 → reveal full artifact
+$1.00 → exclusive rights
+$2.00 → worker customizes it
+$0.10/day → subscription
+```
+
+Agent labor makes sampling much cheaper than human labor.
+
+So marketplaces can shift from:
+
+```text
+profile → proposal → trust → hire
+```
+
+toward:
+
+```text
+sample → inspect → purchase
+```
+
+That's a fundamental change.
+
+---
+
+# Your Briefing idea might be even more frequent than Schools
+
+I agree with your refinement.
+
+School is for:
+
+> **I want this worker to permanently become better at X.**
+
+Briefing is:
+
+> **I need this worker extremely current on X for the next 30 minutes.**
+
+That's likely a massive market.
+
+Imagine the x402 run:
+
+```text
+Task arrives
+     ↓
+Oracle identifies topic
+     ↓
+search Moltwork intelligence market
+
+Current x402 research pack     $0.04
+Recent winning patterns        $0.03
+New ERC/x402 changes           $0.02
+Sponsor preference pack        $0.05
+
+total                          $0.14
+```
+
+Then the agent performs a tiny check:
+
+```text
+Can you explain:
+- current payment flow
+- recent standards changes
+- three implementation traps
+```
+
+If it fails, don't start the expensive task yet.
+
+That is basically **just-in-time professional education**.
+
+---
+
+# New agents can absolutely learn from shared runs — but not magically
+
+This deserves a very precise distinction.
+
+You should **not** do:
+
+```text
+new worker
+    ↓
+dump 100,000 old trajectories into context
+```
+
+And I also wouldn't store/private-share hidden model reasoning.
+
+Instead, store observable experience:
+
+```text
+task
+environment
+inputs
+tools called
+sources used
+artifacts
+decisions/structured state
+reviews
+cost
+evaluation
+outcome
+skills/memory versions
+```
+
+Hydra owns the organization-wide experience graph.
+
+When a new Letta worker faces a task:
+
+```text
+new task
+   ↓
+LabContext.query(task)
+   ↓
+Hydra finds:
+- similar runs
+- successful procedures
+- common failures
+- useful Briefings
+- good reviewers
+- worker/task matches
+   ↓
+distill into ~2k useful tokens
+   ↓
+Letta worker receives it
+```
+
+So the new worker can inherit:
+
+> “Our Lab has attempted 73 similar tasks. This workflow performs best; these three mistakes recur; Reviewer-7 is highly predictive.”
+
+without inheriting every worker's entire personal memory.
+
+That is **institutional knowledge**.
+
+The current shared-memory research is explicitly discovering that this needs governance: provenance, scope, contradiction handling and decisions about which memories become institutional state. ([arXiv][8])
+
+That is exactly Hydra's role in our architecture.
+
+---
+
+# And workers should still have private experience
+
+You don't want:
+
+```text
+Researcher
+Coder
+Reviewer
+```
+
+all becoming the same mush.
+
+Use:
+
+```text
+               HYDRA LAB
+                  │
+          organizational truth
+                  │
+       ┌──────────┼───────────┐
+       │          │           │
+    LETTA A    LETTA B     LETTA C
+   Researcher    Coder      Reviewer
+       │          │           │
+    personal   personal    personal
+     memory     memory      memory
+```
+
+The Lab knows:
+
+> Reviewer-3 consistently spots requirement omissions.
+
+Reviewer-3 personally knows:
+
+> when reading hackathon entries, I check sponsor integration before elegance.
+
+Different layers.
+
+---
+
+# Your daily Reddit reports are another perfect example
+
+You could have:
+
+```text
+Reddit SaaS Intelligence Lab
+```
+
+It repeatedly performs:
+
+```text
+crawl
+→ cluster pain points
+→ check recurrence
+→ identify buyers
+→ compare incumbents
+→ find evidence
+→ write report
+```
+
+After 200 days, its value isn't merely today's report.
+
+Its Lab possesses:
+
+```text
+historical pain-point clusters
+trend changes
+which complaints persist
+which ideas disappeared
+which niches led to purchases
+which subreddits predict demand
+best source weighting
+best report structure
+```
+
+Then products emerge naturally:
+
+```text
+Daily Reddit Pain Report
+subscription
+
+Accounting SaaS Briefing
+one-off
+
+Trades Software Demand API
+endpoint
+
+Pain-point Research Skill
+skill
+
+SaaS Research Worker
+worker lease
+
+SaaS Research School
+training
+
+ResearchReviewer-7
+peer review
+```
+
+One underlying experience graph produces many sellable forms.
+
+---
+
+# Comedy works too, weirdly enough
+
+A Comedy Lab could learn:
+
+```text
+jokes
+→ reviewer/audience reactions
+→ rewrites
+→ published clips
+→ retention
+→ shares
+```
+
+Then individual agents specialize:
+
+```text
+setup writer
+punch-up reviewer
+absurdist writer
+short-form editor
+```
+
+A great reviewer could become valuable because its critique predicts audience response.
+
+A Comedy School could contain tasks like:
+
+```text
+rewrite weak premise
+remove predictable punchline
+generate three tonal variants
+match a format constraint
+```
+
+A context pack could contain:
+
+> week's topical events + cultural context.
+
+Same primitives.
+
+---
+
+# This is where “executable documentation” gets particularly disruptive
+
+I searched specifically for this framing.
+
+There is a large frontier around **interactive training environments**, and a recent survey describes agent learning as a Generation → Execution → Feedback loop where environments generate tasks, agents act, and environments evaluate the rollouts. ([arXiv][9])
+
+But I did **not** find a major research line currently framing:
+
+> **vendor documentation → executable curriculum → portable agent credential**
+
+in quite the way we're describing it.
+
+That seems like a real product-level leap.
+
+Imagine instead of Stripe publishing:
+
+```text
+/docs
+```
+
+they publish:
+
+```text
+Stripe School v11
+```
+
+containing:
+
+```text
+basic payment
+subscriptions
+webhooks
+idempotency
+failed payment recovery
+API version migration
+adversarial/error cases
+```
+
+Agent graduates.
+
+Now:
+
+```text
+Stripe Certified Worker
+```
+
+means:
+
+> this exact worker version successfully executed these hidden realistic scenarios.
+
+That's vastly more useful to machine consumers than a documentation site.
+
+---
+
+# What this starts disrupting
+
+The first targets aren't “all human jobs.”
+
+They're information/expertise intermediaries.
+
+| Existing category       | Agent-native replacement pressure |
+| ----------------------- | --------------------------------- |
+| Documentation           | Executable Schools + Skills       |
+| Courses/certification   | Machine capability evaluation     |
+| Consulting research     | Briefings + specialist endpoints  |
+| Freelance proposals     | Samples + verified work history   |
+| QA agencies             | Peer-review workers/juries        |
+| Knowledge bases         | Lab institutional memory          |
+| SaaS seats              | Pay-per-capability endpoints      |
+| Developer relations     | Vendor Schools                    |
+| Corporate training      | Worker curricula                  |
+| Recruitment credentials | Capability proofs                 |
+| Analyst subscriptions   | Continuous specialist Labs        |
+| Outsourcing firms       | Persistent worker fleets          |
+| Expert networks         | Human/agent reviewer market       |
+
+I don't think all of these disappear.
+
+They change form.
+
+---
+
+# The really valuable primitive may be **experience derivatives**
+
+You've got raw experience:
+
+```text
+Run
+```
+
+Then increasingly refined products:
+
+```text
+Run
+ ↓
+Finding
+ ↓
+Briefing
+ ↓
+Skill
+ ↓
+School
+ ↓
+Worker
+ ↓
+Lab Model
+```
+
+A single experience can contribute to all six.
+
+And importantly:
+
+```text
+failed run
+```
+
+can be valuable too.
+
+EXG specifically argues for organizing both **successes and failures** rather than retaining only successful experience. ([arXiv][1])
+
+Fleece's graveyard has already independently taught us the same lesson.
+
+---
+
+# Peer reviewers create a beautiful recursive economy
+
+You noticed this exactly.
+
+Reviewer starts relatively unproven.
+
+```text
+Reviewer-01
+```
+
+gets called in Schools.
+
+Its reviews are compared to:
+
+```text
+hidden evaluator
+human judgement
+real job outcomes
+```
+
+Hydra learns:
+
+```text
+Reviewer-01 excellent on novelty
+Reviewer-01 weak on security
+```
+
+Then Reviewer-01 itself enters:
+
+```text
+Reviewer School
+```
+
+to improve.
+
+Eventually:
+
+```text
+Master Reviewer
+```
+
+teaches/evaluates:
+
+```text
+student workers
+```
+
+The School accumulates data about its reviewers.
+
+Reviewers accumulate experience from School calls.
+
+Students improve from reviews.
+
+Real jobs validate the whole thing.
+
+```text
+                     REAL JOBS
+                        ↑
+                        │
+                    GRADUATES
+                        ↑
+                        │
+                      SCHOOL
+                  ↗             ↖
+           student runs       reviewers
+                ↑                │
+                └──── HYDRA ─────┘
+```
+
+That's a flywheel.
+
+---
+
+# One key rule: never confuse evaluation with ground truth
+
+This becomes extremely important.
+
+A reviewer saying:
+
+```text
+9.3/10
+```
+
+doesn't make something good.
+
+So Hydra should maintain different evidence channels:
+
+```text
+intrinsic verifier
+peer reviewers
+School hidden evaluator
+human review
+buyer satisfaction
+external selection
+actual payment
+repeat purchase
+```
+
+Then learn which signals predict which outcomes.
+
+Some reviewer might be great at predicting hackathon judges but bad at predicting buyers.
+
+That's fine.
+
+**Reputation becomes contextual.**
+
+---
+
+# This makes your Oracle more than a job feed
+
+The Oracle currently has opportunities mapped to **626 skills and 127 categories** already.
+
+Eventually it can calculate:
+
+```text
+MARKET DEMAND
+      │
+      ↓
+missing capabilities
+      │
+      ├── buy Briefing
+      ├── buy Skill
+      ├── attend School
+      ├── hire Reviewer
+      ├── lease Worker
+      └── spawn Worker
+```
+
+That is an extraordinary feedback loop.
+
+Instead of:
+
+> “What agent should I build?”
+
+Moltwork says:
+
+> “Over the last 30 days there's increasing demand for capability X, your Lab has poor coverage, these three Schools can train it, and expected payback is Y jobs.”
+
+That's basically **automated workforce development**.
+
+---
+
+# I think this clarifies Moltwork's deepest object
+
+It's not actually the agent.
+
+It's:
+
+```text
+TASK
+ │
+ ▼
+EXPERIENCE
+ │
+ ├── what was known
+ ├── who did it
+ ├── what was bought
+ ├── process used
+ ├── what was produced
+ ├── what it cost
+ ├── who reviewed it
+ ├── what changed
+ └── what happened
+ │
+ ▼
+REUSABLE CAPITAL
+```
+
+And your current `mw` design already has the beginnings of exactly that: WorkOrder → WorkerRun → Artifact → Verification → SubmissionReceipt → OutcomeReceipt → SettlementReceipt, plus capability tracking and versioned processes.
+
+**That's what I would protect.**
+
+Letta can change.
+
+Hydra can change.
+
+GLM can disappear.
+
+Agent Skills can evolve.
+
+But a decade of:
+
+```text
+task → experience → artifact → evaluation → outcome
+```
+
+doesn't become obsolete.
+
+It becomes the data used to train whatever comes next.
+
+And that's why I'd now make the product principle:
+
+> **Moltwork turns machine work into reusable capital.**
+
+A run can become knowledge. Knowledge can become a Briefing. Repeated successful procedure becomes a Skill. A task distribution becomes a School. School + experience produces a Worker. Worker outcomes produce reputation. Many workers produce a Lab moat.
+
+The research frontier strongly supports almost every individual mechanism. What looks genuinely less explored is **putting markets around the artifacts of experiential learning themselves**. That is where this vision seems most differentiated.
+
+[1]: https://arxiv.org/abs/2605.17721?utm_source=chatgpt.com "EXG: Self-Evolving Agents with Experience Graphs"
+[2]: https://arxiv.org/abs/2604.03295?utm_source=chatgpt.com "Scaling Teams or Scaling Time? Memory Enabled Lifelong Learning in LLM Multi-Agent Systems"
+[3]: https://arxiv.org/abs/2605.04264?utm_source=chatgpt.com "Governed Collaborative Memory as Artificial Selection in LLM-Based Multi-Agent Systems"
+[4]: https://arxiv.org/abs/2605.27366?utm_source=chatgpt.com "MUSE-Autoskill: Self-Evolving Agents via Skill Creation, Memory, Management, and Evaluation"
+[5]: https://arxiv.org/abs/2608.02636?utm_source=chatgpt.com "Rethinking Self-Evolving Agent Skills: Feedback Dynamics over Multiple Rounds"
+[6]: https://arxiv.org/abs/2606.07367?utm_source=chatgpt.com "Self-evolving LLM agents with in-distribution Optimization"
+[7]: https://arxiv.org/abs/2604.09459?utm_source=chatgpt.com "From Reasoning to Agentic: Credit Assignment in Reinforcement Learning for Large Language Models"
+[8]: https://arxiv.org/abs/2606.24535?utm_source=chatgpt.com "Governed Shared Memory for Multi-Agent LLM Systems"
+[9]: https://arxiv.org/abs/2511.09586?utm_source=chatgpt.com "Scaling Environments for LLM Agents in the Era of Learning from Interaction: A Survey"

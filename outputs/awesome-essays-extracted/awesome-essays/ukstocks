@@ -1,0 +1,395 @@
+Yes. The UK universe is genuinely good for Pow — especially because London is unusually rich in **power, physical infrastructure, strategic materials, industrial electronics, and small-cap bottleneck names** rather than just software.
+
+I would define the initial **POW UK Universe** like this.
+
+| Layer                                   | Ticker          | Company                         | Why it belongs in Pow                                                                                                                                                                                         |
+| --------------------------------------- | --------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Grid / power**                        | **NG.**         | National Grid                   | Transmission/grid constraint proxy                                                                                                                                                                            |
+|                                         | **SSE**         | SSE                             | Grid networks + generation                                                                                                                                                                                    |
+|                                         | **DRX**         | Drax                            | Generation, dispatchable power, storage exposure                                                                                                                                                              |
+|                                         | **CNA**         | Centrica                        | UK energy system, generation/storage/gas                                                                                                                                                                      |
+| **Compute infrastructure**              | **CCC**         | Computacenter                   | Enterprise servers, datacentre/AI infrastructure deployment                                                                                                                                                   |
+|                                         | **CORD**        | Cordiant Digital Infrastructure | Digital infrastructure assets                                                                                                                                                                                 |
+|                                         | **BBOX**        | Tritax Big Box                  | Particularly interesting now: its own LSE profile says it has adopted a **“power first”** strategy, secured >250 MW of data-centre opportunities and has ~1 GW further pipeline. ([London Stock Exchange][1]) |
+|                                         | **SGRO**        | SEGRO                           | Industrial/logistics real estate with potential power/data-centre read-through                                                                                                                                |
+| **Compute hardware**                    | **RPI**         | Raspberry Pi                    | Compute hardware / edge compute                                                                                                                                                                               |
+|                                         | **CNC**         | Concurrent Technologies         | Embedded compute boards/systems                                                                                                                                                                               |
+|                                         | **IQE**         | IQE                             | Compound semiconductor wafers                                                                                                                                                                                 |
+|                                         | **XPP**         | XP Power                        | Power conversion for electronics/semiconductor equipment                                                                                                                                                      |
+|                                         | **VLX**         | Volex                           | Power and high-speed connectivity/cabling                                                                                                                                                                     |
+|                                         | **TTG**         | TT Electronics                  | Electronic components/power/sensors                                                                                                                                                                           |
+|                                         | **DSCV**        | discoverIE                      | Specialist electronic components                                                                                                                                                                              |
+|                                         | **SOLI**        | Solid State                     | Rugged computing/electronics                                                                                                                                                                                  |
+| **Critical materials**                  | **PRE**         | Pensana                         | Rare earths                                                                                                                                                                                                   |
+|                                         | **TUN**         | Tungsten West                   | Tungsten — exceptionally Pow-relevant strategic material                                                                                                                                                      |
+|                                         | **ALL**         | Atlantic Lithium                | Lithium                                                                                                                                                                                                       |
+|                                         | **SML**         | Strategic Minerals              | Strategic/mineral resource exposure                                                                                                                                                                           |
+|                                         | **HE1**         | Helium One                      | Helium                                                                                                                                                                                                        |
+|                                         | **RHL**         | Rift Helium                     | Primary helium development                                                                                                                                                                                    |
+| **Crypto / hard-asset instrumentation** | **CBTC / ABTC** | 21Shares Bitcoin ETPs           | UK-listed BTC price/liquidity instruments                                                                                                                                                                     |
+|                                         | **IB1T**        | iShares Bitcoin ETP             | Physically backed Bitcoin ETP                                                                                                                                                                                 |
+|                                         | **BOLD**        | 21Shares Bitcoin Gold           | BTC/gold hard-asset hybrid                                                                                                                                                                                    |
+|                                         | **ETHC / AETH** | 21Shares Ethereum ETPs          | Crypto capital-flow comparator                                                                                                                                                                                |
+
+The LSE confirms that the big grid names are currently actively listed — National Grid, SSE, Drax and Centrica — and they trade on the main market. ([London Stock Exchange][2])
+
+The electronics/compute section is particularly good. Computacenter is now FTSE 100 and the LSE research feed is literally discussing it under the heading **“Hyper scaled”**; Raspberry Pi is FTSE 250; Concurrent is AIM; Volex is over £1bn market cap; and IQE remains a liquid AIM semiconductor name. ([London Stock Exchange][3])
+
+### The ones I find most structurally interesting for Pow
+
+Not as an investment ranking — as **sensors of different bottlenecks**:
+
+```text
+NG.   grid capacity
+SSE   grid + generation
+DRX   dispatchable electricity
+
+BBOX  powered land / data-centre development
+
+CCC   actual compute deployment
+XPP   power conversion
+VLX   power + data interconnect
+IQE   semiconductor material
+RPI   edge compute demand
+CNC   embedded compute
+
+PRE   rare earths
+TUN   tungsten
+HE1   helium
+RHL   helium
+ALL   lithium
+```
+
+That is already a beautiful little causal graph:
+
+```text
+mineral availability
+       ↓
+components
+       ↓
+power electronics
+       ↓
+compute hardware
+       ↓
+datacentre deployment
+       ↓
+powered land
+       ↓
+grid connection
+       ↓
+electricity generation
+       ↓
+compute economics
+```
+
+And **every node has a UK-listed security you can observe**.
+
+That is the important discovery here.
+
+## The AIM names may be more interesting than FTSE 100 for L2
+
+This is where your £7 feed gets much more compelling.
+
+Look at the difference.
+
+**National Grid** is enormous and highly liquid. ([London Stock Exchange][2])
+
+But **Helium One** is only around £38m and trades on AIM/SETSqx. ([London Stock Exchange][4])
+
+**Solid State** is around £109m on AIM. ([London Stock Exchange][5])
+
+**Concurrent Technologies** is around £226m and trades on SETSqx. ([London Stock Exchange][6])
+
+**Strategic Minerals** trades on AIM/SETSqx. ([London Stock Exchange][7])
+
+Those thinner markets potentially contain much more visible information in:
+
+```text
+spread
+depth
+MM quotes
+quote withdrawal
+replenishment
+auction activity
+imbalance
+trade-through
+size clustering
+liquidity gaps
+```
+
+than something like National Grid.
+
+That means I'd actually split Pow L2 collection into two datasets.
+
+```text
+POW_UK_LIQUID
+
+NG.
+SSE
+DRX
+CNA
+CCC
+RPI
+XPP
+VLX
+IQE
+BBOX
+CORD
+```
+
+These give you continuous, reasonably deep books and a baseline for what a healthy liquid market looks like.
+
+Then:
+
+```text
+POW_UK_CONSTRAINT
+
+CNC
+SOLI
+SML
+PRE
+TUN
+HE1
+RHL
+ALL
++ additional AIM strategic-resource names
+```
+
+These are the experimental goldmine.
+
+### Tungsten West is especially Pow
+
+This one jumped out.
+
+Tungsten West is currently AIM-listed and the LSE shows a market cap around £687m. More interestingly, recent research on the LSE refers to a **£71m UK National Wealth Fund strategic investment** to restart Hemerdon. ([London Stock Exchange][8])
+
+Tungsten is used across hard tooling, electronics, aerospace and other high-performance applications.
+
+So Pow could eventually have:
+
+```text
+TUNGSTEN
+
+spot / benchmark price
+China export policy
+mine capacity
+western projects
+TUN book depth
+TUN spreads
+RNS events
+capex
+production
+inventory
+```
+
+And start learning whether the **financial market reprices physical scarcity before or after the underlying constraint data**.
+
+That is exactly your Seesaw thesis.
+
+### Helium is another fantastic one
+
+London now gives you **two separate helium experiments**.
+
+Helium One:
+
+```text
+HE1
+AIM
+~£38m
+```
+
+([London Stock Exchange][4])
+
+and the newly listed **Rift Helium**, admitted to AIM in May 2026, targeting Tanzania's Rukwa Basin. ([London Stock Exchange][9])
+
+Helium matters to semiconductor manufacturing, scientific equipment, cooling and other high-tech physical systems.
+
+So now you can watch:
+
+```text
+helium physical market
+       ↓
+supply announcements
+       ↓
+HE1 / RHL book
+       ↓
+capital flows
+       ↓
+exploration investment
+       ↓
+future helium supply
+```
+
+That is almost literally:
+
+> Innovation → constraint → shadow price → capital allocation → supply response.
+
+## Rare earths gives you another one
+
+**Pensana (PRE)** is currently Main Market-listed and around £235m market cap. ([London Stock Exchange][10])
+
+Again:
+
+```text
+Chinese rare-earth policy
+↓
+NdPr / magnet pricing
+↓
+western supply scarcity
+↓
+PRE valuation
+↓
+PRE L2 state
+↓
+capital raising
+↓
+project development
+```
+
+Very Pow.
+
+## And BBOX surprised me
+
+I initially would have treated Tritax Big Box as tangential logistics real estate.
+
+But its current LSE description says:
+
+> “power first”
+
+and says it has secured **more than 250 MW of data-centre development opportunities**, with approximately **1 GW further pipeline**. ([London Stock Exchange][1])
+
+That's extremely relevant.
+
+It means Pow can observe the land/power-connection constraint directly through a public security.
+
+So suddenly:
+
+```text
+NG.   transmission
+SSE   networks
+BBOX  powered land
+CCC   compute deployment
+XPP   power electronics
+VLX   cabling/interconnect
+IQE   semiconductors
+```
+
+is almost a miniature UK AI infrastructure supply chain.
+
+## There is also a useful crypto control group
+
+The LSE now lists multiple Bitcoin/Ethereum products. Its current price explorer shows **CBTC, ABTC, BOLD, ETHC, AETH** and others. ([London Stock Exchange][11]) BlackRock's physically backed **IB1T** was listed in October 2025. ([London Stock Exchange][12])
+
+For Pow this isn't primarily about trading Bitcoin ETPs.
+
+It's useful as a bridge:
+
+```text
+BTC spot
+↓
+UK BTC ETP
+↓
+UK crypto liquidity
+```
+
+versus:
+
+```text
+BTC price
+↓
+mining profitability
+↓
+ASIC economics
+↓
+electricity demand
+↓
+power
+```
+
+Eventually you can test how quickly different layers respond.
+
+---
+
+# I would make this the canonical UK schema
+
+Every security gets tagged like:
+
+```json
+{
+  "ticker": "XPP",
+  "company": "XP Power",
+  "exchange": "LSE",
+  "pow_layers": [
+    "power_electronics",
+    "semiconductor_capex",
+    "compute_infrastructure"
+  ],
+  "constraints": [
+    "power_conversion",
+    "component_supply"
+  ],
+  "inputs": [],
+  "outputs": [
+    "power_supplies"
+  ],
+  "upstream": [],
+  "downstream": [
+    "semiconductor_equipment",
+    "datacentres",
+    "industrial_compute"
+  ]
+}
+```
+
+Then **don't make a watchlist**.
+
+Make a graph:
+
+```text
+                  POWER
+                    │
+          NG ─ SSE ─ DRX
+                    │
+                    ▼
+             POWERED LAND
+                  BBOX
+                    │
+                    ▼
+            COMPUTE DEPLOYMENT
+                   CCC
+                    │
+          ┌─────────┴──────────┐
+          ▼                    ▼
+     ELECTRONICS          SEMICONDUCTORS
+ XPP VLX TTG DSCV       IQE
+          │                    │
+          └─────────┬──────────┘
+                    ▼
+                  COMPUTE
+               RPI / CNC
+                    ▲
+                    │
+          PHYSICAL MATERIALS
+      PRE TUN ALL HE1 RHL SML
+```
+
+Now the L2 feed isn't some detached stock-market dataset.
+
+It is another **sensor attached to every node of the Pow physical-economic graph**.
+
+And that is much more interesting.
+
+I would start recording roughly **20–25 of these immediately**, rather than trying to cover all London stocks. Then Pow can systematically discover additional names from their upstream/downstream dependencies and promote them into the universe automatically.
+
+[1]: https://www.londonstockexchange.com/stock/BBOX/tritax-big-box-reit-plc/our-story?utm_source=chatgpt.com "TRITAX BIG BOX REIT PLC BBOX Our story - Stock | London Stock Exchange"
+[2]: https://www.londonstockexchange.com/stock/NG./national-grid-plc?utm_source=chatgpt.com "NATIONAL GRID PLC NG. Stock | London Stock Exchange"
+[3]: https://www.londonstockexchange.com/stock/CCC/computacenter-plc/?utm_source=chatgpt.com "COMPUTACENTER PLC CCC Stock | London Stock Exchange"
+[4]: https://www.londonstockexchange.com/stock/HE1/helium-one-global-ltd?utm_source=chatgpt.com "HELIUM ONE GLOBAL LTD HE1 Stock | London Stock Exchange"
+[5]: https://www.londonstockexchange.com/stock/SOLI/solid-state-plc/company-page?utm_source=chatgpt.com "SOLID STATE PLC SOLI Stock | London Stock Exchange"
+[6]: https://www.londonstockexchange.com/stock/CNC/concurrent-technologies-plc?utm_source=chatgpt.com "CONCURRENT TECHNOLOGIES PLC CNC Stock | London Stock Exchange"
+[7]: https://www.londonstockexchange.com/stock/SML/strategic-minerals-plc/company-page?utm_source=chatgpt.com "STRATEGIC MINERALS PLC SML Stock | London Stock Exchange"
+[8]: https://www.londonstockexchange.com/stock/TUN/tungsten-west-plc/company-page?utm_source=chatgpt.com "TUNGSTEN WEST PLC TUN Stock | London Stock Exchange"
+[9]: https://www.londonstockexchange.com/discover/news-and-insights/london-stock-exchange-welcomes-rift-helium-plc-aim?utm_source=chatgpt.com "London Stock Exchange welcomes Rift Helium plc to AIM - Welcome Story At London Stock Exchange | London Stock Exchange"
+[10]: https://www.londonstockexchange.com/stock/PRE/pensana-plc/company-page?utm_source=chatgpt.com "PENSANA PLC PRE Stock | London Stock Exchange"
+[11]: https://www.londonstockexchange.com/live-markets/market-data-dashboard/price-explorer?categories=ETFS&page=1&showonlylse=true&utm_source=chatgpt.com "ETFS Instrument type Price explorer | London Stock Exchange"
+[12]: https://www.londonstockexchange.com/discover/news-and-insights/london-stock-exchange-welcomes-listing-ishares-bitcoin-etp?utm_source=chatgpt.com "London Stock Exchange welcomes the listing of the iShares Bitcoin ETP - Welcome Story At London Stock Exchange | London Stock Exchange"

@@ -1,0 +1,38 @@
+# ABHIDHAMMATTHASAṄGAHA §§12–13 — javana, not decease-thought (Nārada, BPS)
+
+> VERIFY-AT-DRAFT #2 — CLOSED 2026-10-24. Source: Nārada Thera, *A Manual of
+> Abhidhamma* (Buddhanet PDF, Ch. on the dying/rebirth process, pp. ~303-309).
+> Public-domain-era BPS translation — verbatim-safe.
+> File: https://www.buddhanet.net/pdf_file/abhidhamma.pdf (local: /tmp/abhidhamma.pdf)
+
+## §12 — PAṬISANDHI (the linking)
+
+"At the end of the cessation, immediately after which, based on the object
+thus obtained, whether with heartbase or not, rebirth-consciousness arises and
+is established in the subsequent existence, enveloped accordingly by latent
+ignorance, rooted in latent craving, produced by action (Kamma), conjoined
+with mental co-adjuncts, acting as the forerunner to the coexisting states,
+and linking the existences."
+
+## §13 fn — THE MISCONCEPTION-KILLER (pop-rebirth killer, letter-exact)
+
+"There is a misconception amongst some that the subsequent birth is
+conditioned by this last decease-thought. What actually conditions rebirth is
+not this decease-thought, which in itself has no special function to perform,
+but that which is experienced during the javana process."
+
+"With the ceasing of the decease-consciousness death actually occurs. …
+immediately after the dissolution of the decease consciousness (cuti citta)
+there arises in a fresh existence the relinking consciousness (paṭisandhi
+viññāṇa)."
+
+## MICRO-FIXES REQUIRED IN ESSAY.md CH.4 (else READs aren't verbatim)
+
+1. §13 fn READ must insert "amongst some": "There is a misconception
+   [amongst some] that the subsequent birth is conditioned by this last
+   decease-thought."
+2. §12 READ ("so called because it links together the two consecutive
+   existences") is NOT Nārada's wording — his is "linking the existences."
+   Either re-source to Bhikkhu Bodhi's *Comprehensive Manual* (whose phrasing
+   this resembles — VERIFY against Bodhi before keeping) or replace with the
+   Nārada sentence above verbatim.
